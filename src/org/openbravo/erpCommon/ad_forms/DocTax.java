@@ -22,89 +22,87 @@ import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocTax {
-    static Logger log4jDocTax = Logger.getLogger(DocTax.class);
+  static Logger log4jDocTax = Logger.getLogger(DocTax.class);
 
-    public DocTax(String C_Tax_ID, String name, String rate, String taxBaseAmt,
-            String amount) {
-        m_C_Tax_ID = C_Tax_ID;
-        m_name = name;
-        m_rate = rate;
-        m_amount = amount;
-    } // DocTax
+  public DocTax(String C_Tax_ID, String name, String rate, String taxBaseAmt, String amount) {
+    m_C_Tax_ID = C_Tax_ID;
+    m_name = name;
+    m_rate = rate;
+    m_amount = amount;
+  } // DocTax
 
-    /** Tax ID */
-    public String m_C_Tax_ID = "";
-    /** Amount */
-    public String m_amount = "";
-    /** Tax Rate */
-    public String m_rate = "";
-    /** Name */
-    public String m_name = "";
+  /** Tax ID */
+  public String m_C_Tax_ID = "";
+  /** Amount */
+  public String m_amount = "";
+  /** Tax Rate */
+  public String m_rate = "";
+  /** Name */
+  public String m_name = "";
 
-    /** Tax Due Acct */
-    public static final int ACCTTYPE_TaxDue = 0;
-    /** Tax Liability */
-    public static final int ACCTTYPE_TaxLiability = 1;
-    /** Tax Credit */
-    public static final int ACCTTYPE_TaxCredit = 2;
-    /** Tax Receivables */
-    public static final int ACCTTYPE_TaxReceivables = 3;
-    /** Tax Expense */
-    public static final int ACCTTYPE_TaxExpense = 4;
+  /** Tax Due Acct */
+  public static final int ACCTTYPE_TaxDue = 0;
+  /** Tax Liability */
+  public static final int ACCTTYPE_TaxLiability = 1;
+  /** Tax Credit */
+  public static final int ACCTTYPE_TaxCredit = 2;
+  /** Tax Receivables */
+  public static final int ACCTTYPE_TaxReceivables = 3;
+  /** Tax Expense */
+  public static final int ACCTTYPE_TaxExpense = 4;
 
-    /**
-     * Get Account
-     * 
-     * @param AcctType
-     *            see ACCTTYPE_*
-     * @param as
-     *            account schema
-     * @return Account
-     */
-    public Account getAccount(int AcctType, AcctSchema as,
-            ConnectionProvider conn) {
-        if (AcctType < 0 || AcctType > 4)
-            return null;
-        String validCombination_ID = "";
-        DocTaxData[] data = null;
-        Account acc = null;
-        try {
-            data = DocTaxData.select(conn, m_C_Tax_ID, as.m_C_AcctSchema_ID);
-            if (data.length > 0) {
-                switch (AcctType) {
-                case 0:
-                    validCombination_ID = data[0].tDueAcct;
-                    break;
-                case 1:
-                    validCombination_ID = data[0].tLiabilityAcct;
-                    break;
-                case 2:
-                    validCombination_ID = data[0].tCreditAcct;
-                    break;
-                case 3:
-                    validCombination_ID = data[0].tReceivablesAcct;
-                    break;
-                case 4:
-                    validCombination_ID = data[0].tExpenseAcct;
-                    break;
-                }
-            }
-            if (validCombination_ID.equals(""))
-                return null;
-            acc = Account.getAccount(conn, validCombination_ID);
-        } catch (ServletException e) {
-            log4jDocTax.warn(e);
+  /**
+   * Get Account
+   * 
+   * @param AcctType
+   *          see ACCTTYPE_*
+   * @param as
+   *          account schema
+   * @return Account
+   */
+  public Account getAccount(int AcctType, AcctSchema as, ConnectionProvider conn) {
+    if (AcctType < 0 || AcctType > 4)
+      return null;
+    String validCombination_ID = "";
+    DocTaxData[] data = null;
+    Account acc = null;
+    try {
+      data = DocTaxData.select(conn, m_C_Tax_ID, as.m_C_AcctSchema_ID);
+      if (data.length > 0) {
+        switch (AcctType) {
+        case 0:
+          validCombination_ID = data[0].tDueAcct;
+          break;
+        case 1:
+          validCombination_ID = data[0].tLiabilityAcct;
+          break;
+        case 2:
+          validCombination_ID = data[0].tCreditAcct;
+          break;
+        case 3:
+          validCombination_ID = data[0].tReceivablesAcct;
+          break;
+        case 4:
+          validCombination_ID = data[0].tExpenseAcct;
+          break;
         }
-        return acc;
-    } // getAccount
-
-    /**
-     * Get Amount
-     * 
-     * @return gross amount
-     */
-    public String getAmount() {
-        return m_amount;
+      }
+      if (validCombination_ID.equals(""))
+        return null;
+      acc = Account.getAccount(conn, validCombination_ID);
+    } catch (ServletException e) {
+      log4jDocTax.warn(e);
     }
+    return acc;
+  } // getAccount
+
+  /**
+   * Get Amount
+   * 
+   * @return gross amount
+   */
+  public String getAmount() {
+    return m_amount;
+  }
 
 }

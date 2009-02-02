@@ -28,69 +28,67 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 
 /**
- * Provides the identifier/title of an object using the
- * {@link Entity#getIdentifierProperties() identifierProperties} of the
- * {@link Entity Entity}.
+ * Provides the identifier/title of an object using the {@link Entity#getIdentifierProperties()
+ * identifierProperties} of the {@link Entity Entity}.
  * 
- * Note: the getIdentifier can also be generated in the java entity but the
- * current approach makes it possible to change the identifier definition at
- * runtime.
+ * Note: the getIdentifier can also be generated in the java entity but the current approach makes
+ * it possible to change the identifier definition at runtime.
  * 
  * @author mtaal
  */
 
 public class IdentifierProvider implements OBSingleton {
 
-    private static IdentifierProvider instance;
+  private static IdentifierProvider instance;
 
-    public static IdentifierProvider getInstance() {
-        if (instance == null) {
-            instance = OBProvider.getInstance().get(IdentifierProvider.class);
-        }
-        return instance;
+  public static IdentifierProvider getInstance() {
+    if (instance == null) {
+      instance = OBProvider.getInstance().get(IdentifierProvider.class);
     }
+    return instance;
+  }
 
-    public static void setInstance(IdentifierProvider instance) {
-        IdentifierProvider.instance = instance;
+  public static void setInstance(IdentifierProvider instance) {
+    IdentifierProvider.instance = instance;
+  }
+
+  /**
+   * Returns the identifier of the object. The identifier is computed using the identifier
+   * properties of the Entity of the object.
+   * 
+   * @param o
+   *          the object for which the identifier is generated
+   * @return the identifier
+   */
+  public String getIdentifier(Object o) {
+    return getIdentifier(o, true);
+  }
+
+  // identifyDeep determines if refered to objects are used
+  // to identify the object
+  private String getIdentifier(Object o, boolean identifyDeep) {
+    // TODO: add support for null fields
+    final StringBuilder sb = new StringBuilder();
+    final DynamicEnabled dob = (DynamicEnabled) o;
+    final String entityName = ((Identifiable) dob).getEntityName();
+    final List<Property> identifiers = ModelProvider.getInstance().getEntity(entityName)
+        .getIdentifierProperties();
+
+    for (final Property identifier : identifiers) {
+      if (sb.length() > 0) {
+        sb.append(" ");
+      }
+      final Object value = dob.get(identifier.getName());
+
+      if (value instanceof Identifiable && identifyDeep) {
+        sb.append(getIdentifier(value, false));
+      } else if (value != null) {
+        sb.append(value);
+      }
     }
-
-    /**
-     * Returns the identifier of the object. The identifier is computed using
-     * the identifier properties of the Entity of the object.
-     * 
-     * @param o
-     *            the object for which the identifier is generated
-     * @return the identifier
-     */
-    public String getIdentifier(Object o) {
-        return getIdentifier(o, true);
+    if (identifiers.size() == 0) {
+      return entityName + " (" + ((Identifiable) dob).getId() + ")";
     }
-
-    // identifyDeep determines if refered to objects are used
-    // to identify the object
-    private String getIdentifier(Object o, boolean identifyDeep) {
-        // TODO: add support for null fields
-        final StringBuilder sb = new StringBuilder();
-        final DynamicEnabled dob = (DynamicEnabled) o;
-        final String entityName = ((Identifiable) dob).getEntityName();
-        final List<Property> identifiers = ModelProvider.getInstance()
-                .getEntity(entityName).getIdentifierProperties();
-
-        for (final Property identifier : identifiers) {
-            if (sb.length() > 0) {
-                sb.append(" ");
-            }
-            final Object value = dob.get(identifier.getName());
-
-            if (value instanceof Identifiable && identifyDeep) {
-                sb.append(getIdentifier(value, false));
-            } else if (value != null) {
-                sb.append(value);
-            }
-        }
-        if (identifiers.size() == 0) {
-            return entityName + " (" + ((Identifiable) dob).getId() + ")";
-        }
-        return sb.toString();
-    }
+    return sb.toString();
+  }
 }

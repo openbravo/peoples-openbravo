@@ -34,86 +34,82 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SE_Wh_SchedulePeriod extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strWhSchedule = vars.getStringParameter("inpmWhScheduleId");
-            String strTabId = vars.getStringParameter("inpTabId");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strWhSchedule = vars.getStringParameter("inpmWhScheduleId");
+      String strTabId = vars.getStringParameter("inpTabId");
 
-            try {
-                printPage(response, vars, strWhSchedule, strTabId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+      try {
+        printPage(response, vars, strWhSchedule, strTabId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strWhSchedule, String strTabId) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWhSchedule,
+      String strTabId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-        InvoicingScheduleData[] data = InvoicingScheduleData
-                .selectM_WH_Period_ID(this, Utility.getContext(this, vars,
-                        "#User_Org", "SE_Wh_SchedulePeriod"), Utility
-                        .getContext(this, vars, "#User_Client",
-                                "SE_Wh_SchedulePeriod"), strWhSchedule);
-        StringBuffer resultado = new StringBuffer();
-        if (data == null || data.length == 0)
-            resultado.append("var respuesta = null;");
-        else {
-            resultado.append("var calloutName='SE_Wh_SchedulePeriod';\n\n");
-            resultado.append("var respuesta = new Array(");
-            resultado.append("new Array(\"inpPeriodFromId\", ");
-            if (data != null && data.length > 0) {
-                resultado.append("new Array(");
-                for (int i = 0; i < data.length; i++) {
-                    resultado.append("new Array(\"" + data[i].id + "\", \""
-                            + FormatUtilities.replaceJS(data[i].name) + "\")");
-                    if (i < data.length - 1)
-                        resultado.append(",\n");
-                }
-                resultado.append("\n)");
-            } else
-                resultado.append("null");
-            resultado.append("\n),");
-            resultado.append("new Array(\"inpPeriodToId\", ");
-            if (data != null && data.length > 0) {
-                resultado.append("new Array(");
-                for (int i = 0; i < data.length; i++) {
-                    resultado.append("new Array(\"" + data[i].id + "\", \""
-                            + FormatUtilities.replaceJS(data[i].name) + "\")");
-                    if (i < data.length - 1)
-                        resultado.append(",\n");
-                }
-                resultado.append("\n)");
-            } else
-                resultado.append("null");
-            resultado.append("\n)");
-
-            resultado.append(");");
+    InvoicingScheduleData[] data = InvoicingScheduleData.selectM_WH_Period_ID(this, Utility
+        .getContext(this, vars, "#User_Org", "SE_Wh_SchedulePeriod"), Utility.getContext(this,
+        vars, "#User_Client", "SE_Wh_SchedulePeriod"), strWhSchedule);
+    StringBuffer resultado = new StringBuffer();
+    if (data == null || data.length == 0)
+      resultado.append("var respuesta = null;");
+    else {
+      resultado.append("var calloutName='SE_Wh_SchedulePeriod';\n\n");
+      resultado.append("var respuesta = new Array(");
+      resultado.append("new Array(\"inpPeriodFromId\", ");
+      if (data != null && data.length > 0) {
+        resultado.append("new Array(");
+        for (int i = 0; i < data.length; i++) {
+          resultado.append("new Array(\"" + data[i].id + "\", \""
+              + FormatUtilities.replaceJS(data[i].name) + "\")");
+          if (i < data.length - 1)
+            resultado.append(",\n");
         }
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
+        resultado.append("\n)");
+      } else
+        resultado.append("null");
+      resultado.append("\n),");
+      resultado.append("new Array(\"inpPeriodToId\", ");
+      if (data != null && data.length > 0) {
+        resultado.append("new Array(");
+        for (int i = 0; i < data.length; i++) {
+          resultado.append("new Array(\"" + data[i].id + "\", \""
+              + FormatUtilities.replaceJS(data[i].name) + "\")");
+          if (i < data.length - 1)
+            resultado.append(",\n");
+        }
+        resultado.append("\n)");
+      } else
+        resultado.append("null");
+      resultado.append("\n)");
+
+      resultado.append(");");
     }
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

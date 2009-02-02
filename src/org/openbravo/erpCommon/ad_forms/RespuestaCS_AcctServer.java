@@ -19,5 +19,5 @@
 package org.openbravo.erpCommon.ad_forms;
 
 public class RespuestaCS_AcctServer {
-    String validCombination;
+  String validCombination;
 }

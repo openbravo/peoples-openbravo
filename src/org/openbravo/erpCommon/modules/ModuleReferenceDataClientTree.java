@@ -29,50 +29,49 @@ import org.openbravo.base.HttpBaseServlet;
  */
 public class ModuleReferenceDataClientTree extends ModuleTree {
 
-    /**
-     * Constructor to generate a root tree
-     * 
-     * @param base
-     * @param small
-     *            Normal size or small size (true)
-     */
-    public ModuleReferenceDataClientTree(HttpBaseServlet base, boolean bSmall) {
-        super(base, bSmall);
-        setRootTree();
-    }
+  /**
+   * Constructor to generate a root tree
+   * 
+   * @param base
+   * @param small
+   *          Normal size or small size (true)
+   */
+  public ModuleReferenceDataClientTree(HttpBaseServlet base, boolean bSmall) {
+    super(base, bSmall);
+    setRootTree();
+  }
 
-    /**
-     * sets to data the root tree
-     */
-    public void setRootTree() {
-        try {
-            data = ModuleReferenceDataClientTreeData.select(conn, (lang
-                    .equals("") ? "en_US" : lang));
-            // addLinks();
-            setLevel(0);
-            setIcons();
-        } catch (ServletException ex) {
-            ex.printStackTrace();
-            data = null;
-        }
+  /**
+   * sets to data the root tree
+   */
+  public void setRootTree() {
+    try {
+      data = ModuleReferenceDataClientTreeData.select(conn, (lang.equals("") ? "en_US" : lang));
+      // addLinks();
+      setLevel(0);
+      setIcons();
+    } catch (ServletException ex) {
+      ex.printStackTrace();
+      data = null;
     }
+  }
 
-    /**
-     * Generates a subtree with nodeId as root node
-     * 
-     * @param nodeId
-     */
-    public void setSubTree(String nodeId, String level) {
-        setIsSubTree(true);
-        try {
-            data = ModuleReferenceDataClientTreeData.selectSubTree(conn, (lang
-                    .equals("") ? "en_US" : lang), nodeId);
-            // addLinks();
-            setLevel(new Integer(level).intValue());
-            setIcons();
-        } catch (ServletException ex) {
-            ex.printStackTrace();
-            data = null;
-        }
+  /**
+   * Generates a subtree with nodeId as root node
+   * 
+   * @param nodeId
+   */
+  public void setSubTree(String nodeId, String level) {
+    setIsSubTree(true);
+    try {
+      data = ModuleReferenceDataClientTreeData.selectSubTree(conn, (lang.equals("") ? "en_US"
+          : lang), nodeId);
+      // addLinks();
+      setLevel(new Integer(level).intValue());
+      setIcons();
+    } catch (ServletException ex) {
+      ex.printStackTrace();
+      data = null;
     }
+  }
 }

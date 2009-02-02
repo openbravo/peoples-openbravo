@@ -30,82 +30,76 @@ import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
 
 /**
- * Reads the provider config file and processes it. The provider config file can
- * be used to configure the OBProvider. See the provider config xml file(s) in
- * the WEB-INF directory for examples.
+ * Reads the provider config file and processes it. The provider config file can be used to
+ * configure the OBProvider. See the provider config xml file(s) in the WEB-INF directory for
+ * examples.
  * 
  * @author mtaal
  */
 class OBProviderConfigReader {
-    private static final Logger log = Logger
-            .getLogger(OBProviderConfigReader.class);
+  private static final Logger log = Logger.getLogger(OBProviderConfigReader.class);
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    void read(String prefix, InputStream is) {
-        try {
-            final SAXReader reader = new SAXReader();
-            final Document doc = reader.read(is);
-            process(prefix, doc);
-        } catch (final Exception e) {
-            throw new OBProviderException(e);
-        }
+  void read(String prefix, InputStream is) {
+    try {
+      final SAXReader reader = new SAXReader();
+      final Document doc = reader.read(is);
+      process(prefix, doc);
+    } catch (final Exception e) {
+      throw new OBProviderException(e);
     }
+  }
 
-    void read(String prefix, String fileLocation) {
-        try {
-            final SAXReader reader = new SAXReader();
-            final Document doc = reader.read(new FileInputStream(fileLocation));
-            process(prefix, doc);
-        } catch (final Exception e) {
-            throw new OBProviderException(e);
-        }
+  void read(String prefix, String fileLocation) {
+    try {
+      final SAXReader reader = new SAXReader();
+      final Document doc = reader.read(new FileInputStream(fileLocation));
+      process(prefix, doc);
+    } catch (final Exception e) {
+      throw new OBProviderException(e);
     }
+  }
 
-    void process(String prefix, Document doc) {
-        checkName(doc.getRootElement(), "provider");
-        for (final Object o : doc.getRootElement().elements()) {
-            final Element elem = (Element) o;
-            checkName(elem, "bean");
-            // now check for three children:
-            final String name = getValue(elem, "name", true);
-            final String clzName = getValue(elem, "class", true);
-            Class<?> clz = null;
-            try {
-                clz = OBClassLoader.getInstance().loadClass(clzName);
-            } catch (final ClassNotFoundException e) {
-                // catch ClassNotFoundException
-                log.warn("Class " + clzName
-                        + " can not be loaded. This can happen "
-                        + "when rebuilding after installing new modules. "
-                        + "The system needs to be restarted to find "
-                        + "new services");
-                continue;
-            }
-            if (OBModulePrefixRequired.class.isAssignableFrom(clz)
-                    && prefix != null && prefix.trim().length() > 0) {
-                OBProvider.getInstance().register(prefix + "." + name, clz,
-                        true);
-            } else {
-                OBProvider.getInstance().register(name, clz, true);
-            }
-        }
+  void process(String prefix, Document doc) {
+    checkName(doc.getRootElement(), "provider");
+    for (final Object o : doc.getRootElement().elements()) {
+      final Element elem = (Element) o;
+      checkName(elem, "bean");
+      // now check for three children:
+      final String name = getValue(elem, "name", true);
+      final String clzName = getValue(elem, "class", true);
+      Class<?> clz = null;
+      try {
+        clz = OBClassLoader.getInstance().loadClass(clzName);
+      } catch (final ClassNotFoundException e) {
+        // catch ClassNotFoundException
+        log.warn("Class " + clzName + " can not be loaded. This can happen "
+            + "when rebuilding after installing new modules. "
+            + "The system needs to be restarted to find " + "new services");
+        continue;
+      }
+      if (OBModulePrefixRequired.class.isAssignableFrom(clz) && prefix != null
+          && prefix.trim().length() > 0) {
+        OBProvider.getInstance().register(prefix + "." + name, clz, true);
+      } else {
+        OBProvider.getInstance().register(name, clz, true);
+      }
     }
+  }
 
-    private String getValue(Element parentElem, String name, boolean mandatory) {
-        final Element valueElement = parentElem.element(name);
-        if (mandatory) {
-            Check.isNotNull(valueElement, "Element with name " + name
-                    + " not found");
-        } else if (valueElement == null) {
-            return null;
-        }
-        return valueElement.getText();
+  private String getValue(Element parentElem, String name, boolean mandatory) {
+    final Element valueElement = parentElem.element(name);
+    if (mandatory) {
+      Check.isNotNull(valueElement, "Element with name " + name + " not found");
+    } else if (valueElement == null) {
+      return null;
     }
+    return valueElement.getText();
+  }
 
-    private void checkName(Element elem, String expectedName) {
-        Check.isTrue(elem.getName().equals(expectedName),
-                "The element should have the name: " + expectedName
-                        + " but is has name " + elem.getName());
-    }
+  private void checkName(Element elem, String expectedName) {
+    Check.isTrue(elem.getName().equals(expectedName), "The element should have the name: "
+        + expectedName + " but is has name " + elem.getName());
+  }
 }

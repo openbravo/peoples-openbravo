@@ -32,54 +32,49 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Activation_Message extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strHBActive = vars
-                    .getStringParameter("inpisheartbeatactive");
-            String strRegActive = vars
-                    .getStringParameter("inpisregistrationactive");
-            try {
-                printPage(response, vars, strHBActive, strRegActive);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strHBActive = vars.getStringParameter("inpisheartbeatactive");
+      String strRegActive = vars.getStringParameter("inpisregistrationactive");
+      try {
+        printPage(response, vars, strHBActive, strRegActive);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strHBActive, String strRegActive) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strHBActive,
+      String strRegActive) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-        String msg = (strHBActive.equalsIgnoreCase("Y")
-                || strRegActive.equalsIgnoreCase("Y") ? Utility.messageBD(this,
-                "REG_INFO_MESSAGE", vars.getLanguage()) : "");
+    String msg = (strHBActive.equalsIgnoreCase("Y") || strRegActive.equalsIgnoreCase("Y") ? Utility
+        .messageBD(this, "REG_INFO_MESSAGE", vars.getLanguage()) : "");
 
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='Activation_Message';\n\n");
-        resultado.append("var respuesta = new Array(");
-        if (!msg.equals(""))
-            resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");
-        resultado.append(");");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='Activation_Message';\n\n");
+    resultado.append("var respuesta = new Array(");
+    if (!msg.equals(""))
+      resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");
+    resultado.append(");");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

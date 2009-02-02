@@ -21,38 +21,35 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.HttpBaseServlet;
 
 public class ServletGoBack extends HttpBaseServlet {
-    private static final long serialVersionUID = 1L;
-    String strServletPorDefecto;
+  private static final long serialVersionUID = 1L;
+  String strServletPorDefecto;
 
-    public class Variables extends VariablesHistory {
+  public class Variables extends VariablesHistory {
 
-        public Variables(HttpServletRequest request) {
-            super(request);
-            String sufix = getCurrentHistoryIndex();
-            removeSessionValue("reqHistory.servlet" + sufix);
-            removeSessionValue("reqHistory.path" + sufix);
-            removeSessionValue("reqHistory.command" + sufix);
-            downCurrentHistoryIndex();
-        }
+    public Variables(HttpServletRequest request) {
+      super(request);
+      String sufix = getCurrentHistoryIndex();
+      removeSessionValue("reqHistory.servlet" + sufix);
+      removeSessionValue("reqHistory.path" + sufix);
+      removeSessionValue("reqHistory.command" + sufix);
+      downCurrentHistoryIndex();
     }
+  }
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        strServletPorDefecto = config.getServletContext().getInitParameter(
-                "DefaultServlet");
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    strServletPorDefecto = config.getServletContext().getInitParameter("DefaultServlet");
+  }
 
-    public void doPost(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
-        log4j.info("start doPost");
-        Variables vars = new Variables(req);
-        String strUrl = strDireccion
-                + vars.getCurrentServletPath(strServletPorDefecto)
-                + "?Command=" + vars.getCurrentServletCommand();
-        res.sendRedirect(res.encodeRedirectURL(strUrl));
-    }
+  public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    log4j.info("start doPost");
+    Variables vars = new Variables(req);
+    String strUrl = strDireccion + vars.getCurrentServletPath(strServletPorDefecto) + "?Command="
+        + vars.getCurrentServletCommand();
+    res.sendRedirect(res.encodeRedirectURL(strUrl));
+  }
 
-    public String getServletInfo() {
-        return "Servlet that receives and redirects go back requests, using history information registered in the httpSession";
-    } // end of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet that receives and redirects go back requests, using history information registered in the httpSession";
+  } // end of getServletInfo() method
 }

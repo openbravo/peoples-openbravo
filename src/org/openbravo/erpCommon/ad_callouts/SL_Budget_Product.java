@@ -31,56 +31,53 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_Budget_Product extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strUOM = vars.getStringParameter("inpmProductId_UOM");
-            String strTabId = vars.getStringParameter("inpTabId");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strUOM = vars.getStringParameter("inpmProductId_UOM");
+      String strTabId = vars.getStringParameter("inpTabId");
 
-            try {
-                printPage(response, vars, strUOM, strTabId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+      try {
+        printPage(response, vars, strUOM, strTabId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strUOM, String strTabId) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strUOM,
+      String strTabId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-        StringBuffer resultado = new StringBuffer();
+    StringBuffer resultado = new StringBuffer();
 
-        resultado.append("var calloutName='SL_Budget_Product';\n");
-        resultado.append("var respuesta = new Array(");
-        resultado.append("new Array(\"inpcUomId\", "
-                + (strUOM.equals("") ? "\"\"" : strUOM) + ")");
-        resultado.append(");");
+    resultado.append("var calloutName='SL_Budget_Product';\n");
+    resultado.append("var respuesta = new Array(");
+    resultado.append("new Array(\"inpcUomId\", " + (strUOM.equals("") ? "\"\"" : strUOM) + ")");
+    resultado.append(");");
 
-        if (log4j.isDebugEnabled())
-            log4j.debug("Array: " + resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        xmlDocument.setParameter("array", resultado.toString());
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    if (log4j.isDebugEnabled())
+      log4j.debug("Array: " + resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    xmlDocument.setParameter("array", resultado.toString());
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

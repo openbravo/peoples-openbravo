@@ -41,459 +41,369 @@ import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateFromMultiple extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    static final BigDecimal ZERO = new BigDecimal(0.0);
+  static final BigDecimal ZERO = new BigDecimal(0.0);
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            vars
-                    .getGlobalVariable("inpmInoutId",
-                            "CreateFromMultiple|mInoutId");
-            vars.getGlobalVariable("inpwindowId",
-                    "CreateFromMultiple|windowId", "");
-            vars
-                    .getGlobalVariable("inpTabId",
-                            "CreateFromMultiple|adTabId", "");
-            vars.getGlobalVariable("inpcBpartnerId",
-                    "CreateFromMultiple|bpartner", "");
-            vars.getGlobalVariable("inpmWarehouseId",
-                    "CreateFromMultiple|mWarehouseId", "");
-            vars.setSessionValue("CreateFromMultiple|adProcessId", "800062");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      vars.getGlobalVariable("inpmInoutId", "CreateFromMultiple|mInoutId");
+      vars.getGlobalVariable("inpwindowId", "CreateFromMultiple|windowId", "");
+      vars.getGlobalVariable("inpTabId", "CreateFromMultiple|adTabId", "");
+      vars.getGlobalVariable("inpcBpartnerId", "CreateFromMultiple|bpartner", "");
+      vars.getGlobalVariable("inpmWarehouseId", "CreateFromMultiple|mWarehouseId", "");
+      vars.setSessionValue("CreateFromMultiple|adProcessId", "800062");
 
-            printPage_FS(response, vars);
-        } else if (vars.commandIn("FRAME1")) {
-            String strWindowId = vars.getGlobalVariable("inpWindowId",
-                    "CreateFromMultiple|windowId");
-            String strSOTrx = Utility.getContext(this, vars, "isSOTrx",
-                    strWindowId);
-            String strKey = vars.getGlobalVariable("inpmInoutId",
-                    "CreateFromMultiple|mInoutId");
-            String strTabId = vars.getGlobalVariable("inpTabId",
-                    "CreateFromMultiple|adTabId");
-            String strProcessId = vars.getGlobalVariable("inpadProcessId",
-                    "CreateFromMultiple|adProcessId");
-            String strBpartner = vars.getGlobalVariable("inpcBpartnerId",
-                    "CreateFromMultiple|bpartner", "");
-            String strmWarehouseId = vars.getGlobalVariable("inpmWarehouseId",
-                    "CreateFromMultiple|mWarehouseId", "");
-            vars.removeSessionValue("CreateFromMultiple|mInoutId");
-            vars.removeSessionValue("CreateFromMultiple|windowId");
-            vars.removeSessionValue("CreateFromMultiple|adTabId");
-            vars.removeSessionValue("CreateFromMultiple|adProcessId");
-            vars.removeSessionValue("CreateFromMultiple|bpartner");
+      printPage_FS(response, vars);
+    } else if (vars.commandIn("FRAME1")) {
+      String strWindowId = vars.getGlobalVariable("inpWindowId", "CreateFromMultiple|windowId");
+      String strSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+      String strKey = vars.getGlobalVariable("inpmInoutId", "CreateFromMultiple|mInoutId");
+      String strTabId = vars.getGlobalVariable("inpTabId", "CreateFromMultiple|adTabId");
+      String strProcessId = vars.getGlobalVariable("inpadProcessId",
+          "CreateFromMultiple|adProcessId");
+      String strBpartner = vars.getGlobalVariable("inpcBpartnerId", "CreateFromMultiple|bpartner",
+          "");
+      String strmWarehouseId = vars.getGlobalVariable("inpmWarehouseId",
+          "CreateFromMultiple|mWarehouseId", "");
+      vars.removeSessionValue("CreateFromMultiple|mInoutId");
+      vars.removeSessionValue("CreateFromMultiple|windowId");
+      vars.removeSessionValue("CreateFromMultiple|adTabId");
+      vars.removeSessionValue("CreateFromMultiple|adProcessId");
+      vars.removeSessionValue("CreateFromMultiple|bpartner");
 
-            callPrintPage(response, vars, strKey, strWindowId, strSOTrx,
-                    strTabId, strProcessId, strBpartner, strmWarehouseId);
-        } else if (vars.commandIn("FIND")) {
-            String strKey = vars.getRequiredStringParameter("inpmInoutId");
-            String strWindowId = vars.getStringParameter("inpWindowId");
-            String strSOTrx = vars.getStringParameter("inpissotrx");
-            String strTabId = vars.getStringParameter("inpTabId");
-            String strBpartner = vars.getRequestGlobalVariable(
-                    "inpcBpartnerId", "CreateFromMultiple|bpartner");
-            String strmWarehouseId = vars.getRequestGlobalVariable(
-                    "inpmWarehouseId", "CreateFromMultiple|mWarehouseId");
-            callPrintPage(response, vars, strKey, strWindowId, strSOTrx,
-                    strTabId, "", strBpartner, strmWarehouseId);
-        } else if (vars.commandIn("SAVE")) {
-            String strKey = vars.getRequiredStringParameter("inpmInoutId");
-            String strWindowId = vars.getStringParameter("inpWindowId");
-            String strSOTrx = vars.getStringParameter("inpissotrx");
-            String strTabId = vars.getStringParameter("inpTabId");
-            OBError myMessage = saveMethod(vars, strKey, strWindowId, strSOTrx);
-            ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(
-                    this, strTabId);
-            String strWindowPath = "", strTabName = "";
-            if (tab != null && tab.length != 0) {
-                strTabName = FormatUtilities.replace(tab[0].name);
-                if (tab[0].help.equals("Y"))
-                    strWindowPath = "../utility/WindowTree_FS.html?inpTabId="
-                            + strTabId;
-                else
-                    strWindowPath = "../"
-                            + FormatUtilities.replace(tab[0].description) + "/"
-                            + strTabName + "_Relation.html";
-            } else
-                strWindowPath = strDefaultServlet;
-            vars.setMessage(strTabId, myMessage);
-            printPageClosePopUp(response, vars, strWindowPath);
-        } else
-            pageErrorPopUp(response);
-    }
-
-    void printPage_FS(HttpServletResponse response, VariablesSecureApp vars)
-            throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: FrameSet");
-        XmlDocument xmlDocument = xmlEngine
-                .readXmlTemplate(
-                        "org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_FS")
-                .createXmlDocument();
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
-
-    void callPrintPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strKey, String strWindowId, String strSOTrx,
-            String strTabId, String strProcessId, String strBpartner,
-            String strmWarehouseId) throws IOException, ServletException {
-        if (strSOTrx.equals("Y")) { // Shipment
-            printPageShipment(response, vars, strKey, strWindowId, strTabId,
-                    strSOTrx, strProcessId, strBpartner, strmWarehouseId);
-        } else { // Receipt
-            printPageReceipt(response, vars, strKey, strWindowId, strTabId,
-                    strSOTrx, strProcessId, strBpartner, strmWarehouseId);
-        }
-    }
-
-    void printPageReceipt(HttpServletResponse response,
-            VariablesSecureApp vars, String strKey, String strWindowId,
-            String strTabId, String strSOTrx, String strProcessId,
-            String strBpartner, String strmWarehouseId) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: Receipt");
-        ActionButtonDefaultData[] data = null;
-        String strHelp = "", strDescription = "";
-        if (vars.getLanguage().equals("en_US"))
-            data = ActionButtonDefaultData.select(this, strProcessId);
+      callPrintPage(response, vars, strKey, strWindowId, strSOTrx, strTabId, strProcessId,
+          strBpartner, strmWarehouseId);
+    } else if (vars.commandIn("FIND")) {
+      String strKey = vars.getRequiredStringParameter("inpmInoutId");
+      String strWindowId = vars.getStringParameter("inpWindowId");
+      String strSOTrx = vars.getStringParameter("inpissotrx");
+      String strTabId = vars.getStringParameter("inpTabId");
+      String strBpartner = vars.getRequestGlobalVariable("inpcBpartnerId",
+          "CreateFromMultiple|bpartner");
+      String strmWarehouseId = vars.getRequestGlobalVariable("inpmWarehouseId",
+          "CreateFromMultiple|mWarehouseId");
+      callPrintPage(response, vars, strKey, strWindowId, strSOTrx, strTabId, "", strBpartner,
+          strmWarehouseId);
+    } else if (vars.commandIn("SAVE")) {
+      String strKey = vars.getRequiredStringParameter("inpmInoutId");
+      String strWindowId = vars.getStringParameter("inpWindowId");
+      String strSOTrx = vars.getStringParameter("inpissotrx");
+      String strTabId = vars.getStringParameter("inpTabId");
+      OBError myMessage = saveMethod(vars, strKey, strWindowId, strSOTrx);
+      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
+      String strWindowPath = "", strTabName = "";
+      if (tab != null && tab.length != 0) {
+        strTabName = FormatUtilities.replace(tab[0].name);
+        if (tab[0].help.equals("Y"))
+          strWindowPath = "../utility/WindowTree_FS.html?inpTabId=" + strTabId;
         else
-            data = ActionButtonDefaultData.selectLanguage(this, vars
-                    .getLanguage(), strProcessId);
-        if (data != null && data.length != 0) {
-            strDescription = data[0].description;
-            strHelp = data[0].help;
-        }
-        String[] discard = { "" };
-        if (strHelp.equals(""))
-            discard[0] = new String("helpDiscard");
-        XmlDocument xmlDocument = xmlEngine
-                .readXmlTemplate(
-                        "org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt",
-                        discard).createXmlDocument();
+          strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
+              + "_Relation.html";
+      } else
+        strWindowPath = strDefaultServlet;
+      vars.setMessage(strTabId, myMessage);
+      printPageClosePopUp(response, vars, strWindowPath);
+    } else
+      pageErrorPopUp(response);
+  }
 
-        xmlDocument.setParameter("theme", vars.getTheme());
-        xmlDocument.setParameter("language", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("help", strHelp);
-        xmlDocument.setParameter("description", strDescription);
-        xmlDocument.setParameter("key", strKey);
-        xmlDocument.setParameter("windowId", strWindowId);
-        xmlDocument.setParameter("tabId", strTabId);
-        xmlDocument.setParameter("sotrx", strSOTrx);
-        xmlDocument.setParameter("bpartner", strBpartner);
-        xmlDocument.setParameter("mWarehouseId", strmWarehouseId);
+  void printPage_FS(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: FrameSet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_FS").createXmlDocument();
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 
-        try {
-            ComboTableData comboTableData = new ComboTableData(
-                    this,
-                    "TABLEDIR",
-                    "C_UOM_ID",
-                    "",
-                    "",
-                    Utility.getContext(this, vars, "#User_Org", strWindowId),
-                    Utility.getContext(this, vars, "#User_Client", strWindowId),
-                    0);
-            Utility.fillSQLParameters(this, vars, null, comboTableData,
-                    strWindowId, "");
-            xmlDocument.setData("reportC_UOM_ID", "liststructure",
-                    comboTableData.select(false));
-            comboTableData = null;
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
+  void callPrintPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+      String strWindowId, String strSOTrx, String strTabId, String strProcessId,
+      String strBpartner, String strmWarehouseId) throws IOException, ServletException {
+    if (strSOTrx.equals("Y")) { // Shipment
+      printPageShipment(response, vars, strKey, strWindowId, strTabId, strSOTrx, strProcessId,
+          strBpartner, strmWarehouseId);
+    } else { // Receipt
+      printPageReceipt(response, vars, strKey, strWindowId, strTabId, strSOTrx, strProcessId,
+          strBpartner, strmWarehouseId);
+    }
+  }
 
-        try {
-            ComboTableData comboTableData = new ComboTableData(
-                    this,
-                    "TABLEDIR",
-                    "M_Warehouse_ID",
-                    "",
-                    "",
-                    Utility.getContext(this, vars, "#User_Org", strWindowId),
-                    Utility.getContext(this, vars, "#User_Client", strWindowId),
-                    0);
-            Utility.fillSQLParameters(this, vars, null, comboTableData,
-                    strWindowId, strmWarehouseId);
-            xmlDocument.setData("reportM_WAREHOUSE_ID", "liststructure",
-                    comboTableData.select(false));
-            comboTableData = null;
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
+  void printPageReceipt(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+      String strWindowId, String strTabId, String strSOTrx, String strProcessId,
+      String strBpartner, String strmWarehouseId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: Receipt");
+    ActionButtonDefaultData[] data = null;
+    String strHelp = "", strDescription = "";
+    if (vars.getLanguage().equals("en_US"))
+      data = ActionButtonDefaultData.select(this, strProcessId);
+    else
+      data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    if (data != null && data.length != 0) {
+      strDescription = data[0].description;
+      strHelp = data[0].help;
+    }
+    String[] discard = { "" };
+    if (strHelp.equals(""))
+      discard[0] = new String("helpDiscard");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt", discard)
+        .createXmlDocument();
 
-        WarehouseComboData[] dataW = WarehouseComboData.select(this, vars
-                .getRole(), vars.getClient());
-        if (strmWarehouseId.equals("") && dataW != null && dataW.length > 0)
-            strmWarehouseId = dataW[0].mWarehouseId;
-        xmlDocument.setData("reportM_LOCATOR_X", "liststructure",
-                CreateFromMultipleReceiptData.selectM_Locator_X(this,
-                        strmWarehouseId));
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("help", strHelp);
+    xmlDocument.setParameter("description", strDescription);
+    xmlDocument.setParameter("key", strKey);
+    xmlDocument.setParameter("windowId", strWindowId);
+    xmlDocument.setParameter("tabId", strTabId);
+    xmlDocument.setParameter("sotrx", strSOTrx);
+    xmlDocument.setParameter("bpartner", strBpartner);
+    xmlDocument.setParameter("mWarehouseId", strmWarehouseId);
 
-        try {
-            ComboTableData comboTableData = new ComboTableData(
-                    this,
-                    "TABLEDIR",
-                    "M_Locator_Type_ID",
-                    "",
-                    "",
-                    Utility.getContext(this, vars, "#User_Org", strWindowId),
-                    Utility.getContext(this, vars, "#User_Client", strWindowId),
-                    0);
-            Utility.fillSQLParameters(this, vars, null, comboTableData,
-                    strWindowId, "");
-            xmlDocument.setData("reportM_LOCATOR_TYPE", "liststructure",
-                    comboTableData.select(false));
-            comboTableData = null;
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
-
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
+    try {
+      ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "C_UOM_ID", "", "",
+          Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this, vars,
+              "#User_Client", strWindowId), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+      xmlDocument.setData("reportC_UOM_ID", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
     }
 
-    void printPageShipment(HttpServletResponse response,
-            VariablesSecureApp vars, String strKey, String strWindowId,
-            String strTabId, String strSOTrx, String strProcessId,
-            String strBpartner, String strmWarehouseId) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: Shipment");
-        String[] discard = { "" };
-        String strProduct = vars.getStringParameter("inpmProductId");
-        // String strWarehouse = vars.getStringParameter("inpmWarehouseId");
-        String strX = vars.getStringParameter("inpx");
-        String strY = vars.getStringParameter("inpy");
-        String strZ = vars.getStringParameter("inpz");
-        CreateFromMultipleShipmentData[] data = null;
-        if (strProduct.equals("") && strmWarehouseId.equals("")
-                && strX.equals("") && strY.equals("") && strZ.equals("")) {
-            discard[0] = new String("sectionDetail");
-            data = new CreateFromMultipleShipmentData[0];
-        } else {
-            data = CreateFromMultipleShipmentData.select(this, vars
-                    .getLanguage(), strBpartner, strProduct, strmWarehouseId,
-                    strX, strY, strZ, Utility.getContext(this, vars,
-                            "#User_Client", strWindowId));
-        }
-        XmlDocument xmlDocument = xmlEngine
-                .readXmlTemplate(
-                        "org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment",
-                        discard).createXmlDocument();
-
-        xmlDocument.setParameter("theme", vars.getTheme());
-        xmlDocument.setParameter("language", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("key", strKey);
-        xmlDocument.setParameter("windowId", strWindowId);
-        xmlDocument.setParameter("tabId", strTabId);
-        xmlDocument.setParameter("sotrx", strSOTrx);
-        xmlDocument.setParameter("mWarehouseId", strmWarehouseId);//
-        xmlDocument.setParameter("bpartnerId", strBpartner);
-        xmlDocument.setParameter("bpartnerId_DES",
-                CreateFromMultipleShipmentData.bpartnerDescription(this,
-                        strBpartner));
-        xmlDocument.setParameter("productId", strProduct);
-        xmlDocument.setParameter("productId_DES",
-                CreateFromMultipleShipmentData.productDescription(this,
-                        strProduct));
-        xmlDocument.setParameter("x", strX);
-        xmlDocument.setParameter("y", strY);
-        xmlDocument.setParameter("z", strZ);
-
-        try {
-            ComboTableData comboTableData = new ComboTableData(
-                    this,
-                    "TABLEDIR",
-                    "M_Warehouse_ID",
-                    "",
-                    "",
-                    Utility.getContext(this, vars, "#User_Org", strWindowId),
-                    Utility.getContext(this, vars, "#User_Client", strWindowId),
-                    0);
-            Utility.fillSQLParameters(this, vars, null, comboTableData,
-                    strWindowId, strmWarehouseId);
-            xmlDocument.setData("reportM_WAREHOUSE_ID", "liststructure",
-                    comboTableData.select(false));
-            comboTableData = null;
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
-
-        xmlDocument.setData("structure1", data);
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-
+    try {
+      ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Warehouse_ID", "",
+          "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this,
+              vars, "#User_Client", strWindowId), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strmWarehouseId);
+      xmlDocument.setData("reportM_WAREHOUSE_ID", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
     }
 
-    OBError saveMethod(VariablesSecureApp vars, String strKey,
-            String strWindowId, String strSOTrx) throws IOException,
-            ServletException {
-        if (strSOTrx.equals("Y"))
-            return saveShipment(vars, strKey, strWindowId);
-        else
-            return saveReceipt(vars, strKey, strWindowId);
+    WarehouseComboData[] dataW = WarehouseComboData.select(this, vars.getRole(), vars.getClient());
+    if (strmWarehouseId.equals("") && dataW != null && dataW.length > 0)
+      strmWarehouseId = dataW[0].mWarehouseId;
+    xmlDocument.setData("reportM_LOCATOR_X", "liststructure", CreateFromMultipleReceiptData
+        .selectM_Locator_X(this, strmWarehouseId));
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Locator_Type_ID", "",
+          "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this,
+              vars, "#User_Client", strWindowId), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+      xmlDocument.setData("reportM_LOCATOR_TYPE", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
     }
 
-    OBError saveReceipt(VariablesSecureApp vars, String strKey,
-            String strWindowId) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Save: Receipt");
-        String strProduct = vars.getRequiredStringParameter("inpmProductId");
-        String strAtributo = vars
-                .getStringParameter("inpmAttributesetinstanceId");
-        String strQty = vars.getStringParameter("inpmovementqty");
-        String strUOM = vars.getStringParameter("inpcUomId");
-        String strQuantityOrder = vars.getStringParameter("inpquantityorder");
-        String strProductUOM = vars.getStringParameter("inpmProductUomId");
-        String strWarehouse = vars
-                .getRequiredStringParameter("inpmWarehouseId");
-        String strLocator = vars.getStringParameter("inpmLocatorX");
-        String strNumero = vars.getRequiredStringParameter("inpnumerolineas");
-        String strLocatorType = vars.getStringParameter("inpmLocatorType");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 
-        OBError myMessage = null;
-        int count = 0;
+  void printPageShipment(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+      String strWindowId, String strTabId, String strSOTrx, String strProcessId,
+      String strBpartner, String strmWarehouseId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: Shipment");
+    String[] discard = { "" };
+    String strProduct = vars.getStringParameter("inpmProductId");
+    // String strWarehouse = vars.getStringParameter("inpmWarehouseId");
+    String strX = vars.getStringParameter("inpx");
+    String strY = vars.getStringParameter("inpy");
+    String strZ = vars.getStringParameter("inpz");
+    CreateFromMultipleShipmentData[] data = null;
+    if (strProduct.equals("") && strmWarehouseId.equals("") && strX.equals("") && strY.equals("")
+        && strZ.equals("")) {
+      discard[0] = new String("sectionDetail");
+      data = new CreateFromMultipleShipmentData[0];
+    } else {
+      data = CreateFromMultipleShipmentData.select(this, vars.getLanguage(), strBpartner,
+          strProduct, strmWarehouseId, strX, strY, strZ, Utility.getContext(this, vars,
+              "#User_Client", strWindowId));
+    }
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment", discard)
+        .createXmlDocument();
 
-        Connection conn = null;
-        try {
-            conn = this.getTransactionConnection();
-            int total = Integer.valueOf(strNumero).intValue();
-            CreateFromMultipleReceiptData[] locators = CreateFromMultipleReceiptData
-                    .select(conn, this, vars.getLanguage(), Utility.getContext(
-                            this, vars, "#User_Client", strWindowId), Utility
-                            .getContext(this, vars, "#User_Org", strWindowId),
-                            strWarehouse, strLocator, strLocatorType);
-            if (locators != null && locators.length > 0) {
-                for (count = 0; count < total; count++) {
-                    String strM_Locator_ID = (count > locators.length - 1) ? ""
-                            : locators[count].mLocatorId;
-                    if (strM_Locator_ID.equals(""))
-                        break;
-                    String strSequence = SequenceIdData.getUUID();
-                    try {
-                        CreateFromMultipleReceiptData.insert(conn, this,
-                                strSequence, vars.getClient(), vars.getOrg(),
-                                vars.getUser(), strKey, strM_Locator_ID,
-                                strProduct, strUOM, strQty, strAtributo,
-                                strQuantityOrder, strProductUOM);
-                    } catch (ServletException ex) {
-                        myMessage = Utility.translateError(this, vars, vars
-                                .getLanguage(), ex.getMessage());
-                        releaseRollbackConnection(conn);
-                        return myMessage;
-                    }
-                }
-            }
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("key", strKey);
+    xmlDocument.setParameter("windowId", strWindowId);
+    xmlDocument.setParameter("tabId", strTabId);
+    xmlDocument.setParameter("sotrx", strSOTrx);
+    xmlDocument.setParameter("mWarehouseId", strmWarehouseId);//
+    xmlDocument.setParameter("bpartnerId", strBpartner);
+    xmlDocument.setParameter("bpartnerId_DES", CreateFromMultipleShipmentData.bpartnerDescription(
+        this, strBpartner));
+    xmlDocument.setParameter("productId", strProduct);
+    xmlDocument.setParameter("productId_DES", CreateFromMultipleShipmentData.productDescription(
+        this, strProduct));
+    xmlDocument.setParameter("x", strX);
+    xmlDocument.setParameter("y", strY);
+    xmlDocument.setParameter("z", strZ);
 
-            releaseCommitConnection(conn);
-            myMessage = new OBError();
-            myMessage.setType("Success");
-            myMessage.setTitle("");
-            myMessage.setMessage(Utility.messageBD(this, "Success", vars
-                    .getLanguage())
-                    + " - "
-                    + Utility.messageBD(this, "Created", vars.getLanguage())
-                    + ": " + count);
-        } catch (Exception e) {
-            try {
-                releaseRollbackConnection(conn);
-            } catch (Exception ignored) {
-            }
-            e.printStackTrace();
-            log4j.warn("Rollback in transaction");
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
-                    "ProcessRunError");
+    try {
+      ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Warehouse_ID", "",
+          "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this,
+              vars, "#User_Client", strWindowId), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strmWarehouseId);
+      xmlDocument.setData("reportM_WAREHOUSE_ID", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
+    xmlDocument.setData("structure1", data);
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+
+  }
+
+  OBError saveMethod(VariablesSecureApp vars, String strKey, String strWindowId, String strSOTrx)
+      throws IOException, ServletException {
+    if (strSOTrx.equals("Y"))
+      return saveShipment(vars, strKey, strWindowId);
+    else
+      return saveReceipt(vars, strKey, strWindowId);
+  }
+
+  OBError saveReceipt(VariablesSecureApp vars, String strKey, String strWindowId)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Save: Receipt");
+    String strProduct = vars.getRequiredStringParameter("inpmProductId");
+    String strAtributo = vars.getStringParameter("inpmAttributesetinstanceId");
+    String strQty = vars.getStringParameter("inpmovementqty");
+    String strUOM = vars.getStringParameter("inpcUomId");
+    String strQuantityOrder = vars.getStringParameter("inpquantityorder");
+    String strProductUOM = vars.getStringParameter("inpmProductUomId");
+    String strWarehouse = vars.getRequiredStringParameter("inpmWarehouseId");
+    String strLocator = vars.getStringParameter("inpmLocatorX");
+    String strNumero = vars.getRequiredStringParameter("inpnumerolineas");
+    String strLocatorType = vars.getStringParameter("inpmLocatorType");
+
+    OBError myMessage = null;
+    int count = 0;
+
+    Connection conn = null;
+    try {
+      conn = this.getTransactionConnection();
+      int total = Integer.valueOf(strNumero).intValue();
+      CreateFromMultipleReceiptData[] locators = CreateFromMultipleReceiptData.select(conn, this,
+          vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility
+              .getContext(this, vars, "#User_Org", strWindowId), strWarehouse, strLocator,
+          strLocatorType);
+      if (locators != null && locators.length > 0) {
+        for (count = 0; count < total; count++) {
+          String strM_Locator_ID = (count > locators.length - 1) ? "" : locators[count].mLocatorId;
+          if (strM_Locator_ID.equals(""))
+            break;
+          String strSequence = SequenceIdData.getUUID();
+          try {
+            CreateFromMultipleReceiptData.insert(conn, this, strSequence, vars.getClient(), vars
+                .getOrg(), vars.getUser(), strKey, strM_Locator_ID, strProduct, strUOM, strQty,
+                strAtributo, strQuantityOrder, strProductUOM);
+          } catch (ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
-        return myMessage;
+      }
+
+      releaseCommitConnection(conn);
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()) + " - "
+          + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + count);
+    } catch (Exception e) {
+      try {
+        releaseRollbackConnection(conn);
+      } catch (Exception ignored) {
+      }
+      e.printStackTrace();
+      log4j.warn("Rollback in transaction");
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
+    return myMessage;
+  }
 
-    OBError saveShipment(VariablesSecureApp vars, String strKey,
-            String strWindowId) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Save: Shipment");
-        String strStorageDetail = vars
-                .getInStringParameter("inpmStorageDetailId");
-        if (strStorageDetail.equals(""))
-            return null;
-        OBError myMessage = null;
-        Connection conn = null;
-        int count = 0;
-        try {
-            conn = this.getTransactionConnection();
-            if (strStorageDetail.startsWith("("))
-                strStorageDetail = strStorageDetail.substring(1,
-                        strStorageDetail.length() - 1);
-            if (!strStorageDetail.equals("")) {
-                strStorageDetail = Replace.replace(strStorageDetail, "'", "");
-                StringTokenizer st = new StringTokenizer(strStorageDetail, ",",
-                        false);
-                count = 0;
-                while (st.hasMoreTokens()) {
-                    String strStorageDetailId = st.nextToken().trim();
-                    String strQty = vars.getStringParameter("inpmovementqty"
-                            + strStorageDetailId);
-                    String strQtyOrder = vars
-                            .getStringParameter("inpquantityorder"
-                                    + strStorageDetailId);
+  OBError saveShipment(VariablesSecureApp vars, String strKey, String strWindowId)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Save: Shipment");
+    String strStorageDetail = vars.getInStringParameter("inpmStorageDetailId");
+    if (strStorageDetail.equals(""))
+      return null;
+    OBError myMessage = null;
+    Connection conn = null;
+    int count = 0;
+    try {
+      conn = this.getTransactionConnection();
+      if (strStorageDetail.startsWith("("))
+        strStorageDetail = strStorageDetail.substring(1, strStorageDetail.length() - 1);
+      if (!strStorageDetail.equals("")) {
+        strStorageDetail = Replace.replace(strStorageDetail, "'", "");
+        StringTokenizer st = new StringTokenizer(strStorageDetail, ",", false);
+        count = 0;
+        while (st.hasMoreTokens()) {
+          String strStorageDetailId = st.nextToken().trim();
+          String strQty = vars.getStringParameter("inpmovementqty" + strStorageDetailId);
+          String strQtyOrder = vars.getStringParameter("inpquantityorder" + strStorageDetailId);
 
-                    String strSequence = SequenceIdData.getUUID();
-                    try {
-                        CreateFromMultipleShipmentData.insert(conn, this,
-                                strSequence, vars.getClient(), vars.getOrg(),
-                                vars.getUser(), strKey, strQty, strQtyOrder,
-                                strStorageDetailId);
-                    } catch (ServletException ex) {
-                        myMessage = Utility.translateError(this, vars, vars
-                                .getLanguage(), ex.getMessage());
-                        releaseRollbackConnection(conn);
-                        return myMessage;
-                    }
-                    count++;
-                }
-            }
-            releaseCommitConnection(conn);
-            myMessage = new OBError();
-            myMessage.setType("Success");
-            myMessage.setTitle("");
-            myMessage.setMessage(Utility.messageBD(this, "Success", vars
-                    .getLanguage())
-                    + " - "
-                    + Utility.messageBD(this, "Created", vars.getLanguage())
-                    + ": " + count);
-        } catch (Exception e) {
-            try {
-                releaseRollbackConnection(conn);
-            } catch (Exception ignored) {
-            }
-            e.printStackTrace();
-            log4j.warn("Rollback in transaction");
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
-                    "ProcessRunError");
+          String strSequence = SequenceIdData.getUUID();
+          try {
+            CreateFromMultipleShipmentData.insert(conn, this, strSequence, vars.getClient(), vars
+                .getOrg(), vars.getUser(), strKey, strQty, strQtyOrder, strStorageDetailId);
+          } catch (ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
+          count++;
         }
-        return myMessage;
+      }
+      releaseCommitConnection(conn);
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()) + " - "
+          + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + count);
+    } catch (Exception e) {
+      try {
+        releaseRollbackConnection(conn);
+      } catch (Exception ignored) {
+      }
+      e.printStackTrace();
+      log4j.warn("Rollback in transaction");
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
+    return myMessage;
+  }
 
-    public String getServletInfo() {
-        return "Servlet that presents the button of Create From Multiple";
-    } // end of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet that presents the button of Create From Multiple";
+  } // end of getServletInfo() method
 }

@@ -27,26 +27,23 @@ import org.quartz.JobExecutionException;
 
 public class DefaultJob implements Job {
 
-    static Logger log = Logger.getLogger(DefaultJob.class);
+  static Logger log = Logger.getLogger(DefaultJob.class);
 
-    /**
-     * {@inheritDoc}
-     */
-    public void execute(JobExecutionContext jec) throws JobExecutionException {
-        final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap()
-                .get(ProcessBundle.KEY);
-        try {
-            final Process process = bundle.getProcessClass().newInstance();
-            bundle.setConnection((ConnectionProvider) jec
-                    .get(ProcessBundle.CONNECTION));
-            bundle.setConfig((ConfigParameters) jec
-                    .get(ProcessBundle.CONFIG_PARAMS));
-            bundle.setLog(new ProcessLogger(bundle.getConnection()));
-            process.execute(bundle);
+  /**
+   * {@inheritDoc}
+   */
+  public void execute(JobExecutionContext jec) throws JobExecutionException {
+    final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
+    try {
+      final Process process = bundle.getProcessClass().newInstance();
+      bundle.setConnection((ConnectionProvider) jec.get(ProcessBundle.CONNECTION));
+      bundle.setConfig((ConfigParameters) jec.get(ProcessBundle.CONFIG_PARAMS));
+      bundle.setLog(new ProcessLogger(bundle.getConnection()));
+      process.execute(bundle);
 
-        } catch (final Exception e) {
-            log.error("Error executing process " + bundle.toString(), e);
-            throw new JobExecutionException(e);
-        }
+    } catch (final Exception e) {
+      log.error("Error executing process " + bundle.toString(), e);
+      throw new JobExecutionException(e);
     }
+  }
 }

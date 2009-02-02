@@ -26,44 +26,43 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Property;
 
 /**
- * Is thrown when an entity or property value is invalid. This Exception is not
- * logged. Instead it allows messages to be added and stored by {@link Property
- * Property}.
+ * Is thrown when an entity or property value is invalid. This Exception is not logged. Instead it
+ * allows messages to be added and stored by {@link Property Property}.
  * 
  * @author mtaal
  */
 public class ValidationException extends OBException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private Map<Property, String> msgs = new HashMap<Property, String>();
+  private Map<Property, String> msgs = new HashMap<Property, String>();
 
-    public ValidationException() {
-        super();
+  public ValidationException() {
+    super();
+  }
+
+  public void addMessage(Property p, String msg) {
+    msgs.put(p, msg);
+  }
+
+  public boolean hasMessages() {
+    return !msgs.isEmpty();
+  }
+
+  @Override
+  public String getMessage() {
+    if (msgs == null) {
+      // during construction
+      return "";
     }
-
-    public void addMessage(Property p, String msg) {
-        msgs.put(p, msg);
+    final StringBuffer sb = new StringBuffer();
+    for (final Property p : msgs.keySet()) {
+      final String msg = msgs.get(p);
+      if (sb.length() > 0) {
+        sb.append("\n");
+      }
+      sb.append(p.getName() + ": " + msg);
     }
-
-    public boolean hasMessages() {
-        return !msgs.isEmpty();
-    }
-
-    @Override
-    public String getMessage() {
-        if (msgs == null) {
-            // during construction
-            return "";
-        }
-        final StringBuffer sb = new StringBuffer();
-        for (final Property p : msgs.keySet()) {
-            final String msg = msgs.get(p);
-            if (sb.length() > 0) {
-                sb.append("\n");
-            }
-            sb.append(p.getName() + ": " + msg);
-        }
-        return sb.toString();
-    }
+    return sb.toString();
+  }
 }

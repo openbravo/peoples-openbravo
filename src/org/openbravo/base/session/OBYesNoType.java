@@ -23,32 +23,31 @@ import org.hibernate.type.YesNoType;
 import org.hibernate.util.EqualsHelper;
 
 /**
- * Extends the hibernate yesno type, handles null values as false. As certain
- * methods can not be extended the solution is to catch the isDirty check by
- * reimplementing the isEqual method.
+ * Extends the hibernate yesno type, handles null values as false. As certain methods can not be
+ * extended the solution is to catch the isDirty check by reimplementing the isEqual method.
  * 
  * @author mtaal
  */
 public class OBYesNoType extends YesNoType {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * The isEqual has been overridden from the standard Hibernate YesNo type.
-     * The main difference (with the implementation in the superclass) is that
-     * null is considered to be equal to false here.
-     */
-    @Override
-    public boolean isEqual(Object x, Object y) {
-        if (x == y) {
-            return true;
-        }
-        if (x == null && y != null && y instanceof Boolean) {
-            return ((Boolean) y).booleanValue() == false;
-        } else if (y == null && x != null && x instanceof Boolean) {
-            return ((Boolean) x).booleanValue() == false;
-        }
-
-        return EqualsHelper.equals(x, y);
+  /**
+   * The isEqual has been overridden from the standard Hibernate YesNo type. The main difference
+   * (with the implementation in the superclass) is that null is considered to be equal to false
+   * here.
+   */
+  @Override
+  public boolean isEqual(Object x, Object y) {
+    if (x == y) {
+      return true;
     }
+    if (x == null && y != null && y instanceof Boolean) {
+      return ((Boolean) y).booleanValue() == false;
+    } else if (y == null && x != null && x instanceof Boolean) {
+      return ((Boolean) x).booleanValue() == false;
+    }
+
+    return EqualsHelper.equals(x, y);
+  }
 
 }

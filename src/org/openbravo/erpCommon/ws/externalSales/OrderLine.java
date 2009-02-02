@@ -23,54 +23,54 @@ import java.math.BigDecimal;
 
 public class OrderLine {
 
-    private String orderLineId;
-    private String productId;
-    private BigDecimal units;
-    private BigDecimal price;
-    private String taxId;
+  private String orderLineId;
+  private String productId;
+  private BigDecimal units;
+  private BigDecimal price;
+  private String taxId;
 
-    /** Creates a new instance of OrderLine */
-    public OrderLine() {
-    }
+  /** Creates a new instance of OrderLine */
+  public OrderLine() {
+  }
 
-    public String getOrderLineId() {
-        return orderLineId;
-    }
+  public String getOrderLineId() {
+    return orderLineId;
+  }
 
-    public void setOrderLineId(String orderLineId) {
-        this.orderLineId = orderLineId;
-    }
+  public void setOrderLineId(String orderLineId) {
+    this.orderLineId = orderLineId;
+  }
 
-    public String getProductId() {
-        return productId;
-    }
+  public String getProductId() {
+    return productId;
+  }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
+  public void setProductId(String productId) {
+    this.productId = productId;
+  }
 
-    public BigDecimal getUnits() {
-        return units;
-    }
+  public BigDecimal getUnits() {
+    return units;
+  }
 
-    public void setUnits(BigDecimal units) {
-        this.units = units;
-    }
+  public void setUnits(BigDecimal units) {
+    this.units = units;
+  }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
+  public BigDecimal getPrice() {
+    return price;
+  }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+  public void setPrice(BigDecimal price) {
+    this.price = price;
+  }
 
-    public String getTaxId() {
-        return taxId;
-    }
+  public String getTaxId() {
+    return taxId;
+  }
 
-    public void setTaxId(String taxId) {
-        this.taxId = taxId;
-    }
+  public void setTaxId(String taxId) {
+    this.taxId = taxId;
+  }
 
 }

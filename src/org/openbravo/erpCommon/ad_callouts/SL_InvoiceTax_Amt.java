@@ -32,94 +32,82 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_InvoiceTax_Amt extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strTaxAmt = vars.getStringParameter("inptaxamt");
+      String strTaxBaseAmt = vars.getStringParameter("inptaxbaseamt");
+      String strTaxId = vars.getStringParameter("inpcTaxId");
+      String strInvoiceId = vars.getStringParameter("inpcInvoiceId");
+
+      try {
+        printPage(response, vars, strChanged, strTaxAmt, strTaxBaseAmt, strTaxId, strInvoiceId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
+      String strTaxAmt, String strTaxBaseAmt, String strTaxId, String strInvoiceId)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+
+    StringBuffer resultado = new StringBuffer();
+
+    // Discount...
+    if (strTaxAmt.startsWith("\""))
+      strTaxAmt = strTaxAmt.substring(1, strTaxAmt.length() - 1);
+    if (strTaxBaseAmt.startsWith("\""))
+      strTaxBaseAmt = strTaxBaseAmt.substring(1, strTaxBaseAmt.length() - 1);
+    if (strTaxId.startsWith("\""))
+      strTaxId = strTaxId.substring(1, strTaxId.length() - 1);
+    if (strInvoiceId.startsWith("\""))
+      strInvoiceId = strInvoiceId.substring(1, strTaxId.length() - 1);
+
+    SLInvoiceTaxAmtData[] data = SLInvoiceTaxAmtData.select(this, strTaxId, strInvoiceId);
+
+    BigDecimal taxAmt = (strTaxAmt.equals("") ? new BigDecimal(0.0) : new BigDecimal(strTaxAmt));
+    BigDecimal taxBaseAmt = (strTaxBaseAmt.equals("") ? new BigDecimal(0.0) : new BigDecimal(
+        strTaxBaseAmt));
+    BigDecimal taxRate = (data[0].rate.equals("") ? new BigDecimal(1)
+        : new BigDecimal(data[0].rate));
+    Integer taxScale = new Integer(data[0].priceprecision);
+
+    if (strChanged.equals("inptaxamt")) {
+      if (taxRate.compareTo(BigDecimal.ZERO) != 0)
+        taxBaseAmt = ((taxAmt.divide(taxRate, 12, BigDecimal.ROUND_HALF_EVEN))
+            .multiply(new BigDecimal("100"))).setScale(taxScale, BigDecimal.ROUND_HALF_UP);
+    } else {
+      taxAmt = ((taxBaseAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
+          BigDecimal.ROUND_HALF_EVEN)).setScale(taxScale, BigDecimal.ROUND_HALF_UP);
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strTaxAmt = vars.getStringParameter("inptaxamt");
-            String strTaxBaseAmt = vars.getStringParameter("inptaxbaseamt");
-            String strTaxId = vars.getStringParameter("inpcTaxId");
-            String strInvoiceId = vars.getStringParameter("inpcInvoiceId");
+    resultado.append("var calloutName='SL_InvoiceTax_Amt';\n\n");
+    resultado.append("var respuesta = new Array(");
+    resultado.append("new Array(\"inptaxamt\", " + taxAmt.toPlainString() + "),");
+    resultado.append("new Array(\"inptaxbaseamt\", " + taxBaseAmt.toPlainString() + "));");
 
-            try {
-                printPage(response, vars, strChanged, strTaxAmt, strTaxBaseAmt,
-                        strTaxId, strInvoiceId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strChanged, String strTaxAmt, String strTaxBaseAmt,
-            String strTaxId, String strInvoiceId) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-
-        StringBuffer resultado = new StringBuffer();
-
-        // Discount...
-        if (strTaxAmt.startsWith("\""))
-            strTaxAmt = strTaxAmt.substring(1, strTaxAmt.length() - 1);
-        if (strTaxBaseAmt.startsWith("\""))
-            strTaxBaseAmt = strTaxBaseAmt.substring(1,
-                    strTaxBaseAmt.length() - 1);
-        if (strTaxId.startsWith("\""))
-            strTaxId = strTaxId.substring(1, strTaxId.length() - 1);
-        if (strInvoiceId.startsWith("\""))
-            strInvoiceId = strInvoiceId.substring(1, strTaxId.length() - 1);
-
-        SLInvoiceTaxAmtData[] data = SLInvoiceTaxAmtData.select(this, strTaxId,
-                strInvoiceId);
-
-        BigDecimal taxAmt = (strTaxAmt.equals("") ? new BigDecimal(0.0)
-                : new BigDecimal(strTaxAmt));
-        BigDecimal taxBaseAmt = (strTaxBaseAmt.equals("") ? new BigDecimal(0.0)
-                : new BigDecimal(strTaxBaseAmt));
-        BigDecimal taxRate = (data[0].rate.equals("") ? new BigDecimal(1)
-                : new BigDecimal(data[0].rate));
-        Integer taxScale = new Integer(data[0].priceprecision);
-
-        if (strChanged.equals("inptaxamt")) {
-            if (taxRate.compareTo(BigDecimal.ZERO) != 0)
-                taxBaseAmt = ((taxAmt.divide(taxRate, 12,
-			BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal(
-			"100"))).setScale(taxScale,
-                        BigDecimal.ROUND_HALF_UP);
-        } else {
-            taxAmt = ((taxBaseAmt.multiply(taxRate)).divide(new BigDecimal(
-		    "100"), 12, BigDecimal.ROUND_HALF_EVEN)).setScale(taxScale,
-		    BigDecimal.ROUND_HALF_UP);
-        }
-
-        resultado.append("var calloutName='SL_InvoiceTax_Amt';\n\n");
-        resultado.append("var respuesta = new Array(");
-        resultado
-                .append("new Array(\"inptaxamt\", " + taxAmt.toPlainString()
-		+ "),");
-        resultado.append("new Array(\"inptaxbaseamt\", "
-                + taxBaseAmt.toPlainString() + "));");
-
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

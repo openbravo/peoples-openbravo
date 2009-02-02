@@ -29,15 +29,13 @@ import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.dal.core.OBContext;
 
 /**
- * The main purpose of the user context cache is to support session-less http
- * requests without a large performance hit. With a session-less http request
- * every request needs to log in. This can be comparatively heavy as for each
- * request a new {@link OBContext} is created.
+ * The main purpose of the user context cache is to support session-less http requests without a
+ * large performance hit. With a session-less http request every request needs to log in. This can
+ * be comparatively heavy as for each request a new {@link OBContext} is created.
  * <p/>
- * The user context cache takes care of storing a cache of user contexts (on
- * user id) which are re-used when a web-service call is done. Note that the
- * OBContext which is cached can be re-used by multiple threads at the same
- * time.
+ * The user context cache takes care of storing a cache of user contexts (on user id) which are
+ * re-used when a web-service call is done. Note that the OBContext which is cached can be re-used
+ * by multiple threads at the same time.
  * 
  * @see OBContext
  * 
@@ -46,95 +44,95 @@ import org.openbravo.dal.core.OBContext;
 
 public class UserContextCache implements OBSingleton {
 
-    private final long EXPIRES_IN = 1000 * 60 * 30;
+  private final long EXPIRES_IN = 1000 * 60 * 30;
 
-    private static UserContextCache instance;
+  private static UserContextCache instance;
 
-    public static UserContextCache getInstance() {
-        if (instance == null) {
-            instance = OBProvider.getInstance().get(UserContextCache.class);
-        }
-        return instance;
+  public static UserContextCache getInstance() {
+    if (instance == null) {
+      instance = OBProvider.getInstance().get(UserContextCache.class);
+    }
+    return instance;
+  }
+
+  public static void setInstance(UserContextCache instance) {
+    UserContextCache.instance = instance;
+  }
+
+  private Map<String, CacheEntry> cache = new ConcurrentHashMap<String, CacheEntry>();
+
+  /**
+   * Searches the ContextCache for an OBContext. If none is found a new one is created and placed in
+   * the cache.
+   * 
+   * 
+   * @param userId
+   *          the user for which an OBContext is required
+   * @return the OBContext object
+   * 
+   * @see OBContext
+   */
+  public OBContext getCreateOBContext(String userId) {
+    CacheEntry ce = cache.get(userId);
+    purgeCache();
+    if (ce != null) {
+      ce.setLastUsed(System.currentTimeMillis());
+      return ce.getObContext();
+    }
+    final OBContext obContext = OBContext.createOBContext(userId);
+    ce = new CacheEntry();
+    ce.setLastUsed(System.currentTimeMillis());
+    ce.setObContext(obContext);
+    ce.setUserId(userId);
+    cache.put(userId, ce);
+    return obContext;
+  }
+
+  private void purgeCache() {
+    final List<CacheEntry> toRemove = new ArrayList<CacheEntry>();
+    for (final CacheEntry ce : cache.values()) {
+      if (ce.hasExpired()) {
+        toRemove.add(ce);
+      }
+    }
+    for (final CacheEntry ce : toRemove) {
+      cache.remove(ce.getUserId());
+    }
+  }
+
+  class CacheEntry {
+    private OBContext obContext;
+    private long lastUsed;
+    private String userId;
+
+    public boolean hasExpired() {
+      return getLastUsed() < (System.currentTimeMillis() - EXPIRES_IN);
     }
 
-    public static void setInstance(UserContextCache instance) {
-        UserContextCache.instance = instance;
+    public OBContext getObContext() {
+      return obContext;
     }
 
-    private Map<String, CacheEntry> cache = new ConcurrentHashMap<String, CacheEntry>();
-
-    /**
-     * Searches the ContextCache for an OBContext. If none is found a new one is
-     * created and placed in the cache.
-     * 
-     * 
-     * @param userId
-     *            the user for which an OBContext is required
-     * @return the OBContext object
-     * 
-     * @see OBContext
-     */
-    public OBContext getCreateOBContext(String userId) {
-        CacheEntry ce = cache.get(userId);
-        purgeCache();
-        if (ce != null) {
-            ce.setLastUsed(System.currentTimeMillis());
-            return ce.getObContext();
-        }
-        final OBContext obContext = OBContext.createOBContext(userId);
-        ce = new CacheEntry();
-        ce.setLastUsed(System.currentTimeMillis());
-        ce.setObContext(obContext);
-        ce.setUserId(userId);
-        cache.put(userId, ce);
-        return obContext;
+    public void setObContext(OBContext obContext) {
+      this.obContext = obContext;
     }
 
-    private void purgeCache() {
-        final List<CacheEntry> toRemove = new ArrayList<CacheEntry>();
-        for (final CacheEntry ce : cache.values()) {
-            if (ce.hasExpired()) {
-                toRemove.add(ce);
-            }
-        }
-        for (final CacheEntry ce : toRemove) {
-            cache.remove(ce.getUserId());
-        }
+    public long getLastUsed() {
+      return lastUsed;
     }
 
-    class CacheEntry {
-        private OBContext obContext;
-        private long lastUsed;
-        private String userId;
-
-        public boolean hasExpired() {
-            return getLastUsed() < (System.currentTimeMillis() - EXPIRES_IN);
-        }
-
-        public OBContext getObContext() {
-            return obContext;
-        }
-
-        public void setObContext(OBContext obContext) {
-            this.obContext = obContext;
-        }
-
-        public long getLastUsed() {
-            return lastUsed;
-        }
-
-        public void setLastUsed(long lastUsed) {
-            this.lastUsed = lastUsed;
-        }
-
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
+    public void setLastUsed(long lastUsed) {
+      this.lastUsed = lastUsed;
     }
+
+    public String getUserId() {
+      return userId;
+    }
+
+    public void setUserId(String userId) {
+      this.userId = userId;
+    }
+
+  }
 
 }

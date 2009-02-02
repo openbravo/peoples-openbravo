@@ -24,15 +24,15 @@ import java.math.BigDecimal;
 
 public class ProductPlus extends Product implements Serializable {
 
-    private static final long serialVersionUID = 12L;
+  private static final long serialVersionUID = 12L;
 
-    private BigDecimal qtyonhand;
+  private BigDecimal qtyonhand;
 
-    public BigDecimal getQtyonhand() {
-        return qtyonhand;
-    }
+  public BigDecimal getQtyonhand() {
+    return qtyonhand;
+  }
 
-    public void setQtyonhand(BigDecimal qtyonhand) {
-        this.qtyonhand = qtyonhand;
-    }
+  public void setQtyonhand(BigDecimal qtyonhand) {
+    this.qtyonhand = qtyonhand;
+  }
 }

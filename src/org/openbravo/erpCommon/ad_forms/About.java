@@ -31,51 +31,47 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class About extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        if (vars.commandIn("DEFAULT")) {
-            printPageDataSheet(response, vars);
-        } else
-            pageError(response);
-    }
+    if (vars.commandIn("DEFAULT")) {
+      printPageDataSheet(response, vars);
+    } else
+      pageError(response);
+  }
 
-    void printPageDataSheet(HttpServletResponse response,
-            VariablesSecureApp vars) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        String discard[] = { "discard" };
-        AboutData[] data = AboutData.selectTranslators(this);
-        AboutData[] ver = AboutData.select(this);
-        XmlDocument xmlDocument = null;
-        if (data.length == 0) {
-            xmlDocument = xmlEngine.readXmlTemplate(
-                    "org/openbravo/erpCommon/ad_forms/About", discard)
-                    .createXmlDocument();
-            data = AboutData.set();
-        } else
-            xmlDocument = xmlEngine.readXmlTemplate(
-                    "org/openbravo/erpCommon/ad_forms/About")
-                    .createXmlDocument();
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    String discard[] = { "discard" };
+    AboutData[] data = AboutData.selectTranslators(this);
+    AboutData[] ver = AboutData.select(this);
+    XmlDocument xmlDocument = null;
+    if (data.length == 0) {
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/About", discard)
+          .createXmlDocument();
+      data = AboutData.set();
+    } else
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/About")
+          .createXmlDocument();
 
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("language", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("theme", vars.getTheme());
-        xmlDocument.setData("structure1", data);
-        xmlDocument.setParameter("ver", ver[0].ver);
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setData("structure1", data);
+    xmlDocument.setParameter("ver", ver[0].ver);
 
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    out.println(xmlDocument.print());
+    out.close();
+  }
 
-    public String getServletInfo() {
-        return "Servlet DebtPaymentUnapply. This Servlet was made by Eduardo Argal";
-    } // end of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet DebtPaymentUnapply. This Servlet was made by Eduardo Argal";
+  } // end of getServletInfo() method
 }

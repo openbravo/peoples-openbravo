@@ -28,21 +28,21 @@ import org.openbravo.base.exception.OBException;
  */
 public class InvalidRequestException extends OBException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public InvalidRequestException() {
-        super();
-    }
+  public InvalidRequestException() {
+    super();
+  }
 
-    public InvalidRequestException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public InvalidRequestException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public InvalidRequestException(String message) {
-        super(message);
-    }
+  public InvalidRequestException(String message) {
+    super(message);
+  }
 
-    public InvalidRequestException(Throwable cause) {
-        super(cause);
-    }
+  public InvalidRequestException(Throwable cause) {
+    super(cause);
+  }
 }

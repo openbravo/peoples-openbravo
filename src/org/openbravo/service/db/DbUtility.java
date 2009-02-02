@@ -34,32 +34,31 @@ import org.openbravo.base.provider.OBSingleton;
  */
 
 public class DbUtility implements OBSingleton {
-    /**
-     * Reads a file and returns the content as a String. The file must exist
-     * otherwise an {@link OBException} is thrown.
-     * 
-     * @param file
-     *            the file to read
-     * @return the content of the file
-     */
-    public static String readFile(File file) {
-        final StringBuilder contents = new StringBuilder();
+  /**
+   * Reads a file and returns the content as a String. The file must exist otherwise an
+   * {@link OBException} is thrown.
+   * 
+   * @param file
+   *          the file to read
+   * @return the content of the file
+   */
+  public static String readFile(File file) {
+    final StringBuilder contents = new StringBuilder();
 
-        try {
-            final BufferedReader input = new BufferedReader(
-                    new FileReader(file));
-            try {
-                String line = null;
-                while ((line = input.readLine()) != null) {
-                    contents.append(line);
-                    contents.append(System.getProperty("line.separator"));
-                }
-            } finally {
-                input.close();
-            }
-        } catch (final IOException e) {
-            throw new OBException(e);
+    try {
+      final BufferedReader input = new BufferedReader(new FileReader(file));
+      try {
+        String line = null;
+        while ((line = input.readLine()) != null) {
+          contents.append(line);
+          contents.append(System.getProperty("line.separator"));
         }
-        return contents.toString();
+      } finally {
+        input.close();
+      }
+    } catch (final IOException e) {
+      throw new OBException(e);
     }
+    return contents.toString();
+  }
 }

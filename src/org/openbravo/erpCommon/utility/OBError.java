@@ -19,61 +19,60 @@
 package org.openbravo.erpCommon.utility;
 
 public class OBError {
-    private String type = "";
-    private String title = "";
-    private String message = "";
-    private boolean connectionAvailable = true;
+  private String type = "";
+  private String title = "";
+  private String message = "";
+  private boolean connectionAvailable = true;
 
-    public OBError() {
-    }
+  public OBError() {
+  }
 
-    public void setType(String _data) {
-        if (_data == null)
-            _data = "";
-        this.type = _data;
-    }
+  public void setType(String _data) {
+    if (_data == null)
+      _data = "";
+    this.type = _data;
+  }
 
-    public String getType() {
-        return ((this.type == null) ? "Hidden" : this.type);
-    }
+  public String getType() {
+    return ((this.type == null) ? "Hidden" : this.type);
+  }
 
-    public void setTitle(String _data) {
-        if (_data == null)
-            _data = "";
-        this.title = _data;
-    }
+  public void setTitle(String _data) {
+    if (_data == null)
+      _data = "";
+    this.title = _data;
+  }
 
-    public String getTitle() {
-        return ((this.title == null) ? "" : this.title);
-    }
+  public String getTitle() {
+    return ((this.title == null) ? "" : this.title);
+  }
 
-    public void setMessage(String _data) {
-        if (_data == null)
-            _data = "";
-        this.message = _data;
-    }
+  public void setMessage(String _data) {
+    if (_data == null)
+      _data = "";
+    this.message = _data;
+  }
 
-    public String getMessage() {
-        return ((this.message == null) ? "" : this.message);
-    }
+  public String getMessage() {
+    return ((this.message == null) ? "" : this.message);
+  }
 
-    public void setConnectionAvailable(boolean _data) {
-        this.connectionAvailable = _data;
-    }
+  public void setConnectionAvailable(boolean _data) {
+    this.connectionAvailable = _data;
+  }
 
-    public boolean isEmpty() {
-        return (getTitle().equals("") && getMessage().equals("") && getType()
-                .equals(""));
-    }
+  public boolean isEmpty() {
+    return (getTitle().equals("") && getMessage().equals("") && getType().equals(""));
+  }
 
-    public void setError(OBError e) {
-        setTitle(Utility.formatMessageBDToHtml(e.getTitle()));
-        setMessage(Utility.formatMessageBDToHtml(e.getMessage()));
-        setType(e.getType());
-        setConnectionAvailable(e.isConnectionAvailable());
-    }
+  public void setError(OBError e) {
+    setTitle(Utility.formatMessageBDToHtml(e.getTitle()));
+    setMessage(Utility.formatMessageBDToHtml(e.getMessage()));
+    setType(e.getType());
+    setConnectionAvailable(e.isConnectionAvailable());
+  }
 
-    public boolean isConnectionAvailable() {
-        return this.connectionAvailable;
-    }
+  public boolean isConnectionAvailable() {
+    return this.connectionAvailable;
+  }
 }

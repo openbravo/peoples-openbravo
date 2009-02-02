@@ -33,92 +33,78 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_Invoice_DocType extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strDocTypeTarget = vars.getStringParameter("inpcDoctypetargetId");
+      String strTabId = vars.getStringParameter("inpTabId");
+      String strCInvoiceId = vars.getStringParameter("inpcInvoiceId");
+
+      try {
+        printPage(response, vars, strDocTypeTarget, strTabId, strCInvoiceId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDocTypeTarget,
+      String strTabId, String strCInvoiceId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+
+    SEInOutDocTypeData[] data = SEInOutDocTypeData.select(this, strDocTypeTarget);
+
+    StringBuffer resultado = new StringBuffer();
+    if (data == null || data.length == 0)
+      resultado.append("var respuesta = null;");
+    else {
+      resultado.append("var calloutName='SL_Invoice_DocType';\n\n");
+      resultado.append("var respuesta = new Array(");
+
+      // check if doc type target is different, in this case assing new
+      // documentno otherwise matain the previous one
+      String strDoctypetargetinvoice = SEInOutDocTypeData.selectDoctypetargetinvoice(this,
+          strCInvoiceId);
+
+      if (strDoctypetargetinvoice == null || strDoctypetargetinvoice.equals("")
+          || !strDoctypetargetinvoice.equals(strDocTypeTarget)) {
+        String strDocumentNo = Utility.getDocumentNo(this, vars.getClient(), "C_Invoice", false);
+        if (data[0].isdocnocontrolled.equals("Y"))
+          strDocumentNo = data[0].currentnext;
+        resultado.append("new Array(\"inpdocumentno\", \"<" + strDocumentNo + ">\"),");
+      } else if (strDoctypetargetinvoice != null && !strDoctypetargetinvoice.equals("")
+          && strDoctypetargetinvoice.equals(strDocTypeTarget))
+        resultado.append("new Array(\"inpdocumentno\", \""
+            + SEInOutDocTypeData.selectActualinvoicedocumentno(this, strCInvoiceId) + "\"),");
+      // ------
+
+      resultado.append("new Array(\"inpdocbasetype\", \"" + data[0].docbasetype + "\")");
+      String strPaymentRule = "";
+      if (data[0].docbasetype.endsWith("C")) {
+        strPaymentRule = "P";
+        resultado.append(", new Array(\"inppaymentrule\", \"" + strPaymentRule + "\"),");
+        String strNamePaymentRule = ListData.selectName(this, "195", "P");
+        resultado.append("new Array(\"PaymentRule_BTN\", \"" + strNamePaymentRule + "\")");
+      }
+      resultado.append(");");
     }
-
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strDocTypeTarget = vars
-                    .getStringParameter("inpcDoctypetargetId");
-            String strTabId = vars.getStringParameter("inpTabId");
-            String strCInvoiceId = vars.getStringParameter("inpcInvoiceId");
-
-            try {
-                printPage(response, vars, strDocTypeTarget, strTabId,
-                        strCInvoiceId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strDocTypeTarget, String strTabId, String strCInvoiceId)
-            throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-
-        SEInOutDocTypeData[] data = SEInOutDocTypeData.select(this,
-                strDocTypeTarget);
-
-        StringBuffer resultado = new StringBuffer();
-        if (data == null || data.length == 0)
-            resultado.append("var respuesta = null;");
-        else {
-            resultado.append("var calloutName='SL_Invoice_DocType';\n\n");
-            resultado.append("var respuesta = new Array(");
-
-            // check if doc type target is different, in this case assing new
-            // documentno otherwise matain the previous one
-            String strDoctypetargetinvoice = SEInOutDocTypeData
-                    .selectDoctypetargetinvoice(this, strCInvoiceId);
-
-            if (strDoctypetargetinvoice == null
-                    || strDoctypetargetinvoice.equals("")
-                    || !strDoctypetargetinvoice.equals(strDocTypeTarget)) {
-                String strDocumentNo = Utility.getDocumentNo(this, vars
-                        .getClient(), "C_Invoice", false);
-                if (data[0].isdocnocontrolled.equals("Y"))
-                    strDocumentNo = data[0].currentnext;
-                resultado.append("new Array(\"inpdocumentno\", \"<"
-                        + strDocumentNo + ">\"),");
-            } else if (strDoctypetargetinvoice != null
-                    && !strDoctypetargetinvoice.equals("")
-                    && strDoctypetargetinvoice.equals(strDocTypeTarget))
-                resultado.append("new Array(\"inpdocumentno\", \""
-                        + SEInOutDocTypeData.selectActualinvoicedocumentno(
-                                this, strCInvoiceId) + "\"),");
-            // ------
-
-            resultado.append("new Array(\"inpdocbasetype\", \""
-                    + data[0].docbasetype + "\")");
-            String strPaymentRule = "";
-            if (data[0].docbasetype.endsWith("C")) {
-                strPaymentRule = "P";
-                resultado.append(", new Array(\"inppaymentrule\", \""
-                        + strPaymentRule + "\"),");
-                String strNamePaymentRule = ListData.selectName(this, "195",
-                        "P");
-                resultado.append("new Array(\"PaymentRule_BTN\", \""
-                        + strNamePaymentRule + "\")");
-            }
-            resultado.append(");");
-        }
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

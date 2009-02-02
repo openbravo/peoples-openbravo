@@ -36,146 +36,127 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 
 public class ExportGrid extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        String strTabId = vars.getRequiredStringParameter("inpTabId");
-        String strWindowId = vars.getRequiredStringParameter("inpWindowId");
-        String strAccessLevel = vars
-                .getRequiredStringParameter("inpAccessLevel");
-        if (log4j.isDebugEnabled())
-            log4j.debug("Export grid, tabID: " + strTabId);
-        ServletOutputStream os = null;
-        InputStream is = null;
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    String strTabId = vars.getRequiredStringParameter("inpTabId");
+    String strWindowId = vars.getRequiredStringParameter("inpWindowId");
+    String strAccessLevel = vars.getRequiredStringParameter("inpAccessLevel");
+    if (log4j.isDebugEnabled())
+      log4j.debug("Export grid, tabID: " + strTabId);
+    ServletOutputStream os = null;
+    InputStream is = null;
 
-        String strLanguage = vars.getLanguage();
-        String strBaseDesign = getBaseDesignPath(strLanguage);
-        if (log4j.isDebugEnabled())
-            log4j.debug("*********************Base design path: "
-                    + strBaseDesign);
+    String strLanguage = vars.getLanguage();
+    String strBaseDesign = getBaseDesignPath(strLanguage);
+    if (log4j.isDebugEnabled())
+      log4j.debug("*********************Base design path: " + strBaseDesign);
 
-        try {
-            GridReportVO gridReportVO = createGridReport(vars, strTabId,
-                    strWindowId, strAccessLevel, vars.commandIn("EXCEL"));
-            os = response.getOutputStream();
-            is = getInputStream(strBaseDesign
-                    + "/org/openbravo/erpCommon/utility/"
-                    + gridReportVO.getJrxmlTemplate());
+    try {
+      GridReportVO gridReportVO = createGridReport(vars, strTabId, strWindowId, strAccessLevel,
+          vars.commandIn("EXCEL"));
+      os = response.getOutputStream();
+      is = getInputStream(strBaseDesign + "/org/openbravo/erpCommon/utility/"
+          + gridReportVO.getJrxmlTemplate());
 
-            if (log4j.isDebugEnabled())
-                log4j.debug("Create report, type: " + vars.getCommand());
+      if (log4j.isDebugEnabled())
+        log4j.debug("Create report, type: " + vars.getCommand());
 
-            if (vars.commandIn("HTML"))
-                GridBO.createHTMLReport(is, gridReportVO, os);
-            else if (vars.commandIn("PDF")) {
-                response.setContentType("application/pdf");
-                GridBO.createPDFReport(is, gridReportVO, os);
-            } else if (vars.commandIn("EXCEL")) {
-                response.setContentType("application/vnd.ms-excel");
-                GridBO.createXLSReport(is, gridReportVO, os);
-            } else if (vars.commandIn("CSV")) {
-                response.setContentType("text/csv");
-                GridBO.createCSVReport(is, gridReportVO, os);
-            }
-        } catch (JRException e) {
-            throw new ServletException(e.getMessage());
-        } finally {
-            is.close();
-            os.close();
-        }
+      if (vars.commandIn("HTML"))
+        GridBO.createHTMLReport(is, gridReportVO, os);
+      else if (vars.commandIn("PDF")) {
+        response.setContentType("application/pdf");
+        GridBO.createPDFReport(is, gridReportVO, os);
+      } else if (vars.commandIn("EXCEL")) {
+        response.setContentType("application/vnd.ms-excel");
+        GridBO.createXLSReport(is, gridReportVO, os);
+      } else if (vars.commandIn("CSV")) {
+        response.setContentType("text/csv");
+        GridBO.createCSVReport(is, gridReportVO, os);
+      }
+    } catch (JRException e) {
+      throw new ServletException(e.getMessage());
+    } finally {
+      is.close();
+      os.close();
     }
+  }
 
-    GridReportVO createGridReport(VariablesSecureApp vars, String strTabId,
-            String strWindowId, String strAccessLevel) throws ServletException {
-        return createGridReport(vars, strTabId, strWindowId, strAccessLevel,
-                false);
+  GridReportVO createGridReport(VariablesSecureApp vars, String strTabId, String strWindowId,
+      String strAccessLevel) throws ServletException {
+    return createGridReport(vars, strTabId, strWindowId, strAccessLevel, false);
+  }
+
+  GridReportVO createGridReport(VariablesSecureApp vars, String strTabId, String strWindowId,
+      String strAccessLevel, boolean useFieldLength) throws ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Create Grid Report, tabID: " + strTabId);
+    LinkedList<GridColumnVO> columns = new LinkedList<GridColumnVO>();
+    FieldProvider[] data = null;
+    TableSQLData tableSQL = null;
+    try {
+      tableSQL = new TableSQLData(vars, this, strTabId, Utility.getContext(this, vars,
+          "#AccessibleOrgTree", strWindowId, Integer.valueOf(strAccessLevel).intValue()), Utility
+          .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
+          "ShowAudit", strWindowId).equals("Y"));
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      log4j.error(ex.getMessage());
+      throw new ServletException(ex.getMessage());
     }
+    SQLReturnObject[] headers = tableSQL.getHeaders(true, useFieldLength);
 
-    GridReportVO createGridReport(VariablesSecureApp vars, String strTabId,
-            String strWindowId, String strAccessLevel, boolean useFieldLength)
-            throws ServletException {
+    if (tableSQL != null && headers != null) {
+      try {
         if (log4j.isDebugEnabled())
-            log4j.debug("Create Grid Report, tabID: " + strTabId);
-        LinkedList<GridColumnVO> columns = new LinkedList<GridColumnVO>();
-        FieldProvider[] data = null;
-        TableSQLData tableSQL = null;
-        try {
-            tableSQL = new TableSQLData(
-                    vars,
-                    this,
-                    strTabId,
-                    Utility.getContext(this, vars, "#AccessibleOrgTree",
-                            strWindowId, Integer.valueOf(strAccessLevel)
-                                    .intValue()),
-                    Utility.getContext(this, vars, "#User_Client", strWindowId),
-                    Utility.getContext(this, vars, "ShowAudit", strWindowId)
-                            .equals("Y"));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            log4j.error(ex.getMessage());
-            throw new ServletException(ex.getMessage());
-        }
-        SQLReturnObject[] headers = tableSQL.getHeaders(true, useFieldLength);
-
-        if (tableSQL != null && headers != null) {
-            try {
-                if (log4j.isDebugEnabled())
-                    log4j.debug("Geting the grid data.");
-                vars.setSessionValue(strTabId + "|newOrder", "1");
-                String strSQL = ModelSQLGeneration.generateSQL(this, vars,
-                        tableSQL, "", new Vector<String>(),
-                        new Vector<String>(), 0, 0);
-                // if (log4j.isDebugEnabled()) log4j.debug("SQL: " + strSQL);
-                ExecuteQuery execquery = new ExecuteQuery(this, strSQL,
-                        tableSQL.getParameterValues());
-                data = execquery.select();
-            } catch (Exception e) {
-                if (log4j.isDebugEnabled())
-                    log4j.debug("Error obtaining rows data");
-                e.printStackTrace();
-                throw new ServletException(e.getMessage());
-            }
-        }
-        int totalWidth = 0;
-        for (int i = 0; i < headers.length; i++) {
-            if (headers[i].getField("isvisible").equals("true")) {
-                String columnname = headers[i].getField("columnname");
-                if (!tableSQL.getSelectField(columnname + "_R").equals(""))
-                    columnname += "_R";
-                if (log4j.isDebugEnabled())
-                    log4j.debug("Add column: " + columnname + " width: "
-                            + headers[i].getField("width") + " reference: "
-                            + headers[i].getField("adReferenceId"));
-                totalWidth += Integer.valueOf(headers[i].getField("width"));
-                Class<?> fieldClass = String.class;
-                if (headers[i].getField("adReferenceId").equals("11"))
-                    fieldClass = Double.class;
-                else if (headers[i].getField("adReferenceId").equals("22")
-                        || headers[i].getField("adReferenceId").equals("12")
-                        || headers[i].getField("adReferenceId")
-                                .equals("800008")
-                        || headers[i].getField("adReferenceId")
-                                .equals("800019"))
-                    fieldClass = java.math.BigDecimal.class;
-
-                columns.add(new GridColumnVO(headers[i].getField("name"),
-                        columnname, Integer.valueOf(headers[i]
-                                .getField("width")), fieldClass));
-            }
-        }
-        String strTitle = ExportGridData.getTitle(this, strTabId, vars
-                .getLanguage());
-        GridReportVO gridReportVO = new GridReportVO("plantilla.jrxml", data,
-                strTitle, columns, strReplaceWithFull, totalWidth, vars
-                        .getJavaDateFormat());
-        return gridReportVO;
-    }
-
-    private InputStream getInputStream(String reportFile) throws IOException {
+          log4j.debug("Geting the grid data.");
+        vars.setSessionValue(strTabId + "|newOrder", "1");
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "",
+            new Vector<String>(), new Vector<String>(), 0, 0);
+        // if (log4j.isDebugEnabled()) log4j.debug("SQL: " + strSQL);
+        ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
+        data = execquery.select();
+      } catch (Exception e) {
         if (log4j.isDebugEnabled())
-            log4j.debug("Get input stream file: " + reportFile);
-        return (new FileInputStream(reportFile));
+          log4j.debug("Error obtaining rows data");
+        e.printStackTrace();
+        throw new ServletException(e.getMessage());
+      }
     }
+    int totalWidth = 0;
+    for (int i = 0; i < headers.length; i++) {
+      if (headers[i].getField("isvisible").equals("true")) {
+        String columnname = headers[i].getField("columnname");
+        if (!tableSQL.getSelectField(columnname + "_R").equals(""))
+          columnname += "_R";
+        if (log4j.isDebugEnabled())
+          log4j.debug("Add column: " + columnname + " width: " + headers[i].getField("width")
+              + " reference: " + headers[i].getField("adReferenceId"));
+        totalWidth += Integer.valueOf(headers[i].getField("width"));
+        Class<?> fieldClass = String.class;
+        if (headers[i].getField("adReferenceId").equals("11"))
+          fieldClass = Double.class;
+        else if (headers[i].getField("adReferenceId").equals("22")
+            || headers[i].getField("adReferenceId").equals("12")
+            || headers[i].getField("adReferenceId").equals("800008")
+            || headers[i].getField("adReferenceId").equals("800019"))
+          fieldClass = java.math.BigDecimal.class;
+
+        columns.add(new GridColumnVO(headers[i].getField("name"), columnname, Integer
+            .valueOf(headers[i].getField("width")), fieldClass));
+      }
+    }
+    String strTitle = ExportGridData.getTitle(this, strTabId, vars.getLanguage());
+    GridReportVO gridReportVO = new GridReportVO("plantilla.jrxml", data, strTitle, columns,
+        strReplaceWithFull, totalWidth, vars.getJavaDateFormat());
+    return gridReportVO;
+  }
+
+  private InputStream getInputStream(String reportFile) throws IOException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Get input stream file: " + reportFile);
+    return (new FileInputStream(reportFile));
+  }
 }

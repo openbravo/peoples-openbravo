@@ -34,96 +34,87 @@ import org.openbravo.erpCommon.utility.Utility;
  */
 public class DefaultAuthenticationManager implements AuthenticationManager {
 
-    private ConnectionProvider conn = null;
-    private String strServletSinIdentificar = null;
-    public Logger log4j = Logger.getLogger(DefaultAuthenticationManager.class);
+  private ConnectionProvider conn = null;
+  private String strServletSinIdentificar = null;
+  public Logger log4j = Logger.getLogger(DefaultAuthenticationManager.class);
 
-    /** Creates a new instance of DefaultAuthenticationManager */
-    public DefaultAuthenticationManager() {
+  /** Creates a new instance of DefaultAuthenticationManager */
+  public DefaultAuthenticationManager() {
+  }
+
+  public void init(HttpServlet s) throws AuthenticationException {
+    if (s instanceof ConnectionProvider) {
+      conn = (ConnectionProvider) s;
+      strServletSinIdentificar = s.getServletConfig().getServletContext().getInitParameter(
+          "ServletSinIdentificar");
+    } else {
+      throw new AuthenticationException("Connection provider required for default authentication");
     }
+  }
 
-    public void init(HttpServlet s) throws AuthenticationException {
-        if (s instanceof ConnectionProvider) {
-            conn = (ConnectionProvider) s;
-            strServletSinIdentificar = s.getServletConfig().getServletContext()
-                    .getInitParameter("ServletSinIdentificar");
-        } else {
-            throw new AuthenticationException(
-                    "Connection provider required for default authentication");
-        }
+  public String authenticate(HttpServletRequest request, HttpServletResponse response)
+      throws AuthenticationException, ServletException, IOException {
+    String sUserId = (String) request.getSession(true).getAttribute("#Authenticated_user");
+
+    if (sUserId == null || sUserId.equals("")) {
+      String strAjax = "";
+      // strHidden and strPopUp not implemented
+      /*
+       * String strHidden = ""; String strPopUp = "";
+       */
+      try {
+        strAjax = request.getParameter("IsAjaxCall");
+      } catch (Exception ignored) {
+      }
+      /*
+       * try { strHidden = request.getParameter("IsHiddenCall"); } catch (Exception ignored) {} try
+       * { strPopUp = request.getParameter("IsPopUpCall"); } catch (Exception ignored) {}
+       */
+      VariablesHistory variables = new VariablesHistory(request);
+
+      // redirects to the menu or the menu with the target
+      String strTarget = request.getRequestURL().toString();
+      if (!strTarget.endsWith("/security/Menu.html")) {
+        variables.setSessionValue("targetmenu", strTarget);
+      }
+
+      // redirects
+      String strDireccionLocal = HttpBaseUtils.getLocalAddress(request);
+      variables.setSessionValue("target", strDireccionLocal + "/security/Menu.html");
+      if (strAjax != null && !strAjax.equals(""))
+        bdErrorAjax(response, "Error", "", Utility.messageBD(this.conn, "NotLogged", variables
+            .getLanguage()));
+      else
+        response.sendRedirect(strDireccionLocal + strServletSinIdentificar);
+      return null;
+    } else {
+      return sUserId;
     }
+  }
 
-    public String authenticate(HttpServletRequest request,
-            HttpServletResponse response) throws AuthenticationException,
-            ServletException, IOException {
-        String sUserId = (String) request.getSession(true).getAttribute(
-                "#Authenticated_user");
+  public void bdErrorAjax(HttpServletResponse response, String strType, String strTitle,
+      String strText) throws IOException {
+    response.setContentType("text/xml; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+    out.println("<xml-structure>\n");
+    out.println("  <status>\n");
+    out.println("    <type>" + strType + "</type>\n");
+    out.println("    <title>" + strTitle + "</title>\n");
+    out.println("    <description><![CDATA[" + strText + "]]></description>\n");
+    out.println("  </status>\n");
+    out.println("</xml-structure>\n");
+    out.close();
+  }
 
-        if (sUserId == null || sUserId.equals("")) {
-            String strAjax = "";
-            // strHidden and strPopUp not implemented
-            /*
-             * String strHidden = ""; String strPopUp = "";
-             */
-            try {
-                strAjax = request.getParameter("IsAjaxCall");
-            } catch (Exception ignored) {
-            }
-            /*
-             * try { strHidden = request.getParameter("IsHiddenCall"); } catch
-             * (Exception ignored) {} try { strPopUp =
-             * request.getParameter("IsPopUpCall"); } catch (Exception ignored)
-             * {}
-             */
-            VariablesHistory variables = new VariablesHistory(request);
-
-            // redirects to the menu or the menu with the target
-            String strTarget = request.getRequestURL().toString();
-            if (!strTarget.endsWith("/security/Menu.html")) {
-                variables.setSessionValue("targetmenu", strTarget);
-            }
-
-            // redirects
-            String strDireccionLocal = HttpBaseUtils.getLocalAddress(request);
-            variables.setSessionValue("target", strDireccionLocal
-                    + "/security/Menu.html");
-            if (strAjax != null && !strAjax.equals(""))
-                bdErrorAjax(response, "Error", "", Utility.messageBD(this.conn,
-                        "NotLogged", variables.getLanguage()));
-            else
-                response.sendRedirect(strDireccionLocal
-                        + strServletSinIdentificar);
-            return null;
-        } else {
-            return sUserId;
-        }
+  public void logout(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    if (request.getSession().getAttribute("#Authenticated_user") != null
+        && !request.getSession().getAttribute("#Authenticated_user").equals("")) {
+      request.getSession(true).removeAttribute("#Authenticated_user");
     }
-
-    public void bdErrorAjax(HttpServletResponse response, String strType,
-            String strTitle, String strText) throws IOException {
-        response.setContentType("text/xml; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-        out.println("<xml-structure>\n");
-        out.println("  <status>\n");
-        out.println("    <type>" + strType + "</type>\n");
-        out.println("    <title>" + strTitle + "</title>\n");
-        out.println("    <description><![CDATA[" + strText
-                + "]]></description>\n");
-        out.println("  </status>\n");
-        out.println("</xml-structure>\n");
-        out.close();
-    }
-
-    public void logout(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        if (request.getSession().getAttribute("#Authenticated_user") != null
-                && !request.getSession().getAttribute("#Authenticated_user")
-                        .equals("")) {
-            request.getSession(true).removeAttribute("#Authenticated_user");
-        }
-        if (!response.isCommitted())
-            response.sendRedirect(HttpBaseUtils.getLocalAddress(request));
-    }
+    if (!response.isCommitted())
+      response.sendRedirect(HttpBaseUtils.getLocalAddress(request));
+  }
 
 }

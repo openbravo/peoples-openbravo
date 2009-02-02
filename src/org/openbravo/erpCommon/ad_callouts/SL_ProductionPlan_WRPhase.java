@@ -34,70 +34,64 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_ProductionPlan_WRPhase extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    static final BigDecimal ZERO = new BigDecimal(0.0);
+  static final BigDecimal ZERO = new BigDecimal(0.0);
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strProduction = vars.getStringParameter("inpmProductionId");
-            String strWRPhase = vars.getStringParameter("inpmaWrphaseId");
-            try {
-                printPage(response, vars, strProduction, strWRPhase);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strProduction = vars.getStringParameter("inpmProductionId");
+      String strWRPhase = vars.getStringParameter("inpmaWrphaseId");
+      try {
+        printPage(response, vars, strProduction, strWRPhase);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strProduction, String strWRPhase) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-        SLProductionPlanWRPhaseData[] data = SLProductionPlanWRPhaseData
-                .select(this, strProduction, strWRPhase);
-        if (data == null || data.length == 0)
-            data = SLProductionPlanWRPhaseData.set();
-        String strNeededQuantity = data[0].neededqty;
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strProduction,
+      String strWRPhase) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    SLProductionPlanWRPhaseData[] data = SLProductionPlanWRPhaseData.select(this, strProduction,
+        strWRPhase);
+    if (data == null || data.length == 0)
+      data = SLProductionPlanWRPhaseData.set();
+    String strNeededQuantity = data[0].neededqty;
 
-        String strOutsourced = SLProductionPlanWRPhaseData.selectOutsourced(
-                this, strWRPhase);
-        if (strOutsourced == null || strOutsourced.equals(""))
-            strOutsourced = "N";
+    String strOutsourced = SLProductionPlanWRPhaseData.selectOutsourced(this, strWRPhase);
+    if (strOutsourced == null || strOutsourced.equals(""))
+      strOutsourced = "N";
 
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_ProductionPlan_WRPhase';\n\n");
-        resultado.append("var respuesta = new Array(");
-        resultado.append("new Array(\"inpneededquantity\", \""
-                + strNeededQuantity + "\"),\n");
-        resultado.append("new Array(\"inpsecondaryunit\", \""
-                + FormatUtilities.replaceJS(data[0].secondaryunit) + "\"),\n");
-        resultado.append("new Array(\"inpconversionrate\", \""
-                + data[0].conversionrate + "\"),\n");
-        resultado.append("new Array(\"inpmaCostcenterVersionId\", \""
-                + data[0].maCostcenterVersionId + "\"), \n");
-        resultado.append("new Array(\"inpoutsourced\", \"" + strOutsourced
-                + "\")\n");
-        resultado.append(");\n");
-        xmlDocument.setParameter("array", resultado.toString());
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_ProductionPlan_WRPhase';\n\n");
+    resultado.append("var respuesta = new Array(");
+    resultado.append("new Array(\"inpneededquantity\", \"" + strNeededQuantity + "\"),\n");
+    resultado.append("new Array(\"inpsecondaryunit\", \""
+        + FormatUtilities.replaceJS(data[0].secondaryunit) + "\"),\n");
+    resultado.append("new Array(\"inpconversionrate\", \"" + data[0].conversionrate + "\"),\n");
+    resultado.append("new Array(\"inpmaCostcenterVersionId\", \"" + data[0].maCostcenterVersionId
+        + "\"), \n");
+    resultado.append("new Array(\"inpoutsourced\", \"" + strOutsourced + "\")\n");
+    resultado.append(");\n");
+    xmlDocument.setParameter("array", resultado.toString());
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

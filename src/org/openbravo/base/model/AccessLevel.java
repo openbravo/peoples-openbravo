@@ -25,5 +25,5 @@ package org.openbravo.base.model;
  * @author Martin Taal
  */
 public enum AccessLevel {
-    SYSTEM, CLIENT, ORGANIZATION, CLIENT_ORGANIZATION, SYSTEM_CLIENT, ALL
+  SYSTEM, CLIENT, ORGANIZATION, CLIENT_ORGANIZATION, SYSTEM_CLIENT, ALL
 }

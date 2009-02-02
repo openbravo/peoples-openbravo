@@ -32,69 +32,60 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SE_ExternalPOS_BPartner extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strBPartner = vars.getStringParameter("inpcBpartnerId");
+      String strWindowId = vars.getStringParameter("inpwindowId");
+      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+      String strPriceList = vars.getStringParameter("inpmPricelistId");
+      try {
+        printPage(response, vars, strWindowId, strBPartner, strIsSOTrx, strPriceList);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
+
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindowId,
+      String strBPartner, String strIsSOTrx, String strPriceList0) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    SEExternalPOSBPartnerData[] data = SEExternalPOSBPartnerData.select(this, strBPartner);
+    String strPriceList = "";
+    if (data != null && data.length > 0) {
+      strPriceList = (strIsSOTrx.equals("Y") ? data[0].mPricelistId : data[0].poPricelistId);
+      strPriceList = strPriceList.equals("") ? strPriceList0 : strPriceList;
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strBPartner = vars.getStringParameter("inpcBpartnerId");
-            String strWindowId = vars.getStringParameter("inpwindowId");
-            String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx",
-                    strWindowId);
-            String strPriceList = vars.getStringParameter("inpmPricelistId");
-            try {
-                printPage(response, vars, strWindowId, strBPartner, strIsSOTrx,
-                        strPriceList);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
-
-    private void printPage(HttpServletResponse response,
-            VariablesSecureApp vars, String strWindowId, String strBPartner,
-            String strIsSOTrx, String strPriceList0) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-        SEExternalPOSBPartnerData[] data = SEExternalPOSBPartnerData.select(
-                this, strBPartner);
-        String strPriceList = "";
-        if (data != null && data.length > 0) {
-            strPriceList = (strIsSOTrx.equals("Y") ? data[0].mPricelistId
-                    : data[0].poPricelistId);
-            strPriceList = strPriceList.equals("") ? strPriceList0
-                    : strPriceList;
-        }
-
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SE_ExternalPOS_BPartner';\n\n");
-        resultado.append("var respuesta = new Array(");
-        resultado
-                .append("new Array(\"inpmPricelistId\", \""
-                        + (strPriceList.equals("") ? Utility.getContext(this,
-                                vars, "#M_PriceList_ID", strWindowId)
-                                : strPriceList) + "\")");
-        resultado.append(");");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "frameAplicacion");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SE_ExternalPOS_BPartner';\n\n");
+    resultado.append("var respuesta = new Array(");
+    resultado.append("new Array(\"inpmPricelistId\", \""
+        + (strPriceList.equals("") ? Utility.getContext(this, vars, "#M_PriceList_ID", strWindowId)
+            : strPriceList) + "\")");
+    resultado.append(");");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "frameAplicacion");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

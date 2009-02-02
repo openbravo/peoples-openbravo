@@ -21,17 +21,15 @@ package org.openbravo.erpCommon.ad_forms;
 import org.apache.log4j.Logger;
 
 public class DocLine_Amortization extends DocLine {
-    static Logger log4jDocLine_Amortization = Logger
-            .getLogger(DocLine_Amortization.class);
+  static Logger log4jDocLine_Amortization = Logger.getLogger(DocLine_Amortization.class);
 
-    public String Amount;
+  public String Amount;
 
-    public DocLine_Amortization(String DocumentType, String TrxHeader_ID,
-            String TrxLine_ID) {
-        super(DocumentType, TrxHeader_ID, TrxLine_ID);
-    }
+  public DocLine_Amortization(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
+    super(DocumentType, TrxHeader_ID, TrxLine_ID);
+  }
 
-    public String getServletInfo() {
-        return "Servlet for the accounting";
-    } // end of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet for the accounting";
+  } // end of getServletInfo() method
 }

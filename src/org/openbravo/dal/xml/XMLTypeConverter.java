@@ -36,173 +36,168 @@ import org.openbravo.base.provider.OBSingleton;
 
 public class XMLTypeConverter implements OBSingleton {
 
-    private static XMLTypeConverter instance = new XMLTypeConverter();
+  private static XMLTypeConverter instance = new XMLTypeConverter();
 
-    public static XMLTypeConverter getInstance() {
-        if (instance == null) {
-            instance = OBProvider.getInstance().get(XMLTypeConverter.class);
-        }
-        return instance;
+  public static XMLTypeConverter getInstance() {
+    if (instance == null) {
+      instance = OBProvider.getInstance().get(XMLTypeConverter.class);
     }
+    return instance;
+  }
 
-    public static void setInstance(XMLTypeConverter instance) {
-        XMLTypeConverter.instance = instance;
+  public static void setInstance(XMLTypeConverter instance) {
+    XMLTypeConverter.instance = instance;
+  }
+
+  private final SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+
+  /**
+   * @return the String format of a {@link Date}, the standard xml format is used:
+   *         yyyy-MM-dd'T'HH:mm:ss.S'Z'
+   * @param dt
+   *          the Date to format
+   * @return the String representation of the Date in xml format
+   */
+  public String toXML(Date dt) {
+    return xmlDateFormat.format(dt);
+  }
+
+  /**
+   * @return numbers are converted using the Number.toString method
+   */
+  public String toXML(Number number) {
+    return number.toString();
+  }
+
+  /** @return the parameter str is returned without changing it */
+  public String toXML(String str) {
+    return str;
+  }
+
+  /** @return the result of the b.toString() method is returned */
+  public String toXML(Boolean b) {
+    return b.toString();
+  }
+
+  /**
+   * Returns an empty string if the object is null. In other cases the call is forwarded to one of
+   * the other toXML methods in this class.
+   * 
+   * @param o
+   *          the value to convert to a String XML representation
+   * @return the String XML representation
+   */
+  public String toXML(Object o) {
+    if (o == null) {
+      return "";
     }
-
-    private final SimpleDateFormat xmlDateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss.S'Z'");
-
-    /**
-     * @return the String format of a {@link Date}, the standard xml format is
-     *         used: yyyy-MM-dd'T'HH:mm:ss.S'Z'
-     * @param dt
-     *            the Date to format
-     * @return the String representation of the Date in xml format
-     */
-    public String toXML(Date dt) {
-        return xmlDateFormat.format(dt);
+    if (o instanceof Number) {
+      return toXML((Number) o);
     }
-
-    /**
-     * @return numbers are converted using the Number.toString method
-     */
-    public String toXML(Number number) {
-        return number.toString();
+    if (o instanceof Date) {
+      return toXML((Date) o);
     }
-
-    /** @return the parameter str is returned without changing it */
-    public String toXML(String str) {
-        return str;
+    if (o instanceof String) {
+      return toXML((String) o);
     }
-
-    /** @return the result of the b.toString() method is returned */
-    public String toXML(Boolean b) {
-        return b.toString();
+    if (o instanceof Boolean) {
+      return toXML((Boolean) o);
     }
+    return o.toString();
+    // throw new OBException("Type " + o.getClass().getName() +
+    // " not supported");
+  }
 
-    /**
-     * Returns an empty string if the object is null. In other cases the call is
-     * forwarded to one of the other toXML methods in this class.
-     * 
-     * @param o
-     *            the value to convert to a String XML representation
-     * @return the String XML representation
-     */
-    public String toXML(Object o) {
-        if (o == null) {
-            return "";
-        }
-        if (o instanceof Number) {
-            return toXML((Number) o);
-        }
-        if (o instanceof Date) {
-            return toXML((Date) o);
-        }
-        if (o instanceof String) {
-            return toXML((String) o);
-        }
-        if (o instanceof Boolean) {
-            return toXML((Boolean) o);
-        }
-        return o.toString();
-        // throw new OBException("Type " + o.getClass().getName() +
-        // " not supported");
+  /**
+   * Converts an xml String back to a primitive type java Object. If the xml string has lenght zero
+   * then null is returned.
+   * 
+   * @param targetClass
+   *          the class of the primitive type (e.g. String.class, Float.class)
+   * @param xml
+   *          the xml string to convert
+   * @return the converted object
+   */
+  @SuppressWarnings("unchecked")
+  public <T extends Object> T fromXML(Class<T> targetClass, String xml) {
+    if (xml.length() == 0) {
+      return null;
     }
+    try {
+      if (Date.class == targetClass) {
+        return (T) xmlDateFormat.parse(xml);
+      }
+      if (Timestamp.class == targetClass) {
+        final Date dt = xmlDateFormat.parse(xml);
+        return (T) new Timestamp(dt.getTime());
+      }
+      if (String.class == targetClass) {
+        return (T) xml;
+      }
+      if (BigDecimal.class == targetClass) {
+        return (T) new BigDecimal(xml);
+      }
+      if (Integer.class == targetClass) {
+        return (T) new Integer(xml);
+      }
+      if (Long.class == targetClass) {
+        return (T) new Long(xml);
+      }
+      if (boolean.class == targetClass) {
+        return (T) new Boolean(xml);
+      }
+      if (Boolean.class == targetClass) {
+        return (T) new Boolean(xml);
+      }
+      if (Float.class == targetClass) {
+        return (T) new Float(xml);
+      }
+    } catch (final Exception e) {
+      throw new EntityXMLException("Value " + xml + " can not be parsed to an instance of class "
+          + targetClass.getName());
+    }
+    throw new EntityXMLException("Unsupported target class " + targetClass.getName());
+  }
 
-    /**
-     * Converts an xml String back to a primitive type java Object. If the xml
-     * string has lenght zero then null is returned.
-     * 
-     * @param targetClass
-     *            the class of the primitive type (e.g. String.class,
-     *            Float.class)
-     * @param xml
-     *            the xml string to convert
-     * @return the converted object
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends Object> T fromXML(Class<T> targetClass, String xml) {
-        if (xml.length() == 0) {
-            return null;
-        }
-        try {
-            if (Date.class == targetClass) {
-                return (T) xmlDateFormat.parse(xml);
-            }
-            if (Timestamp.class == targetClass) {
-                final Date dt = xmlDateFormat.parse(xml);
-                return (T) new Timestamp(dt.getTime());
-            }
-            if (String.class == targetClass) {
-                return (T) xml;
-            }
-            if (BigDecimal.class == targetClass) {
-                return (T) new BigDecimal(xml);
-            }
-            if (Integer.class == targetClass) {
-                return (T) new Integer(xml);
-            }
-            if (Long.class == targetClass) {
-                return (T) new Long(xml);
-            }
-            if (boolean.class == targetClass) {
-                return (T) new Boolean(xml);
-            }
-            if (Boolean.class == targetClass) {
-                return (T) new Boolean(xml);
-            }
-            if (Float.class == targetClass) {
-                return (T) new Float(xml);
-            }
-        } catch (final Exception e) {
-            throw new EntityXMLException("Value " + xml
-                    + " can not be parsed to an instance of class "
-                    + targetClass.getName());
-        }
-        throw new EntityXMLException("Unsupported target class "
-                + targetClass.getName());
+  /**
+   * @return the XML Schema type which matches the targetClass parameter
+   */
+  public String toXMLSchemaType(Class<?> targetClass) {
+    if (Date.class == targetClass) {
+      return "dateTime";
     }
-
-    /**
-     * @return the XML Schema type which matches the targetClass parameter
-     */
-    public String toXMLSchemaType(Class<?> targetClass) {
-        if (Date.class == targetClass) {
-            return "dateTime";
-        }
-        if (Timestamp.class == targetClass) {
-            return "dateTime";
-        }
-        if (String.class == targetClass) {
-            return "string";
-        }
-        if (BigDecimal.class == targetClass) {
-            return "decimal";
-        }
-        if (Integer.class == targetClass) {
-            return "integer";
-        }
-        if (Long.class == targetClass) {
-            return "long";
-        }
-        if (boolean.class == targetClass) {
-            return "boolean";
-        }
-        if (Boolean.class == targetClass) {
-            return "boolean";
-        }
-        if (Float.class == targetClass) {
-            return "float";
-        }
-        if (Object.class == targetClass) {
-            // TODO catch this
-            return "OBJECT";
-        }
-        if (targetClass == null) {
-            // TODO catch this
-            return "NULL";
-        }
-        throw new OBException("Unsupported target class "
-                + targetClass.getName());
+    if (Timestamp.class == targetClass) {
+      return "dateTime";
     }
+    if (String.class == targetClass) {
+      return "string";
+    }
+    if (BigDecimal.class == targetClass) {
+      return "decimal";
+    }
+    if (Integer.class == targetClass) {
+      return "integer";
+    }
+    if (Long.class == targetClass) {
+      return "long";
+    }
+    if (boolean.class == targetClass) {
+      return "boolean";
+    }
+    if (Boolean.class == targetClass) {
+      return "boolean";
+    }
+    if (Float.class == targetClass) {
+      return "float";
+    }
+    if (Object.class == targetClass) {
+      // TODO catch this
+      return "OBJECT";
+    }
+    if (targetClass == null) {
+      // TODO catch this
+      return "NULL";
+    }
+    throw new OBException("Unsupported target class " + targetClass.getName());
+  }
 }

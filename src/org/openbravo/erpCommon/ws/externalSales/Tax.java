@@ -23,37 +23,37 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class Tax extends Object implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private String id;
-    private String name;
-    private BigDecimal percentage;
+  private static final long serialVersionUID = 1L;
+  private String id;
+  private String name;
+  private BigDecimal percentage;
 
-    /** Creates a new instance of Tax */
-    public Tax() {
-    }
+  /** Creates a new instance of Tax */
+  public Tax() {
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public BigDecimal getPercentage() {
-        return percentage;
-    }
+  public BigDecimal getPercentage() {
+    return percentage;
+  }
 
-    public void setPercentage(BigDecimal percentage) {
-        this.percentage = percentage;
-    }
+  public void setPercentage(BigDecimal percentage) {
+    this.percentage = percentage;
+  }
 
 }

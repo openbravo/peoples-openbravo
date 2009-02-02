@@ -37,152 +37,126 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportOffer extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        if (vars.commandIn("DEFAULT")) {
-            String strDateFrom = vars.getGlobalVariable("inpDateFrom",
-                    "ReportOffer|dateFrom", "");
-            String strDateTo = vars.getGlobalVariable("inpDateTo",
-                    "ReportOffer|dateTo", "");
-            String strcBpartnerId = vars.getInGlobalVariable(
-                    "inpcBPartnerId_IN", "ReportOffer|partner", "");
-            printPageDataSheet(response, vars, strDateFrom, strDateTo,
-                    strcBpartnerId);
-        } else if (vars.commandIn("FIND")) {
-            String strDateFrom = vars.getGlobalVariable("inpDateFrom",
-                    "ReportOffer|dateFrom", "");
-            String strDateTo = vars.getGlobalVariable("inpDateTo",
-                    "ReportOffer|dateTo", "");
-            String strcBpartnerId = vars.getRequestInGlobalVariable(
-                    "inpcBPartnerId_IN", "ReportOffer|partner");
-            printPageDataSheet(response, vars, strDateFrom, strDateTo,
-                    strcBpartnerId);
-        } else if (vars.commandIn("OPENAJAX")) {
-            String strOfferId = vars.getRequiredStringParameter("inpOfferAjax");
-            printPageAjaxDocumentResponse(response, vars, strOfferId);
-        } else
-            pageError(response);
+    if (vars.commandIn("DEFAULT")) {
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportOffer|dateFrom", "");
+      String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportOffer|dateTo", "");
+      String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN", "ReportOffer|partner",
+          "");
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId);
+    } else if (vars.commandIn("FIND")) {
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportOffer|dateFrom", "");
+      String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportOffer|dateTo", "");
+      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
+          "ReportOffer|partner");
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId);
+    } else if (vars.commandIn("OPENAJAX")) {
+      String strOfferId = vars.getRequiredStringParameter("inpOfferAjax");
+      printPageAjaxDocumentResponse(response, vars, strOfferId);
+    } else
+      pageError(response);
+  }
+
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strcBpartnerId) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = null;
+
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportOffer")
+        .createXmlDocument();
+
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportOffer", false, "", "", "",
+        false, "ad_reports", strReplaceWith, false, true);
+    toolbar.prepareSimpleToolBarTemplate();
+
+    ReportOfferData[] data = ReportOfferData.select(this, Utility.getContext(this, vars,
+        "#User_Client", "ReportOffer"), Utility.getContext(this, vars, "#User_Org", "ReportOffer"),
+        strDateFrom, strDateTo, strcBpartnerId);
+    /*
+     * SubreportOfferProductData[][] dataProduct = new SubreportOfferProductData[data.length][]; for
+     * (int i=0; i<data.length; i++) { dataProduct[i] = SubreportOfferProductData.select(this,
+     * Utility.getContext(this, vars, "#User_Client", "ReportOffer"), Utility.getContext(this, vars,
+     * "#User_Org", "ReportOffer"), data[i].mOfferId); }
+     */
+    xmlDocument.setParameter("toolbar", toolbar.toString());
+    try {
+      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportOffer");
+      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+      xmlDocument.setParameter("theme", vars.getTheme());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportOffer.html",
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      xmlDocument.setParameter("navigationBar", nav.toString());
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportOffer.html",
+          strReplaceWith);
+      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    {
+      OBError myMessage = vars.getMessage("ReportOffer");
+      vars.removeMessage("ReportOffer");
+      if (myMessage != null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
     }
 
-    void printPageDataSheet(HttpServletResponse response,
-            VariablesSecureApp vars, String strDateFrom, String strDateTo,
-            String strcBpartnerId) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = null;
+    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("dateFrom", strDateFrom);
+    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTo", strDateTo);
+    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("today", DateTimeData.today(this));
 
-        xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_reports/ReportOffer")
-                .createXmlDocument();
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportOfferData.selectBpartner(
+        this, Utility.getContext(this, vars, "#User_Org", "ReportOffer"), Utility.getContext(this,
+            vars, "#User_Client", "ReportOffer"), strcBpartnerId));
+    xmlDocument.setData("structure1", data);
+    // xmlDocument.setDataArray("reportProduct", "structure1" ,
+    // dataProduct);
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 
-        ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportOffer",
-                false, "", "", "", false, "ad_reports", strReplaceWith, false,
-                true);
-        toolbar.prepareSimpleToolBarTemplate();
+  void printPageAjaxDocumentResponse(HttpServletResponse response, VariablesSecureApp vars,
+      String strOfferId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: ajaxreponse");
+    XmlDocument xmlDocument = null;
 
-        ReportOfferData[] data = ReportOfferData.select(this, Utility
-                .getContext(this, vars, "#User_Client", "ReportOffer"), Utility
-                .getContext(this, vars, "#User_Org", "ReportOffer"),
-                strDateFrom, strDateTo, strcBpartnerId);
-        /*
-         * SubreportOfferProductData[][] dataProduct = new
-         * SubreportOfferProductData[data.length][]; for (int i=0;
-         * i<data.length; i++) { dataProduct[i] =
-         * SubreportOfferProductData.select(this, Utility.getContext(this, vars,
-         * "#User_Client", "ReportOffer"), Utility.getContext(this, vars,
-         * "#User_Org", "ReportOffer"), data[i].mOfferId); }
-         */
-        xmlDocument.setParameter("toolbar", toolbar.toString());
-        try {
-            WindowTabs tabs = new WindowTabs(this, vars,
-                    "org.openbravo.erpCommon.ad_reports.ReportOffer");
-            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-            xmlDocument.setParameter("theme", vars.getTheme());
-            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-                    "ReportOffer.html", classInfo.id, classInfo.type,
-                    strReplaceWith, tabs.breadcrumb());
-            xmlDocument.setParameter("navigationBar", nav.toString());
-            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
-                    "ReportOffer.html", strReplaceWith);
-            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
-        {
-            OBError myMessage = vars.getMessage("ReportOffer");
-            vars.removeMessage("ReportOffer");
-            if (myMessage != null) {
-                xmlDocument.setParameter("messageType", myMessage.getType());
-                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-                xmlDocument.setParameter("messageMessage", myMessage
-                        .getMessage());
-            }
-        }
+    SubreportOfferProductData[] data = SubreportOfferProductData.select(this, Utility.getContext(
+        this, vars, "#User_Client", "ReportOffer"), Utility.getContext(this, vars, "#User_Org",
+        "ReportOffer"), strOfferId);
 
-        xmlDocument
-                .setParameter("calendar", vars.getLanguage().substring(0, 2));
-        xmlDocument.setParameter("language", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("dateFrom", strDateFrom);
-        xmlDocument.setParameter("dateFromdisplayFormat", vars
-                .getSessionValue("#AD_SqlDateFormat"));
-        xmlDocument.setParameter("dateFromsaveFormat", vars
-                .getSessionValue("#AD_SqlDateFormat"));
-        xmlDocument.setParameter("dateTo", strDateTo);
-        xmlDocument.setParameter("dateTodisplayFormat", vars
-                .getSessionValue("#AD_SqlDateFormat"));
-        xmlDocument.setParameter("dateTosaveFormat", vars
-                .getSessionValue("#AD_SqlDateFormat"));
-        xmlDocument.setParameter("today", DateTimeData.today(this));
+    xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_reports/SubreportOfferProduct").createXmlDocument();
 
-        xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-                ReportOfferData.selectBpartner(this, Utility.getContext(this,
-                        vars, "#User_Org", "ReportOffer"), Utility.getContext(
-                        this, vars, "#User_Client", "ReportOffer"),
-                        strcBpartnerId));
-        xmlDocument.setData("structure1", data);
-        // xmlDocument.setDataArray("reportProduct", "structure1" ,
-        // dataProduct);
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    response.setContentType("text/plain; charset=UTF-8");
+    response.setHeader("Cache-Control", "no-cache");
+    PrintWriter out = response.getWriter();
 
-    void printPageAjaxDocumentResponse(HttpServletResponse response,
-            VariablesSecureApp vars, String strOfferId) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: ajaxreponse");
-        XmlDocument xmlDocument = null;
+    xmlDocument.setData("structure1", data);
+    out.println(xmlDocument.print());
+    out.close();
+  }
 
-        SubreportOfferProductData[] data = SubreportOfferProductData.select(
-                this, Utility.getContext(this, vars, "#User_Client",
-                        "ReportOffer"), Utility.getContext(this, vars,
-                        "#User_Org", "ReportOffer"), strOfferId);
-
-        xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_reports/SubreportOfferProduct")
-                .createXmlDocument();
-
-        response.setContentType("text/plain; charset=UTF-8");
-        response.setHeader("Cache-Control", "no-cache");
-        PrintWriter out = response.getWriter();
-
-        xmlDocument.setData("structure1", data);
-        out.println(xmlDocument.print());
-        out.close();
-    }
-
-    public String getServletInfo() {
-        return "Servlet ReportOffer. This Servlet was made by Pablo Sarobe";
-    } // end of the getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet ReportOffer. This Servlet was made by Pablo Sarobe";
+  } // end of the getServletInfo() method
 }

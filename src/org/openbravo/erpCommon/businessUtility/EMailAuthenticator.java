@@ -22,40 +22,39 @@ import javax.mail.PasswordAuthentication;
 import org.apache.log4j.Logger;
 
 public class EMailAuthenticator extends Authenticator {
-    static Logger log4j = Logger.getLogger(EMailAuthenticator.class);
+  static Logger log4j = Logger.getLogger(EMailAuthenticator.class);
 
-    private PasswordAuthentication m_pass;
+  private PasswordAuthentication m_pass;
 
-    public EMailAuthenticator(String username, String password) {
-        m_pass = new PasswordAuthentication(username, password);
-        if (username == null || username.length() == 0) {
-            log4j.error("EMailAuthenticator - Username is NULL");
-            Thread.dumpStack();
-        }
-        if (password == null || password.length() == 0) {
-            log4j.error("EMailAuthenticator - Password is NULL");
-            Thread.dumpStack();
-        }
+  public EMailAuthenticator(String username, String password) {
+    m_pass = new PasswordAuthentication(username, password);
+    if (username == null || username.length() == 0) {
+      log4j.error("EMailAuthenticator - Username is NULL");
+      Thread.dumpStack();
     }
-
-    protected PasswordAuthentication getPasswordAuthentication() {
-        return m_pass;
+    if (password == null || password.length() == 0) {
+      log4j.error("EMailAuthenticator - Password is NULL");
+      Thread.dumpStack();
     }
+  }
 
-    public String toString() {
-        if (m_pass == null)
-            return "EMailAuthenticator[]";
-        else
-            return "EMailAuthenticator[" + m_pass.getUserName() + "/"
-                    + m_pass.getPassword() + "]";
-    }
+  protected PasswordAuthentication getPasswordAuthentication() {
+    return m_pass;
+  }
 
-    private String getUserName() {
-        return m_pass.getUserName();
-    }
+  public String toString() {
+    if (m_pass == null)
+      return "EMailAuthenticator[]";
+    else
+      return "EMailAuthenticator[" + m_pass.getUserName() + "/" + m_pass.getPassword() + "]";
+  }
 
-    private String getPassword() {
-        return m_pass.getPassword();
-    }
+  private String getUserName() {
+    return m_pass.getUserName();
+  }
+
+  private String getPassword() {
+    return m_pass.getPassword();
+  }
 
 }

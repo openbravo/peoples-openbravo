@@ -20,54 +20,54 @@ package org.openbravo.erpCommon.ws.externalSales;
 
 public class Order {
 
-    private OrderIdentifier orderId;
-    private OrderLine[] lines;
-    private int state;
-    private BPartner businessPartner;
-    private Payment[] payments;
+  private OrderIdentifier orderId;
+  private OrderLine[] lines;
+  private int state;
+  private BPartner businessPartner;
+  private Payment[] payments;
 
-    /** Creates a new instance of Order */
-    public Order() {
-    }
+  /** Creates a new instance of Order */
+  public Order() {
+  }
 
-    public OrderIdentifier getOrderId() {
-        return orderId;
-    }
+  public OrderIdentifier getOrderId() {
+    return orderId;
+  }
 
-    public void setOrderId(OrderIdentifier orderId) {
-        this.orderId = orderId;
-    }
+  public void setOrderId(OrderIdentifier orderId) {
+    this.orderId = orderId;
+  }
 
-    public OrderLine[] getLines() {
-        return lines;
-    }
+  public OrderLine[] getLines() {
+    return lines;
+  }
 
-    public void setLines(OrderLine[] lines) {
-        this.lines = lines;
-    }
+  public void setLines(OrderLine[] lines) {
+    this.lines = lines;
+  }
 
-    public int getState() {
-        return state;
-    }
+  public int getState() {
+    return state;
+  }
 
-    public void setState(int state) {
-        this.state = state;
-    }
+  public void setState(int state) {
+    this.state = state;
+  }
 
-    public BPartner getBusinessPartner() {
-        return businessPartner;
-    }
+  public BPartner getBusinessPartner() {
+    return businessPartner;
+  }
 
-    public void setBusinessPartner(BPartner businessPartner) {
-        this.businessPartner = businessPartner;
-    }
+  public void setBusinessPartner(BPartner businessPartner) {
+    this.businessPartner = businessPartner;
+  }
 
-    public Payment[] getPayment() {
-        return payments;
-    }
+  public Payment[] getPayment() {
+    return payments;
+  }
 
-    public void setPayment(Payment[] payments) {
-        this.payments = payments;
-    }
+  public void setPayment(Payment[] payments) {
+    this.payments = payments;
+  }
 
 }

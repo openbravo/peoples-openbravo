@@ -31,41 +31,39 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Menu extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /** Creates a new instance of Menu */
-    public Menu() {
-    }
+  /** Creates a new instance of Menu */
+  public Menu() {
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        String targetmenu = vars.getSessionValue("targetmenu");
-        String textDirection = vars.getSessionValue("#TextDirection", "LTR");
-        printPageFrameIdentificacion(response, "../utility/VerticalMenu.html",
-                (targetmenu.equals("") ? "../utility/Home.html" : targetmenu),
-                "../utility/VerticalMenu.html?Command=LOADING", textDirection);
-    }
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    String targetmenu = vars.getSessionValue("targetmenu");
+    String textDirection = vars.getSessionValue("#TextDirection", "LTR");
+    printPageFrameIdentificacion(response, "../utility/VerticalMenu.html",
+        (targetmenu.equals("") ? "../utility/Home.html" : targetmenu),
+        "../utility/VerticalMenu.html?Command=LOADING", textDirection);
+  }
 
-    private void printPageFrameIdentificacion(HttpServletResponse response,
-            String strMenu, String strDetalle, String strMenuLoading,
-            String textDirection) throws IOException, ServletException {
-        XmlDocument xmlDocument;
-        if (textDirection.equals("RTL")) {
-            xmlDocument = xmlEngine.readXmlTemplate(
-                    "org/openbravo/erpCommon/security/Login_FS_RTL")
-                    .createXmlDocument();
-        } else {
-            xmlDocument = xmlEngine.readXmlTemplate(
-                    "org/openbravo/erpCommon/security/Login_FS")
-                    .createXmlDocument();
-        }
-        xmlDocument.setParameter("frameMenuLoading", strMenuLoading);
-        xmlDocument.setParameter("frameMenu", strMenu);
-        xmlDocument.setParameter("frame1", strDetalle);
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
+  private void printPageFrameIdentificacion(HttpServletResponse response, String strMenu,
+      String strDetalle, String strMenuLoading, String textDirection) throws IOException,
+      ServletException {
+    XmlDocument xmlDocument;
+    if (textDirection.equals("RTL")) {
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS_RTL")
+          .createXmlDocument();
+    } else {
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS")
+          .createXmlDocument();
     }
+    xmlDocument.setParameter("frameMenuLoading", strMenuLoading);
+    xmlDocument.setParameter("frameMenu", strMenu);
+    xmlDocument.setParameter("frame1", strDetalle);
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

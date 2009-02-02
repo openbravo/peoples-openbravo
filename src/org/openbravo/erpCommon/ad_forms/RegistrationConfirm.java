@@ -32,45 +32,41 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class RegistrationConfirm extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        if (vars.commandIn("DEFAULT")) {
-            printPageDataSheet(response, vars);
-        } else if (vars.commandIn("CONFIRM")) {
-            //
-        } else
-            pageError(response);
-    }
+    if (vars.commandIn("DEFAULT")) {
+      printPageDataSheet(response, vars);
+    } else if (vars.commandIn("CONFIRM")) {
+      //
+    } else
+      pageError(response);
+  }
 
-    void printPageDataSheet(HttpServletResponse response,
-            VariablesSecureApp vars) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
 
-        XmlDocument xmlDocument = null;
-        xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_forms/RegistrationConfirm")
-                .createXmlDocument();
+    XmlDocument xmlDocument = null;
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/RegistrationConfirm")
+        .createXmlDocument();
 
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("language", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("theme", vars.getTheme());
-        xmlDocument.setParameter("result", Utility.messageBD(this,
-                "REG_SUCCESS", vars.getLanguage()));
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("result", Utility.messageBD(this, "REG_SUCCESS", vars.getLanguage()));
 
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    out.println(xmlDocument.print());
+    out.close();
+  }
 
-    public String getServletInfo() {
-        return "Registration form servlet.";
-    } // end of getServletInfo() method
+  public String getServletInfo() {
+    return "Registration form servlet.";
+  } // end of getServletInfo() method
 }

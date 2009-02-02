@@ -39,105 +39,97 @@ import org.openbravo.data.Sqlc;
 import org.openbravo.utils.Replace;
 
 public class PrintJR extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        String strProcessId = vars.getRequiredStringParameter("inpadProcessId");
-        String strOutputType = vars.getStringParameter("inpoutputtype", "html");
-        if (!hasGeneralAccess(vars, "P", strProcessId)) {
-            bdError(request, response, "AccessTableNoView", vars.getLanguage());
-            return;
-        }
-        String strReportName = PrintJRData.getReportName(this, strProcessId);
-        HashMap<String, Object> parameters = createParameters(vars,
-                strProcessId);
-
-        renderJR(vars, response, strReportName, strOutputType, parameters,
-                null, null);
+    String strProcessId = vars.getRequiredStringParameter("inpadProcessId");
+    String strOutputType = vars.getStringParameter("inpoutputtype", "html");
+    if (!hasGeneralAccess(vars, "P", strProcessId)) {
+      bdError(request, response, "AccessTableNoView", vars.getLanguage());
+      return;
     }
+    String strReportName = PrintJRData.getReportName(this, strProcessId);
+    HashMap<String, Object> parameters = createParameters(vars, strProcessId);
 
-    HashMap<String, Object> createParameters(VariablesSecureApp vars,
-            String strProcessId) throws ServletException {
+    renderJR(vars, response, strReportName, strOutputType, parameters, null, null);
+  }
+
+  HashMap<String, Object> createParameters(VariablesSecureApp vars, String strProcessId)
+      throws ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("JR: Get Parameters");
+    String strParamname;
+    JasperReport jasperReport = null;
+
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    PrintJRData[] processparams = PrintJRData.getProcessParams(this, strProcessId);
+    if (processparams != null && processparams.length > 0) {
+      String strReportName = PrintJRData.getReportName(this, strProcessId);
+      String strAttach = globalParameters.strFTPDirectory + "/284-" + classInfo.id;
+      String strLanguage = vars.getLanguage();
+      String strBaseDesign = getBaseDesignPath(strLanguage);
+
+      strReportName = Replace.replace(
+          Replace.replace(strReportName, "@basedesign@", strBaseDesign), "@attach@", strAttach);
+
+      try {
+        JasperDesign jasperDesign = JRXmlLoader.load(strReportName);
+        jasperReport = JasperCompileManager.compileReport(jasperDesign);
+      } catch (JRException e) {
         if (log4j.isDebugEnabled())
-            log4j.debug("JR: Get Parameters");
-        String strParamname;
-        JasperReport jasperReport = null;
+          log4j.debug("JR: Error: " + e);
+        e.printStackTrace();
+        throw new ServletException(e.getMessage());
+      } catch (Exception e) {
+        throw new ServletException(e.getMessage());
+      }
 
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
-        PrintJRData[] processparams = PrintJRData.getProcessParams(this,
-                strProcessId);
-        if (processparams != null && processparams.length > 0) {
-            String strReportName = PrintJRData
-                    .getReportName(this, strProcessId);
-            String strAttach = globalParameters.strFTPDirectory + "/284-"
-                    + classInfo.id;
-            String strLanguage = vars.getLanguage();
-            String strBaseDesign = getBaseDesignPath(strLanguage);
-
-            strReportName = Replace.replace(Replace.replace(strReportName,
-                    "@basedesign@", strBaseDesign), "@attach@", strAttach);
-
-            try {
-                JasperDesign jasperDesign = JRXmlLoader.load(strReportName);
-                jasperReport = JasperCompileManager.compileReport(jasperDesign);
-            } catch (JRException e) {
-                if (log4j.isDebugEnabled())
-                    log4j.debug("JR: Error: " + e);
-                e.printStackTrace();
-                throw new ServletException(e.getMessage());
-            } catch (Exception e) {
-                throw new ServletException(e.getMessage());
-            }
-
-        }
-        for (int i = 0; i < processparams.length; i++) {
-            strParamname = Sqlc
-                    .TransformaNombreColumna(processparams[i].paramname);
-            if (log4j.isDebugEnabled())
-                log4j.debug("JR: -----parameter: " + strParamname + " "
-                        + vars.getStringParameter("inp" + strParamname));
-            if (!vars.getStringParameter("inp" + strParamname).equals(""))
-                parameters.put(processparams[i].paramname, formatParameter(
-                        vars, processparams[i].paramname, vars
-                                .getStringParameter("inp" + strParamname),
-                        processparams[i].reference, jasperReport));
-        }
-        return parameters;
     }
-
-    Object formatParameter(VariablesSecureApp vars, String strParamName,
-            String strParamValue, String reference, JasperReport jasperReport)
-            throws ServletException {
-        String strObjectClass = "";
-        Object object;
-        JRParameter[] jrparams = jasperReport.getParameters();
-        for (int i = 0; i < jrparams.length; i++) {
-            if (jrparams[i].getName().equals(strParamName))
-                strObjectClass = jrparams[i].getValueClassName();
-        }
-        if (log4j.isDebugEnabled())
-            log4j.debug("ClassType: " + strObjectClass);
-        if (strObjectClass.equals("java.lang.String")) {
-            object = new String(strParamValue);
-        } else if (strObjectClass.equals("java.util.Date")) {
-            String strDateFormat;
-            strDateFormat = vars.getJavaDateFormat();
-            SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
-            try {
-                object = dateFormat.parse(strParamValue);
-            } catch (Exception e) {
-                throw new ServletException(e.getMessage());
-            }
-        } else {
-            object = new String(strParamValue);
-        }
-        return object;
+    for (int i = 0; i < processparams.length; i++) {
+      strParamname = Sqlc.TransformaNombreColumna(processparams[i].paramname);
+      if (log4j.isDebugEnabled())
+        log4j.debug("JR: -----parameter: " + strParamname + " "
+            + vars.getStringParameter("inp" + strParamname));
+      if (!vars.getStringParameter("inp" + strParamname).equals(""))
+        parameters.put(processparams[i].paramname, formatParameter(vars,
+            processparams[i].paramname, vars.getStringParameter("inp" + strParamname),
+            processparams[i].reference, jasperReport));
     }
+    return parameters;
+  }
 
-    public String getServletInfo() {
-        return "Servlet that generates the output of a JasperReports report.";
-    } // end of getServletInfo() method
+  Object formatParameter(VariablesSecureApp vars, String strParamName, String strParamValue,
+      String reference, JasperReport jasperReport) throws ServletException {
+    String strObjectClass = "";
+    Object object;
+    JRParameter[] jrparams = jasperReport.getParameters();
+    for (int i = 0; i < jrparams.length; i++) {
+      if (jrparams[i].getName().equals(strParamName))
+        strObjectClass = jrparams[i].getValueClassName();
+    }
+    if (log4j.isDebugEnabled())
+      log4j.debug("ClassType: " + strObjectClass);
+    if (strObjectClass.equals("java.lang.String")) {
+      object = new String(strParamValue);
+    } else if (strObjectClass.equals("java.util.Date")) {
+      String strDateFormat;
+      strDateFormat = vars.getJavaDateFormat();
+      SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+      try {
+        object = dateFormat.parse(strParamValue);
+      } catch (Exception e) {
+        throw new ServletException(e.getMessage());
+      }
+    } else {
+      object = new String(strParamValue);
+    }
+    return object;
+  }
+
+  public String getServletInfo() {
+    return "Servlet that generates the output of a JasperReports report.";
+  } // end of getServletInfo() method
 }

@@ -37,61 +37,55 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.Utility;
 
 public class RptC_ProposalJr extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    if (vars.commandIn("DEFAULT")) {
+      String strClave = vars.getSessionValue("RptC_ProposalJr.inpcProjectproposalId_R");
+      if (strClave.equals(""))
+        strClave = vars.getSessionValue("RptC_ProposalJr.inpcProjectproposalId");
+      printPagePartePDF(response, vars, strClave);
+    } else
+      pageError(response);
+  }
+
+  void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars, String strClave)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: pdf - ID:" + strClave);
+    RptCProposalJrData[] data = RptCProposalJrData.select(this, strClave, Utility.getContext(this,
+        vars, "#User_Client", "RptC_ProposalJr"), Utility.getContext(this, vars, "#User_Org",
+        "RptC_ProposalJr"));
+
+    String strLanguage = vars.getLanguage();
+    String strBaseDesign = getBaseDesignPath(strLanguage);
+
+    JasperReport jasperReportLines;
+    try {
+      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
+          + "/org/openbravo/erpReports/SubreportLines.jrxml");
+      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+    } catch (JRException e) {
+      e.printStackTrace();
+      throw new ServletException(e.getMessage());
     }
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("SR_LINES", jasperReportLines);
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+    String strOutput = "pdf";
+    String strReportName = "@basedesign@/org/openbravo/erpReports/RptC_ProposalJr.jrxml";
+    renderJR(vars, response, strReportName, strOutput, parameters, data, null);
+  }
 
-        if (vars.commandIn("DEFAULT")) {
-            String strClave = vars
-                    .getSessionValue("RptC_ProposalJr.inpcProjectproposalId_R");
-            if (strClave.equals(""))
-                strClave = vars
-                        .getSessionValue("RptC_ProposalJr.inpcProjectproposalId");
-            printPagePartePDF(response, vars, strClave);
-        } else
-            pageError(response);
-    }
-
-    void printPagePartePDF(HttpServletResponse response,
-            VariablesSecureApp vars, String strClave) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: pdf - ID:" + strClave);
-        RptCProposalJrData[] data = RptCProposalJrData.select(this, strClave,
-                Utility.getContext(this, vars, "#User_Client",
-                        "RptC_ProposalJr"), Utility.getContext(this, vars,
-                        "#User_Org", "RptC_ProposalJr"));
-
-        String strLanguage = vars.getLanguage();
-        String strBaseDesign = getBaseDesignPath(strLanguage);
-
-        JasperReport jasperReportLines;
-        try {
-            JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
-                    + "/org/openbravo/erpReports/SubreportLines.jrxml");
-            jasperReportLines = JasperCompileManager
-                    .compileReport(jasperDesignLines);
-        } catch (JRException e) {
-            e.printStackTrace();
-            throw new ServletException(e.getMessage());
-        }
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("SR_LINES", jasperReportLines);
-
-        String strOutput = "pdf";
-        String strReportName = "@basedesign@/org/openbravo/erpReports/RptC_ProposalJr.jrxml";
-        renderJR(vars, response, strReportName, strOutput, parameters, data,
-                null);
-    }
-
-    public String getServletInfo() {
-        return "Servlet that presents the RptCOrders seeker";
-    } // End of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet that presents the RptCOrders seeker";
+  } // End of getServletInfo() method
 }

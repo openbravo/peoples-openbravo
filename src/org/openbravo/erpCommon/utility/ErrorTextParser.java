@@ -28,104 +28,103 @@ import org.openbravo.database.ConnectionProvider;
  *         Abstract Class Handler for the Error management in the application.
  */
 public abstract class ErrorTextParser {
-    static Logger log4j = Logger.getLogger(ErrorTextParser.class);
-    private ConnectionProvider conn;
-    private String language = "";
-    private String message = "";
-    private VariablesSecureApp vars;
+  static Logger log4j = Logger.getLogger(ErrorTextParser.class);
+  private ConnectionProvider conn;
+  private String language = "";
+  private String message = "";
+  private VariablesSecureApp vars;
 
-    /**
-     * Constructor.
-     */
-    public ErrorTextParser() {
-    }
+  /**
+   * Constructor.
+   */
+  public ErrorTextParser() {
+  }
 
-    /**
-     * Constructor
-     * 
-     * @param _data
-     *            Object with the database connection handler.
-     */
-    public void setConnection(ConnectionProvider _data) {
-        this.conn = _data;
-    }
+  /**
+   * Constructor
+   * 
+   * @param _data
+   *          Object with the database connection handler.
+   */
+  public void setConnection(ConnectionProvider _data) {
+    this.conn = _data;
+  }
 
-    /**
-     * Getter for the database connection handler.
-     * 
-     * @return Object with the database connection handler.
-     */
-    public ConnectionProvider getConnection() {
-        return this.conn;
-    }
+  /**
+   * Getter for the database connection handler.
+   * 
+   * @return Object with the database connection handler.
+   */
+  public ConnectionProvider getConnection() {
+    return this.conn;
+  }
 
-    /**
-     * Setter for the language.
-     * 
-     * @param _data
-     *            String with the language.
-     */
-    public void setLanguage(String _data) {
-        if (_data == null)
-            _data = "";
-        this.language = _data;
-    }
+  /**
+   * Setter for the language.
+   * 
+   * @param _data
+   *          String with the language.
+   */
+  public void setLanguage(String _data) {
+    if (_data == null)
+      _data = "";
+    this.language = _data;
+  }
 
-    /**
-     * Getter for the language.
-     * 
-     * @return String with the language.
-     */
-    public String getLanguage() {
-        return ((this.language == null) ? "" : this.language);
-    }
+  /**
+   * Getter for the language.
+   * 
+   * @return String with the language.
+   */
+  public String getLanguage() {
+    return ((this.language == null) ? "" : this.language);
+  }
 
-    /**
-     * Setter for the message text.
-     * 
-     * @param _data
-     *            String with the new message text.
-     */
-    public void setMessage(String _data) {
-        if (_data == null)
-            _data = "";
-        this.message = _data;
-    }
+  /**
+   * Setter for the message text.
+   * 
+   * @param _data
+   *          String with the new message text.
+   */
+  public void setMessage(String _data) {
+    if (_data == null)
+      _data = "";
+    this.message = _data;
+  }
 
-    /**
-     * Getter for the message text.
-     * 
-     * @return String with the message text.
-     */
-    public String getMessage() {
-        return ((this.message == null) ? "" : this.message);
-    }
+  /**
+   * Getter for the message text.
+   * 
+   * @return String with the message text.
+   */
+  public String getMessage() {
+    return ((this.message == null) ? "" : this.message);
+  }
 
-    /**
-     * Setter for the session info handler.
-     * 
-     * @param _data
-     *            Object with the session info handler.
-     */
-    public void setVars(VariablesSecureApp _data) {
-        this.vars = _data;
-    }
+  /**
+   * Setter for the session info handler.
+   * 
+   * @param _data
+   *          Object with the session info handler.
+   */
+  public void setVars(VariablesSecureApp _data) {
+    this.vars = _data;
+  }
 
-    /**
-     * Getter for the session info handler.
-     * 
-     * @return Object with the session info handler.
-     */
-    public VariablesSecureApp getVars() {
-        return this.vars;
-    }
+  /**
+   * Getter for the session info handler.
+   * 
+   * @return Object with the session info handler.
+   */
+  public VariablesSecureApp getVars() {
+    return this.vars;
+  }
 
-    /**
-     * Abstract method to implement the specific error parsing for each database
-     * type.
-     * 
-     * @return Object with the error message parsed.
-     * @throws Exception
-     */
-    public abstract OBError parse() throws Exception;
+  /**
+   * Abstract method to implement the specific error parsing for each database type.
+   * 
+   * @return Object with the error message parsed.
+   * @throws Exception
+   */
+  public abstract OBError parse() throws Exception;
 }

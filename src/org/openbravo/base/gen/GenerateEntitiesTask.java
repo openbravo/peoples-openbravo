@@ -31,143 +31,132 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.util.OBClassLoader;
 
 /**
- * Task generates the entities using OpenArchitectureWare. It initializes the
- * dal/model layer, the rest of the work is done by the superclass.
+ * Task generates the entities using OpenArchitectureWare. It initializes the dal/model layer, the
+ * rest of the work is done by the superclass.
  * 
  * @author Martin Taal
  */
 public class GenerateEntitiesTask extends WorkflowAntTask {
-    private static final Logger log = Logger
-            .getLogger(GenerateEntitiesTask.class);
+  private static final Logger log = Logger.getLogger(GenerateEntitiesTask.class);
 
-    private static String basePath;
-    private String srcGenPath;
+  private static String basePath;
+  private String srcGenPath;
 
-    public static String getBasePath() {
-        return basePath;
+  public static String getBasePath() {
+    return basePath;
+  }
+
+  public static void setBasePath(String basePath) {
+    GenerateEntitiesTask.basePath = basePath;
+  }
+
+  private String propertiesFile;
+  private String providerConfigDirectory;
+  private boolean debug;
+
+  public String getPropertiesFile() {
+    return propertiesFile;
+  }
+
+  public void setPropertiesFile(String propertiesFile) {
+    this.propertiesFile = propertiesFile;
+  }
+
+  @Override
+  public void execute() {
+
+    if (!hasChanged()) {
+      log.info("Model has not changed since last run, not re-generating entities");
+      return;
     }
 
-    public static void setBasePath(String basePath) {
-        GenerateEntitiesTask.basePath = basePath;
+    if (getBasePath() == null) {
+      setBasePath(super.getProject().getBaseDir().getAbsolutePath());
     }
 
-    private String propertiesFile;
-    private String providerConfigDirectory;
-    private boolean debug;
+    if (debug) {
+      OBProvider.getInstance().register(OBClassLoader.class,
+          OBClassLoader.ClassOBClassLoader.class, false);
 
-    public String getPropertiesFile() {
-        return propertiesFile;
+      // the beautifier uses the source.path if it is not set
+      log.debug("initializating dal layer, getting properties from " + getPropertiesFile());
+      OBPropertiesProvider.getInstance().setProperties(getPropertiesFile());
+
+      if (getProviderConfigDirectory() != null) {
+        OBConfigFileProvider.getInstance().setFileLocation(getProviderConfigDirectory());
+      }
+
+      try {
+        ModelProvider.getInstance().getModel();
+      } catch (final Exception e) {
+        e.printStackTrace(System.err);
+        throw new OBException(e);
+      }
+    }
+    super.execute();
+  }
+
+  private boolean hasChanged() {
+    // first check if there is a directory
+    // already in the src-gen
+    // if not then regenerate anyhow
+    final File modelDir = new File(getSrcGenPath(), "org" + File.separator + "openbravo"
+        + File.separator + "model" + File.separator + "ad");
+    if (!modelDir.exists()) {
+      return true;
     }
 
-    public void setPropertiesFile(String propertiesFile) {
-        this.propertiesFile = propertiesFile;
+    OBProvider.getInstance().register(OBClassLoader.class, OBClassLoader.ClassOBClassLoader.class,
+        false);
+
+    // the beautifier uses the source.path if it is not set
+    log.debug("initializating dal layer, getting properties from " + getPropertiesFile());
+    OBPropertiesProvider.getInstance().setProperties(getPropertiesFile());
+
+    if (getProviderConfigDirectory() != null) {
+      OBConfigFileProvider.getInstance().setFileLocation(getProviderConfigDirectory());
     }
 
-    @Override
-    public void execute() {
+    // check if there is a sourcefile which was updated before the last
+    // time the model was created. In this case that sourcefile (and
+    // all source files need to be regenerated
+    final long lastModelUpdateTime = ModelProvider.getInstance().computeLastUpdateModelTime();
+    return isSourceFileUpdatedBeforeModelChange(modelDir, lastModelUpdateTime);
+  }
 
-        if (!hasChanged()) {
-            log
-                    .info("Model has not changed since last run, not re-generating entities");
-            return;
+  private boolean isSourceFileUpdatedBeforeModelChange(File file, long modelUpdateTime) {
+    if (file.isDirectory()) {
+      for (File child : file.listFiles()) {
+        if (isSourceFileUpdatedBeforeModelChange(child, modelUpdateTime)) {
+          return true;
         }
-
-        if (getBasePath() == null) {
-            setBasePath(super.getProject().getBaseDir().getAbsolutePath());
-        }
-
-        if (debug) {
-            OBProvider.getInstance().register(OBClassLoader.class,
-                    OBClassLoader.ClassOBClassLoader.class, false);
-
-            // the beautifier uses the source.path if it is not set
-            log.debug("initializating dal layer, getting properties from "
-                    + getPropertiesFile());
-            OBPropertiesProvider.getInstance().setProperties(
-                    getPropertiesFile());
-
-            if (getProviderConfigDirectory() != null) {
-                OBConfigFileProvider.getInstance().setFileLocation(
-                        getProviderConfigDirectory());
-            }
-
-            try {
-                ModelProvider.getInstance().getModel();
-            } catch (final Exception e) {
-                e.printStackTrace(System.err);
-                throw new OBException(e);
-            }
-        }
-        super.execute();
+      }
+      return false;
     }
+    return file.lastModified() < modelUpdateTime;
+  }
 
-    private boolean hasChanged() {
-        // first check if there is a directory
-        // already in the src-gen
-        // if not then regenerate anyhow
-        final File modelDir = new File(getSrcGenPath(), "org" + File.separator
-                + "openbravo" + File.separator + "model" + File.separator
-                + "ad");
-        if (!modelDir.exists()) {
-            return true;
-        }
+  public String getProviderConfigDirectory() {
+    return providerConfigDirectory;
+  }
 
-        OBProvider.getInstance().register(OBClassLoader.class,
-                OBClassLoader.ClassOBClassLoader.class, false);
+  public void setProviderConfigDirectory(String providerConfigDirectory) {
+    this.providerConfigDirectory = providerConfigDirectory;
+  }
 
-        // the beautifier uses the source.path if it is not set
-        log.debug("initializating dal layer, getting properties from "
-                + getPropertiesFile());
-        OBPropertiesProvider.getInstance().setProperties(getPropertiesFile());
+  public boolean isDebug() {
+    return debug;
+  }
 
-        if (getProviderConfigDirectory() != null) {
-            OBConfigFileProvider.getInstance().setFileLocation(
-                    getProviderConfigDirectory());
-        }
+  public void setDebug(boolean debug) {
+    this.debug = debug;
+  }
 
-        // check if there is a sourcefile which was updated before the last
-        // time the model was created. In this case that sourcefile (and
-        // all source files need to be regenerated
-        final long lastModelUpdateTime = ModelProvider.getInstance()
-                .computeLastUpdateModelTime();
-        return isSourceFileUpdatedBeforeModelChange(modelDir,
-                lastModelUpdateTime);
-    }
+  public String getSrcGenPath() {
+    return srcGenPath;
+  }
 
-    private boolean isSourceFileUpdatedBeforeModelChange(File file,
-            long modelUpdateTime) {
-        if (file.isDirectory()) {
-            for (File child : file.listFiles()) {
-                if (isSourceFileUpdatedBeforeModelChange(child, modelUpdateTime)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return file.lastModified() < modelUpdateTime;
-    }
-
-    public String getProviderConfigDirectory() {
-        return providerConfigDirectory;
-    }
-
-    public void setProviderConfigDirectory(String providerConfigDirectory) {
-        this.providerConfigDirectory = providerConfigDirectory;
-    }
-
-    public boolean isDebug() {
-        return debug;
-    }
-
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
-
-    public String getSrcGenPath() {
-        return srcGenPath;
-    }
-
-    public void setSrcGenPath(String srcGenPath) {
-        this.srcGenPath = srcGenPath;
-    }
+  public void setSrcGenPath(String srcGenPath) {
+    this.srcGenPath = srcGenPath;
+  }
 }

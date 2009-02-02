@@ -21,20 +21,18 @@ package org.openbravo.erpCommon.ad_forms;
 import org.apache.log4j.Logger;
 
 public class DocLine_DPManagement extends DocLine {
-    static Logger log4jDocLine_Amortization = Logger
-            .getLogger(DocLine_Amortization.class);
+  static Logger log4jDocLine_Amortization = Logger.getLogger(DocLine_Amortization.class);
 
-    public String Amount;
-    public String Isreceipt;
-    public String StatusTo;
-    public String StatusFrom;
+  public String Amount;
+  public String Isreceipt;
+  public String StatusTo;
+  public String StatusFrom;
 
-    public DocLine_DPManagement(String DocumentType, String TrxHeader_ID,
-            String TrxLine_ID) {
-        super(DocumentType, TrxHeader_ID, TrxLine_ID);
-    }
+  public DocLine_DPManagement(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
+    super(DocumentType, TrxHeader_ID, TrxLine_ID);
+  }
 
-    public String getServletInfo() {
-        return "Servlet for the accounting";
-    } // end of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet for the accounting";
+  } // end of getServletInfo() method
 }

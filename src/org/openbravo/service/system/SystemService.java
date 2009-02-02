@@ -39,69 +39,64 @@ import org.openbravo.model.common.enterprise.Organization;
  * @author Martin Taal
  */
 public class SystemService implements OBSingleton {
-    private static SystemService instance;
+  private static SystemService instance;
 
-    public static SystemService getInstance() {
-        if (instance == null) {
-            instance = OBProvider.getInstance().get(SystemService.class);
-        }
-        return instance;
+  public static SystemService getInstance() {
+    if (instance == null) {
+      instance = OBProvider.getInstance().get(SystemService.class);
     }
+    return instance;
+  }
 
-    public static void setInstance(SystemService instance) {
-        SystemService.instance = instance;
-    }
+  public static void setInstance(SystemService instance) {
+    SystemService.instance = instance;
+  }
 
-    /**
-     * Returns true if for a certain class there are objects which have changed.
-     * 
-     * @param clzs
-     *            the type of objects which are checked
-     * @param afterDate
-     *            the timestamp to check
-     * @return true if there is an object in the database which changed since
-     *         afterDate, false otherwise
-     */
-    public boolean hasChanged(Class<?>[] clzs, Date afterDate) {
-        for (Class<?> clz : clzs) {
-            final OBCriteria<?> obc = OBDal.getInstance().createCriteria(
-                    (Class<BaseOBObject>) clz);
-            obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
-            // todo: count is slower than exists, is exists possible?
-            if (obc.count() > 0) {
-                return true;
-            }
-        }
-        return false;
+  /**
+   * Returns true if for a certain class there are objects which have changed.
+   * 
+   * @param clzs
+   *          the type of objects which are checked
+   * @param afterDate
+   *          the timestamp to check
+   * @return true if there is an object in the database which changed since afterDate, false
+   *         otherwise
+   */
+  public boolean hasChanged(Class<?>[] clzs, Date afterDate) {
+    for (Class<?> clz : clzs) {
+      final OBCriteria<?> obc = OBDal.getInstance().createCriteria((Class<BaseOBObject>) clz);
+      obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
+      // todo: count is slower than exists, is exists possible?
+      if (obc.count() > 0) {
+        return true;
+      }
     }
+    return false;
+  }
 
-    /**
-     * Checks if objects of a {@link DataSetTable} of the {@link DataSet} have
-     * changed since a specific date. Note that this method does not use
-     * whereclauses or other filters defined in the dataSetTable. It checks all
-     * instances of the table of the DataSetTable.
-     * 
-     * @param dataSet
-     *            the DataSetTables of this dataSet are checked.
-     * @param afterDate
-     *            the time limit
-     * @return true if there is at least one object which has changed since
-     *         afterDate, false afterwards
-     */
-    public <T extends BaseOBObject> boolean hasChanged(DataSet dataSet,
-            Date afterDate) {
-        for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
-            final Entity entity = ModelProvider.getInstance()
-                    .getEntityByTableName(
-                            dataSetTable.getTable().getTableName());
-            final OBCriteria<T> obc = OBDal.getInstance().createCriteria(
-                    entity.getName());
-            obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
-            // todo: count is slower than exists, is exists possible?
-            if (obc.count() > 0) {
-                return true;
-            }
-        }
-        return false;
+  /**
+   * Checks if objects of a {@link DataSetTable} of the {@link DataSet} have changed since a
+   * specific date. Note that this method does not use whereclauses or other filters defined in the
+   * dataSetTable. It checks all instances of the table of the DataSetTable.
+   * 
+   * @param dataSet
+   *          the DataSetTables of this dataSet are checked.
+   * @param afterDate
+   *          the time limit
+   * @return true if there is at least one object which has changed since afterDate, false
+   *         afterwards
+   */
+  public <T extends BaseOBObject> boolean hasChanged(DataSet dataSet, Date afterDate) {
+    for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
+      final Entity entity = ModelProvider.getInstance().getEntityByTableName(
+          dataSetTable.getTable().getTableName());
+      final OBCriteria<T> obc = OBDal.getInstance().createCriteria(entity.getName());
+      obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
+      // todo: count is slower than exists, is exists possible?
+      if (obc.count() > 0) {
+        return true;
+      }
     }
+    return false;
+  }
 }

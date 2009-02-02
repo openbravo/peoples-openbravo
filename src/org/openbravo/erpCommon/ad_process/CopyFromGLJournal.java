@@ -37,194 +37,158 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class CopyFromGLJournal extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        if (vars.commandIn("DEFAULT")) {
-            String strWindow = vars.getRequiredStringParameter("inpwindowId");
-            String strTab = vars.getRequiredStringParameter("inpTabId");
-            String strKey = vars
-                    .getRequiredStringParameter("inpglJournalbatchId");
-            String strDescription = vars.getStringParameter("inpDescription",
-                    "");
-            String strDocumentNo = vars.getStringParameter("inpDocumentNo", "");
-            printPage(response, vars, strDescription, strDocumentNo, strWindow,
-                    strTab, strKey);
-        } else if (vars.commandIn("FIND")) {
-            String strWindow = vars.getRequiredStringParameter("inpwindowId");
-            String strTab = vars.getRequiredStringParameter("inpTabId");
-            String strKey = vars
-                    .getRequiredStringParameter("inpglJournalbatchId");
-            String strDescription = vars.getStringParameter("inpDescription");
-            String strDocumentNo = vars.getStringParameter("inpDocumentNo");
-            printPage(response, vars, strDescription, strDocumentNo, strWindow,
-                    strTab, strKey);
-        } else if (vars.commandIn("SAVE")) {
-            String strWindow = vars.getStringParameter("inpwindowId");
-            String strTab = vars.getStringParameter("inpTabId");
-            ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(
-                    this, strTab);
-            String strWindowPath = "", strTabName = "";
-            if (tab != null && tab.length != 0) {
-                strTabName = FormatUtilities.replace(tab[0].name);
-                if (tab[0].help.equals("Y"))
-                    strWindowPath = "../utility/WindowTree_FS.html?inpTabId="
-                            + strTab;
-                else
-                    strWindowPath = "../"
-                            + FormatUtilities.replace(tab[0].description) + "/"
-                            + strTabName + "_Relation.html";
-            } else
-                strWindowPath = strDefaultServlet;
-            String strKey = vars
-                    .getRequiredStringParameter("inpglJournalbatchId");
-            String strGLJournalBatch = vars.getStringParameter("inpClave");
+    if (vars.commandIn("DEFAULT")) {
+      String strWindow = vars.getRequiredStringParameter("inpwindowId");
+      String strTab = vars.getRequiredStringParameter("inpTabId");
+      String strKey = vars.getRequiredStringParameter("inpglJournalbatchId");
+      String strDescription = vars.getStringParameter("inpDescription", "");
+      String strDocumentNo = vars.getStringParameter("inpDocumentNo", "");
+      printPage(response, vars, strDescription, strDocumentNo, strWindow, strTab, strKey);
+    } else if (vars.commandIn("FIND")) {
+      String strWindow = vars.getRequiredStringParameter("inpwindowId");
+      String strTab = vars.getRequiredStringParameter("inpTabId");
+      String strKey = vars.getRequiredStringParameter("inpglJournalbatchId");
+      String strDescription = vars.getStringParameter("inpDescription");
+      String strDocumentNo = vars.getStringParameter("inpDocumentNo");
+      printPage(response, vars, strDescription, strDocumentNo, strWindow, strTab, strKey);
+    } else if (vars.commandIn("SAVE")) {
+      String strWindow = vars.getStringParameter("inpwindowId");
+      String strTab = vars.getStringParameter("inpTabId");
+      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
+      String strWindowPath = "", strTabName = "";
+      if (tab != null && tab.length != 0) {
+        strTabName = FormatUtilities.replace(tab[0].name);
+        if (tab[0].help.equals("Y"))
+          strWindowPath = "../utility/WindowTree_FS.html?inpTabId=" + strTab;
+        else
+          strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
+              + "_Relation.html";
+      } else
+        strWindowPath = strDefaultServlet;
+      String strKey = vars.getRequiredStringParameter("inpglJournalbatchId");
+      String strGLJournalBatch = vars.getStringParameter("inpClave");
 
-            OBError myError = processButton(vars, strKey, strGLJournalBatch,
-                    strWindow);
-            vars.setMessage(strTab, myError);
+      OBError myError = processButton(vars, strKey, strGLJournalBatch, strWindow);
+      vars.setMessage(strTab, myError);
 
-            printPageClosePopUp(response, vars, strWindowPath);
-        } else
-            pageErrorPopUp(response);
-    }
+      printPageClosePopUp(response, vars, strWindowPath);
+    } else
+      pageErrorPopUp(response);
+  }
 
-    OBError processButton(VariablesSecureApp vars, String strKey,
-            String strGLJournalBatch, String windowId) {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Save: GLJournal");
-        if (strGLJournalBatch.equals(""))
-            return new OBError();
-        ;
-        Connection conn = null;
+  OBError processButton(VariablesSecureApp vars, String strKey, String strGLJournalBatch,
+      String windowId) {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Save: GLJournal");
+    if (strGLJournalBatch.equals(""))
+      return new OBError();
+    ;
+    Connection conn = null;
 
-        OBError myError = null;
+    OBError myError = null;
+    try {
+      conn = this.getTransactionConnection();
+      CopyFromGLJournalData[] data = CopyFromGLJournalData.select(this, strGLJournalBatch, strKey);
+      for (int i = 0; data != null && i < data.length; i++) {
+        String strSequence = SequenceIdData.getUUID();
+        String strDocumentNo = Utility.getDocumentNo(this, vars, windowId, "GL_Journal", Utility
+            .getContext(this, vars, "C_DocTypeTarget_ID", "132"), Utility.getContext(this, vars,
+            "C_DocType_ID", "132"), false, true);
         try {
-            conn = this.getTransactionConnection();
-            CopyFromGLJournalData[] data = CopyFromGLJournalData.select(this,
-                    strGLJournalBatch, strKey);
-            for (int i = 0; data != null && i < data.length; i++) {
-                String strSequence = SequenceIdData.getUUID();
-                String strDocumentNo = Utility.getDocumentNo(this, vars,
-                        windowId, "GL_Journal", Utility.getContext(this, vars,
-                                "C_DocTypeTarget_ID", "132"), Utility
-                                .getContext(this, vars, "C_DocType_ID", "132"),
-                        false, true);
-                try {
-                    if (CopyFromGLJournalData.insertGLJournal(conn, this,
-                            strSequence, vars.getClient(), vars.getOrg(), vars
-                                    .getUser(), data[i].cAcctschemaId,
-                            data[i].cDoctypeId, "DR", "CO", data[i].isapproved,
-                            data[i].isprinted, data[i].description,
-                            data[i].postingtype, data[i].glCategoryId,
-                            data[i].datedoc, data[i].dateacct,
-                            data[i].cPeriodId, data[i].cCurrencyId,
-                            data[i].currencyratetype, data[i].currencyrate,
-                            strKey, data[i].controlamt, strDocumentNo, "N",
-                            "N", "N") == 0)
-                        log4j.warn("Save: GLJournal record " + i
-                                + " not inserted. Sequence = " + strSequence);
-                } catch (ServletException ex) {
-                    myError = Utility.translateError(this, vars, vars
-                            .getLanguage(), ex.getMessage());
-                    releaseRollbackConnection(conn);
-                    return myError;
-                }
-                CopyFromGLJournalData[] dataLines = CopyFromGLJournalData
-                        .selectLines(this, data[i].glJournalId);
-                for (int j = 0; dataLines != null && j < dataLines.length; j++) {
-                    String strLineSequence = SequenceIdData.getUUID();
-                    try {
-                        if (CopyFromGLJournalData.insertGLJournalLine(conn,
-                                this, strLineSequence, vars.getClient(), vars
-                                        .getOrg(), vars.getUser(), strSequence,
-                                dataLines[j].line, dataLines[j].isgenerated,
-                                dataLines[j].description,
-                                dataLines[j].amtsourcedr,
-                                dataLines[j].amtsourcecr,
-                                dataLines[j].cCurrencyId,
-                                dataLines[j].currencyratetype,
-                                dataLines[j].currencyrate,
-                                dataLines[j].amtacctdr, dataLines[j].amtacctcr,
-                                dataLines[j].cUomId, dataLines[j].qty,
-                                dataLines[j].cValidcombinationId) == 0)
-                            log4j.warn("Save: GLJournalLine record " + j
-                                    + " not inserted. Sequence = "
-                                    + strLineSequence);
-                    } catch (ServletException ex) {
-                        myError = Utility.translateError(this, vars, vars
-                                .getLanguage(), ex.getMessage());
-                        releaseRollbackConnection(conn);
-                        return myError;
-                    }
-                }
-            }
-
-            releaseCommitConnection(conn);
-            myError = new OBError();
-            myError.setType("Success");
-            myError.setTitle("");
-            myError.setMessage(Utility.messageBD(this, "Success", vars
-                    .getLanguage()));
-        } catch (Exception e) {
-            try {
-                releaseRollbackConnection(conn);
-            } catch (Exception ignored) {
-            }
-            e.printStackTrace();
-            log4j.warn("Rollback in transaction");
-            myError = Utility.translateError(this, vars, vars.getLanguage(),
-                    "@CODE=ProcessRunError");
+          if (CopyFromGLJournalData.insertGLJournal(conn, this, strSequence, vars.getClient(), vars
+              .getOrg(), vars.getUser(), data[i].cAcctschemaId, data[i].cDoctypeId, "DR", "CO",
+              data[i].isapproved, data[i].isprinted, data[i].description, data[i].postingtype,
+              data[i].glCategoryId, data[i].datedoc, data[i].dateacct, data[i].cPeriodId,
+              data[i].cCurrencyId, data[i].currencyratetype, data[i].currencyrate, strKey,
+              data[i].controlamt, strDocumentNo, "N", "N", "N") == 0)
+            log4j.warn("Save: GLJournal record " + i + " not inserted. Sequence = " + strSequence);
+        } catch (ServletException ex) {
+          myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
+          return myError;
         }
-        return myError;
-    }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strDescription, String strDocumentNo, String strWindow,
-            String strTab, String strKey) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: Button process copy GLJournalBatch details");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_process/CopyFromGLJournal")
-                .createXmlDocument();
-        CopyFromGLJournalData[] data = CopyFromGLJournalData.selectFrom(this,
-                strDescription, strDocumentNo, vars.getClient(), Utility
-                        .getContext(this, vars, "#User_Org",
-                                "CopyFromGLJournal"));
-        xmlDocument.setData("structure1", data);
-        xmlDocument.setParameter("language", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("theme", vars.getTheme());
-        xmlDocument.setParameter("window", strWindow);
-        xmlDocument.setParameter("tab", strTab);
-        xmlDocument.setParameter("key", strKey);
-        {
-            OBError myMessage = vars.getMessage(strTab);
-            vars.removeMessage(strTab);
-            if (myMessage != null) {
-                xmlDocument.setParameter("messageType", myMessage.getType());
-                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-                xmlDocument.setParameter("messageMessage", myMessage
-                        .getMessage());
-            }
+        CopyFromGLJournalData[] dataLines = CopyFromGLJournalData.selectLines(this,
+            data[i].glJournalId);
+        for (int j = 0; dataLines != null && j < dataLines.length; j++) {
+          String strLineSequence = SequenceIdData.getUUID();
+          try {
+            if (CopyFromGLJournalData.insertGLJournalLine(conn, this, strLineSequence, vars
+                .getClient(), vars.getOrg(), vars.getUser(), strSequence, dataLines[j].line,
+                dataLines[j].isgenerated, dataLines[j].description, dataLines[j].amtsourcedr,
+                dataLines[j].amtsourcecr, dataLines[j].cCurrencyId, dataLines[j].currencyratetype,
+                dataLines[j].currencyrate, dataLines[j].amtacctdr, dataLines[j].amtacctcr,
+                dataLines[j].cUomId, dataLines[j].qty, dataLines[j].cValidcombinationId) == 0)
+              log4j.warn("Save: GLJournalLine record " + j + " not inserted. Sequence = "
+                  + strLineSequence);
+          } catch (ServletException ex) {
+            myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myError;
+          }
         }
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+      }
 
-    public String getServletInfo() {
-        return "Servlet Project set Type";
-    } // end of getServletInfo() method
+      releaseCommitConnection(conn);
+      myError = new OBError();
+      myError.setType("Success");
+      myError.setTitle("");
+      myError.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+    } catch (Exception e) {
+      try {
+        releaseRollbackConnection(conn);
+      } catch (Exception ignored) {
+      }
+      e.printStackTrace();
+      log4j.warn("Rollback in transaction");
+      myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=ProcessRunError");
+    }
+    return myError;
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDescription,
+      String strDocumentNo, String strWindow, String strTab, String strKey) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: Button process copy GLJournalBatch details");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_process/CopyFromGLJournal").createXmlDocument();
+    CopyFromGLJournalData[] data = CopyFromGLJournalData.selectFrom(this, strDescription,
+        strDocumentNo, vars.getClient(), Utility.getContext(this, vars, "#User_Org",
+            "CopyFromGLJournal"));
+    xmlDocument.setData("structure1", data);
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("window", strWindow);
+    xmlDocument.setParameter("tab", strTab);
+    xmlDocument.setParameter("key", strKey);
+    {
+      OBError myMessage = vars.getMessage(strTab);
+      vars.removeMessage(strTab);
+      if (myMessage != null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
+    }
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  public String getServletInfo() {
+    return "Servlet Project set Type";
+  } // end of getServletInfo() method
 }

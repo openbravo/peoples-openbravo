@@ -20,44 +20,42 @@
 package org.openbravo.dal.core;
 
 /**
- * Encapsulates a thread so that when the thread returns the session/transaction
- * is closed/committed/rolledback. It also ensures that the OBContext is removed
- * from the thread.
+ * Encapsulates a thread so that when the thread returns the session/transaction is
+ * closed/committed/rolledback. It also ensures that the OBContext is removed from the thread.
  * 
- * Note that cleaning up the thread is particularly important in webcontainer
- * environments because webcontainers (tomcat) re-use thread instances for new
- * requests (using a threadpool).
+ * Note that cleaning up the thread is particularly important in webcontainer environments because
+ * webcontainers (tomcat) re-use thread instances for new requests (using a threadpool).
  * 
  * @author mtaal
  */
 
 public abstract class DalThreadHandler extends ThreadHandler {
 
-    /** @see ThreadHandler#doBefore */
-    @Override
-    public void doBefore() {
-    }
+  /** @see ThreadHandler#doBefore */
+  @Override
+  public void doBefore() {
+  }
 
-    /** @see ThreadHandler#doFinal */
-    @Override
-    public void doFinal(boolean errorOccured) {
-        try {
-            if (SessionHandler.isSessionHandlerPresent()) {
-                // application software can force a rollback
-                if (SessionHandler.getInstance().getDoRollback()) {
-                    SessionHandler.getInstance().rollback();
-                } else if (errorOccured) {
-                    SessionHandler.getInstance().rollback();
-                } else {
-                    SessionHandler.getInstance().commitAndClose();
-                }
-            }
-        } finally {
-            SessionHandler.deleteSessionHandler();
-            if (OBContext.getOBContext() != null) {
-                OBContext.getOBContext().setInAdministratorMode(false);
-            }
-            OBContext.setOBContext((OBContext) null);
+  /** @see ThreadHandler#doFinal */
+  @Override
+  public void doFinal(boolean errorOccured) {
+    try {
+      if (SessionHandler.isSessionHandlerPresent()) {
+        // application software can force a rollback
+        if (SessionHandler.getInstance().getDoRollback()) {
+          SessionHandler.getInstance().rollback();
+        } else if (errorOccured) {
+          SessionHandler.getInstance().rollback();
+        } else {
+          SessionHandler.getInstance().commitAndClose();
         }
+      }
+    } finally {
+      SessionHandler.deleteSessionHandler();
+      if (OBContext.getOBContext() != null) {
+        OBContext.getOBContext().setInAdministratorMode(false);
+      }
+      OBContext.setOBContext((OBContext) null);
     }
+  }
 }

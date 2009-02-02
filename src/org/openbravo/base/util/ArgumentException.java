@@ -22,28 +22,28 @@ package org.openbravo.base.util;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Exception which can be used to indicate that arguments of a method have
- * illegal values. Is an unchecked exception which also logs itself.
+ * Exception which can be used to indicate that arguments of a method have illegal values. Is an
+ * unchecked exception which also logs itself.
  * 
  * @author mtaal
  */
 public class ArgumentException extends OBException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public ArgumentException() {
-        super();
-    }
+  public ArgumentException() {
+    super();
+  }
 
-    public ArgumentException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public ArgumentException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public ArgumentException(String message) {
-        super(message);
-    }
+  public ArgumentException(String message) {
+    super(message);
+  }
 
-    public ArgumentException(Throwable cause) {
-        super(cause);
-    }
+  public ArgumentException(Throwable cause) {
+    super(cause);
+  }
 }

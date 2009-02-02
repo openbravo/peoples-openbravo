@@ -37,133 +37,120 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class RequestReOpen extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    if (vars.commandIn("DEFAULT")) {
+      printPage(response, vars);
+    } else if (vars.commandIn("SAVE")) {
+      String strRequest = vars.getRequiredStringParameter("inprRequestId");
+      // new message system
+      OBError myMessage = processSave(vars, strRequest);
+      // if (!strMessage.equals(""))
+      // vars.setSessionValue("RequestReOpen.message", strMessage);
+      vars.setMessage("RequestReOpen", myMessage);
+      printPage(response, vars);
+    } else
+      pageErrorPopUp(response);
+  }
+
+  OBError processSave(VariablesSecureApp vars, String strRequest) {
+    OBError myMessage = null;
+    myMessage = new OBError();
+    myMessage.setTitle("");
+    if (log4j.isDebugEnabled())
+      log4j.debug("Save: RequestReOpen");
+    if (strRequest.equals("")) {
+      myMessage.setType("Success");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+      return myMessage;
+      // return "";
+    }
+    try {
+      String pinstance = SequenceIdData.getUUID();
+      PInstanceProcessData.insertPInstance(this, pinstance, "195", strRequest, "N", vars.getUser(),
+          vars.getClient(), vars.getOrg());
+      PInstanceProcessData.insertPInstanceParam(this, pinstance, "10", "R_Request_ID", strRequest,
+          vars.getClient(), vars.getOrg(), vars.getUser());
+      RequestReOpenData.processRequest(this, pinstance);
+    } catch (ServletException e) {
+      e.printStackTrace();
+      log4j.warn("Rollback in transaction");
+      myMessage.setType("Error");
+      myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+      return myMessage;
+      // return Utility.messageBD(this, "ProcessRunError",
+      // vars.getLanguage());
+    }
+    myMessage.setType("Success");
+    myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+    return myMessage;
+    // return Utility.messageBD(this, "Success", vars.getLanguage());
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: process RequestReOpen");
+    ActionButtonDefaultData[] data = null;
+    String strHelp = "", strDescription = "", strProcessId = "195";
+    if (vars.getLanguage().equals("en_US"))
+      data = ActionButtonDefaultData.select(this, strProcessId);
+    else
+      data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    if (data != null && data.length != 0) {
+      strDescription = data[0].description;
+      strHelp = data[0].help;
+    }
+    String[] discard = { "" };
+    if (strHelp.equals(""))
+      discard[0] = new String("helpDiscard");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_process/RequestReOpen").createXmlDocument();
+
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "RequestReOpen", false, "", "", "",
+        false, "ad_process", strReplaceWith, false, true);
+    toolbar.prepareSimpleToolBarTemplate();
+    xmlDocument.setParameter("toolbar", toolbar.toString());
+
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
+        .getLanguage()));
+    xmlDocument.setParameter("description", strDescription);
+    xmlDocument.setParameter("help", strHelp);
+    // new message system
+    /*
+     * String strMessage = vars.getSessionValue("RequestReOpen.message"); if
+     * (!strMessage.equals("")) { vars.removeSessionValue("RequestReOpen.message"); strMessage =
+     * "alert('" + Replace.replace(strMessage, "'", "\'") + "');"; }
+     * xmlDocument.setParameter("body", strMessage);
+     */
+    {
+      OBError myMessage = vars.getMessage("RequestReOpen");
+      vars.removeMessage("RequestReOpen");
+      if (myMessage != null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 
-        if (vars.commandIn("DEFAULT")) {
-            printPage(response, vars);
-        } else if (vars.commandIn("SAVE")) {
-            String strRequest = vars
-                    .getRequiredStringParameter("inprRequestId");
-            // new message system
-            OBError myMessage = processSave(vars, strRequest);
-            // if (!strMessage.equals(""))
-            // vars.setSessionValue("RequestReOpen.message", strMessage);
-            vars.setMessage("RequestReOpen", myMessage);
-            printPage(response, vars);
-        } else
-            pageErrorPopUp(response);
-    }
-
-    OBError processSave(VariablesSecureApp vars, String strRequest) {
-        OBError myMessage = null;
-        myMessage = new OBError();
-        myMessage.setTitle("");
-        if (log4j.isDebugEnabled())
-            log4j.debug("Save: RequestReOpen");
-        if (strRequest.equals("")) {
-            myMessage.setType("Success");
-            myMessage.setMessage(Utility.messageBD(this, "Success", vars
-                    .getLanguage()));
-            return myMessage;
-            // return "";
-        }
-        try {
-            String pinstance = SequenceIdData.getUUID();
-            PInstanceProcessData.insertPInstance(this, pinstance, "195",
-                    strRequest, "N", vars.getUser(), vars.getClient(), vars
-                            .getOrg());
-            PInstanceProcessData.insertPInstanceParam(this, pinstance, "10",
-                    "R_Request_ID", strRequest, vars.getClient(),
-                    vars.getOrg(), vars.getUser());
-            RequestReOpenData.processRequest(this, pinstance);
-        } catch (ServletException e) {
-            e.printStackTrace();
-            log4j.warn("Rollback in transaction");
-            myMessage.setType("Error");
-            myMessage.setMessage(Utility.messageBD(this, "ProcessRunError",
-                    vars.getLanguage()));
-            return myMessage;
-            // return Utility.messageBD(this, "ProcessRunError",
-            // vars.getLanguage());
-        }
-        myMessage.setType("Success");
-        myMessage.setMessage(Utility.messageBD(this, "Success", vars
-                .getLanguage()));
-        return myMessage;
-        // return Utility.messageBD(this, "Success", vars.getLanguage());
-    }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars)
-            throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: process RequestReOpen");
-        ActionButtonDefaultData[] data = null;
-        String strHelp = "", strDescription = "", strProcessId = "195";
-        if (vars.getLanguage().equals("en_US"))
-            data = ActionButtonDefaultData.select(this, strProcessId);
-        else
-            data = ActionButtonDefaultData.selectLanguage(this, vars
-                    .getLanguage(), strProcessId);
-        if (data != null && data.length != 0) {
-            strDescription = data[0].description;
-            strHelp = data[0].help;
-        }
-        String[] discard = { "" };
-        if (strHelp.equals(""))
-            discard[0] = new String("helpDiscard");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_process/RequestReOpen")
-                .createXmlDocument();
-
-        ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
-                "RequestReOpen", false, "", "", "", false, "ad_process",
-                strReplaceWith, false, true);
-        toolbar.prepareSimpleToolBarTemplate();
-        xmlDocument.setParameter("toolbar", toolbar.toString());
-
-        xmlDocument.setParameter("language", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("question", Utility.messageBD(this,
-                "StartProcess?", vars.getLanguage()));
-        xmlDocument.setParameter("description", strDescription);
-        xmlDocument.setParameter("help", strHelp);
-        // new message system
-        /*
-         * String strMessage = vars.getSessionValue("RequestReOpen.message"); if
-         * (!strMessage.equals("")) {
-         * vars.removeSessionValue("RequestReOpen.message"); strMessage =
-         * "alert('" + Replace.replace(strMessage, "'", "\'") + "');"; }
-         * xmlDocument.setParameter("body", strMessage);
-         */
-        {
-            OBError myMessage = vars.getMessage("RequestReOpen");
-            vars.removeMessage("RequestReOpen");
-            if (myMessage != null) {
-                xmlDocument.setParameter("messageType", myMessage.getType());
-                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-                xmlDocument.setParameter("messageMessage", myMessage
-                        .getMessage());
-            }
-        }
-
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
-
-    public String getServletInfo() {
-        return "Servlet RequestReOpen";
-    } // end of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet RequestReOpen";
+  } // end of getServletInfo() method
 }

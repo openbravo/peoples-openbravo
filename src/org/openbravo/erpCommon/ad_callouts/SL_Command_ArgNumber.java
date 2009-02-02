@@ -33,64 +33,62 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_Command_ArgNumber extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    static final BigDecimal ZERO = new BigDecimal(0.0);
+  static final BigDecimal ZERO = new BigDecimal(0.0);
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strCommand = vars.getStringParameter("inpatCommandId");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strCommand = vars.getStringParameter("inpatCommandId");
 
-            try {
-                printPage(response, vars, strCommand);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+      try {
+        printPage(response, vars, strCommand);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strCommand) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-        SLCommandArgNumberData[] data = SLCommandArgNumberData.select(this,
-                strCommand);
-        String strArgNo = data[0].argno;
-        String strHelp1 = data[0].help1;
-        String strHelp2 = data[0].help2;
-        String strHelp3 = data[0].help3;
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strCommand)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    SLCommandArgNumberData[] data = SLCommandArgNumberData.select(this, strCommand);
+    String strArgNo = data[0].argno;
+    String strHelp1 = data[0].help1;
+    String strHelp2 = data[0].help2;
+    String strHelp3 = data[0].help3;
 
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_Command_ArgNumber';\n\n");
-        resultado.append("var respuesta = new Array(");
-        resultado.append("new Array(\"inpargno\", " + strArgNo + "),\n");
-        resultado.append("new Array(\"inparghelp1\", \""
-                + FormatUtilities.replaceJS(strHelp1) + "\"),\n");
-        resultado.append("new Array(\"inparghelp2\", \""
-                + FormatUtilities.replaceJS(strHelp2) + "\"),\n");
-        resultado.append("new Array(\"inparghelp3\", \""
-                + FormatUtilities.replaceJS(strHelp3) + "\"),\n");
-        resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
-        resultado.append(");");
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_Command_ArgNumber';\n\n");
+    resultado.append("var respuesta = new Array(");
+    resultado.append("new Array(\"inpargno\", " + strArgNo + "),\n");
+    resultado.append("new Array(\"inparghelp1\", \"" + FormatUtilities.replaceJS(strHelp1)
+        + "\"),\n");
+    resultado.append("new Array(\"inparghelp2\", \"" + FormatUtilities.replaceJS(strHelp2)
+        + "\"),\n");
+    resultado.append("new Array(\"inparghelp3\", \"" + FormatUtilities.replaceJS(strHelp3)
+        + "\"),\n");
+    resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
+    resultado.append(");");
 
-        xmlDocument.setParameter("array", resultado.toString());
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    xmlDocument.setParameter("array", resultado.toString());
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

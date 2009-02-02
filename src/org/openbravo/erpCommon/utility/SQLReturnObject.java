@@ -23,27 +23,27 @@ import java.util.Hashtable;
 import org.openbravo.data.FieldProvider;
 
 public class SQLReturnObject implements FieldProvider {
-    private Hashtable<String, String> data = new Hashtable<String, String>();
+  private Hashtable<String, String> data = new Hashtable<String, String>();
 
-    public SQLReturnObject() {
-    }
+  public SQLReturnObject() {
+  }
 
-    public String getField(String fieldName) {
-        return getData(fieldName);
-    }
+  public String getField(String fieldName) {
+    return getData(fieldName);
+  }
 
-    public void setData(String name, String value) {
-        if (name == null)
-            return;
-        if (this.data == null)
-            this.data = new Hashtable<String, String>();
-        if (value == null || value.equals(""))
-            this.data.remove(name.toUpperCase());
-        else
-            this.data.put(name.toUpperCase(), value);
-    }
+  public void setData(String name, String value) {
+    if (name == null)
+      return;
+    if (this.data == null)
+      this.data = new Hashtable<String, String>();
+    if (value == null || value.equals(""))
+      this.data.remove(name.toUpperCase());
+    else
+      this.data.put(name.toUpperCase(), value);
+  }
 
-    public String getData(String name) {
-        return data.get(name.toUpperCase());
-    }
+  public String getData(String name) {
+    return data.get(name.toUpperCase());
+  }
 }

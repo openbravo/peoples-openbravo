@@ -24,26 +24,26 @@ import java.util.Date;
 import org.openbravo.model.ad.access.User;
 
 /**
- * An interface modeling open bravo objects which have audit info fields such as
- * created, createdBy, etc.
+ * An interface modeling open bravo objects which have audit info fields such as created, createdBy,
+ * etc.
  * 
  * @author mtaal
  */
 
 public interface Traceable {
-    public User getCreatedBy();
+  public User getCreatedBy();
 
-    public void setCreatedBy(User user);
+  public void setCreatedBy(User user);
 
-    public Date getCreated();
+  public Date getCreated();
 
-    public void setCreated(Date date);
+  public void setCreated(Date date);
 
-    public User getUpdatedBy();
+  public User getUpdatedBy();
 
-    public void setUpdatedBy(User user);
+  public void setUpdatedBy(User user);
 
-    public Date getUpdated();
+  public Date getUpdated();
 
-    public void setUpdated(Date date);
+  public void setUpdated(Date date);
 }

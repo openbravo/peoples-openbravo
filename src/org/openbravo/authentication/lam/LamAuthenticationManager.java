@@ -36,61 +36,57 @@ import com.spikesource.lam.bindings.LamClient;
  */
 public class LamAuthenticationManager implements AuthenticationManager {
 
-    private ConnectionProvider conn = null;
+  private ConnectionProvider conn = null;
 
-    /** Creates a new instance of LamAuthenticationManager */
-    public LamAuthenticationManager() {
+  /** Creates a new instance of LamAuthenticationManager */
+  public LamAuthenticationManager() {
+  }
+
+  public void init(HttpServlet s) throws AuthenticationException {
+
+    // TODO: Read LAM configuration.
+    if (s instanceof ConnectionProvider) {
+      conn = (ConnectionProvider) s;
+    } else {
+      throw new AuthenticationException("Connection provider required for LAM authentication");
     }
+  }
 
-    public void init(HttpServlet s) throws AuthenticationException {
+  public String authenticate(HttpServletRequest request, HttpServletResponse response)
+      throws AuthenticationException, ServletException, IOException {
 
-        // TODO: Read LAM configuration.
-        if (s instanceof ConnectionProvider) {
-            conn = (ConnectionProvider) s;
+    try {
+      LamClient LC = new LamClient(); // TODO: configure LamClient
+
+      String sUserName = LC.force_authenticate(request, response);
+      if (sUserName == null || sUserName.equals("")) {
+        return null;
+      } else {
+        String sUserId = SeguridadData.getUserId(conn, sUserName);
+        if ("-1".equals(sUserId)) {
+          throw new AuthenticationException("Authenticated user is not an Openbravo ERP user: "
+              + sUserName);
         } else {
-            throw new AuthenticationException(
-                    "Connection provider required for LAM authentication");
+          return sUserId;
         }
+      }
+    } catch (XmlRpcException e) {
+      throw new ServletException("Cannot authenticate user.", e);
+    } catch (NoSuchAlgorithmException e) {
+      throw new ServletException("Cannot authenticate user.", e);
+    } catch (KeyManagementException e) {
+      throw new ServletException("Cannot authenticate user.", e);
     }
+  }
 
-    public String authenticate(HttpServletRequest request,
-            HttpServletResponse response) throws AuthenticationException,
-            ServletException, IOException {
+  public void logout(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
 
-        try {
-            LamClient LC = new LamClient(); // TODO: configure LamClient
-
-            String sUserName = LC.force_authenticate(request, response);
-            if (sUserName == null || sUserName.equals("")) {
-                return null;
-            } else {
-                String sUserId = SeguridadData.getUserId(conn, sUserName);
-                if ("-1".equals(sUserId)) {
-                    throw new AuthenticationException(
-                            "Authenticated user is not an Openbravo ERP user: "
-                                    + sUserName);
-                } else {
-                    return sUserId;
-                }
-            }
-        } catch (XmlRpcException e) {
-            throw new ServletException("Cannot authenticate user.", e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new ServletException("Cannot authenticate user.", e);
-        } catch (KeyManagementException e) {
-            throw new ServletException("Cannot authenticate user.", e);
-        }
+    try {
+      LamClient LC = new LamClient(); // TODO: configure LamClient
+      LC.logout(request, response, HttpBaseUtils.getLocalAddress(request) + "/security/Menu.html");
+    } catch (XmlRpcException e) {
+      throw new ServletException("Cannot close user session.", e);
     }
-
-    public void logout(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        try {
-            LamClient LC = new LamClient(); // TODO: configure LamClient
-            LC.logout(request, response, HttpBaseUtils.getLocalAddress(request)
-                    + "/security/Menu.html");
-        } catch (XmlRpcException e) {
-            throw new ServletException("Cannot close user session.", e);
-        }
-    }
+  }
 }

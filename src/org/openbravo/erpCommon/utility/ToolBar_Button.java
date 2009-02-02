@@ -19,79 +19,74 @@
 package org.openbravo.erpCommon.utility;
 
 public class ToolBar_Button implements HTMLElement {
-    String name = "";
-    String description = "";
-    String click = "";
-    String href = "#";
-    ToolBar_Image image;
-    String base_direction;
-    String imageClass;
-    boolean selected = false;
+  String name = "";
+  String description = "";
+  String click = "";
+  String href = "#";
+  ToolBar_Image image;
+  String base_direction;
+  String imageClass;
+  boolean selected = false;
 
-    public ToolBar_Button(String _base_direction, String _name,
-            String _description, String _onclick) {
-        this(_base_direction, _name, _description, _onclick, "#");
-    }
+  public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick) {
+    this(_base_direction, _name, _description, _onclick, "#");
+  }
 
-    public ToolBar_Button(String _base_direction, String _name,
-            String _description, String _onclick, boolean _selected) {
-        this(_base_direction, _name, _description, _onclick, "#");
-        this.selected = _selected;
-    }
+  public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick,
+      boolean _selected) {
+    this(_base_direction, _name, _description, _onclick, "#");
+    this.selected = _selected;
+  }
 
-    public ToolBar_Button(String _base_direction, String _name,
-            String _description, String _onclick, boolean _selected,
-            String _imageClass) {
-        this(_base_direction, _name, _description, _onclick, "#", _imageClass);
-        this.selected = _selected;
-    }
+  public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick,
+      boolean _selected, String _imageClass) {
+    this(_base_direction, _name, _description, _onclick, "#", _imageClass);
+    this.selected = _selected;
+  }
 
-    public ToolBar_Button(String _base_direction, String _name,
-            String _description, String _onclick, String _href) {
-        this(_base_direction, _name, _description, _onclick, _href, _name);
-    }
+  public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick,
+      String _href) {
+    this(_base_direction, _name, _description, _onclick, _href, _name);
+  }
 
-    public ToolBar_Button(String _base_direction, String _name,
-            String _description, String _onclick, String _href,
-            String _imageClass) {
-        this.base_direction = _base_direction;
-        this.name = _name;
-        this.click = _onclick;
-        this.description = _description;
-        this.href = _href;
-        this.imageClass = _imageClass;
-        this.image = new ToolBar_Image(this.base_direction, this.name,
-                this.description, this.imageClass);
-    }
+  public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick,
+      String _href, String _imageClass) {
+    this.base_direction = _base_direction;
+    this.name = _name;
+    this.click = _onclick;
+    this.description = _description;
+    this.href = _href;
+    this.imageClass = _imageClass;
+    this.image = new ToolBar_Image(this.base_direction, this.name, this.description,
+        this.imageClass);
+  }
 
-    public String getWidth() {
-        return "2%";
-    }
+  public String getWidth() {
+    return "2%";
+  }
 
-    public String elementType() {
-        return "BUTTON";
-    }
+  public String elementType() {
+    return "BUTTON";
+  }
 
-    public String toString() {
-        StringBuffer toolbar = new StringBuffer();
-        toolbar.append("<a href=\"");
-        toolbar.append(href);
-        toolbar.append("\" onClick=\"");
-        toolbar.append(click);
-        if ((click != null && !click.equals("")) || href == null
-                || href.equals("") || href.equals("#"))
-            toolbar.append("return false;");
-        toolbar.append("\" ");
-        toolbar.append("class=\"Main_ToolBar_Button").append(
-                selected ? "_Selected" : "").append(
-                "\" onMouseOver=\"window.status='");
-        toolbar.append(description);
-        toolbar.append("';return true;\" ");
-        toolbar
-                .append("onMouseOut=\"window.status='';return true;\" onclick=\"this.hideFocus=true\" onblur=\"this.hideFocus=false\" ");
-        toolbar.append("id=\"linkButton").append(name).append("\">");
-        toolbar.append(image);
-        toolbar.append("</a>");
-        return toolbar.toString();
-    }
+  public String toString() {
+    StringBuffer toolbar = new StringBuffer();
+    toolbar.append("<a href=\"");
+    toolbar.append(href);
+    toolbar.append("\" onClick=\"");
+    toolbar.append(click);
+    if ((click != null && !click.equals("")) || href == null || href.equals("") || href.equals("#"))
+      toolbar.append("return false;");
+    toolbar.append("\" ");
+    toolbar.append("class=\"Main_ToolBar_Button").append(selected ? "_Selected" : "").append(
+        "\" onMouseOver=\"window.status='");
+    toolbar.append(description);
+    toolbar.append("';return true;\" ");
+    toolbar
+        .append("onMouseOut=\"window.status='';return true;\" onclick=\"this.hideFocus=true\" onblur=\"this.hideFocus=false\" ");
+    toolbar.append("id=\"linkButton").append(name).append("\">");
+    toolbar.append(image);
+    toolbar.append("</a>");
+    return toolbar.toString();
+  }
 }

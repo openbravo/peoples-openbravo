@@ -33,56 +33,55 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_Year_Validation extends HttpSecureAppServlet {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strYear = vars.getStringParameter("inpyear");
+      try {
+        printPage(response, vars, strYear);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+
+    } else
+      pageError(response);
+
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strYear)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_Year_Validation';\n\n");
+    resultado.append("var respuesta = new Array(");
+
+    String msg = "";
+
+    try {
+      Integer.parseInt(strYear);
+    } catch (NumberFormatException e) {
+      msg = Utility.messageBD(this, "NotValidNumber", vars.getLanguage());
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strYear = vars.getStringParameter("inpyear");
-            try {
-                printPage(response, vars, strYear);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-
-        } else
-            pageError(response);
-
-    }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strYear) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_Year_Validation';\n\n");
-        resultado.append("var respuesta = new Array(");
-
-        String msg = "";
-
-        try {
-            Integer.parseInt(strYear);
-        } catch (NumberFormatException e) {
-            msg = Utility.messageBD(this, "NotValidNumber", vars.getLanguage());
-        }
-        
-        resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");
-        resultado.append(");");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");
+    resultado.append(");");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

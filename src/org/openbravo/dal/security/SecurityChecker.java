@@ -42,169 +42,150 @@ import org.openbravo.dal.core.SessionHandler;
 
 public class SecurityChecker implements OBSingleton {
 
-    private static SecurityChecker instance;
+  private static SecurityChecker instance;
 
-    public static SecurityChecker getInstance() {
-        if (instance == null) {
-            instance = OBProvider.getInstance().get(SecurityChecker.class);
-        }
-        return instance;
+  public static SecurityChecker getInstance() {
+    if (instance == null) {
+      instance = OBProvider.getInstance().get(SecurityChecker.class);
+    }
+    return instance;
+  }
+
+  public void checkDeleteAllowed(Object o) {
+    if (!OBContext.getOBContext().isInAdministratorMode() && o instanceof BaseOBObject) {
+      final BaseOBObject bob = (BaseOBObject) o;
+      final Entity entity = ModelProvider.getInstance().getEntity(bob.getEntityName());
+      if (!entity.isDeletable()) {
+        throw new OBSecurityException("Entity " + entity.getName() + " is not deletable");
+      }
+    }
+    checkWriteAccess(o);
+  }
+
+  /**
+   * Performs several write access checks when an object is created or updated:
+   * <ul>
+   * <li>is the organization writable (@see OBContext#getWritableOrganizations())</li>
+   * <li>is the client of the object the same as the client of the user (@see
+   * OBContext#getCurrentClient())</li>
+   * <li>is the Entity writable for this user (@see EntityAccessChecker#isWritable(Entity))
+   * <li>are the client and organization correct from an access level perspective (@see
+   * AccessLevelChecker).</lo>
+   * 
+   * @param obj
+   *          the object to check
+   * @return true if writable, false otherwise
+   * @see Entity
+   */
+  // NOTE: this method needs to be kept insync with the checkWritable method
+  public boolean isWritable(Object obj) {
+
+    // check that the client id and organization id are resp. in the list of
+    // user_client and user_org
+    // TODO: throw specific and translated exception, for more info:
+    // Utility.translateError(this, vars, vars.getLanguage(),
+    // Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()))
+
+    final OBContext obContext = OBContext.getOBContext();
+
+    String clientId = "";
+    if (obj instanceof ClientEnabled && ((ClientEnabled) obj).getClient() != null) {
+      clientId = (String) DalUtil.getId(((ClientEnabled) obj).getClient());
+    }
+    String orgId = "";
+    if (obj instanceof OrganizationEnabled && ((OrganizationEnabled) obj).getOrganization() != null) {
+      orgId = (String) DalUtil.getId(((OrganizationEnabled) obj).getOrganization());
     }
 
-    public void checkDeleteAllowed(Object o) {
-        if (!OBContext.getOBContext().isInAdministratorMode()
-                && o instanceof BaseOBObject) {
-            final BaseOBObject bob = (BaseOBObject) o;
-            final Entity entity = ModelProvider.getInstance().getEntity(
-                    bob.getEntityName());
-            if (!entity.isDeletable()) {
-                throw new OBSecurityException("Entity " + entity.getName()
-                        + " is not deletable");
-            }
+    final Entity entity = ((BaseOBObject) obj).getEntity();
+    if (!obContext.isInAdministratorMode() && clientId.length() > 0) {
+      if (obj instanceof ClientEnabled) {
+        if (!obContext.getCurrentClient().getId().equals(clientId)) {
+          return false;
         }
-        checkWriteAccess(o);
+      }
+
+      // todo can be improved by only checking if the client or
+      // organization
+      // actually changed...
+      if (!obContext.getEntityAccessChecker().isWritable(entity)) {
+        return false;
+      }
+
+      if (obj instanceof OrganizationEnabled && orgId.length() > 0) {
+        if (!obContext.getWritableOrganizations().contains(orgId)) {
+          return false;
+        }
+      }
     }
 
-    /**
-     * Performs several write access checks when an object is created or
-     * updated:
-     * <ul>
-     * <li>is the organization writable (@see
-     * OBContext#getWritableOrganizations())</li>
-     * <li>is the client of the object the same as the client of the user (@see
-     * OBContext#getCurrentClient())</li>
-     * <li>is the Entity writable for this user (@see
-     * EntityAccessChecker#isWritable(Entity))
-     * <li>are the client and organization correct from an access level
-     * perspective (@see AccessLevelChecker).</lo>
-     * 
-     * @param obj
-     *            the object to check
-     * @return true if writable, false otherwise
-     * @see Entity
-     */
-    // NOTE: this method needs to be kept insync with the checkWritable method
-    public boolean isWritable(Object obj) {
+    // accesslevel check must also be done for administrators
+    try {
+      entity.checkAccessLevel(clientId, orgId);
+    } catch (final OBSecurityException e) {
+      return false;
+    }
+    return true;
+  }
 
-        // check that the client id and organization id are resp. in the list of
-        // user_client and user_org
-        // TODO: throw specific and translated exception, for more info:
-        // Utility.translateError(this, vars, vars.getLanguage(),
-        // Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()))
+  /**
+   * Performs the same checks as {@link #isWritable(Object)}. Does not return true/false but throws
+   * a OBSecurityException if the object is not writable.
+   * 
+   * @param obj
+   *          the object to check
+   * @throws OBSecurityException
+   */
+  // NOTE: this method needs to be kept insync with the isWritable method
+  public void checkWriteAccess(Object obj) {
 
-        final OBContext obContext = OBContext.getOBContext();
+    // check that the client id and organization id are resp. in the list of
+    // user_client and user_org
+    // TODO: throw specific and translated exception, for more info:
+    // Utility.translateError(this, vars, vars.getLanguage(),
+    // Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()))
+    final OBContext obContext = OBContext.getOBContext();
 
-        String clientId = "";
-        if (obj instanceof ClientEnabled
-                && ((ClientEnabled) obj).getClient() != null) {
-            clientId = (String) DalUtil
-                    .getId(((ClientEnabled) obj).getClient());
-        }
-        String orgId = "";
-        if (obj instanceof OrganizationEnabled
-                && ((OrganizationEnabled) obj).getOrganization() != null) {
-            orgId = (String) DalUtil.getId(((OrganizationEnabled) obj)
-                    .getOrganization());
-        }
-
-        final Entity entity = ((BaseOBObject) obj).getEntity();
-        if (!obContext.isInAdministratorMode() && clientId.length() > 0) {
-            if (obj instanceof ClientEnabled) {
-                if (!obContext.getCurrentClient().getId().equals(clientId)) {
-                    return false;
-                }
-            }
-
-            // todo can be improved by only checking if the client or
-            // organization
-            // actually changed...
-            if (!obContext.getEntityAccessChecker().isWritable(entity)) {
-                return false;
-            }
-
-            if (obj instanceof OrganizationEnabled && orgId.length() > 0) {
-                if (!obContext.getWritableOrganizations().contains(orgId)) {
-                    return false;
-                }
-            }
-        }
-
-        // accesslevel check must also be done for administrators
-        try {
-            entity.checkAccessLevel(clientId, orgId);
-        } catch (final OBSecurityException e) {
-            return false;
-        }
-        return true;
+    String clientId = "";
+    if (obj instanceof ClientEnabled && ((ClientEnabled) obj).getClient() != null) {
+      clientId = (String) DalUtil.getId(((ClientEnabled) obj).getClient());
+    }
+    String orgId = "";
+    if (obj instanceof OrganizationEnabled && ((OrganizationEnabled) obj).getOrganization() != null) {
+      orgId = (String) DalUtil.getId(((OrganizationEnabled) obj).getOrganization());
     }
 
-    /**
-     * Performs the same checks as {@link #isWritable(Object)}. Does not return
-     * true/false but throws a OBSecurityException if the object is not
-     * writable.
-     * 
-     * @param obj
-     *            the object to check
-     * @throws OBSecurityException
-     */
-    // NOTE: this method needs to be kept insync with the isWritable method
-    public void checkWriteAccess(Object obj) {
-
-        // check that the client id and organization id are resp. in the list of
-        // user_client and user_org
-        // TODO: throw specific and translated exception, for more info:
-        // Utility.translateError(this, vars, vars.getLanguage(),
-        // Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()))
-        final OBContext obContext = OBContext.getOBContext();
-
-        String clientId = "";
-        if (obj instanceof ClientEnabled
-                && ((ClientEnabled) obj).getClient() != null) {
-            clientId = (String) DalUtil
-                    .getId(((ClientEnabled) obj).getClient());
+    final Entity entity = ((BaseOBObject) obj).getEntity();
+    if (!obContext.isInAdministratorMode() && clientId.length() > 0) {
+      if (obj instanceof ClientEnabled) {
+        if (!obContext.getCurrentClient().getId().equals(clientId)) {
+          // TODO: maybe move rollback to exception throwing
+          SessionHandler.getInstance().setDoRollback(true);
+          throw new OBSecurityException("Client (" + clientId + ") of object (" + obj
+              + ") is not present  in ClientList " + obContext.getCurrentClient().getId());
         }
-        String orgId = "";
-        if (obj instanceof OrganizationEnabled
-                && ((OrganizationEnabled) obj).getOrganization() != null) {
-            orgId = (String) DalUtil.getId(((OrganizationEnabled) obj)
-                    .getOrganization());
+      }
+
+      // todo can be improved by only checking if the client or
+      // organization
+      // actually changed...
+      obContext.getEntityAccessChecker().checkWritable(entity);
+
+      if (obj instanceof OrganizationEnabled && orgId.length() > 0) {
+        // todo as only the id is required this can be made much more
+        // efficient
+        // by
+        // not loading the hibernate proxy
+        if (!obContext.getWritableOrganizations().contains(orgId)) {
+          // TODO: maybe move rollback to exception throwing
+          SessionHandler.getInstance().setDoRollback(true);
+          throw new OBSecurityException("Organization " + orgId + " of object (" + obj
+              + ") is not present  in OrganizationList " + obContext.getWritableOrganizations());
         }
-
-        final Entity entity = ((BaseOBObject) obj).getEntity();
-        if (!obContext.isInAdministratorMode() && clientId.length() > 0) {
-            if (obj instanceof ClientEnabled) {
-                if (!obContext.getCurrentClient().getId().equals(clientId)) {
-                    // TODO: maybe move rollback to exception throwing
-                    SessionHandler.getInstance().setDoRollback(true);
-                    throw new OBSecurityException("Client (" + clientId
-                            + ") of object (" + obj
-                            + ") is not present  in ClientList "
-                            + obContext.getCurrentClient().getId());
-                }
-            }
-
-            // todo can be improved by only checking if the client or
-            // organization
-            // actually changed...
-            obContext.getEntityAccessChecker().checkWritable(entity);
-
-            if (obj instanceof OrganizationEnabled && orgId.length() > 0) {
-                // todo as only the id is required this can be made much more
-                // efficient
-                // by
-                // not loading the hibernate proxy
-                if (!obContext.getWritableOrganizations().contains(orgId)) {
-                    // TODO: maybe move rollback to exception throwing
-                    SessionHandler.getInstance().setDoRollback(true);
-                    throw new OBSecurityException("Organization " + orgId
-                            + " of object (" + obj
-                            + ") is not present  in OrganizationList "
-                            + obContext.getWritableOrganizations());
-                }
-            }
-        }
-
-        // accesslevel check must also be done for administrators
-        entity.checkAccessLevel(clientId, orgId);
+      }
     }
+
+    // accesslevel check must also be done for administrators
+    entity.checkAccessLevel(clientId, orgId);
+  }
 }

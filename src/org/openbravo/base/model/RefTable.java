@@ -20,21 +20,21 @@
 package org.openbravo.base.model;
 
 /**
- * Used by the {@link ModelProvider ModelProvider}, maps the AD_Ref_Table table
- * in the application dictionary.
+ * Used by the {@link ModelProvider ModelProvider}, maps the AD_Ref_Table table in the application
+ * dictionary.
  * 
  * @author iperdomo
  */
 
 public class RefTable extends ModelObject {
 
-    private Column column;
+  private Column column;
 
-    public Column getColumn() {
-        return column;
-    }
+  public Column getColumn() {
+    return column;
+  }
 
-    public void setColumn(Column column) {
-        this.column = column;
-    }
+  public void setColumn(Column column) {
+    this.column = column;
+  }
 }

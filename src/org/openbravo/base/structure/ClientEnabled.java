@@ -29,7 +29,7 @@ import org.openbravo.model.ad.system.Client;
 
 public interface ClientEnabled {
 
-    public Client getClient();
+  public Client getClient();
 
-    public void setClient(Client client);
+  public void setClient(Client client);
 }

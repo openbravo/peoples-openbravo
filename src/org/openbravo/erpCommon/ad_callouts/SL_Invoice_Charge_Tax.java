@@ -33,79 +33,72 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_Invoice_Charge_Tax extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strMProductID = vars.getStringParameter("inpmProductId");
-            String strADOrgID = vars.getStringParameter("inpadOrgId");
-            String strCInvoiceID = vars.getStringParameter("inpcInvoiceId");
-            String strWindowId = vars.getStringParameter("inpwindowId");
-            String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx",
-                    strWindowId);
-            String strWharehouse = Utility.getContext(this, vars,
-                    "#M_Warehouse_ID", strWindowId);
-            String strCChargeID = vars.getStringParameter("inpcChargeId");
-            String strTabId = vars.getStringParameter("inpTabId");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strMProductID = vars.getStringParameter("inpmProductId");
+      String strADOrgID = vars.getStringParameter("inpadOrgId");
+      String strCInvoiceID = vars.getStringParameter("inpcInvoiceId");
+      String strWindowId = vars.getStringParameter("inpwindowId");
+      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+      String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
+      String strCChargeID = vars.getStringParameter("inpcChargeId");
+      String strTabId = vars.getStringParameter("inpTabId");
 
-            try {
-                printPage(response, vars, strMProductID, strADOrgID,
-                        strCInvoiceID, strIsSOTrx, strWharehouse, strCChargeID,
-                        strTabId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+      try {
+        printPage(response, vars, strMProductID, strADOrgID, strCInvoiceID, strIsSOTrx,
+            strWharehouse, strCChargeID, strTabId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strMProductID, String strADOrgID, String strCInvoiceID,
-            String strIsSOTrx, String strWharehouse, String strCChargeID,
-            String strTabId) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strMProductID,
+      String strADOrgID, String strCInvoiceID, String strIsSOTrx, String strWharehouse,
+      String strCChargeID, String strTabId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-        String chargeAmt;
-        if (strCChargeID.equals(""))
-            chargeAmt = "0";
-        else
-            chargeAmt = SLChargeData.chargeAmt(this, strCChargeID);
+    String chargeAmt;
+    if (strCChargeID.equals(""))
+      chargeAmt = "0";
+    else
+      chargeAmt = SLChargeData.chargeAmt(this, strCChargeID);
 
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_Invoice_Charge_Tax';\n\n");
-        resultado.append("var respuesta = new Array(");
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_Invoice_Charge_Tax';\n\n");
+    resultado.append("var respuesta = new Array(");
 
-        SLInvoiceTaxData[] data = SLInvoiceTaxData.select(this, strCInvoiceID);
+    SLInvoiceTaxData[] data = SLInvoiceTaxData.select(this, strCInvoiceID);
 
-        String strCTaxID = Tax.get(this, strMProductID, data[0].dateinvoiced,
-                strADOrgID, strWharehouse, data[0].cBpartnerLocationId,
-                data[0].cBpartnerLocationId, data[0].cProjectId, strIsSOTrx
-                        .equals("Y"));
+    String strCTaxID = Tax.get(this, strMProductID, data[0].dateinvoiced, strADOrgID,
+        strWharehouse, data[0].cBpartnerLocationId, data[0].cBpartnerLocationId,
+        data[0].cProjectId, strIsSOTrx.equals("Y"));
 
-        resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\"),");
-        resultado
-                .append("new Array(\"inpchargeamt\", \"" + chargeAmt + "\")\n");
+    resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\"),");
+    resultado.append("new Array(\"inpchargeamt\", \"" + chargeAmt + "\")\n");
 
-        resultado.append(");");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    resultado.append(");");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

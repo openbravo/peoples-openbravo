@@ -33,86 +33,78 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_Order_Charge_Tax extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strCChargeID = vars.getStringParameter("inpcChargeId");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strCChargeID = vars.getStringParameter("inpcChargeId");
 
-            String strMProductID = vars.getStringParameter("inpmProductId");
-            String strCBPartnerLocationID = vars
-                    .getStringParameter("inpcBpartnerLocation");
-            String strDateOrdered = vars.getStringParameter("inpdateordered");
-            String strADOrgID = vars.getStringParameter("inpadOrgId");
-            String strMWarehouseID = vars.getStringParameter("inpmWarehouseId");
-            String strCOrderId = vars.getStringParameter("inpcOrderId");
-            String strWindowId = vars.getStringParameter("inpwindowId");
-            String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx",
-                    strWindowId);
-            String strTabId = vars.getStringParameter("inpTabId");
+      String strMProductID = vars.getStringParameter("inpmProductId");
+      String strCBPartnerLocationID = vars.getStringParameter("inpcBpartnerLocation");
+      String strDateOrdered = vars.getStringParameter("inpdateordered");
+      String strADOrgID = vars.getStringParameter("inpadOrgId");
+      String strMWarehouseID = vars.getStringParameter("inpmWarehouseId");
+      String strCOrderId = vars.getStringParameter("inpcOrderId");
+      String strWindowId = vars.getStringParameter("inpwindowId");
+      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+      String strTabId = vars.getStringParameter("inpTabId");
 
-            try {
-                printPage(response, vars, strCChargeID, strMProductID,
-                        strCBPartnerLocationID, strDateOrdered, strADOrgID,
-                        strMWarehouseID, strCOrderId, strWindowId, strIsSOTrx,
-                        strTabId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+      try {
+        printPage(response, vars, strCChargeID, strMProductID, strCBPartnerLocationID,
+            strDateOrdered, strADOrgID, strMWarehouseID, strCOrderId, strWindowId, strIsSOTrx,
+            strTabId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strCChargeID, String strMProductID,
-            String strCBPartnerLocationID, String strDateOrdered,
-            String strADOrgID, String strMWarehouseID, String strCOrderId,
-            String strWindowId, String strIsSOTrx, String strTabId)
-            throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strCChargeID,
+      String strMProductID, String strCBPartnerLocationID, String strDateOrdered,
+      String strADOrgID, String strMWarehouseID, String strCOrderId, String strWindowId,
+      String strIsSOTrx, String strTabId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-        String chargeAmt;
-        if (strCChargeID.equals(""))
-            chargeAmt = "0";
-        else
-            chargeAmt = SLChargeData.chargeAmt(this, strCChargeID);
+    String chargeAmt;
+    if (strCChargeID.equals(""))
+      chargeAmt = "0";
+    else
+      chargeAmt = SLChargeData.chargeAmt(this, strCChargeID);
 
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_Order_Charge_Tax';\n\n");
-        resultado.append("var respuesta = new Array(");
-        resultado.append("new Array(\"inpchargeamt\", \"" + chargeAmt + "\"),");
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_Order_Charge_Tax';\n\n");
+    resultado.append("var respuesta = new Array(");
+    resultado.append("new Array(\"inpchargeamt\", \"" + chargeAmt + "\"),");
 
-        String strCTaxID = "";
-        SLOrderTaxData[] data = SLOrderTaxData.select(this, strCOrderId);
+    String strCTaxID = "";
+    SLOrderTaxData[] data = SLOrderTaxData.select(this, strCOrderId);
 
-        if (data != null && data.length > 0)
-            strCTaxID = Tax.get(this, strMProductID, data[0].dateordered,
-                    strADOrgID, strMWarehouseID,
-                    (data[0].billtoId.equals("") ? strCBPartnerLocationID
-                            : data[0].billtoId), strCBPartnerLocationID,
-                    data[0].cProjectId, strIsSOTrx.equals("Y"));
+    if (data != null && data.length > 0)
+      strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID, strMWarehouseID,
+          (data[0].billtoId.equals("") ? strCBPartnerLocationID : data[0].billtoId),
+          strCBPartnerLocationID, data[0].cProjectId, strIsSOTrx.equals("Y"));
 
-        resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\")");
-        resultado.append(");");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\")");
+    resultado.append(");");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

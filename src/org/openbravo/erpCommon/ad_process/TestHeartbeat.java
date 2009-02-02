@@ -33,28 +33,24 @@ import org.openbravo.scheduling.ProcessRunner;
 
 public class TestHeartbeat extends HttpSecureAppServlet {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        try {
-            ProcessBundle bundle = new ProcessBundle("1005800000", vars)
-                    .init(this);
-            new ProcessRunner(bundle).execute(this);
+    try {
+      ProcessBundle bundle = new ProcessBundle("1005800000", vars).init(this);
+      new ProcessRunner(bundle).execute(this);
 
-            String msg = Utility.messageBD(this, "HB_SUCCESS", vars
-                    .getLanguage());
-            advisePopUp(request, response, "SUCCESS",
-                    "Heartbeat Configuration", msg);
+      String msg = Utility.messageBD(this, "HB_SUCCESS", vars.getLanguage());
+      advisePopUp(request, response, "SUCCESS", "Heartbeat Configuration", msg);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            advisePopUp(request, response, "ERROR", "Heartbeat Configuration",
-                    e.getMessage());
-        }
+    } catch (Exception e) {
+      e.printStackTrace();
+      advisePopUp(request, response, "ERROR", "Heartbeat Configuration", e.getMessage());
     }
+  }
 
 }

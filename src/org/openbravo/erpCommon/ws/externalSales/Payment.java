@@ -23,27 +23,27 @@ import java.math.BigDecimal;
 
 public class Payment {
 
-    private BigDecimal amount;
-    private String paymentType;
+  private BigDecimal amount;
+  private String paymentType;
 
-    /** Creates a new instance of Payment */
-    public Payment() {
-    }
+  /** Creates a new instance of Payment */
+  public Payment() {
+  }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
+  public BigDecimal getAmount() {
+    return amount;
+  }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
+  }
 
-    public String getPaymentType() {
-        return paymentType;
-    }
+  public String getPaymentType() {
+    return paymentType;
+  }
 
-    public void setPaymentType(String paymentType) {
-        this.paymentType = paymentType;
-    }
+  public void setPaymentType(String paymentType) {
+    this.paymentType = paymentType;
+  }
 
 }

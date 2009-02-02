@@ -28,65 +28,65 @@ import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.util.Check;
 
 /**
- * Evaluates expressions in the context of a business object, the expression
- * language supported by this class is javascript rhino.
+ * Evaluates expressions in the context of a business object, the expression language supported by
+ * this class is javascript rhino.
  * 
  * @author mtaal
  */
 
 public class Evaluator implements OBSingleton {
-    private static final Logger log = Logger.getLogger(Evaluator.class);
+  private static final Logger log = Logger.getLogger(Evaluator.class);
 
-    private static Evaluator instance = new Evaluator();
+  private static Evaluator instance = new Evaluator();
 
-    public static Evaluator getInstance() {
-        if (instance == null) {
-            instance = OBProvider.getInstance().get(Evaluator.class);
-        }
-        return instance;
+  public static Evaluator getInstance() {
+    if (instance == null) {
+      instance = OBProvider.getInstance().get(Evaluator.class);
     }
+    return instance;
+  }
 
-    public static void setInstance(Evaluator instance) {
-        Evaluator.instance = instance;
+  public static void setInstance(Evaluator instance) {
+    Evaluator.instance = instance;
+  }
+
+  /**
+   * Evaluates the passed script in the context of the passed business object. This means that
+   * properties of the business object may be used directly in the script. The result should always
+   * be a boolean.
+   * 
+   * @param contextBob
+   *          the script is executed in the context of this business object
+   * @param script
+   *          the javascript which much evaluate to a boolean
+   * @return the result of the script evaluation
+   */
+  public Boolean evaluateBoolean(BaseOBObjectDef contextBob, String script) {
+    // TODO: check if the compiled javascript can be cached
+
+    log.debug("Evaluating script for " + contextBob + " script: " + script);
+
+    try {
+      // note that the name of a engine can differ: Mozilla Rhino
+      // but js seems to work fine
+      final ScriptEngineManager manager = new ScriptEngineManager();
+      final ScriptEngine engine = manager.getEngineByName("js");
+      Check
+          .isNotNull(
+              engine,
+              "Scripting engine not found using name js, check for other scripting language names such as Mozilla Rhino");
+
+      final Entity e = contextBob.getEntity();
+      for (final Property p : e.getProperties()) {
+        engine.put(p.getName(), contextBob.get(p.getName()));
+      }
+
+      final Object result = engine.eval(script);
+      Check.isInstanceOf(result, Boolean.class);
+      return (Boolean) result;
+    } catch (final ScriptException e) {
+      throw new OBException("Exception while executing " + script + " for business object "
+          + contextBob, e);
     }
-
-    /**
-     * Evaluates the passed script in the context of the passed business object.
-     * This means that properties of the business object may be used directly in
-     * the script. The result should always be a boolean.
-     * 
-     * @param contextBob
-     *            the script is executed in the context of this business object
-     * @param script
-     *            the javascript which much evaluate to a boolean
-     * @return the result of the script evaluation
-     */
-    public Boolean evaluateBoolean(BaseOBObjectDef contextBob, String script) {
-        // TODO: check if the compiled javascript can be cached
-
-        log.debug("Evaluating script for " + contextBob + " script: " + script);
-
-        try {
-            // note that the name of a engine can differ: Mozilla Rhino
-            // but js seems to work fine
-            final ScriptEngineManager manager = new ScriptEngineManager();
-            final ScriptEngine engine = manager.getEngineByName("js");
-            Check
-                    .isNotNull(
-                            engine,
-                            "Scripting engine not found using name js, check for other scripting language names such as Mozilla Rhino");
-
-            final Entity e = contextBob.getEntity();
-            for (final Property p : e.getProperties()) {
-                engine.put(p.getName(), contextBob.get(p.getName()));
-            }
-
-            final Object result = engine.eval(script);
-            Check.isInstanceOf(result, Boolean.class);
-            return (Boolean) result;
-        } catch (final ScriptException e) {
-            throw new OBException("Exception while executing " + script
-                    + " for business object " + contextBob, e);
-        }
-    }
+  }
 }

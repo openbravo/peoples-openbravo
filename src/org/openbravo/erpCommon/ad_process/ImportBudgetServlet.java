@@ -36,133 +36,111 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ImportBudgetServlet extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        String process = ImportData.processId(this, "ImportBudget");
-        if (vars.commandIn("DEFAULT")) {
-            String strTabId = vars.getGlobalVariable("inpTabId",
-                    "ImportBudgetServlet|tabId");
-            String strWindowId = vars.getGlobalVariable("inpwindowId",
-                    "ImportBudgetServlet|windowId");
-            // String strKey = vars.getGlobalVariable("inpKey",
-            // "ImportBudgetServlet|key");
-            String strKey = "00";
-            String strDeleteOld = vars.getStringParameter("inpDeleteOld", "Y");
-            printPage(response, vars, process, strWindowId, strTabId, strKey,
-                    strDeleteOld);
-        } else if (vars.commandIn("SAVE")) {
-            String strDeleteOld = vars.getStringParameter("inpDeleteOld", "Y");
-            String strRecord = vars.getGlobalVariable("inpKey",
-                    "ImportBudgetServlet|key");
-            String strTabId = vars.getRequestGlobalVariable("inpTabId",
-                    "ImportBudgetServlet|tabId");
-            String strWindowId = vars.getRequestGlobalVariable("inpwindowId",
-                    "ImportBudgetServlet|windowId");
-            String strBudget = vars.getRequestGlobalVariable("inpBudgetId",
-                    "ImportBudgetServlet|inpBudgetId");
+    String process = ImportData.processId(this, "ImportBudget");
+    if (vars.commandIn("DEFAULT")) {
+      String strTabId = vars.getGlobalVariable("inpTabId", "ImportBudgetServlet|tabId");
+      String strWindowId = vars.getGlobalVariable("inpwindowId", "ImportBudgetServlet|windowId");
+      // String strKey = vars.getGlobalVariable("inpKey",
+      // "ImportBudgetServlet|key");
+      String strKey = "00";
+      String strDeleteOld = vars.getStringParameter("inpDeleteOld", "Y");
+      printPage(response, vars, process, strWindowId, strTabId, strKey, strDeleteOld);
+    } else if (vars.commandIn("SAVE")) {
+      String strDeleteOld = vars.getStringParameter("inpDeleteOld", "Y");
+      String strRecord = vars.getGlobalVariable("inpKey", "ImportBudgetServlet|key");
+      String strTabId = vars.getRequestGlobalVariable("inpTabId", "ImportBudgetServlet|tabId");
+      String strWindowId = vars.getRequestGlobalVariable("inpwindowId",
+          "ImportBudgetServlet|windowId");
+      String strBudget = vars.getRequestGlobalVariable("inpBudgetId",
+          "ImportBudgetServlet|inpBudgetId");
 
-            ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(
-                    this, strTabId);
-            String strWindowPath = "";
-            String strTabName = "";
-            if (tab != null && tab.length != 0) {
-                strTabName = FormatUtilities.replace(tab[0].name);
-                if (tab[0].help.equals("Y"))
-                    strWindowPath = "../utility/WindowTree_FS.html?inpTabId="
-                            + strTabId;
-                else
-                    strWindowPath = "../"
-                            + FormatUtilities.replace(tab[0].description) + "/"
-                            + strTabName + "_Relation.html";
-            } else
-                strWindowPath = strDefaultServlet;
-
-            ImportBudget b = new ImportBudget(this, process, strRecord,
-                    strBudget, strDeleteOld.equals("Y"));
-            b.startProcess(vars);
-            // String strMessage = b.getLog();
-            // if (!strMessage.equals("")) vars.setSessionValue(strWindowId +
-            // "|" + strTabName + ".message", strMessage);
-            OBError myError = b.getError();
-            vars.setMessage(strTabId, myError);
-            printPageClosePopUp(response, vars, strWindowPath);
-        } else
-            pageErrorPopUp(response);
-    }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strProcessId, String strWindowId, String strTabId,
-            String strRecordId, String strDeleteOld) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: process ImportBudgetServlet");
-        ActionButtonDefaultData[] data = null;
-        String strHelp = "", strDescription = "";
-        if (vars.getLanguage().equals("en_US"))
-            data = ActionButtonDefaultData.select(this, strProcessId);
+      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
+      String strWindowPath = "";
+      String strTabName = "";
+      if (tab != null && tab.length != 0) {
+        strTabName = FormatUtilities.replace(tab[0].name);
+        if (tab[0].help.equals("Y"))
+          strWindowPath = "../utility/WindowTree_FS.html?inpTabId=" + strTabId;
         else
-            data = ActionButtonDefaultData.selectLanguage(this, vars
-                    .getLanguage(), strProcessId);
-        if (data != null && data.length != 0) {
-            strDescription = data[0].description;
-            strHelp = data[0].help;
-        }
-        String[] discard = { "" };
-        if (strHelp.equals(""))
-            discard[0] = new String("helpDiscard");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_process/ImportBudgetServlet")
-                .createXmlDocument();
-        xmlDocument.setParameter("language", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("theme", vars.getTheme());
-        xmlDocument.setParameter("question", Utility.messageBD(this,
-                "StartProcess?", vars.getLanguage()));
-        xmlDocument.setParameter("description", strDescription);
-        xmlDocument.setParameter("help", strHelp);
-        xmlDocument.setParameter("windowId", strWindowId);
-        xmlDocument.setParameter("tabId", strTabId);
-        xmlDocument.setParameter("recordId", strRecordId);
-        xmlDocument.setParameter("deleteOld", strDeleteOld);
+          strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
+              + "_Relation.html";
+      } else
+        strWindowPath = strDefaultServlet;
 
-        try {
-            ComboTableData comboTableData = new ComboTableData(
-                    vars,
-                    this,
-                    "TABLEDIR",
-                    "C_Budget_ID",
-                    "",
-                    "",
-                    Utility.getContext(this, vars, "#User_Org", strWindowId),
-                    Utility.getContext(this, vars, "#User_Client", strWindowId),
-                    0);
-            Utility.fillSQLParameters(this, vars, null, comboTableData,
-                    strWindowId, "");
-            xmlDocument.setData("reportC_BUDGET", "liststructure",
-                    comboTableData.select(false));
-            comboTableData = null;
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
+      ImportBudget b = new ImportBudget(this, process, strRecord, strBudget, strDeleteOld
+          .equals("Y"));
+      b.startProcess(vars);
+      // String strMessage = b.getLog();
+      // if (!strMessage.equals("")) vars.setSessionValue(strWindowId +
+      // "|" + strTabName + ".message", strMessage);
+      OBError myError = b.getError();
+      vars.setMessage(strTabId, myError);
+      printPageClosePopUp(response, vars, strWindowPath);
+    } else
+      pageErrorPopUp(response);
+  }
 
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strProcessId,
+      String strWindowId, String strTabId, String strRecordId, String strDeleteOld)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: process ImportBudgetServlet");
+    ActionButtonDefaultData[] data = null;
+    String strHelp = "", strDescription = "";
+    if (vars.getLanguage().equals("en_US"))
+      data = ActionButtonDefaultData.select(this, strProcessId);
+    else
+      data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    if (data != null && data.length != 0) {
+      strDescription = data[0].description;
+      strHelp = data[0].help;
+    }
+    String[] discard = { "" };
+    if (strHelp.equals(""))
+      discard[0] = new String("helpDiscard");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_process/ImportBudgetServlet").createXmlDocument();
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
+        .getLanguage()));
+    xmlDocument.setParameter("description", strDescription);
+    xmlDocument.setParameter("help", strHelp);
+    xmlDocument.setParameter("windowId", strWindowId);
+    xmlDocument.setParameter("tabId", strTabId);
+    xmlDocument.setParameter("recordId", strRecordId);
+    xmlDocument.setParameter("deleteOld", strDeleteOld);
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Budget_ID", "",
+          "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this,
+              vars, "#User_Client", strWindowId), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+      xmlDocument.setData("reportC_BUDGET", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
     }
 
-    public String getServletInfo() {
-        return "Servlet ImportBudgetServlet";
-    } // end of getServletInfo() method
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  public String getServletInfo() {
+    return "Servlet ImportBudgetServlet";
+  } // end of getServletInfo() method
 }

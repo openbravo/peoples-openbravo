@@ -34,67 +34,63 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_Payment_DocType extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    static final BigDecimal ZERO = new BigDecimal(0.0);
+  static final BigDecimal ZERO = new BigDecimal(0.0);
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("WE GO INTO THE DEFAULT");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strcInvoiceId = vars.getStringParameter("inpcInvoiceId");
+      String strcDoctypeId = vars.getStringParameter("inpcDoctypeId");
+      String strTabId = vars.getStringParameter("inpTabId");
+
+      try {
+        printPage(response, vars, strChanged, strcInvoiceId, strcDoctypeId, strTabId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
+      String strcInvoiceId, String strcDoctypeId, String strTabId) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    if (log4j.isDebugEnabled())
+      log4j.debug("WE GET INTO PRINTPAGE");
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_Payment_DocType';\n\n");
+    resultado.append("var respuesta = new Array(");
+
+    String strcaseId = SLPaymentDocTypeData.selectCase(this, strcInvoiceId, strcDoctypeId);
+    if (strcaseId.equals("N")) {
+      resultado.append("new Array('MESSAGE', \""
+          + FormatUtilities.replaceJS(Utility.messageBD(this, "PaymentDocTypeInvoiceInconsistent",
+              vars.getLanguage())) + "\")");
     }
+    resultado.append(");");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("WE GO INTO THE DEFAULT");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strcInvoiceId = vars.getStringParameter("inpcInvoiceId");
-            String strcDoctypeId = vars.getStringParameter("inpcDoctypeId");
-            String strTabId = vars.getStringParameter("inpTabId");
-
-            try {
-                printPage(response, vars, strChanged, strcInvoiceId,
-                        strcDoctypeId, strTabId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strChanged, String strcInvoiceId, String strcDoctypeId,
-            String strTabId) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-        if (log4j.isDebugEnabled())
-            log4j.debug("WE GET INTO PRINTPAGE");
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_Payment_DocType';\n\n");
-        resultado.append("var respuesta = new Array(");
-
-        String strcaseId = SLPaymentDocTypeData.selectCase(this, strcInvoiceId,
-                strcDoctypeId);
-        if (strcaseId.equals("N")) {
-            resultado.append("new Array('MESSAGE', \""
-                    + FormatUtilities.replaceJS(Utility.messageBD(this,
-                            "PaymentDocTypeInvoiceInconsistent", vars
-                                    .getLanguage())) + "\")");
-        }
-        resultado.append(");");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-
-    }
+  }
 }

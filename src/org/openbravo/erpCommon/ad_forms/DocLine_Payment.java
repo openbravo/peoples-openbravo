@@ -21,39 +21,37 @@ package org.openbravo.erpCommon.ad_forms;
 import org.apache.log4j.Logger;
 
 public class DocLine_Payment extends DocLine {
-    static Logger log4jDocLine_Payment = Logger
-            .getLogger(DocLine_Payment.class);
+  static Logger log4jDocLine_Payment = Logger.getLogger(DocLine_Payment.class);
 
-    String Line_ID = "";
-    String Amount = "";
-    String WriteOffAmt = "";
-    String isManual = "";
-    String isReceipt = "";
-    String isPaid = "";
-    String C_Settlement_Cancel_ID = "";
-    String C_Settlement_Generate_ID = "";
-    String C_GLItem_ID = "";
-    String IsDirectPosting = "";
-    String dpStatus = "";
-    String C_Currency_ID_From;
-    String conversionDate;
-    String C_INVOICE_ID = "";
-    String C_BPARTNER_ID = "";
-    String C_WITHHOLDING_ID = "";
-    String WithHoldAmt = "";
-    String C_BANKACCOUNT_ID = "";
-    String C_BANKSTATEMENTLINE_ID = "";
-    String C_CASHBOOK_ID = "";
-    String C_CASHLINE_ID = "";
+  String Line_ID = "";
+  String Amount = "";
+  String WriteOffAmt = "";
+  String isManual = "";
+  String isReceipt = "";
+  String isPaid = "";
+  String C_Settlement_Cancel_ID = "";
+  String C_Settlement_Generate_ID = "";
+  String C_GLItem_ID = "";
+  String IsDirectPosting = "";
+  String dpStatus = "";
+  String C_Currency_ID_From;
+  String conversionDate;
+  String C_INVOICE_ID = "";
+  String C_BPARTNER_ID = "";
+  String C_WITHHOLDING_ID = "";
+  String WithHoldAmt = "";
+  String C_BANKACCOUNT_ID = "";
+  String C_BANKSTATEMENTLINE_ID = "";
+  String C_CASHBOOK_ID = "";
+  String C_CASHLINE_ID = "";
 
-    public DocLine_Payment(String DocumentType, String TrxHeader_ID,
-            String TrxLine_ID) {
-        super(DocumentType, TrxHeader_ID, TrxLine_ID);
-        Line_ID = TrxLine_ID;
-        m_Record_Id2 = Line_ID;
-    }
+  public DocLine_Payment(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
+    super(DocumentType, TrxHeader_ID, TrxLine_ID);
+    Line_ID = TrxLine_ID;
+    m_Record_Id2 = Line_ID;
+  }
 
-    public String getServletInfo() {
-        return "Servlet for accounting";
-    } // end of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet for accounting";
+  } // end of getServletInfo() method
 }

@@ -42,78 +42,134 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    
+
     // Get user Client's base currency
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT", "DEFAULT_COMPARATIVE")) {
-      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportInvoiceVendorDimensionalAnalysesJR|dateFrom", "");
-      String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceVendorDimensionalAnalysesJR|dateTo", "");
-      String strDateFromRef = vars.getGlobalVariable("inpDateFromRef", "ReportInvoiceVendorDimensionalAnalysesJR|dateFromRef", "");
-      String strDateToRef = vars.getGlobalVariable("inpDateToRef", "ReportInvoiceVendorDimensionalAnalysesJR|dateToRef", "");
-      String strPartnerGroup = vars.getGlobalVariable("inpPartnerGroup", "ReportInvoiceVendorDimensionalAnalysesJR|partnerGroup", "");
-      String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN", "ReportInvoiceVendorDimensionalAnalysesJR|partner", "");
-      String strProductCategory = vars.getGlobalVariable("inpProductCategory", "ReportInvoiceVendorDimensionalAnalysesJR|productCategory", "");
-      String strmProductId = vars.getInGlobalVariable("inpmProductId_IN", "ReportInvoiceVendorDimensionalAnalysesJR|product", "");
-      String strNotShown = vars.getInGlobalVariable("inpNotShown", "ReportInvoiceVendorDimensionalAnalysesJR|notShown", "");
-      String strShown = vars.getInGlobalVariable("inpShown", "ReportInvoiceVendorDimensionalAnalysesJR|shown", "");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportInvoiceVendorDimensionalAnalysesJR|Org", "0");
-      String strOrder = vars.getGlobalVariable("inpOrder", "ReportInvoiceVendorDimensionalAnalysesJR|order", "Normal");
-      String strMayor = vars.getGlobalVariable("inpMayor", "ReportInvoiceVendorDimensionalAnalysesJR|mayor", "");
-      String strMenor = vars.getGlobalVariable("inpMenor", "ReportInvoiceVendorDimensionalAnalysesJR|menor", "");
-      String strProducttype = vars.getGlobalVariable("inpProducttype", "ReportInvoiceVendorDimensionalAnalysesJR|producttype", "");
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportInvoiceVendorDimensionalAnalysesJR|currency", strUserCurrencyId);
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom",
+          "ReportInvoiceVendorDimensionalAnalysesJR|dateFrom", "");
+      String strDateTo = vars.getGlobalVariable("inpDateTo",
+          "ReportInvoiceVendorDimensionalAnalysesJR|dateTo", "");
+      String strDateFromRef = vars.getGlobalVariable("inpDateFromRef",
+          "ReportInvoiceVendorDimensionalAnalysesJR|dateFromRef", "");
+      String strDateToRef = vars.getGlobalVariable("inpDateToRef",
+          "ReportInvoiceVendorDimensionalAnalysesJR|dateToRef", "");
+      String strPartnerGroup = vars.getGlobalVariable("inpPartnerGroup",
+          "ReportInvoiceVendorDimensionalAnalysesJR|partnerGroup", "");
+      String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
+          "ReportInvoiceVendorDimensionalAnalysesJR|partner", "");
+      String strProductCategory = vars.getGlobalVariable("inpProductCategory",
+          "ReportInvoiceVendorDimensionalAnalysesJR|productCategory", "");
+      String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
+          "ReportInvoiceVendorDimensionalAnalysesJR|product", "");
+      String strNotShown = vars.getInGlobalVariable("inpNotShown",
+          "ReportInvoiceVendorDimensionalAnalysesJR|notShown", "");
+      String strShown = vars.getInGlobalVariable("inpShown",
+          "ReportInvoiceVendorDimensionalAnalysesJR|shown", "");
+      String strOrg = vars.getGlobalVariable("inpOrg",
+          "ReportInvoiceVendorDimensionalAnalysesJR|Org", "0");
+      String strOrder = vars.getGlobalVariable("inpOrder",
+          "ReportInvoiceVendorDimensionalAnalysesJR|order", "Normal");
+      String strMayor = vars.getGlobalVariable("inpMayor",
+          "ReportInvoiceVendorDimensionalAnalysesJR|mayor", "");
+      String strMenor = vars.getGlobalVariable("inpMenor",
+          "ReportInvoiceVendorDimensionalAnalysesJR|menor", "");
+      String strProducttype = vars.getGlobalVariable("inpProducttype",
+          "ReportInvoiceVendorDimensionalAnalysesJR|producttype", "");
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+          "ReportInvoiceVendorDimensionalAnalysesJR|currency", strUserCurrencyId);
       String strComparative = "";
       if (vars.commandIn("DEFAULT_COMPARATIVE"))
-        strComparative = vars.getRequestGlobalVariable("inpComparative", "ReportInvoiceVendorDimensionalAnalysesJR|comparative");
+        strComparative = vars.getRequestGlobalVariable("inpComparative",
+            "ReportInvoiceVendorDimensionalAnalysesJR|comparative");
       else
-        strComparative = vars.getGlobalVariable("inpComparative", "ReportInvoiceVendorDimensionalAnalysesJR|comparative", "N");
-      printPageDataSheet(response, vars, strComparative, strDateFrom, strDateTo, strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown, strShown, strDateFromRef, strDateToRef, strOrg, strOrder, strMayor, strMenor, strProducttype, strCurrencyId);
+        strComparative = vars.getGlobalVariable("inpComparative",
+            "ReportInvoiceVendorDimensionalAnalysesJR|comparative", "N");
+      printPageDataSheet(response, vars, strComparative, strDateFrom, strDateTo, strPartnerGroup,
+          strcBpartnerId, strProductCategory, strmProductId, strNotShown, strShown, strDateFromRef,
+          strDateToRef, strOrg, strOrder, strMayor, strMenor, strProducttype, strCurrencyId);
     } else if (vars.commandIn("EDIT_HTML", "EDIT_HTML_COMPARATIVE")) {
-      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportInvoiceVendorDimensionalAnalysesJR|dateFrom");
-      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportInvoiceVendorDimensionalAnalysesJR|dateTo");
-      String strDateFromRef = vars.getRequestGlobalVariable("inpDateFromRef", "ReportInvoiceVendorDimensionalAnalysesJR|dateFromRef");
-      String strDateToRef = vars.getRequestGlobalVariable("inpDateToRef", "ReportSInvoiceVendorDimensionalAnalysesJR|dateToRef");
-      String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup", "ReportInvoiceVendorDimensionalAnalysesJR|partnerGroup");
-      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportInvoiceVendorDimensionalAnalysesJR|partner");
-      String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory", "ReportInvoiceVendorDimensionalAnalysesJR|productCategory");
-      String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN", "ReportInvoiceVendorDimensionalAnalysesJR|product");
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+          "ReportInvoiceVendorDimensionalAnalysesJR|dateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
+          "ReportInvoiceVendorDimensionalAnalysesJR|dateTo");
+      String strDateFromRef = vars.getRequestGlobalVariable("inpDateFromRef",
+          "ReportInvoiceVendorDimensionalAnalysesJR|dateFromRef");
+      String strDateToRef = vars.getRequestGlobalVariable("inpDateToRef",
+          "ReportSInvoiceVendorDimensionalAnalysesJR|dateToRef");
+      String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup",
+          "ReportInvoiceVendorDimensionalAnalysesJR|partnerGroup");
+      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
+          "ReportInvoiceVendorDimensionalAnalysesJR|partner");
+      String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
+          "ReportInvoiceVendorDimensionalAnalysesJR|productCategory");
+      String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
+          "ReportInvoiceVendorDimensionalAnalysesJR|product");
       String strNotShown = vars.getInStringParameter("inpNotShown");
       String strShown = vars.getInStringParameter("inpShown");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportInvoiceVendorDimensionalAnalysesJR|Org", "0");
-      String strOrder = vars.getRequestGlobalVariable("inpOrder", "ReportInvoiceVendorDimensionalAnalysesJR|order");
+      String strOrg = vars.getGlobalVariable("inpOrg",
+          "ReportInvoiceVendorDimensionalAnalysesJR|Org", "0");
+      String strOrder = vars.getRequestGlobalVariable("inpOrder",
+          "ReportInvoiceVendorDimensionalAnalysesJR|order");
       String strMayor = vars.getStringParameter("inpMayor", "");
       String strMenor = vars.getStringParameter("inpMenor", "");
-      String strProducttype = vars.getRequestGlobalVariable("inpProducttype", "ReportInvoiceVendorDimensionalAnalysesJR|producttype");
+      String strProducttype = vars.getRequestGlobalVariable("inpProducttype",
+          "ReportInvoiceVendorDimensionalAnalysesJR|producttype");
       String strComparative = vars.getStringParameter("inpComparative", "N");
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportInvoiceVendorDimensionalAnalysesJR|currency", strUserCurrencyId);
-      printPageHtml(request, response, vars, strComparative, strDateFrom, strDateTo, strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown, strShown, strDateFromRef, strDateToRef, strOrg, strOrder, strMayor, strMenor, strProducttype, strCurrencyId, "html");
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+          "ReportInvoiceVendorDimensionalAnalysesJR|currency", strUserCurrencyId);
+      printPageHtml(request, response, vars, strComparative, strDateFrom, strDateTo,
+          strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown,
+          strShown, strDateFromRef, strDateToRef, strOrg, strOrder, strMayor, strMenor,
+          strProducttype, strCurrencyId, "html");
     } else if (vars.commandIn("EDIT_PDF", "EDIT_PDF_COMPARATIVE")) {
-      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportInvoiceVendorDimensionalAnalysesJR|dateFrom");
-      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportInvoiceVendorDimensionalAnalysesJR|dateTo");
-      String strDateFromRef = vars.getRequestGlobalVariable("inpDateFromRef", "ReportInvoiceVendorDimensionalAnalysesJR|dateFromRef");
-      String strDateToRef = vars.getRequestGlobalVariable("inpDateToRef", "ReportSInvoiceVendorDimensionalAnalysesJR|dateToRef");
-      String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup", "ReportInvoiceVendorDimensionalAnalysesJR|partnerGroup");
-      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportInvoiceVendorDimensionalAnalysesJR|partner");
-      String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory", "ReportInvoiceVendorDimensionalAnalysesJR|productCategory");
-      String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN", "ReportInvoiceVendorDimensionalAnalysesJR|product");
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+          "ReportInvoiceVendorDimensionalAnalysesJR|dateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
+          "ReportInvoiceVendorDimensionalAnalysesJR|dateTo");
+      String strDateFromRef = vars.getRequestGlobalVariable("inpDateFromRef",
+          "ReportInvoiceVendorDimensionalAnalysesJR|dateFromRef");
+      String strDateToRef = vars.getRequestGlobalVariable("inpDateToRef",
+          "ReportSInvoiceVendorDimensionalAnalysesJR|dateToRef");
+      String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup",
+          "ReportInvoiceVendorDimensionalAnalysesJR|partnerGroup");
+      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
+          "ReportInvoiceVendorDimensionalAnalysesJR|partner");
+      String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
+          "ReportInvoiceVendorDimensionalAnalysesJR|productCategory");
+      String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
+          "ReportInvoiceVendorDimensionalAnalysesJR|product");
       String strNotShown = vars.getInStringParameter("inpNotShown");
       String strShown = vars.getInStringParameter("inpShown");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportInvoiceVendorDimensionalAnalysesJR|Org", "0");
-      String strOrder = vars.getRequestGlobalVariable("inpOrder", "ReportInvoiceVendorDimensionalAnalysesJR|order");
+      String strOrg = vars.getGlobalVariable("inpOrg",
+          "ReportInvoiceVendorDimensionalAnalysesJR|Org", "0");
+      String strOrder = vars.getRequestGlobalVariable("inpOrder",
+          "ReportInvoiceVendorDimensionalAnalysesJR|order");
       String strMayor = vars.getStringParameter("inpMayor", "");
       String strMenor = vars.getStringParameter("inpMenor", "");
-      String strProducttype = vars.getRequestGlobalVariable("inpProducttype", "ReportInvoiceVendorDimensionalAnalysesJR|producttype");
+      String strProducttype = vars.getRequestGlobalVariable("inpProducttype",
+          "ReportInvoiceVendorDimensionalAnalysesJR|producttype");
       String strComparative = vars.getStringParameter("inpComparative", "N");
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportInvoiceVendorDimensionalAnalysesJR|currency", strUserCurrencyId);
-      printPageHtml(request, response, vars, strComparative, strDateFrom, strDateTo, strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown, strShown, strDateFromRef, strDateToRef, strOrg, strOrder, strMayor, strMenor, strProducttype, strCurrencyId, "pdf");
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+          "ReportInvoiceVendorDimensionalAnalysesJR|currency", strUserCurrencyId);
+      printPageHtml(request, response, vars, strComparative, strDateFrom, strDateTo,
+          strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown,
+          strShown, strDateFromRef, strDateToRef, strOrg, strOrder, strMayor, strMenor,
+          strProducttype, strCurrencyId, "pdf");
     } else
       pageErrorPopUp(response);
   }
-  
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup, String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown, String strShown, String strDateFromRef, String strDateToRef, String strOrg, String strOrder, String strMayor, String strMenor, String strProducttype, String strCurrencyId) throws IOException, ServletException {
+
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
+      String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown,
+      String strShown, String strDateFromRef, String strDateToRef, String strOrg, String strOrder,
+      String strMayor, String strMenor, String strProducttype, String strCurrencyId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     String discard[] = { "selEliminarHeader1" };
@@ -121,21 +177,29 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
       discard[0] = "selEliminarHeader2";
     }
     XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportInvoiceVendorDimensionalAnalysesFilterJR", discard).createXmlDocument();
-    
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportInvoiceVendorDimensionalAnalysesFilterJR", false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
+    xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_reports/ReportInvoiceVendorDimensionalAnalysesFilterJR",
+        discard).createXmlDocument();
+
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
+        "ReportInvoiceVendorDimensionalAnalysesFilterJR", false, "", "", "", false, "ad_reports",
+        strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
-    
+
     try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportInvoiceVendorDimensionalAnalysesJR");
+      WindowTabs tabs = new WindowTabs(this, vars,
+          "org.openbravo.erpCommon.ad_reports.ReportInvoiceVendorDimensionalAnalysesJR");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportInvoiceVendorDimensionalAnalysesFilterJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+          "ReportInvoiceVendorDimensionalAnalysesFilterJR.html", classInfo.id, classInfo.type,
+          strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportInvoiceVendorDimensionalAnalysesFilterJR.html", strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+          "ReportInvoiceVendorDimensionalAnalysesFilterJR.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -149,7 +213,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    
+
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -176,74 +240,122 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     xmlDocument.setParameter("producttype", strProducttype);
     xmlDocument.setParameter("comparative", strComparative);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceVendorDimensionalAnalysesJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceVendorDimensionalAnalysesJR", strPartnerGroup);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
+          "", "", Utility.getContext(this, vars, "#User_Org",
+              "ReportInvoiceVendorDimensionalAnalysesJR"), Utility.getContext(this, vars,
+              "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData,
+          "ReportInvoiceVendorDimensionalAnalysesJR", strPartnerGroup);
       xmlDocument.setData("reportC_BP_GROUPID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    
+
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceVendorDimensionalAnalysesJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceVendorDimensionalAnalysesJR", strProductCategory);
-      xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure", comboTableData.select(false));
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
+          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+              "ReportInvoiceVendorDimensionalAnalysesJR"), Utility.getContext(this, vars,
+              "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData,
+          "ReportInvoiceVendorDimensionalAnalysesJR", strProductCategory);
+      xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure", comboTableData
+          .select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInvoiceVendorDimensionalAnalysesJRData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
-    xmlDocument.setData("reportMProductId_IN", "liststructure", ReportInvoiceVendorDimensionalAnalysesJRData.selectMproduct(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
+
+    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
+        vars.getRole()));
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
+        ReportInvoiceVendorDimensionalAnalysesJRData.selectBpartner(this, Utility.getContext(this,
+            vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""),
+            strcBpartnerId));
+    xmlDocument.setData("reportMProductId_IN", "liststructure",
+        ReportInvoiceVendorDimensionalAnalysesJRData.selectMproduct(this, Utility.getContext(this,
+            vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""),
+            strmProductId));
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "M_Product_ProductType", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceVendorDimensionalAnalysesJRData"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJRData"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceVendorDimensionalAnalysesJRData", "");
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
+          "M_Product_ProductType", "", Utility.getContext(this, vars, "#User_Org",
+              "ReportInvoiceVendorDimensionalAnalysesJRData"), Utility.getContext(this, vars,
+              "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJRData"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData,
+          "ReportInvoiceVendorDimensionalAnalysesJRData", "");
       xmlDocument.setData("reportProductType", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    
+
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceVendorDimensionalAnalysesJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceVendorDimensionalAnalysesJR", strCurrencyId);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
+          "", "", Utility.getContext(this, vars, "#User_Org",
+              "ReportInvoiceVendorDimensionalAnalysesJR"), Utility.getContext(this, vars,
+              "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData,
+          "ReportInvoiceVendorDimensionalAnalysesJR", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    
+
     if (vars.getLanguage().equals("en_US")) {
-      xmlDocument.setData("structure1", ReportInvoiceVendorDimensionalAnalysesJRData.selectNotShown(this, strShown));
-      xmlDocument.setData("structure2", strShown.equals("") ? new ReportInvoiceVendorDimensionalAnalysesJRData[0] : ReportInvoiceVendorDimensionalAnalysesJRData.selectShown(this, strShown));
+      xmlDocument.setData("structure1", ReportInvoiceVendorDimensionalAnalysesJRData
+          .selectNotShown(this, strShown));
+      xmlDocument.setData("structure2",
+          strShown.equals("") ? new ReportInvoiceVendorDimensionalAnalysesJRData[0]
+              : ReportInvoiceVendorDimensionalAnalysesJRData.selectShown(this, strShown));
     } else {
-      xmlDocument.setData("structure1", ReportInvoiceVendorDimensionalAnalysesJRData.selectNotShownTrl(this, vars.getLanguage(), strShown));
-      xmlDocument.setData("structure2", strShown.equals("") ? new ReportInvoiceVendorDimensionalAnalysesJRData[0] : ReportInvoiceVendorDimensionalAnalysesJRData.selectShownTrl(this, vars.getLanguage(), strShown));
+      xmlDocument.setData("structure1", ReportInvoiceVendorDimensionalAnalysesJRData
+          .selectNotShownTrl(this, vars.getLanguage(), strShown));
+      xmlDocument.setData("structure2",
+          strShown.equals("") ? new ReportInvoiceVendorDimensionalAnalysesJRData[0]
+              : ReportInvoiceVendorDimensionalAnalysesJRData.selectShownTrl(this, vars
+                  .getLanguage(), strShown));
     }
-    
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
-  
-  void printPageHtml(HttpServletRequest request, HttpServletResponse response, VariablesSecureApp vars, String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup, String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown, String strShown, String strDateFromRef, String strDateToRef, String strOrg, String strOrder, String strMayor, String strMenor, String strProducttype, String strCurrencyId, String strOutput) throws IOException, ServletException {
+
+  void printPageHtml(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, String strComparative, String strDateFrom, String strDateTo,
+      String strPartnerGroup, String strcBpartnerId, String strProductCategory,
+      String strmProductId, String strNotShown, String strShown, String strDateFromRef,
+      String strDateToRef, String strOrg, String strOrder, String strMayor, String strMenor,
+      String strProducttype, String strCurrencyId, String strOutput) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     String strOrderby = "";
     String[] discard = { "", "", "", "", "" };
-    String[] discard1 = { "selEliminarBody1", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard" };
+    String[] discard1 = { "selEliminarBody1", "discard", "discard", "discard", "discard",
+        "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
+        "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard" };
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";
-    strTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom + " " + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strDateTo;
+    strTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom + " "
+        + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strDateTo;
     if (!strPartnerGroup.equals(""))
-      strTitle = strTitle + ", " + Utility.messageBD(this, "ForBPartnerGroup", vars.getLanguage()) + " " + ReportInvoiceVendorDimensionalAnalysesJRData.selectBpgroup(this, strPartnerGroup);
+      strTitle = strTitle + ", " + Utility.messageBD(this, "ForBPartnerGroup", vars.getLanguage())
+          + " " + ReportInvoiceVendorDimensionalAnalysesJRData.selectBpgroup(this, strPartnerGroup);
     if (!strProductCategory.equals(""))
-      strTitle = strTitle + " " + Utility.messageBD(this, "And", vars.getLanguage()) + " " + Utility.messageBD(this, "ProductCategory", vars.getLanguage()) + " " + ReportInvoiceVendorDimensionalAnalysesJRData.selectProductCategory(this, strProductCategory);
-    
+      strTitle = strTitle
+          + " "
+          + Utility.messageBD(this, "And", vars.getLanguage())
+          + " "
+          + Utility.messageBD(this, "ProductCategory", vars.getLanguage())
+          + " "
+          + ReportInvoiceVendorDimensionalAnalysesJRData.selectProductCategory(this,
+              strProductCategory);
+
     ReportInvoiceVendorDimensionalAnalysesJRData[] data = null;
     String[] strShownArray = { "", "", "", "", "" };
     if (strShown.startsWith("("))
@@ -257,13 +369,14 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
         strShownArray[intContador] = st.nextToken();
         intContador++;
       }
-      
+
     }
     ReportInvoiceVendorDimensionalAnalysesJRData[] dimensionLabel = null;
     if (vars.getLanguage().equals("en_US")) {
       dimensionLabel = ReportInvoiceVendorDimensionalAnalysesJRData.selectNotShown(this, "");
     } else {
-      dimensionLabel = ReportInvoiceVendorDimensionalAnalysesJRData.selectNotShownTrl(this, vars.getLanguage(), "");
+      dimensionLabel = ReportInvoiceVendorDimensionalAnalysesJRData.selectNotShownTrl(this, vars
+          .getLanguage(), "");
     }
     String[] strTextShow = { "", "", "", "", "" };
     String[] strLevelLabel = { "", "", "", "", "" };
@@ -276,7 +389,8 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
         intDiscard++;
         strLevelLabel[i] = dimensionLabel[0].name;
       } else if (strShownArray[i].equals("2")) {
-        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( C_BPARTNER.C_BPARTNER_ID), to_char('" + vars.getLanguage() + "'))";
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( C_BPARTNER.C_BPARTNER_ID), to_char('"
+            + vars.getLanguage() + "'))";
         intDiscard++;
         strLevelLabel[i] = dimensionLabel[1].name;
       } else if (strShownArray[i].equals("3")) {
@@ -284,7 +398,8 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
         intDiscard++;
         strLevelLabel[i] = dimensionLabel[2].name;
       } else if (strShownArray[i].equals("4")) {
-        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char('" + vars.getLanguage() + "'))||' ('||UOMSYMBOL||')'";
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char('"
+            + vars.getLanguage() + "'))||' ('||UOMSYMBOL||')'";
         intAuxDiscard = i;
         intDiscard++;
         intProductLevel = i + 1;
@@ -330,13 +445,14 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
           strOrderby = "1";
         }
       }
-      
+
     } else {
       strOrderby = " ORDER BY 1";
     }
     String strHaving = "";
     if (!strMayor.equals("") && !strMenor.equals("")) {
-      strHaving = " HAVING (SUM(CONVAMOUNT) > " + strMayor + " AND SUM(CONVAMOUNT) < " + strMenor + ")";
+      strHaving = " HAVING (SUM(CONVAMOUNT) > " + strMayor + " AND SUM(CONVAMOUNT) < " + strMenor
+          + ")";
     } else if (!strMayor.equals("") && strMenor.equals("")) {
       strHaving = " HAVING (SUM(CONVAMOUNT) > " + strMayor + ")";
     } else if (strMayor.equals("") && !strMenor.equals("")) {
@@ -345,7 +461,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
       strHaving = " HAVING (SUM(CONVAMOUNT) <> 0 OR SUM(CONVAMOUNTREF) <> 0)";
     }
     strOrderby = strHaving + strOrderby;
-    
+
     // Checks if there is a conversion rate for each of the transactions of
     // the report
     String strConvRateErrorMsg = "";
@@ -353,13 +469,26 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     myMessage = new OBError();
     if (strComparative.equals("Y")) {
       try {
-        data = ReportInvoiceVendorDimensionalAnalysesJRData.select(this, strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strProducttype, strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"), strOrderby);
+        data = ReportInvoiceVendorDimensionalAnalysesJRData.select(this, strCurrencyId,
+            strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], Tree
+                .getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg),
+            Utility.getContext(this, vars, "#User_Client",
+                "ReportInvoiceVendorDimensionalAnalysesJR"), strDateFrom, DateTimeData.nDaysAfter(
+                this, strDateTo, "1"), strPartnerGroup, strcBpartnerId, strProductCategory,
+            strmProductId, strProducttype, strDateFromRef, DateTimeData.nDaysAfter(this,
+                strDateToRef, "1"), strOrderby);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
     } else {
       try {
-        data = ReportInvoiceVendorDimensionalAnalysesJRData.selectNoComparative(this, strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strProducttype, strOrderby);
+        data = ReportInvoiceVendorDimensionalAnalysesJRData.selectNoComparative(this,
+            strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
+            strTextShow[4], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
+                strOrg), Utility.getContext(this, vars, "#User_Client",
+                "ReportInvoiceVendorDimensionalAnalysesJR"), strDateFrom, DateTimeData.nDaysAfter(
+                this, strDateTo, "1"), strPartnerGroup, strcBpartnerId, strProductCategory,
+            strmProductId, strProducttype, strOrderby);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -368,7 +497,8 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
+          vars.getLanguage()), strConvRateErrorMsg);
     } else { // Otherwise, the report is launched
       String strReportPath = "";
       if (strComparative.equals("Y")) {
@@ -379,7 +509,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
       if (data.length == 0 || data == null) {
         data = ReportInvoiceVendorDimensionalAnalysesJRData.set();
       }
-      
+
       HashMap<String, Object> parameters = new HashMap<String, Object>();
       parameters.put("LEVEL1_LABEL", strLevelLabel[0]);
       parameters.put("LEVEL2_LABEL", strLevelLabel[1]);
@@ -392,7 +522,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
       renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
     }
   }
-  
+
   public String getServletInfo() {
     return "Servlet ReportInvoiceVendorDimensionalAnalysesJR. This Servlet was made by Jon Alegría";
   } // end of getServletInfo() method

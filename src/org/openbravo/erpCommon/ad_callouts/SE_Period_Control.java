@@ -32,60 +32,56 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SE_Period_Control extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strAdOrgTypeID = vars.getStringParameter("inpadOrgtypeId");
+      String strIsReady = vars.getStringParameter("inpisready");
+      try {
+        printPage(response, vars, strAdOrgTypeID, strIsReady);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAdOrgTypeID,
+      String strIsReady) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+
+    String strIsBULE = SEPeriodControlData.select(this, strAdOrgTypeID);
+
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SE_Period_Control';\n\n");
+    resultado.append("var respuesta = new Array(");
+    resultado.append("new Array(\"inpisperiodcontrolallowedAux\", \"" + strIsBULE + "\"),\n ");
+
+    if (strIsBULE == null && strIsReady.equals("N")) {
+      resultado.append("new Array(\"inpisperiodcontrolallowed\", \"" + "N" + "\"),\n ");
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strAdOrgTypeID = vars.getStringParameter("inpadOrgtypeId");
-            String strIsReady = vars.getStringParameter("inpisready");
-            try {
-                printPage(response, vars, strAdOrgTypeID, strIsReady);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+    resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
+    resultado.append(");");
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strAdOrgTypeID, String strIsReady) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-
-        String strIsBULE = SEPeriodControlData.select(this, strAdOrgTypeID);
-
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SE_Period_Control';\n\n");
-        resultado.append("var respuesta = new Array(");
-        resultado.append("new Array(\"inpisperiodcontrolallowedAux\", \""
-                + strIsBULE + "\"),\n ");
-
-        if (strIsBULE == null && strIsReady.equals("N")) {
-            resultado.append("new Array(\"inpisperiodcontrolallowed\", \""
-                    + "N" + "\"),\n ");
-        }
-
-        resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
-        resultado.append(");");
-
-        xmlDocument.setParameter("array", resultado.toString());
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    xmlDocument.setParameter("array", resultado.toString());
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

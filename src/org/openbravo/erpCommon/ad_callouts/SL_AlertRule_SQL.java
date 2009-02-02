@@ -37,112 +37,108 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_AlertRule_SQL extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strSQL = vars.getStringParameter("inpsql");
+      try {
+        printPage(response, vars, strSQL);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
+
+  boolean existsColumn(ResultSetMetaData rmeta, String col) {
+    try {
+      for (int i = 1; i <= rmeta.getColumnCount(); i++) {
+        if (rmeta.getColumnName(i).equalsIgnoreCase(col))
+          return true;
+      }
+    } catch (Exception ex) {
     }
+    return false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strSQL = vars.getStringParameter("inpsql");
-            try {
-                printPage(response, vars, strSQL);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strSQL)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-    boolean existsColumn(ResultSetMetaData rmeta, String col) {
+    String msg = "";
+
+    if (!strSQL.equals("")) {
+      ResultSet result = null;
+      PreparedStatement st = null;
+      try {
+        st = this.getPreparedStatement(strSQL);
+        result = st.executeQuery();
+        ResultSetMetaData rmeta = result.getMetaData();
+        if (!existsColumn(rmeta, "AD_CLIENT_ID"))
+          msg = "AD_CLIENT_ID ";
+        if (!existsColumn(rmeta, "AD_ORG_ID"))
+          msg += "AD_ORG_ID ";
+        if (!existsColumn(rmeta, "CREATED"))
+          msg += "CREATED ";
+        if (!existsColumn(rmeta, "CREATEDBY"))
+          msg += "CREATEDBY ";
+        if (!existsColumn(rmeta, "UPDATED"))
+          msg += "UPDATED ";
+        if (!existsColumn(rmeta, "UPDATEDBY"))
+          msg += "UPDATEDBY ";
+        if (!existsColumn(rmeta, "ISACTIVE"))
+          msg += "ISACTIVE ";
+        if (!existsColumn(rmeta, "AD_USER_ID"))
+          msg += "AD_USER_ID ";
+        if (!existsColumn(rmeta, "AD_ROLE_ID"))
+          msg += "AD_ROLE_ID ";
+        if (!existsColumn(rmeta, "RECORD_ID"))
+          msg += "RECORD_ID ";
+        if (!existsColumn(rmeta, "DESCRIPTION"))
+          msg += "DESCRIPTION ";
+        if (!existsColumn(rmeta, "REFERENCEKEY_ID"))
+          msg += "REFERENCEKEY_ID";
+        if (!msg.equals(""))
+          msg = Utility.messageBD(this, "notColumnInQuery", vars.getLanguage()) + msg;
+      } catch (Exception ex) {
+        msg = "error in query: " + FormatUtilities.replaceJS(ex.toString());
+      } finally {
         try {
-            for (int i = 1; i <= rmeta.getColumnCount(); i++) {
-                if (rmeta.getColumnName(i).equalsIgnoreCase(col))
-                    return true;
-            }
-        } catch (Exception ex) {
+          if (result != null) {
+            result.close();
+          }
+        } catch (SQLException e) {
+          e.printStackTrace();
         }
-        return false;
+        try {
+          this.releasePreparedStatement(st);
+        } catch (SQLException e) {
+          e.printStackTrace();
+        }
+      }
     }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strSQL) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-
-        String msg = "";
-
-        if (!strSQL.equals("")) {
-            ResultSet result = null;
-            PreparedStatement st = null;
-            try {
-                st = this.getPreparedStatement(strSQL);
-                result = st.executeQuery();
-                ResultSetMetaData rmeta = result.getMetaData();
-                if (!existsColumn(rmeta, "AD_CLIENT_ID"))
-                    msg = "AD_CLIENT_ID ";
-                if (!existsColumn(rmeta, "AD_ORG_ID"))
-                    msg += "AD_ORG_ID ";
-                if (!existsColumn(rmeta, "CREATED"))
-                    msg += "CREATED ";
-                if (!existsColumn(rmeta, "CREATEDBY"))
-                    msg += "CREATEDBY ";
-                if (!existsColumn(rmeta, "UPDATED"))
-                    msg += "UPDATED ";
-                if (!existsColumn(rmeta, "UPDATEDBY"))
-                    msg += "UPDATEDBY ";
-                if (!existsColumn(rmeta, "ISACTIVE"))
-                    msg += "ISACTIVE ";
-                if (!existsColumn(rmeta, "AD_USER_ID"))
-                    msg += "AD_USER_ID ";
-                if (!existsColumn(rmeta, "AD_ROLE_ID"))
-                    msg += "AD_ROLE_ID ";
-                if (!existsColumn(rmeta, "RECORD_ID"))
-                    msg += "RECORD_ID ";
-                if (!existsColumn(rmeta, "DESCRIPTION"))
-                    msg += "DESCRIPTION ";
-                if (!existsColumn(rmeta, "REFERENCEKEY_ID"))
-                    msg += "REFERENCEKEY_ID";
-                if (!msg.equals(""))
-                    msg = Utility.messageBD(this, "notColumnInQuery", vars
-                            .getLanguage())
-                            + msg;
-            } catch (Exception ex) {
-                msg = "error in query: "
-                        + FormatUtilities.replaceJS(ex.toString());
-            } finally {
-                try {
-                    if (result != null) {
-                        result.close();
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    this.releasePreparedStatement(st);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_AlertRule_SQL';\n\n");
-        resultado.append("var respuesta = new Array(");
-        resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");
-        resultado.append(");");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_AlertRule_SQL';\n\n");
+    resultado.append("var respuesta = new Array(");
+    resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");
+    resultado.append(");");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

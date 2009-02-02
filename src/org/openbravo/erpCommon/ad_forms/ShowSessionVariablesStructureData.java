@@ -22,41 +22,40 @@ import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
 class ShowSessionVariablesStructureData implements FieldProvider {
-    static Logger log4j = Logger
-            .getLogger(ShowSessionVariablesStructureData.class);
-    boolean isPreference = false;
-    boolean isAccounting = false;
-    boolean isGlobal = false;
-    String window;
-    String windowName;
-    String completeName;
-    String name;
-    String value;
-    String rownum;
+  static Logger log4j = Logger.getLogger(ShowSessionVariablesStructureData.class);
+  boolean isPreference = false;
+  boolean isAccounting = false;
+  boolean isGlobal = false;
+  String window;
+  String windowName;
+  String completeName;
+  String name;
+  String value;
+  String rownum;
 
-    public String getField(String fieldName) {
-        if (fieldName.equalsIgnoreCase("isPreference"))
-            return (isPreference ? "Yes" : "NO");
-        else if (fieldName.equalsIgnoreCase("isAccounting"))
-            return (isAccounting ? "Yes" : "NO");
-        else if (fieldName.equalsIgnoreCase("isGlobal"))
-            return (isGlobal ? "Yes" : "NO");
-        else if (fieldName.equalsIgnoreCase("window"))
-            return ((window == null) ? "" : window);
-        else if (fieldName.equalsIgnoreCase("windowName"))
-            return ((windowName == null) ? "" : windowName);
-        else if (fieldName.equalsIgnoreCase("completeName"))
-            return ((completeName == null) ? "" : completeName);
-        else if (fieldName.equalsIgnoreCase("name"))
-            return ((name == null) ? "" : name);
-        else if (fieldName.equalsIgnoreCase("value"))
-            return ((value == null) ? "" : value);
-        else if (fieldName.equalsIgnoreCase("rownum"))
-            return ((rownum == null) ? "0" : rownum);
-        else {
-            if (log4j.isDebugEnabled())
-                log4j.debug("Field does not exist: " + fieldName);
-            return null;
-        }
+  public String getField(String fieldName) {
+    if (fieldName.equalsIgnoreCase("isPreference"))
+      return (isPreference ? "Yes" : "NO");
+    else if (fieldName.equalsIgnoreCase("isAccounting"))
+      return (isAccounting ? "Yes" : "NO");
+    else if (fieldName.equalsIgnoreCase("isGlobal"))
+      return (isGlobal ? "Yes" : "NO");
+    else if (fieldName.equalsIgnoreCase("window"))
+      return ((window == null) ? "" : window);
+    else if (fieldName.equalsIgnoreCase("windowName"))
+      return ((windowName == null) ? "" : windowName);
+    else if (fieldName.equalsIgnoreCase("completeName"))
+      return ((completeName == null) ? "" : completeName);
+    else if (fieldName.equalsIgnoreCase("name"))
+      return ((name == null) ? "" : name);
+    else if (fieldName.equalsIgnoreCase("value"))
+      return ((value == null) ? "" : value);
+    else if (fieldName.equalsIgnoreCase("rownum"))
+      return ((rownum == null) ? "0" : rownum);
+    else {
+      if (log4j.isDebugEnabled())
+        log4j.debug("Field does not exist: " + fieldName);
+      return null;
     }
+  }
 }

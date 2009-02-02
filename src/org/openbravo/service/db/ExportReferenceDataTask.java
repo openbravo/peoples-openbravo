@@ -37,84 +37,78 @@ import org.openbravo.model.ad.system.Client;
  * 
  */
 public class ExportReferenceDataTask extends ReferenceDataTask {
-    private static final Logger log = Logger
-            .getLogger(ExportReferenceDataTask.class);
+  private static final Logger log = Logger.getLogger(ExportReferenceDataTask.class);
 
-    private String clients;
+  private String clients;
 
-    @Override
-    protected void doExecute() {
-        final File exportDir = getReferenceDataDir();
-        for (final Client client : getClientObjects()) {
-            final Map<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put(DataExportService.CLIENT_ID_PARAMETER_NAME, client
-                    .getId());
+  @Override
+  protected void doExecute() {
+    final File exportDir = getReferenceDataDir();
+    for (final Client client : getClientObjects()) {
+      final Map<String, Object> parameters = new HashMap<String, Object>();
+      parameters.put(DataExportService.CLIENT_ID_PARAMETER_NAME, client.getId());
 
-            log.info("Exporting client " + client.getName());
-            final String xml = DataExportService.getInstance()
-                    .exportClientToXML(parameters);
+      log.info("Exporting client " + client.getName());
+      final String xml = DataExportService.getInstance().exportClientToXML(parameters);
 
-            final File exportFile = new File(exportDir,
-                    getExportFileName(client.getName()));
-            if (exportFile.exists()) {
-                exportFile.delete();
-            }
-            try {
-                final FileWriter fw = new FileWriter(exportFile);
-                fw.write(xml);
-                fw.close();
-            } catch (final IOException e) {
-                throw new OBException(e);
-            }
-        }
+      final File exportFile = new File(exportDir, getExportFileName(client.getName()));
+      if (exportFile.exists()) {
+        exportFile.delete();
+      }
+      try {
+        final FileWriter fw = new FileWriter(exportFile);
+        fw.write(xml);
+        fw.close();
+      } catch (final IOException e) {
+        throw new OBException(e);
+      }
     }
+  }
 
-    @Override
-    public String getClients() {
-        return clients;
-    }
+  @Override
+  public String getClients() {
+    return clients;
+  }
 
-    @Override
-    public void setClients(String clients) {
-        this.clients = clients;
-    }
+  @Override
+  public void setClients(String clients) {
+    this.clients = clients;
+  }
 
-    private List<Client> getClientObjects() {
-        final List<Client> result = new ArrayList<Client>();
-        for (final String clientStr : getClients().split(",")) {
-            result.add(getClient(clientStr.trim()));
-        }
-        return result;
+  private List<Client> getClientObjects() {
+    final List<Client> result = new ArrayList<Client>();
+    for (final String clientStr : getClients().split(",")) {
+      result.add(getClient(clientStr.trim()));
     }
+    return result;
+  }
 
-    private Client getClient(String clientValue) {
-        final org.openbravo.dal.service.OBCriteria<Client> obc = org.openbravo.dal.service.OBDal
-                .getInstance().createCriteria(Client.class);
-        obc.add(Expression.eq(Client.PROPERTY_VALUE, clientValue));
-        final List<Client> result = obc.list();
-        if (result.size() == 0) {
-            throw new OBException("No client found using " + clientValue
-                    + " as the value in the query");
-        }
-        if (result.size() > 1) {
-            throw new OBException("More than one client found using "
-                    + clientValue + " as the value in the query");
-        }
-        return result.get(0);
+  private Client getClient(String clientValue) {
+    final org.openbravo.dal.service.OBCriteria<Client> obc = org.openbravo.dal.service.OBDal
+        .getInstance().createCriteria(Client.class);
+    obc.add(Expression.eq(Client.PROPERTY_VALUE, clientValue));
+    final List<Client> result = obc.list();
+    if (result.size() == 0) {
+      throw new OBException("No client found using " + clientValue + " as the value in the query");
     }
+    if (result.size() > 1) {
+      throw new OBException("More than one client found using " + clientValue
+          + " as the value in the query");
+    }
+    return result.get(0);
+  }
 
-    // replace everything except alphabetical characters
-    private String getExportFileName(String clientName) {
-        final char[] nameChars = clientName.toCharArray();
-        for (int i = 0; i < nameChars.length; i++) {
-            final char c = nameChars[i];
-            // Only allow valid characters
-            final boolean allowedChar = (c >= 'A' && c <= 'Z')
-                    || (c >= 'a' && c <= 'z');
-            if (!allowedChar) {
-                nameChars[i] = '_';
-            }
-        }
-        return new String(nameChars) + ".xml";
+  // replace everything except alphabetical characters
+  private String getExportFileName(String clientName) {
+    final char[] nameChars = clientName.toCharArray();
+    for (int i = 0; i < nameChars.length; i++) {
+      final char c = nameChars[i];
+      // Only allow valid characters
+      final boolean allowedChar = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+      if (!allowedChar) {
+        nameChars[i] = '_';
+      }
     }
+    return new String(nameChars) + ".xml";
+  }
 }

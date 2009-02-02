@@ -22,62 +22,59 @@ import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocLine_Invoice extends DocLine {
-    static Logger log4jDocLine_Invoice = Logger
-            .getLogger(DocLine_Invoice.class);
+  static Logger log4jDocLine_Invoice = Logger.getLogger(DocLine_Invoice.class);
 
-    public DocLine_Invoice(String DocumentType, String TrxHeader_ID,
-            String TrxLine_ID) {
-        super(DocumentType, TrxHeader_ID, TrxLine_ID);
+  public DocLine_Invoice(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
+    super(DocumentType, TrxHeader_ID, TrxLine_ID);
+  }
+
+  /** Net Line Amt */
+  private String m_LineNetAmt = "0";
+  /** List Amount */
+  private String m_ListAmt = "0";
+  /** Discount Amount */
+  private String m_DiscountAmt = "0";
+
+  public void setAmount(String LineNetAmt, String PriceList, String Qty) {
+    BigDecimal ZERO = new BigDecimal("0");
+    m_LineNetAmt = (LineNetAmt == "0") ? ZERO.toString() : LineNetAmt;
+    BigDecimal b_Qty = new BigDecimal(Qty);
+    BigDecimal b_PriceList = new BigDecimal(PriceList);
+    if (!PriceList.equals("") && !Qty.equals(""))
+      m_ListAmt = b_PriceList.multiply(b_Qty).toString();
+    if (m_ListAmt.equals(ZERO.toString()))
+      m_ListAmt = m_LineNetAmt;
+    BigDecimal b_LineNetAmt = new BigDecimal(LineNetAmt);
+    BigDecimal b_ListAmt = new BigDecimal(m_ListAmt);
+    m_DiscountAmt = b_ListAmt.subtract(b_LineNetAmt).toString();
+    //
+    setAmount(m_ListAmt, m_DiscountAmt);
+  } // setAmounts
+
+  /**
+   * Line Account from Product (or Charge).
+   * 
+   * @param AcctType
+   *          see ProoductInfo.ACCTTYPE_* (0..3)
+   * @param as
+   *          Accounting schema
+   * @return Requested Product Account
+   */
+  public Account getAccount(String AcctType, AcctSchema as, ConnectionProvider conn) {
+    // Charge Account
+    if (m_M_Product_ID.equals("") && !m_C_Charge_ID.equals("")) {
+      BigDecimal amt = new BigDecimal(-1); // Revenue (-)
+      if (p_DocumentType.indexOf("AP") != -1)
+        amt = new BigDecimal(+1); // Expense (+)
+      Account acct = getChargeAccount(as, amt, conn);
+      if (acct != null)
+        return acct;
     }
+    // Product Account
+    return p_productInfo.getAccount(AcctType, as, conn);
+  } // getAccount
 
-    /** Net Line Amt */
-    private String m_LineNetAmt = "0";
-    /** List Amount */
-    private String m_ListAmt = "0";
-    /** Discount Amount */
-    private String m_DiscountAmt = "0";
-
-    public void setAmount(String LineNetAmt, String PriceList, String Qty) {
-        BigDecimal ZERO = new BigDecimal("0");
-        m_LineNetAmt = (LineNetAmt == "0") ? ZERO.toString() : LineNetAmt;
-        BigDecimal b_Qty = new BigDecimal(Qty);
-        BigDecimal b_PriceList = new BigDecimal(PriceList);
-        if (!PriceList.equals("") && !Qty.equals(""))
-            m_ListAmt = b_PriceList.multiply(b_Qty).toString();
-        if (m_ListAmt.equals(ZERO.toString()))
-            m_ListAmt = m_LineNetAmt;
-        BigDecimal b_LineNetAmt = new BigDecimal(LineNetAmt);
-        BigDecimal b_ListAmt = new BigDecimal(m_ListAmt);
-        m_DiscountAmt = b_ListAmt.subtract(b_LineNetAmt).toString();
-        //
-        setAmount(m_ListAmt, m_DiscountAmt);
-    } // setAmounts
-
-    /**
-     * Line Account from Product (or Charge).
-     * 
-     * @param AcctType
-     *            see ProoductInfo.ACCTTYPE_* (0..3)
-     * @param as
-     *            Accounting schema
-     * @return Requested Product Account
-     */
-    public Account getAccount(String AcctType, AcctSchema as,
-            ConnectionProvider conn) {
-        // Charge Account
-        if (m_M_Product_ID.equals("") && !m_C_Charge_ID.equals("")) {
-            BigDecimal amt = new BigDecimal(-1); // Revenue (-)
-            if (p_DocumentType.indexOf("AP") != -1)
-                amt = new BigDecimal(+1); // Expense (+)
-            Account acct = getChargeAccount(as, amt, conn);
-            if (acct != null)
-                return acct;
-        }
-        // Product Account
-        return p_productInfo.getAccount(AcctType, as, conn);
-    } // getAccount
-
-    public String getServletInfo() {
-        return "Servlet for the accounting";
-    } // end of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet for the accounting";
+  } // end of getServletInfo() method
 }

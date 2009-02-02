@@ -33,89 +33,78 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_Request_Action extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strWindowId = vars.getStringParameter("inpwindowId");
+      String strActionType = vars.getStringParameter("inpactiontype");
+      String strCBPartnerID = vars.getRequestGlobalVariable("inpcBpartnerId", strWindowId
+          + "|C_BPartner_ID");
+      String strTabId = vars.getStringParameter("inpTabId");
+      try {
+        printPage(response, vars, strCBPartnerID, vars.getClient(), vars.getUser(), strActionType,
+            strTabId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+
+    } else
+      pageError(response);
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strCBPartnerID,
+      String strClient, String strUser, String strActionType, String strTabId) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_Request_Action';\n\n");
+    resultado.append("var respuesta = new Array(");
+
+    String strMessage = "";
+    if (strActionType.equals("E")) {
+      String strSMTPHost = SLRequestActionData.SMTPHost(this, strClient);
+      if (strSMTPHost.equals(""))
+        strMessage += Utility.messageBD(this, "SMTPHostError", vars.getLanguage());
+
+      String strBPemail = SLRequestActionData.BPemail(this, strCBPartnerID, strUser);
+      if (strBPemail.equals(""))
+        strMessage += Utility.messageBD(this, "BPemailError", vars.getLanguage());
+
+      SLRequestActionData[] data = SLRequestActionData.select(this, strUser);
+      if (data == null || data.length == 0)
+        strMessage += Utility.messageBD(this, "UserMailInfoError", vars.getLanguage());
+      else {
+        if (data[0].email == null || data[0].email.equals(""))
+          strMessage += Utility.messageBD(this, "UserMailError", vars.getLanguage());
+        if (data[0].emailuser == null || data[0].emailuser.equals(""))
+          strMessage += Utility.messageBD(this, "eMailUserError", vars.getLanguage());
+        if (data[0].emailuserpw == null || data[0].emailuserpw.equals(""))
+          strMessage += Utility.messageBD(this, "eMailUserPWError", vars.getLanguage());
+      }
+
+      if (strMessage != null && !strMessage.equals(""))
+        resultado.append("new Array(\"MESSAGE\", \"" + FormatUtilities.replaceJS(strMessage)
+            + "\")");
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strWindowId = vars.getStringParameter("inpwindowId");
-            String strActionType = vars.getStringParameter("inpactiontype");
-            String strCBPartnerID = vars.getRequestGlobalVariable(
-                    "inpcBpartnerId", strWindowId + "|C_BPartner_ID");
-            String strTabId = vars.getStringParameter("inpTabId");
-            try {
-                printPage(response, vars, strCBPartnerID, vars.getClient(),
-                        vars.getUser(), strActionType, strTabId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-
-        } else
-            pageError(response);
-    }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strCBPartnerID, String strClient, String strUser,
-            String strActionType, String strTabId) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_Request_Action';\n\n");
-        resultado.append("var respuesta = new Array(");
-
-        String strMessage = "";
-        if (strActionType.equals("E")) {
-            String strSMTPHost = SLRequestActionData.SMTPHost(this, strClient);
-            if (strSMTPHost.equals(""))
-                strMessage += Utility.messageBD(this, "SMTPHostError", vars
-                        .getLanguage());
-
-            String strBPemail = SLRequestActionData.BPemail(this,
-                    strCBPartnerID, strUser);
-            if (strBPemail.equals(""))
-                strMessage += Utility.messageBD(this, "BPemailError", vars
-                        .getLanguage());
-
-            SLRequestActionData[] data = SLRequestActionData.select(this,
-                    strUser);
-            if (data == null || data.length == 0)
-                strMessage += Utility.messageBD(this, "UserMailInfoError", vars
-                        .getLanguage());
-            else {
-                if (data[0].email == null || data[0].email.equals(""))
-                    strMessage += Utility.messageBD(this, "UserMailError", vars
-                            .getLanguage());
-                if (data[0].emailuser == null || data[0].emailuser.equals(""))
-                    strMessage += Utility.messageBD(this, "eMailUserError",
-                            vars.getLanguage());
-                if (data[0].emailuserpw == null
-                        || data[0].emailuserpw.equals(""))
-                    strMessage += Utility.messageBD(this, "eMailUserPWError",
-                            vars.getLanguage());
-            }
-
-            if (strMessage != null && !strMessage.equals(""))
-                resultado.append("new Array(\"MESSAGE\", \""
-                        + FormatUtilities.replaceJS(strMessage) + "\")");
-        }
-
-        resultado.append(");");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    resultado.append(");");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

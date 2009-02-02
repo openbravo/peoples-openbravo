@@ -45,187 +45,157 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportProductionJR extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        if (vars.commandIn("DEFAULT")) {
-            String strDateFrom = vars.getGlobalVariable("inpDateFrom",
-                    "ReportProductionJR|DateFrom", "");
-            String strDateTo = vars.getGlobalVariable("inpDateTo",
-                    "ReportProductionJR|DateTo", "");
-            String strRawMaterial = vars.getGlobalVariable("inpRawMaterial",
-                    "ReportProductionJR|RawMaterial", "");
-            printPageDataSheet(response, vars, strDateFrom, strDateTo,
-                    strRawMaterial);
-        } else if (vars.commandIn("FIND")) {
-            String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
-                    "ReportProductionJR|DateFrom");
-            String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
-                    "ReportProductionJR|DateTo");
-            String strRawMaterial = vars.getRequestGlobalVariable(
-                    "inpRawMaterial", "ReportProductionJR|RawMaterial");
-            printPagePDF(response, vars, strDateFrom, strDateTo, strRawMaterial);
-        } else
-            pageError(response);
+    if (vars.commandIn("DEFAULT")) {
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportProductionJR|DateFrom", "");
+      String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportProductionJR|DateTo", "");
+      String strRawMaterial = vars.getGlobalVariable("inpRawMaterial",
+          "ReportProductionJR|RawMaterial", "");
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strRawMaterial);
+    } else if (vars.commandIn("FIND")) {
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+          "ReportProductionJR|DateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportProductionJR|DateTo");
+      String strRawMaterial = vars.getRequestGlobalVariable("inpRawMaterial",
+          "ReportProductionJR|RawMaterial");
+      printPagePDF(response, vars, strDateFrom, strDateTo, strRawMaterial);
+    } else
+      pageError(response);
+  }
+
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strRawMaterial) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_reports/ReportProductionJR").createXmlDocument();
+
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportProduction", false, "", "", "",
+        false, "ad_reports", strReplaceWith, false, true);
+    toolbar.prepareSimpleToolBarTemplate();
+    xmlDocument.setParameter("toolbar", toolbar.toString());
+
+    try {
+      WindowTabs tabs = new WindowTabs(this, vars,
+          "org.openbravo.erpCommon.ad_reports.ReportProductionJR");
+      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+      xmlDocument.setParameter("theme", vars.getTheme());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportProductionJR.html",
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      xmlDocument.setParameter("navigationBar", nav.toString());
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportProductionJR.html",
+          strReplaceWith);
+      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    {
+      OBError myMessage = vars.getMessage("ReportProductionJR");
+      vars.removeMessage("ReportProductionJR");
+      if (myMessage != null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
     }
 
-    void printPageDataSheet(HttpServletResponse response,
-            VariablesSecureApp vars, String strDateFrom, String strDateTo,
-            String strRawMaterial) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_reports/ReportProductionJR")
-                .createXmlDocument();
+    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("dateFrom", strDateFrom);
+    xmlDocument.setParameter("dateTo", strDateTo);
+    xmlDocument.setParameter("rawMaterial", strRawMaterial);
+    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    out.println(xmlDocument.print());
+    out.close();
+  }
 
-        ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
-                "ReportProduction", false, "", "", "", false, "ad_reports",
-                strReplaceWith, false, true);
-        toolbar.prepareSimpleToolBarTemplate();
-        xmlDocument.setParameter("toolbar", toolbar.toString());
+  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
+      String strDateTo, String strRawMaterial) throws IOException, ServletException {
 
-        try {
-            WindowTabs tabs = new WindowTabs(this, vars,
-                    "org.openbravo.erpCommon.ad_reports.ReportProductionJR");
-            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-            xmlDocument.setParameter("theme", vars.getTheme());
-            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-                    "ReportProductionJR.html", classInfo.id, classInfo.type,
-                    strReplaceWith, tabs.breadcrumb());
-            xmlDocument.setParameter("navigationBar", nav.toString());
-            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
-                    "ReportProductionJR.html", strReplaceWith);
-            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
-        {
-            OBError myMessage = vars.getMessage("ReportProductionJR");
-            vars.removeMessage("ReportProductionJR");
-            if (myMessage != null) {
-                xmlDocument.setParameter("messageType", myMessage.getType());
-                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-                xmlDocument.setParameter("messageMessage", myMessage
-                        .getMessage());
-            }
-        }
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: Jasper Report : Production Report");
 
-        xmlDocument
-                .setParameter("calendar", vars.getLanguage().substring(0, 2));
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("paramLanguage", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("dateFrom", strDateFrom);
-        xmlDocument.setParameter("dateTo", strDateTo);
-        xmlDocument.setParameter("rawMaterial", strRawMaterial);
-        xmlDocument.setParameter("dateFromdisplayFormat", vars
-                .getSessionValue("#AD_SqlDateFormat"));
-        xmlDocument.setParameter("dateFromsaveFormat", vars
-                .getSessionValue("#AD_SqlDateFormat"));
-        xmlDocument.setParameter("dateTodisplayFormat", vars
-                .getSessionValue("#AD_SqlDateFormat"));
-        xmlDocument.setParameter("dateTosaveFormat", vars
-                .getSessionValue("#AD_SqlDateFormat"));
-        out.println(xmlDocument.print());
-        out.close();
+    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/productionReport.jrxml";
+    response.setHeader("Content-disposition", "inline; filename=ProductionReportJR.pdf");
+
+    String strTitle = "Production Report";
+    String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom
+        + " " + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strDateTo;
+
+    // String strSubTitle = (!strDateFrom.equals("")?"From "+strDateFrom:"")
+    // + (!strDateTo.equals("")?" to "+strDateTo:"");
+
+    if (!strRawMaterial.equals("Y"))
+      strRawMaterial = "N";
+
+    ReportProductionData[] data = ReportProductionData.select(this, strRawMaterial, Utility
+        .getContext(this, vars, "#User_Client", "ReportProductionJR"), Utility.getContext(this,
+        vars, "#User_Org", "ReportProductionJR"), strDateFrom, DateTimeData.nDaysAfter(this,
+        strDateTo, "1"));
+
+    if (data == null || data.length == 0) {
+      data = ReportProductionData.set();
     }
 
-    void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
-            String strDateFrom, String strDateTo, String strRawMaterial)
-            throws IOException, ServletException {
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
 
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: Jasper Report : Production Report");
+    if (log4j.isDebugEnabled())
+      log4j.debug("inpDateFrom:"
+          + vars.getRequestGlobalVariable("inpDateFrom", "ReportProductionJR|DateFrom"));
+    if (log4j.isDebugEnabled())
+      log4j.debug("inpDateTo:"
+          + vars.getRequestGlobalVariable("inpDateTo", "ReportProductionJR|DateFrom"));
 
-        String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/productionReport.jrxml";
-        response.setHeader("Content-disposition",
-                "inline; filename=ProductionReportJR.pdf");
+    String strLanguage = vars.getLanguage();
+    String strBaseDesign = getBaseDesignPath(strLanguage);
 
-        String strTitle = "Production Report";
-        String strSubTitle = Utility
-                .messageBD(this, "From", vars.getLanguage())
-                + " "
-                + strDateFrom
-                + " "
-                + Utility.messageBD(this, "To", vars.getLanguage())
-                + " "
-                + strDateTo;
+    JasperReport jasperReportLines;
+    try {
+      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
+          + "/org/openbravo/erpCommon/ad_reports/productionSubReport.jrxml");
+      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+    } catch (JRException e) {
+      e.printStackTrace();
+      throw new ServletException(e.getMessage());
+    }
+    parameters.put("SR_LINES", jasperReportLines);
 
-        // String strSubTitle = (!strDateFrom.equals("")?"From "+strDateFrom:"")
-        // + (!strDateTo.equals("")?" to "+strDateTo:"");
+    parameters.put("REPORT_TITLE", strTitle);
+    parameters.put("REPORT_SUBTITLE", strSubTitle);
 
-        if (!strRawMaterial.equals("Y"))
-            strRawMaterial = "N";
-
-        ReportProductionData[] data = ReportProductionData.select(this,
-                strRawMaterial, Utility.getContext(this, vars, "#User_Client",
-                        "ReportProductionJR"), Utility.getContext(this, vars,
-                        "#User_Org", "ReportProductionJR"), strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"));
-
-        if (data == null || data.length == 0) {
-            data = ReportProductionData.set();
-        }
-
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
-
-        if (log4j.isDebugEnabled())
-            log4j.debug("inpDateFrom:"
-                    + vars.getRequestGlobalVariable("inpDateFrom",
-                            "ReportProductionJR|DateFrom"));
-        if (log4j.isDebugEnabled())
-            log4j.debug("inpDateTo:"
-                    + vars.getRequestGlobalVariable("inpDateTo",
-                            "ReportProductionJR|DateFrom"));
-
-        String strLanguage = vars.getLanguage();
-        String strBaseDesign = getBaseDesignPath(strLanguage);
-
-        JasperReport jasperReportLines;
-        try {
-            JasperDesign jasperDesignLines = JRXmlLoader
-                    .load(strBaseDesign
-                            + "/org/openbravo/erpCommon/ad_reports/productionSubReport.jrxml");
-            jasperReportLines = JasperCompileManager
-                    .compileReport(jasperDesignLines);
-        } catch (JRException e) {
-            e.printStackTrace();
-            throw new ServletException(e.getMessage());
-        }
-        parameters.put("SR_LINES", jasperReportLines);
-
-        parameters.put("REPORT_TITLE", strTitle);
-        parameters.put("REPORT_SUBTITLE", strSubTitle);
-
-        try {
-            if (!strDateFrom.equals(""))
-                parameters.put("DATE_FROM", new SimpleDateFormat("dd-MM-yyyy")
-                        .parse(strDateFrom));
-            if (!strDateTo.equals(""))
-                parameters.put("DATE_TO", new SimpleDateFormat("dd-MM-yyyy")
-                        .parse(strDateTo));
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
-
-        if (log4j.isDebugEnabled())
-            log4j.debug("parameters: " + parameters.toString());
-        if (log4j.isDebugEnabled())
-            log4j.debug("data: " + data);
-
-        renderJR(vars, response, strReportName, "pdf", parameters, data, null);
-
+    try {
+      if (!strDateFrom.equals(""))
+        parameters.put("DATE_FROM", new SimpleDateFormat("dd-MM-yyyy").parse(strDateFrom));
+      if (!strDateTo.equals(""))
+        parameters.put("DATE_TO", new SimpleDateFormat("dd-MM-yyyy").parse(strDateTo));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
     }
 
-    public String getServletInfo() {
-        return "Servlet ReportProduction. This Servlet was made by Jon Alegria";
-    } // end of getServletInfo() method
+    if (log4j.isDebugEnabled())
+      log4j.debug("parameters: " + parameters.toString());
+    if (log4j.isDebugEnabled())
+      log4j.debug("data: " + data);
+
+    renderJR(vars, response, strReportName, "pdf", parameters, data, null);
+
+  }
+
+  public String getServletInfo() {
+    return "Servlet ReportProduction. This Servlet was made by Jon Alegria";
+  } // end of getServletInfo() method
 }

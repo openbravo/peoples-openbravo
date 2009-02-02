@@ -17,100 +17,94 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 public class VariablesHistory {
-    private String currentHistoryIndex;
-    private static final int reqHistoryLength = 10;
-    HttpSession session;
-    private String role;
-    private String language;
-    private String dbSessionID;
-    static Logger log4j = Logger.getLogger(VariablesHistory.class);
+  private String currentHistoryIndex;
+  private static final int reqHistoryLength = 10;
+  HttpSession session;
+  private String role;
+  private String language;
+  private String dbSessionID;
+  static Logger log4j = Logger.getLogger(VariablesHistory.class);
 
-    public VariablesHistory(HttpServletRequest request) {
-        this.session = request.getSession(true);
-        this.currentHistoryIndex = getSessionValue("reqHistory.current", "0");
-        this.role = getSessionValue("#AD_Role_ID");
-        this.language = getSessionValue("#AD_Language");
-        this.dbSessionID = getSessionValue("#AD_Session_ID");
-    }
+  public VariablesHistory(HttpServletRequest request) {
+    this.session = request.getSession(true);
+    this.currentHistoryIndex = getSessionValue("reqHistory.current", "0");
+    this.role = getSessionValue("#AD_Role_ID");
+    this.language = getSessionValue("#AD_Language");
+    this.dbSessionID = getSessionValue("#AD_Session_ID");
+  }
 
-    public String getCurrentHistoryIndex() {
-        return Integer.toString(Integer.valueOf(this.currentHistoryIndex)
-                .intValue()
-                % reqHistoryLength);
-    }
+  public String getCurrentHistoryIndex() {
+    return Integer
+        .toString(Integer.valueOf(this.currentHistoryIndex).intValue() % reqHistoryLength);
+  }
 
-    public void upCurrentHistoryIndex() {
-        this.currentHistoryIndex = Integer.toString(Integer.valueOf(
-                this.currentHistoryIndex).intValue() + 1);
-        setSessionValue("reqHistory.current", this.currentHistoryIndex);
-    }
+  public void upCurrentHistoryIndex() {
+    this.currentHistoryIndex = Integer.toString(Integer.valueOf(this.currentHistoryIndex)
+        .intValue() + 1);
+    setSessionValue("reqHistory.current", this.currentHistoryIndex);
+  }
 
-    public void downCurrentHistoryIndex() {
-        this.currentHistoryIndex = Integer.toString(Integer.valueOf(
-                this.currentHistoryIndex).intValue() - 1);
-        setSessionValue("reqHistory.current", this.currentHistoryIndex);
-    }
+  public void downCurrentHistoryIndex() {
+    this.currentHistoryIndex = Integer.toString(Integer.valueOf(this.currentHistoryIndex)
+        .intValue() - 1);
+    setSessionValue("reqHistory.current", this.currentHistoryIndex);
+  }
 
-    public String getCurrentServletPath(String defaultServletPath) {
-        return getSessionValue("reqHistory.path" + getCurrentHistoryIndex(),
-                defaultServletPath);
-    }
+  public String getCurrentServletPath(String defaultServletPath) {
+    return getSessionValue("reqHistory.path" + getCurrentHistoryIndex(), defaultServletPath);
+  }
 
-    public String getCurrentServletCommand() {
-        return getSessionValue("reqHistory.command" + getCurrentHistoryIndex(),
-                "DEFAULT");
-    }
+  public String getCurrentServletCommand() {
+    return getSessionValue("reqHistory.command" + getCurrentHistoryIndex(), "DEFAULT");
+  }
 
-    public String getSessionValue(String sessionAttribute) {
-        return getSessionValue(sessionAttribute, "");
-    }
+  public String getSessionValue(String sessionAttribute) {
+    return getSessionValue(sessionAttribute, "");
+  }
 
-    public String getSessionValue(String sessionAttribute, String defaultValue) {
-        String auxStr = null;
-        try {
-            auxStr = (String) session.getAttribute(sessionAttribute
-                    .toUpperCase());
-            if (auxStr == null || auxStr.trim().equals(""))
-                auxStr = defaultValue;
-        } catch (Exception e) {
-            auxStr = defaultValue;
-        }
-        if (!sessionAttribute.equalsIgnoreCase("menuVertical"))
-            if (log4j.isDebugEnabled())
-                log4j.debug("Session attribute: " + sessionAttribute + ":..."
-                        + auxStr);
-        return auxStr;
+  public String getSessionValue(String sessionAttribute, String defaultValue) {
+    String auxStr = null;
+    try {
+      auxStr = (String) session.getAttribute(sessionAttribute.toUpperCase());
+      if (auxStr == null || auxStr.trim().equals(""))
+        auxStr = defaultValue;
+    } catch (Exception e) {
+      auxStr = defaultValue;
     }
+    if (!sessionAttribute.equalsIgnoreCase("menuVertical"))
+      if (log4j.isDebugEnabled())
+        log4j.debug("Session attribute: " + sessionAttribute + ":..." + auxStr);
+    return auxStr;
+  }
 
-    public void setSessionValue(String attribute, String value) {
-        try {
-            session.setAttribute(attribute.toUpperCase(), value);
-            if (!attribute.equalsIgnoreCase("menuVertical"))
-                if (log4j.isDebugEnabled())
-                    log4j.debug("session value: " + attribute + ":..."
-                            + value.toString());
-        } catch (Exception e) {
-            log4j.error("setSessionValue error: " + attribute + ":..." + value);
-        }
+  public void setSessionValue(String attribute, String value) {
+    try {
+      session.setAttribute(attribute.toUpperCase(), value);
+      if (!attribute.equalsIgnoreCase("menuVertical"))
+        if (log4j.isDebugEnabled())
+          log4j.debug("session value: " + attribute + ":..." + value.toString());
+    } catch (Exception e) {
+      log4j.error("setSessionValue error: " + attribute + ":..." + value);
     }
+  }
 
-    public void removeSessionValue(String attribute) {
-        try {
-            session.removeAttribute(attribute.toUpperCase());
-        } catch (Exception e) {
-            log4j.error("removeSessionValue error: " + attribute);
-        }
+  public void removeSessionValue(String attribute) {
+    try {
+      session.removeAttribute(attribute.toUpperCase());
+    } catch (Exception e) {
+      log4j.error("removeSessionValue error: " + attribute);
     }
+  }
 
-    public String getRole() {
-        return role;
-    }
+  public String getRole() {
+    return role;
+  }
 
-    public String getLanguage() {
-        return language;
-    }
+  public String getLanguage() {
+    return language;
+  }
 
-    public String getDBSession() {
-        return dbSessionID;
-    }
+  public String getDBSession() {
+    return dbSessionID;
+  }
 }

@@ -22,77 +22,77 @@ import org.openbravo.data.FieldProvider;
 
 public class AttachContent implements FieldProvider {
 
-    static Logger log4j = Logger.getLogger(AttachContent.class);
-    public String docName;
-    public String fileName;
-    public FileItem fileItem;
-    public String id;
-    public String visible;
-    public String selected;
+  static Logger log4j = Logger.getLogger(AttachContent.class);
+  public String docName;
+  public String fileName;
+  public FileItem fileItem;
+  public String id;
+  public String visible;
+  public String selected;
 
-    public String getSelected() {
-        return selected;
-    }
+  public String getSelected() {
+    return selected;
+  }
 
-    public void setSelected(String selected) {
-        this.selected = selected;
-    }
+  public void setSelected(String selected) {
+    this.selected = selected;
+  }
 
-    public String getVisible() {
-        return visible;
-    }
+  public String getVisible() {
+    return visible;
+  }
 
-    public void setVisible(String visible) {
-        this.visible = visible;
-    }
+  public void setVisible(String visible) {
+    this.visible = visible;
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public FileItem getFileItem() {
-        return fileItem;
-    }
+  public FileItem getFileItem() {
+    return fileItem;
+  }
 
-    public void setFileItem(FileItem fileItem) {
-        this.fileItem = fileItem;
-    }
+  public void setFileItem(FileItem fileItem) {
+    this.fileItem = fileItem;
+  }
 
-    public String getFileName() {
-        return fileName;
-    }
+  public String getFileName() {
+    return fileName;
+  }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
 
-    public String getDocName() {
-        return docName;
-    }
+  public String getDocName() {
+    return docName;
+  }
 
-    public void setDocName(String docName) {
-        this.docName = docName;
-    }
+  public void setDocName(String docName) {
+    this.docName = docName;
+  }
 
-    public String getField(String fieldName) {
-        if (fieldName.equalsIgnoreCase("FILENAME"))
-            return fileName;
-        else if (fieldName.equalsIgnoreCase("ID")) {
-            return id;
-        } else if (fieldName.equalsIgnoreCase("VISIBLE")) {
-            return visible;
-        } else if (fieldName.equalsIgnoreCase("SELECTED")) {
-            return selected;
-        } else if (fieldName.equalsIgnoreCase("DOCNAME")) {
-            return docName;
-        } else {
-            log4j.debug("Field does not exist: " + fieldName);
-            return null;
-        }
+  public String getField(String fieldName) {
+    if (fieldName.equalsIgnoreCase("FILENAME"))
+      return fileName;
+    else if (fieldName.equalsIgnoreCase("ID")) {
+      return id;
+    } else if (fieldName.equalsIgnoreCase("VISIBLE")) {
+      return visible;
+    } else if (fieldName.equalsIgnoreCase("SELECTED")) {
+      return selected;
+    } else if (fieldName.equalsIgnoreCase("DOCNAME")) {
+      return docName;
+    } else {
+      log4j.debug("Field does not exist: " + fieldName);
+      return null;
     }
+  }
 
 }

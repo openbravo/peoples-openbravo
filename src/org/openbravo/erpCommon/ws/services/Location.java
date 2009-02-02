@@ -20,88 +20,88 @@
 package org.openbravo.erpCommon.ws.services;
 
 public class Location {
-    private String id;
-    private String clientId;
-    private String businessPartnerId;
-    private String address1;
-    private String address2;
-    private String city;
-    private String postal;
-    private String region;
-    private String country;
+  private String id;
+  private String clientId;
+  private String businessPartnerId;
+  private String address1;
+  private String address2;
+  private String city;
+  private String postal;
+  private String region;
+  private String country;
 
-    public Location() {
-    }
+  public Location() {
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String value) {
-        id = value;
-    }
+  public void setId(String value) {
+    id = value;
+  }
 
-    public String getClientId() {
-        return clientId;
-    }
+  public String getClientId() {
+    return clientId;
+  }
 
-    public void setClientId(String value) {
-        clientId = value;
-    }
+  public void setClientId(String value) {
+    clientId = value;
+  }
 
-    public String getBusinessPartnerId() {
-        return businessPartnerId;
-    }
+  public String getBusinessPartnerId() {
+    return businessPartnerId;
+  }
 
-    public void setBusinessPartnerId(String value) {
-        businessPartnerId = value;
-    }
+  public void setBusinessPartnerId(String value) {
+    businessPartnerId = value;
+  }
 
-    public String getAddress1() {
-        return address1;
-    }
+  public String getAddress1() {
+    return address1;
+  }
 
-    public void setAddress1(String value) {
-        address1 = value;
-    }
+  public void setAddress1(String value) {
+    address1 = value;
+  }
 
-    public String getAddress2() {
-        return address2;
-    }
+  public String getAddress2() {
+    return address2;
+  }
 
-    public void setAddress2(String value) {
-        address2 = value;
-    }
+  public void setAddress2(String value) {
+    address2 = value;
+  }
 
-    public String getCity() {
-        return city;
-    }
+  public String getCity() {
+    return city;
+  }
 
-    public void setCity(String value) {
-        city = value;
-    }
+  public void setCity(String value) {
+    city = value;
+  }
 
-    public String getPostal() {
-        return postal;
-    }
+  public String getPostal() {
+    return postal;
+  }
 
-    public void setPostal(String value) {
-        postal = value;
-    }
+  public void setPostal(String value) {
+    postal = value;
+  }
 
-    public String getRegion() {
-        return region;
-    }
+  public String getRegion() {
+    return region;
+  }
 
-    public void setRegion(String value) {
-        region = value;
-    }
+  public void setRegion(String value) {
+    region = value;
+  }
 
-    public String getCountry() {
-        return country;
-    }
+  public String getCountry() {
+    return country;
+  }
 
-    public void setCountry(String value) {
-        country = value;
-    }
+  public void setCountry(String value) {
+    country = value;
+  }
 }

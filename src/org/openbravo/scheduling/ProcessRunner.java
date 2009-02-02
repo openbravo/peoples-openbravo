@@ -38,68 +38,67 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
  */
 public class ProcessRunner {
 
-    static Logger log = Logger.getLogger(ProcessRunner.class);
+  static Logger log = Logger.getLogger(ProcessRunner.class);
 
-    private ProcessBundle bundle;
+  private ProcessBundle bundle;
 
-    public ProcessRunner(ProcessBundle bundle) {
-        this.bundle = bundle;
+  public ProcessRunner(ProcessBundle bundle) {
+    this.bundle = bundle;
+  }
+
+  /**
+   * @param process
+   * @param vars
+   * @param conn
+   * @throws ServletException
+   */
+  public String execute(ConnectionProvider conn) throws ServletException {
+
+    Process process = null;
+    try {
+      process = bundle.getProcessClass().newInstance();
+
+    } catch (final Exception e) {
+      log.error(e.getMessage(), e);
+      throw new ServletException(e.getMessage(), e);
+    }
+    final String requestId = SequenceIdData.getUUID();
+    String status = SCHEDULED;
+
+    final ProcessContext ctx = bundle.getContext();
+    ProcessRequestData.insert(conn, ctx.getOrganization(), ctx.getClient(), ctx.getUser(), ctx
+        .getUser(), requestId, bundle.getProcessId(), ctx.getUser(), status, "Direct", ctx
+        .toString(), "", null, null, null);
+
+    final String executionId = SequenceIdData.getUUID();
+    final long startTime = System.currentTimeMillis();
+    long endTime = startTime;
+
+    status = PROCESSING;
+    ProcessRunData.insert(conn, ctx.getOrganization(), ctx.getClient(), ctx.getUser(), ctx
+        .getUser(), executionId, status, OBScheduler.format(new Date(startTime)), null, bundle
+        .getLog(), requestId);
+
+    try {
+      log.debug("Calling execute on process " + requestId);
+      process.execute(bundle);
+      endTime = System.currentTimeMillis();
+      status = SUCCESS;
+
+    } catch (final Exception e) {
+      log.error(e.getMessage(), e);
+      endTime = System.currentTimeMillis();
+      status = ERROR;
+      log.info("Process " + requestId + " threw an Exception: ", e);
     }
 
-    /**
-     * @param process
-     * @param vars
-     * @param conn
-     * @throws ServletException
-     */
-    public String execute(ConnectionProvider conn) throws ServletException {
+    final String duration = ProcessMonitor.getDuration(endTime - startTime);
+    ProcessRequestData.update(conn, COMPLETE, requestId);
+    final String end = OBScheduler.format(new Date(endTime));
+    ProcessRunData.update(conn, ctx.getUser(), SUCCESS, end, duration, bundle.getLog().toString(),
+        executionId);
 
-        Process process = null;
-        try {
-            process = bundle.getProcessClass().newInstance();
-
-        } catch (final Exception e) {
-            log.error(e.getMessage(), e);
-            throw new ServletException(e.getMessage(), e);
-        }
-        final String requestId = SequenceIdData.getUUID();
-        String status = SCHEDULED;
-
-        final ProcessContext ctx = bundle.getContext();
-        ProcessRequestData.insert(conn, ctx.getOrganization(), ctx.getClient(),
-                ctx.getUser(), ctx.getUser(), requestId, bundle.getProcessId(),
-                ctx.getUser(), status, "Direct", ctx.toString(), "", null,
-                null, null);
-
-        final String executionId = SequenceIdData.getUUID();
-        final long startTime = System.currentTimeMillis();
-        long endTime = startTime;
-
-        status = PROCESSING;
-        ProcessRunData.insert(conn, ctx.getOrganization(), ctx.getClient(), ctx
-                .getUser(), ctx.getUser(), executionId, status, OBScheduler
-                .format(new Date(startTime)), null, bundle.getLog(), requestId);
-
-        try {
-            log.debug("Calling execute on process " + requestId);
-            process.execute(bundle);
-            endTime = System.currentTimeMillis();
-            status = SUCCESS;
-
-        } catch (final Exception e) {
-            log.error(e.getMessage(), e);
-            endTime = System.currentTimeMillis();
-            status = ERROR;
-            log.info("Process " + requestId + " threw an Exception: ", e);
-        }
-
-        final String duration = ProcessMonitor.getDuration(endTime - startTime);
-        ProcessRequestData.update(conn, COMPLETE, requestId);
-        final String end = OBScheduler.format(new Date(endTime));
-        ProcessRunData.update(conn, ctx.getUser(), SUCCESS, end, duration,
-                bundle.getLog().toString(), executionId);
-
-        return executionId;
-    }
+    return executionId;
+  }
 
 }

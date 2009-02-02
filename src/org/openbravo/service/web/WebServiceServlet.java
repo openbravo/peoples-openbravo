@@ -30,107 +30,98 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.service.OBServiceException;
 
 /**
- * The default servlet which catches all requests for a webservice. This servlet
- * finds the WebService instance implementing the requested service by calling
- * the {@link OBProvider} with the top segment in the path. When the WebService
- * implementation is found the request is forwarded to that service.
+ * The default servlet which catches all requests for a webservice. This servlet finds the
+ * WebService instance implementing the requested service by calling the {@link OBProvider} with the
+ * top segment in the path. When the WebService implementation is found the request is forwarded to
+ * that service.
  * 
  * @author mtaal
  */
 
 public class WebServiceServlet extends BaseWebServiceServlet {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        try {
-            final String segment = WebServiceUtil.getInstance()
-                    .getFirstSegment(request.getPathInfo());
-            final WebService ws = getWebService(segment);
-            if (ws != null) {
-                ws.doGet(getRemainingPath(request.getPathInfo(), segment),
-                        request, response);
-            }
-        } catch (final OBException e) {
-            throw e;
-        } catch (final Exception e) {
-            throw new OBException(e);
-        }
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    try {
+      final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
+      final WebService ws = getWebService(segment);
+      if (ws != null) {
+        ws.doGet(getRemainingPath(request.getPathInfo(), segment), request, response);
+      }
+    } catch (final OBException e) {
+      throw e;
+    } catch (final Exception e) {
+      throw new OBException(e);
     }
+  }
 
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        try {
-            final String segment = WebServiceUtil.getInstance()
-                    .getFirstSegment(request.getPathInfo());
-            final WebService ws = getWebService(segment);
-            if (ws != null) {
-                ws.doPost(getRemainingPath(request.getPathInfo(), segment),
-                        request, response);
-            }
-        } catch (final OBException e) {
-            throw e;
-        } catch (final Exception e) {
-            throw new OBException(e);
-        }
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    try {
+      final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
+      final WebService ws = getWebService(segment);
+      if (ws != null) {
+        ws.doPost(getRemainingPath(request.getPathInfo(), segment), request, response);
+      }
+    } catch (final OBException e) {
+      throw e;
+    } catch (final Exception e) {
+      throw new OBException(e);
     }
+  }
 
-    @Override
-    public void doDelete(HttpServletRequest request,
-            HttpServletResponse response) throws IOException, ServletException {
-        try {
-            final String segment = WebServiceUtil.getInstance()
-                    .getFirstSegment(request.getPathInfo());
-            final WebService ws = getWebService(segment);
-            if (ws != null) {
-                ws.doDelete(getRemainingPath(request.getPathInfo(), segment),
-                        request, response);
-            }
-        } catch (final OBException e) {
-            throw e;
-        } catch (final Exception e) {
-            throw new OBException(e);
-        }
+  @Override
+  public void doDelete(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+    try {
+      final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
+      final WebService ws = getWebService(segment);
+      if (ws != null) {
+        ws.doDelete(getRemainingPath(request.getPathInfo(), segment), request, response);
+      }
+    } catch (final OBException e) {
+      throw e;
+    } catch (final Exception e) {
+      throw new OBException(e);
     }
+  }
 
-    @Override
-    public void doPut(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        try {
-            final String segment = WebServiceUtil.getInstance()
-                    .getFirstSegment(request.getPathInfo());
-            final WebService ws = getWebService(segment);
-            if (ws != null) {
-                ws.doPut(getRemainingPath(request.getPathInfo(), segment),
-                        request, response);
-            }
-        } catch (final OBException e) {
-            throw e;
-        } catch (final Exception e) {
-            throw new OBException(e);
-        }
+  @Override
+  public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    try {
+      final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
+      final WebService ws = getWebService(segment);
+      if (ws != null) {
+        ws.doPut(getRemainingPath(request.getPathInfo(), segment), request, response);
+      }
+    } catch (final OBException e) {
+      throw e;
+    } catch (final Exception e) {
+      throw new OBException(e);
     }
+  }
 
-    private WebService getWebService(String segment) {
-        final Object o = OBProvider.getInstance().get(segment);
-        if (o instanceof WebService) {
-            return (WebService) o;
-        }
-        throw new OBServiceException("No WebService found using the name "
-                + segment);
+  private WebService getWebService(String segment) {
+    final Object o = OBProvider.getInstance().get(segment);
+    if (o instanceof WebService) {
+      return (WebService) o;
     }
+    throw new OBServiceException("No WebService found using the name " + segment);
+  }
 
-    private String getRemainingPath(String pathInfo, String segment) {
-        String localPathInfo = pathInfo;
-        if (pathInfo.startsWith("/")) {
-            localPathInfo = pathInfo.substring(1);
-        }
-        if (localPathInfo.length() == segment.length()) {
-            return "";
-        }
-        return localPathInfo.substring(segment.length());
+  private String getRemainingPath(String pathInfo, String segment) {
+    String localPathInfo = pathInfo;
+    if (pathInfo.startsWith("/")) {
+      localPathInfo = pathInfo.substring(1);
     }
+    if (localPathInfo.length() == segment.length()) {
+      return "";
+    }
+    return localPathInfo.substring(segment.length());
+  }
 }

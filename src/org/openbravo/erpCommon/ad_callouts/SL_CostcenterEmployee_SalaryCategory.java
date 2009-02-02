@@ -32,53 +32,49 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_CostcenterEmployee_SalaryCategory extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String srtcSalaryCategoryId = vars
-                    .getStringParameter("inpcSalaryCategoryId");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String srtcSalaryCategoryId = vars.getStringParameter("inpcSalaryCategoryId");
 
-            try {
-                printPage(response, vars, srtcSalaryCategoryId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+      try {
+        printPage(response, vars, srtcSalaryCategoryId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String srtcSalaryCategoryId) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-        String strCostUom = SLCostcenterEmployeeSalaryCategoryData.select(this,
-                srtcSalaryCategoryId);
-        StringBuffer resultado = new StringBuffer();
-        resultado
-                .append("var calloutName='SL_CostcenterEmployee_SalaryCategory';\n\n");
-        resultado.append("var respuesta = new Array(");
-        resultado.append("new Array(\"inpcostuom\", \""
-                + FormatUtilities.replaceJS(strCostUom) + "\")");
-        resultado.append(");");
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String srtcSalaryCategoryId)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    String strCostUom = SLCostcenterEmployeeSalaryCategoryData.select(this, srtcSalaryCategoryId);
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_CostcenterEmployee_SalaryCategory';\n\n");
+    resultado.append("var respuesta = new Array(");
+    resultado
+        .append("new Array(\"inpcostuom\", \"" + FormatUtilities.replaceJS(strCostUom) + "\")");
+    resultado.append(");");
 
-        xmlDocument.setParameter("array", resultado.toString());
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    xmlDocument.setParameter("array", resultado.toString());
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

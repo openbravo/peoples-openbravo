@@ -25,57 +25,55 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 
 /**
- * A convenience class which can be used as a base class for when specific
- * actions need to be done before or after a thread has run. cleaning up certain
- * threadlocals.
+ * A convenience class which can be used as a base class for when specific actions need to be done
+ * before or after a thread has run. cleaning up certain threadlocals.
  * 
  * @author mtaal
  */
 
 public abstract class ThreadHandler {
-    private static final Logger log = Logger.getLogger(ThreadHandler.class);
+  private static final Logger log = Logger.getLogger(ThreadHandler.class);
 
-    /**
-     * Run the thread, this method will call the protected methods doBefore,
-     * doAction and doFinal.
-     */
-    public void run() {
-        boolean err = true;
-        try {
-            log.debug("Thread started --> doBefore");
-            doBefore();
-            log.debug("Thread --> doAction");
-            doAction();
-            log.debug("Thread --> Action done");
-            err = false;
-            // TODO add exception logging/tracing/emailing
-            // } catch (Throwable t) {
-            // ExceptionHandler.reportThrowable(t, (HttpServletRequest)
-            // request);
-            // throw new ServletException(t);
-        } catch (final ServletException se) {
-            if (se.getRootCause() != null) {
-                se.getRootCause().printStackTrace(System.err);
-                log.error(se);
-                throw new OBException("Exception thrown "
-                        + se.getRootCause().getMessage(), se.getRootCause());
-            } else {
-                se.printStackTrace(System.err);
-                log.error(se);
-                throw new OBException("Exception thrown " + se.getMessage(), se);
-            }
-        } catch (final Throwable t) {
-            t.printStackTrace(System.err);
-            log.error(t);
-            throw new OBException("Exception thrown " + t.getMessage(), t);
-        } finally {
-            doFinal(err);
-        }
+  /**
+   * Run the thread, this method will call the protected methods doBefore, doAction and doFinal.
+   */
+  public void run() {
+    boolean err = true;
+    try {
+      log.debug("Thread started --> doBefore");
+      doBefore();
+      log.debug("Thread --> doAction");
+      doAction();
+      log.debug("Thread --> Action done");
+      err = false;
+      // TODO add exception logging/tracing/emailing
+      // } catch (Throwable t) {
+      // ExceptionHandler.reportThrowable(t, (HttpServletRequest)
+      // request);
+      // throw new ServletException(t);
+    } catch (final ServletException se) {
+      if (se.getRootCause() != null) {
+        se.getRootCause().printStackTrace(System.err);
+        log.error(se);
+        throw new OBException("Exception thrown " + se.getRootCause().getMessage(), se
+            .getRootCause());
+      } else {
+        se.printStackTrace(System.err);
+        log.error(se);
+        throw new OBException("Exception thrown " + se.getMessage(), se);
+      }
+    } catch (final Throwable t) {
+      t.printStackTrace(System.err);
+      log.error(t);
+      throw new OBException("Exception thrown " + t.getMessage(), t);
+    } finally {
+      doFinal(err);
     }
+  }
 
-    protected abstract void doBefore() throws Exception;
+  protected abstract void doBefore() throws Exception;
 
-    protected abstract void doFinal(boolean errorOccured);
+  protected abstract void doFinal(boolean errorOccured);
 
-    protected abstract void doAction() throws Exception;
+  protected abstract void doAction() throws Exception;
 }

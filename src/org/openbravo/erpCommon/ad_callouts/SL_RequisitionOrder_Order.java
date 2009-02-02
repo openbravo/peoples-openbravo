@@ -32,64 +32,59 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_RequisitionOrder_Order extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    static final BigDecimal ZERO = new BigDecimal(0.0);
+  static final BigDecimal ZERO = new BigDecimal(0.0);
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strOrderLine = vars.getStringParameter("inpcOrderlineId");
-            String strRequisitionLine = vars
-                    .getStringParameter("inpmRequisitionlineId");
-            try {
-                printPage(response, vars, strOrderLine, strRequisitionLine);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strOrderLine = vars.getStringParameter("inpcOrderlineId");
+      String strRequisitionLine = vars.getStringParameter("inpmRequisitionlineId");
+      try {
+        printPage(response, vars, strOrderLine, strRequisitionLine);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strOrderLine, String strRequisitionLine) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strOrderLine,
+      String strRequisitionLine) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-        BigDecimal required, orderLine, reqOrder;
+    BigDecimal required, orderLine, reqOrder;
 
-        required = new BigDecimal(SLRequisitionOrderOrderData.getRequired(this,
-                strRequisitionLine));
-        orderLine = new BigDecimal(SLRequisitionOrderOrderData.getOrderLine(
-                this, strOrderLine));
-        if (required.compareTo(orderLine) == 1)
-            reqOrder = orderLine;
-        else
-            reqOrder = required;
+    required = new BigDecimal(SLRequisitionOrderOrderData.getRequired(this, strRequisitionLine));
+    orderLine = new BigDecimal(SLRequisitionOrderOrderData.getOrderLine(this, strOrderLine));
+    if (required.compareTo(orderLine) == 1)
+      reqOrder = orderLine;
+    else
+      reqOrder = required;
 
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_RequisitionOrder_Order';\n\n");
-        resultado.append("var respuesta = new Array(");
-        resultado.append("new Array(\"inpqty\", " + reqOrder.toString() + ")");
-        resultado.append(");");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_RequisitionOrder_Order';\n\n");
+    resultado.append("var respuesta = new Array(");
+    resultado.append("new Array(\"inpqty\", " + reqOrder.toString() + ")");
+    resultado.append(");");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

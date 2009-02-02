@@ -26,11 +26,11 @@ package org.openbravo.dal.security;
  */
 
 public class SecurityConstants {
-    public final static String USER_Organization = "O";
-    public final static String USER_SYSTEM = "S";
-    public final static String USER_CLIENTOrganization = "CO";
-    public final static String USER_CLIENT = "C";
+  public final static String USER_Organization = "O";
+  public final static String USER_SYSTEM = "S";
+  public final static String USER_CLIENTOrganization = "CO";
+  public final static String USER_CLIENT = "C";
 
-    public final static String DATA_ONE = "1";
+  public final static String DATA_ONE = "1";
 
 }

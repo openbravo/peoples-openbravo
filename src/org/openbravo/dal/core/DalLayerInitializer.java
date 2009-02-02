@@ -28,85 +28,80 @@ import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.SessionFactoryController;
 
 /**
- * This class is responsible for initializing the dal layer. It ensures that the
- * model is read in memory and that the mapping is generated in a two stage
- * process.
+ * This class is responsible for initializing the dal layer. It ensures that the model is read in
+ * memory and that the mapping is generated in a two stage process.
  * 
  * @author mtaal
  */
 
 public class DalLayerInitializer implements OBSingleton {
-    private static final Logger log = Logger
-            .getLogger(DalLayerInitializer.class);
+  private static final Logger log = Logger.getLogger(DalLayerInitializer.class);
 
-    private static DalLayerInitializer instance;
+  private static DalLayerInitializer instance;
 
-    public static DalLayerInitializer getInstance() {
-        if (instance == null) {
-            instance = OBProvider.getInstance().get(DalLayerInitializer.class);
-        }
-        return instance;
+  public static DalLayerInitializer getInstance() {
+    if (instance == null) {
+      instance = OBProvider.getInstance().get(DalLayerInitializer.class);
+    }
+    return instance;
+  }
+
+  private boolean initialized = false;
+
+  /**
+   * Initializes the in-memory model, registers the entity classes with the {@link OBProvider
+   * OBProvider}, initializes the SessionFactory and reads the service config files.
+   * 
+   * @param rereadConfigFiles
+   *          there are cases where it does not make sense to reread the config files with services,
+   *          for example after installing a module. The system needs to be restarted for those
+   *          cases.
+   */
+  public void initialize(boolean rereadConfigFiles) {
+    if (initialized) {
+      return;
+    }
+    log.info("Initializing in-memory model...");
+    ModelProvider.refresh();
+
+    log.debug("Registering entity classes in the OBFactory");
+    for (final Entity e : ModelProvider.getInstance().getModel()) {
+      if (e.getMappingClass() != null) {
+        OBProvider.getInstance().register(e.getMappingClass(), e.getMappingClass(), false);
+        OBProvider.getInstance().register(e.getName(), e.getMappingClass(), false);
+      }
     }
 
-    private boolean initialized = false;
+    log.info("Model read in-memory, generating mapping...");
+    SessionFactoryController.setInstance(OBProvider.getInstance().get(
+        DalSessionFactoryController.class));
+    SessionFactoryController.getInstance().initialize();
 
-    /**
-     * Initializes the in-memory model, registers the entity classes with the
-     * {@link OBProvider OBProvider}, initializes the SessionFactory and reads
-     * the service config files.
-     * 
-     * @param rereadConfigFiles
-     *            there are cases where it does not make sense to reread the
-     *            config files with services, for example after installing a
-     *            module. The system needs to be restarted for those cases.
-     */
-    public void initialize(boolean rereadConfigFiles) {
-        if (initialized) {
-            return;
-        }
-        log.info("Initializing in-memory model...");
-        ModelProvider.refresh();
+    // reset the session
+    SessionHandler.deleteSessionHandler();
 
-        log.debug("Registering entity classes in the OBFactory");
-        for (final Entity e : ModelProvider.getInstance().getModel()) {
-            if (e.getMappingClass() != null) {
-                OBProvider.getInstance().register(e.getMappingClass(),
-                        e.getMappingClass(), false);
-                OBProvider.getInstance().register(e.getName(),
-                        e.getMappingClass(), false);
-            }
-        }
-
-        log.info("Model read in-memory, generating mapping...");
-        SessionFactoryController.setInstance(OBProvider.getInstance().get(
-                DalSessionFactoryController.class));
-        SessionFactoryController.getInstance().initialize();
-
-        // reset the session
-        SessionHandler.deleteSessionHandler();
-
-        // set the configs
-        if (rereadConfigFiles) {
-            OBConfigFileProvider.getInstance().setConfigInProvider();
-        }
-
-        log.info("Dal layer initialized");
-        initialized = true;
+    // set the configs
+    if (rereadConfigFiles) {
+      OBConfigFileProvider.getInstance().setConfigInProvider();
     }
 
-    public boolean isInitialized() {
-        return initialized;
-    }
+    log.info("Dal layer initialized");
+    initialized = true;
+  }
 
-    /**
-     * Can be used to set the internal initialized member to false and then call
-     * initialize again to re-initialize the Dal layer.
-     * 
-     * @param initialized
-     *            the value of the initialized member
-     */
-    public void setInitialized(boolean initialized) {
-        this.initialized = initialized;
-    }
+  public boolean isInitialized() {
+    return initialized;
+  }
+
+  /**
+   * Can be used to set the internal initialized member to false and then call initialize again to
+   * re-initialize the Dal layer.
+   * 
+   * @param initialized
+   *          the value of the initialized member
+   */
+  public void setInitialized(boolean initialized) {
+    this.initialized = initialized;
+  }
 
 }

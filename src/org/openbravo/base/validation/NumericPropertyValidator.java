@@ -32,62 +32,59 @@ import org.openbravo.base.util.Check;
 
 public class NumericPropertyValidator extends BasePropertyValidator {
 
-    static boolean isValidationRequired(Property p) {
-        if (p.isPrimitive()
-                && (p.getPrimitiveType() == Float.class
-                        || p.getPrimitiveType() == BigDecimal.class || p
-                        .getPrimitiveType() == Integer.class)) {
-            if (p.getMinValue() != null || p.getMaxValue() != null) {
-                return true;
-            }
-        }
-        return false;
+  static boolean isValidationRequired(Property p) {
+    if (p.isPrimitive()
+        && (p.getPrimitiveType() == Float.class || p.getPrimitiveType() == BigDecimal.class || p
+            .getPrimitiveType() == Integer.class)) {
+      if (p.getMinValue() != null || p.getMaxValue() != null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private BigDecimal minValue;
+  private BigDecimal maxValue;
+
+  public void initialize() {
+    Check.isTrue(getProperty().getFieldLength() > 0,
+        "Fieldlength should be larger than 0 for validation");
+    if (getProperty().getMinValue() != null) {
+      minValue = new BigDecimal(getProperty().getMinValue());
+    }
+    if (getProperty().getMaxValue() != null) {
+      maxValue = new BigDecimal(getProperty().getMaxValue());
+    }
+  }
+
+  @Override
+  public String validate(Object value) {
+    if (value == null) {
+      // mandatory is checked in Hibernate and in the property itself
+      return null;
+    }
+    final BigDecimal localValue;
+    if (float.class.isAssignableFrom(value.getClass())
+        || Float.class.isAssignableFrom(value.getClass())) {
+      localValue = new BigDecimal((Float) value);
+    } else if (int.class.isAssignableFrom(value.getClass())
+        || Integer.class.isAssignableFrom(value.getClass())) {
+      localValue = new BigDecimal((Integer) value);
+    } else {
+      Check.isInstanceOf(value, BigDecimal.class);
+      localValue = (BigDecimal) value;
     }
 
-    private BigDecimal minValue;
-    private BigDecimal maxValue;
-
-    public void initialize() {
-        Check.isTrue(getProperty().getFieldLength() > 0,
-                "Fieldlength should be larger than 0 for validation");
-        if (getProperty().getMinValue() != null) {
-            minValue = new BigDecimal(getProperty().getMinValue());
-        }
-        if (getProperty().getMaxValue() != null) {
-            maxValue = new BigDecimal(getProperty().getMaxValue());
-        }
+    if (minValue != null) {
+      if (minValue.compareTo(localValue) > 0) {
+        return "Value (" + value + ") is smaller than the min value: " + minValue;
+      }
     }
-
-    @Override
-    public String validate(Object value) {
-        if (value == null) {
-            // mandatory is checked in Hibernate and in the property itself
-            return null;
-        }
-        final BigDecimal localValue;
-        if (float.class.isAssignableFrom(value.getClass())
-                || Float.class.isAssignableFrom(value.getClass())) {
-            localValue = new BigDecimal((Float) value);
-        } else if (int.class.isAssignableFrom(value.getClass())
-                || Integer.class.isAssignableFrom(value.getClass())) {
-            localValue = new BigDecimal((Integer) value);
-        } else {
-            Check.isInstanceOf(value, BigDecimal.class);
-            localValue = (BigDecimal) value;
-        }
-
-        if (minValue != null) {
-            if (minValue.compareTo(localValue) > 0) {
-                return "Value (" + value + ") is smaller than the min value: "
-                        + minValue;
-            }
-        }
-        if (maxValue != null) {
-            if (maxValue.compareTo(localValue) < 0) {
-                return "Value (" + localValue
-                        + ") is larger than the max value: " + maxValue;
-            }
-        }
-        return null;
+    if (maxValue != null) {
+      if (maxValue.compareTo(localValue) < 0) {
+        return "Value (" + localValue + ") is larger than the max value: " + maxValue;
+      }
     }
+    return null;
+  }
 }

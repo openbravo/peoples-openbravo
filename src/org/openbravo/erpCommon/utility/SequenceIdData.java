@@ -26,35 +26,33 @@ import org.openbravo.database.ConnectionProvider;
 
 public class SequenceIdData {
 
-    /**
-     * Returns a new UUID
-     * 
-     * @return a new random UUID
-     */
-    public static String getUUID() {
-        return UUID.randomUUID().toString().replace("-", "").toUpperCase();
-    }
+  /**
+   * Returns a new UUID
+   * 
+   * @return a new random UUID
+   */
+  public static String getUUID() {
+    return UUID.randomUUID().toString().replace("-", "").toUpperCase();
+  }
 
-    /**
-     * Get the sequence for the specified table this shouldn't be used anymore,
-     * use instead getUUID() It is deprecated and will be removed before the
-     * 2.60 release
-     * 
-     * @deprecated
-     */
-    public static String getSequence(ConnectionProvider conn, String table,
-            String client) {
-        return getUUID();
-    }
+  /**
+   * Get the sequence for the specified table this shouldn't be used anymore, use instead getUUID()
+   * It is deprecated and will be removed before the 2.60 release
+   * 
+   * @deprecated
+   */
+  public static String getSequence(ConnectionProvider conn, String table, String client) {
+    return getUUID();
+  }
 
-    /**
-     * Get the sequence for the specified table. It is deprecated and will be
-     * removed before the 2.60 release
-     * 
-     * @deprecated
-     */
-    public static String getSequenceConnection(Connection conn,
-            ConnectionProvider con, String table, String client) {
-        return getUUID();
-    }
+  /**
+   * Get the sequence for the specified table. It is deprecated and will be removed before the 2.60
+   * release
+   * 
+   * @deprecated
+   */
+  public static String getSequenceConnection(Connection conn, ConnectionProvider con, String table,
+      String client) {
+    return getUUID();
+  }
 }

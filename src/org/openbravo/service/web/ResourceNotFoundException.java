@@ -22,28 +22,27 @@ package org.openbravo.service.web;
 import org.openbravo.base.exception.OBException;
 
 /**
- * This exception is thrown when the resource which is being retrieved does not
- * exist.
+ * This exception is thrown when the resource which is being retrieved does not exist.
  * 
  * @author mtaal
  */
 public class ResourceNotFoundException extends OBException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public ResourceNotFoundException() {
-        super();
-    }
+  public ResourceNotFoundException() {
+    super();
+  }
 
-    public ResourceNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public ResourceNotFoundException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public ResourceNotFoundException(String message) {
-        super(message);
-    }
+  public ResourceNotFoundException(String message) {
+    super(message);
+  }
 
-    public ResourceNotFoundException(Throwable cause) {
-        super(cause);
-    }
+  public ResourceNotFoundException(Throwable cause) {
+    super(cause);
+  }
 }

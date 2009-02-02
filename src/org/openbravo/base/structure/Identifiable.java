@@ -20,20 +20,19 @@
 package org.openbravo.base.structure;
 
 /**
- * An interface modeling open bravo objects which are identifiable. Identifiable
- * means that a unique id and entityname is available and also a user readable
- * identifier.
+ * An interface modeling open bravo objects which are identifiable. Identifiable means that a unique
+ * id and entityname is available and also a user readable identifier.
  * 
  * @author mtaal
  */
 
 public interface Identifiable {
 
-    public Object getId();
+  public Object getId();
 
-    public void setId(Object id);
+  public void setId(Object id);
 
-    public String getEntityName();
+  public String getEntityName();
 
-    public String getIdentifier();
+  public String getIdentifier();
 }

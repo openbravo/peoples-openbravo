@@ -20,88 +20,88 @@
 package org.openbravo.erpCommon.ws.services;
 
 public class Contact {
-    private String id;
-    private String clientId;
-    private String businessPartnerId;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String phone;
-    private String phone2;
-    private String fax;
+  private String id;
+  private String clientId;
+  private String businessPartnerId;
+  private String firstname;
+  private String lastname;
+  private String email;
+  private String phone;
+  private String phone2;
+  private String fax;
 
-    public Contact() {
-    }
+  public Contact() {
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String value) {
-        id = value;
-    }
+  public void setId(String value) {
+    id = value;
+  }
 
-    public String getClientId() {
-        return clientId;
-    }
+  public String getClientId() {
+    return clientId;
+  }
 
-    public void setClientId(String value) {
-        clientId = value;
-    }
+  public void setClientId(String value) {
+    clientId = value;
+  }
 
-    public String getBusinessPartnerId() {
-        return businessPartnerId;
-    }
+  public String getBusinessPartnerId() {
+    return businessPartnerId;
+  }
 
-    public void setBusinessPartnerId(String value) {
-        businessPartnerId = value;
-    }
+  public void setBusinessPartnerId(String value) {
+    businessPartnerId = value;
+  }
 
-    public String getFirstName() {
-        return firstname;
-    }
+  public String getFirstName() {
+    return firstname;
+  }
 
-    public void setFirstName(String value) {
-        firstname = value;
-    }
+  public void setFirstName(String value) {
+    firstname = value;
+  }
 
-    public String getLastName() {
-        return lastname;
-    }
+  public String getLastName() {
+    return lastname;
+  }
 
-    public void setLastName(String value) {
-        lastname = value;
-    }
+  public void setLastName(String value) {
+    lastname = value;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public void setEmail(String value) {
-        email = value;
-    }
+  public void setEmail(String value) {
+    email = value;
+  }
 
-    public String getPhone() {
-        return phone;
-    }
+  public String getPhone() {
+    return phone;
+  }
 
-    public void setPhone(String value) {
-        phone = value;
-    }
+  public void setPhone(String value) {
+    phone = value;
+  }
 
-    public String getPhone2() {
-        return phone2;
-    }
+  public String getPhone2() {
+    return phone2;
+  }
 
-    public void setPhone2(String value) {
-        phone2 = value;
-    }
+  public void setPhone2(String value) {
+    phone2 = value;
+  }
 
-    public String getFax() {
-        return fax;
-    }
+  public String getFax() {
+    return fax;
+  }
 
-    public void setFax(String value) {
-        fax = value;
-    }
+  public void setFax(String value) {
+    fax = value;
+  }
 }

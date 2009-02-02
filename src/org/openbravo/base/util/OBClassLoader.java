@@ -23,54 +23,50 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 
 /**
- * The OBClassLoader is used to support different classloading scenarios. As a
- * default two classloaders are present: the context (the default, used in
- * Tomcat) and the class classloader. The class classloader is used in Ant
- * tasks.
+ * The OBClassLoader is used to support different classloading scenarios. As a default two
+ * classloaders are present: the context (the default, used in Tomcat) and the class classloader.
+ * The class classloader is used in Ant tasks.
  * <p/>
- * Use the {@link OBProvider OBProvider} to define which classloader in a
- * specific environment.
+ * Use the {@link OBProvider OBProvider} to define which classloader in a specific environment.
  * 
  * @author mtaal
  */
 
 public class OBClassLoader implements OBSingleton {
 
-    private static OBClassLoader instance;
+  private static OBClassLoader instance;
 
-    public static OBClassLoader getInstance() {
-        if (instance == null) {
-            instance = OBProvider.getInstance().get(OBClassLoader.class);
-        }
-        return instance;
+  public static OBClassLoader getInstance() {
+    if (instance == null) {
+      instance = OBProvider.getInstance().get(OBClassLoader.class);
     }
+    return instance;
+  }
 
-    /**
-     * Load a class using the classloader. This method will throw an OBException
-     * if the class is not found. This exception is logged.
-     * 
-     * @param className
-     *            the name of the class to load
-     * @throws ClassNotFoundException
-     */
+  /**
+   * Load a class using the classloader. This method will throw an OBException if the class is not
+   * found. This exception is logged.
+   * 
+   * @param className
+   *          the name of the class to load
+   * @throws ClassNotFoundException
+   */
+  public Class<?> loadClass(String className) throws ClassNotFoundException {
+    return Thread.currentThread().getContextClassLoader().loadClass(className);
+  }
+
+  /**
+   * A class loader which uses the classloader of the Class class.
+   * 
+   * To use this classloader do the following:
+   * OBProvider.getInstance().register(OBClassLoader.class, OBClassLoader.ClassOBClassLoader.class,
+   * false);
+   */
+  public static class ClassOBClassLoader extends OBClassLoader {
+
+    @Override
     public Class<?> loadClass(String className) throws ClassNotFoundException {
-        return Thread.currentThread().getContextClassLoader().loadClass(
-                className);
+      return Class.forName(className);
     }
-
-    /**
-     * A class loader which uses the classloader of the Class class.
-     * 
-     * To use this classloader do the following:
-     * OBProvider.getInstance().register(OBClassLoader.class,
-     * OBClassLoader.ClassOBClassLoader.class, false);
-     */
-    public static class ClassOBClassLoader extends OBClassLoader {
-
-        @Override
-        public Class<?> loadClass(String className)
-                throws ClassNotFoundException {
-            return Class.forName(className);
-        }
-    }
+  }
 }

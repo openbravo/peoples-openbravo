@@ -26,22 +26,22 @@ package org.openbravo.base.model;
  */
 public class Package extends ModelObject {
 
-    private String javaPackage;
-    private Module module;
+  private String javaPackage;
+  private Module module;
 
-    public String getJavaPackage() {
-	return javaPackage;
-    }
+  public String getJavaPackage() {
+    return javaPackage;
+  }
 
-    public void setJavaPackage(String javaPackage) {
-	this.javaPackage = javaPackage;
-    }
+  public void setJavaPackage(String javaPackage) {
+    this.javaPackage = javaPackage;
+  }
 
-    public Module getModule() {
-	return module;
-    }
+  public Module getModule() {
+    return module;
+  }
 
-    public void setModule(Module module) {
-	this.module = module;
-    }
+  public void setModule(Module module) {
+    this.module = module;
+  }
 }

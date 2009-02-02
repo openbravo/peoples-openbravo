@@ -31,41 +31,37 @@ import org.openbravo.data.Sqlc;
 import org.openbravo.utils.FormatUtilities;
 
 public class ReportAcctRedirectUtility extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        if (vars.commandIn("DEFAULT")) {
-            String strTableId = vars.getRequiredStringParameter("inpadTableId");
-            String strRecordId = vars.getRequiredStringParameter("inprecordId");
-            String strDocBaseType = vars
-                    .getRequiredStringParameter("inpdocbasetype");
-            ReportAcctRedirectUtilityData[] data = ReportAcctRedirectUtilityData
-                    .select(this, strTableId, strDocBaseType, vars.getClient());
-            if (data == null || data.length == 0)
-                bdError(request, response, "RecordError", vars.getLanguage());
-            else {
-                String inputName = "inp"
-                        + Sqlc.TransformaNombreColumna(data[0].columnname);
-                String ubicacion = "/"
-                        + FormatUtilities.replace(data[0].windowName) + "/"
-                        + FormatUtilities.replace(data[0].tabName)
-                        + "_Relation.html";
-                response.sendRedirect(strDireccion + ubicacion + "?"
-                        + "Command=DIRECT&" + inputName + "=" + strRecordId);
-            }
-        } else
-            pageError(response);
-    }
+    if (vars.commandIn("DEFAULT")) {
+      String strTableId = vars.getRequiredStringParameter("inpadTableId");
+      String strRecordId = vars.getRequiredStringParameter("inprecordId");
+      String strDocBaseType = vars.getRequiredStringParameter("inpdocbasetype");
+      ReportAcctRedirectUtilityData[] data = ReportAcctRedirectUtilityData.select(this, strTableId,
+          strDocBaseType, vars.getClient());
+      if (data == null || data.length == 0)
+        bdError(request, response, "RecordError", vars.getLanguage());
+      else {
+        String inputName = "inp" + Sqlc.TransformaNombreColumna(data[0].columnname);
+        String ubicacion = "/" + FormatUtilities.replace(data[0].windowName) + "/"
+            + FormatUtilities.replace(data[0].tabName) + "_Relation.html";
+        response.sendRedirect(strDireccion + ubicacion + "?" + "Command=DIRECT&" + inputName + "="
+            + strRecordId);
+      }
+    } else
+      pageError(response);
+  }
 
-    public String getServletInfo() {
-        return "Servlet ReportAcctRedirectUtility";
-    } // end of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet ReportAcctRedirectUtility";
+  } // end of getServletInfo() method
 }

@@ -31,90 +31,82 @@ import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class PoolStatus extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        if (vars.commandIn("DEFAULT", "REFRESH")) {
-            printPageMenuPoolStatus(response, vars);
-        }
+    if (vars.commandIn("DEFAULT", "REFRESH")) {
+      printPageMenuPoolStatus(response, vars);
+    }
+  }
+
+  void printPageMenuPoolStatus(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/utility/PoolStatus").createXmlDocument();
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+
+    xmlDocument.setParameter("status", formatearTextoJavascript(getPoolStatus()));
+    xmlDocument.setParameter("body", "");
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "SetPriority", false, "", "", "",
+        false, "utility", strReplaceWith, false, true);
+    toolbar.prepareSimpleToolBarTemplate();
+    xmlDocument.setParameter("toolbar", toolbar.toString());
+    try {
+      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.ShowSession");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "PoolStatus.html",
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      xmlDocument.setParameter("navigationBar", nav.toString());
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "PoolStatus.html",
+          strReplaceWith);
+      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+    } catch (Exception ex) {
+      throw new ServletException(ex);
     }
 
-    void printPageMenuPoolStatus(HttpServletResponse response,
-            VariablesSecureApp vars) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/utility/PoolStatus")
-                .createXmlDocument();
-        xmlDocument.setParameter("language", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-
-        xmlDocument.setParameter("status",
-                formatearTextoJavascript(getPoolStatus()));
-        xmlDocument.setParameter("body", "");
-        ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "SetPriority",
-                false, "", "", "", false, "utility", strReplaceWith, false,
-                true);
-        toolbar.prepareSimpleToolBarTemplate();
-        xmlDocument.setParameter("toolbar", toolbar.toString());
-        try {
-            WindowTabs tabs = new WindowTabs(this, vars,
-                    "org.openbravo.erpCommon.ad_forms.ShowSession");
-            xmlDocument.setParameter("theme", vars.getTheme());
-            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-                    "PoolStatus.html", classInfo.id, classInfo.type,
-                    strReplaceWith, tabs.breadcrumb());
-            xmlDocument.setParameter("navigationBar", nav.toString());
-            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
-                    "PoolStatus.html", strReplaceWith);
-            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
-
-        {
-            OBError myMessage = vars.getMessage("PoolStatus");
-            vars.removeMessage("PoolStatus");
-            if (myMessage != null) {
-                xmlDocument.setParameter("messageType", myMessage.getType());
-                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-                xmlDocument.setParameter("messageMessage", myMessage
-                        .getMessage());
-            }
-        }
-
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
+    {
+      OBError myMessage = vars.getMessage("PoolStatus");
+      vars.removeMessage("PoolStatus");
+      if (myMessage != null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
     }
 
-    // replaces the linebreak character and the enter carriage with \n and \r,
-    // in order to make it identify just the in the second reading
-    public String formatearTextoJavascript(String strTexto) {
-        int pos;
-        while (strTexto.indexOf('\r') != -1) {
-            pos = strTexto.indexOf('\r');
-            strTexto = strTexto.substring(0, pos) + "<br>"
-                    + strTexto.substring(pos + 1, strTexto.length());
-        }
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 
-        while (strTexto.indexOf('\n') != -1) {
-            pos = strTexto.indexOf('\n');
-            strTexto = strTexto.substring(0, pos) + "<br>"
-                    + strTexto.substring(pos + 1, strTexto.length());
-        }
-        return strTexto;
-
+  // replaces the linebreak character and the enter carriage with \n and \r,
+  // in order to make it identify just the in the second reading
+  public String formatearTextoJavascript(String strTexto) {
+    int pos;
+    while (strTexto.indexOf('\r') != -1) {
+      pos = strTexto.indexOf('\r');
+      strTexto = strTexto.substring(0, pos) + "<br>"
+          + strTexto.substring(pos + 1, strTexto.length());
     }
 
-    public String getServletInfo() {
-        return "Protected resources Servlet";
-    } // end of getServletInfo() method
+    while (strTexto.indexOf('\n') != -1) {
+      pos = strTexto.indexOf('\n');
+      strTexto = strTexto.substring(0, pos) + "<br>"
+          + strTexto.substring(pos + 1, strTexto.length());
+    }
+    return strTexto;
+
+  }
+
+  public String getServletInfo() {
+    return "Protected resources Servlet";
+  } // end of getServletInfo() method
 }

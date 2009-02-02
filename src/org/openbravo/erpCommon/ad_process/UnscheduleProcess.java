@@ -33,33 +33,27 @@ import org.quartz.SchedulerException;
 
 public class UnscheduleProcess extends HttpSecureAppServlet {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
+  public static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
 
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        final VariablesSecureApp vars = new VariablesSecureApp(request);
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        final String windowId = request.getParameter("inpwindowId");
-        final String requestId = vars.getSessionValue(windowId + "|"
-                + PROCESS_REQUEST_ID);
+    final String windowId = request.getParameter("inpwindowId");
+    final String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
 
-        String message;
-        try {
-            OBScheduler.getInstance().unschedule(requestId,
-                    new ProcessContext(vars));
+    String message;
+    try {
+      OBScheduler.getInstance().unschedule(requestId, new ProcessContext(vars));
 
-        } catch (final SchedulerException e) {
-            message = Utility.messageBD(this, "UNSCHED_ERROR", vars
-                    .getLanguage());
-            advisePopUp(request, response, "ERROR", "Process Request", message
-                    + " " + e.getMessage());
-        }
-        message = Utility
-                .messageBD(this, "UNSCHED_SUCCESS", vars.getLanguage());
-        advisePopUpRefresh(request, response, "SUCCESS", "Process Request",
-                message);
+    } catch (final SchedulerException e) {
+      message = Utility.messageBD(this, "UNSCHED_ERROR", vars.getLanguage());
+      advisePopUp(request, response, "ERROR", "Process Request", message + " " + e.getMessage());
     }
+    message = Utility.messageBD(this, "UNSCHED_SUCCESS", vars.getLanguage());
+    advisePopUpRefresh(request, response, "SUCCESS", "Process Request", message);
+  }
 }

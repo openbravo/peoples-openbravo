@@ -27,48 +27,46 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
 
 /**
- * This class implements transaction and user context handling for backend
- * process tasks which need to make use of the DAL. It assumes to be run inside
- * of a web container which has an initialized dal layer.
+ * This class implements transaction and user context handling for backend process tasks which need
+ * to make use of the DAL. It assumes to be run inside of a web container which has an initialized
+ * dal layer.
  * 
- * A subclass needs to implement the doExecute method (or override the execute
- * method).
+ * A subclass needs to implement the doExecute method (or override the execute method).
  * 
  * @author mtaal
  */
 public abstract class DalBaseProcess implements Process {
-    private static final Logger log = Logger.getLogger(DalBaseProcess.class);
+  private static final Logger log = Logger.getLogger(DalBaseProcess.class);
 
-    /**
-     * Is called by the process scheduler. The execute method sets the
-     * usercontext and does transaction handling.
-     * 
-     * @param bundle
-     *            provides the current user and other context information.
-     */
-    public void execute(ProcessBundle bundle) throws Exception {
-	final ProcessContext processContext = bundle.getContext();
+  /**
+   * Is called by the process scheduler. The execute method sets the usercontext and does
+   * transaction handling.
+   * 
+   * @param bundle
+   *          provides the current user and other context information.
+   */
+  public void execute(ProcessBundle bundle) throws Exception {
+    final ProcessContext processContext = bundle.getContext();
 
-	boolean errorOccured = true;
-	final OBContext currentOBContext = OBContext.getOBContext();
-	try {
-	    log.debug("Setting user context to user "
-		    + processContext.getUser());
-	    OBContext.setOBContext(processContext.getUser());
-	    doExecute(bundle);
-	    errorOccured = false;
-	} finally {
-	    if (errorOccured) {
-		OBDal.getInstance().rollbackAndClose();
-	    } else {
-		OBDal.getInstance().commitAndClose();
-	    }
+    boolean errorOccured = true;
+    final OBContext currentOBContext = OBContext.getOBContext();
+    try {
+      log.debug("Setting user context to user " + processContext.getUser());
+      OBContext.setOBContext(processContext.getUser());
+      doExecute(bundle);
+      errorOccured = false;
+    } finally {
+      if (errorOccured) {
+        OBDal.getInstance().rollbackAndClose();
+      } else {
+        OBDal.getInstance().commitAndClose();
+      }
 
-	    // remove the context at the end, maybe the process scheduler
-	    // reuses the thread?
-	    OBContext.setOBContext(currentOBContext);
-	}
+      // remove the context at the end, maybe the process scheduler
+      // reuses the thread?
+      OBContext.setOBContext(currentOBContext);
     }
+  }
 
-    protected abstract void doExecute(ProcessBundle bundle) throws Exception;
+  protected abstract void doExecute(ProcessBundle bundle) throws Exception;
 }

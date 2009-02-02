@@ -34,87 +34,82 @@ import org.hibernate.tuple.entity.EntityMetamodel;
 import org.openbravo.base.structure.DynamicOBObject;
 
 /**
- * The tuplizer for {@link DynamicOBObject} objects. This is class used by
- * Hibernate. It sets the object instantiator (the factory) used by Hibernate.
+ * The tuplizer for {@link DynamicOBObject} objects. This is class used by Hibernate. It sets the
+ * object instantiator (the factory) used by Hibernate.
  * 
  * @see OBInstantiator
  * @author mtaal
  */
 @SuppressWarnings("unchecked")
 public class OBDynamicTuplizer extends AbstractEntityTuplizer {
-    private static final Logger log = Logger.getLogger(OBDynamicTuplizer.class);
+  private static final Logger log = Logger.getLogger(OBDynamicTuplizer.class);
 
-    private final PersistentClass persistentClass;
+  private final PersistentClass persistentClass;
 
-    public OBDynamicTuplizer(EntityMetamodel entityMetamodel,
-            PersistentClass mappedEntity) {
-        super(entityMetamodel, mappedEntity);
-        log.debug("Created tuplizer for "
-                + (mappedEntity.getMappedClass() != null ? mappedEntity
-                        .getMappedClass().getName() : mappedEntity
-                        .getEntityName()));
-        persistentClass = mappedEntity;
+  public OBDynamicTuplizer(EntityMetamodel entityMetamodel, PersistentClass mappedEntity) {
+    super(entityMetamodel, mappedEntity);
+    log.debug("Created tuplizer for "
+        + (mappedEntity.getMappedClass() != null ? mappedEntity.getMappedClass().getName()
+            : mappedEntity.getEntityName()));
+    persistentClass = mappedEntity;
+  }
+
+  // this is done in the generated mapping
+  // @Override
+  // protected Getter buildPropertyGetter(Property mappedProperty,
+  // PersistentClass mappedEntity) {
+  // return new OBDynamicPropertyHandler.Getter(mappedProperty.getName());
+  // }
+  //  
+  // @Override
+  // protected Setter buildPropertySetter(Property mappedProperty,
+  // PersistentClass mappedEntity) {
+  // return new OBDynamicPropertyHandler.Setter(mappedProperty.getName());
+  // }
+
+  @Override
+  protected Instantiator buildInstantiator(PersistentClass mappingInfo) {
+    return new OBInstantiator(mappingInfo);
+  }
+
+  @Override
+  protected ProxyFactory buildProxyFactory(PersistentClass thePersistentClass, Getter idGetter,
+      Setter idSetter) {
+    ProxyFactory pf = new MapProxyFactory();
+    try {
+      pf.postInstantiate(getEntityName(), null, null, null, null, null);
+    } catch (final HibernateException he) {
+      log.warn("could not create proxy factory for:" + getEntityName(), he);
+      pf = null;
     }
+    return pf;
+  }
 
-    // this is done in the generated mapping
-    // @Override
-    // protected Getter buildPropertyGetter(Property mappedProperty,
-    // PersistentClass mappedEntity) {
-    // return new OBDynamicPropertyHandler.Getter(mappedProperty.getName());
-    // }
-    //  
-    // @Override
-    // protected Setter buildPropertySetter(Property mappedProperty,
-    // PersistentClass mappedEntity) {
-    // return new OBDynamicPropertyHandler.Setter(mappedProperty.getName());
-    // }
+  public Class getMappedClass() {
+    return persistentClass.getMappedClass();
+  }
 
-    @Override
-    protected Instantiator buildInstantiator(PersistentClass mappingInfo) {
-        return new OBInstantiator(mappingInfo);
-    }
+  public Class getConcreteProxyClass() {
+    return persistentClass.getMappedClass();
+  }
 
-    @Override
-    protected ProxyFactory buildProxyFactory(
-            PersistentClass thePersistentClass, Getter idGetter, Setter idSetter) {
-        ProxyFactory pf = new MapProxyFactory();
-        try {
-            pf.postInstantiate(getEntityName(), null, null, null, null, null);
-        } catch (final HibernateException he) {
-            log.warn("could not create proxy factory for:" + getEntityName(),
-                    he);
-            pf = null;
-        }
-        return pf;
-    }
+  @Override
+  public EntityMode getEntityMode() {
+    return EntityMode.POJO;
+  }
 
-    public Class getMappedClass() {
-        return persistentClass.getMappedClass();
-    }
+  @Override
+  protected Getter buildPropertyGetter(Property mappedProperty, PersistentClass mappedEntity) {
+    return mappedProperty.getGetter(mappedEntity.getMappedClass());
+  }
 
-    public Class getConcreteProxyClass() {
-        return persistentClass.getMappedClass();
-    }
+  @Override
+  protected Setter buildPropertySetter(Property mappedProperty, PersistentClass mappedEntity) {
+    return mappedProperty.getSetter(mappedEntity.getMappedClass());
+  }
 
-    @Override
-    public EntityMode getEntityMode() {
-        return EntityMode.POJO;
-    }
-
-    @Override
-    protected Getter buildPropertyGetter(Property mappedProperty,
-            PersistentClass mappedEntity) {
-        return mappedProperty.getGetter(mappedEntity.getMappedClass());
-    }
-
-    @Override
-    protected Setter buildPropertySetter(Property mappedProperty,
-            PersistentClass mappedEntity) {
-        return mappedProperty.getSetter(mappedEntity.getMappedClass());
-    }
-
-    public boolean isInstrumented() {
-        return false;
-    }
+  public boolean isInstrumented() {
+    return false;
+  }
 
 }

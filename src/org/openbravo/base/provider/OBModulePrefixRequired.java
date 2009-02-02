@@ -20,8 +20,8 @@
 package org.openbravo.base.provider;
 
 /**
- * Flags that the name of a registration of this class in the OBProvider needs
- * to be prefixed with the module name.
+ * Flags that the name of a registration of this class in the OBProvider needs to be prefixed with
+ * the module name.
  * 
  * @author mtaal
  */

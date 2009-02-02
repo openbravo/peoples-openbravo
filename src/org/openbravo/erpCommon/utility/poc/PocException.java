@@ -18,19 +18,19 @@ package org.openbravo.erpCommon.utility.poc;
 @SuppressWarnings("serial")
 public class PocException extends Exception {
 
-    public PocException() {
-    }
+  public PocException() {
+  }
 
-    public PocException(String message) {
-        super(message);
-    }
+  public PocException(String message) {
+    super(message);
+  }
 
-    public PocException(Throwable cause) {
-        super(cause);
-    }
+  public PocException(Throwable cause) {
+    super(cause);
+  }
 
-    public PocException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public PocException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
 }

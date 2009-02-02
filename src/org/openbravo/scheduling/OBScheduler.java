@@ -51,551 +51,503 @@ import org.quartz.TriggerUtils;
  */
 public class OBScheduler {
 
-    private static final OBScheduler INSTANCE = new OBScheduler();
+  private static final OBScheduler INSTANCE = new OBScheduler();
 
-    static Logger log = Logger.getLogger(OBScheduler.class);
+  static Logger log = Logger.getLogger(OBScheduler.class);
 
-    private static final String OB_GROUP = "OB_QUARTZ_GROUP";
+  private static final String OB_GROUP = "OB_QUARTZ_GROUP";
 
-    public static final String KEY = "org.openbravo.scheduling.OBSchedulingContext.KEY";
+  public static final String KEY = "org.openbravo.scheduling.OBSchedulingContext.KEY";
 
-    private Scheduler sched;
+  private Scheduler sched;
 
-    private SchedulerContext ctx;
+  private SchedulerContext ctx;
 
-    public static String dateTimeFormat;
+  public static String dateTimeFormat;
 
-    private OBScheduler() {
+  private OBScheduler() {
+  }
+
+  /**
+   * @return
+   */
+  public static final OBScheduler getInstance() {
+    return INSTANCE;
+  }
+
+  /**
+   * @return The Quartz Scheduler instance used by OBScheduler.
+   */
+  public Scheduler getScheduler() {
+    return sched;
+  }
+
+  /**
+   * Retrieves the Openbravo ConnectionProvider from the Scheduler Context.
+   * 
+   * @return A ConnectionProvider
+   */
+  public ConnectionProvider getConnection() {
+    return (ConnectionProvider) ctx.get(ConnectionProviderContextListener.POOL_ATTRIBUTE);
+  }
+
+  /**
+   * Retrieves the Openbravo ConfigParameters from the Scheduler context.
+   * 
+   * @return Openbravo ConfigParameters
+   */
+  public ConfigParameters getConfigParameters() {
+    return (ConfigParameters) ctx.get(ConfigParameters.CONFIG_ATTRIBUTE);
+  }
+
+  /**
+   * Schedule a new process (bundle) to run immediately in the background with the default Openbravo
+   * Job implementation.
+   * 
+   * This will create a new record in AD_PROCESS_REQUEST.
+   * 
+   * @param bundle
+   * @throws SchedulerException
+   */
+  public void schedule(ProcessBundle bundle) throws SchedulerException, ServletException {
+    schedule(bundle, DefaultJob.class.asSubclass(Job.class));
+  }
+
+  /**
+   * Schedule a new process (bundle) to run immediately in the background with the specified Job
+   * implementation.
+   * 
+   * This will create a new record in AD_PROCESS_REQUEST.
+   * 
+   * @param bundle
+   *          The bundle with all of the process' details
+   * @param jobClass
+   *          The Quartz Job implementation that will execute when
+   * 
+   * @throws SchedulerException
+   *           If something goes wrong.
+   */
+  public void schedule(ProcessBundle bundle, Class<? extends Job> jobClass)
+      throws SchedulerException, ServletException {
+    if (bundle == null) {
+      throw new SchedulerException("Process bundle cannot be null.");
     }
+    final String requestId = SequenceIdData.getUUID();
 
-    /**
-     * @return
-     */
-    public static final OBScheduler getInstance() {
-        return INSTANCE;
+    final String processId = bundle.getProcessId();
+    final String channel = bundle.getChannel().toString();
+    final ProcessContext context = bundle.getContext();
+
+    ProcessRequestData.insert(getConnection(), context.getOrganization(), context.getClient(),
+        context.getUser(), context.getUser(), requestId, processId, context.getUser(), SCHEDULED,
+        channel.toString(), context.toString(), bundle.getParamsDefalated(), null, null, null);
+
+    schedule(requestId, bundle, jobClass);
+  }
+
+  /**
+   * Schedule a process (bundle) with the specified requestId and using the default Openbravo Job
+   * implementation. The requestId is used in Quartz as the JobDetail's name. The details must be
+   * saved to AD_PROCESS_REQUEST before reaching this method.
+   * 
+   * @param requestId
+   * @param bundle
+   * @param jobClass
+   * @throws SchedulerException
+   */
+  public void schedule(String requestId, ProcessBundle bundle) throws SchedulerException,
+      ServletException {
+    schedule(requestId, bundle, DefaultJob.class.asSubclass(Job.class));
+  }
+
+  /**
+   * Schedule a process (bundle) with the specified requestId and the specified Job implementation.
+   * The requestId is used in Quartz as the JobDetail's name. The details must be saved to
+   * AD_PROCESS_REQUEST before reaching this method.
+   * 
+   * @param requestId
+   * @param bundle
+   * @param jobClass
+   * @throws SchedulerException
+   */
+  public void schedule(String requestId, ProcessBundle bundle, Class<? extends Job> jobClass)
+      throws SchedulerException, ServletException {
+    if (requestId == null) {
+      throw new SchedulerException("Request Id cannot be null.");
     }
-
-    /**
-     * @return The Quartz Scheduler instance used by OBScheduler.
-     */
-    public Scheduler getScheduler() {
-        return sched;
+    if (bundle == null) {
+      throw new SchedulerException("Process bundle cannot be null.");
     }
-
-    /**
-     * Retrieves the Openbravo ConnectionProvider from the Scheduler Context.
-     * 
-     * @return A ConnectionProvider
-     */
-    public ConnectionProvider getConnection() {
-        return (ConnectionProvider) ctx
-                .get(ConnectionProviderContextListener.POOL_ATTRIBUTE);
+    if (jobClass == null) {
+      throw new SchedulerException("Job class cannot be null.");
     }
+    final JobDetail jobDetail = JobDetailProvider.newInstance(requestId, bundle, jobClass);
+    final Trigger trigger = TriggerProvider.newInstance(requestId, bundle, getConnection());
 
-    /**
-     * Retrieves the Openbravo ConfigParameters from the Scheduler context.
-     * 
-     * @return Openbravo ConfigParameters
-     */
-    public ConfigParameters getConfigParameters() {
-        return (ConfigParameters) ctx.get(ConfigParameters.CONFIG_ATTRIBUTE);
+    sched.scheduleJob(jobDetail, trigger);
+  }
+
+  /**
+   * @param requestId
+   * @param bundle
+   * @throws SchedulerException
+   * @throws ServletException
+   */
+  public void reschedule(String requestId, ProcessBundle bundle) throws SchedulerException,
+      ServletException {
+    try {
+      sched.unscheduleJob(requestId, OB_GROUP);
+      sched.deleteJob(requestId, OB_GROUP);
+
+    } catch (final SchedulerException e) {
+      log.error("An error occurred rescheduling process " + bundle.toString(), e);
     }
+    schedule(requestId, bundle);
+  }
 
-    /**
-     * Schedule a new process (bundle) to run immediately in the background with
-     * the default Openbravo Job implementation.
-     * 
-     * This will create a new record in AD_PROCESS_REQUEST.
-     * 
-     * @param bundle
-     * @throws SchedulerException
-     */
-    public void schedule(ProcessBundle bundle) throws SchedulerException,
-            ServletException {
-        schedule(bundle, DefaultJob.class.asSubclass(Job.class));
+  public void unschedule(String requestId, ProcessContext context) throws SchedulerException {
+    try {
+      sched.unscheduleJob(requestId, OB_GROUP);
+      sched.deleteJob(requestId, OB_GROUP);
+      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, format(new Date()), requestId);
+
+    } catch (final Exception e) {
+      log.error("An error occurred unscheduling process " + requestId, e);
     }
+  }
 
-    /**
-     * Schedule a new process (bundle) to run immediately in the background with
-     * the specified Job implementation.
-     * 
-     * This will create a new record in AD_PROCESS_REQUEST.
-     * 
-     * @param bundle
-     *            The bundle with all of the process' details
-     * @param jobClass
-     *            The Quartz Job implementation that will execute when
-     * 
-     * @throws SchedulerException
-     *             If something goes wrong.
-     */
-    public void schedule(ProcessBundle bundle, Class<? extends Job> jobClass)
-            throws SchedulerException, ServletException {
-        if (bundle == null) {
-            throw new SchedulerException("Process bundle cannot be null.");
-        }
-        final String requestId = SequenceIdData.getUUID();
+  /**
+   * @param date
+   * @return
+   */
+  public static final String format(Date date) {
+    return date == null ? null : new SimpleDateFormat(dateTimeFormat).format(date);
+  }
 
-        final String processId = bundle.getProcessId();
-        final String channel = bundle.getChannel().toString();
-        final ProcessContext context = bundle.getContext();
+  /**
+   * @param sched
+   * @throws SchedulerException
+   */
+  public void initialize(Scheduler sched) throws SchedulerException {
+    this.ctx = sched.getContext();
+    this.sched = sched;
 
-        ProcessRequestData.insert(getConnection(), context.getOrganization(),
-                context.getClient(), context.getUser(), context.getUser(),
-                requestId, processId, context.getUser(), SCHEDULED, channel
-                        .toString(), context.toString(), bundle
-                        .getParamsDefalated(), null, null, null);
+    final ProcessMonitor monitor = new ProcessMonitor("Monitor." + OB_GROUP, this.ctx);
+    sched.addSchedulerListener(monitor);
+    sched.addGlobalJobListener(monitor);
+    sched.addGlobalTriggerListener(monitor);
 
-        schedule(requestId, bundle, jobClass);
-    }
+    dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
+    ProcessRequestData[] data = null;
+    try {
+      data = ProcessRequestData.selectByStatus(getConnection(), SCHEDULED);
 
-    /**
-     * Schedule a process (bundle) with the specified requestId and using the
-     * default Openbravo Job implementation. The requestId is used in Quartz as
-     * the JobDetail's name. The details must be saved to AD_PROCESS_REQUEST
-     * before reaching this method.
-     * 
-     * @param requestId
-     * @param bundle
-     * @param jobClass
-     * @throws SchedulerException
-     */
-    public void schedule(String requestId, ProcessBundle bundle)
-            throws SchedulerException, ServletException {
-        schedule(requestId, bundle, DefaultJob.class.asSubclass(Job.class));
-    }
-
-    /**
-     * Schedule a process (bundle) with the specified requestId and the
-     * specified Job implementation. The requestId is used in Quartz as the
-     * JobDetail's name. The details must be saved to AD_PROCESS_REQUEST before
-     * reaching this method.
-     * 
-     * @param requestId
-     * @param bundle
-     * @param jobClass
-     * @throws SchedulerException
-     */
-    public void schedule(String requestId, ProcessBundle bundle,
-            Class<? extends Job> jobClass) throws SchedulerException,
-            ServletException {
-        if (requestId == null) {
-            throw new SchedulerException("Request Id cannot be null.");
-        }
-        if (bundle == null) {
-            throw new SchedulerException("Process bundle cannot be null.");
-        }
-        if (jobClass == null) {
-            throw new SchedulerException("Job class cannot be null.");
-        }
-        final JobDetail jobDetail = JobDetailProvider.newInstance(requestId,
-                bundle, jobClass);
-        final Trigger trigger = TriggerProvider.newInstance(requestId, bundle,
-                getConnection());
-
-        sched.scheduleJob(jobDetail, trigger);
-    }
-
-    /**
-     * @param requestId
-     * @param bundle
-     * @throws SchedulerException
-     * @throws ServletException
-     */
-    public void reschedule(String requestId, ProcessBundle bundle)
-            throws SchedulerException, ServletException {
+      for (final ProcessRequestData request : data) {
+        final String requestId = request.id;
+        final VariablesSecureApp vars = ProcessContext.newInstance(request.obContext).toVars();
         try {
-            sched.unscheduleJob(requestId, OB_GROUP);
-            sched.deleteJob(requestId, OB_GROUP);
+          final ProcessBundle bundle = ProcessBundle.request(requestId, vars, getConnection());
+          schedule(requestId, bundle);
 
-        } catch (final SchedulerException e) {
-            log.error("An error occurred rescheduling process "
-                    + bundle.toString(), e);
-        }
-        schedule(requestId, bundle);
-    }
-
-    public void unschedule(String requestId, ProcessContext context)
-            throws SchedulerException {
-        try {
-            sched.unscheduleJob(requestId, OB_GROUP);
-            sched.deleteJob(requestId, OB_GROUP);
-            ProcessRequestData.update(getConnection(), UNSCHEDULED, null,
-                    format(new Date()), requestId);
-
-        } catch (final Exception e) {
-            log.error("An error occurred unscheduling process " + requestId, e);
-        }
-    }
-
-    /**
-     * @param date
-     * @return
-     */
-    public static final String format(Date date) {
-        return date == null ? null : new SimpleDateFormat(dateTimeFormat)
-                .format(date);
-    }
-
-    /**
-     * @param sched
-     * @throws SchedulerException
-     */
-    public void initialize(Scheduler sched) throws SchedulerException {
-        this.ctx = sched.getContext();
-        this.sched = sched;
-
-        final ProcessMonitor monitor = new ProcessMonitor(
-                "Monitor." + OB_GROUP, this.ctx);
-        sched.addSchedulerListener(monitor);
-        sched.addGlobalJobListener(monitor);
-        sched.addGlobalTriggerListener(monitor);
-
-        dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
-        ProcessRequestData[] data = null;
-        try {
-            data = ProcessRequestData
-                    .selectByStatus(getConnection(), SCHEDULED);
-
-            for (final ProcessRequestData request : data) {
-                final String requestId = request.id;
-                final VariablesSecureApp vars = ProcessContext.newInstance(
-                        request.obContext).toVars();
-                try {
-                    final ProcessBundle bundle = ProcessBundle.request(
-                            requestId, vars, getConnection());
-                    schedule(requestId, bundle);
-
-                } catch (final ServletException e) {
-                    log.error("Error scheduling process: " + e.getMessage(), e);
-                }
-            }
         } catch (final ServletException e) {
-            log.error("An error occurred retrieving scheduled process data: "
-                    + e.getMessage(), e);
+          log.error("Error scheduling process: " + e.getMessage(), e);
         }
+      }
+    } catch (final ServletException e) {
+      log.error("An error occurred retrieving scheduled process data: " + e.getMessage(), e);
     }
+  }
+
+  /**
+   * @author awolski
+   * 
+   */
+  private static class JobDetailProvider {
 
     /**
-     * @author awolski
+     * Creates a new JobDetail with the specified name and job class. Inserts the process bundle
+     * into the JobDetail's jobDataMap for retrieval when the job is executed.
      * 
+     * @param name
+     *          The name of the JobDetail
+     * @param bundle
+     *          The Openbravo process bundle.
+     * @param jobClass
+     *          The class to be executed when Job.execute is called.
+     * @return
+     * @throws SchedulerException
      */
-    private static class JobDetailProvider {
+    private static JobDetail newInstance(String name, ProcessBundle bundle,
+        Class<? extends Job> jobClass) throws SchedulerException {
+      if (bundle == null) {
+        throw new SchedulerException("Process bundle cannot be null.");
+      }
+      final JobDetail jobDetail = new JobDetail(name, OB_GROUP, jobClass);
+      jobDetail.getJobDataMap().put(ProcessBundle.KEY, bundle);
 
-        /**
-         * Creates a new JobDetail with the specified name and job class.
-         * Inserts the process bundle into the JobDetail's jobDataMap for
-         * retrieval when the job is executed.
-         * 
-         * @param name
-         *            The name of the JobDetail
-         * @param bundle
-         *            The Openbravo process bundle.
-         * @param jobClass
-         *            The class to be executed when Job.execute is called.
-         * @return
-         * @throws SchedulerException
-         */
-        private static JobDetail newInstance(String name, ProcessBundle bundle,
-                Class<? extends Job> jobClass) throws SchedulerException {
-            if (bundle == null) {
-                throw new SchedulerException("Process bundle cannot be null.");
+      return jobDetail;
+    }
+  }
+
+  /**
+   * @author awolski
+   */
+  private static class TriggerProvider {
+
+    private static final String TIMING_OPTION_IMMEDIATE = "I";
+
+    private static final String TIMING_OPTION_LATER = "L";
+
+    private static final String TIMING_OPTION_SCHEDULED = "S";
+
+    private static final String FREQUENCY_SECONDLY = "1";
+
+    private static final String FREQUENCY_MINUTELY = "2";
+
+    private static final String FREQUENCY_HOURLY = "3";
+
+    private static final String FREQUENCY_DAILY = "4";
+
+    private static final String FREQUENCY_WEEKLY = "5";
+
+    private static final String FREQUENCY_MONTHLY = "6";
+
+    private static final String FREQUENCY_CRON = "7";
+
+    private static final String FINISHES = "Y";
+
+    private static final String WEEKDAYS = "W";
+
+    private static final String WEEKENDS = "E";
+
+    private static final String EVERY_N_DAYS = "N";
+
+    private static final String MONTH_OPTION_FIRST = "1";
+
+    private static final String MONTH_OPTION_SECOND = "2";
+
+    private static final String MONTH_OPTION_THIRD = "3";
+
+    private static final String MONTH_OPTION_FOURTH = "4";
+
+    private static final String MONTH_OPTION_LAST = "L";
+
+    private static final String MONTH_OPTION_SPECIFIC = "S";
+
+    /**
+     * Loads the trigger details from AD_PROCESS_REQUEST and converts them into a schedulable Quartz
+     * Trigger instance.
+     * 
+     * @return
+     */
+    private static Trigger newInstance(String name, ProcessBundle bundle, ConnectionProvider conn)
+        throws ServletException {
+
+      final TriggerData data = TriggerData.select(conn, name);
+
+      Trigger trigger = null;
+
+      if (data == null) {
+        trigger = new SimpleTrigger(name, OB_GROUP, new Date());
+        trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
+        return trigger;
+      }
+
+      Calendar start = null;
+      Calendar finish = null;
+
+      try {
+        final String timingOption = data.timingOption;
+        if ("".equals(timingOption) || timingOption.equals(TIMING_OPTION_IMMEDIATE)) {
+          trigger = new SimpleTrigger(name, OB_GROUP, new Date());
+
+        } else if (data.timingOption.equals(TIMING_OPTION_LATER)) {
+          trigger = new SimpleTrigger();
+          start = timestamp(data.startDate, data.startTime, dateTimeFormat);
+          trigger.setStartTime(start.getTime());
+
+        } else if (data.timingOption.equals(TIMING_OPTION_SCHEDULED)) {
+          start = timestamp(data.startDate, data.startTime, dateTimeFormat);
+
+          final int second = start.get(Calendar.SECOND);
+          final int minute = start.get(Calendar.MINUTE);
+          final int hour = start.get(Calendar.HOUR_OF_DAY);
+
+          if (data.frequency.equals(FREQUENCY_SECONDLY)) {
+            trigger = makeIntervalTrigger(FREQUENCY_SECONDLY, data.secondlyInterval,
+                data.secondlyRepetitions);
+
+          } else if (data.frequency.equals(FREQUENCY_MINUTELY)) {
+            trigger = makeIntervalTrigger(FREQUENCY_MINUTELY, data.minutelyInterval,
+                data.minutelyRepetitions);
+
+          } else if (data.frequency.equals(FREQUENCY_HOURLY)) {
+            trigger = makeIntervalTrigger(FREQUENCY_HOURLY, data.hourlyInterval,
+                data.hourlyRepetitions);
+
+          } else if (data.frequency.equals(FREQUENCY_DAILY)) {
+            if ("".equals(data.dailyOption)) {
+              trigger = TriggerUtils.makeDailyTrigger(hour, minute);
+
+            } else if (data.dailyOption.equals(EVERY_N_DAYS)) {
+              try {
+                final int interval = Integer.parseInt(data.dailyInterval);
+                trigger = TriggerUtils.makeHourlyTrigger(interval * 24);
+
+              } catch (final NumberFormatException e) {
+                throw new ParseException("Invalid interval specified.", -1);
+              }
+
+            } else if (data.dailyOption.equals(WEEKDAYS)) {
+              final String cronExpression = second + " " + minute + " " + hour + " ? * MON-FRI";
+              trigger = new CronTrigger(name, OB_GROUP, cronExpression);
+
+            } else if (data.dailyOption.equals(WEEKENDS)) {
+              final String cronExpression = second + " " + minute + " " + hour + " ? * SAT,SUN";
+              trigger = new CronTrigger(name, OB_GROUP, cronExpression);
+
+            } else {
+              throw new ParseException("At least one option must be selected.", -1);
             }
-            final JobDetail jobDetail = new JobDetail(name, OB_GROUP, jobClass);
-            jobDetail.getJobDataMap().put(ProcessBundle.KEY, bundle);
 
-            return jobDetail;
+          } else if (data.frequency.equals(FREQUENCY_WEEKLY)) {
+            final StringBuilder sb = new StringBuilder();
+            if (data.daySun.equals("Y"))
+              sb.append("SUN");
+            if (data.dayMon.equals("Y"))
+              sb.append(sb.length() == 0 ? "MON" : ",MON");
+            if (data.dayTue.equals("Y"))
+              sb.append(sb.length() == 0 ? "TUE" : ",TUE");
+            if (data.dayWed.equals("Y"))
+              sb.append(sb.length() == 0 ? "WED" : ",WED");
+            if (data.dayThu.equals("Y"))
+              sb.append(sb.length() == 0 ? "THU" : ",THU");
+            if (data.dayFri.equals("Y"))
+              sb.append(sb.length() == 0 ? "FRI" : ",FRI");
+            if (data.daySat.equals("Y"))
+              sb.append(sb.length() == 0 ? "SAT" : ",SAT");
+
+            if (sb.length() != 0) {
+              sb.insert(0, second + " " + minute + " " + hour + " ? * ");
+              trigger = new CronTrigger(name, OB_GROUP, sb.toString());
+            } else {
+              throw new ParseException("At least one day must be selected.", -1);
+            }
+
+          } else if (data.frequency.equals(FREQUENCY_MONTHLY)) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(second + " " + minute + " " + hour + " ");
+
+            if (data.monthlyOption.equals(MONTH_OPTION_FIRST)
+                || data.monthlyOption.equals(MONTH_OPTION_SECOND)
+                || data.monthlyOption.equals(MONTH_OPTION_THIRD)
+                || data.monthlyOption.equals(MONTH_OPTION_FOURTH)) {
+              final String num = data.monthlyOption;
+              final int day = Integer.parseInt(data.monthlyDayOfWeek) + 1;
+              sb.append("? * " + (day > 7 ? 1 : day) + "#" + num);
+
+            } else if (data.monthlyOption.equals(MONTH_OPTION_LAST)) {
+              sb.append("L * ?");
+
+            } else if (data.monthlyOption.equals(MONTH_OPTION_SPECIFIC)) {
+              sb.append(Integer.parseInt(data.monthlySpecificDay) + " * ?");
+            } else {
+              throw new ParseException("At least one month option be selected.", -1);
+            }
+            trigger = new CronTrigger(name, OB_GROUP, sb.toString());
+
+          } else if (data.frequency.equals(FREQUENCY_CRON)) {
+            trigger = new CronTrigger(name, OB_GROUP, data.cron);
+          } else {
+            throw new ServletException("Invalid option: " + data.frequency);
+          }
+          trigger.setStartTime(start.getTime());
+
+          if (data.finishes.equals(FINISHES)) {
+            finish = timestamp(data.finishesDate, data.finishesTime, dateTimeFormat);
+            trigger.setEndTime(finish.getTime());
+          }
+
         }
+      } catch (final ParseException e) {
+        final String msg = Utility.messageBD(conn, "TRIG_INVALID_DATA", bundle.getContext()
+            .getLanguage());
+        throw new ServletException(msg + " " + e.getMessage());
+      }
+
+      if (trigger.getName() == null)
+        trigger.setName(name);
+      if (trigger.getGroup() == null)
+        trigger.setGroup(OB_GROUP);
+
+      trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
+
+      return trigger;
+    }
+
+    private static final Trigger makeIntervalTrigger(String type, String interval,
+        String repititions) throws ParseException {
+      try {
+        final int i = Integer.parseInt(interval);
+        int r = SimpleTrigger.REPEAT_INDEFINITELY;
+        if (!repititions.trim().equals("")) {
+          r = Integer.parseInt(repititions);
+        }
+        if (type.equals(FREQUENCY_SECONDLY)) {
+          return TriggerUtils.makeSecondlyTrigger(i, r);
+
+        } else if (type.equals(FREQUENCY_MINUTELY)) {
+          return TriggerUtils.makeMinutelyTrigger(i, r);
+
+        } else if (type.equals(FREQUENCY_HOURLY)) {
+          return TriggerUtils.makeHourlyTrigger(i, r);
+        }
+        return null;
+
+      } catch (final NumberFormatException e) {
+        throw new ParseException("Invalid interval or repitition value.", -1);
+      }
     }
 
     /**
-     * @author awolski
+     * Utility method to parse a start date string and a start time string into a date.
+     * 
+     * @param date
+     * @param time
+     * @param dateTimeFormat
+     * @return
+     * @throws ParseException
      */
-    private static class TriggerProvider {
+    private static Calendar timestamp(String date, String time, String dateTimeFormat)
+        throws ParseException {
 
-        private static final String TIMING_OPTION_IMMEDIATE = "I";
+      if (dateTimeFormat == null || dateTimeFormat.trim().equals("")) {
+        throw new ParseException("dateTimeFormat cannot be null.", -1);
+      }
 
-        private static final String TIMING_OPTION_LATER = "L";
+      Calendar cal = null;
+      final String dateFormat = dateTimeFormat.substring(0, dateTimeFormat.indexOf(' '));
 
-        private static final String TIMING_OPTION_SCHEDULED = "S";
+      if (date == null || date.equals("")) {
+        cal = Calendar.getInstance();
+      } else {
+        cal = Calendar.getInstance();
+        cal.setTime(new SimpleDateFormat(dateFormat).parse(date));
+      }
 
-        private static final String FREQUENCY_SECONDLY = "1";
+      if (time != null && !time.equals("")) {
+        final int hour = Integer.parseInt(time.substring(time.indexOf(" ") + 1, time.indexOf(':')));
+        final int minute = Integer.parseInt(time.substring(time.indexOf(':') + 1, time
+            .lastIndexOf(':')));
+        final int second = Integer.parseInt(time
+            .substring(time.lastIndexOf(':') + 1, time.length()));
 
-        private static final String FREQUENCY_MINUTELY = "2";
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minute);
+        cal.set(Calendar.SECOND, second);
+      }
 
-        private static final String FREQUENCY_HOURLY = "3";
-
-        private static final String FREQUENCY_DAILY = "4";
-
-        private static final String FREQUENCY_WEEKLY = "5";
-
-        private static final String FREQUENCY_MONTHLY = "6";
-
-        private static final String FREQUENCY_CRON = "7";
-
-        private static final String FINISHES = "Y";
-
-        private static final String WEEKDAYS = "W";
-
-        private static final String WEEKENDS = "E";
-
-        private static final String EVERY_N_DAYS = "N";
-
-        private static final String MONTH_OPTION_FIRST = "1";
-
-        private static final String MONTH_OPTION_SECOND = "2";
-
-        private static final String MONTH_OPTION_THIRD = "3";
-
-        private static final String MONTH_OPTION_FOURTH = "4";
-
-        private static final String MONTH_OPTION_LAST = "L";
-
-        private static final String MONTH_OPTION_SPECIFIC = "S";
-
-        /**
-         * Loads the trigger details from AD_PROCESS_REQUEST and converts them
-         * into a schedulable Quartz Trigger instance.
-         * 
-         * @return
-         */
-        private static Trigger newInstance(String name, ProcessBundle bundle,
-                ConnectionProvider conn) throws ServletException {
-
-            final TriggerData data = TriggerData.select(conn, name);
-
-            Trigger trigger = null;
-
-            if (data == null) {
-                trigger = new SimpleTrigger(name, OB_GROUP, new Date());
-                trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
-                return trigger;
-            }
-
-            Calendar start = null;
-            Calendar finish = null;
-
-            try {
-                final String timingOption = data.timingOption;
-                if ("".equals(timingOption)
-                        || timingOption.equals(TIMING_OPTION_IMMEDIATE)) {
-                    trigger = new SimpleTrigger(name, OB_GROUP, new Date());
-
-                } else if (data.timingOption.equals(TIMING_OPTION_LATER)) {
-                    trigger = new SimpleTrigger();
-                    start = timestamp(data.startDate, data.startTime,
-                            dateTimeFormat);
-                    trigger.setStartTime(start.getTime());
-
-                } else if (data.timingOption.equals(TIMING_OPTION_SCHEDULED)) {
-                    start = timestamp(data.startDate, data.startTime,
-                            dateTimeFormat);
-
-                    final int second = start.get(Calendar.SECOND);
-                    final int minute = start.get(Calendar.MINUTE);
-                    final int hour = start.get(Calendar.HOUR_OF_DAY);
-
-                    if (data.frequency.equals(FREQUENCY_SECONDLY)) {
-                        trigger = makeIntervalTrigger(FREQUENCY_SECONDLY,
-                                data.secondlyInterval, data.secondlyRepetitions);
-
-                    } else if (data.frequency.equals(FREQUENCY_MINUTELY)) {
-                        trigger = makeIntervalTrigger(FREQUENCY_MINUTELY,
-                                data.minutelyInterval, data.minutelyRepetitions);
-
-                    } else if (data.frequency.equals(FREQUENCY_HOURLY)) {
-                        trigger = makeIntervalTrigger(FREQUENCY_HOURLY,
-                                data.hourlyInterval, data.hourlyRepetitions);
-
-                    } else if (data.frequency.equals(FREQUENCY_DAILY)) {
-                        if ("".equals(data.dailyOption)) {
-                            trigger = TriggerUtils.makeDailyTrigger(hour,
-                                    minute);
-
-                        } else if (data.dailyOption.equals(EVERY_N_DAYS)) {
-                            try {
-                                final int interval = Integer
-                                        .parseInt(data.dailyInterval);
-                                trigger = TriggerUtils
-                                        .makeHourlyTrigger(interval * 24);
-
-                            } catch (final NumberFormatException e) {
-                                throw new ParseException(
-                                        "Invalid interval specified.", -1);
-                            }
-
-                        } else if (data.dailyOption.equals(WEEKDAYS)) {
-                            final String cronExpression = second + " " + minute
-                                    + " " + hour + " ? * MON-FRI";
-                            trigger = new CronTrigger(name, OB_GROUP,
-                                    cronExpression);
-
-                        } else if (data.dailyOption.equals(WEEKENDS)) {
-                            final String cronExpression = second + " " + minute
-                                    + " " + hour + " ? * SAT,SUN";
-                            trigger = new CronTrigger(name, OB_GROUP,
-                                    cronExpression);
-
-                        } else {
-                            throw new ParseException(
-                                    "At least one option must be selected.", -1);
-                        }
-
-                    } else if (data.frequency.equals(FREQUENCY_WEEKLY)) {
-                        final StringBuilder sb = new StringBuilder();
-                        if (data.daySun.equals("Y"))
-                            sb.append("SUN");
-                        if (data.dayMon.equals("Y"))
-                            sb.append(sb.length() == 0 ? "MON" : ",MON");
-                        if (data.dayTue.equals("Y"))
-                            sb.append(sb.length() == 0 ? "TUE" : ",TUE");
-                        if (data.dayWed.equals("Y"))
-                            sb.append(sb.length() == 0 ? "WED" : ",WED");
-                        if (data.dayThu.equals("Y"))
-                            sb.append(sb.length() == 0 ? "THU" : ",THU");
-                        if (data.dayFri.equals("Y"))
-                            sb.append(sb.length() == 0 ? "FRI" : ",FRI");
-                        if (data.daySat.equals("Y"))
-                            sb.append(sb.length() == 0 ? "SAT" : ",SAT");
-
-                        if (sb.length() != 0) {
-                            sb.insert(0, second + " " + minute + " " + hour
-                                    + " ? * ");
-                            trigger = new CronTrigger(name, OB_GROUP, sb
-                                    .toString());
-                        } else {
-                            throw new ParseException(
-                                    "At least one day must be selected.", -1);
-                        }
-
-                    } else if (data.frequency.equals(FREQUENCY_MONTHLY)) {
-                        final StringBuilder sb = new StringBuilder();
-                        sb.append(second + " " + minute + " " + hour + " ");
-
-                        if (data.monthlyOption.equals(MONTH_OPTION_FIRST)
-                                || data.monthlyOption
-                                        .equals(MONTH_OPTION_SECOND)
-                                || data.monthlyOption
-                                        .equals(MONTH_OPTION_THIRD)
-                                || data.monthlyOption
-                                        .equals(MONTH_OPTION_FOURTH)) {
-                            final String num = data.monthlyOption;
-                            final int day = Integer
-                                    .parseInt(data.monthlyDayOfWeek) + 1;
-                            sb.append("? * " + (day > 7 ? 1 : day) + "#" + num);
-
-                        } else if (data.monthlyOption.equals(MONTH_OPTION_LAST)) {
-                            sb.append("L * ?");
-
-                        } else if (data.monthlyOption
-                                .equals(MONTH_OPTION_SPECIFIC)) {
-                            sb.append(Integer.parseInt(data.monthlySpecificDay)
-                                    + " * ?");
-                        } else {
-                            throw new ParseException(
-                                    "At least one month option be selected.",
-                                    -1);
-                        }
-                        trigger = new CronTrigger(name, OB_GROUP, sb.toString());
-
-                    } else if (data.frequency.equals(FREQUENCY_CRON)) {
-                        trigger = new CronTrigger(name, OB_GROUP, data.cron);
-                    } else {
-                        throw new ServletException("Invalid option: "
-                                + data.frequency);
-                    }
-                    trigger.setStartTime(start.getTime());
-
-                    if (data.finishes.equals(FINISHES)) {
-                        finish = timestamp(data.finishesDate,
-                                data.finishesTime, dateTimeFormat);
-                        trigger.setEndTime(finish.getTime());
-                    }
-
-                }
-            } catch (final ParseException e) {
-                final String msg = Utility.messageBD(conn, "TRIG_INVALID_DATA",
-                        bundle.getContext().getLanguage());
-                throw new ServletException(msg + " " + e.getMessage());
-            }
-
-            if (trigger.getName() == null)
-                trigger.setName(name);
-            if (trigger.getGroup() == null)
-                trigger.setGroup(OB_GROUP);
-
-            trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
-
-            return trigger;
-        }
-
-        private static final Trigger makeIntervalTrigger(String type,
-                String interval, String repititions) throws ParseException {
-            try {
-                final int i = Integer.parseInt(interval);
-                int r = SimpleTrigger.REPEAT_INDEFINITELY;
-                if (!repititions.trim().equals("")) {
-                    r = Integer.parseInt(repititions);
-                }
-                if (type.equals(FREQUENCY_SECONDLY)) {
-                    return TriggerUtils.makeSecondlyTrigger(i, r);
-
-                } else if (type.equals(FREQUENCY_MINUTELY)) {
-                    return TriggerUtils.makeMinutelyTrigger(i, r);
-
-                } else if (type.equals(FREQUENCY_HOURLY)) {
-                    return TriggerUtils.makeHourlyTrigger(i, r);
-                }
-                return null;
-
-            } catch (final NumberFormatException e) {
-                throw new ParseException(
-                        "Invalid interval or repitition value.", -1);
-            }
-        }
-
-        /**
-         * Utility method to parse a start date string and a start time string
-         * into a date.
-         * 
-         * @param date
-         * @param time
-         * @param dateTimeFormat
-         * @return
-         * @throws ParseException
-         */
-        private static Calendar timestamp(String date, String time,
-                String dateTimeFormat) throws ParseException {
-
-            if (dateTimeFormat == null || dateTimeFormat.trim().equals("")) {
-                throw new ParseException("dateTimeFormat cannot be null.", -1);
-            }
-
-            Calendar cal = null;
-            final String dateFormat = dateTimeFormat.substring(0,
-                    dateTimeFormat.indexOf(' '));
-
-            if (date == null || date.equals("")) {
-                cal = Calendar.getInstance();
-            } else {
-                cal = Calendar.getInstance();
-                cal.setTime(new SimpleDateFormat(dateFormat).parse(date));
-            }
-
-            if (time != null && !time.equals("")) {
-                final int hour = Integer.parseInt(time.substring(time
-                        .indexOf(" ") + 1, time.indexOf(':')));
-                final int minute = Integer.parseInt(time.substring(time
-                        .indexOf(':') + 1, time.lastIndexOf(':')));
-                final int second = Integer.parseInt(time.substring(time
-                        .lastIndexOf(':') + 1, time.length()));
-
-                cal.set(Calendar.HOUR_OF_DAY, hour);
-                cal.set(Calendar.MINUTE, minute);
-                cal.set(Calendar.SECOND, second);
-            }
-
-            return cal;
-        }
+      return cal;
     }
+  }
 }

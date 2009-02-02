@@ -32,68 +32,62 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_WorkRequirement_ProcessPlan extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strProcessPlan = vars.getStringParameter("inpmaProcessplanId");
+
+      try {
+        printPage(response, vars, strProcessPlan);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strProcessPlan)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    SLWorkRequirementProcessPlanData[] data = SLWorkRequirementProcessPlanData.select(this,
+        strProcessPlan);
+    // String strExplodePhases = data[0].explodephases;
+
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_Workrequirement_ProcessPlan';\n\n");
+    resultado.append("var respuesta = new Array(");
+    if (data != null && data.length > 0) {
+      resultado.append("new Array(\"inpexplodephases\", \""
+          + FormatUtilities.replaceJS(data[0].explodephases) + "\"),");
+      resultado.append("new Array(\"inpconversionrate\", \""
+          + FormatUtilities.replaceJS(data[0].conversionrate) + "\"),");
+      resultado.append("new Array(\"inpsecondaryunit\", \""
+          + FormatUtilities.replaceJS(data[0].secondaryunit) + "\")");
+    } else {
+      resultado.append("new Array(\"inpexplodephases\", \"N\"),");
+      resultado.append("new Array(\"inpconversionrate\", \"1\"),");
+      resultado.append("new Array(\"inpsecondaryunit\", \"\")");
     }
+    resultado.append(");");
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strProcessPlan = vars
-                    .getStringParameter("inpmaProcessplanId");
-
-            try {
-                printPage(response, vars, strProcessPlan);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strProcessPlan) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-        SLWorkRequirementProcessPlanData[] data = SLWorkRequirementProcessPlanData
-                .select(this, strProcessPlan);
-        // String strExplodePhases = data[0].explodephases;
-
-        StringBuffer resultado = new StringBuffer();
-        resultado
-                .append("var calloutName='SL_Workrequirement_ProcessPlan';\n\n");
-        resultado.append("var respuesta = new Array(");
-        if (data != null && data.length > 0) {
-            resultado
-                    .append("new Array(\"inpexplodephases\", \""
-                            + FormatUtilities.replaceJS(data[0].explodephases)
-                            + "\"),");
-            resultado.append("new Array(\"inpconversionrate\", \""
-                    + FormatUtilities.replaceJS(data[0].conversionrate)
-                    + "\"),");
-            resultado.append("new Array(\"inpsecondaryunit\", \""
-                    + FormatUtilities.replaceJS(data[0].secondaryunit) + "\")");
-        } else {
-            resultado.append("new Array(\"inpexplodephases\", \"N\"),");
-            resultado.append("new Array(\"inpconversionrate\", \"1\"),");
-            resultado.append("new Array(\"inpsecondaryunit\", \"\")");
-        }
-        resultado.append(");");
-
-        xmlDocument.setParameter("array", resultado.toString());
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    xmlDocument.setParameter("array", resultado.toString());
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

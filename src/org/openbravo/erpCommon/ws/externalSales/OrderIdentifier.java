@@ -21,27 +21,27 @@ package org.openbravo.erpCommon.ws.externalSales;
 
 public class OrderIdentifier {
 
-    private String documentNo;
-    private java.util.Date dateNew;
+  private String documentNo;
+  private java.util.Date dateNew;
 
-    /** Creates a new instance of Order */
-    public OrderIdentifier() {
-    }
+  /** Creates a new instance of Order */
+  public OrderIdentifier() {
+  }
 
-    public String getDocumentNo() {
-        return documentNo;
-    }
+  public String getDocumentNo() {
+    return documentNo;
+  }
 
-    public void setDocumentNo(String documentNo) {
-        this.documentNo = documentNo;
-    }
+  public void setDocumentNo(String documentNo) {
+    this.documentNo = documentNo;
+  }
 
-    public java.util.Date getDateNew() {
-        return dateNew;
-    }
+  public java.util.Date getDateNew() {
+    return dateNew;
+  }
 
-    public void setDateNew(java.util.Date dateNew) {
-        this.dateNew = dateNew;
-    }
+  public void setDateNew(java.util.Date dateNew) {
+    this.dateNew = dateNew;
+  }
 
 }

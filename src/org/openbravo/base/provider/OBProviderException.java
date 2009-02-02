@@ -22,28 +22,27 @@ package org.openbravo.base.provider;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Is thrown when instantiating a class fails in the {@link OBProvider
- * OBProvider}.
+ * Is thrown when instantiating a class fails in the {@link OBProvider OBProvider}.
  * 
  * @author mtaal
  */
 public class OBProviderException extends OBException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public OBProviderException() {
-        super();
-    }
+  public OBProviderException() {
+    super();
+  }
 
-    public OBProviderException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public OBProviderException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public OBProviderException(String message) {
-        super(message);
-    }
+  public OBProviderException(String message) {
+    super(message);
+  }
 
-    public OBProviderException(Throwable cause) {
-        super(cause);
-    }
+  public OBProviderException(Throwable cause) {
+    super(cause);
+  }
 }

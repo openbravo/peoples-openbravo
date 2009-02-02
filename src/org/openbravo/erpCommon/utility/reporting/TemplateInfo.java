@@ -28,157 +28,149 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 
 public class TemplateInfo {
-    private static Logger log4j = Logger.getLogger(TemplateInfo.class);
+  private static Logger log4j = Logger.getLogger(TemplateInfo.class);
 
-    private String _TemplateLocation;
-    private String _TemplateFilename;
-    private String _ReportFilename;
-    private TemplateData[] templates;
-    private EmailDefinition _DefaultEmailDefinition;
-    private Map<String, EmailDefinition> _EmailDefinitions;
+  private String _TemplateLocation;
+  private String _TemplateFilename;
+  private String _ReportFilename;
+  private TemplateData[] templates;
+  private EmailDefinition _DefaultEmailDefinition;
+  private Map<String, EmailDefinition> _EmailDefinitions;
 
-    public class EmailDefinition {
-        private String _Subject;
-        private String _Body;
-        private String _Language;
-        private boolean _IsDefault;
+  public class EmailDefinition {
+    private String _Subject;
+    private String _Body;
+    private String _Language;
+    private boolean _IsDefault;
 
-        public EmailDefinition(EmailDefinitionData emailDefinitionData) {
-            _Subject = emailDefinitionData.getField("subject");
-            _Body = emailDefinitionData.getField("body");
-            _Language = emailDefinitionData.getField("ad_language");
-            if (emailDefinitionData.getField("isdefault") != null) {
-                _IsDefault = emailDefinitionData.getField("isdefault") == "Y" ? true
-                        : false;
-            }
+    public EmailDefinition(EmailDefinitionData emailDefinitionData) {
+      _Subject = emailDefinitionData.getField("subject");
+      _Body = emailDefinitionData.getField("body");
+      _Language = emailDefinitionData.getField("ad_language");
+      if (emailDefinitionData.getField("isdefault") != null) {
+        _IsDefault = emailDefinitionData.getField("isdefault") == "Y" ? true : false;
+      }
+    }
+
+    public String getSubject() {
+      return _Subject;
+    }
+
+    public String getBody() {
+      return _Body;
+    }
+
+    public String getLanguage() {
+      return _Language;
+    }
+
+    public boolean isDefault() {
+      return _IsDefault;
+    }
+  }
+
+  public TemplateInfo(ConnectionProvider connectionProvider, String docTypeId, String orgId,
+      String strLanguage, String templateId) throws ServletException, ReportingException {
+    templates = TemplateData.getDocumentTemplates(connectionProvider, docTypeId, orgId);
+    final TemplateData template = getSelectedTemplate(templates, templateId);
+    if (templates.length > 0) {
+      setTemplateLocation(template.getField("template_location"));
+
+      _TemplateFilename = template.getField("template_filename");
+      _ReportFilename = template.getField("report_filename");
+
+      // READ EMAIL DEFINITIONS!!!!
+      _EmailDefinitions = new HashMap<String, EmailDefinition>();
+      final EmailDefinitionData[] emailDefinitionsData = EmailDefinitionData.getEmailDefinitions(
+          connectionProvider, orgId, template.id);
+      if (emailDefinitionsData.length > 0) {
+        for (final EmailDefinitionData emailDefinitionData : emailDefinitionsData) {
+          final EmailDefinition emailDefinition = new EmailDefinition(emailDefinitionData);
+          _EmailDefinitions.put(emailDefinition.getLanguage(), emailDefinition);
+
+          if (emailDefinition.isDefault())
+            _DefaultEmailDefinition = emailDefinition;
         }
-
-        public String getSubject() {
-            return _Subject;
+        if (_DefaultEmailDefinition == null && !_EmailDefinitions.isEmpty()) {
+          _DefaultEmailDefinition = _EmailDefinitions.values().iterator().next();
         }
+      } else
+        throw new ReportingException(Utility.messageBD(connectionProvider, "NoEmailDefinitions",
+            strLanguage)
+            + template.id);
+    } else
+      throw new ServletException(Utility.messageBD(connectionProvider, "NoDocumentTypeTemplate",
+          strLanguage)
+          + docTypeId);
+  }
 
-        public String getBody() {
-            return _Body;
+  private TemplateData getSelectedTemplate(TemplateData[] templates, String templateId) {
+    if ("default".equals(templateId)) {
+      return templates[0];
+
+    } else {
+      for (int i = 0; i < templates.length; i++) {
+        final TemplateData template = templates[i];
+        if (templateId.equals(template.id)) {
+          return template;
         }
-
-        public String getLanguage() {
-            return _Language;
-        }
-
-        public boolean isDefault() {
-            return _IsDefault;
-        }
+      }
     }
 
-    public TemplateInfo(ConnectionProvider connectionProvider,
-            String docTypeId, String orgId, String strLanguage,
-            String templateId) throws ServletException, ReportingException {
-        templates = TemplateData.getDocumentTemplates(connectionProvider,
-                docTypeId, orgId);
-        final TemplateData template = getSelectedTemplate(templates, templateId);
-        if (templates.length > 0) {
-            setTemplateLocation(template.getField("template_location"));
+    return null;
+  }
 
-            _TemplateFilename = template.getField("template_filename");
-            _ReportFilename = template.getField("report_filename");
+  public TemplateData[] getTemplates() {
+    return templates;
+  }
 
-            // READ EMAIL DEFINITIONS!!!!
-            _EmailDefinitions = new HashMap<String, EmailDefinition>();
-            final EmailDefinitionData[] emailDefinitionsData = EmailDefinitionData
-                    .getEmailDefinitions(connectionProvider, orgId, template.id);
-            if (emailDefinitionsData.length > 0) {
-                for (final EmailDefinitionData emailDefinitionData : emailDefinitionsData) {
-                    final EmailDefinition emailDefinition = new EmailDefinition(
-                            emailDefinitionData);
-                    _EmailDefinitions.put(emailDefinition.getLanguage(),
-                            emailDefinition);
+  public void setTemplates(TemplateData[] templates) {
+    this.templates = templates;
+  }
 
-                    if (emailDefinition.isDefault())
-                        _DefaultEmailDefinition = emailDefinition;
-                }
-                if (_DefaultEmailDefinition == null
-                        && !_EmailDefinitions.isEmpty()) {
-                    _DefaultEmailDefinition = _EmailDefinitions.values()
-                            .iterator().next();
-                }
-            } else
-                throw new ReportingException(Utility.messageBD(
-                        connectionProvider, "NoEmailDefinitions", strLanguage)
-                        + template.id);
-        } else
-            throw new ServletException(Utility.messageBD(connectionProvider,
-                    "NoDocumentTypeTemplate", strLanguage)
-                    + docTypeId);
+  public String getTemplate() {
+    return _TemplateLocation + "/" + _TemplateFilename;
+  }
+
+  public void setTemplateLocation(String templateLocation) {
+    _TemplateLocation = templateLocation;
+    // Make sure the location always ends with a / character
+    if (!_TemplateLocation.endsWith("/"))
+      _TemplateLocation = _TemplateLocation + "/";
+    if (log4j.isDebugEnabled())
+      log4j.debug("Template location is set to: " + _TemplateLocation);
+  }
+
+  public String getTemplateLocation() {
+    return _TemplateLocation;
+  }
+
+  public String getTemplateFilename() {
+    return _TemplateFilename;
+  }
+
+  public String getReportFilename() {
+    return _ReportFilename;
+  }
+
+  public EmailDefinition getEmailDefinition(String language) throws ReportingException {
+    EmailDefinition emailDefinition = _EmailDefinitions.get(language);
+    if (emailDefinition == null) {
+      log4j.info("No email definition found for language " + language
+          + ". Using default email definition");
+      emailDefinition = _DefaultEmailDefinition;
     }
 
-    private TemplateData getSelectedTemplate(TemplateData[] templates,
-            String templateId) {
-        if ("default".equals(templateId)) {
-            return templates[0];
+    if (emailDefinition == null)
+      throw new ReportingException("No email definition available.");
+    return emailDefinition;
+  }
 
-        } else {
-            for (int i = 0; i < templates.length; i++) {
-                final TemplateData template = templates[i];
-                if (templateId.equals(template.id)) {
-                    return template;
-                }
-            }
-        }
+  public EmailDefinition get_DefaultEmailDefinition() {
+    return _DefaultEmailDefinition;
+  }
 
-        return null;
-    }
-
-    public TemplateData[] getTemplates() {
-        return templates;
-    }
-
-    public void setTemplates(TemplateData[] templates) {
-        this.templates = templates;
-    }
-
-    public String getTemplate() {
-        return _TemplateLocation + "/" + _TemplateFilename;
-    }
-
-    public void setTemplateLocation(String templateLocation) {
-        _TemplateLocation = templateLocation;
-        // Make sure the location always ends with a / character
-        if (!_TemplateLocation.endsWith("/"))
-            _TemplateLocation = _TemplateLocation + "/";
-        if (log4j.isDebugEnabled())
-            log4j.debug("Template location is set to: " + _TemplateLocation);
-    }
-
-    public String getTemplateLocation() {
-        return _TemplateLocation;
-    }
-
-    public String getTemplateFilename() {
-        return _TemplateFilename;
-    }
-
-    public String getReportFilename() {
-        return _ReportFilename;
-    }
-
-    public EmailDefinition getEmailDefinition(String language)
-            throws ReportingException {
-        EmailDefinition emailDefinition = _EmailDefinitions.get(language);
-        if (emailDefinition == null) {
-            log4j.info("No email definition found for language " + language
-                    + ". Using default email definition");
-            emailDefinition = _DefaultEmailDefinition;
-        }
-
-        if (emailDefinition == null)
-            throw new ReportingException("No email definition available.");
-        return emailDefinition;
-    }
-    public EmailDefinition get_DefaultEmailDefinition() {
-      return _DefaultEmailDefinition;
-    }
-
-    public void set_DefaultEmailDefinition(EmailDefinition defaultEmailDefinition) {
-      _DefaultEmailDefinition = defaultEmailDefinition;
-    }
+  public void set_DefaultEmailDefinition(EmailDefinition defaultEmailDefinition) {
+    _DefaultEmailDefinition = defaultEmailDefinition;
+  }
 }

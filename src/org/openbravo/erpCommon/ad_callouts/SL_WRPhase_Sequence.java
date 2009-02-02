@@ -35,82 +35,69 @@ import org.openbravo.xmlEngine.XmlDocument;
 //import org.openbravo.erpCommon.businessUtility.Tax;
 
 public class SL_WRPhase_Sequence extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strTabId = vars.getStringParameter("inpTabId");
+
+      String strMASequenceID = vars.getStringParameter("inpmaSequenceId");
+      String strMAWReqID = vars.getStringParameter("inpmaWorkrequirementId");
+      try {
+        printPage(response, vars, strTabId, strMASequenceID, strMAWReqID);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
+      String strMASequenceID, String strMAWReqID) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_Sequence_Process';\n\n");
+    resultado.append("var respuesta = new Array(");
+    if (!(strMASequenceID == null || strMASequenceID.equals(""))) {
+      SLWRPhaseSequenceData[] data = SLWRPhaseSequenceData.select(this, strMASequenceID);
+      String strQuantity = SLWRPhaseSequenceData.selectQuantity(this, strMASequenceID, strMAWReqID);
+      resultado.append("new Array(\"inpmaProcessId\", \""
+          + FormatUtilities.replaceJS((data[0].process.equals("") ? "\"\"" : data[0].process))
+          + "\"),\n");
+      resultado.append("new Array(\"inpquantity\", \""
+          + FormatUtilities.replaceJS((strQuantity.equals("") ? "\"\"" : strQuantity)) + "\"),\n");
+      resultado.append("new Array(\"inpcostcenteruse\", \""
+          + FormatUtilities.replaceJS((data[0].ccuse.equals("") ? "\"\"" : data[0].ccuse))
+          + "\"),\n");
+      resultado.append("new Array(\"inppreptime\", \""
+          + FormatUtilities.replaceJS((data[0].preptime.equals("") ? "\"\"" : data[0].preptime))
+          + "\"),\n");
+      resultado.append("new Array(\"inpoutsourced\", \""
+          + FormatUtilities
+              .replaceJS((data[0].outsourced.equals("") ? "\"\"" : data[0].outsourced)) + "\")\n");
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strTabId = vars.getStringParameter("inpTabId");
-
-            String strMASequenceID = vars.getStringParameter("inpmaSequenceId");
-            String strMAWReqID = vars
-                    .getStringParameter("inpmaWorkrequirementId");
-            try {
-                printPage(response, vars, strTabId, strMASequenceID,
-                        strMAWReqID);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strTabId, String strMASequenceID, String strMAWReqID)
-            throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_Sequence_Process';\n\n");
-        resultado.append("var respuesta = new Array(");
-        if (!(strMASequenceID == null || strMASequenceID.equals(""))) {
-            SLWRPhaseSequenceData[] data = SLWRPhaseSequenceData.select(this,
-                    strMASequenceID);
-            String strQuantity = SLWRPhaseSequenceData.selectQuantity(this,
-                    strMASequenceID, strMAWReqID);
-            resultado.append("new Array(\"inpmaProcessId\", \""
-                    + FormatUtilities
-                            .replaceJS((data[0].process.equals("") ? "\"\""
-                                    : data[0].process)) + "\"),\n");
-            resultado.append("new Array(\"inpquantity\", \""
-                    + FormatUtilities
-                            .replaceJS((strQuantity.equals("") ? "\"\""
-                                    : strQuantity)) + "\"),\n");
-            resultado.append("new Array(\"inpcostcenteruse\", \""
-                    + FormatUtilities
-                            .replaceJS((data[0].ccuse.equals("") ? "\"\""
-                                    : data[0].ccuse)) + "\"),\n");
-            resultado.append("new Array(\"inppreptime\", \""
-                    + FormatUtilities
-                            .replaceJS((data[0].preptime.equals("") ? "\"\""
-                                    : data[0].preptime)) + "\"),\n");
-            resultado.append("new Array(\"inpoutsourced\", \""
-                    + FormatUtilities
-                            .replaceJS((data[0].outsourced.equals("") ? "\"\""
-                                    : data[0].outsourced)) + "\")\n");
-        }
-
-        resultado.append(");\n");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", (Utility
-                .isTreeTab(this, strTabId) ? "appFrame.frameWindowTreeTab"
-                : "appFrame"));
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    resultado.append(");\n");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName",
+        (Utility.isTreeTab(this, strTabId) ? "appFrame.frameWindowTreeTab" : "appFrame"));
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

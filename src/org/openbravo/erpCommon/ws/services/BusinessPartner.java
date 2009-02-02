@@ -20,97 +20,97 @@
 package org.openbravo.erpCommon.ws.services;
 
 public class BusinessPartner {
-    private String id;
-    private String clientId;
-    private String name;
-    private String searchKey;
-    private String description;
-    private Boolean complete;
-    private Boolean customer;
-    private Boolean vendor;
-    private Location[] locations;
-    private Contact[] contacts;
+  private String id;
+  private String clientId;
+  private String name;
+  private String searchKey;
+  private String description;
+  private Boolean complete;
+  private Boolean customer;
+  private Boolean vendor;
+  private Location[] locations;
+  private Contact[] contacts;
 
-    public BusinessPartner() {
-    }
+  public BusinessPartner() {
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String value) {
-        id = value;
-    }
+  public void setId(String value) {
+    id = value;
+  }
 
-    public String getClientId() {
-        return clientId;
-    }
+  public String getClientId() {
+    return clientId;
+  }
 
-    public void setClientId(String value) {
-        clientId = value;
-    }
+  public void setClientId(String value) {
+    clientId = value;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setDescription(String value) {
-        description = value;
-    }
+  public void setDescription(String value) {
+    description = value;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setName(String value) {
-        name = value;
-    }
+  public void setName(String value) {
+    name = value;
+  }
 
-    public String getSearchKey() {
-        return searchKey;
-    }
+  public String getSearchKey() {
+    return searchKey;
+  }
 
-    public void setSearchKey(String value) {
-        searchKey = value;
-    }
+  public void setSearchKey(String value) {
+    searchKey = value;
+  }
 
-    public Location[] getLocations() {
-        return locations;
-    }
+  public Location[] getLocations() {
+    return locations;
+  }
 
-    public void setLocations(Location[] value) {
-        locations = value;
-    }
+  public void setLocations(Location[] value) {
+    locations = value;
+  }
 
-    public Contact[] getContacts() {
-        return contacts;
-    }
+  public Contact[] getContacts() {
+    return contacts;
+  }
 
-    public void setContacts(Contact[] value) {
-        contacts = value;
-    }
+  public void setContacts(Contact[] value) {
+    contacts = value;
+  }
 
-    public Boolean isComplete() {
-        return complete;
-    }
+  public Boolean isComplete() {
+    return complete;
+  }
 
-    public void setComplete(Boolean value) {
-        complete = value;
-    }
+  public void setComplete(Boolean value) {
+    complete = value;
+  }
 
-    public Boolean isCustomer() {
-        return customer;
-    }
+  public Boolean isCustomer() {
+    return customer;
+  }
 
-    public void setCustomer(Boolean value) {
-        customer = value;
-    }
+  public void setCustomer(Boolean value) {
+    customer = value;
+  }
 
-    public Boolean isVendor() {
-        return vendor;
-    }
+  public Boolean isVendor() {
+    return vendor;
+  }
 
-    public void setVendor(Boolean value) {
-        vendor = value;
-    }
+  public void setVendor(Boolean value) {
+    vendor = value;
+  }
 }

@@ -47,298 +47,279 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * This interceptor is used by Hibernate as a kind of save, update and delete
- * event listener. This event listener catches save or update events to set the
- * client and organization and the updated/created fields. In addition security
- * checks are performed.
+ * This interceptor is used by Hibernate as a kind of save, update and delete event listener. This
+ * event listener catches save or update events to set the client and organization and the
+ * updated/created fields. In addition security checks are performed.
  * 
  * @author mtaal
  */
 
 public class OBInterceptor extends EmptyInterceptor {
-    private static final Logger log = Logger.getLogger(OBInterceptor.class);
+  private static final Logger log = Logger.getLogger(OBInterceptor.class);
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * Determines if the object is transient (==new and not yet persisted in
-     * Hibernate).
-     * 
-     * @param entity
-     *            the object for which it is determined if it is new
-     * @return true if the object has a null id or has been explicitly set to
-     *         being new (@see BaseOBObject#isNewOBObject()}, returns false
-     *         otherwise.
-     */
-    @Override
-    public Boolean isTransient(Object entity) {
-        // special case, if the id is set but it was explicitly
-        // set to new then return new
-        if (entity instanceof BaseOBObject) {
-            final BaseOBObject bob = (BaseOBObject) entity;
-            if (bob.getId() != null && bob.isNewOBObject()) {
-                return new Boolean(true);
-            }
+  /**
+   * Determines if the object is transient (==new and not yet persisted in Hibernate).
+   * 
+   * @param entity
+   *          the object for which it is determined if it is new
+   * @return true if the object has a null id or has been explicitly set to being new (@see
+   *         BaseOBObject#isNewOBObject()}, returns false otherwise.
+   */
+  @Override
+  public Boolean isTransient(Object entity) {
+    // special case, if the id is set but it was explicitly
+    // set to new then return new
+    if (entity instanceof BaseOBObject) {
+      final BaseOBObject bob = (BaseOBObject) entity;
+      if (bob.getId() != null && bob.isNewOBObject()) {
+        return new Boolean(true);
+      }
+    }
+    // let hibernate do the rest
+    return null;
+  }
+
+  /**
+   * Performs security checks, is the user present in the {@link OBContext} allowed to delete this
+   * entity and is the entity deletable (@see {@link Entity#isDeletable()}.
+   * 
+   * @param entity
+   *          the business object which is deleted
+   * @param id
+   *          the id of the entity
+   * @param state
+   *          the value of the properties
+   * @param propertyNames
+   *          the name of the properties of the entity
+   * @param types
+   *          the hibernate type definition of the properties
+   * 
+   * @see BaseOBObject
+   * @see Entity
+   * @see Property
+   */
+  @Override
+  public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames,
+      Type[] types) {
+    SecurityChecker.getInstance().checkDeleteAllowed(entity);
+  }
+
+  /**
+   * Is called when the entity object is dirty (a value of a property has changed) and the state of
+   * the object is about to be flushed to the database using sql update statements. This method
+   * updates the audit info fields (updated, updatedBy) and performs security checks.
+   * 
+   * @param entity
+   *          the business object which is deleted
+   * @param id
+   *          the id of the entity
+   * @param currentState
+   *          the current value of the properties
+   * @param previousState
+   *          the previous value of the properties, i.e. the values when the entity was loaded from
+   *          the database
+   * @param propertyNames
+   *          the name of the properties of the entity
+   * @param types
+   *          the hibernate type definition of the properties
+   * @return true if the state of the object has changed, this is the case when the entity has audit
+   *         info because the updated/updatedBy properties are updated here, false is returned in
+   *         other cases
+   */
+  @Override
+  public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState,
+      Object[] previousState, String[] propertyNames, Type[] types) {
+
+    // disabled for now, checks are all done when a property is set
+    // if (entity instanceof BaseOBObject) {
+    // ((BaseOBObject) entity).validate();
+    // }
+
+    doEvent(entity, currentState, propertyNames);
+
+    checkReferencedOrganizations(entity, currentState, previousState, propertyNames);
+
+    if (entity instanceof Traceable) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Is called when a new entity object is persisted in the database. This method sets the audit
+   * info fields (created/createdBy/updated/updatedBy) and performs several security checks.
+   * 
+   * @param entity
+   *          the business object which is deleted
+   * @param id
+   *          the id of the entity
+   * @param currentState
+   *          the current value of the properties
+   * @param propertyNames
+   *          the name of the properties of the entity
+   * @param types
+   *          the hibernate type definition of the properties
+   * @return true if the state of the object has changed, this is the case when the entity has audit
+   *         info because the updated/updatedBy properties are updated here, false is returned in
+   *         other cases
+   */
+  @Override
+  public boolean onSave(Object entity, Serializable id, Object[] currentState,
+      String[] propertyNames, Type[] types) {
+    // disabled for now, checks are all done when a property is set
+    // if (entity instanceof BaseOBObject) {
+    // ((BaseOBObject) entity).validate();
+    // }
+
+    doEvent(entity, currentState, propertyNames);
+
+    // audit info fields
+    if (entity instanceof Traceable || entity instanceof ClientEnabled
+        || entity instanceof OrganizationEnabled) {
+      return true;
+    }
+    return false;
+  }
+
+  private void checkReferencedOrganizations(Object entity, Object[] currentState,
+      Object[] previousState, String[] propertyNames) {
+    if (!(entity instanceof OrganizationEnabled)) {
+      return;
+    }
+    final Organization o1 = ((OrganizationEnabled) entity).getOrganization();
+    final OBContext obContext = OBContext.getOBContext();
+    final BaseOBObject bob = (BaseOBObject) entity;
+    boolean isNew = bob.getId() == null || bob.isNewOBObject();
+
+    // check if the organization of the current object has changed, if so
+    // then
+    // check all references
+    if (!isNew) {
+      for (int i = 0; i < currentState.length; i++) {
+        if (propertyNames[i].equals(PROPERTY_ORGANIZATION)) {
+          if (currentState[i] != previousState[i]) {
+            isNew = true;
+            break;
+          }
         }
-        // let hibernate do the rest
-        return null;
+      }
     }
 
-    /**
-     * Performs security checks, is the user present in the {@link OBContext}
-     * allowed to delete this entity and is the entity deletable (@see
-     * {@link Entity#isDeletable()}.
-     * 
-     * @param entity
-     *            the business object which is deleted
-     * @param id
-     *            the id of the entity
-     * @param state
-     *            the value of the properties
-     * @param propertyNames
-     *            the name of the properties of the entity
-     * @param types
-     *            the hibernate type definition of the properties
-     * 
-     * @see BaseOBObject
-     * @see Entity
-     * @see Property
-     */
-    @Override
-    public void onDelete(Object entity, Serializable id, Object[] state,
-            String[] propertyNames, Type[] types) {
-        SecurityChecker.getInstance().checkDeleteAllowed(entity);
+    for (int i = 0; i < currentState.length; i++) {
+      // TODO maybe use equals
+      if ((isNew || currentState[i] != previousState[i])
+          && !(currentState[i] instanceof Organization)
+          && (currentState[i] instanceof BaseOBObject || currentState[i] instanceof HibernateProxy)
+          && currentState[i] instanceof OrganizationEnabled) {
+        // get the organization from the current state
+        final OrganizationEnabled oe = (OrganizationEnabled) currentState[i];
+        final Organization o2 = oe.getOrganization();
+
+        if (!obContext.getOrganizationStructureProvider(o1.getClient().getId()).isInNaturalTree(o1,
+            o2)) {
+          throw new OBSecurityException("Entity " + bob.getIdentifier() + " ("
+              + bob.getEntityName() + ") with organization " + o1.getIdentifier()
+              + " references an entity " + ((BaseOBObject) currentState[i]).getIdentifier()
+              + " through its property " + propertyNames[i] + " but this referenced entity"
+              + " belongs to an organization " + o2.getIdentifier()
+              + " which is not part of the natural tree of " + o1.getIdentifier());
+        }
+      }
     }
+  }
 
-    /**
-     * Is called when the entity object is dirty (a value of a property has
-     * changed) and the state of the object is about to be flushed to the
-     * database using sql update statements. This method updates the audit info
-     * fields (updated, updatedBy) and performs security checks.
-     * 
-     * @param entity
-     *            the business object which is deleted
-     * @param id
-     *            the id of the entity
-     * @param currentState
-     *            the current value of the properties
-     * @param previousState
-     *            the previous value of the properties, i.e. the values when the
-     *            entity was loaded from the database
-     * @param propertyNames
-     *            the name of the properties of the entity
-     * @param types
-     *            the hibernate type definition of the properties
-     * @return true if the state of the object has changed, this is the case
-     *         when the entity has audit info because the updated/updatedBy
-     *         properties are updated here, false is returned in other cases
-     */
-    @Override
-    public boolean onFlushDirty(Object entity, Serializable id,
-            Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types) {
-
-        // disabled for now, checks are all done when a property is set
-        // if (entity instanceof BaseOBObject) {
-        // ((BaseOBObject) entity).validate();
-        // }
-
-        doEvent(entity, currentState, propertyNames);
-
-        checkReferencedOrganizations(entity, currentState, previousState,
-                propertyNames);
-
-        if (entity instanceof Traceable) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Is called when a new entity object is persisted in the database. This
-     * method sets the audit info fields (created/createdBy/updated/updatedBy)
-     * and performs several security checks.
-     * 
-     * @param entity
-     *            the business object which is deleted
-     * @param id
-     *            the id of the entity
-     * @param currentState
-     *            the current value of the properties
-     * @param propertyNames
-     *            the name of the properties of the entity
-     * @param types
-     *            the hibernate type definition of the properties
-     * @return true if the state of the object has changed, this is the case
-     *         when the entity has audit info because the updated/updatedBy
-     *         properties are updated here, false is returned in other cases
-     */
-    @Override
-    public boolean onSave(Object entity, Serializable id,
-            Object[] currentState, String[] propertyNames, Type[] types) {
-        // disabled for now, checks are all done when a property is set
-        // if (entity instanceof BaseOBObject) {
-        // ((BaseOBObject) entity).validate();
-        // }
-
-        doEvent(entity, currentState, propertyNames);
-
-        // audit info fields
-        if (entity instanceof Traceable || entity instanceof ClientEnabled
-                || entity instanceof OrganizationEnabled) {
-            return true;
-        }
-        return false;
-    }
-
-    private void checkReferencedOrganizations(Object entity,
-            Object[] currentState, Object[] previousState,
-            String[] propertyNames) {
-        if (!(entity instanceof OrganizationEnabled)) {
-            return;
-        }
-        final Organization o1 = ((OrganizationEnabled) entity)
-                .getOrganization();
-        final OBContext obContext = OBContext.getOBContext();
-        final BaseOBObject bob = (BaseOBObject) entity;
-        boolean isNew = bob.getId() == null || bob.isNewOBObject();
-
-        // check if the organization of the current object has changed, if so
-        // then
-        // check all references
-        if (!isNew) {
-            for (int i = 0; i < currentState.length; i++) {
-                if (propertyNames[i].equals(PROPERTY_ORGANIZATION)) {
-                    if (currentState[i] != previousState[i]) {
-                        isNew = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < currentState.length; i++) {
-            // TODO maybe use equals
-            if ((isNew || currentState[i] != previousState[i])
-                    && !(currentState[i] instanceof Organization)
-                    && (currentState[i] instanceof BaseOBObject || currentState[i] instanceof HibernateProxy)
-                    && currentState[i] instanceof OrganizationEnabled) {
-                // get the organization from the current state
-                final OrganizationEnabled oe = (OrganizationEnabled) currentState[i];
-                final Organization o2 = oe.getOrganization();
-
-                if (!obContext.getOrganizationStructureProvider(
-                        o1.getClient().getId()).isInNaturalTree(o1, o2)) {
-                    throw new OBSecurityException("Entity "
-                            + bob.getIdentifier() + " (" + bob.getEntityName()
-                            + ") with organization " + o1.getIdentifier()
-                            + " references an entity "
-                            + ((BaseOBObject) currentState[i]).getIdentifier()
-                            + " through its property " + propertyNames[i]
-                            + " but this referenced entity"
-                            + " belongs to an organization "
-                            + o2.getIdentifier()
-                            + " which is not part of the natural tree of "
-                            + o1.getIdentifier());
-                }
-            }
-        }
-    }
-
-    // general event handler does new and update
-    protected void doEvent(Object o, Object[] currentState,
-            String[] propertyNames) {
-        try {
-            // not traceable but still do the security check
-            if (!(o instanceof Traceable)) {
-                // do a check for writeaccess
-                // TODO: the question is if this is the correct
-                // location as because of hibernate cascade many things are
-                // written.
-                SecurityChecker.getInstance().checkWriteAccess(o);
-                return;
-            }
-
-            final Traceable t = (Traceable) o;
-            if (t.getCreatedBy() == null) { // new
-                onNew(t, propertyNames, currentState);
-            } else {
-                onUpdate(t, propertyNames, currentState);
-            }
-        } catch (Exception e) {
-            final Exception originalException = e;
-            e.printStackTrace(System.err);
-            while (e instanceof SQLException) {
-                e = ((SQLException) e).getNextException();
-                e.printStackTrace(System.err);
-            }
-            throw new OBException(originalException);
-        }
-
+  // general event handler does new and update
+  protected void doEvent(Object o, Object[] currentState, String[] propertyNames) {
+    try {
+      // not traceable but still do the security check
+      if (!(o instanceof Traceable)) {
         // do a check for writeaccess
         // TODO: the question is if this is the correct
-        // location as because of hibernate cascade many things are written.
+        // location as because of hibernate cascade many things are
+        // written.
         SecurityChecker.getInstance().checkWriteAccess(o);
+        return;
+      }
+
+      final Traceable t = (Traceable) o;
+      if (t.getCreatedBy() == null) { // new
+        onNew(t, propertyNames, currentState);
+      } else {
+        onUpdate(t, propertyNames, currentState);
+      }
+    } catch (Exception e) {
+      final Exception originalException = e;
+      e.printStackTrace(System.err);
+      while (e instanceof SQLException) {
+        e = ((SQLException) e).getNextException();
+        e.printStackTrace(System.err);
+      }
+      throw new OBException(originalException);
     }
 
-    // set created/createdby and the client and organization
-    private void onNew(Traceable t, String[] propertyNames,
-            Object[] currentState) {
-        final OBContext obContext = OBContext.getOBContext();
-        final User currentUser = obContext.getUser();
-        log.debug("OBEvent for new object " + t.getClass().getName() + " user "
-                + currentUser.getName());
+    // do a check for writeaccess
+    // TODO: the question is if this is the correct
+    // location as because of hibernate cascade many things are written.
+    SecurityChecker.getInstance().checkWriteAccess(o);
+  }
 
-        Client client = null;
-        Organization org = null;
-        if (t instanceof ClientEnabled || t instanceof OrganizationEnabled) {
-            // reread the client and organization
-            client = SessionHandler.getInstance().find(Client.class,
-                    obContext.getCurrentClient().getId());
-            org = SessionHandler.getInstance().find(Organization.class,
-                    obContext.getCurrentOrganization().getId());
-        }
-        for (int i = 0; i < propertyNames.length; i++) {
-            if ("".equals(propertyNames[i])) {
-                currentState[i] = new Date();
-            }
-            if (PROPERTY_UPDATED.equals(propertyNames[i])) {
-                currentState[i] = new Date();
-            }
-            if (PROPERTY_UPDATEDBY.equals(propertyNames[i])) {
-                currentState[i] = currentUser;
-            }
-            if (PROPERTY_CREATED.equals(propertyNames[i])) {
-                currentState[i] = new Date();
-            }
-            if (PROPERTY_CREATEDBY.equals(propertyNames[i])) {
-                currentState[i] = currentUser;
-            }
-            if (PROPERTY_CLIENT.equals(propertyNames[i])
-                    && currentState[i] == null) {
-                currentState[i] = client;
-            }
-            if (PROPERTY_ORGANIZATION.equals(propertyNames[i])
-                    && currentState[i] == null) {
-                currentState[i] = org;
-            }
-        }
-    }
+  // set created/createdby and the client and organization
+  private void onNew(Traceable t, String[] propertyNames, Object[] currentState) {
+    final OBContext obContext = OBContext.getOBContext();
+    final User currentUser = obContext.getUser();
+    log
+        .debug("OBEvent for new object " + t.getClass().getName() + " user "
+            + currentUser.getName());
 
-    // Sets the updated/updatedby
-    // TODO: can the client/organization change?
-    protected void onUpdate(Traceable t, String[] propertyNames,
-            Object[] currentState) {
-        final User currentUser = OBContext.getOBContext().getUser();
-        log.debug("OBEvent for updated object " + t.getClass().getName()
-                + " user " + currentUser.getName());
-        for (int i = 0; i < propertyNames.length; i++) {
-            if (PROPERTY_UPDATED.equals(propertyNames[i])) {
-                currentState[i] = new Date();
-            }
-            if (PROPERTY_UPDATEDBY.equals(propertyNames[i])) {
-                currentState[i] = currentUser;
-            }
-        }
+    Client client = null;
+    Organization org = null;
+    if (t instanceof ClientEnabled || t instanceof OrganizationEnabled) {
+      // reread the client and organization
+      client = SessionHandler.getInstance()
+          .find(Client.class, obContext.getCurrentClient().getId());
+      org = SessionHandler.getInstance().find(Organization.class,
+          obContext.getCurrentOrganization().getId());
     }
+    for (int i = 0; i < propertyNames.length; i++) {
+      if ("".equals(propertyNames[i])) {
+        currentState[i] = new Date();
+      }
+      if (PROPERTY_UPDATED.equals(propertyNames[i])) {
+        currentState[i] = new Date();
+      }
+      if (PROPERTY_UPDATEDBY.equals(propertyNames[i])) {
+        currentState[i] = currentUser;
+      }
+      if (PROPERTY_CREATED.equals(propertyNames[i])) {
+        currentState[i] = new Date();
+      }
+      if (PROPERTY_CREATEDBY.equals(propertyNames[i])) {
+        currentState[i] = currentUser;
+      }
+      if (PROPERTY_CLIENT.equals(propertyNames[i]) && currentState[i] == null) {
+        currentState[i] = client;
+      }
+      if (PROPERTY_ORGANIZATION.equals(propertyNames[i]) && currentState[i] == null) {
+        currentState[i] = org;
+      }
+    }
+  }
+
+  // Sets the updated/updatedby
+  // TODO: can the client/organization change?
+  protected void onUpdate(Traceable t, String[] propertyNames, Object[] currentState) {
+    final User currentUser = OBContext.getOBContext().getUser();
+    log.debug("OBEvent for updated object " + t.getClass().getName() + " user "
+        + currentUser.getName());
+    for (int i = 0; i < propertyNames.length; i++) {
+      if (PROPERTY_UPDATED.equals(propertyNames[i])) {
+        currentState[i] = new Date();
+      }
+      if (PROPERTY_UPDATEDBY.equals(propertyNames[i])) {
+        currentState[i] = currentUser;
+      }
+    }
+  }
 }

@@ -31,51 +31,45 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.Utility;
 
 public class RptC_RemittanceJR extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        if (vars.commandIn("DEFAULT")) {
-            String strcRemittanceId = vars
-                    .getSessionValue("RptC_Remittance.inpcRemittanceId_R");
-            if (strcRemittanceId.equals(""))
-                strcRemittanceId = vars
-                        .getSessionValue("RptC_Remittance.inpcRemittanceId");
-            printPagePDF(response, vars, strcRemittanceId);
-        } else
-            pageError(response);
-    }
+    if (vars.commandIn("DEFAULT")) {
+      String strcRemittanceId = vars.getSessionValue("RptC_Remittance.inpcRemittanceId_R");
+      if (strcRemittanceId.equals(""))
+        strcRemittanceId = vars.getSessionValue("RptC_Remittance.inpcRemittanceId");
+      printPagePDF(response, vars, strcRemittanceId);
+    } else
+      pageError(response);
+  }
 
-    void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
-            String strcRemittanceId) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: pdf");
+  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strcRemittanceId)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: pdf");
 
-        String strOutput = new String("pdf");
-        String strReportName = "@basedesign@/org/openbravo/erpReports/RptC_Remittance.jrxml";
-        if (strOutput.equals("pdf"))
-            response.setHeader("Content-disposition",
-                    "inline; filename=RptC_Remittance.pdf");
+    String strOutput = new String("pdf");
+    String strReportName = "@basedesign@/org/openbravo/erpReports/RptC_Remittance.jrxml";
+    if (strOutput.equals("pdf"))
+      response.setHeader("Content-disposition", "inline; filename=RptC_Remittance.pdf");
 
-        RptCRemittanceData[] data = RptCRemittanceData.select(this, Utility
-                .getContext(this, vars, "#User_Client", "RptC_RemittanceJR"),
-                Utility
-                        .getContext(this, vars, "#User_Org",
-                                "RptC_RemittanceJR"), strcRemittanceId);
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
-        renderJR(vars, response, strReportName, strOutput, parameters, data,
-                null);
+    RptCRemittanceData[] data = RptCRemittanceData.select(this, Utility.getContext(this, vars,
+        "#User_Client", "RptC_RemittanceJR"), Utility.getContext(this, vars, "#User_Org",
+        "RptC_RemittanceJR"), strcRemittanceId);
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    renderJR(vars, response, strReportName, strOutput, parameters, data, null);
 
-    }
+  }
 
-    public String getServletInfo() {
-        return "Servlet that presents the RptCOrders seeker";
-    } // End of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet that presents the RptCOrders seeker";
+  } // End of getServletInfo() method
 }

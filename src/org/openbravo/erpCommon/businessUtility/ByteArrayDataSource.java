@@ -26,61 +26,61 @@ import java.io.UnsupportedEncodingException;
 import javax.activation.DataSource;
 
 public class ByteArrayDataSource implements DataSource {
-    private byte[] g_data = null;
-    private String g_type = "text/plain";
-    private String g_name = null;
+  private byte[] g_data = null;
+  private String g_type = "text/plain";
+  private String g_name = null;
 
-    public ByteArrayDataSource(InputStream is, String type) {
-        g_type = type;
-        try {
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            int ch;
+  public ByteArrayDataSource(InputStream is, String type) {
+    g_type = type;
+    try {
+      ByteArrayOutputStream os = new ByteArrayOutputStream();
+      int ch;
 
-            while ((ch = is.read()) != -1) {
-                os.write(ch);
-            }
-            g_data = os.toByteArray();
-        } catch (IOException ioex) {
-            System.err.println("ByteArrayDataSource - " + ioex);
-        }
+      while ((ch = is.read()) != -1) {
+        os.write(ch);
+      }
+      g_data = os.toByteArray();
+    } catch (IOException ioex) {
+      System.err.println("ByteArrayDataSource - " + ioex);
     }
+  }
 
-    public ByteArrayDataSource(byte[] data, String type) {
-        g_data = data;
-        g_type = type;
-    }
+  public ByteArrayDataSource(byte[] data, String type) {
+    g_data = data;
+    g_type = type;
+  }
 
-    public ByteArrayDataSource(String asciiData, String type) {
-        try {
-            g_data = asciiData.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException uex) {
-            System.err.println("ByteArrayDataSource - " + uex);
-        }
-        g_type = type;
+  public ByteArrayDataSource(String asciiData, String type) {
+    try {
+      g_data = asciiData.getBytes("UTF-8");
+    } catch (UnsupportedEncodingException uex) {
+      System.err.println("ByteArrayDataSource - " + uex);
     }
+    g_type = type;
+  }
 
-    public InputStream getInputStream() throws IOException {
-        if (g_data == null)
-            throw new IOException("no data");
-        return new ByteArrayInputStream(g_data);
-    }
+  public InputStream getInputStream() throws IOException {
+    if (g_data == null)
+      throw new IOException("no data");
+    return new ByteArrayInputStream(g_data);
+  }
 
-    public OutputStream getOutputStream() throws IOException {
-        throw new IOException("cannot do this");
-    }
+  public OutputStream getOutputStream() throws IOException {
+    throw new IOException("cannot do this");
+  }
 
-    public String getContentType() {
-        return g_type;
-    }
+  public String getContentType() {
+    return g_type;
+  }
 
-    public ByteArrayDataSource setName(String name) {
-        g_name = name;
-        return this;
-    }
+  public ByteArrayDataSource setName(String name) {
+    g_name = name;
+    return this;
+  }
 
-    public String getName() {
-        if (g_name != null)
-            return g_name;
-        return "ByteArrayDataStream " + g_type;
-    }
+  public String getName() {
+    if (g_name != null)
+      return g_name;
+    return "ByteArrayDataStream " + g_type;
+  }
 }

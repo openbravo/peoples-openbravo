@@ -30,23 +30,23 @@ import org.openbravo.base.VariablesBase;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Log extends HttpBaseServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesBase vars = new VariablesBase(request);
-        printPage(response, vars);
-    }
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesBase vars = new VariablesBase(request);
+    printPage(response, vars);
+  }
 
-    void printPage(HttpServletResponse response, VariablesBase vars)
-            throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/utility/Log").createXmlDocument();
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+  void printPage(HttpServletResponse response, VariablesBase vars) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/Log")
+        .createXmlDocument();
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

@@ -36,124 +36,111 @@ import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class EmailManager {
-    private static Logger log4j = Logger.getLogger(EmailManager.class);
+  private static Logger log4j = Logger.getLogger(EmailManager.class);
 
-    /*
+  /*
 	 * 
 	 */
-    public static Session newMailSession(ConnectionProvider connectionProvider,
-            String clientId, String adOrgId) throws PocException, ServletException {
-        PocConfigurationData configurations[];
-        try {
-            configurations = PocConfigurationData.getSmtpDetails(
-                    connectionProvider, clientId, adOrgId);
-        } catch (ServletException exception) {
-            throw new PocException(exception);
-        }
-
-        PocConfigurationData configuration = null;
-        if (configurations.length > 0) {
-            configuration = configurations[0];
-            if (log4j.isDebugEnabled())
-                log4j.debug("Crm configuration, smtp server: "
-                        + configuration.smtpserver);
-            if (log4j.isDebugEnabled())
-                log4j.debug("Crm configuration, smtp server auth: "
-                        + configuration.issmtpauthorization);
-            if (log4j.isDebugEnabled())
-                log4j.debug("Crm configuration, smtp server account: "
-                        + configuration.smtpserveraccount);
-            if (log4j.isDebugEnabled())
-                log4j.debug("Crm configuration, smtp server password: "
-                        + configuration.smtpserverpassword);
-        } else {
-             throw new ServletException(
-             "No Poc configuration found for this client." );
-        }
-
-        Properties props = new Properties();
-        props.put("mail.debug", "true");
-        props.put("mail.smtp.auth", (configuration.issmtpauthorization
-                .equals("Y") ? "true" : "false"));
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.host", configuration.smtpserver);
-
-        ClientAuthenticator authenticator = null;
-        if (configuration.smtpserveraccount != null) {
-            authenticator = new ClientAuthenticator(
-                    configuration.smtpserveraccount,
-                    configuration.smtpserverpassword);
-        }
-
-        return Session.getInstance(props, authenticator);
+  public static Session newMailSession(ConnectionProvider connectionProvider, String clientId,
+      String adOrgId) throws PocException, ServletException {
+    PocConfigurationData configurations[];
+    try {
+      configurations = PocConfigurationData.getSmtpDetails(connectionProvider, clientId, adOrgId);
+    } catch (ServletException exception) {
+      throw new PocException(exception);
     }
 
-    /*
+    PocConfigurationData configuration = null;
+    if (configurations.length > 0) {
+      configuration = configurations[0];
+      if (log4j.isDebugEnabled())
+        log4j.debug("Crm configuration, smtp server: " + configuration.smtpserver);
+      if (log4j.isDebugEnabled())
+        log4j.debug("Crm configuration, smtp server auth: " + configuration.issmtpauthorization);
+      if (log4j.isDebugEnabled())
+        log4j.debug("Crm configuration, smtp server account: " + configuration.smtpserveraccount);
+      if (log4j.isDebugEnabled())
+        log4j.debug("Crm configuration, smtp server password: " + configuration.smtpserverpassword);
+    } else {
+      throw new ServletException("No Poc configuration found for this client.");
+    }
+
+    Properties props = new Properties();
+    props.put("mail.debug", "true");
+    props.put("mail.smtp.auth", (configuration.issmtpauthorization.equals("Y") ? "true" : "false"));
+    props.put("mail.transport.protocol", "smtp");
+    props.put("mail.host", configuration.smtpserver);
+
+    ClientAuthenticator authenticator = null;
+    if (configuration.smtpserveraccount != null) {
+      authenticator = new ClientAuthenticator(configuration.smtpserveraccount,
+          configuration.smtpserverpassword);
+    }
+
+    return Session.getInstance(props, authenticator);
+  }
+
+  /*
 	 * 
 	 */
-    public void sendSimpleEmail(Session session, String from, String to,
-            String bcc, String subject, String body,
-            String attachmentFileLocations) throws PocException {
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(from));
+  public void sendSimpleEmail(Session session, String from, String to, String bcc, String subject,
+      String body, String attachmentFileLocations) throws PocException {
+    try {
+      Message message = new MimeMessage(session);
+      message.setFrom(new InternetAddress(from));
 
-            message.setRecipients(Message.RecipientType.TO, getAddressesFrom(to
-                    .split(",")));
+      message.setRecipients(Message.RecipientType.TO, getAddressesFrom(to.split(",")));
 
-            if (bcc != null)
-                message.setRecipients(Message.RecipientType.BCC,
-                        getAddressesFrom(bcc.split(",")));
+      if (bcc != null)
+        message.setRecipients(Message.RecipientType.BCC, getAddressesFrom(bcc.split(",")));
 
-            message.setSubject(subject);
+      message.setSubject(subject);
 
-            // Content consists of 2 parts, the message body and the attachment
-            // We therefore use a multipart message
-            Multipart multipart = new MimeMultipart();
+      // Content consists of 2 parts, the message body and the attachment
+      // We therefore use a multipart message
+      Multipart multipart = new MimeMultipart();
 
-            // Create the message part
-            MimeBodyPart messageBodyPart = new MimeBodyPart();
-            messageBodyPart.setText(body);
-            multipart.addBodyPart(messageBodyPart);
+      // Create the message part
+      MimeBodyPart messageBodyPart = new MimeBodyPart();
+      messageBodyPart.setText(body);
+      multipart.addBodyPart(messageBodyPart);
 
-            // Create the attachment parts
-            if (attachmentFileLocations != null) {
-                String attachments[] = attachmentFileLocations.split(",");
+      // Create the attachment parts
+      if (attachmentFileLocations != null) {
+        String attachments[] = attachmentFileLocations.split(",");
 
-                for (String attachment : attachments) {
-                    messageBodyPart = new MimeBodyPart();
-                    DataSource source = new FileDataSource(attachment);
-                    messageBodyPart.setDataHandler(new DataHandler(source));
-                    messageBodyPart.setFileName(attachment.substring(attachment
-                            .lastIndexOf("/") + 1));
-                    multipart.addBodyPart(messageBodyPart);
-                }
-            }
-
-            message.setContent(multipart);
-
-            // Send the email
-            Transport.send(message);
-        } catch (AddressException exception) {
-            throw new PocException(exception);
-        } catch (MessagingException exception) {
-            throw new PocException(exception);
+        for (String attachment : attachments) {
+          messageBodyPart = new MimeBodyPart();
+          DataSource source = new FileDataSource(attachment);
+          messageBodyPart.setDataHandler(new DataHandler(source));
+          messageBodyPart.setFileName(attachment.substring(attachment.lastIndexOf("/") + 1));
+          multipart.addBodyPart(messageBodyPart);
         }
-    }
+      }
 
-    private InternetAddress[] getAddressesFrom(String[] textualAddresses) {
-        InternetAddress internetAddresses[] = new InternetAddress[textualAddresses.length];
-        for (int index = 0; index < textualAddresses.length; index++) {
-            try {
-                internetAddresses[index] = new InternetAddress(
-                        textualAddresses[index]);
-            } catch (AddressException e) {
-                if (log4j.isDebugEnabled())
-                    log4j.debug("Could not create a valid email for: "
-                            + textualAddresses[index] + ". Address ignored");
-            }
-        }
-        return internetAddresses;
+      message.setContent(multipart);
+
+      // Send the email
+      Transport.send(message);
+    } catch (AddressException exception) {
+      throw new PocException(exception);
+    } catch (MessagingException exception) {
+      throw new PocException(exception);
     }
+  }
+
+  private InternetAddress[] getAddressesFrom(String[] textualAddresses) {
+    InternetAddress internetAddresses[] = new InternetAddress[textualAddresses.length];
+    for (int index = 0; index < textualAddresses.length; index++) {
+      try {
+        internetAddresses[index] = new InternetAddress(textualAddresses[index]);
+      } catch (AddressException e) {
+        if (log4j.isDebugEnabled())
+          log4j.debug("Could not create a valid email for: " + textualAddresses[index]
+              + ". Address ignored");
+      }
+    }
+    return internetAddresses;
+  }
 
 }

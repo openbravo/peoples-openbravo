@@ -20,9 +20,8 @@
 package org.openbravo.base.provider;
 
 /**
- * Tags a class as being a singleton. This is used to determine for a
- * non-registered class that it is a singleton or not. Used by the
- * {@link OBProvider OBProvider}.
+ * Tags a class as being a singleton. This is used to determine for a non-registered class that it
+ * is a singleton or not. Used by the {@link OBProvider OBProvider}.
  * 
  * @author mtaal
  */

@@ -26,27 +26,27 @@ package org.openbravo.base.model;
  */
 public class RefList extends ModelObject {
 
-    private Reference reference;
+  private Reference reference;
 
-    private String value;
+  private String value;
 
-    public Reference getReference() {
-        return reference;
-    }
+  public Reference getReference() {
+    return reference;
+  }
 
-    public void setReference(Reference reference) {
-        this.reference = reference;
-    }
+  public void setReference(Reference reference) {
+    this.reference = reference;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-    public void setAllowedValue() {
-        reference.addAllowedValue(value);
-    }
+  public void setAllowedValue() {
+    reference.addAllowedValue(value);
+  }
 }

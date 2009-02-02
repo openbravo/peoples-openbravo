@@ -31,59 +31,56 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_Charge extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strCChargeID = vars.getStringParameter("inpcChargeId");
-            String strTabId = vars.getStringParameter("inpTabId");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strCChargeID = vars.getStringParameter("inpcChargeId");
+      String strTabId = vars.getStringParameter("inpTabId");
 
-            try {
-                printPage(response, vars, strCChargeID, strTabId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+      try {
+        printPage(response, vars, strCChargeID, strTabId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strCChargeID, String strTabId) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strCChargeID,
+      String strTabId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-        String chargeAmt;
-        if (strCChargeID.equals(""))
-            chargeAmt = "0";
-        else
-            chargeAmt = SLChargeData.chargeAmt(this, strCChargeID);
+    String chargeAmt;
+    if (strCChargeID.equals(""))
+      chargeAmt = "0";
+    else
+      chargeAmt = SLChargeData.chargeAmt(this, strCChargeID);
 
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_Charge';\n\n");
-        resultado.append("var respuesta = new Array(");
-        resultado
-                .append("new Array(\"inpchargeamt\", \"" + chargeAmt + "\")\n");
-        resultado.append(");");
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_Charge';\n\n");
+    resultado.append("var respuesta = new Array(");
+    resultado.append("new Array(\"inpchargeamt\", \"" + chargeAmt + "\")\n");
+    resultado.append(");");
 
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

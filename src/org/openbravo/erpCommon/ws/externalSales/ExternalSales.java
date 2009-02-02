@@ -21,17 +21,15 @@ package org.openbravo.erpCommon.ws.externalSales;
 
 public interface ExternalSales {
 
-    public Product[] getProductsCatalog(String entityId, String organizationId,
-            String salesChannel, String username, String password);
+  public Product[] getProductsCatalog(String entityId, String organizationId, String salesChannel,
+      String username, String password);
 
-    public ProductPlus[] getProductsPlusCatalog(String entityId,
-            String organizationId, String salesChannel, String username,
-            String password);
+  public ProductPlus[] getProductsPlusCatalog(String entityId, String organizationId,
+      String salesChannel, String username, String password);
 
-    public boolean uploadOrders(String entityId, String organizationId,
-            String salesChannel, Order[] newOrders, String username,
-            String password);
+  public boolean uploadOrders(String entityId, String organizationId, String salesChannel,
+      Order[] newOrders, String username, String password);
 
-    public Order[] getOrders(String entityId, String organizationId,
-            OrderIdentifier[] orderIds, String username, String password);
+  public Order[] getOrders(String entityId, String organizationId, OrderIdentifier[] orderIds,
+      String username, String password);
 }

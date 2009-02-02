@@ -27,34 +27,32 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 /**
- * This class validates several aspects of the application dictionary. The
- * application dictionary itself is validated as well as the match between the
- * application dictionary and the database.
+ * This class validates several aspects of the application dictionary. The application dictionary
+ * itself is validated as well as the match between the application dictionary and the database.
  * 
  * @author mtaal
  */
 public class ApplicationDictionaryValidator {
-    private static final Logger log = Logger
-            .getLogger(ApplicationDictionaryValidator.class);
+  private static final Logger log = Logger.getLogger(ApplicationDictionaryValidator.class);
 
-    private List<SystemValidator> validators = new ArrayList<SystemValidator>();
+  private List<SystemValidator> validators = new ArrayList<SystemValidator>();
 
-    public ApplicationDictionaryValidator() {
-        validators.add(new DatabaseValidator());
+  public ApplicationDictionaryValidator() {
+    validators.add(new DatabaseValidator());
+  }
+
+  /**
+   * Performs the validation using different validators. Returns the validation results grouped by
+   * type of validation.
+   * 
+   * @return the validation result.
+   */
+  public Map<String, SystemValidationResult> validate() {
+    final Map<String, SystemValidationResult> result = new HashMap<String, SystemValidationResult>();
+
+    for (SystemValidator validator : validators) {
+      result.put(validator.getCategory(), validator.validate());
     }
-
-    /**
-     * Performs the validation using different validators. Returns the
-     * validation results grouped by type of validation.
-     * 
-     * @return the validation result.
-     */
-    public Map<String, SystemValidationResult> validate() {
-        final Map<String, SystemValidationResult> result = new HashMap<String, SystemValidationResult>();
-
-        for (SystemValidator validator : validators) {
-            result.put(validator.getCategory(), validator.validate());
-        }
-        return result;
-    }
+    return result;
+  }
 }

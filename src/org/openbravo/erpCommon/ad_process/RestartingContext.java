@@ -32,15 +32,15 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
  */
 public class RestartingContext extends HttpSecureAppServlet {
 
-    /**
+  /**
      * 
      */
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
 
-    }
+  }
 
 }

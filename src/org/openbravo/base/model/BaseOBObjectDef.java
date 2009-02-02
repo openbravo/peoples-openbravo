@@ -20,23 +20,22 @@
 package org.openbravo.base.model;
 
 /**
- * Defines the BaseOBObject interface, this interface has been introduced to
- * prevent cyclic references between generated code and model code which is used
- * by the generator. This interface only contains the minimally required methods
- * to prevent this cycle.
+ * Defines the BaseOBObject interface, this interface has been introduced to prevent cyclic
+ * references between generated code and model code which is used by the generator. This interface
+ * only contains the minimally required methods to prevent this cycle.
  * 
  * @author mtaal
  */
 
 public interface BaseOBObjectDef {
 
-    public Object get(String propertyName);
+  public Object get(String propertyName);
 
-    public void set(String propertyName, Object value);
+  public void set(String propertyName, Object value);
 
-    public Entity getEntity();
+  public Entity getEntity();
 
-    public Object getId();
+  public Object getId();
 
-    public String getIdentifier();
+  public String getIdentifier();
 }

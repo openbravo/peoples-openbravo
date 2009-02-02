@@ -22,28 +22,27 @@ package org.openbravo.dal.xml;
 import org.openbravo.base.exception.OBException;
 
 /**
- * This Exception is thrown when a reference in xml does not exist as an object
- * in the database.
+ * This Exception is thrown when a reference in xml does not exist as an object in the database.
  * 
  * @author mtaal
  */
 public class EntityNotFoundException extends OBException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public EntityNotFoundException() {
-        super();
-    }
+  public EntityNotFoundException() {
+    super();
+  }
 
-    public EntityNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public EntityNotFoundException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public EntityNotFoundException(String message) {
-        super(message);
-    }
+  public EntityNotFoundException(String message) {
+    super(message);
+  }
 
-    public EntityNotFoundException(Throwable cause) {
-        super(cause);
-    }
+  public EntityNotFoundException(Throwable cause) {
+    super(cause);
+  }
 }

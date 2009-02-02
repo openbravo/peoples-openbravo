@@ -31,100 +31,92 @@ import org.openbravo.database.ConnectionProvider;
  *         Class defined to implement the specific utilities of each client.
  */
 public class WindowTreeUtilityClient {
-    static Logger log4j = Logger.getLogger(WindowTreeUtilityClient.class);
+  static Logger log4j = Logger.getLogger(WindowTreeUtilityClient.class);
 
-    /**
-     * Gets the tree type.
-     * 
-     * @param keyColumnName
-     *            Name of the column key.
-     * @return String with the tree type.
-     */
-    public static String getTreeType(String keyColumnName) {
-        if (log4j.isDebugEnabled())
-            log4j.debug("WindowTreeUtilityClient.getTreeID() - key Column: "
-                    + keyColumnName);
-        String TreeType = "";
-        if (keyColumnName.equals("AT_Test_ID"))
-            TreeType = "II";
-        else if (keyColumnName == null || keyColumnName.length() == 0)
-            return "";
-        return TreeType;
-    }
+  /**
+   * Gets the tree type.
+   * 
+   * @param keyColumnName
+   *          Name of the column key.
+   * @return String with the tree type.
+   */
+  public static String getTreeType(String keyColumnName) {
+    if (log4j.isDebugEnabled())
+      log4j.debug("WindowTreeUtilityClient.getTreeID() - key Column: " + keyColumnName);
+    String TreeType = "";
+    if (keyColumnName.equals("AT_Test_ID"))
+      TreeType = "II";
+    else if (keyColumnName == null || keyColumnName.length() == 0)
+      return "";
+    return TreeType;
+  }
 
-    /**
-     * Gets the array with the tree elements.
-     * 
-     * @param conn
-     *            Handler for the database connection.
-     * @param vars
-     *            Handler for the session info.
-     * @param TreeType
-     *            The type of tree.
-     * @param TreeID
-     *            The id of the tree.
-     * @param editable
-     *            is editable?
-     * @param strParentID
-     *            Parent id node (optional).
-     * @param strNodeId
-     *            The node to search (optional).
-     * @param strTabID
-     *            Id of the tab.
-     * @return Array with the tree elements.
-     * @throws ServletException
-     */
-    public static FieldProvider[] getTree(ConnectionProvider conn,
-            VariablesSecureApp vars, String TreeType, String TreeID,
-            boolean editable, String strParentID, String strNodeId,
-            String strTabID) throws ServletException {
-        if (log4j.isDebugEnabled())
-            log4j
-                    .debug("WindowTreeUtilityClient.getTree() - TreeID: "
-                            + TreeID);
-        FieldProvider[] data = null;
-        String strEditable = (editable ? "editable" : "");
-        if (TreeType.equals("II"))
-            data = WindowTreeUtilityClientData
-                    .selectInstructions(conn, strEditable, strParentID,
-                            strNodeId, vars.getUser(), TreeID);
-        if (data == null)
-            throw new ServletException(
-                    "WindowTreeUtilityClient.getTree - Unknown TreeType="
-                            + TreeType);
-        return data;
-    }
+  /**
+   * Gets the array with the tree elements.
+   * 
+   * @param conn
+   *          Handler for the database connection.
+   * @param vars
+   *          Handler for the session info.
+   * @param TreeType
+   *          The type of tree.
+   * @param TreeID
+   *          The id of the tree.
+   * @param editable
+   *          is editable?
+   * @param strParentID
+   *          Parent id node (optional).
+   * @param strNodeId
+   *          The node to search (optional).
+   * @param strTabID
+   *          Id of the tab.
+   * @return Array with the tree elements.
+   * @throws ServletException
+   */
+  public static FieldProvider[] getTree(ConnectionProvider conn, VariablesSecureApp vars,
+      String TreeType, String TreeID, boolean editable, String strParentID, String strNodeId,
+      String strTabID) throws ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("WindowTreeUtilityClient.getTree() - TreeID: " + TreeID);
+    FieldProvider[] data = null;
+    String strEditable = (editable ? "editable" : "");
+    if (TreeType.equals("II"))
+      data = WindowTreeUtilityClientData.selectInstructions(conn, strEditable, strParentID,
+          strNodeId, vars.getUser(), TreeID);
+    if (data == null)
+      throw new ServletException("WindowTreeUtilityClient.getTree - Unknown TreeType=" + TreeType);
+    return data;
+  }
 
-    /**
-     * Type for the class of the html element.
-     * 
-     * @param type
-     *            Database type.
-     * @return String with the css type.
-     */
-    public static String windowType(String type) {
-        if (log4j.isDebugEnabled())
-            log4j.debug("WindowTreeUtilityClient.windowType() - type: " + type);
-        if (type == null || type.equals(""))
-            return "";
-        else
-            return "";
-    }
+  /**
+   * Type for the class of the html element.
+   * 
+   * @param type
+   *          Database type.
+   * @return String with the css type.
+   */
+  public static String windowType(String type) {
+    if (log4j.isDebugEnabled())
+      log4j.debug("WindowTreeUtilityClient.windowType() - type: " + type);
+    if (type == null || type.equals(""))
+      return "";
+    else
+      return "";
+  }
 
-    /**
-     * Type for the id of the html element. Used in the test application.
-     * 
-     * @param tipo
-     *            Database type.
-     * @return String with the id type.
-     */
-    public static String windowTypeNico(String tipo) {
-        if (log4j.isDebugEnabled())
-            log4j.debug("WindowTreeUtilityClient.windowTypeNico() - type: "
-                    + tipo);
-        if (tipo == null)
-            return "";
-        else
-            return "";
-    }
+  /**
+   * Type for the id of the html element. Used in the test application.
+   * 
+   * @param tipo
+   *          Database type.
+   * @return String with the id type.
+   */
+  public static String windowTypeNico(String tipo) {
+    if (log4j.isDebugEnabled())
+      log4j.debug("WindowTreeUtilityClient.windowTypeNico() - type: " + tipo);
+    if (tipo == null)
+      return "";
+    else
+      return "";
+  }
 }

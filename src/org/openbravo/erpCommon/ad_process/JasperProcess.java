@@ -37,195 +37,174 @@ import org.openbravo.utils.Replace;
 
 public class JasperProcess implements Process {
 
-    static Logger log4j = Logger.getLogger(JasperProcess.class);
+  static Logger log4j = Logger.getLogger(JasperProcess.class);
 
-    private ProcessLogger logger;
+  private ProcessLogger logger;
 
-    private ConnectionProvider connection;
+  private ConnectionProvider connection;
 
-    public void initialize(ProcessBundle bundle) {
-        logger = bundle.getLogger();
-        connection = bundle.getConnection();
+  public void initialize(ProcessBundle bundle) {
+    logger = bundle.getLogger();
+    connection = bundle.getConnection();
+  }
+
+  public void execute(ProcessBundle bundle) throws Exception {
+
+    HashMap<String, Object> designParameters = null;
+    HashMap<Object, Object> exportParameters = null;
+
+    ConfigParameters config = bundle.getConfig();
+    VariablesSecureApp vars = bundle.getContext().toVars();
+    FieldProvider[] data = (FieldProvider[]) bundle.getParams().get("data");
+
+    String classInfoId = (String) bundle.getParams().get("classInfoId");
+
+    String strReportName = bundle.getImpl();
+    String strOutputType = (String) bundle.getParams().get("strOutputType");
+
+    designParameters = (HashMap<String, Object>) bundle.getParams().get("designParameters");
+    exportParameters = (HashMap<Object, Object>) bundle.getParams().get("exportParameters");
+
+    if (strReportName == null || strReportName.equals("")) {
+      strReportName = PrintJRData.getReportName(connection, classInfoId);
     }
 
-    public void execute(ProcessBundle bundle) throws Exception {
+    String strAttach = config.strFTPDirectory + "/284-" + classInfoId;
 
-        HashMap<String, Object> designParameters = null;
-        HashMap<Object, Object> exportParameters = null;
+    String strLanguage = bundle.getContext().getLanguage();
+    Locale locLocale = new Locale(strLanguage.substring(0, 2), strLanguage.substring(3, 5));
 
-        ConfigParameters config = bundle.getConfig();
-        VariablesSecureApp vars = bundle.getContext().toVars();
-        FieldProvider[] data = (FieldProvider[]) bundle.getParams().get("data");
+    String strBaseDesign = getBaseDesignPath(config);
 
-        String classInfoId = (String) bundle.getParams().get("classInfoId");
+    strReportName = Replace.replace(Replace.replace(strReportName, "@basedesign@", strBaseDesign),
+        "@attach@", strAttach);
+    String strFileName = strReportName.substring(strReportName.lastIndexOf("/") + 1);
 
-        String strReportName = bundle.getImpl();
-        String strOutputType = (String) bundle.getParams().get("strOutputType");
+    // FIXME: os is never assigned, but used leading to an NPE
+    ServletOutputStream os = null;
+    try {
+      JasperReport jasperReport = Utility.getTranslatedJasperReport(connection, strReportName,
+          strLanguage);
 
-        designParameters = (HashMap<String, Object>) bundle.getParams().get(
-                "designParameters");
-        exportParameters = (HashMap<Object, Object>) bundle.getParams().get(
-                "exportParameters");
+      if (designParameters == null)
+        designParameters = new HashMap<String, Object>();
 
-        if (strReportName == null || strReportName.equals("")) {
-            strReportName = PrintJRData.getReportName(connection, classInfoId);
+      Boolean pagination = true;
+      if (strOutputType.equals("pdf"))
+        pagination = false;
+
+      designParameters.put("IS_IGNORE_PAGINATION", pagination);
+      // designParameters.put("BASE_WEB", strReplaceWithFull);
+      designParameters.put("BASE_DESIGN", strBaseDesign);
+      designParameters.put("ATTACH", strAttach);
+      designParameters.put("USER_CLIENT", Utility.getContext(connection, vars, "#User_Client", ""));
+      designParameters.put("USER_ORG", Utility.getContext(connection, vars, "#User_Org", ""));
+      designParameters.put("LANGUAGE", strLanguage);
+      designParameters.put("LOCALE", locLocale);
+
+      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+      dfs.setDecimalSeparator(vars.getSessionValue("#AD_ReportDecimalSeparator").charAt(0));
+      dfs.setGroupingSeparator(vars.getSessionValue("#AD_ReportGroupingSeparator").charAt(0));
+      DecimalFormat numberFormat = new DecimalFormat(
+          vars.getSessionValue("#AD_ReportNumberFormat"), dfs);
+      designParameters.put("NUMBERFORMAT", numberFormat);
+
+      if (log4j.isDebugEnabled())
+        log4j.debug("creating the format factory: " + vars.getJavaDateFormat());
+      JRFormatFactory jrFormatFactory = new JRFormatFactory();
+      jrFormatFactory.setDatePattern(vars.getJavaDateFormat());
+      designParameters.put(JRParameter.REPORT_FORMAT_FACTORY, jrFormatFactory);
+
+      JasperPrint jasperPrint;
+      Connection conn = null;
+      try {
+        conn = connection.getTransactionConnection();
+        if (data != null) {
+          designParameters.put("REPORT_CONNECTION", conn);
+          jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters,
+              new JRFieldProviderDataSource(data, vars.getJavaDateFormat()));
+        } else {
+          jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, conn);
         }
+      } catch (Exception e) {
+        throw new ServletException(e.getMessage());
+      } finally {
+        connection.releaseRollbackConnection(conn);
+      }
 
-        String strAttach = config.strFTPDirectory + "/284-" + classInfoId;
+      if (exportParameters == null)
+        exportParameters = new HashMap<Object, Object>();
+      if (strOutputType == null || strOutputType.equals(""))
+        strOutputType = "html";
+      if (strOutputType.equals("html")) {
+        if (log4j.isDebugEnabled())
+          log4j.debug("JR: Print HTML");
+        // response.setHeader( "Content-disposition", "inline" +
+        // "; filename=" + strFileName + "." +strOutputType);
+        JRHtmlExporter exporter = new JRHtmlExporter();
+        exportParameters.put(JRHtmlExporterParameter.JASPER_PRINT, jasperPrint);
+        exportParameters.put(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
+        exportParameters.put(JRHtmlExporterParameter.SIZE_UNIT,
+            JRHtmlExporterParameter.SIZE_UNIT_POINT);
+        exportParameters.put(JRHtmlExporterParameter.OUTPUT_STREAM, os);
+        exporter.setParameters(exportParameters);
+        exporter.exportReport();
 
-        String strLanguage = bundle.getContext().getLanguage();
-        Locale locLocale = new Locale(strLanguage.substring(0, 2), strLanguage
-                .substring(3, 5));
+      } else if (strOutputType.equals("pdf")) {
+        // response.setContentType("application/pdf");
+        // response.setHeader( "Content-disposition", "attachment" +
+        // "; filename=" + strFileName + "." +strOutputType);
+        JasperExportManager.exportReportToPdfStream(jasperPrint, os);
 
-        String strBaseDesign = getBaseDesignPath(config);
+      } else if (strOutputType.equals("xls")) {
+        // response.setContentType("application/vnd.ms-excel");
+        // response.setHeader( "Content-disposition", "attachment" +
+        // "; filename=" + strFileName + "." +strOutputType);
+        JExcelApiExporter exporter = new JExcelApiExporter();
+        exportParameters.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
+        exportParameters.put(JRExporterParameter.OUTPUT_STREAM, os);
+        exportParameters.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
+        exportParameters.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
+            Boolean.TRUE);
 
-        strReportName = Replace.replace(Replace.replace(strReportName,
-                "@basedesign@", strBaseDesign), "@attach@", strAttach);
-        String strFileName = strReportName.substring(strReportName
-                .lastIndexOf("/") + 1);
+        exporter.setParameters(exportParameters);
+        exporter.exportReport();
 
-        // FIXME: os is never assigned, but used leading to an NPE
-        ServletOutputStream os = null;
-        try {
-            JasperReport jasperReport = Utility.getTranslatedJasperReport(
-                    connection, strReportName, strLanguage);
+      } else {
+        throw new ServletException("Output format no supported");
+      }
+    } catch (JRException e) {
+      if (log4j.isDebugEnabled())
+        log4j.debug("JR: Error: " + e);
+      e.printStackTrace();
+      throw new ServletException(e.getMessage());
 
-            if (designParameters == null)
-                designParameters = new HashMap<String, Object>();
+    } catch (Exception e) {
+      throw new ServletException(e.getMessage());
 
-            Boolean pagination = true;
-            if (strOutputType.equals("pdf"))
-                pagination = false;
-
-            designParameters.put("IS_IGNORE_PAGINATION", pagination);
-            // designParameters.put("BASE_WEB", strReplaceWithFull);
-            designParameters.put("BASE_DESIGN", strBaseDesign);
-            designParameters.put("ATTACH", strAttach);
-            designParameters.put("USER_CLIENT", Utility.getContext(connection,
-                    vars, "#User_Client", ""));
-            designParameters.put("USER_ORG", Utility.getContext(connection,
-                    vars, "#User_Org", ""));
-            designParameters.put("LANGUAGE", strLanguage);
-            designParameters.put("LOCALE", locLocale);
-
-            DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-            dfs.setDecimalSeparator(vars.getSessionValue(
-                    "#AD_ReportDecimalSeparator").charAt(0));
-            dfs.setGroupingSeparator(vars.getSessionValue(
-                    "#AD_ReportGroupingSeparator").charAt(0));
-            DecimalFormat numberFormat = new DecimalFormat(vars
-                    .getSessionValue("#AD_ReportNumberFormat"), dfs);
-            designParameters.put("NUMBERFORMAT", numberFormat);
-
-            if (log4j.isDebugEnabled())
-                log4j.debug("creating the format factory: "
-                        + vars.getJavaDateFormat());
-            JRFormatFactory jrFormatFactory = new JRFormatFactory();
-            jrFormatFactory.setDatePattern(vars.getJavaDateFormat());
-            designParameters.put(JRParameter.REPORT_FORMAT_FACTORY,
-                    jrFormatFactory);
-
-            JasperPrint jasperPrint;
-            Connection conn = null;
-            try {
-                conn = connection.getTransactionConnection();
-                if (data != null) {
-                    designParameters.put("REPORT_CONNECTION", conn);
-                    jasperPrint = JasperFillManager.fillReport(jasperReport,
-                            designParameters, new JRFieldProviderDataSource(
-                                    data, vars.getJavaDateFormat()));
-                } else {
-                    jasperPrint = JasperFillManager.fillReport(jasperReport,
-                            designParameters, conn);
-                }
-            } catch (Exception e) {
-                throw new ServletException(e.getMessage());
-            } finally {
-                connection.releaseRollbackConnection(conn);
-            }
-
-            if (exportParameters == null)
-                exportParameters = new HashMap<Object, Object>();
-            if (strOutputType == null || strOutputType.equals(""))
-                strOutputType = "html";
-            if (strOutputType.equals("html")) {
-                if (log4j.isDebugEnabled())
-                    log4j.debug("JR: Print HTML");
-                // response.setHeader( "Content-disposition", "inline" +
-                // "; filename=" + strFileName + "." +strOutputType);
-                JRHtmlExporter exporter = new JRHtmlExporter();
-                exportParameters.put(JRHtmlExporterParameter.JASPER_PRINT,
-                        jasperPrint);
-                exportParameters.put(
-                        JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN,
-                        Boolean.FALSE);
-                exportParameters.put(JRHtmlExporterParameter.SIZE_UNIT,
-                        JRHtmlExporterParameter.SIZE_UNIT_POINT);
-                exportParameters.put(JRHtmlExporterParameter.OUTPUT_STREAM, os);
-                exporter.setParameters(exportParameters);
-                exporter.exportReport();
-
-            } else if (strOutputType.equals("pdf")) {
-                // response.setContentType("application/pdf");
-                // response.setHeader( "Content-disposition", "attachment" +
-                // "; filename=" + strFileName + "." +strOutputType);
-                JasperExportManager.exportReportToPdfStream(jasperPrint, os);
-
-            } else if (strOutputType.equals("xls")) {
-                // response.setContentType("application/vnd.ms-excel");
-                // response.setHeader( "Content-disposition", "attachment" +
-                // "; filename=" + strFileName + "." +strOutputType);
-                JExcelApiExporter exporter = new JExcelApiExporter();
-                exportParameters.put(JRExporterParameter.JASPER_PRINT,
-                        jasperPrint);
-                exportParameters.put(JRExporterParameter.OUTPUT_STREAM, os);
-                exportParameters.put(
-                        JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET,
-                        Boolean.FALSE);
-                exportParameters
-                        .put(
-                                JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
-                                Boolean.TRUE);
-
-                exporter.setParameters(exportParameters);
-                exporter.exportReport();
-
-            } else {
-                throw new ServletException("Output format no supported");
-            }
-        } catch (JRException e) {
-            if (log4j.isDebugEnabled())
-                log4j.debug("JR: Error: " + e);
-            e.printStackTrace();
-            throw new ServletException(e.getMessage());
-
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
-
-        } finally {
-            try {
-                os.close();
-            } catch (Exception e) {
-            }
-        }
+    } finally {
+      try {
+        os.close();
+      } catch (Exception e) {
+      }
     }
+  }
 
-    /**
-     * Returns the absolute path to the correct language subfolder within the
-     * context's src-loc folder.
-     * 
-     * @return String with the absolute path on the local drive.
-     */
-    protected String getBaseDesignPath(ConfigParameters config) {
-        log4j.info("*********************Base path: "
-                + config.strBaseDesignPath);
-        String strNewAddBase = config.strDefaultDesignPath;
-        String strFinal = config.strBaseDesignPath;
-        if (!strFinal.endsWith("/" + strNewAddBase)) {
-            strFinal += "/" + strNewAddBase;
-        }
-        log4j.info("*********************Base path: " + strFinal);
-        return config.prefix + strFinal;
+  /**
+   * Returns the absolute path to the correct language subfolder within the context's src-loc
+   * folder.
+   * 
+   * @return String with the absolute path on the local drive.
+   */
+  protected String getBaseDesignPath(ConfigParameters config) {
+    log4j.info("*********************Base path: " + config.strBaseDesignPath);
+    String strNewAddBase = config.strDefaultDesignPath;
+    String strFinal = config.strBaseDesignPath;
+    if (!strFinal.endsWith("/" + strNewAddBase)) {
+      strFinal += "/" + strNewAddBase;
     }
+    log4j.info("*********************Base path: " + strFinal);
+    return config.prefix + strFinal;
+  }
 
 }

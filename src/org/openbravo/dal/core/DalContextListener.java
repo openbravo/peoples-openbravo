@@ -39,51 +39,50 @@ import org.openbravo.base.session.SessionFactoryController;
  * @author mtaal
  */
 public class DalContextListener implements ServletContextListener {
-    private static Properties obProperties = null;
-    private static ServletContext servletContext = null;
+  private static Properties obProperties = null;
+  private static ServletContext servletContext = null;
 
-    public static ServletContext getServletContext() {
-        return servletContext;
+  public static ServletContext getServletContext() {
+    return servletContext;
+  }
+
+  public static void setServletContext(ServletContext context) {
+    DalContextListener.servletContext = context;
+  }
+
+  public static Properties getOpenBravoProperties() {
+    return obProperties;
+  }
+
+  /**
+   * Reads the Openbravo.properties file, initializes the Dal layer and flags that the Dal layer is
+   * running in a web container.
+   * 
+   * @see DalLayerInitializer
+   * @see OBPropertiesProvider
+   */
+  public void contextInitialized(ServletContextEvent event) {
+    // this allows the sessionfactory controller to use jndi
+    SessionFactoryController.setRunningInWebContainer(true);
+
+    final ServletContext context = event.getServletContext();
+    setServletContext(context);
+    final InputStream is = context.getResourceAsStream("/WEB-INF/Openbravo.properties");
+    if (is != null) {
+      OBPropertiesProvider.getInstance().setProperties(is);
     }
 
-    public static void setServletContext(ServletContext context) {
-        DalContextListener.servletContext = context;
-    }
+    // set our own config file provider which uses the servletcontext
+    OBConfigFileProvider.getInstance().setServletContext(context);
+    OBConfigFileProvider.getInstance().setClassPathLocation("/WEB-INF");
 
-    public static Properties getOpenBravoProperties() {
-        return obProperties;
-    }
+    // initialize the dal layer
+    DalLayerInitializer.getInstance().initialize(true);
+  }
 
-    /**
-     * Reads the Openbravo.properties file, initializes the Dal layer and flags
-     * that the Dal layer is running in a web container.
-     * 
-     * @see DalLayerInitializer
-     * @see OBPropertiesProvider
-     */
-    public void contextInitialized(ServletContextEvent event) {
-        // this allows the sessionfactory controller to use jndi
-        SessionFactoryController.setRunningInWebContainer(true);
-
-        final ServletContext context = event.getServletContext();
-        setServletContext(context);
-        final InputStream is = context
-                .getResourceAsStream("/WEB-INF/Openbravo.properties");
-        if (is != null) {
-            OBPropertiesProvider.getInstance().setProperties(is);
-        }
-
-        // set our own config file provider which uses the servletcontext
-        OBConfigFileProvider.getInstance().setServletContext(context);
-        OBConfigFileProvider.getInstance().setClassPathLocation("/WEB-INF");
-
-        // initialize the dal layer
-        DalLayerInitializer.getInstance().initialize(true);
-    }
-
-    public void contextDestroyed(ServletContextEvent event) {
-        System.err.println("Removing sessionfactory");
-        ModelProvider.setInstance(null);
-        SessionFactoryController.setInstance(null);
-    }
+  public void contextDestroyed(ServletContextEvent event) {
+    System.err.println("Removing sessionfactory");
+    ModelProvider.setInstance(null);
+    SessionFactoryController.setInstance(null);
+  }
 }

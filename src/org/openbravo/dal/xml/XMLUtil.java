@@ -44,64 +44,64 @@ import org.openbravo.base.provider.OBSingleton;
 
 public class XMLUtil implements OBSingleton {
 
-    private static XMLUtil instance;
+  private static XMLUtil instance;
 
-    public static XMLUtil getInstance() {
-        if (instance == null) {
-            instance = OBProvider.getInstance().get(XMLUtil.class);
-        }
-        return instance;
+  public static XMLUtil getInstance() {
+    if (instance == null) {
+      instance = OBProvider.getInstance().get(XMLUtil.class);
     }
+    return instance;
+  }
 
-    public static void setInstance(XMLUtil instance) {
-        XMLUtil.instance = instance;
-    }
+  public static void setInstance(XMLUtil instance) {
+    XMLUtil.instance = instance;
+  }
 
-    /** @return a new Dom4j Document */
-    public Document createDomDocument() {
-        final Document document = DocumentHelper.createDocument();
-        return document;
-    }
+  /** @return a new Dom4j Document */
+  public Document createDomDocument() {
+    final Document document = DocumentHelper.createDocument();
+    return document;
+  }
 
-    /**
-     * Creates a standard Openbravo root element for a xml document and set ths
-     * namespace. Ads the new root element to the Dom4j document.
-     * 
-     * @param doc
-     *            the Dom4j document to set the root element
-     * @param elementName
-     *            the name of the root element
-     * @return the new root element
-     */
-    public Element addRootElement(Document doc, String elementName) {
-        final Namespace ns = new Namespace("ob", "http://www.openbravo.com");
-        final QName qName = new QName(elementName, ns);
-        final Element root = doc.addElement(qName);
-        root.addNamespace("ob", "http://www.openbravo.com");
-        return root;
-    }
+  /**
+   * Creates a standard Openbravo root element for a xml document and set ths namespace. Ads the new
+   * root element to the Dom4j document.
+   * 
+   * @param doc
+   *          the Dom4j document to set the root element
+   * @param elementName
+   *          the name of the root element
+   * @return the new root element
+   */
+  public Element addRootElement(Document doc, String elementName) {
+    final Namespace ns = new Namespace("ob", "http://www.openbravo.com");
+    final QName qName = new QName(elementName, ns);
+    final Element root = doc.addElement(qName);
+    root.addNamespace("ob", "http://www.openbravo.com");
+    return root;
+  }
 
-    /**
-     * Converts a Dom4j document to a string. A number of specific settings: 1)
-     * output encoding is UTF-8, 2) text nodes are not trimmed
-     * 
-     * @param document
-     *            the Dom4j to convert to a XML string
-     * @return the XML representation
-     */
-    public String toString(Document document) {
-        try {
-            final OutputFormat format = OutputFormat.createPrettyPrint();
-            format.setEncoding("UTF-8");
-            format.setTrimText(false);
-            final StringWriter out = new StringWriter();
-            final XMLWriter writer = new XMLWriter(out, format);
-            writer.write(document);
-            writer.close();
-            return out.toString();
-        } catch (final Exception e) {
-            throw new OBException(e);
-        }
+  /**
+   * Converts a Dom4j document to a string. A number of specific settings: 1) output encoding is
+   * UTF-8, 2) text nodes are not trimmed
+   * 
+   * @param document
+   *          the Dom4j to convert to a XML string
+   * @return the XML representation
+   */
+  public String toString(Document document) {
+    try {
+      final OutputFormat format = OutputFormat.createPrettyPrint();
+      format.setEncoding("UTF-8");
+      format.setTrimText(false);
+      final StringWriter out = new StringWriter();
+      final XMLWriter writer = new XMLWriter(out, format);
+      writer.write(document);
+      writer.close();
+      return out.toString();
+    } catch (final Exception e) {
+      throw new OBException(e);
     }
+  }
 
 }

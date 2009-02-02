@@ -27,97 +27,90 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.scheduling.ProcessBundle;
 
 /**
- * The import client process is called from the ui. It imports the data of a new
- * client (including the client itself). It again calls the
- * {@link DataImportService} for the actual import.
+ * The import client process is called from the ui. It imports the data of a new client (including
+ * the client itself). It again calls the {@link DataImportService} for the actual import.
  * 
  * @author mtaal
  */
 
 public class ImportClientProcess implements org.openbravo.scheduling.Process {
 
-    private static final Logger log = Logger
-            .getLogger(ExportClientProcess.class);
+  private static final Logger log = Logger.getLogger(ExportClientProcess.class);
 
-    /**
-     * Executes the import process. The expected parameters in the bundle are
-     * clientId (denoting the client) and fileLocation giving the full path
-     * location of the file with the data to import.
-     */
-    public void execute(ProcessBundle bundle) throws Exception {
+  /**
+   * Executes the import process. The expected parameters in the bundle are clientId (denoting the
+   * client) and fileLocation giving the full path location of the file with the data to import.
+   */
+  public void execute(ProcessBundle bundle) throws Exception {
 
-        try {
-            final String newName = (String) bundle.getParams().get("name");
-            log.debug("Importing file using name " + newName);
+    try {
+      final String newName = (String) bundle.getParams().get("name");
+      log.debug("Importing file using name " + newName);
 
-            final String xml = DbUtility.readFile(getImportFile());
-            final ClientImportProcessor importProcessor = new ClientImportProcessor();
-            importProcessor.setNewName((newName != null ? newName.trim()
-                    : newName));
-            final ImportResult ir = DataImportService.getInstance()
-                    .importClientData(xml, importProcessor);
-            if (ir.hasErrorOccured()) {
-                final StringBuilder sb = new StringBuilder();
-                if (ir.getException() != null) {
-                    ir.getException().printStackTrace(System.err);
-                    log.error(ir.getException());
-                    sb.append(ir.getException().getMessage());
-                }
-                if (ir.getErrorMessages() != null) {
-                    log.debug(ir.getErrorMessages());
-                    if (sb.length() > 0) {
-                        sb.append("\n");
-                    }
-                    sb.append(ir.getErrorMessages());
-                    final OBError msg = new OBError();
-                    msg.setType("Error");
-                    msg.setMessage(sb.toString());
-                    msg.setTitle("Errors occured");
-                    bundle.setResult(msg);
-                    return;
-                }
-            }
-            final OBError msg = new OBError();
-            msg.setType("Success");
-
-            if (ir.getWarningMessages() != null) {
-                msg.setTitle("Done with messages");
-                log.debug(ir.getWarningMessages());
-                msg
-                        .setMessage("Imported client data with the following messages:<br/><ul><li>"
-                                + ir.getWarningMessages().replaceAll("\n",
-                                        "</li><li>") + "</li></ul>");
-            } else {
-                msg.setTitle("Done");
-                msg.setMessage("Imported client data");
-            }
-            bundle.setResult(msg);
-        } catch (final Exception e) {
-            log.error(e);
-            e.printStackTrace(System.err);
-            final OBError msg = new OBError();
-            msg.setType("Error");
-            msg.setMessage(e.getMessage());
-            msg.setTitle("Error occurred");
-            bundle.setResult(msg);
+      final String xml = DbUtility.readFile(getImportFile());
+      final ClientImportProcessor importProcessor = new ClientImportProcessor();
+      importProcessor.setNewName((newName != null ? newName.trim() : newName));
+      final ImportResult ir = DataImportService.getInstance()
+          .importClientData(xml, importProcessor);
+      if (ir.hasErrorOccured()) {
+        final StringBuilder sb = new StringBuilder();
+        if (ir.getException() != null) {
+          ir.getException().printStackTrace(System.err);
+          log.error(ir.getException());
+          sb.append(ir.getException().getMessage());
         }
+        if (ir.getErrorMessages() != null) {
+          log.debug(ir.getErrorMessages());
+          if (sb.length() > 0) {
+            sb.append("\n");
+          }
+          sb.append(ir.getErrorMessages());
+          final OBError msg = new OBError();
+          msg.setType("Error");
+          msg.setMessage(sb.toString());
+          msg.setTitle("Errors occured");
+          bundle.setResult(msg);
+          return;
+        }
+      }
+      final OBError msg = new OBError();
+      msg.setType("Success");
+
+      if (ir.getWarningMessages() != null) {
+        msg.setTitle("Done with messages");
+        log.debug(ir.getWarningMessages());
+        msg.setMessage("Imported client data with the following messages:<br/><ul><li>"
+            + ir.getWarningMessages().replaceAll("\n", "</li><li>") + "</li></ul>");
+      } else {
+        msg.setTitle("Done");
+        msg.setMessage("Imported client data");
+      }
+      bundle.setResult(msg);
+    } catch (final Exception e) {
+      log.error(e);
+      e.printStackTrace(System.err);
+      final OBError msg = new OBError();
+      msg.setType("Error");
+      msg.setMessage(e.getMessage());
+      msg.setTitle("Error occurred");
+      bundle.setResult(msg);
     }
+  }
 
-    private File getImportFile() {
-        final File exportDir = ExportClientProcess.getExportDir();
-        final File importDir = new File(exportDir, "importclient");
-        if (!importDir.exists()) {
-            importDir.mkdirs();
-        }
-        if (importDir.listFiles().length > 1) {
-            throw new OBException("There is more than one file in the "
-                    + "importdirectory: " + importDir.getAbsolutePath()
-                    + ". Only one file is allowed to be there.");
-        }
-        if (importDir.listFiles().length == 0) {
-            throw new OBException("There is no file (to import from) present "
-                    + "in the importdirectory: " + importDir.getAbsolutePath());
-        }
-        return importDir.listFiles()[0];
+  private File getImportFile() {
+    final File exportDir = ExportClientProcess.getExportDir();
+    final File importDir = new File(exportDir, "importclient");
+    if (!importDir.exists()) {
+      importDir.mkdirs();
     }
+    if (importDir.listFiles().length > 1) {
+      throw new OBException("There is more than one file in the " + "importdirectory: "
+          + importDir.getAbsolutePath() + ". Only one file is allowed to be there.");
+    }
+    if (importDir.listFiles().length == 0) {
+      throw new OBException("There is no file (to import from) present "
+          + "in the importdirectory: " + importDir.getAbsolutePath());
+    }
+    return importDir.listFiles()[0];
+  }
 }

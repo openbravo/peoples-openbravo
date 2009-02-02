@@ -22,8 +22,7 @@ package org.openbravo.dal.xml;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Is thrown when an Exception situation occurs in the XML to Entity or the
- * Entity to XML code.
+ * Is thrown when an Exception situation occurs in the XML to Entity or the Entity to XML code.
  * 
  * @see EntityXMLConverter
  * @see XMLEntityConverter
@@ -32,21 +31,21 @@ import org.openbravo.base.exception.OBException;
  */
 public class EntityXMLException extends OBException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public EntityXMLException() {
-        super();
-    }
+  public EntityXMLException() {
+    super();
+  }
 
-    public EntityXMLException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public EntityXMLException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public EntityXMLException(String message) {
-        super(message);
-    }
+  public EntityXMLException(String message) {
+    super(message);
+  }
 
-    public EntityXMLException(Throwable cause) {
-        super(cause);
-    }
+  public EntityXMLException(Throwable cause) {
+    super(cause);
+  }
 }

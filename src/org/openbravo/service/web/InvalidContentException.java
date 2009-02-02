@@ -28,21 +28,21 @@ import org.openbravo.base.exception.OBException;
  */
 public class InvalidContentException extends OBException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public InvalidContentException() {
-        super();
-    }
+  public InvalidContentException() {
+    super();
+  }
 
-    public InvalidContentException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public InvalidContentException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public InvalidContentException(String message) {
-        super(message);
-    }
+  public InvalidContentException(String message) {
+    super(message);
+  }
 
-    public InvalidContentException(Throwable cause) {
-        super(cause);
-    }
+  public InvalidContentException(Throwable cause) {
+    super(cause);
+  }
 }

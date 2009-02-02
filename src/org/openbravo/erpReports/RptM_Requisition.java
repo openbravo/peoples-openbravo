@@ -36,55 +36,51 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 
 public class RptM_Requisition extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    if (vars.commandIn("DEFAULT")) {
+      String strmRequisitionId = vars.getSessionValue("RptM_Requisition.inpmRequisitionId_R");
+      if (strmRequisitionId.equals(""))
+        strmRequisitionId = vars.getSessionValue("RptM_Requisition.inpmRequisitionId");
+      if (log4j.isDebugEnabled())
+        log4j.debug("+***********************: " + strmRequisitionId);
+      printPagePartePDF(response, vars, strmRequisitionId);
+    } else
+      pageError(response);
+  }
+
+  void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strmRequisitionId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: pdf");
+    String strBaseDesign = getBaseDesignPath(vars.getLanguage());
+
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    JasperReport jasperReportLines;
+    try {
+      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
+          + "/org/openbravo/erpReports/RptM_Requisition_Lines.jrxml");
+      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+    } catch (JRException e) {
+      e.printStackTrace();
+      throw new ServletException(e.getMessage());
     }
+    strmRequisitionId = strmRequisitionId.replaceAll("\\(|\\)|'", "");
+    parameters.put("SR_LINES", jasperReportLines);
+    parameters.put("REQUISITION_ID", strmRequisitionId);
+    renderJR(vars, response, null, "pdf", parameters, null, null);
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-
-        if (vars.commandIn("DEFAULT")) {
-            String strmRequisitionId = vars
-                    .getSessionValue("RptM_Requisition.inpmRequisitionId_R");
-            if (strmRequisitionId.equals(""))
-                strmRequisitionId = vars
-                        .getSessionValue("RptM_Requisition.inpmRequisitionId");
-            if (log4j.isDebugEnabled())
-                log4j.debug("+***********************: " + strmRequisitionId);
-            printPagePartePDF(response, vars, strmRequisitionId);
-        } else
-            pageError(response);
-    }
-
-    void printPagePartePDF(HttpServletResponse response,
-            VariablesSecureApp vars, String strmRequisitionId)
-            throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: pdf");
-        String strBaseDesign = getBaseDesignPath(vars.getLanguage());
-
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
-        JasperReport jasperReportLines;
-        try {
-            JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
-                    + "/org/openbravo/erpReports/RptM_Requisition_Lines.jrxml");
-            jasperReportLines = JasperCompileManager
-                    .compileReport(jasperDesignLines);
-        } catch (JRException e) {
-            e.printStackTrace();
-            throw new ServletException(e.getMessage());
-        }
-        strmRequisitionId = strmRequisitionId.replaceAll("\\(|\\)|'", "");
-        parameters.put("SR_LINES", jasperReportLines);
-        parameters.put("REQUISITION_ID", strmRequisitionId);
-        renderJR(vars, response, null, "pdf", parameters, null, null);
-    }
-
-    public String getServletInfo() {
-        return "Servlet that presents the RptMRequisitions seeker";
-    } // End of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet that presents the RptMRequisitions seeker";
+  } // End of getServletInfo() method
 }

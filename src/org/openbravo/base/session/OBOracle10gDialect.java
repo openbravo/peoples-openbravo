@@ -26,27 +26,25 @@ import org.hibernate.Hibernate;
 import org.hibernate.dialect.Oracle10gDialect;
 
 /**
- * Extends the Oracle10Dialect to replace some java-oracle type mappings to
- * support the current rdb schema of OpenBravo. Is used in the
- * {@link SessionFactoryController}.
+ * Extends the Oracle10Dialect to replace some java-oracle type mappings to support the current rdb
+ * schema of OpenBravo. Is used in the {@link SessionFactoryController}.
  * 
  * @author mtaal
  */
 
 public class OBOracle10gDialect extends Oracle10gDialect {
-    private static final Logger log = Logger
-            .getLogger(OBOracle10gDialect.class);
+  private static final Logger log = Logger.getLogger(OBOracle10gDialect.class);
 
-    public OBOracle10gDialect() {
-        super();
+  public OBOracle10gDialect() {
+    super();
 
-        registerHibernateType(Types.NUMERIC, Hibernate.LONG.getName());
+    registerHibernateType(Types.NUMERIC, Hibernate.LONG.getName());
 
-        registerColumnType(Types.VARCHAR, 4000, "nvarchar2($l)");
-        registerColumnType(Types.VARCHAR, 100, "varchar2($l)");
-        registerColumnType(Types.VARCHAR, 5, "char($l)");
+    registerColumnType(Types.VARCHAR, 4000, "nvarchar2($l)");
+    registerColumnType(Types.VARCHAR, 100, "varchar2($l)");
+    registerColumnType(Types.VARCHAR, 5, "char($l)");
 
-        log.debug("Created Openbravo specific Oracle DIalect");
-    }
+    log.debug("Created Openbravo specific Oracle DIalect");
+  }
 
 }

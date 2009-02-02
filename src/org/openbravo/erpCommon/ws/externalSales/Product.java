@@ -23,95 +23,95 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class Product extends Object implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private String id;
-    private String name;
-    private String number;
-    private String description;
-    private BigDecimal listPrice;
-    private BigDecimal purchasePrice;
-    private Tax tax;
-    private String imageUrl;
-    private String ean;
-    private Category category;
+  private static final long serialVersionUID = 1L;
+  private String id;
+  private String name;
+  private String number;
+  private String description;
+  private BigDecimal listPrice;
+  private BigDecimal purchasePrice;
+  private Tax tax;
+  private String imageUrl;
+  private String ean;
+  private Category category;
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getNumber() {
-        return number;
-    }
+  public String getNumber() {
+    return number;
+  }
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
+  public void setNumber(String number) {
+    this.number = number;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public BigDecimal getListPrice() {
-        return listPrice;
-    }
+  public BigDecimal getListPrice() {
+    return listPrice;
+  }
 
-    public void setListPrice(BigDecimal listPrice) {
-        this.listPrice = listPrice;
-    }
+  public void setListPrice(BigDecimal listPrice) {
+    this.listPrice = listPrice;
+  }
 
-    public BigDecimal getPurchasePrice() {
-        return purchasePrice;
-    }
+  public BigDecimal getPurchasePrice() {
+    return purchasePrice;
+  }
 
-    public void setPurchasePrice(BigDecimal purchasePrice) {
-        this.purchasePrice = purchasePrice;
-    }
+  public void setPurchasePrice(BigDecimal purchasePrice) {
+    this.purchasePrice = purchasePrice;
+  }
 
-    public Tax getTax() {
-        return tax;
-    }
+  public Tax getTax() {
+    return tax;
+  }
 
-    public void setTax(Tax tax) {
-        this.tax = tax;
-    }
+  public void setTax(Tax tax) {
+    this.tax = tax;
+  }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
+  public String getImageUrl() {
+    return imageUrl;
+  }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+  public void setImageUrl(String imageUrl) {
+    this.imageUrl = imageUrl;
+  }
 
-    public String getEan() {
-        return ean;
-    }
+  public String getEan() {
+    return ean;
+  }
 
-    public void setEan(String ean) {
-        this.ean = ean;
-    }
+  public void setEan(String ean) {
+    this.ean = ean;
+  }
 
-    public Category getCategory() {
-        return category;
-    }
+  public Category getCategory() {
+    return category;
+  }
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
+  public void setCategory(Category category) {
+    this.category = category;
+  }
 }

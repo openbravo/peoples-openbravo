@@ -26,21 +26,20 @@ import org.hibernate.id.UUIDHexGenerator;
 import org.openbravo.base.model.BaseOBObjectDef;
 
 /**
- * Extends the standard Hibernate UUIDHexGenerator. This is needed because the
- * standard Hibernate UUIDHexGenerator will overwrite the id even if the object
- * already has one. The goal is to try to keep an id if it has been assigned to
- * an object. This is important in case of imports.
+ * Extends the standard Hibernate UUIDHexGenerator. This is needed because the standard Hibernate
+ * UUIDHexGenerator will overwrite the id even if the object already has one. The goal is to try to
+ * keep an id if it has been assigned to an object. This is important in case of imports.
  * 
  * @author mtaal
  */
 
 public class DalUUIDHexGenerator extends UUIDHexGenerator {
-    @Override
-    public Serializable generate(SessionImplementor session, Object obj) {
-        final BaseOBObjectDef bob = (BaseOBObjectDef) obj;
-        if (bob.getId() != null) {
-            return ((String) bob.getId()).toUpperCase();
-        }
-        return ((String) super.generate(session, obj)).toUpperCase();
+  @Override
+  public Serializable generate(SessionImplementor session, Object obj) {
+    final BaseOBObjectDef bob = (BaseOBObjectDef) obj;
+    if (bob.getId() != null) {
+      return ((String) bob.getId()).toUpperCase();
     }
+    return ((String) super.generate(session, obj)).toUpperCase();
+  }
 }

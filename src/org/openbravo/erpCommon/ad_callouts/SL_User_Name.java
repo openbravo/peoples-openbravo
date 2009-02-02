@@ -32,71 +32,67 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_User_Name extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      if (log4j.isDebugEnabled())
+        log4j.debug("CHANGED: " + strChanged);
+      String strFirstname = vars.getStringParameter("inpfirstname");
+      String strLastname = vars.getStringParameter("inplastname");
+      String strName = vars.getStringParameter("inpname");
+      String strTabId = vars.getStringParameter("inpTabId");
+      try {
+        printPage(response, vars, strChanged, strFirstname, strLastname, strName, strTabId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
+      String strFirstname, String strLastname, String strName, String strTabId) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+
+    if (!strLastname.equals(""))
+      strLastname = " " + strLastname;
+
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_User_Name';\n\n");
+    resultado.append("var respuesta = new Array(");
+    // do not change the name field, if the user just left it
+    if (!strChanged.equals("inpname")) {
+      strName = FormatUtilities.replaceJS(strFirstname + strLastname);
+      resultado.append("new Array(\"inpname\", \"" + strName + "\"),");
     }
-
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            if (log4j.isDebugEnabled())
-                log4j.debug("CHANGED: " + strChanged);
-            String strFirstname = vars.getStringParameter("inpfirstname");
-            String strLastname = vars.getStringParameter("inplastname");
-            String strName = vars.getStringParameter("inpname");
-            String strTabId = vars.getStringParameter("inpTabId");
-            try {
-                printPage(response, vars, strChanged, strFirstname,
-                        strLastname, strName, strTabId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
+    // if we have a name filled in use that for the username
+    if (!strName.equals("")) {
+      resultado
+          .append("new Array(\"inpusername\", \"" + FormatUtilities.replaceJS(strName) + "\")");
+    } else {
+      // else concatenate first- and lastname
+      resultado.append("new Array(\"inpusername\", \""
+          + FormatUtilities.replaceJS(strFirstname + strLastname) + "\")");
     }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strChanged, String strFirstname, String strLastname,
-            String strName, String strTabId) throws IOException,
-            ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-
-        if (!strLastname.equals(""))
-            strLastname = " " + strLastname;
-
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_User_Name';\n\n");
-        resultado.append("var respuesta = new Array(");
-        // do not change the name field, if the user just left it
-        if (!strChanged.equals("inpname")) {
-            strName = FormatUtilities.replaceJS(strFirstname + strLastname);
-            resultado.append("new Array(\"inpname\", \"" + strName + "\"),");
-        }
-        // if we have a name filled in use that for the username
-        if (!strName.equals("")) {
-            resultado.append("new Array(\"inpusername\", \""
-                    + FormatUtilities.replaceJS(strName) + "\")");
-        } else {
-            // else concatenate first- and lastname
-            resultado.append("new Array(\"inpusername\", \""
-                    + FormatUtilities.replaceJS(strFirstname + strLastname)
-                    + "\")");
-        }
-        resultado.append(");");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    resultado.append(");");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

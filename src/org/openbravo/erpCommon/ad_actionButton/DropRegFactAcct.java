@@ -35,165 +35,147 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class DropRegFactAcct extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        if (vars.commandIn("DEFAULT")) {
-            String strProcessId = vars.getStringParameter("inpProcessId");
-            String strWindow = vars.getStringParameter("inpwindowId");
-            String strTab = vars.getStringParameter("inpTabId");
-            String stradOrgId = vars.getStringParameter("inpadOrgId", "");
-            String strKey = vars.getRequiredGlobalVariable("inpcYearId",
-                    strWindow + "|C_Year_ID");
-            printPage(response, vars, strKey, stradOrgId, strWindow, strTab,
-                    strProcessId);
-        } else if (vars.commandIn("SAVE")) {
-            String strWindow = vars.getStringParameter("inpwindowId");
-            String stradOrgId = vars.getStringParameter("inpadOrgId", "");
-            String strKey = vars.getRequiredGlobalVariable("inpcYearId",
-                    strWindow + "|C_Year_ID");
-            String strTab = vars.getStringParameter("inpTabId");
-            ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(
-                    this, strTab);
-            String strWindowPath = "", strTabName = "";
-            if (tab != null && tab.length != 0) {
-                strTabName = FormatUtilities.replace(tab[0].name);
-                strWindowPath = "../"
-                        + FormatUtilities.replace(tab[0].description) + "/"
-                        + strTabName + "_Relation.html";
-            } else
-                strWindowPath = strDefaultServlet;
-            OBError myError = processButton(vars, stradOrgId, strKey);
-            vars.setMessage(strTab, myError);
-            printPageClosePopUp(response, vars, strWindowPath);
-        } else
-            pageErrorPopUp(response);
-    }
+    if (vars.commandIn("DEFAULT")) {
+      String strProcessId = vars.getStringParameter("inpProcessId");
+      String strWindow = vars.getStringParameter("inpwindowId");
+      String strTab = vars.getStringParameter("inpTabId");
+      String stradOrgId = vars.getStringParameter("inpadOrgId", "");
+      String strKey = vars.getRequiredGlobalVariable("inpcYearId", strWindow + "|C_Year_ID");
+      printPage(response, vars, strKey, stradOrgId, strWindow, strTab, strProcessId);
+    } else if (vars.commandIn("SAVE")) {
+      String strWindow = vars.getStringParameter("inpwindowId");
+      String stradOrgId = vars.getStringParameter("inpadOrgId", "");
+      String strKey = vars.getRequiredGlobalVariable("inpcYearId", strWindow + "|C_Year_ID");
+      String strTab = vars.getStringParameter("inpTabId");
+      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
+      String strWindowPath = "", strTabName = "";
+      if (tab != null && tab.length != 0) {
+        strTabName = FormatUtilities.replace(tab[0].name);
+        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
+            + "_Relation.html";
+      } else
+        strWindowPath = strDefaultServlet;
+      OBError myError = processButton(vars, stradOrgId, strKey);
+      vars.setMessage(strTab, myError);
+      printPageClosePopUp(response, vars, strWindowPath);
+    } else
+      pageErrorPopUp(response);
+  }
 
-    OBError processButton(VariablesSecureApp vars, String stradOrgId,
-            String strKey) {
-        Connection conn = null;
-        OBError myError = null;
-        try {
-            conn = this.getTransactionConnection();
-            String strRegFactAcctGroupId = "";
-            String strCloseFactAcctGroupId = "";
-            String strDivideUpFactAcctGroupId = "";
-            String strOpenUpFactAcctGroupId = "";
-            String strOrgSchemaId = "";
-            try {
-                DropRegFactAcctData[] data = DropRegFactAcctData
-                        .selectFactAcctGroupId(this, stradOrgId, strKey);
-                if (data != null && data.length != 0) {
-                    for (int i = 0; i < data.length; i++) {
-                        strRegFactAcctGroupId = data[0].regFactAcctGroupId;
-                        strCloseFactAcctGroupId = data[0].closeFactAcctGroupId;
-                        strDivideUpFactAcctGroupId = data[0].divideupFactAcctGroupId;
-                        strOpenUpFactAcctGroupId = data[0].openFactAcctGroupId;
-                        strOrgSchemaId = data[0].adOrgClosingId;
-                        processButtonClose(conn, vars, strKey, stradOrgId,
-                                strRegFactAcctGroupId, strCloseFactAcctGroupId,
-                                strDivideUpFactAcctGroupId,
-                                strOpenUpFactAcctGroupId, strOrgSchemaId);
-                    }
-                }
-            } catch (ServletException ex) {
-                myError = Utility.translateError(this, vars,
-                        vars.getLanguage(), ex.getMessage());
-                releaseRollbackConnection(conn);
-                return myError;
-            }
-
-            releaseCommitConnection(conn);
-            myError = new OBError();
-            myError.setType("Success");
-            myError.setTitle("");
-            myError.setMessage(Utility.messageBD(this, "Success", vars
-                    .getLanguage()));
-        } catch (Exception e) {
-            log4j.warn(e);
-            try {
-                releaseRollbackConnection(conn);
-            } catch (Exception ignored) {
-            }
-            myError = Utility.translateError(this, vars, vars.getLanguage(),
-                    "ProcessRunError");
-        }
-        return myError;
-    }
-
-    String processButtonClose(Connection conn, VariablesSecureApp vars,
-            String strKey, String stradOrgId, String strRegFactAcctGroupId,
-            String strCloseFactAcctGroupId, String strDivideUpFactAcctGroupId,
-            String strOpenUpFactAcctGroupId, String strOrgSchemaId)
-            throws ServletException {
-        DropRegFactAcctData.updatePeriodsOpen(conn, this, vars.getUser(),
-                strKey, stradOrgId);
-        DropRegFactAcctData.deleteOrgClosing(conn, this, strOrgSchemaId);
-        DropRegFactAcctData.deleteFactAcctClose(conn, this,
-                strRegFactAcctGroupId, strCloseFactAcctGroupId,
-                strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId,
-                stradOrgId);
-        return "ProcessOK";
-    }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strKey, String stradOrgId, String windowId, String strTab,
-            String strProcessId) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: Button process Create Close Fact Acct");
-
-        ActionButtonDefaultData[] data = null;
-        String strHelp = "", strDescription = "";
-        if (vars.getLanguage().equals("en_US"))
-            data = ActionButtonDefaultData.select(this, strProcessId);
-        else
-            data = ActionButtonDefaultData.selectLanguage(this, vars
-                    .getLanguage(), strProcessId);
-
+  OBError processButton(VariablesSecureApp vars, String stradOrgId, String strKey) {
+    Connection conn = null;
+    OBError myError = null;
+    try {
+      conn = this.getTransactionConnection();
+      String strRegFactAcctGroupId = "";
+      String strCloseFactAcctGroupId = "";
+      String strDivideUpFactAcctGroupId = "";
+      String strOpenUpFactAcctGroupId = "";
+      String strOrgSchemaId = "";
+      try {
+        DropRegFactAcctData[] data = DropRegFactAcctData.selectFactAcctGroupId(this, stradOrgId,
+            strKey);
         if (data != null && data.length != 0) {
-            strDescription = data[0].description;
-            strHelp = data[0].help;
+          for (int i = 0; i < data.length; i++) {
+            strRegFactAcctGroupId = data[0].regFactAcctGroupId;
+            strCloseFactAcctGroupId = data[0].closeFactAcctGroupId;
+            strDivideUpFactAcctGroupId = data[0].divideupFactAcctGroupId;
+            strOpenUpFactAcctGroupId = data[0].openFactAcctGroupId;
+            strOrgSchemaId = data[0].adOrgClosingId;
+            processButtonClose(conn, vars, strKey, stradOrgId, strRegFactAcctGroupId,
+                strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId,
+                strOrgSchemaId);
+          }
         }
-        String[] discard = { "" };
-        if (strHelp.equals(""))
-            discard[0] = new String("helpDiscard");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_actionButton/DropRegFactAcct",
-                discard).createXmlDocument();
-        xmlDocument.setParameter("key", strKey);
-        xmlDocument.setParameter("window", windowId);
-        xmlDocument.setParameter("tab", strTab);
-        xmlDocument.setParameter("language", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("question", Utility.messageBD(this,
-                "StartProcess?", vars.getLanguage()));
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("theme", vars.getTheme());
-        xmlDocument.setParameter("description", strDescription);
-        xmlDocument.setParameter("help", strHelp);
+      } catch (ServletException ex) {
+        myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+        releaseRollbackConnection(conn);
+        return myError;
+      }
 
-        xmlDocument.setData("reportadOrgId", "liststructure",
-                DropRegFactAcctData.select(this, vars.getLanguage(), strKey));
-
-        xmlDocument.setParameter("adOrgId", stradOrgId);
-
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
+      releaseCommitConnection(conn);
+      myError = new OBError();
+      myError.setType("Success");
+      myError.setTitle("");
+      myError.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+    } catch (Exception e) {
+      log4j.warn(e);
+      try {
+        releaseRollbackConnection(conn);
+      } catch (Exception ignored) {
+      }
+      myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
+    return myError;
+  }
 
-    public String getServletInfo() {
-        return "Servlet Drop reg fact acct";
-    } // end of getServletInfo() method
+  String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey,
+      String stradOrgId, String strRegFactAcctGroupId, String strCloseFactAcctGroupId,
+      String strDivideUpFactAcctGroupId, String strOpenUpFactAcctGroupId, String strOrgSchemaId)
+      throws ServletException {
+    DropRegFactAcctData.updatePeriodsOpen(conn, this, vars.getUser(), strKey, stradOrgId);
+    DropRegFactAcctData.deleteOrgClosing(conn, this, strOrgSchemaId);
+    DropRegFactAcctData.deleteFactAcctClose(conn, this, strRegFactAcctGroupId,
+        strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId, stradOrgId);
+    return "ProcessOK";
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+      String stradOrgId, String windowId, String strTab, String strProcessId) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: Button process Create Close Fact Acct");
+
+    ActionButtonDefaultData[] data = null;
+    String strHelp = "", strDescription = "";
+    if (vars.getLanguage().equals("en_US"))
+      data = ActionButtonDefaultData.select(this, strProcessId);
+    else
+      data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+
+    if (data != null && data.length != 0) {
+      strDescription = data[0].description;
+      strHelp = data[0].help;
+    }
+    String[] discard = { "" };
+    if (strHelp.equals(""))
+      discard[0] = new String("helpDiscard");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_actionButton/DropRegFactAcct", discard).createXmlDocument();
+    xmlDocument.setParameter("key", strKey);
+    xmlDocument.setParameter("window", windowId);
+    xmlDocument.setParameter("tab", strTab);
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
+        .getLanguage()));
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("description", strDescription);
+    xmlDocument.setParameter("help", strHelp);
+
+    xmlDocument.setData("reportadOrgId", "liststructure", DropRegFactAcctData.select(this, vars
+        .getLanguage(), strKey));
+
+    xmlDocument.setParameter("adOrgId", stradOrgId);
+
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  public String getServletInfo() {
+    return "Servlet Drop reg fact acct";
+  } // end of getServletInfo() method
 }

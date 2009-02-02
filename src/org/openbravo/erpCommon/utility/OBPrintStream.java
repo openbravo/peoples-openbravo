@@ -24,134 +24,131 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 /**
- * OBPrintStream class is a PrintStream, it allows to obtain a log (using the
- * getLog() method) as a String. Each time this method is called the log is
- * emptied. Its purpose is to be used from an HTML using AJAX to fill a log
- * textarea in real time.
+ * OBPrintStream class is a PrintStream, it allows to obtain a log (using the getLog() method) as a
+ * String. Each time this method is called the log is emptied. Its purpose is to be used from an
+ * HTML using AJAX to fill a log textarea in real time.
  * 
  * @see org.openbravo.erpCommon.ad_process.ApplyModules
  * @see AntExecutor
  * 
  */
 public class OBPrintStream extends PrintStream {
-    private StringBuffer log;
-    private boolean finished;
-    private PrintWriter out;
-    private PrintStream psout;
-    public static final int TEXT_HTML = 1;
-    public static final int TEXT_PLAIN = 2;
-    private File logFile;
-    private PrintWriter logWriter;
+  private StringBuffer log;
+  private boolean finished;
+  private PrintWriter out;
+  private PrintStream psout;
+  public static final int TEXT_HTML = 1;
+  public static final int TEXT_PLAIN = 2;
+  private File logFile;
+  private PrintWriter logWriter;
 
-    /**
-     * Crates a new OBPrintStream object
-     */
-    public OBPrintStream(PrintWriter p) {
+  /**
+   * Crates a new OBPrintStream object
+   */
+  public OBPrintStream(PrintWriter p) {
 
-	super(System.out); // It is needed to call a super constructor, though
-	// it is not going to be used
-	setPrintWritter(p);
-	log = new StringBuffer();
-	finished = false;
+    super(System.out); // It is needed to call a super constructor, though
+    // it is not going to be used
+    setPrintWritter(p);
+    log = new StringBuffer();
+    finished = false;
+  }
+
+  public OBPrintStream(PrintStream p) {
+
+    super(System.out); // It is needed to call a super constructor, though
+    // it is not going to be used
+    psout = p;
+    log = new StringBuffer();
+    finished = false;
+  }
+
+  public void setPrintWritter(PrintWriter p) {
+    out = p;
+  }
+
+  public void setLogFile(File f) {
+    logFile = f;
+    try {
+      logWriter = new PrintWriter(f);
+
+    } catch (final Exception e) {
+      e.printStackTrace();
     }
+  }
 
-    public OBPrintStream(PrintStream p) {
+  /**
+   * Writes a byte array to the internal PrintStream, replaces line breaks with the <br/>
+   * html tag.
+   */
+  @Override
+  public void write(byte[] buf) {
+    write(buf, 0, buf.length);
+  }
 
-	super(System.out); // It is needed to call a super constructor, though
-	// it is not going to be used
-	psout = p;
-	log = new StringBuffer();
-	finished = false;
+  /**
+   * Writes the log in a StringBuffer, if the PrintWritter is set if also writes there and flushes
+   * it.
+   */
+  @Override
+  public void write(byte[] buf, int off, int len) {
+    final String s = new String(buf, off, len);
+    if (psout != null) {
+      psout.println(encodeHtml(s));
+      psout.flush();
+    } else if (out != null) {
+      out.println(encodeHtml(s));
+      out.flush();
     }
-
-    public void setPrintWritter(PrintWriter p) {
-	out = p;
+    if (logWriter != null) {
+      logWriter.print(s);
+      logWriter.flush();
     }
+    log.append(s);
+  }
 
-    public void setLogFile(File f) {
-	logFile = f;
-	try {
-	    logWriter = new PrintWriter(f);
+  // simple encoding
+  private String encodeHtml(String s) {
+    String value = s.replace("&", "&amp;");
+    value = value.replace(">", "&gt;");
+    value = value.replace("<", "&lt;");
+    value = value.replace("\n", "<br/>");
+    return value;
+  }
 
-	} catch (final Exception e) {
-	    e.printStackTrace();
-	}
+  /**
+   * Returns a String with the piece of log generated after the last call to this method. In case no
+   * log has been generated and the finished property is set to true, it returns and END String to
+   * be used in case the AJAX call has timed out.
+   * 
+   * @param showType
+   *          - Defines the format to display the text
+   * @return - The newly generated log
+   */
+  public String getLog(int showType) {
+    String rt = "";
+    if (log != null) {
+      rt = log.toString();
+      log = new StringBuffer();
     }
-
-    /**
-     * Writes a byte array to the internal PrintStream, replaces line breaks
-     * with the <br/>
-     * html tag.
-     */
-    @Override
-    public void write(byte[] buf) {
-	write(buf, 0, buf.length);
+    if (rt.equals("") && finished) {
+      rt = "@END@"; // to force end
+    } else {
+      switch (showType) {
+      case TEXT_HTML:
+        rt = rt.replace("\n", "<br/>");
+      }
     }
+    return rt;
+  }
 
-    /**
-     * Writes the log in a StringBuffer, if the PrintWritter is set if also
-     * writes there and flushes it.
-     */
-    @Override
-    public void write(byte[] buf, int off, int len) {
-	final String s = new String(buf, off, len);
-	if (psout != null) {
-	    psout.println(encodeHtml(s));
-	    psout.flush();
-	} else if (out != null) {
-	    out.println(encodeHtml(s));
-	    out.flush();
-	}
-	if (logWriter != null) {
-	    logWriter.print(s);
-	    logWriter.flush();
-	}
-	log.append(s);
-    }
-
-    // simple encoding
-    private String encodeHtml(String s) {
-	String value = s.replace("&", "&amp;");
-	value = value.replace(">", "&gt;");
-	value = value.replace("<", "&lt;");
-	value = value.replace("\n", "<br/>");
-	return value;
-    }
-
-    /**
-     * Returns a String with the piece of log generated after the last call to
-     * this method. In case no log has been generated and the finished property
-     * is set to true, it returns and END String to be used in case the AJAX
-     * call has timed out.
-     * 
-     * @param showType
-     *            - Defines the format to display the text
-     * @return - The newly generated log
-     */
-    public String getLog(int showType) {
-	String rt = "";
-	if (log != null) {
-	    rt = log.toString();
-	    log = new StringBuffer();
-	}
-	if (rt.equals("") && finished) {
-	    rt = "@END@"; // to force end
-	} else {
-	    switch (showType) {
-	    case TEXT_HTML:
-		rt = rt.replace("\n", "<br/>");
-	    }
-	}
-	return rt;
-    }
-
-    /**
-     * Sets the finished property to the passed value.
-     * 
-     * @param v
-     *            - boolean value to set the finished property.
-     */
-    public void setFinished(boolean v) {
-	finished = v;
-    }
+  /**
+   * Sets the finished property to the passed value.
+   * 
+   * @param v
+   *          - boolean value to set the finished property.
+   */
+  public void setFinished(boolean v) {
+    finished = v;
+  }
 }

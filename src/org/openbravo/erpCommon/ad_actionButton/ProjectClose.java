@@ -35,122 +35,107 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ProjectClose extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    if (vars.commandIn("DEFAULT")) {
+      String strProcessId = vars.getStringParameter("inpProcessId");
+      String strWindow = vars.getStringParameter("inpwindowId");
+      String strTab = vars.getStringParameter("inpTabId");
+      String strKey = vars.getRequiredGlobalVariable("inpcProjectId", strWindow + "|C_Project_ID");
+      printPage(response, vars, strKey, strWindow, strTab, strProcessId);
+    } else if (vars.commandIn("SAVE")) {
+      String strWindow = vars.getStringParameter("inpwindowId");
+      String strKey = vars.getRequestGlobalVariable("inpcProjectId", strWindow + "|C_Project_ID");
+      String strTab = vars.getStringParameter("inpTabId");
+      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
+      String strWindowPath = "", strTabName = "";
+      if (tab != null && tab.length != 0) {
+        strTabName = FormatUtilities.replace(tab[0].name);
+        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
+            + "_Relation.html";
+      } else
+        strWindowPath = strDefaultServlet;
+      OBError myMessage = processButton(vars, strKey, strWindow);
+      vars.setMessage(strTab, myMessage);
+      printPageClosePopUp(response, vars, strWindowPath);
+    } else
+      pageErrorPopUp(response);
+  }
+
+  OBError processButton(VariablesSecureApp vars, String strKey, String windowId) {
+    Connection conn = null;
+    OBError myMessage = null;
+    try {
+      conn = this.getTransactionConnection();
+      if (ProjectCloseData.update(this, strKey) != 1)
+        return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+      ProjectCloseData.updateLines(this, strKey);
+
+      releaseCommitConnection(conn);
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+      myMessage.setMessage(Utility.messageBD(this, "ProcessOK", vars.getLanguage()));
+    } catch (Exception e) {
+      try {
+        releaseRollbackConnection(conn);
+      } catch (Exception ignored) {
+      }
+      e.printStackTrace();
+      log4j.warn("Rollback in transaction");
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
     }
+    return myMessage;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+      String windowId, String strTab, String strProcessId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: Button process Project Close");
 
-        if (vars.commandIn("DEFAULT")) {
-            String strProcessId = vars.getStringParameter("inpProcessId");
-            String strWindow = vars.getStringParameter("inpwindowId");
-            String strTab = vars.getStringParameter("inpTabId");
-            String strKey = vars.getRequiredGlobalVariable("inpcProjectId",
-                    strWindow + "|C_Project_ID");
-            printPage(response, vars, strKey, strWindow, strTab, strProcessId);
-        } else if (vars.commandIn("SAVE")) {
-            String strWindow = vars.getStringParameter("inpwindowId");
-            String strKey = vars.getRequestGlobalVariable("inpcProjectId",
-                    strWindow + "|C_Project_ID");
-            String strTab = vars.getStringParameter("inpTabId");
-            ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(
-                    this, strTab);
-            String strWindowPath = "", strTabName = "";
-            if (tab != null && tab.length != 0) {
-                strTabName = FormatUtilities.replace(tab[0].name);
-                strWindowPath = "../"
-                        + FormatUtilities.replace(tab[0].description) + "/"
-                        + strTabName + "_Relation.html";
-            } else
-                strWindowPath = strDefaultServlet;
-            OBError myMessage = processButton(vars, strKey, strWindow);
-            vars.setMessage(strTab, myMessage);
-            printPageClosePopUp(response, vars, strWindowPath);
-        } else
-            pageErrorPopUp(response);
+    ActionButtonDefaultData[] data = null;
+    String strHelp = "", strDescription = "";
+    if (vars.getLanguage().equals("en_US"))
+      data = ActionButtonDefaultData.select(this, strProcessId);
+    else
+      data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+
+    if (data != null && data.length != 0) {
+      strDescription = data[0].description;
+      strHelp = data[0].help;
     }
+    String[] discard = { "" };
+    if (strHelp.equals(""))
+      discard[0] = new String("helpDiscard");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_actionButton/ProjectClose", discard).createXmlDocument();
+    xmlDocument.setParameter("key", strKey);
+    xmlDocument.setParameter("window", windowId);
+    xmlDocument.setParameter("tab", strTab);
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
+        .getLanguage()));
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("description", strDescription);
+    xmlDocument.setParameter("help", strHelp);
 
-    OBError processButton(VariablesSecureApp vars, String strKey,
-            String windowId) {
-        Connection conn = null;
-        OBError myMessage = null;
-        try {
-            conn = this.getTransactionConnection();
-            if (ProjectCloseData.update(this, strKey) != 1)
-                return Utility.translateError(this, vars, vars.getLanguage(),
-                        "ProcessRunError");
-            ProjectCloseData.updateLines(this, strKey);
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 
-            releaseCommitConnection(conn);
-            myMessage = new OBError();
-            myMessage.setType("Success");
-            myMessage.setTitle(Utility.messageBD(this, "Success", vars
-                    .getLanguage()));
-            myMessage.setMessage(Utility.messageBD(this, "ProcessOK", vars
-                    .getLanguage()));
-        } catch (Exception e) {
-            try {
-                releaseRollbackConnection(conn);
-            } catch (Exception ignored) {
-            }
-            e.printStackTrace();
-            log4j.warn("Rollback in transaction");
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
-                    e.getMessage());
-        }
-        return myMessage;
-    }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strKey, String windowId, String strTab, String strProcessId)
-            throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: Button process Project Close");
-
-        ActionButtonDefaultData[] data = null;
-        String strHelp = "", strDescription = "";
-        if (vars.getLanguage().equals("en_US"))
-            data = ActionButtonDefaultData.select(this, strProcessId);
-        else
-            data = ActionButtonDefaultData.selectLanguage(this, vars
-                    .getLanguage(), strProcessId);
-
-        if (data != null && data.length != 0) {
-            strDescription = data[0].description;
-            strHelp = data[0].help;
-        }
-        String[] discard = { "" };
-        if (strHelp.equals(""))
-            discard[0] = new String("helpDiscard");
-        XmlDocument xmlDocument = xmlEngine
-                .readXmlTemplate(
-                        "org/openbravo/erpCommon/ad_actionButton/ProjectClose",
-                        discard).createXmlDocument();
-        xmlDocument.setParameter("key", strKey);
-        xmlDocument.setParameter("window", windowId);
-        xmlDocument.setParameter("tab", strTab);
-        xmlDocument.setParameter("language", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("question", Utility.messageBD(this,
-                "StartProcess?", vars.getLanguage()));
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("theme", vars.getTheme());
-        xmlDocument.setParameter("description", strDescription);
-        xmlDocument.setParameter("help", strHelp);
-
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
-
-    public String getServletInfo() {
-        return "Servlet Project set Type";
-    } // end of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet Project set Type";
+  } // end of getServletInfo() method
 }

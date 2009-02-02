@@ -20,28 +20,28 @@
 package org.openbravo.base.exception;
 
 /**
- * This exception is used in case of Security violation. For example updating an
- * object of another client.
+ * This exception is used in case of Security violation. For example updating an object of another
+ * client.
  * 
  * @author mtaal
  */
 public class OBSecurityException extends OBException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public OBSecurityException() {
-        super();
-    }
+  public OBSecurityException() {
+    super();
+  }
 
-    public OBSecurityException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public OBSecurityException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public OBSecurityException(String message) {
-        super(message);
-    }
+  public OBSecurityException(String message) {
+    super(message);
+  }
 
-    public OBSecurityException(Throwable cause) {
-        super(cause);
-    }
+  public OBSecurityException(Throwable cause) {
+    super(cause);
+  }
 }

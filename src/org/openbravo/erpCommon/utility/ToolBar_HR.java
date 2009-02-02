@@ -20,18 +20,18 @@ package org.openbravo.erpCommon.utility;
 
 public class ToolBar_HR implements HTMLElement {
 
-    public ToolBar_HR() {
-    }
+  public ToolBar_HR() {
+  }
 
-    public String getWidth() {
-        return "";
-    }
+  public String getWidth() {
+    return "";
+  }
 
-    public String elementType() {
-        return "HR";
-    }
+  public String elementType() {
+    return "HR";
+  }
 
-    public String toString() {
-        return "<hr>";
-    }
+  public String toString() {
+    return "<hr>";
+  }
 }

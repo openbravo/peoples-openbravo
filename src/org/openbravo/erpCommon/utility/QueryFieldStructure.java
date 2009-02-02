@@ -21,69 +21,68 @@ package org.openbravo.erpCommon.utility;
 import java.util.Hashtable;
 
 public class QueryFieldStructure {
-    private Hashtable<String, String> data = new Hashtable<String, String>();
+  private Hashtable<String, String> data = new Hashtable<String, String>();
 
-    public QueryFieldStructure() {
-    }
+  public QueryFieldStructure() {
+  }
 
-    public QueryFieldStructure(String _field, String _aliasJoin, String _alias,
-            String _type) {
-        this(_field, _aliasJoin, _alias, _type, _field);
-    }
+  public QueryFieldStructure(String _field, String _aliasJoin, String _alias, String _type) {
+    this(_field, _aliasJoin, _alias, _type, _field);
+  }
 
-    public QueryFieldStructure(String _field, String _aliasJoin, String _alias,
-            String _type, String _realName) {
-        setData("field", _field);
-        setData("aliasJoin", _aliasJoin);
-        setData("alias", _alias);
-        setData("type", _type);
-        setData("realName", _realName);
-    }
+  public QueryFieldStructure(String _field, String _aliasJoin, String _alias, String _type,
+      String _realName) {
+    setData("field", _field);
+    setData("aliasJoin", _aliasJoin);
+    setData("alias", _alias);
+    setData("type", _type);
+    setData("realName", _realName);
+  }
 
-    public void setData(String name, String value) {
-        if (name == null)
-            return;
-        if (this.data == null)
-            this.data = new Hashtable<String, String>();
-        if (value == null || value.equals(""))
-            this.data.remove(name);
-        else
-            this.data.put(name, value);
-    }
+  public void setData(String name, String value) {
+    if (name == null)
+      return;
+    if (this.data == null)
+      this.data = new Hashtable<String, String>();
+    if (value == null || value.equals(""))
+      this.data.remove(name);
+    else
+      this.data.put(name, value);
+  }
 
-    public String getData(String name) {
-        return data.get(name);
-    }
+  public String getData(String name) {
+    return data.get(name);
+  }
 
-    public void setField(String _data) {
-        setData("field", _data);
-    }
+  public void setField(String _data) {
+    setData("field", _data);
+  }
 
-    public String getField() {
-        return getData("field");
-    }
+  public String getField() {
+    return getData("field");
+  }
 
-    public String getAlias() {
-        return getData("alias");
-    }
+  public String getAlias() {
+    return getData("alias");
+  }
 
-    public String getType() {
-        return getData("type");
-    }
+  public String getType() {
+    return getData("type");
+  }
 
-    public String getRealName() {
-        return getData("realName");
-    }
+  public String getRealName() {
+    return getData("realName");
+  }
 
-    public String toString() {
-        return toString(false);
-    }
+  public String toString() {
+    return toString(false);
+  }
 
-    public String toString(boolean printAlias) {
-        StringBuffer text = new StringBuffer();
-        text.append(getData("field"));
-        if (printAlias)
-            text.append(getData("aliasJoin")).append(getData("alias"));
-        return text.toString();
-    }
+  public String toString(boolean printAlias) {
+    StringBuffer text = new StringBuffer();
+    text.append(getData("field"));
+    if (printAlias)
+      text.append(getData("aliasJoin")).append(getData("alias"));
+    return text.toString();
+  }
 }

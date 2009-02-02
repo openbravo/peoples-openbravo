@@ -33,73 +33,68 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_CreateFromMultiple_Warehouse extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            log4j.debug("CHANGED: " + strChanged);
-            String strWindowId = vars.getStringParameter("inpWindowId");
-            String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx",
-                    strWindowId);
-            String strWarehouse = vars.getStringParameter("inpmWarehouseId");
-            String strTabId = vars.getStringParameter("inpTabId");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      log4j.debug("CHANGED: " + strChanged);
+      String strWindowId = vars.getStringParameter("inpWindowId");
+      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+      String strWarehouse = vars.getStringParameter("inpmWarehouseId");
+      String strTabId = vars.getStringParameter("inpTabId");
 
-            try {
-                printPage(response, vars, strWarehouse, strIsSOTrx, strTabId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+      try {
+        printPage(response, vars, strWarehouse, strIsSOTrx, strTabId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strWarehouse, String strIsSOTrx, String strTabId)
-            throws IOException, ServletException {
-        log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWarehouse,
+      String strIsSOTrx, String strTabId) throws IOException, ServletException {
+    log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var frameDefault='frameButton';\n\n");
-        resultado
-                .append("var calloutName='SL_CreateFromMultiple_Warehouse';\n\n");
-        resultado.append("var respuesta = new Array(");
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var frameDefault='frameButton';\n\n");
+    resultado.append("var calloutName='SL_CreateFromMultiple_Warehouse';\n\n");
+    resultado.append("var respuesta = new Array(");
 
-        LocatorComboData[] data = LocatorComboData.select(this, vars
-                .getLanguage(), strWarehouse, vars.getClient());
-        resultado.append("new Array(\"inpmLocatorX\", ");
-        if (data != null && data.length > 0) {
-            resultado.append("new Array(");
-            for (int i = 0; i < data.length; i++) {
-                resultado.append("new Array(\"" + data[i].id + "\", \""
-                        + data[i].name + "\", \"false\")");
-                if (i < data.length - 1)
-                    resultado.append(",\n");
-            }
-            resultado.append("\n)");
-        } else
-            resultado.append("null");
-        resultado.append("\n)");
-        resultado.append(");");
+    LocatorComboData[] data = LocatorComboData.select(this, vars.getLanguage(), strWarehouse, vars
+        .getClient());
+    resultado.append("new Array(\"inpmLocatorX\", ");
+    if (data != null && data.length > 0) {
+      resultado.append("new Array(");
+      for (int i = 0; i < data.length; i++) {
+        resultado.append("new Array(\"" + data[i].id + "\", \"" + data[i].name + "\", \"false\")");
+        if (i < data.length - 1)
+          resultado.append(",\n");
+      }
+      resultado.append("\n)");
+    } else
+      resultado.append("null");
+    resultado.append("\n)");
+    resultado.append(");");
 
-        log4j.debug("Array: " + resultado.toString());
-        xmlDocument.setParameter("array", resultado.toString());
-        // xmlDocument.setParameter("frameName", (Utility.isTreeTab(this,
-        // strTabId)?"appFrame.frameWindowTreeTab":"appFrame"));
-        xmlDocument.setParameter("frameName", "frameButton");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    log4j.debug("Array: " + resultado.toString());
+    xmlDocument.setParameter("array", resultado.toString());
+    // xmlDocument.setParameter("frameName", (Utility.isTreeTab(this,
+    // strTabId)?"appFrame.frameWindowTreeTab":"appFrame"));
+    xmlDocument.setParameter("frameName", "frameButton");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

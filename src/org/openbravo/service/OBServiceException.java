@@ -28,21 +28,21 @@ import org.openbravo.base.exception.OBException;
  */
 public class OBServiceException extends OBException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public OBServiceException() {
-        super();
-    }
+  public OBServiceException() {
+    super();
+  }
 
-    public OBServiceException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public OBServiceException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public OBServiceException(String message) {
-        super(message);
-    }
+  public OBServiceException(String message) {
+    super(message);
+  }
 
-    public OBServiceException(Throwable cause) {
-        super(cause);
-    }
+  public OBServiceException(Throwable cause) {
+    super(cause);
+  }
 }

@@ -32,99 +32,91 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_Assets extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+
+      String strAssetvalue = vars.getStringParameter("inpassetvalueamt");
+      String strResidualvalue = vars.getStringParameter("inpresidualassetvalueamt");
+      String strAmortizationvalue = vars.getStringParameter("inpamortizationvalueamt");
+      String strLastChanged = vars.getStringParameter("inpLastFieldChanged");
+      String strTabId = vars.getStringParameter("inpTabId");
+
+      try {
+        printPage(response, vars, strTabId, strAssetvalue, strResidualvalue, strAmortizationvalue,
+            strLastChanged);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
+      String strAssetvalue, String strResidualvalue, String strAmortizationvalue,
+      String strLastChanged) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+
+    if (strAssetvalue.equals(""))
+      strAssetvalue = "0";
+    if (strResidualvalue.equals(""))
+      strResidualvalue = "0";
+    if (strAmortizationvalue.equals(""))
+      strAmortizationvalue = "0";
+
+    BigDecimal fAssetvalue = new BigDecimal(strAssetvalue);
+    BigDecimal fResidualvalue = new BigDecimal(strResidualvalue);
+    BigDecimal fAmortizationvalue = new BigDecimal(strAmortizationvalue);
+    // Float fAssetvalue = Float.valueOf(strAssetvalue);
+    // Float fResidualvalue = Float.valueOf(strResidualvalue);
+    // Float fAmortizationvalue = Float.valueOf(strAmortizationvalue);
+
+    if (strLastChanged.equals("inpassetvalueamt")) {
+      if (!fAmortizationvalue.equals(BigDecimal.ZERO))
+        fResidualvalue = fAssetvalue.subtract(fAmortizationvalue);
+      fAmortizationvalue = fAssetvalue.subtract(fResidualvalue);
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-
-            String strAssetvalue = vars.getStringParameter("inpassetvalueamt");
-            String strResidualvalue = vars
-                    .getStringParameter("inpresidualassetvalueamt");
-            String strAmortizationvalue = vars
-                    .getStringParameter("inpamortizationvalueamt");
-            String strLastChanged = vars
-                    .getStringParameter("inpLastFieldChanged");
-            String strTabId = vars.getStringParameter("inpTabId");
-
-            try {
-                printPage(response, vars, strTabId, strAssetvalue,
-                        strResidualvalue, strAmortizationvalue, strLastChanged);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
+    if (strLastChanged.equals("inpresidualassetvalueamt")) {
+      // if (fAmortizationvalue != 0) fAssetvalue = fResidualvalue +
+      // fAmortizationvalue;
+      fAmortizationvalue = fAssetvalue.subtract(fResidualvalue);
     }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strTabId, String strAssetvalue, String strResidualvalue,
-            String strAmortizationvalue, String strLastChanged)
-            throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
-
-        if (strAssetvalue.equals(""))
-            strAssetvalue = "0";
-        if (strResidualvalue.equals(""))
-            strResidualvalue = "0";
-        if (strAmortizationvalue.equals(""))
-            strAmortizationvalue = "0";
-
-        BigDecimal fAssetvalue = new BigDecimal(strAssetvalue);
-        BigDecimal fResidualvalue = new BigDecimal(strResidualvalue);
-        BigDecimal fAmortizationvalue = new BigDecimal(strAmortizationvalue);
-        // Float fAssetvalue = Float.valueOf(strAssetvalue);
-        // Float fResidualvalue = Float.valueOf(strResidualvalue);
-        // Float fAmortizationvalue = Float.valueOf(strAmortizationvalue);
-
-        if (strLastChanged.equals("inpassetvalueamt")) {
-            if (!fAmortizationvalue.equals(BigDecimal.ZERO))
-                fResidualvalue = fAssetvalue.subtract(fAmortizationvalue);
-            fAmortizationvalue = fAssetvalue.subtract(fResidualvalue);
-        }
-
-        if (strLastChanged.equals("inpresidualassetvalueamt")) {
-            // if (fAmortizationvalue != 0) fAssetvalue = fResidualvalue +
-            // fAmortizationvalue;
-            fAmortizationvalue = fAssetvalue.subtract(fResidualvalue);
-        }
-
-        if (strLastChanged.equals("inpamortizationvalueamt")) {
-            // if (fResidualvalue != 0 ) fAssetvalue = fResidualvalue +
-            // fAmortizationvalue;
-            fResidualvalue = fAssetvalue.subtract(fAmortizationvalue);
-        }
-
-        strAssetvalue = fAssetvalue.toString();
-        strResidualvalue = fResidualvalue.toString();
-        strAmortizationvalue = fAmortizationvalue.toString();
-
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_Assets';\n\n");
-        resultado
-                .append("var respuesta = new Array(new Array(\"inpassetvalueamt\",\""
-                        + fAssetvalue.toString()
-                        + "\"), new Array(\"inpresidualassetvalueamt\",\""
-                        + fResidualvalue.toString()
-                        + "\"), new Array(\"inpamortizationvalueamt\",\""
-                        + fAmortizationvalue.toString() + "\"));");
-        resultado.append("\n\n//" + strLastChanged);
-
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
+    if (strLastChanged.equals("inpamortizationvalueamt")) {
+      // if (fResidualvalue != 0 ) fAssetvalue = fResidualvalue +
+      // fAmortizationvalue;
+      fResidualvalue = fAssetvalue.subtract(fAmortizationvalue);
     }
+
+    strAssetvalue = fAssetvalue.toString();
+    strResidualvalue = fResidualvalue.toString();
+    strAmortizationvalue = fAmortizationvalue.toString();
+
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_Assets';\n\n");
+    resultado.append("var respuesta = new Array(new Array(\"inpassetvalueamt\",\""
+        + fAssetvalue.toString() + "\"), new Array(\"inpresidualassetvalueamt\",\""
+        + fResidualvalue.toString() + "\"), new Array(\"inpamortizationvalueamt\",\""
+        + fAmortizationvalue.toString() + "\"));");
+    resultado.append("\n\n//" + strLastChanged);
+
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

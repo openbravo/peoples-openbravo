@@ -17,24 +17,23 @@
 package org.openbravo.erpCommon.utility.reporting;
 
 public enum DocumentType {
-    UNKNOWN(null, null), QUOTATION("C_ORDER", "quotations/"), SALESORDER(
-            "C_ORDER", "orders/"), SALESINVOICE("C_INVOICE", "invoices/"), SHIPMENT(
-            "M_INOUT", "shipments/"), PURCHASEORDER("C_ORDER",
-            "purchaseorders/");
+  UNKNOWN(null, null), QUOTATION("C_ORDER", "quotations/"), SALESORDER("C_ORDER", "orders/"), SALESINVOICE(
+      "C_INVOICE", "invoices/"), SHIPMENT("M_INOUT", "shipments/"), PURCHASEORDER("C_ORDER",
+      "purchaseorders/");
 
-    private String _tableName;
-    private String _contextSubFolder;
+  private String _tableName;
+  private String _contextSubFolder;
 
-    private DocumentType(String tableName, String contextSubFolder) {
-        _tableName = tableName;
-        _contextSubFolder = contextSubFolder;
-    }
+  private DocumentType(String tableName, String contextSubFolder) {
+    _tableName = tableName;
+    _contextSubFolder = contextSubFolder;
+  }
 
-    public String getTableName() {
-        return _tableName;
-    }
+  public String getTableName() {
+    return _tableName;
+  }
 
-    public String getContextSubFolder() {
-        return _contextSubFolder;
-    }
+  public String getContextSubFolder() {
+    return _contextSubFolder;
+  }
 }

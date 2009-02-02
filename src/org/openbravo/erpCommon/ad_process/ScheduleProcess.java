@@ -36,33 +36,28 @@ import org.openbravo.scheduling.ProcessBundle;
  */
 public class ScheduleProcess extends HttpSecureAppServlet {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
+  public static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
 
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        final VariablesSecureApp vars = new VariablesSecureApp(request);
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        final String windowId = request.getParameter("inpwindowId");
-        final String requestId = vars.getSessionValue(windowId + "|"
-                + PROCESS_REQUEST_ID);
+    final String windowId = request.getParameter("inpwindowId");
+    final String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
 
-        String message = null;
-        try {
-            final ProcessBundle bundle = ProcessBundle.request(requestId, vars,
-                    this);
-            OBScheduler.getInstance().schedule(requestId, bundle);
+    String message = null;
+    try {
+      final ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
+      OBScheduler.getInstance().schedule(requestId, bundle);
 
-        } catch (final Exception e) {
-            message = Utility
-                    .messageBD(this, "SCHED_ERROR", vars.getLanguage());
-            advisePopUp(request, response, "ERROR", "Process Request", message
-                    + " " + e.getMessage());
-        }
-        message = Utility.messageBD(this, "SCHED_SUCCESS", vars.getLanguage());
-        advisePopUpRefresh(request, response, "SUCCESS", "Process Request",
-                message);
+    } catch (final Exception e) {
+      message = Utility.messageBD(this, "SCHED_ERROR", vars.getLanguage());
+      advisePopUp(request, response, "ERROR", "Process Request", message + " " + e.getMessage());
     }
+    message = Utility.messageBD(this, "SCHED_SUCCESS", vars.getLanguage());
+    advisePopUpRefresh(request, response, "SUCCESS", "Process Request", message);
+  }
 }

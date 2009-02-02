@@ -25,12 +25,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface AuthenticationManager {
 
-    public void init(HttpServlet s) throws AuthenticationException;
+  public void init(HttpServlet s) throws AuthenticationException;
 
-    public String authenticate(HttpServletRequest request,
-            HttpServletResponse response) throws AuthenticationException,
-            ServletException, IOException;
+  public String authenticate(HttpServletRequest request, HttpServletResponse response)
+      throws AuthenticationException, ServletException, IOException;
 
-    public void logout(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException;
+  public void logout(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException;
 }

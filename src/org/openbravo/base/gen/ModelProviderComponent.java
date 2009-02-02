@@ -29,43 +29,42 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 
 /**
- * Sets the model in the work flow context, so that the generator can pick it up
- * from there.
+ * Sets the model in the work flow context, so that the generator can pick it up from there.
  * 
  * @author mtaal
  */
 
 public class ModelProviderComponent implements WorkflowComponent {
 
-    private String propFile;
+  private String propFile;
 
-    public void checkConfiguration(Issues arg0) {
-    }
+  public void checkConfiguration(Issues arg0) {
+  }
 
-    public CompositeComponent getContainer() {
-        return null;
-    }
+  public CompositeComponent getContainer() {
+    return null;
+  }
 
-    public Location getLocation() {
-        return null;
-    }
+  public Location getLocation() {
+    return null;
+  }
 
-    public void invoke(WorkflowContext wc, ProgressMonitor pm, Issues issues) {
-        wc.set("model", ModelProvider.getInstance());
-    }
+  public void invoke(WorkflowContext wc, ProgressMonitor pm, Issues issues) {
+    wc.set("model", ModelProvider.getInstance());
+  }
 
-    public void setContainer(CompositeComponent arg0) {
-    }
+  public void setContainer(CompositeComponent arg0) {
+  }
 
-    public void setLocation(Location arg0) {
-    }
+  public void setLocation(Location arg0) {
+  }
 
-    public void setPropFile(String propFile) {
-        OBPropertiesProvider.getInstance().setProperties(propFile);
-        this.propFile = propFile;
-    }
+  public void setPropFile(String propFile) {
+    OBPropertiesProvider.getInstance().setProperties(propFile);
+    this.propFile = propFile;
+  }
 
-    public String getPropFile() {
-        return propFile;
-    }
+  public String getPropFile() {
+    return propFile;
+  }
 }

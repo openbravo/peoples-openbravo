@@ -20,15 +20,14 @@
 package org.openbravo.base.structure;
 
 /**
- * Classes implementing this interface have a get and set method allowing access
- * to all properties.
+ * Classes implementing this interface have a get and set method allowing access to all properties.
  * 
  * @author mtaal
  */
 
 public interface DynamicEnabled {
 
-    public Object get(String propName);
+  public Object get(String propName);
 
-    public void set(String propName, Object value);
+  public void set(String propName, Object value);
 }

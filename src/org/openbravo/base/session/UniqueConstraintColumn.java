@@ -20,41 +20,40 @@
 package org.openbravo.base.session;
 
 /**
- * Helper class which combines the relevant information of a column used within
- * an UniqueConstraint. It contains a table, columnname and
- * uniqueconstraintname.
+ * Helper class which combines the relevant information of a column used within an UniqueConstraint.
+ * It contains a table, columnname and uniqueconstraintname.
  * 
  * @author mtaal
  */
 
 public class UniqueConstraintColumn {
 
-    private String tableName;
-    private String columnName;
-    private String uniqueConstraintName;
+  private String tableName;
+  private String columnName;
+  private String uniqueConstraintName;
 
-    public String getTableName() {
-        return tableName;
-    }
+  public String getTableName() {
+    return tableName;
+  }
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
+  public void setTableName(String tableName) {
+    this.tableName = tableName;
+  }
 
-    public String getColumnName() {
-        return columnName;
-    }
+  public String getColumnName() {
+    return columnName;
+  }
 
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
-    }
+  public void setColumnName(String columnName) {
+    this.columnName = columnName;
+  }
 
-    public String getUniqueConstraintName() {
-        return uniqueConstraintName;
-    }
+  public String getUniqueConstraintName() {
+    return uniqueConstraintName;
+  }
 
-    public void setUniqueConstraintName(String uniqueConstraintName) {
-        this.uniqueConstraintName = uniqueConstraintName;
-    }
+  public void setUniqueConstraintName(String uniqueConstraintName) {
+    this.uniqueConstraintName = uniqueConstraintName;
+  }
 
 }

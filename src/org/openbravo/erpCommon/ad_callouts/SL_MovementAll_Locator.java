@@ -32,72 +32,66 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_MovementAll_Locator extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strChanged = vars.getStringParameter("inpLastFieldChanged");
-            log4j.debug("CHANGED: " + strChanged);
-            String strLocator = vars.getStringParameter(strChanged);
-            // String strLocator = vars.getStringParameter("inpmLocatorId");
-            String strmInoutId = vars.getStringParameter("inpmInoutId");
-            String strTabId = vars.getStringParameter("inpTabId");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+      log4j.debug("CHANGED: " + strChanged);
+      String strLocator = vars.getStringParameter(strChanged);
+      // String strLocator = vars.getStringParameter("inpmLocatorId");
+      String strmInoutId = vars.getStringParameter("inpmInoutId");
+      String strTabId = vars.getStringParameter("inpTabId");
 
-            try {
-                printPage(response, vars, strLocator, "N", strTabId,
-                        strmInoutId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+      try {
+        printPage(response, vars, strLocator, "N", strTabId, strmInoutId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strLocator, String strIsSOTrx, String strTabId,
-            String strmInoutId) throws IOException, ServletException {
-        log4j.debug("Output: dataSheet");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strLocator,
+      String strIsSOTrx, String strTabId, String strmInoutId) throws IOException, ServletException {
+    log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-        String locator = "0";
-        String FilledLocator = "0";
+    String locator = "0";
+    String FilledLocator = "0";
 
-        locator = SLInOutLineLocatorData.locator(this, strLocator);
-        FilledLocator = SLInOutLineLocatorData.filledLocator(this, strmInoutId,
-                strLocator);
+    locator = SLInOutLineLocatorData.locator(this, strLocator);
+    FilledLocator = SLInOutLineLocatorData.filledLocator(this, strmInoutId, strLocator);
 
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SL_MovementAll_Locator';\n\n");
-        log4j.debug("IsSOTrx: " + strIsSOTrx + " - locator: " + locator
-                + " - FilledLocator: " + FilledLocator);
-        if (strIsSOTrx.equals("N") && !locator.equals("0")) {
-            resultado.append("var respuesta = new Array(");
-            resultado.append("new Array(\"MESSAGE\", \""
-                    + Utility.messageBD(this, "FilledWarehouseLocator", vars
-                            .getLanguage()) + "\")");
-            resultado.append(");");
-        } else if (strIsSOTrx.equals("N") && !FilledLocator.equals("0")) {
-            resultado.append("var respuesta = new Array(");
-            resultado.append("new Array(\"MESSAGE\", \""
-                    + Utility.messageBD(this, "FilledLocatorInout", vars
-                            .getLanguage()) + "\")");
-            resultado.append(");");
-        } else
-            resultado.append("var respuesta = null;\n");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "frameButton");
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
-    }
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SL_MovementAll_Locator';\n\n");
+    log4j.debug("IsSOTrx: " + strIsSOTrx + " - locator: " + locator + " - FilledLocator: "
+        + FilledLocator);
+    if (strIsSOTrx.equals("N") && !locator.equals("0")) {
+      resultado.append("var respuesta = new Array(");
+      resultado.append("new Array(\"MESSAGE\", \""
+          + Utility.messageBD(this, "FilledWarehouseLocator", vars.getLanguage()) + "\")");
+      resultado.append(");");
+    } else if (strIsSOTrx.equals("N") && !FilledLocator.equals("0")) {
+      resultado.append("var respuesta = new Array(");
+      resultado.append("new Array(\"MESSAGE\", \""
+          + Utility.messageBD(this, "FilledLocatorInout", vars.getLanguage()) + "\")");
+      resultado.append(");");
+    } else
+      resultado.append("var respuesta = null;\n");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "frameButton");
+    response.setContentType("text/html");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 }

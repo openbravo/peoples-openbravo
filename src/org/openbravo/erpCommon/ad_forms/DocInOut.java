@@ -29,224 +29,209 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class DocInOut extends AcctServer {
-    private static final long serialVersionUID = 1L;
-    static Logger log4jDocInOut = Logger.getLogger(DocInOut.class);
+  private static final long serialVersionUID = 1L;
+  static Logger log4jDocInOut = Logger.getLogger(DocInOut.class);
 
-    /** AD_Table_ID */
-    private String SeqNo = "0";
+  /** AD_Table_ID */
+  private String SeqNo = "0";
 
-    /**
-     * Constructor
-     * 
-     * @param AD_Client_ID
-     *            AD_Client_ID
-     */
-    public DocInOut(String AD_Client_ID, String AD_Org_ID,
-            ConnectionProvider connectionProvider) {
-        super(AD_Client_ID, AD_Org_ID, connectionProvider);
+  /**
+   * Constructor
+   * 
+   * @param AD_Client_ID
+   *          AD_Client_ID
+   */
+  public DocInOut(String AD_Client_ID, String AD_Org_ID, ConnectionProvider connectionProvider) {
+    super(AD_Client_ID, AD_Org_ID, connectionProvider);
+  }
+
+  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+      throws ServletException {
+    setObjectFieldProvider(DocInOutData.selectRegistro(conn, AD_Client_ID, Id));
+  }
+
+  /**
+   * Load Document Details
+   * 
+   * @param rs
+   *          result set
+   * @return true if loadDocumentType was set
+   */
+  public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
+    C_Currency_ID = NO_CURRENCY;
+    log4jDocInOut.debug("loadDocumentDetails - C_Currency_ID : " + C_Currency_ID);
+    DateDoc = data[0].getField("MovementDate");
+    C_BPartner_Location_ID = data[0].getField("C_BPartner_Location_ID");
+
+    loadDocumentType(); // lines require doc type
+    // Contained Objects
+    p_lines = loadLines(conn);
+    log4jDocInOut.debug("Lines=" + p_lines.length);
+    return true;
+  } // loadDocumentDetails
+
+  /**
+   * Load Invoice Line
+   * 
+   * @return DocLine Array
+   */
+  public DocLine[] loadLines(ConnectionProvider conn) {
+    ArrayList<Object> list = new ArrayList<Object>();
+    DocLineInOutData[] data = null;
+    try {
+      data = DocLineInOutData.select(conn, Record_ID);
+    } catch (ServletException e) {
+      log4jDocInOut.warn(e);
     }
-
-    public void loadObjectFieldProvider(ConnectionProvider conn,
-            String AD_Client_ID, String Id) throws ServletException {
-        setObjectFieldProvider(DocInOutData.selectRegistro(conn, AD_Client_ID,
-                Id));
+    //
+    for (int i = 0; data != null && i < data.length; i++) {
+      String Line_ID = data[i].getField("M_INOUTLINE_ID");
+      DocLine_Material docLine = new DocLine_Material(DocumentType, Record_ID, Line_ID);
+      docLine.loadAttributes(data[i], this);
+      docLine.setQty(data[i].getField("MOVEMENTQTY"), conn); // sets Trx
+      // and
+      // Storage
+      // Qty
+      docLine.m_M_Locator_ID = data[i].getField("M_LOCATOR_ID");
+      //
+      if (docLine.m_M_Product_ID.equals(""))
+        log4jDocInOut.debug(" - No Product - ignored");
+      else
+        list.add(docLine);
     }
+    // Return Array
+    DocLine[] dl = new DocLine[list.size()];
+    list.toArray(dl);
+    return dl;
+  } // loadLines
 
-    /**
-     * Load Document Details
-     * 
-     * @param rs
-     *            result set
-     * @return true if loadDocumentType was set
-     */
-    public boolean loadDocumentDetails(FieldProvider[] data,
-            ConnectionProvider conn) {
-        C_Currency_ID = NO_CURRENCY;
-        log4jDocInOut.debug("loadDocumentDetails - C_Currency_ID : "
-                + C_Currency_ID);
-        DateDoc = data[0].getField("MovementDate");
-        C_BPartner_Location_ID = data[0].getField("C_BPartner_Location_ID");
+  /**
+   * Get Balance
+   * 
+   * @return Zero (always balanced)
+   */
+  public BigDecimal getBalance() {
+    BigDecimal retValue = ZERO;
+    return retValue;
+  } // getBalance
 
-        loadDocumentType(); // lines require doc type
-        // Contained Objects
-        p_lines = loadLines(conn);
-        log4jDocInOut.debug("Lines=" + p_lines.length);
-        return true;
-    } // loadDocumentDetails
+  /**
+   * Create Facts (the accounting logic) for MMS, MMR.
+   * 
+   * <pre>
+   *  Shipment
+   *      CoGS            DR
+   *      Inventory               CR
+   *  Shipment of Project Issue
+   *      CoGS            DR
+   *      Project                 CR
+   *  Receipt
+   *      Inventory       DR
+   *      NotInvoicedReceipt      CR
+   * </pre>
+   * 
+   * @param as
+   *          accounting schema
+   * @return Fact
+   */
+  public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
+      VariablesSecureApp vars) throws ServletException {
+    C_Currency_ID = as.getC_Currency_ID();
+    // create Fact Header
+    Fact fact = new Fact(this, as, Fact.POST_Actual);
+    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
+    // Line pointers
+    FactLine dr = null;
+    FactLine cr = null;
 
-    /**
-     * Load Invoice Line
-     * 
-     * @return DocLine Array
-     */
-    public DocLine[] loadLines(ConnectionProvider conn) {
-        ArrayList<Object> list = new ArrayList<Object>();
-        DocLineInOutData[] data = null;
-        try {
-            data = DocLineInOutData.select(conn, Record_ID);
-        } catch (ServletException e) {
-            log4jDocInOut.warn(e);
-        }
-        //
-        for (int i = 0; data != null && i < data.length; i++) {
-            String Line_ID = data[i].getField("M_INOUTLINE_ID");
-            DocLine_Material docLine = new DocLine_Material(DocumentType,
-                    Record_ID, Line_ID);
-            docLine.loadAttributes(data[i], this);
-            docLine.setQty(data[i].getField("MOVEMENTQTY"), conn); // sets Trx
-                                                                   // and
-                                                                   // Storage
-                                                                   // Qty
-            docLine.m_M_Locator_ID = data[i].getField("M_LOCATOR_ID");
-            //
-            if (docLine.m_M_Product_ID.equals(""))
-                log4jDocInOut.debug(" - No Product - ignored");
-            else
-                list.add(docLine);
-        }
-        // Return Array
-        DocLine[] dl = new DocLine[list.size()];
-        list.toArray(dl);
-        return dl;
-    } // loadLines
-
-    /**
-     * Get Balance
-     * 
-     * @return Zero (always balanced)
-     */
-    public BigDecimal getBalance() {
-        BigDecimal retValue = ZERO;
-        return retValue;
-    } // getBalance
-
-    /**
-     * Create Facts (the accounting logic) for MMS, MMR.
-     * 
-     * <pre>
-     *  Shipment
-     *      CoGS            DR
-     *      Inventory               CR
-     *  Shipment of Project Issue
-     *      CoGS            DR
-     *      Project                 CR
-     *  Receipt
-     *      Inventory       DR
-     *      NotInvoicedReceipt      CR
-     * </pre>
-     * 
-     * @param as
-     *            accounting schema
-     * @return Fact
-     */
-    public Fact createFact(AcctSchema as, ConnectionProvider conn,
-            Connection con, VariablesSecureApp vars) throws ServletException {
-        C_Currency_ID = as.getC_Currency_ID();
-        // create Fact Header
-        Fact fact = new Fact(this, as, Fact.POST_Actual);
-        String Fact_Acct_Group_ID = SequenceIdData.getUUID();
-        // Line pointers
-        FactLine dr = null;
-        FactLine cr = null;
-
-        // Sales
-        if (DocumentType.equals(AcctServer.DOCTYPE_MatShipment)) {
-            for (int i = 0; p_lines != null && i < p_lines.length; i++) {
-                DocLine_Material line = (DocLine_Material) p_lines[i];
-                String costs = line.getProductCosts(DateAcct, as, conn, con);
-                log4jDocInOut.debug("(MatShipment) - DR account: "
-                        + line
-                                .getAccount(ProductInfo.ACCTTYPE_P_Cogs, as,
-                                        conn));
-                log4jDocInOut.debug("(MatShipment) - DR costs: " + costs);
-                // CoGS DR
-                dr = fact.createLine(line, line.getAccount(
-                        ProductInfo.ACCTTYPE_P_Cogs, as, conn), as
-                        .getC_Currency_ID(), costs, "", Fact_Acct_Group_ID,
-                        nextSeqNo(SeqNo), DocumentType, conn);
-                dr.setM_Locator_ID(line.m_M_Locator_ID);
-                dr.setLocationFromLocator(line.m_M_Locator_ID, true, conn); // from
-                                                                            // Loc
-                dr.setLocationFromBPartner(C_BPartner_Location_ID, false, conn); // to
-                                                                                 // Loc
-                log4jDocInOut.debug("(MatShipment) - CR account: "
-                        + getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
-                log4jDocInOut.debug("(MatShipment) - CR costs: " + costs);
-                // Inventory CR
-                cr = fact.createLine(line, line.getAccount(
-                        ProductInfo.ACCTTYPE_P_Asset, as, conn), as
-                        .getC_Currency_ID(), "", costs, Fact_Acct_Group_ID,
-                        nextSeqNo(SeqNo), DocumentType, conn);
-                cr.setM_Locator_ID(line.m_M_Locator_ID);
-                cr.setLocationFromLocator(line.m_M_Locator_ID, true, conn); // from
-                                                                            // Loc
-                cr.setLocationFromBPartner(C_BPartner_Location_ID, false, conn); // to
-                                                                                 // Loc
-            }
-        }
-        // Purchasing
-        else if (DocumentType.equals(AcctServer.DOCTYPE_MatReceipt)) {
-            for (int i = 0; p_lines != null && i < p_lines.length; i++) {
-                DocLine_Material line = (DocLine_Material) p_lines[i];
-                String costs = line.getProductCosts(DateAcct, as, conn, con);
-                log4jDocInOut.debug("(matReceipt) - DR account: "
-                        + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as,
-                                conn));
-                log4jDocInOut.debug("(matReceipt) - DR costs: " + costs);
-                // Inventory DR
-                dr = fact.createLine(line, line.getAccount(
-                        ProductInfo.ACCTTYPE_P_Asset, as, conn), as
-                        .getC_Currency_ID(), costs, "", Fact_Acct_Group_ID,
-                        nextSeqNo(SeqNo), DocumentType, conn);
-                dr.setM_Locator_ID(line.m_M_Locator_ID);
-                dr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
-                                                                                // Loc
-                dr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
-                                                                             // Loc
-                log4jDocInOut.debug("(matReceipt) - CR account: "
-                        + getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts,
-                                as, conn));
-                log4jDocInOut.debug("(matReceipt) - CR costs: " + costs);
-                // NotInvoicedReceipt CR
-                cr = fact.createLine(line, getAccount(
-                        AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn), as
-                        .getC_Currency_ID(), "", costs, Fact_Acct_Group_ID,
-                        nextSeqNo(SeqNo), DocumentType, conn);
-                cr.setM_Locator_ID(line.m_M_Locator_ID);
-                cr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
-                                                                                // Loc
-                cr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
-                                                                             // Loc
-            }
-        } else {
-            log4jDocInOut.warn("createFact - " + "DocumentType unknown: "
-                    + DocumentType);
-            return null;
-        }
-        //
-        SeqNo = "0";
-        return fact;
-    } // createFact
-
-    public String nextSeqNo(String oldSeqNo) {
-        log4jDocInOut.debug("DocInOut - oldSeqNo = " + oldSeqNo);
-        BigDecimal seqNo = new BigDecimal(oldSeqNo);
-        SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
-        log4jDocInOut.debug("DocInOut - nextSeqNo = " + SeqNo);
-        return SeqNo;
+    // Sales
+    if (DocumentType.equals(AcctServer.DOCTYPE_MatShipment)) {
+      for (int i = 0; p_lines != null && i < p_lines.length; i++) {
+        DocLine_Material line = (DocLine_Material) p_lines[i];
+        String costs = line.getProductCosts(DateAcct, as, conn, con);
+        log4jDocInOut.debug("(MatShipment) - DR account: "
+            + line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn));
+        log4jDocInOut.debug("(MatShipment) - DR costs: " + costs);
+        // CoGS DR
+        dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn), as
+            .getC_Currency_ID(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            conn);
+        dr.setM_Locator_ID(line.m_M_Locator_ID);
+        dr.setLocationFromLocator(line.m_M_Locator_ID, true, conn); // from
+        // Loc
+        dr.setLocationFromBPartner(C_BPartner_Location_ID, false, conn); // to
+        // Loc
+        log4jDocInOut.debug("(MatShipment) - CR account: "
+            + getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
+        log4jDocInOut.debug("(MatShipment) - CR costs: " + costs);
+        // Inventory CR
+        cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
+            .getC_Currency_ID(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            conn);
+        cr.setM_Locator_ID(line.m_M_Locator_ID);
+        cr.setLocationFromLocator(line.m_M_Locator_ID, true, conn); // from
+        // Loc
+        cr.setLocationFromBPartner(C_BPartner_Location_ID, false, conn); // to
+        // Loc
+      }
     }
-
-    /**
-     * Get Document Confirmation
-     * 
-     * @not used
-     */
-    public boolean getDocumentConfirmation(ConnectionProvider conn,
-            String strRecordId) {
-        return true;
+    // Purchasing
+    else if (DocumentType.equals(AcctServer.DOCTYPE_MatReceipt)) {
+      for (int i = 0; p_lines != null && i < p_lines.length; i++) {
+        DocLine_Material line = (DocLine_Material) p_lines[i];
+        String costs = line.getProductCosts(DateAcct, as, conn, con);
+        log4jDocInOut.debug("(matReceipt) - DR account: "
+            + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
+        log4jDocInOut.debug("(matReceipt) - DR costs: " + costs);
+        // Inventory DR
+        dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
+            .getC_Currency_ID(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            conn);
+        dr.setM_Locator_ID(line.m_M_Locator_ID);
+        dr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
+        // Loc
+        dr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
+        // Loc
+        log4jDocInOut.debug("(matReceipt) - CR account: "
+            + getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn));
+        log4jDocInOut.debug("(matReceipt) - CR costs: " + costs);
+        // NotInvoicedReceipt CR
+        cr = fact.createLine(line, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
+            as.getC_Currency_ID(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            conn);
+        cr.setM_Locator_ID(line.m_M_Locator_ID);
+        cr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
+        // Loc
+        cr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
+        // Loc
+      }
+    } else {
+      log4jDocInOut.warn("createFact - " + "DocumentType unknown: " + DocumentType);
+      return null;
     }
+    //
+    SeqNo = "0";
+    return fact;
+  } // createFact
 
-    public String getServletInfo() {
-        return "Servlet for the accounting";
-    } // end of getServletInfo() method
+  public String nextSeqNo(String oldSeqNo) {
+    log4jDocInOut.debug("DocInOut - oldSeqNo = " + oldSeqNo);
+    BigDecimal seqNo = new BigDecimal(oldSeqNo);
+    SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
+    log4jDocInOut.debug("DocInOut - nextSeqNo = " + SeqNo);
+    return SeqNo;
+  }
+
+  /**
+   * Get Document Confirmation
+   * 
+   * @not used
+   */
+  public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
+    return true;
+  }
+
+  public String getServletInfo() {
+    return "Servlet for the accounting";
+  } // end of getServletInfo() method
 }

@@ -37,222 +37,210 @@ import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * Builds a tree of organizations to compute the accessible organizations for
- * the current organizations of a user. Is used to check if references from one
- * object to another are correct from an organization structure perspective.
+ * Builds a tree of organizations to compute the accessible organizations for the current
+ * organizations of a user. Is used to check if references from one object to another are correct
+ * from an organization structure perspective.
  * <p/>
- * For example a city refers to a country then: an organization of the country
- * (the refered object) must be in the natural tree of the organization of the
- * city (the referee).
+ * For example a city refers to a country then: an organization of the country (the refered object)
+ * must be in the natural tree of the organization of the city (the referee).
  * 
  * @author mtaal
  */
 
 public class OrganizationStructureProvider implements OBNotSingleton {
 
-    private boolean isInitialized = false;
-    private Map<String, Set<String>> naturalTreesByOrgID = new HashMap<String, Set<String>>();
-    private String clientId;
+  private boolean isInitialized = false;
+  private Map<String, Set<String>> naturalTreesByOrgID = new HashMap<String, Set<String>>();
+  private String clientId;
 
-    /**
-     * Set initialized to false and recompute the organization structures
-     */
-    public void reInitialize() {
-        isInitialized = false;
-        initialize();
+  /**
+   * Set initialized to false and recompute the organization structures
+   */
+  public void reInitialize() {
+    isInitialized = false;
+    initialize();
+  }
+
+  private void initialize() {
+    if (isInitialized) {
+      return;
     }
 
-    private void initialize() {
-        if (isInitialized) {
-            return;
-        }
-
-        if (getClientId() == null) {
-            setClientId(OBContext.getOBContext().getCurrentClient().getId());
-        }
-
-        // read all trees of all clients, bypass DAL to prevent security checks
-        final String qryStr = "select t from " + Tree.class.getName()
-                + " t where treetype='OO' and client.id='" + getClientId()
-                + "'";
-        final Query qry = SessionHandler.getInstance().createQuery(qryStr);
-        @SuppressWarnings("unchecked")
-        final List<Tree> ts = qry.list();
-        final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
-        for (final Tree t : ts) {
-            final String nodeQryStr = "select tn from "
-                    + TreeNode.class.getName() + " tn where tn.tree.id='"
-                    + t.getId() + "'";
-            final Query nodeQry = SessionHandler.getInstance().createQuery(
-                    nodeQryStr);
-            @SuppressWarnings("unchecked")
-            final List<TreeNode> tns = nodeQry.list();
-            treeNodes.addAll(tns);
-        }
-
-        final List<OrgNode> orgNodes = new ArrayList<OrgNode>(treeNodes.size());
-        for (final TreeNode tn : treeNodes) {
-            final OrgNode on = new OrgNode();
-            on.setTreeNode(tn);
-            orgNodes.add(on);
-        }
-
-        for (final OrgNode on : orgNodes) {
-            on.resolve(orgNodes);
-        }
-
-        for (final OrgNode on : orgNodes) {
-            naturalTreesByOrgID.put(on.getTreeNode().getNode(), on
-                    .getNaturalTree());
-        }
-        isInitialized = true;
+    if (getClientId() == null) {
+      setClientId(OBContext.getOBContext().getCurrentClient().getId());
     }
 
-    /**
-     * Returns the natural tree of an organization.
-     * 
-     * @param orgId
-     *            the id of the organization for which the natural tree is
-     *            determined.
-     * @return the natural tree of the organization.
-     */
-    public Set<String> getNaturalTree(String orgId) {
-        initialize();
-        Set<String> result = naturalTreesByOrgID.get(orgId);
-        if (result == null) {
-            result = new HashSet<String>();
-            result.add(orgId);
-        }
-        return result;
+    // read all trees of all clients, bypass DAL to prevent security checks
+    final String qryStr = "select t from " + Tree.class.getName()
+        + " t where treetype='OO' and client.id='" + getClientId() + "'";
+    final Query qry = SessionHandler.getInstance().createQuery(qryStr);
+    @SuppressWarnings("unchecked")
+    final List<Tree> ts = qry.list();
+    final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+    for (final Tree t : ts) {
+      final String nodeQryStr = "select tn from " + TreeNode.class.getName()
+          + " tn where tn.tree.id='" + t.getId() + "'";
+      final Query nodeQry = SessionHandler.getInstance().createQuery(nodeQryStr);
+      @SuppressWarnings("unchecked")
+      final List<TreeNode> tns = nodeQry.list();
+      treeNodes.addAll(tns);
     }
 
-    /**
-     * Checks if an organization (org2) is in the natural tree of another
-     * organization (org1).
-     * 
-     * @param org1
-     *            the natural tree of this organization is used to check if org2
-     *            is present
-     * @param org2
-     *            the organization checked in the natural tree of org1
-     * @return true if org2 is in the natural tree of org1, false otherwise
-     */
-    public boolean isInNaturalTree(Organization org1, Organization org2) {
-        initialize();
-        final String id1 = (String) DalUtil.getId(org1);
-        final String id2 = (String) DalUtil.getId(org2);
-
-        // org 0 is in everyones natural tree, and the other way around
-        if (id2 != null && id2.equals("0")) {
-            return true;
-        }
-        if (id1 != null && id1.equals("0")) {
-            return true;
-        }
-
-        final Set<String> ids = getNaturalTree(id1);
-        Check
-                .isNotNull(
-                        ids,
-                        "Organization with id "
-                                + id1
-                                + " does not have a computed natural tree, does this organization exist?");
-        return ids.contains(id2);
+    final List<OrgNode> orgNodes = new ArrayList<OrgNode>(treeNodes.size());
+    for (final TreeNode tn : treeNodes) {
+      final OrgNode on = new OrgNode();
+      on.setTreeNode(tn);
+      orgNodes.add(on);
     }
 
-    class OrgNode {
-
-        private TreeNode treeNode;
-        private OrgNode parent;
-        private List<OrgNode> children = new ArrayList<OrgNode>();
-
-        private Set<String> naturalTreeParent = null;
-        private Set<String> naturalTreeChildren = null;
-        private Set<String> naturalTree = null;
-
-        void addChild(OrgNode child) {
-            children.add(child);
-        }
-
-        public void resolve(List<OrgNode> nodes) {
-            if (treeNode.getParent() == null) {
-                return;
-            }
-            for (final OrgNode on : nodes) {
-                if (on.getTreeNode().getNode().equals(treeNode.getParent())) {
-                    on.addChild(this);
-                    setParent(on);
-                    break;
-                }
-            }
-        }
-
-        public Set<String> getNaturalTree() {
-            if (naturalTree == null) {
-                naturalTree = new HashSet<String>();
-                naturalTree.add(getTreeNode().getNode());
-                if (getParent() != null) {
-                    getParent().getParentPath(naturalTree);
-                }
-                for (final OrgNode child : getChildren()) {
-                    child.getChildPath(naturalTree);
-                }
-            }
-            return naturalTree;
-        }
-
-        public void getParentPath(Set<String> theNaturalTree) {
-            if (naturalTreeParent == null) {
-                naturalTreeParent = new HashSet<String>();
-                naturalTreeParent.add(getTreeNode().getNode());
-                if (getParent() != null) {
-                    getParent().getParentPath(naturalTreeParent);
-                }
-            }
-            theNaturalTree.addAll(naturalTreeParent);
-        }
-
-        public void getChildPath(Set<String> theNaturalTree) {
-            if (naturalTreeChildren == null) {
-                naturalTreeChildren = new HashSet<String>();
-                naturalTreeChildren.add(getTreeNode().getNode());
-                for (final OrgNode child : getChildren()) {
-                    child.getChildPath(naturalTreeChildren);
-                }
-            }
-            theNaturalTree.addAll(naturalTreeChildren);
-        }
-
-        public TreeNode getTreeNode() {
-            return treeNode;
-        }
-
-        public void setTreeNode(TreeNode treeNode) {
-            this.treeNode = treeNode;
-        }
-
-        public OrgNode getParent() {
-            return parent;
-        }
-
-        public void setParent(OrgNode parent) {
-            this.parent = parent;
-        }
-
-        public List<OrgNode> getChildren() {
-            return children;
-        }
-
-        public void setChildren(List<OrgNode> children) {
-            this.children = children;
-        }
+    for (final OrgNode on : orgNodes) {
+      on.resolve(orgNodes);
     }
 
-    public String getClientId() {
-        return clientId;
+    for (final OrgNode on : orgNodes) {
+      naturalTreesByOrgID.put(on.getTreeNode().getNode(), on.getNaturalTree());
+    }
+    isInitialized = true;
+  }
+
+  /**
+   * Returns the natural tree of an organization.
+   * 
+   * @param orgId
+   *          the id of the organization for which the natural tree is determined.
+   * @return the natural tree of the organization.
+   */
+  public Set<String> getNaturalTree(String orgId) {
+    initialize();
+    Set<String> result = naturalTreesByOrgID.get(orgId);
+    if (result == null) {
+      result = new HashSet<String>();
+      result.add(orgId);
+    }
+    return result;
+  }
+
+  /**
+   * Checks if an organization (org2) is in the natural tree of another organization (org1).
+   * 
+   * @param org1
+   *          the natural tree of this organization is used to check if org2 is present
+   * @param org2
+   *          the organization checked in the natural tree of org1
+   * @return true if org2 is in the natural tree of org1, false otherwise
+   */
+  public boolean isInNaturalTree(Organization org1, Organization org2) {
+    initialize();
+    final String id1 = (String) DalUtil.getId(org1);
+    final String id2 = (String) DalUtil.getId(org2);
+
+    // org 0 is in everyones natural tree, and the other way around
+    if (id2 != null && id2.equals("0")) {
+      return true;
+    }
+    if (id1 != null && id1.equals("0")) {
+      return true;
     }
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
+    final Set<String> ids = getNaturalTree(id1);
+    Check.isNotNull(ids, "Organization with id " + id1
+        + " does not have a computed natural tree, does this organization exist?");
+    return ids.contains(id2);
+  }
+
+  class OrgNode {
+
+    private TreeNode treeNode;
+    private OrgNode parent;
+    private List<OrgNode> children = new ArrayList<OrgNode>();
+
+    private Set<String> naturalTreeParent = null;
+    private Set<String> naturalTreeChildren = null;
+    private Set<String> naturalTree = null;
+
+    void addChild(OrgNode child) {
+      children.add(child);
     }
+
+    public void resolve(List<OrgNode> nodes) {
+      if (treeNode.getParent() == null) {
+        return;
+      }
+      for (final OrgNode on : nodes) {
+        if (on.getTreeNode().getNode().equals(treeNode.getParent())) {
+          on.addChild(this);
+          setParent(on);
+          break;
+        }
+      }
+    }
+
+    public Set<String> getNaturalTree() {
+      if (naturalTree == null) {
+        naturalTree = new HashSet<String>();
+        naturalTree.add(getTreeNode().getNode());
+        if (getParent() != null) {
+          getParent().getParentPath(naturalTree);
+        }
+        for (final OrgNode child : getChildren()) {
+          child.getChildPath(naturalTree);
+        }
+      }
+      return naturalTree;
+    }
+
+    public void getParentPath(Set<String> theNaturalTree) {
+      if (naturalTreeParent == null) {
+        naturalTreeParent = new HashSet<String>();
+        naturalTreeParent.add(getTreeNode().getNode());
+        if (getParent() != null) {
+          getParent().getParentPath(naturalTreeParent);
+        }
+      }
+      theNaturalTree.addAll(naturalTreeParent);
+    }
+
+    public void getChildPath(Set<String> theNaturalTree) {
+      if (naturalTreeChildren == null) {
+        naturalTreeChildren = new HashSet<String>();
+        naturalTreeChildren.add(getTreeNode().getNode());
+        for (final OrgNode child : getChildren()) {
+          child.getChildPath(naturalTreeChildren);
+        }
+      }
+      theNaturalTree.addAll(naturalTreeChildren);
+    }
+
+    public TreeNode getTreeNode() {
+      return treeNode;
+    }
+
+    public void setTreeNode(TreeNode treeNode) {
+      this.treeNode = treeNode;
+    }
+
+    public OrgNode getParent() {
+      return parent;
+    }
+
+    public void setParent(OrgNode parent) {
+      this.parent = parent;
+    }
+
+    public List<OrgNode> getChildren() {
+      return children;
+    }
+
+    public void setChildren(List<OrgNode> children) {
+      this.children = children;
+    }
+  }
+
+  public String getClientId() {
+    return clientId;
+  }
+
+  public void setClientId(String clientId) {
+    this.clientId = clientId;
+  }
 }

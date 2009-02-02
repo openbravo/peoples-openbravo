@@ -20,30 +20,30 @@
 package org.openbravo.base.model;
 
 /**
- * Used by the {@link ModelProvider ModelProvider}, maps the AD_Reference table
- * in the application dictionary.
+ * Used by the {@link ModelProvider ModelProvider}, maps the AD_Reference table in the application
+ * dictionary.
  * 
  * @author iperdomo
  */
 
 public class RefSearch extends ModelObject {
 
-    private String reference;
-    private Column column;
+  private String reference;
+  private Column column;
 
-    public String getReference() {
-        return reference;
-    }
+  public String getReference() {
+    return reference;
+  }
 
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
+  public void setReference(String reference) {
+    this.reference = reference;
+  }
 
-    public Column getColumn() {
-        return column;
-    }
+  public Column getColumn() {
+    return column;
+  }
 
-    public void setColumn(Column column) {
-        this.column = column;
-    }
+  public void setColumn(Column column) {
+    this.column = column;
+  }
 }

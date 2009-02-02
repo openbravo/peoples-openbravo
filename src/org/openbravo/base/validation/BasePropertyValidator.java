@@ -22,26 +22,26 @@ package org.openbravo.base.validation;
 import org.openbravo.base.model.Property;
 
 /**
- * Base class for property validators. Property validators check length and min
- * and max constraints of property values.
+ * Base class for property validators. Property validators check length and min and max constraints
+ * of property values.
  * 
  * @author mtaal
  */
 
 public abstract class BasePropertyValidator implements PropertyValidator {
 
-    private Property property;
+  private Property property;
 
-    public Property getProperty() {
-        return property;
-    }
+  public Property getProperty() {
+    return property;
+  }
 
-    public void setProperty(Property property) {
-        this.property = property;
-    }
+  public void setProperty(Property property) {
+    this.property = property;
+  }
 
-    /**
-     * @see PropertyValidator#validate(Object)
-     */
-    public abstract String validate(Object value);
+  /**
+   * @see PropertyValidator#validate(Object)
+   */
+  public abstract String validate(Object value);
 }

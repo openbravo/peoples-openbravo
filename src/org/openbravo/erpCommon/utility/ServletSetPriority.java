@@ -33,77 +33,69 @@ import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ServletSetPriority extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        doPost(request, response);
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    doPost(request, response);
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    String strCategory = request.getParameter("category");
+    String strPriority = request.getParameter("priority");
+    if (strCategory != null && strPriority != null) {
+      Logger category = Logger.getLogger(strCategory);
+      Level priority = Level.toLevel(strPriority);
+      category.setLevel(priority);
     }
+    printPage(response, vars);
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        String strCategory = request.getParameter("category");
-        String strPriority = request.getParameter("priority");
-        if (strCategory != null && strPriority != null) {
-            Logger category = Logger.getLogger(strCategory);
-            Level priority = Level.toLevel(strPriority);
-            category.setLevel(priority);
-        }
-        printPage(response, vars);
+  void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: Page");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/utility/SetPriority").createXmlDocument();
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "SetPriority", false, "", "", "",
+        false, "utility", strReplaceWith, false, true);
+    toolbar.prepareSimpleToolBarTemplate();
+    xmlDocument.setParameter("toolbar", toolbar.toString());
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    try {
+      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.ShowSession");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "SetPriority.html",
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      xmlDocument.setParameter("navigationBar", nav.toString());
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "SetPriority.html",
+          strReplaceWith);
+      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+    } catch (Exception ex) {
+      throw new ServletException(ex);
     }
-
-    void printPage(HttpServletResponse response, VariablesSecureApp vars)
-            throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: Page");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/utility/SetPriority")
-                .createXmlDocument();
-        ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "SetPriority",
-                false, "", "", "", false, "utility", strReplaceWith, false,
-                true);
-        toolbar.prepareSimpleToolBarTemplate();
-        xmlDocument.setParameter("toolbar", toolbar.toString());
-        xmlDocument.setParameter("directory", "var baseDirectory = \""
-                + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("language", "defaultLang=\""
-                + vars.getLanguage() + "\";");
-        try {
-            WindowTabs tabs = new WindowTabs(this, vars,
-                    "org.openbravo.erpCommon.ad_forms.ShowSession");
-            xmlDocument.setParameter("theme", vars.getTheme());
-            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-                    "SetPriority.html", classInfo.id, classInfo.type,
-                    strReplaceWith, tabs.breadcrumb());
-            xmlDocument.setParameter("navigationBar", nav.toString());
-            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
-                    "SetPriority.html", strReplaceWith);
-            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
-        {
-            OBError myMessage = vars.getMessage("SetPriority");
-            vars.removeMessage("SetPriority");
-            if (myMessage != null) {
-                xmlDocument.setParameter("messageType", myMessage.getType());
-                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-                xmlDocument.setParameter("messageMessage", myMessage
-                        .getMessage());
-            }
-        }
-        SetPriorityCategoryData[] data = SetPriorityCategoryData
-                .getCategories();
-        xmlDocument.setData("structure1", data);
-
-        out.println(xmlDocument.print());
-        out.close();
+    {
+      OBError myMessage = vars.getMessage("SetPriority");
+      vars.removeMessage("SetPriority");
+      if (myMessage != null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
     }
+    SetPriorityCategoryData[] data = SetPriorityCategoryData.getCategories();
+    xmlDocument.setData("structure1", data);
 
-    public String getServletInfo() {
-        return "Servlet that asign a priority to a Category";
-    }
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  public String getServletInfo() {
+    return "Servlet that asign a priority to a Category";
+  }
 }

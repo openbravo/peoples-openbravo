@@ -31,71 +31,69 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SE_PeriodNo extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
-    }
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-        if (vars.commandIn("DEFAULT")) {
-            String strYearId = vars.getStringParameter("inpcYearId");
-            String strWindowId = vars.getStringParameter("inpwindowId");
-            try {
-                printPage(response, vars, strYearId, strWindowId);
-            } catch (ServletException ex) {
-                pageErrorCallOut(response);
-            }
-        } else
-            pageError(response);
-    }
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    if (vars.commandIn("DEFAULT")) {
+      String strYearId = vars.getStringParameter("inpcYearId");
+      String strWindowId = vars.getStringParameter("inpwindowId");
+      try {
+        printPage(response, vars, strYearId, strWindowId);
+      } catch (ServletException ex) {
+        pageErrorCallOut(response);
+      }
+    } else
+      pageError(response);
+  }
 
-    void printPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strYearId, String strWindowId) throws IOException,
-            ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strYearId,
+      String strWindowId) throws IOException, ServletException {
 
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_callouts/CallOut")
-                .createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-        StringBuffer resultado = new StringBuffer();
-        resultado.append("var calloutName='SE_PeriodNo';\n\n");
-        resultado.append("var respuesta = new Array(");
+    StringBuffer resultado = new StringBuffer();
+    resultado.append("var calloutName='SE_PeriodNo';\n\n");
+    resultado.append("var respuesta = new Array(");
 
-        SEPeriodNoData[] tdv = null;
-        if (!strYearId.equals("")) {
-            try {
-                tdv = SEPeriodNoData.getPeriodNo(this, strYearId);
-            } catch (Exception ex) {
-                throw new ServletException(ex);
-            }
+    SEPeriodNoData[] tdv = null;
+    if (!strYearId.equals("")) {
+      try {
+        tdv = SEPeriodNoData.getPeriodNo(this, strYearId);
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
 
-            resultado.append("new Array(\"inpperiodno\", ");
-            if (tdv != null && tdv.length > 0) {
-                resultado.append("new Array(");
-                for (int i = 0; i < tdv.length; i++) {
-                    resultado.append("new Array(\"" + tdv[i].getField("id")
-                            + "\", \"" + tdv[i].getField("PeriodNo") + "\")");
-                    if (i < tdv.length - 1)
-                        resultado.append(",\n");
-                }
-                resultado.append("\n)");
-            } else
-                resultado.append("null");
-            resultado.append("\n)");
-
+      resultado.append("new Array(\"inpperiodno\", ");
+      if (tdv != null && tdv.length > 0) {
+        resultado.append("new Array(");
+        for (int i = 0; i < tdv.length; i++) {
+          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+              + tdv[i].getField("PeriodNo") + "\")");
+          if (i < tdv.length - 1)
+            resultado.append(",\n");
         }
+        resultado.append("\n)");
+      } else
+        resultado.append("null");
+      resultado.append("\n)");
 
-        resultado.append(");");
-        xmlDocument.setParameter("array", resultado.toString());
-        xmlDocument.setParameter("frameName", "appFrame");
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println(xmlDocument.print());
-        out.close();
     }
+
+    resultado.append(");");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
 
 }

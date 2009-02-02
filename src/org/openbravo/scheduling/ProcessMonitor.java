@@ -50,232 +50,210 @@ import org.quartz.TriggerListener;
  * @author awolski
  * 
  */
-public class ProcessMonitor implements SchedulerListener, JobListener,
-        TriggerListener {
+public class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener {
 
-    static final Logger log = Logger.getLogger(ProcessMonitor.class);
+  static final Logger log = Logger.getLogger(ProcessMonitor.class);
 
-    public static final String KEY = "org.openbravo.scheduling.ProcessMonitor.KEY";
+  public static final String KEY = "org.openbravo.scheduling.ProcessMonitor.KEY";
 
-    private String name;
+  private String name;
 
-    private SchedulerContext context;
+  private SchedulerContext context;
 
-    public ProcessMonitor(String name, SchedulerContext context) {
-        this.name = name;
-        this.context = context;
+  public ProcessMonitor(String name, SchedulerContext context) {
+    this.name = name;
+    this.context = context;
+  }
+
+  public void jobScheduled(Trigger trigger) {
+    final ProcessBundle bundle = (ProcessBundle) trigger.getJobDataMap().get(ProcessBundle.KEY);
+    final ProcessContext ctx = bundle.getContext();
+    try {
+      ProcessRequestData.update(getConnection(), ctx.getUser(), ctx.getUser(), SCHEDULED, bundle
+          .getChannel().toString(), null, null, null, ctx.toString(), trigger.getName());
+
+    } catch (final ServletException e) {
+      log.error(e.getMessage(), e);
+    }
+  }
+
+  public void triggerFired(Trigger trigger, JobExecutionContext jec) {
+    final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
+    final ProcessContext ctx = bundle.getContext();
+    try {
+      ProcessRequestData.update(getConnection(), ctx.getUser(), ctx.getUser(), SCHEDULED, bundle
+          .getChannel().toString(), format(trigger.getPreviousFireTime()), format(trigger
+          .getNextFireTime()), format(trigger.getFinalFireTime()), ctx.toString(), trigger
+          .getName());
+
+    } catch (final ServletException e) {
+      log.error(e.getMessage(), e);
+    }
+  }
+
+  public void jobToBeExecuted(JobExecutionContext jec) {
+    final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
+    if (bundle == null) {
+      return;
+    }
+    final ProcessContext ctx = bundle.getContext();
+    final String executionId = SequenceIdData.getUUID();
+    try {
+      ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
+          ctx.getUser(), executionId, PROCESSING, format(jec.getFireTime()), null, null, jec
+              .getJobDetail().getName());
+
+      jec.put(EXECUTION_ID, executionId);
+      jec.put(ProcessBundle.CONNECTION, getConnection());
+      jec.put(ProcessBundle.CONFIG_PARAMS, getConfigParameters());
+
+    } catch (final ServletException e) {
+      log.error(e.getMessage(), e);
+    }
+  }
+
+  public void jobWasExecuted(JobExecutionContext jec, JobExecutionException jee) {
+    final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
+    if (bundle == null) {
+      return;
+    }
+    final ProcessContext ctx = bundle.getContext();
+    try {
+      final String executionId = (String) jec.get(EXECUTION_ID);
+      final String log = bundle.getLog().length() >= 4000 ? bundle.getLog().substring(0, 3999)
+          : bundle.getLog();
+      if (jee == null) {
+        ProcessRunData.update(getConnection(), ctx.getUser(), SUCCESS, format(new Date()),
+            getDuration(jec.getJobRunTime()), log, executionId);
+      } else {
+        ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, format(new Date()),
+            getDuration(jec.getJobRunTime()), log, executionId);
+      }
+
+    } catch (final ServletException e) {
+      log.error(e.getMessage(), e);
+    }
+  }
+
+  public static void main(String... args) {
+    final StringBuilder sb = new StringBuilder(10);
+    sb.append("12345678901");
+    System.out.println(sb.toString());
+  }
+
+  public void triggerFinalized(Trigger trigger) {
+    try {
+      ProcessRequestData.update(getConnection(), COMPLETE, trigger.getName());
+
+    } catch (final ServletException e) {
+      log.error(e.getMessage(), e);
+    }
+  }
+
+  public void jobUnscheduled(String triggerName, String triggerGroup) {
+    try {
+      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, null, triggerName);
+
+    } catch (final ServletException e) {
+      log.error(e.getMessage(), e);
+    }
+  }
+
+  public void triggerMisfired(Trigger trigger) {
+    try {
+      ProcessRequestData.update(getConnection(), MISFIRED, trigger.getName());
+
+    } catch (final ServletException e) {
+      log.error(e.getMessage(), e);
     }
 
-    public void jobScheduled(Trigger trigger) {
-        final ProcessBundle bundle = (ProcessBundle) trigger.getJobDataMap()
-                .get(ProcessBundle.KEY);
-        final ProcessContext ctx = bundle.getContext();
-        try {
-            ProcessRequestData.update(getConnection(), ctx.getUser(), ctx
-                    .getUser(), SCHEDULED, bundle.getChannel().toString(),
-                    null, null, null, ctx.toString(), trigger.getName());
+  }
 
-        } catch (final ServletException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
+  public void jobsPaused(String jobName, String jobGroup) {
+    // Not implemented
+  }
 
-    public void triggerFired(Trigger trigger, JobExecutionContext jec) {
-        final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap()
-                .get(ProcessBundle.KEY);
-        final ProcessContext ctx = bundle.getContext();
-        try {
-            ProcessRequestData.update(getConnection(), ctx.getUser(), ctx
-                    .getUser(), SCHEDULED, bundle.getChannel().toString(),
-                    format(trigger.getPreviousFireTime()), format(trigger
-                            .getNextFireTime()), format(trigger
-                            .getFinalFireTime()), ctx.toString(), trigger
-                            .getName());
+  public void jobsResumed(String jobName, String jobGroup) {
+    // Not implemented
+  }
 
-        } catch (final ServletException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
+  public void schedulerError(String msg, SchedulerException e) {
+    // Not implemented
+  }
 
-    public void jobToBeExecuted(JobExecutionContext jec) {
-        final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap()
-                .get(ProcessBundle.KEY);
-        if (bundle == null) {
-            return;
-        }
-        final ProcessContext ctx = bundle.getContext();
-        final String executionId = SequenceIdData.getUUID();
-        try {
-            ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx
-                    .getClient(), ctx.getUser(), ctx.getUser(), executionId,
-                    PROCESSING, format(jec.getFireTime()), null, null, jec
-                            .getJobDetail().getName());
+  public void schedulerShutdown() {
+    // Not implemented
+  }
 
-            jec.put(EXECUTION_ID, executionId);
-            jec.put(ProcessBundle.CONNECTION, getConnection());
-            jec.put(ProcessBundle.CONFIG_PARAMS, getConfigParameters());
+  public void triggersPaused(String triggerName, String triggerGroup) {
+    // Not implemented
+  }
 
-        } catch (final ServletException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
+  public void triggersResumed(String triggerName, String triggerGroup) {
+    // Not implemented
+  }
 
-    public void jobWasExecuted(JobExecutionContext jec,
-            JobExecutionException jee) {
-        final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap()
-                .get(ProcessBundle.KEY);
-        if (bundle == null) {
-            return;
-        }
-        final ProcessContext ctx = bundle.getContext();
-        try {
-            final String executionId = (String) jec.get(EXECUTION_ID);
-            final String log = bundle.getLog().length() >= 4000 ? bundle
-                    .getLog().substring(0, 3999) : bundle.getLog();
-            if (jee == null) {
-                ProcessRunData.update(getConnection(), ctx.getUser(), SUCCESS,
-                        format(new Date()), getDuration(jec.getJobRunTime()),
-                        log, executionId);
-            } else {
-                ProcessRunData.update(getConnection(), ctx.getUser(), ERROR,
-                        format(new Date()), getDuration(jec.getJobRunTime()),
-                        log, executionId);
-            }
+  public void jobExecutionVetoed(JobExecutionContext jec) {
+    // Not implemented
+  }
 
-        } catch (final ServletException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
+  public void triggerComplete(Trigger trigger, JobExecutionContext jec, int triggerInstructionCode) {
+    // Not implemented
+  }
 
-    public static void main(String... args) {
-        final StringBuilder sb = new StringBuilder(10);
-        sb.append("12345678901");
-        System.out.println(sb.toString());
-    }
+  public boolean vetoJobExecution(Trigger trigger, JobExecutionContext jec) {
+    // Not implemented
+    return false;
+  }
 
-    public void triggerFinalized(Trigger trigger) {
-        try {
-            ProcessRequestData.update(getConnection(), COMPLETE, trigger
-                    .getName());
+  /**
+   * @return
+   */
+  public ConnectionProvider getConnection() {
+    return (ConnectionProvider) context.get(ConnectionProviderContextListener.POOL_ATTRIBUTE);
+  }
 
-        } catch (final ServletException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
+  /**
+   * @return
+   */
+  public ConfigParameters getConfigParameters() {
+    return (ConfigParameters) context.get(ConfigParameters.CONFIG_ATTRIBUTE);
+  }
 
-    public void jobUnscheduled(String triggerName, String triggerGroup) {
-        try {
-            ProcessRequestData.update(getConnection(), UNSCHEDULED, null, null,
-                    triggerName);
+  /**
+   * @param date
+   * @return
+   */
+  public final String format(Date date) {
+    final String dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
+    return date == null ? null : new SimpleDateFormat(dateTimeFormat).format(date);
+  }
 
-        } catch (final ServletException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
+  /**
+   * @param duration
+   * @return
+   */
+  public static String getDuration(long duration) {
 
-    public void triggerMisfired(Trigger trigger) {
-        try {
-            ProcessRequestData.update(getConnection(), MISFIRED, trigger
-                    .getName());
+    final int milliseconds = (int) (duration % 1000);
+    final int seconds = (int) ((duration / 1000) % 60);
+    final int minutes = (int) ((duration / 60000) % 60);
+    final int hours = (int) ((duration / 3600000) % 24);
 
-        } catch (final ServletException e) {
-            log.error(e.getMessage(), e);
-        }
+    final String m = (milliseconds < 10 ? "00" : (milliseconds < 100 ? "0" : "")) + milliseconds;
+    final String sec = (seconds < 10 ? "0" : "") + seconds;
+    final String min = (minutes < 10 ? "0" : "") + minutes;
+    final String hr = (hours < 10 ? "0" : "") + hours;
 
-    }
+    return hr + ":" + min + ":" + sec + "." + m;
+  }
 
-    public void jobsPaused(String jobName, String jobGroup) {
-        // Not implemented
-    }
-
-    public void jobsResumed(String jobName, String jobGroup) {
-        // Not implemented
-    }
-
-    public void schedulerError(String msg, SchedulerException e) {
-        // Not implemented
-    }
-
-    public void schedulerShutdown() {
-        // Not implemented
-    }
-
-    public void triggersPaused(String triggerName, String triggerGroup) {
-        // Not implemented
-    }
-
-    public void triggersResumed(String triggerName, String triggerGroup) {
-        // Not implemented
-    }
-
-    public void jobExecutionVetoed(JobExecutionContext jec) {
-        // Not implemented
-    }
-
-    public void triggerComplete(Trigger trigger, JobExecutionContext jec,
-            int triggerInstructionCode) {
-        // Not implemented
-    }
-
-    public boolean vetoJobExecution(Trigger trigger, JobExecutionContext jec) {
-        // Not implemented
-        return false;
-    }
-
-    /**
-     * @return
-     */
-    public ConnectionProvider getConnection() {
-        return (ConnectionProvider) context
-                .get(ConnectionProviderContextListener.POOL_ATTRIBUTE);
-    }
-
-    /**
-     * @return
-     */
-    public ConfigParameters getConfigParameters() {
-        return (ConfigParameters) context
-                .get(ConfigParameters.CONFIG_ATTRIBUTE);
-    }
-
-    /**
-     * @param date
-     * @return
-     */
-    public final String format(Date date) {
-        final String dateTimeFormat = getConfigParameters()
-                .getJavaDateTimeFormat();
-        return date == null ? null : new SimpleDateFormat(dateTimeFormat)
-                .format(date);
-    }
-
-    /**
-     * @param duration
-     * @return
-     */
-    public static String getDuration(long duration) {
-
-        final int milliseconds = (int) (duration % 1000);
-        final int seconds = (int) ((duration / 1000) % 60);
-        final int minutes = (int) ((duration / 60000) % 60);
-        final int hours = (int) ((duration / 3600000) % 24);
-
-        final String m = (milliseconds < 10 ? "00" : (milliseconds < 100 ? "0"
-                : ""))
-                + milliseconds;
-        final String sec = (seconds < 10 ? "0" : "") + seconds;
-        final String min = (minutes < 10 ? "0" : "") + minutes;
-        final String hr = (hours < 10 ? "0" : "") + hours;
-
-        return hr + ":" + min + ":" + sec + "." + m;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.quartz.JobListener#getName()
-     */
-    public String getName() {
-        return name;
-    }
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.quartz.JobListener#getName()
+   */
+  public String getName() {
+    return name;
+  }
 }

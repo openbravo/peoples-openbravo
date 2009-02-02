@@ -25,15 +25,15 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
  * @author adrianromero
  */
 public class Logout extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /** Creates a new instance of Logout */
-    public Logout() {
-    }
+  /** Creates a new instance of Logout */
+  public Logout() {
+  }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
 
-        logout(request, response);
-    }
+    logout(request, response);
+  }
 }

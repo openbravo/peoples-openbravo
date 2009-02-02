@@ -20,20 +20,20 @@
 package org.openbravo.service.system;
 
 /**
- * Defines the common interface for a validator of system components like the
- * database and the application dictionary.
+ * Defines the common interface for a validator of system components like the database and the
+ * application dictionary.
  * 
  * @author mtaal
  */
 public interface SystemValidator {
 
-    /**
-     * @return the validation category, mainly for reporting
-     */
-    public String getCategory();
+  /**
+   * @return the validation category, mainly for reporting
+   */
+  public String getCategory();
 
-    /**
-     * @return the result of the validation, warning and error messages.
-     */
-    public SystemValidationResult validate();
+  /**
+   * @return the result of the validation, warning and error messages.
+   */
+  public SystemValidationResult validate();
 }

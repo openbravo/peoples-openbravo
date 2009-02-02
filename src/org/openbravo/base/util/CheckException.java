@@ -22,28 +22,28 @@ package org.openbravo.base.util;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Is thrown by the {@link Check Check} invariant check methods. Unchecked state
- * exception which also logs itself.
+ * Is thrown by the {@link Check Check} invariant check methods. Unchecked state exception which
+ * also logs itself.
  * 
  * @author mtaal
  */
 public class CheckException extends OBException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public CheckException() {
-        super();
-    }
+  public CheckException() {
+    super();
+  }
 
-    public CheckException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public CheckException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public CheckException(String message) {
-        super(message);
-    }
+  public CheckException(String message) {
+    super(message);
+  }
 
-    public CheckException(Throwable cause) {
-        super(cause);
-    }
+  public CheckException(Throwable cause) {
+    super(cause);
+  }
 }

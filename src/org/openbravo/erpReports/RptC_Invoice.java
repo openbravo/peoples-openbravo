@@ -37,101 +37,91 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.DateTimeData;
 
 public class RptC_Invoice extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) {
-        super.init(config);
-        boolHist = false;
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    if (vars.commandIn("DEFAULT")) {
+      String strcInvoiceId = vars.getSessionValue("RptC_Invoice.inpcInvoiceId_R");
+      if (strcInvoiceId.equals(""))
+        strcInvoiceId = vars.getSessionValue("RptC_Invoice.inpcInvoiceId");
+      printPagePDF(response, vars, strcInvoiceId);
+    } else if (vars.commandIn("FIND")) {
+      String strbPartnerId = vars.getStringParameter("inpcBpartnerId");
+      String strDateTo = vars.getStringParameter("inpDateInvoiceFrom");
+      String strDateFrom = vars.getStringParameter("inpDateInvoiceTo");
+      String strDocNoFrom = vars.getStringParameter("inpInvoicedocumentnoFrom");
+      String strDocNoTo = vars.getStringParameter("inpInvoicedocumentnoTo");
+      String strcInvoiceId = "";
+      RptCInvoiceData[] data2 = RptCInvoiceData.select(this, strDocNoFrom, strDocNoTo,
+          strbPartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"));
+      int j;
+      for (j = 0; j < data2.length; j++) {
+        if (j != 0)
+          strcInvoiceId += ",";
+        strcInvoiceId += data2[j].cInvoiceId;
+      }
+      strcInvoiceId = "(" + strcInvoiceId + ")";
+      printPagePDF(response, vars, strcInvoiceId);
+    } else
+      pageError(response);
+  }
+
+  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strcInvoiceId)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: pdf");
+
+    if (log4j.isDebugEnabled())
+      log4j.debug("printPagePDF strInvoiceId = " + strcInvoiceId);
+
+    RptCInvoiceHeaderData[] pdfInvoicesData = RptCInvoiceHeaderData.select(this, strcInvoiceId);
+
+    String strLanguage = vars.getLanguage();
+    String strBaseDesign = getBaseDesignPath(strLanguage);
+
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("C_INVOICE_ID", strcInvoiceId);
+
+    String currencyCode = pdfInvoicesData[0].currencyCode;
+    // String currencySymbol=pdfInvoicesData[0].symbol;
+
+    parameters.put("CURRENCYSYMBOL", currencyCode);
+
+    JasperReport jasperReportLines;
+    try {
+      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
+          + "/org/openbravo/erpReports/RptC_Invoice_Lines.jrxml");
+      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+    } catch (JRException e) {
+      e.printStackTrace();
+      throw new ServletException(e.getMessage());
     }
+    parameters.put("SR_LINES_1", jasperReportLines);
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
-
-        if (vars.commandIn("DEFAULT")) {
-            String strcInvoiceId = vars
-                    .getSessionValue("RptC_Invoice.inpcInvoiceId_R");
-            if (strcInvoiceId.equals(""))
-                strcInvoiceId = vars
-                        .getSessionValue("RptC_Invoice.inpcInvoiceId");
-            printPagePDF(response, vars, strcInvoiceId);
-        } else if (vars.commandIn("FIND")) {
-            String strbPartnerId = vars.getStringParameter("inpcBpartnerId");
-            String strDateTo = vars.getStringParameter("inpDateInvoiceFrom");
-            String strDateFrom = vars.getStringParameter("inpDateInvoiceTo");
-            String strDocNoFrom = vars
-                    .getStringParameter("inpInvoicedocumentnoFrom");
-            String strDocNoTo = vars
-                    .getStringParameter("inpInvoicedocumentnoTo");
-            String strcInvoiceId = "";
-            RptCInvoiceData[] data2 = RptCInvoiceData.select(this,
-                    strDocNoFrom, strDocNoTo, strbPartnerId, strDateFrom,
-                    DateTimeData.nDaysAfter(this, strDateTo, "1"));
-            int j;
-            for (j = 0; j < data2.length; j++) {
-                if (j != 0)
-                    strcInvoiceId += ",";
-                strcInvoiceId += data2[j].cInvoiceId;
-            }
-            strcInvoiceId = "(" + strcInvoiceId + ")";
-            printPagePDF(response, vars, strcInvoiceId);
-        } else
-            pageError(response);
+    try {
+      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
+          + "/org/openbravo/erpReports/RptC_Invoice_TaxLines.jrxml");
+      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+    } catch (JRException e) {
+      e.printStackTrace();
+      throw new ServletException(e.getMessage());
     }
+    parameters.put("SR_LINES_2", jasperReportLines);
 
-    void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
-            String strcInvoiceId) throws IOException, ServletException {
-        if (log4j.isDebugEnabled())
-            log4j.debug("Output: pdf");
+    String strReportName = "@basedesign@/org/openbravo/erpReports/RptC_Invoice.jrxml";
+    response.setHeader("Content-disposition", "inline; filename=RptC_Invoice.pdf");
+    renderJR(vars, response, strReportName, "pdf", parameters, pdfInvoicesData, null);
+  }
 
-        if (log4j.isDebugEnabled())
-            log4j.debug("printPagePDF strInvoiceId = " + strcInvoiceId);
-
-        RptCInvoiceHeaderData[] pdfInvoicesData = RptCInvoiceHeaderData.select(
-                this, strcInvoiceId);
-
-        String strLanguage = vars.getLanguage();
-        String strBaseDesign = getBaseDesignPath(strLanguage);
-
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("C_INVOICE_ID", strcInvoiceId);
-
-        String currencyCode = pdfInvoicesData[0].currencyCode;
-        // String currencySymbol=pdfInvoicesData[0].symbol;
-
-        parameters.put("CURRENCYSYMBOL", currencyCode);
-
-        JasperReport jasperReportLines;
-        try {
-            JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
-                    + "/org/openbravo/erpReports/RptC_Invoice_Lines.jrxml");
-            jasperReportLines = JasperCompileManager
-                    .compileReport(jasperDesignLines);
-        } catch (JRException e) {
-            e.printStackTrace();
-            throw new ServletException(e.getMessage());
-        }
-        parameters.put("SR_LINES_1", jasperReportLines);
-
-        try {
-            JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
-                    + "/org/openbravo/erpReports/RptC_Invoice_TaxLines.jrxml");
-            jasperReportLines = JasperCompileManager
-                    .compileReport(jasperDesignLines);
-        } catch (JRException e) {
-            e.printStackTrace();
-            throw new ServletException(e.getMessage());
-        }
-        parameters.put("SR_LINES_2", jasperReportLines);
-
-        String strReportName = "@basedesign@/org/openbravo/erpReports/RptC_Invoice.jrxml";
-        response.setHeader("Content-disposition",
-                "inline; filename=RptC_Invoice.pdf");
-        renderJR(vars, response, strReportName, "pdf", parameters,
-                pdfInvoicesData, null);
-    }
-
-    public String getServletInfo() {
-        return "Servlet that presents the RptCOrders seeker";
-    } // End of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet that presents the RptCOrders seeker";
+  } // End of getServletInfo() method
 }

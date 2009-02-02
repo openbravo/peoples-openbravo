@@ -24,85 +24,78 @@ import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocLine_Bank extends DocLine {
-    static Logger log4jDocLine_Bank = Logger.getLogger(DocLine_Bank.class);
+  static Logger log4jDocLine_Bank = Logger.getLogger(DocLine_Bank.class);
 
-    public String m_C_Payment_ID = "";
-    public String m_C_GLItem_ID = "";
-    public String isManual = "";
-    public String chargeAmt = "";
+  public String m_C_Payment_ID = "";
+  public String m_C_GLItem_ID = "";
+  public String isManual = "";
+  public String chargeAmt = "";
 
-    public String m_TrxAmt = ZERO.toString();
-    public String m_StmtAmt = ZERO.toString();
-    public String m_InterestAmt = ZERO.toString();
-    public String convertChargeAmt = ZERO.toString();
+  public String m_TrxAmt = ZERO.toString();
+  public String m_StmtAmt = ZERO.toString();
+  public String m_InterestAmt = ZERO.toString();
+  public String convertChargeAmt = ZERO.toString();
 
-    public DocLine_Bank(String DocumentType, String TrxHeader_ID,
-            String TrxLine_ID) {
-        super(DocumentType, TrxHeader_ID, TrxLine_ID);
+  public DocLine_Bank(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
+    super(DocumentType, TrxHeader_ID, TrxLine_ID);
+  }
+
+  /**
+   * Set Amounts
+   * 
+   * @param StmtAmt
+   *          statement amt
+   * @param InterestAmt
+   *          interest amount
+   * @param TrxAmt
+   *          transaction amount
+   */
+  public void setAmount(String StmtAmt/* , String InterestAmt */, String TrxAmt) {
+    if (StmtAmt != null && !StmtAmt.equals(""))
+      m_StmtAmt = StmtAmt;
+    /*
+     * if (InterestAmt != null && !StmtAmt.equals("")) m_InterestAmt = InterestAmt;
+     */
+    if (TrxAmt != null && !StmtAmt.equals(""))
+      m_TrxAmt = TrxAmt;
+  } // setAmount
+
+  /**
+   * Get GL Item Account
+   * 
+   * @param as
+   *          account schema
+   * @param amount
+   *          amount for expense(+)/revenue(-)
+   * @return Charge Account or null
+   */
+  public Account getGlitemAccount(AcctSchema as, BigDecimal amount, ConnectionProvider conn) {
+    if (m_C_GLItem_ID.equals(""))
+      return null;
+    String Account_ID = "";
+    DocLineBankData[] data = null;
+    Account acct = null;
+    try {
+      data = DocLineBankData.selectGlitem(conn, m_C_GLItem_ID, as.getC_AcctSchema_ID());
+      if (data.length > 0) {
+        Account_ID = data[0].glitemDebitAcct;
+        if (amount != null && amount.signum() < 0)
+          Account_ID = data[0].glitemCreditAcct;
+      }
+      // No account
+      if (Account_ID.equals("")) {
+        log4jDocLine.warn("getChargeAccount - NO account for m_C_Glitem_ID=" + m_C_GLItem_ID);
+        return null;
+      }
+      // Return Account
+      acct = Account.getAccount(conn, Account_ID);
+    } catch (ServletException e) {
+      log4jDocLine.warn(e);
     }
+    return acct;
+  } // getGlitemAccount
 
-    /**
-     * Set Amounts
-     * 
-     * @param StmtAmt
-     *            statement amt
-     * @param InterestAmt
-     *            interest amount
-     * @param TrxAmt
-     *            transaction amount
-     */
-    public void setAmount(String StmtAmt/* , String InterestAmt */,
-            String TrxAmt) {
-        if (StmtAmt != null && !StmtAmt.equals(""))
-            m_StmtAmt = StmtAmt;
-        /*
-         * if (InterestAmt != null && !StmtAmt.equals("")) m_InterestAmt =
-         * InterestAmt;
-         */
-        if (TrxAmt != null && !StmtAmt.equals(""))
-            m_TrxAmt = TrxAmt;
-    } // setAmount
-
-    /**
-     * Get GL Item Account
-     * 
-     * @param as
-     *            account schema
-     * @param amount
-     *            amount for expense(+)/revenue(-)
-     * @return Charge Account or null
-     */
-    public Account getGlitemAccount(AcctSchema as, BigDecimal amount,
-            ConnectionProvider conn) {
-        if (m_C_GLItem_ID.equals(""))
-            return null;
-        String Account_ID = "";
-        DocLineBankData[] data = null;
-        Account acct = null;
-        try {
-            data = DocLineBankData.selectGlitem(conn, m_C_GLItem_ID, as
-                    .getC_AcctSchema_ID());
-            if (data.length > 0) {
-                Account_ID = data[0].glitemDebitAcct;
-                if (amount != null && amount.signum() < 0)
-                    Account_ID = data[0].glitemCreditAcct;
-            }
-            // No account
-            if (Account_ID.equals("")) {
-                log4jDocLine
-                        .warn("getChargeAccount - NO account for m_C_Glitem_ID="
-                                + m_C_GLItem_ID);
-                return null;
-            }
-            // Return Account
-            acct = Account.getAccount(conn, Account_ID);
-        } catch (ServletException e) {
-            log4jDocLine.warn(e);
-        }
-        return acct;
-    } // getGlitemAccount
-
-    public String getServletInfo() {
-        return "Servlet for the accounting";
-    } // end of getServletInfo() method
+  public String getServletInfo() {
+    return "Servlet for the accounting";
+  } // end of getServletInfo() method
 }

@@ -26,30 +26,27 @@ import org.openbravo.base.session.SessionFactoryController;
 
 /**
  * Initializes and provides the session factory for the runtime dal layer. This
- * SessionFactoryController is initialized after the model has been read
- * in-memory. The {@link DalMappingGenerator DalMappingGenerator} is used to
- * generated the Hibernate mapping for the runtime model (see
- * {@link ModelProvider ModelProvider}.
+ * SessionFactoryController is initialized after the model has been read in-memory. The
+ * {@link DalMappingGenerator DalMappingGenerator} is used to generated the Hibernate mapping for
+ * the runtime model (see {@link ModelProvider ModelProvider}.
  * 
  * @author mtaal
  */
 
 public class DalSessionFactoryController extends SessionFactoryController {
-    private static final Logger log = Logger
-            .getLogger(DalSessionFactoryController.class);
+  private static final Logger log = Logger.getLogger(DalSessionFactoryController.class);
 
-    @Override
-    protected void mapModel(Configuration configuration) {
-        final String mapping = DalMappingGenerator.getInstance()
-                .generateMapping();
-        // System.err.println(mapping);
-        log.debug("Generated mapping: ");
-        log.debug(mapping);
-        configuration.addXML(mapping);
-    }
+  @Override
+  protected void mapModel(Configuration configuration) {
+    final String mapping = DalMappingGenerator.getInstance().generateMapping();
+    // System.err.println(mapping);
+    log.debug("Generated mapping: ");
+    log.debug(mapping);
+    configuration.addXML(mapping);
+  }
 
-    @Override
-    protected void setInterceptor(Configuration configuration) {
-        configuration.setInterceptor(new OBInterceptor());
-    }
+  @Override
+  protected void setInterceptor(Configuration configuration) {
+    configuration.setInterceptor(new OBInterceptor());
+  }
 }

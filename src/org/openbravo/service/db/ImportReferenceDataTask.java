@@ -30,40 +30,38 @@ import org.openbravo.dal.service.OBDal;
  * {@link ReferenceDataTask#REFERENCE_DATA_DIRECTORY} directory.
  */
 public class ImportReferenceDataTask extends ReferenceDataTask {
-    private static final Logger log = Logger
-            .getLogger(ImportReferenceDataTask.class);
+  private static final Logger log = Logger.getLogger(ImportReferenceDataTask.class);
 
-    @Override
-    protected void doExecute() {
-        final File importDir = getReferenceDataDir();
-        if (importDir.listFiles().length == 0) {
-            throw new OBException(
-                    "No import files present in the import directory: "
-                            + importDir.getAbsolutePath());
-        }
-
-        for (final File importFile : importDir.listFiles()) {
-            if (importFile.isDirectory()) {
-                continue;
-            }
-            log.info("Importing from file " + importFile.getAbsolutePath());
-
-            String xml = DbUtility.readFile(importFile);
-            final ClientImportProcessor importProcessor = new ClientImportProcessor();
-            importProcessor.setNewName(null);
-            final ImportResult ir = DataImportService.getInstance()
-                    .importClientData(xml, importProcessor);
-            xml = null; // set to null to make debugging faster
-            if (ir.hasErrorOccured()) {
-                if (ir.getException() != null) {
-                    throw new OBException(ir.getException());
-                }
-                if (ir.getErrorMessages() != null) {
-                    throw new OBException(ir.getErrorMessages());
-                }
-            }
-        }
-        OBDal.getInstance().commitAndClose();
+  @Override
+  protected void doExecute() {
+    final File importDir = getReferenceDataDir();
+    if (importDir.listFiles().length == 0) {
+      throw new OBException("No import files present in the import directory: "
+          + importDir.getAbsolutePath());
     }
+
+    for (final File importFile : importDir.listFiles()) {
+      if (importFile.isDirectory()) {
+        continue;
+      }
+      log.info("Importing from file " + importFile.getAbsolutePath());
+
+      String xml = DbUtility.readFile(importFile);
+      final ClientImportProcessor importProcessor = new ClientImportProcessor();
+      importProcessor.setNewName(null);
+      final ImportResult ir = DataImportService.getInstance()
+          .importClientData(xml, importProcessor);
+      xml = null; // set to null to make debugging faster
+      if (ir.hasErrorOccured()) {
+        if (ir.getException() != null) {
+          throw new OBException(ir.getException());
+        }
+        if (ir.getErrorMessages() != null) {
+          throw new OBException(ir.getErrorMessages());
+        }
+      }
+    }
+    OBDal.getInstance().commitAndClose();
+  }
 
 }
