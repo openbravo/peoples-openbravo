@@ -3016,10 +3016,8 @@ function readOnlyLogicElement(id, readonly) {
 * @see #obtainKeyCode
 */
 function auto_complete_number(obj, isFloatAllowed, isNegativeAllowed, evt) {
-  var number;
-  if (document.all) evt = window.event;
-  if (document.layers) { number = evt.which; }
-  if (document.all)    { number = evt.keyCode;}
+  if (!evt) evt = window.event;
+  var number = evt.keyCode ? evt.keyCode : evt.which ? evt.which : evt.charCode;
   if (number != obtainKeyCode("ENTER") && number != obtainKeyCode("LEFTARROW") && number != obtainKeyCode("RIGHTARROW") && number != obtainKeyCode("UPARROW") && number != obtainKeyCode("DOWNARROW") && number != obtainKeyCode("DELETE") && number != obtainKeyCode("BACKSPACE") && number != obtainKeyCode("END") && number != obtainKeyCode("HOME") && !evt["ctrlKey"]) {
     if (number>95 && number <106) { //Teclado numÃ©rico
       number = number - 96;

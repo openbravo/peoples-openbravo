@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.businessUtility;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Vector;
+import java.util.Random;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -348,8 +349,15 @@ public class Buscador extends HttpSecureAppServlet {
     boolean scriptKeyboard = false;
     boolean scriptSearch = false;
     boolean scriptSelect = false;
+    int randomId4Num1 = 0;
+    int randomId4Num2 = 0;
+    int randomId4Num3 = 0;
+    Random rnd = new Random();
     Vector<Object> vecKeys = new Vector<Object>();
     for (int i = 0; i < fields.length; i++) {
+      randomId4Num1 = rnd.nextInt(10000);
+      randomId4Num2 = rnd.nextInt(10000);
+      randomId4Num3 = rnd.nextInt(10000);
       if (Integer.valueOf(fields[i].displaylength).intValue() > MAX_TEXTBOX_DISPLAY)
         fields[i].displaylength = Integer.toString(MAX_TEXTBOX_DISPLAY);
       strHtml.append("<tr><td class=\"TitleCell\"> <span class=\"LabelText\">");
@@ -549,10 +557,12 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("value=\"").append(fields[i].value).append("\" ");
         if (Utility.isDecimalNumber(fields[i].reference))
           strHtml
-              .append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, true, true);return true;\" ");
+              .append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, true, true, event);return true;\" ")
+              .append("id=\"").append(randomId4Num1).append("\" ");
         else if (Utility.isIntegerNumber(fields[i].reference))
           strHtml
-              .append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, false, false);return true;\" ");
+              .append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, false, false, event);return true;\" ")
+              .append("id=\"").append(randomId4Num1).append("\" ");
         strHtml.append(">");
         if (Utility.isDecimalNumber(fields[i].reference)
             || Utility.isIntegerNumber(fields[i].reference)) {
@@ -575,9 +585,9 @@ public class Buscador extends HttpSecureAppServlet {
               .append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></img>\n");
           strHtml.append("</td>\n</tr>\n</table>\n</td>\n</tr>\n</table>\n</a>\n");
           strHtml
-              .append("<span class=\"invalid\" style=\"display: none;\">* The value entered is not valid.</span>");
+              .append("<span class=\"invalid\" style=\"display: none;\" id=\"").append(randomId4Num1).append("invalidSpan\">* The value entered is not valid.</span>");
           strHtml
-              .append("<span class=\"missing\" style=\"display: none;\">* This value is required.</span>");
+              .append("<span class=\"missing\" style=\"display: none;\" id=\"").append(randomId4Num1).append("missingSpan\">* This value is required.</span>");
           strHtml
               .append("<span class=\"range\" style=\"display: none;\">* This value is out of range.</span>");
           strHtml.append("</td>");
@@ -614,10 +624,12 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("value=\"").append(fields[i].value).append("\" ");
         if (Utility.isDecimalNumber(fields[i].reference)) {
           scriptCalculator = true;
-          strHtml.append("onkeydown=\"auto_complete_number(this, true, true);return true;\" ");
+          strHtml.append("onkeydown=\"auto_complete_number(this, true, true, event);return true;\" ");
+          strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         } else if (Utility.isIntegerNumber(fields[i].reference)) {
           scriptCalculator = true;
-          strHtml.append("onkeydown=\"auto_complete_number(this, false, false);return true;\" ");
+          strHtml.append("onkeydown=\"auto_complete_number(this, false, false, event);return true;\" ");
+          strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         }
         strHtml.append(">");
         strHtml.append("</td>");// <td class=\"FieldButton_bg\">");
@@ -647,10 +659,12 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("value=\"").append(value).append("\" ");
           if (Utility.isDecimalNumber(fields[i].reference))
             strHtml
-                .append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, true, true);return true;\" ");
+                .append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, true, true, event);return true;\" ")
+                .append("id=\"").append(randomId4Num3).append("\" ");
           else if (Utility.isIntegerNumber(fields[i].reference))
             strHtml
-                .append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, false, false);return true;\" ");
+                .append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, false, false, event);return true;\" ")
+                .append("id=\"").append(randomId4Num3).append("\" ");
           strHtml.append(">");
 
           strHtml
@@ -669,9 +683,9 @@ public class Buscador extends HttpSecureAppServlet {
               .append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></img>\n");
           strHtml.append("</td>\n</tr>\n</table>\n</td>\n</tr>\n</table>\n");
           strHtml
-              .append("<span class=\"invalid\" style=\"display: none;\">* The value entered is not valid.</span>");
+              .append("<span class=\"invalid\" style=\"display: none;\" id=\"").append(randomId4Num3).append("invalidSpan\">* The value entered is not valid.</span>");
           strHtml
-              .append("<span class=\"missing\" style=\"display: none;\">* This value is required.</span>");
+              .append("<span class=\"missing\" style=\"display: none;\" id=\"").append(randomId4Num3).append("missingSpan\">* This value is required.</span>");
           strHtml
               .append("<span class=\"range\" style=\"display: none;\">* This value is out of range.</span>");
           strHtml.append("</td>");
@@ -770,6 +784,10 @@ public class Buscador extends HttpSecureAppServlet {
           "/js/default/DateTextBox.js\" type=\"text/javascript\"></script>");
     }
     if (scriptCalculator) {
+      scrScr
+          .append("<script language=\"JavaScript\" src=\"")
+          .append(strReplaceWith)
+          .append("/js/default/ValidationNumberBox.js\" type=\"text/javascript\"></script>");
       scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append(
           "/js/calculator.js\" type=\"text/javascript\"></script>");
     }
