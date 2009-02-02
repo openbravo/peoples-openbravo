@@ -14774,7 +14774,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800059 AD_ORG_ID-->
 <!--800059-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800059 ISACTIVE-->
-<!--800059-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800059-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800059 NAME-->
 <!--800059-->              <NAME><![CDATA[Discounts]]></NAME>
 <!--800059 AD_TABLE_ID-->
@@ -19124,7 +19124,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800211 AD_ORG_ID-->
 <!--800211-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800211 ISACTIVE-->
-<!--800211-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800211-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800211 NAME-->
 <!--800211-->              <NAME><![CDATA[Discounts]]></NAME>
 <!--800211 DESCRIPTION-->
