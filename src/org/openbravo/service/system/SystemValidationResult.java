@@ -32,7 +32,7 @@ import java.util.Map;
 public class SystemValidationResult {
 
   public enum SystemValidationType {
-    MODULE_ERROR, INCORRECT_DEFAULT_VALUE, WRONG_LENGTH, NO_PRIMARY_KEY_COLUMNS, NOT_NULL_IN_DB_NOT_MANDATORY_IN_AD, MANDATORY_IN_AD_NULLABLE_IN_DB, NOT_EXIST_IN_AD, NOT_EXIST_IN_DB, NOT_PART_OF_FOREIGN_KEY, WRONG_TYPE;
+    NAME_TOO_LONG, MODULE_ERROR, INCORRECT_DEFAULT_VALUE, WRONG_LENGTH, NO_PRIMARY_KEY_COLUMNS, NOT_NULL_IN_DB_NOT_MANDATORY_IN_AD, MANDATORY_IN_AD_NULLABLE_IN_DB, NOT_EXIST_IN_AD, NOT_EXIST_IN_DB, NOT_PART_OF_FOREIGN_KEY, WRONG_TYPE;
 
     public String getName() {
       return this.getClass().getSimpleName();
@@ -43,6 +43,29 @@ public class SystemValidationResult {
   private Map<SystemValidationType, List<String>> errors = new HashMap<SystemValidationType, List<String>>();
 
   private String category;
+
+  /**
+   * Add the warnings and errors of one validationResult to this one.
+   * 
+   * @param validationResult
+   *          the warnings/errors of the validationResult are added to this one
+   */
+  public void addAll(SystemValidationResult validationResult) {
+    addAll(warnings, validationResult.getWarnings());
+    addAll(errors, validationResult.getErrors());
+  }
+
+  private void addAll(Map<SystemValidationType, List<String>> current,
+      Map<SystemValidationType, List<String>> add) {
+    for (SystemValidationType svt : add.keySet()) {
+      List<String> list;
+      if ((list = current.get(svt)) != null) {
+        list.addAll(add.get(svt));
+      } else {
+        current.put(svt, add.get(svt));
+      }
+    }
+  }
 
   /**
    * Adds a warning to the result for a specific validation type.

@@ -12024,7 +12024,7 @@
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.Value),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, I_ElementValue T WHERE I_ElementValue_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1DD4B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.dataimport"/>
+    <dataPackage id="5A3ED54AB1DD4B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.dataimport"/>
   </ADTable>
   <ADTable id="800222" identifier="I_Tax" reference="true">
     <id>800222</id>
@@ -12050,7 +12050,7 @@
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT  AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, I_Tax T WHERE I_Tax_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1DD4B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.dataimport"/>
+    <dataPackage id="5A3ED54AB1DD4B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.dataimport"/>
   </ADTable>
   <ADTable id="800175" identifier="I_Budgetline" reference="true">
     <id>800175</id>
@@ -12076,7 +12076,7 @@
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT  AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, I_Budgetline T WHERE I_Budgetline_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1DD4B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.dataimport"/>
+    <dataPackage id="5A3ED54AB1DD4B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.dataimport"/>
   </ADTable>
   <ADColumn id="7929" identifier="Value" reference="true">
     <id>7929</id>
@@ -15422,7 +15422,7 @@ Usually, company's internal identifiers for various records (products, customers
     <isDefault>false</isDefault>
     <module id="0" entity-name="ADModule" identifier="core 2.50.10440 English (USA)"/>
   </ADWindow>
-  <Package id="5A3ED54AB1DD4B84E040007F01006125" identifier="org.openbravo.model.dataimport" reference="true">
+  <DataPackage id="5A3ED54AB1DD4B84E040007F01006125" identifier="org.openbravo.model.dataimport" reference="true">
     <id>5A3ED54AB1DD4B84E040007F01006125</id>
     <name>org.openbravo.model.dataimport</name>
     <description/>
@@ -15433,7 +15433,7 @@ Usually, company's internal identifiers for various records (products, customers
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <updated transient="true">2008-10-27T17:43:39.0Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-  </Package>
+  </DataPackage>
   <ADWindow id="800098" identifier="Import Taxes" reference="true">
     <id>800098</id>
     <isActive>true</isActive>

@@ -46,6 +46,8 @@ import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
  */
 public class ModuleValidator implements SystemValidator {
 
+  private Module validateModule;
+
   public String getCategory() {
     return "Module";
   }
@@ -55,40 +57,16 @@ public class ModuleValidator implements SystemValidator {
    */
   public SystemValidationResult validate() {
     final SystemValidationResult result = new SystemValidationResult();
-    final OBCriteria<Module> modules = OBDal.getInstance().createCriteria(Module.class);
-    for (Module module : modules.list()) {
-      validate(module, result);
+    if (getValidateModule() != null) {
+      validate(getValidateModule(), result);
+    } else {
+      final OBCriteria<Module> modules = OBDal.getInstance().createCriteria(Module.class);
+      for (Module module : modules.list()) {
+        if (module.isInDevelopment()) {
+          validate(module, result);
+        }
+      }
     }
-    return result;
-  }
-
-  public SystemValidationResult validate(String moduleJavaPackage) {
-    final SystemValidationResult result = new SystemValidationResult();
-    final OBCriteria<Module> modules = OBDal.getInstance().createCriteria(Module.class);
-    modules.add(Expression.eq(Module.PROPERTY_JAVAPACKAGE, moduleJavaPackage));
-
-    if (modules.list().size() == 0) {
-      result.addError(SystemValidationType.MODULE_ERROR, "Module " + moduleJavaPackage
-          + " does not exist");
-      return result;
-    }
-    final Module module = modules.list().get(0);
-
-    validate(module, result);
-    return result;
-  }
-
-  public SystemValidationResult validateByModuleId(String moduleId) {
-    final SystemValidationResult result = new SystemValidationResult();
-
-    final Module module = OBDal.getInstance().get(Module.class, moduleId);
-
-    if (module == null) {
-      result.addError(SystemValidationType.MODULE_ERROR, "Module " + moduleId + " does not exist");
-      return result;
-    }
-
-    validate(module, result);
     return result;
   }
 
@@ -213,7 +191,7 @@ public class ModuleValidator implements SystemValidator {
   }
 
   private void checkJavaPackages(Module module, SystemValidationResult result) {
-    for (org.openbravo.model.ad.module.Package pckg : module.getPackageList()) {
+    for (org.openbravo.model.ad.module.DataPackage pckg : module.getDataPackageList()) {
       if (!pckg.getJavaPackage().startsWith(module.getJavaPackage())) {
         result.addError(SystemValidationType.MODULE_ERROR, "Data package " + pckg.getName()
             + " has a java package which is not within the java package of its module "
@@ -238,5 +216,13 @@ public class ModuleValidator implements SystemValidator {
       }
     }
     return null;
+  }
+
+  public Module getValidateModule() {
+    return validateModule;
+  }
+
+  public void setValidateModule(Module validateModule) {
+    this.validateModule = validateModule;
   }
 }

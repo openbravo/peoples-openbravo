@@ -22,8 +22,12 @@ package org.openbravo.service.system;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.service.db.ReferenceDataTask;
+import org.openbravo.dal.core.DalInitializingTask;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
 /**
@@ -31,7 +35,7 @@ import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
  * 
  * @author mtaal
  */
-public class SystemValidationTask extends ReferenceDataTask {
+public class SystemValidationTask extends DalInitializingTask {
   private static final Logger log = Logger.getLogger("SystemValidation");
 
   private String type;
@@ -40,9 +44,12 @@ public class SystemValidationTask extends ReferenceDataTask {
 
   @Override
   protected void doExecute() {
+    final Module module = getModule();
+
     if (getType().contains("database")) {
       log.info("Validating Database and Application Dictionary");
       final DatabaseValidator databaseValidator = new DatabaseValidator();
+      databaseValidator.setValidateModule(module);
       final SystemValidationResult result = databaseValidator.validate();
       if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
         log.warn("Validation successfull no warnings or errors");
@@ -50,15 +57,18 @@ public class SystemValidationTask extends ReferenceDataTask {
         printResult(result);
       }
     }
+    // does both module and database
     if (getType().contains("module")) {
       log.info("Validating Modules");
+
+      final DatabaseValidator databaseValidator = new DatabaseValidator();
+      databaseValidator.setValidateModule(module);
+      final SystemValidationResult result = databaseValidator.validate();
+
       final ModuleValidator moduleValidator = new ModuleValidator();
-      final SystemValidationResult result;
-      if (getModuleJavaPackage() != null) {
-        result = moduleValidator.validate(getModuleJavaPackage());
-      } else {
-        result = moduleValidator.validate();
-      }
+      moduleValidator.setValidateModule(module);
+      result.addAll(moduleValidator.validate());
+
       if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
         log.warn("Validation successfull no warnings or errors");
       } else {
@@ -97,6 +107,19 @@ public class SystemValidationTask extends ReferenceDataTask {
     if (failOnError) {
       throw new OBException(sb.toString());
     }
+  }
+
+  private Module getModule() {
+    if (getModuleJavaPackage() == null) {
+      return null;
+    }
+    final OBCriteria<Module> modules = OBDal.getInstance().createCriteria(Module.class);
+    modules.add(Expression.eq(Module.PROPERTY_JAVAPACKAGE, moduleJavaPackage));
+
+    if (modules.list().size() == 0) {
+      throw new OBException("Module with javapackage " + moduleJavaPackage + " does not exist");
+    }
+    return modules.list().get(0);
   }
 
   public String getType() {

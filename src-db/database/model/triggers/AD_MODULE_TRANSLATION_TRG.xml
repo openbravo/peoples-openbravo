@@ -32,7 +32,7 @@ BEGIN
    WHERE T.AD_MODULE_ID = :new.AD_MODULE_ID;
 
      IF v_Aux > 0 AND :new.istranslationrequired='N' THEN
-       RAISE_APPLICATION_ERROR(-10101, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
+       RAISE_APPLICATION_ERROR(-20103, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
      END IF;
 
     SELECT COUNT(*)
@@ -41,7 +41,7 @@ BEGIN
    WHERE T.AD_MODULE_ID = :new.AD_MODULE_ID;
 
      IF v_Aux > 0 AND :new.istranslationrequired='N' THEN
-       RAISE_APPLICATION_ERROR(-10101, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
+       RAISE_APPLICATION_ERROR(-20103, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
      END IF;
 
     SELECT COUNT(*)
@@ -50,7 +50,7 @@ BEGIN
    WHERE T.AD_MODULE_ID = :new.AD_MODULE_ID;
 
      IF v_Aux > 0 AND :new.istranslationrequired='N' THEN
-       RAISE_APPLICATION_ERROR(-10101, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
+       RAISE_APPLICATION_ERROR(-20103, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
      END IF;
 
     SELECT COUNT(*)
@@ -59,7 +59,7 @@ BEGIN
    WHERE T.AD_MODULE_ID = :new.AD_MODULE_ID;
 
      IF v_Aux > 0 AND :new.istranslationrequired='N' THEN
-       RAISE_APPLICATION_ERROR(-10101, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
+       RAISE_APPLICATION_ERROR(-20103, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
      END IF;
 
     SELECT COUNT(*)
@@ -68,7 +68,7 @@ BEGIN
    WHERE T.AD_MODULE_ID = :new.AD_MODULE_ID;
 
      IF v_Aux > 0 AND :new.istranslationrequired='N' THEN
-       RAISE_APPLICATION_ERROR(-10101, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
+       RAISE_APPLICATION_ERROR(-20103, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
      END IF;
 
     SELECT COUNT(*)
@@ -77,7 +77,7 @@ BEGIN
    WHERE T.AD_MODULE_ID = :new.AD_MODULE_ID;
 
      IF v_Aux > 0 AND :new.istranslationrequired='N' THEN
-       RAISE_APPLICATION_ERROR(-10101, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
+       RAISE_APPLICATION_ERROR(-20103, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
      END IF;
 
     SELECT COUNT(*)
@@ -86,7 +86,7 @@ BEGIN
    WHERE T.AD_MODULE_ID = :new.AD_MODULE_ID;
 
      IF v_Aux > 0 AND :new.istranslationrequired='N' THEN
-       RAISE_APPLICATION_ERROR(-10101, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
+       RAISE_APPLICATION_ERROR(-20103, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
      END IF;
 
     SELECT COUNT(*)
@@ -95,7 +95,7 @@ BEGIN
    WHERE T.AD_MODULE_ID = :new.AD_MODULE_ID;
 
      IF v_Aux > 0 AND :new.istranslationrequired='N' THEN
-       RAISE_APPLICATION_ERROR(-10101, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
+       RAISE_APPLICATION_ERROR(-20103, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
      END IF;
 
     SELECT COUNT(*)
@@ -104,7 +104,7 @@ BEGIN
    WHERE T.AD_MODULE_ID = :new.AD_MODULE_ID;
 
      IF v_Aux > 0 AND :new.istranslationrequired='N' THEN
-       RAISE_APPLICATION_ERROR(-10101, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
+       RAISE_APPLICATION_ERROR(-20103, 'The module has User Interface artifacts, translation required must be set to Yes (checked).') ;
      END IF;
 
 END AD_MODULE_TRANSLATION_TRG

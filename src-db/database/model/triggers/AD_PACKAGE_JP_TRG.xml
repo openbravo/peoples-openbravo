@@ -35,7 +35,7 @@ BEGIN
       AND instr(upper(:new.javapackage), upper(M.javapackage)) = 1;
 
      IF v_Aux = 0 THEN
-       RAISE_APPLICATION_ERROR(-10100, 'The java package of the Data Package must be within the java package of its module.') ;
+       RAISE_APPLICATION_ERROR(-20102, 'The java package of the Data Package must be within the java package of its module.') ;
      END IF;
   END AD_PACKAGE_JP_TRG
 ]]></body>
