@@ -80,10 +80,10 @@ public class CheckSum {
 
   private String[] getFiles(String type) {
     if (type.equals("md5.db.structure")) {
-      String rt[] = { obDir + "src-db/database/model" };
+      String rt[] = { obDir + "src-db/database/model", obDir + "modules" };
       return rt;
     } else if (type.equals("md5.db.sourcedata")) {
-      String rt[] = { obDir + "src-db/database/sourcedata" };
+      String rt[] = { obDir + "src-db/database/sourcedata", obDir + "modules" };
       return rt;
     } else if (type.equals("md5.wad")) {
       String rt[] = { obDir + "src-wad/lib/openbravo-wad.jar" };
