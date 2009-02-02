@@ -118,7 +118,7 @@ public class DataSetService implements OBSingleton {
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
     obc.add(Expression.eq(DataSet.PROPERTY_VALUE, value));
     final List<DataSet> ds = obc.list();
-    Check.isTrue(ds.size() > 0, "There is no DataSet with name " + value);
+    //Check.isTrue(ds.size() > 0, "There is no DataSet with name " + value);
     if (ds.size() == 0) {
       // TODO: throw an exception?
       return null;
