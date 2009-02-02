@@ -85,7 +85,7 @@ public class CreateFile extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setData("reportTyperemittance", "liststructure", TyperemittanceComboData.select(
         this, Utility.getContext(this, vars, "#User_Client", "CreateFile"), Utility.getContext(
-            this, vars, "#User_Org", "CreateFile")));
+            this, vars, "#AccessibleOrgTree", "CreateFile")));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);

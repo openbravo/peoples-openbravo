@@ -363,8 +363,9 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "", Utility.getContext(this, vars, "#User_Org", "CreateFrom"),
-          Utility.getContext(this, vars, "#User_Client", "CreateFrom"), 0);
+          "All_Payment Rule", "", Utility
+              .getContext(this, vars, "#AccessibleOrgTree", "CreateFrom"), Utility.getContext(this,
+              vars, "#User_Client", "CreateFrom"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "CreateFrom", strPaymentRule);
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -401,8 +402,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "C_BankAccount_ID", "", "", Utility.getContext(this, vars, "#User_Org", strWindowId),
-          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
+          "C_BankAccount_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strBank);
       xmlDocument.setData("reportC_BankAccount_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -412,8 +413,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this,
-              vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
+              .getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -737,36 +738,36 @@ public class CreateFrom extends HttpSecureAppServlet {
           strArray = arrayEntradaSimple("arrDatos", new CreateFromShipmentData[0]);
           strArray2 = arrayEntradaSimple("arrDatos2", CreateFromShipmentData
               .selectFromPOSOTrxCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                  "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org",
-                  strWindowId), strBPartner));
+                  "#User_Client", strWindowId), Utility.getContext(this, vars,
+                  "#AccessibleOrgTree", strWindowId), strBPartner));
         } else {
           strArray = arrayEntradaSimple("arrDatos", CreateFromShipmentData.selectFromInvoiceCombo(
               this, vars.getLanguage(),
               Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                  vars, "#User_Org", strWindowId), strBPartner));
+                  vars, "#AccessibleOrgTree", strWindowId), strBPartner));
           strArray2 = arrayEntradaSimple("arrDatos2", CreateFromShipmentData.selectFromPOCombo(
               this, vars.getLanguage(),
               Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                  vars, "#User_Org", strWindowId), strBPartner));
+                  vars, "#AccessibleOrgTree", strWindowId), strBPartner));
         }
       } else { // Loading the Combos in the Invoice's CreateFrom
         if (isSOTrx.equals("Y")) {
           strArray = arrayEntradaSimple("arrDatos", CreateFromInvoiceData
               .selectFromShipmentSOTrxCombo(this, vars.getLanguage(), Utility.getContext(this,
-                  vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org",
-                  strWindowId), strBPartner));
+                  vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
+                  "#AccessibleOrgTree", strWindowId), strBPartner));
           strArray2 = arrayEntradaSimple("arrDatos2", CreateFromInvoiceData.selectFromPOSOTrxCombo(
               this, vars.getLanguage(),
               Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                  vars, "#User_Org", strWindowId), strBPartner));
+                  vars, "#AccessibleOrgTree", strWindowId), strBPartner));
         } else {
           strArray = arrayEntradaSimple("arrDatos", CreateFromInvoiceData.selectFromShipmentCombo(
               this, vars.getLanguage(),
               Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                  vars, "#User_Org", strWindowId), strBPartner));
+                  vars, "#AccessibleOrgTree", strWindowId), strBPartner));
           strArray2 = arrayEntradaSimple("arrDatos2", CreateFromInvoiceData.selectFromPOCombo(this,
               vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId),
-              Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
+              Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
         }
       }
     }
@@ -907,8 +908,9 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility
-              .getContext(this, vars, "#User_Client", strWindowId), 0);
+          "All_Payment Rule", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(
+              this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strPaymentRule);
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -918,8 +920,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this,
-              vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
+              .getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1070,8 +1072,9 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility
-              .getContext(this, vars, "#User_Client", strWindowId), 0);
+          "All_Payment Rule", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(
+              this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strPaymentRule);
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1081,8 +1084,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this,
-              vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
+              .getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1092,8 +1095,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_DP_Management_Status", "", Utility.getContext(this, vars, "#User_Org", strWindowId),
-          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
+          "C_DP_Management_Status", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strStatusFrom);
       xmlDocument.setData("reportStatusFrom", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1103,8 +1106,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_DP_Management_Status", "", Utility.getContext(this, vars, "#User_Org", strWindowId),
-          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
+          "C_DP_Management_Status", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strStatusFrom);
       xmlDocument.setData("reportStatusTo", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1238,8 +1241,9 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility
-              .getContext(this, vars, "#User_Client", strWindowId), 0);
+          "All_Payment Rule", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(
+              this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strPaymentRule);
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1249,8 +1253,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this,
-              vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
+              .getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1260,8 +1264,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_DP_Management_Status", "", Utility.getContext(this, vars, "#User_Org", strWindowId),
-          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
+          "C_DP_Management_Status", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strStatusFrom);
       xmlDocument.setData("reportStatusFrom", "liststructure", comboTableData.select(false));
       comboTableData = null;

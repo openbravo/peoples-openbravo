@@ -250,7 +250,7 @@ public class ProjectSetType extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "C_ProjectType_ID", "", "Project type service", Utility.getContext(this, vars,
-              "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), 0);
+              "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "", strProjectType);
       xmlDocument.setData("reportcProjecttypeId", "liststructure", comboTableData.select(false));
       comboTableData = null;

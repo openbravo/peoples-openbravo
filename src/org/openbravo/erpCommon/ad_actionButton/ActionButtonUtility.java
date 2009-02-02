@@ -40,8 +40,9 @@ public class ActionButtonUtility {
           + " - actual status: " + strDocStatus);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, conn, "LIST", "DocAction",
-          strReference, "", Utility.getContext(conn, vars, "#User_Org", "ActionButtonUtility"),
-          Utility.getContext(conn, vars, "#User_Client", "ActionButtonUtility"), 0);
+          strReference, "", Utility.getContext(conn, vars, "#AccessibleOrgTree",
+              "ActionButtonUtility"), Utility.getContext(conn, vars, "#User_Client",
+              "ActionButtonUtility"), 0);
       Utility.fillSQLParameters(conn, vars, null, comboTableData, "ActionButtonUtility", "");
       ld = comboTableData.select(false);
       comboTableData = null;
@@ -137,8 +138,9 @@ public class ActionButtonUtility {
     FieldProvider[] ld = null;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, conn, "LIST", "ProjectAction",
-          strReference, "", Utility.getContext(conn, vars, "#User_Org", "ActionButtonUtility"),
-          Utility.getContext(conn, vars, "#User_Client", "ActionButtonUtility"), 0);
+          strReference, "", Utility.getContext(conn, vars, "#AccessibleOrgTree",
+              "ActionButtonUtility"), Utility.getContext(conn, vars, "#User_Client",
+              "ActionButtonUtility"), 0);
       Utility.fillSQLParameters(conn, vars, null, comboTableData, "ActionButtonUtility", "");
       ld = comboTableData.select(false);
       comboTableData = null;

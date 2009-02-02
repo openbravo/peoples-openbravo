@@ -122,7 +122,7 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "Maintenance type", "", Utility.getContext(this, vars, "#User_Org",
+          "Maintenance type", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "UpdateMaintenanceScheduled"), Utility.getContext(this, vars, "#User_Client",
               "UpdateMaintenanceScheduled"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "UpdateMaintenanceScheduled",

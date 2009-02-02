@@ -175,8 +175,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "C_UOM_ID", "", "",
-          Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this, vars,
-              "#User_Client", strWindowId), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(
+              this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       xmlDocument.setData("reportC_UOM_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -186,8 +186,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Warehouse_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this,
-              vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
+              .getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSE_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -203,8 +203,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Locator_Type_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this,
-              vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
+              .getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       xmlDocument.setData("reportM_LOCATOR_TYPE", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -263,8 +263,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Warehouse_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this,
-              vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
+              .getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSE_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
