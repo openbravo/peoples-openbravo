@@ -117,8 +117,8 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "C_Tax_ID", "C_Tax",
-          "", Utility.getContext(this, vars, "#User_Org", windowId), Utility.getContext(this, vars,
-              "#User_Client", windowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", windowId), Utility.getContext(
+              this, vars, "#User_Client", windowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, windowId, strTax);
       xmlDocument.setData("reportC_Tax_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -305,8 +305,8 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
       FieldProvider[] fp = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "", "C_Tax", "",
-            Utility.getContext(this, vars, "#User_Org", windowId), Utility.getContext(this, vars,
-                "#User_Client", windowId), 0);
+            Utility.getContext(this, vars, "#AccessibleOrgTree", windowId), Utility.getContext(
+                this, vars, "#User_Client", windowId), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, windowId, "");
         fp = comboTableData.select(false);
         comboTableData = null;

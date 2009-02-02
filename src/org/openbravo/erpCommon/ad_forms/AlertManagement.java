@@ -135,8 +135,8 @@ public class AlertManagement extends HttpSecureAppServlet {
         try {
           AlertManagementData[] data = AlertManagementData.select(this, strActiveFilter,
               strFixedFilter, Utility.getContext(this, vars, "#User_Client", ""), Utility
-                  .getContext(this, vars, "#User_Org", ""), vars.getUser(), vars.getRole(),
-              rules[i].adAlertruleId, strWhere);
+                  .getContext(this, vars, "#AccessibleOrgTree", ""), vars.getUser(),
+              vars.getRole(), rules[i].adAlertruleId, strWhere);
 
           if (data == null || data.length == 0)
             rules[i].display = "none";

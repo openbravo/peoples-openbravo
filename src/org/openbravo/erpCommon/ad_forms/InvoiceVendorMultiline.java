@@ -186,21 +186,24 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
 
     if (data.cDoctypetargetId.equals(""))
       data.cDoctypetargetId = InvoiceVendorMultilineData.selectDocTypeTarget(this, Utility
-          .getContext(this, vars, "#User_Org", windowId), Utility.getContext(this, vars,
+          .getContext(this, vars, "#AccessibleOrgTree", windowId), Utility.getContext(this, vars,
           "#User_Client", windowId), Utility.getContext(this, vars, "#AD_Client_ID", windowId),
           data.issotrx);
 
     if (data.cDoctypeId.equals(""))
       data.cDoctypeId = InvoiceVendorMultilineData.selectDocType(this, Utility.getContext(this,
-          vars, "#User_Org", windowId), Utility.getContext(this, vars, "#User_Client", windowId));
+          vars, "#AccessibleOrgTree", windowId), Utility.getContext(this, vars, "#User_Client",
+          windowId));
 
     if (data.mPricelistId.equals(""))
       data.mPricelistId = InvoiceVendorMultilineData.selectPriceList(this, Utility.getContext(this,
-          vars, "#User_Org", windowId), Utility.getContext(this, vars, "#User_Client", windowId));
+          vars, "#AccessibleOrgTree", windowId), Utility.getContext(this, vars, "#User_Client",
+          windowId));
 
     if (data.cCurrencyId.equals(""))
       data.cCurrencyId = InvoiceVendorMultilineData.selectCurrency(this, Utility.getContext(this,
-          vars, "#User_Org", windowId), Utility.getContext(this, vars, "#User_Client", windowId));
+          vars, "#AccessibleOrgTree", windowId), Utility.getContext(this, vars, "#User_Client",
+          windowId));
 
     if (data.documentno.startsWith("<"))
       data.documentno = Utility.getDocumentNo(this, vars, windowId, "C_Invoice",
@@ -279,8 +282,8 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "", Utility.getContext(this, vars, "#User_Org", windowId), Utility
-              .getContext(this, vars, "#User_Client", windowId), 0);
+          "All_Payment Rule", "", Utility.getContext(this, vars, "#AccessibleOrgTree", windowId),
+          Utility.getContext(this, vars, "#User_Client", windowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, windowId, data[0].paymentrule);
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -312,8 +315,9 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "C_PaymentTerm_ID", "", "", Utility.getContext(this, vars, "#User_Org", windowId),
-          Utility.getContext(this, vars, "#User_Client", windowId), 0);
+          "C_PaymentTerm_ID", "", "", Utility
+              .getContext(this, vars, "#AccessibleOrgTree", windowId), Utility.getContext(this,
+              vars, "#User_Client", windowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, windowId, data[0].cPaymenttermId);
       xmlDocument.setData("reportC_PaymentTerm_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -324,8 +328,8 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "C_BPartner_Location_ID", "", "C_BPartner Location - Bill To", Utility.getContext(this,
-              vars, "#User_Org", windowId), Utility
-              .getContext(this, vars, "#User_Client", windowId), 0);
+              vars, "#AccessibleOrgTree", windowId), Utility.getContext(this, vars, "#User_Client",
+              windowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, windowId, data[0].cBpartnerId);
       xmlDocument.setData("reportC_BPartner_Location_ID", "liststructure", comboTableData
           .select(false));

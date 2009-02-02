@@ -840,7 +840,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     FieldProvider[] data1 = null;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_AcctSchema ElementType", "", Utility.getContext(this, vars, "#User_Org",
+          "C_AcctSchema ElementType", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "InitialOrgSetup"),
           Utility.getContext(this, vars, "#User_Client", "InitialOrgSetup"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "InitialOrgSetup", "");

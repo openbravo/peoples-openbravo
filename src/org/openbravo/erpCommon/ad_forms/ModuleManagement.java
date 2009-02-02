@@ -375,8 +375,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("inpUser", strUser);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "18", "AD_User_ID", "110", "",
-          Utility.getContext(this, vars, "#User_Org", "ModuleManagement"), Utility.getContext(this,
-              vars, "#User_Client", "ModuleManagement"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ModuleManagement"), Utility
+              .getContext(this, vars, "#User_Client", "ModuleManagement"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ModuleManagement", strUser);
       xmlDocument.setData("reportUser", "liststructure", comboTableData.select(false));
       comboTableData = null;

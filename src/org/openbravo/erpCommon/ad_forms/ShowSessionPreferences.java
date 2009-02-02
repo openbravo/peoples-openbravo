@@ -193,8 +193,8 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
     ComboTableData comboTableData = null;
     try {
       comboTableData = new ComboTableData(vars, this, "LIST", "Theme", "800102", "", Utility
-          .getContext(this, vars, "#User_Org", "ShowSessionPreferences"), Utility.getContext(this,
-          vars, "#User_Client", "ShowSessionPreferences"), 0);
+          .getContext(this, vars, "#AccessibleOrgTree", "ShowSessionPreferences"), Utility
+          .getContext(this, vars, "#User_Client", "ShowSessionPreferences"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ShowSessionPreferences", "");
       xmlDocument.setData("reportTheme", "liststructure", comboTableData.select(true));
     } catch (Exception ex) {

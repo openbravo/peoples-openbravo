@@ -146,7 +146,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
             vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars,
             "#User_Client", "CreateAccountingReport"), strcAcctSchemaId, ""));
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
-        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#User_Org",
+        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client",
             "CreateAccountingReport"), strcAcctSchemaId));
 

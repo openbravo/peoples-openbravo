@@ -302,8 +302,8 @@ public class FileImport extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ImpFormat_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars,
-              "#User_Client", ""), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
+              this, vars, "#User_Client", ""), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "", "");
       xmlDocument.setData("reportImpFormat", "liststructure", comboTableData.select(false));
       comboTableData = null;

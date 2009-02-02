@@ -221,7 +221,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramAdOrgId", strOrgId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", "RequisitionToOrder"), Utility
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "RequisitionToOrder"), Utility
               .getContext(this, vars, "#User_Client", "RequisitionToOrder"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "RequisitionToOrder",
           strRequesterId);
@@ -383,7 +383,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramOrderOrgId", strOrgId);
     xmlDocument.setParameter("arrayWarehouse", arrayDobleEntrada("arrWarehouse",
         RequisitionToOrderData.selectWarehouseDouble(this, vars.getClient(), Utility.getContext(
-            this, vars, "#User_Org", "RequisitionToOrder"), Utility.getContext(this, vars,
+            this, vars, "#AccessibleOrgTree", "RequisitionToOrder"), Utility.getContext(this, vars,
             "#User_Client", "RequisitionToOrder"))));
     xmlDocument.setParameter("paramPriceListId", strPriceListId);
     try {
@@ -399,7 +399,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Pricelist_ID",
-          "", "Purchase Pricelist", Utility.getContext(this, vars, "#User_Org",
+          "", "Purchase Pricelist", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "RequisitionToOrder"), Utility.getContext(this, vars, "#User_Client",
               "RequisitionToOrder"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "RequisitionToOrder",
