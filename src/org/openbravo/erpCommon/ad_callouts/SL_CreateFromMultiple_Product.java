@@ -108,7 +108,7 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#User_Org",
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "SLCreateFromMultipleProduct"), Utility.getContext(this, vars, "#User_Client",
                 "SLCreateFromMultipleProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLCreateFromMultipleProduct",
@@ -136,7 +136,7 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#User_Org",
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "SLCreateFromMultipleProduct"), Utility.getContext(this, vars, "#User_Client",
                 "SLCreateFromMultipleProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLCreateFromMultipleProduct",

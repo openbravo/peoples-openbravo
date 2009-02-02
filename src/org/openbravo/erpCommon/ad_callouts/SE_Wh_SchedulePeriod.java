@@ -68,7 +68,7 @@ public class SE_Wh_SchedulePeriod extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
     InvoicingScheduleData[] data = InvoicingScheduleData.selectM_WH_Period_ID(this, Utility
-        .getContext(this, vars, "#User_Org", "SE_Wh_SchedulePeriod"), Utility.getContext(this,
+        .getContext(this, vars, "#AccessibleOrgTree", "SE_Wh_SchedulePeriod"), Utility.getContext(this,
         vars, "#User_Client", "SE_Wh_SchedulePeriod"), strWhSchedule);
     StringBuffer resultado = new StringBuffer();
     if (data == null || data.length == 0)

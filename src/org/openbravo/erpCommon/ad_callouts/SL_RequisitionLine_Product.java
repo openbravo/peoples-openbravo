@@ -146,7 +146,7 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Product_UOM_ID", "", "M_Product_UOM_ID", Utility.getContext(this, vars, "#User_Org",
+            "M_Product_UOM_ID", "", "M_Product_UOM_ID", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "SLRequisitionLineProduct"), Utility.getContext(this, vars, "#User_Client",
                 "SLRequisitionLineProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, strTabId, "");

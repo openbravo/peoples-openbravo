@@ -126,7 +126,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this,
-              vars, "#User_Org", strWindowId), Utility.getContext(this, vars, "#User_Client",
+              vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars, "#User_Client",
               strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       tdv = comboTableData.select(false);
@@ -152,7 +152,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
     FieldProvider[] td = null;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(
               this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       td = comboTableData.select(false);
@@ -179,7 +179,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
     FieldProvider[] tld = null;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-          "AD_User SalesRep", "", Utility.getContext(this, vars, "#User_Org", "SEOrderBPartner"),
+          "AD_User SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SEOrderBPartner"),
           Utility.getContext(this, vars, "#User_Client", "SEOrderBPartner"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SEOrderBPartner", "");
       tld = comboTableData.select(false);
@@ -205,7 +205,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
           "C_Order InvoiceRule", "",
-          Utility.getContext(this, vars, "#User_Org", "SEOrderBPartner"), Utility.getContext(this,
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "SEOrderBPartner"), Utility.getContext(this,
               vars, "#User_Client", "SEOrderBPartner"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SEOrderBPartner", "");
       l = comboTableData.select(false);
@@ -234,7 +234,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
           "C_BPartner Location", "C_BPartner Location - Bill To", Utility.getContext(this, vars,
-              "#User_Org", strWindowId), Utility
+              "#AccessibleOrgTree", strWindowId), Utility
               .getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       tlv = comboTableData.select(false);
@@ -265,7 +265,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
           "C_Order DeliveryRule", "", Utility
-              .getContext(this, vars, "#User_Org", "SEOrderBPartner"), Utility.getContext(this,
+              .getContext(this, vars, "#AccessibleOrgTree", "SEOrderBPartner"), Utility.getContext(this,
               vars, "#User_Client", "SEOrderBPartner"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SEOrderBPartner", "");
       l = comboTableData.select(false);
@@ -296,7 +296,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
     resultado.append("\n),");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID", "",
-          "AD_User C_BPartner User/Contacts", Utility.getContext(this, vars, "#User_Org",
+          "AD_User C_BPartner User/Contacts", Utility.getContext(this, vars, "#AccessibleOrgTree",
               strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       tdv = comboTableData.select(false);

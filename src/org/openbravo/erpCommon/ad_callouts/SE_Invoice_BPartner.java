@@ -108,7 +108,7 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
             "C_BPartner_Location_ID", "", "C_BPartner Location - Bill To", Utility.getContext(this,
-                vars, "#User_Org", strWindowId), Utility.getContext(this, vars, "#User_Client",
+                vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars, "#User_Client",
                 strWindowId), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
         tdv = comboTableData.select(false);
@@ -136,7 +136,7 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
             "AD_User SalesRep", "", Utility
-                .getContext(this, vars, "#User_Org", "SEInvoiceBPartner"), Utility.getContext(this,
+                .getContext(this, vars, "#AccessibleOrgTree", "SEInvoiceBPartner"), Utility.getContext(this,
                 vars, "#User_Client", "SEInvoiceBPartner"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SEInvoiceBPartner", "");
         tld = comboTableData.select(false);
@@ -162,7 +162,7 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpcProjectId_R\", \"\"),");
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID",
-            "", "AD_User C_BPartner User/Contacts", Utility.getContext(this, vars, "#User_Org",
+            "", "AD_User C_BPartner User/Contacts", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
         tdv = comboTableData.select(false);
@@ -188,7 +188,7 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID",
-            "", "AD_User C_BPartner User/Contacts", Utility.getContext(this, vars, "#User_Org",
+            "", "AD_User C_BPartner User/Contacts", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
         tdv = comboTableData.select(false);

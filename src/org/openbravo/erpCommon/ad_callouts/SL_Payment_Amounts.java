@@ -127,7 +127,7 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
             FieldProvider[] tdd = null;
             try {
               ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-                  "C_Currency", "ID", Utility.getContext(this, vars, "#User_Org",
+                  "C_Currency", "ID", Utility.getContext(this, vars, "#AccessibleOrgTree",
                       "SLPaymentAmounts"), Utility.getContext(this, vars, "#User_Client",
                       "SLPaymentAmounts"), 0);
               Utility.fillSQLParameters(this, vars, null, comboTableData, "SLPaymentAmounts", "");

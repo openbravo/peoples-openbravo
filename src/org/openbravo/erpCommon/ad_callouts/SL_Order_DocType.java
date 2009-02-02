@@ -155,7 +155,7 @@ public class SL_Order_DocType extends HttpSecureAppServlet {
         FieldProvider[] l = null;
         try {
           ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-              "C_Order InvoiceRule", "", Utility.getContext(this, vars, "#User_Org",
+              "C_Order InvoiceRule", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                   "SLOrderDocType"), Utility.getContext(this, vars, "#User_Client",
                   "SLOrderDocType"), 0);
           Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderDocType", "");

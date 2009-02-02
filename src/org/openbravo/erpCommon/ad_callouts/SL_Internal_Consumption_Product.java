@@ -105,7 +105,7 @@ public class SL_Internal_Consumption_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#User_Org",
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "SLInternalConsumptionProduct"), Utility.getContext(this, vars, "#User_Client",
                 "SLInternalConsumptionProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLInternalConsumptionProduct",
@@ -133,7 +133,7 @@ public class SL_Internal_Consumption_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#User_Org",
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "SLInternalConsumptionProduct"), Utility.getContext(this, vars, "#User_Client",
                 "SLInternalConsumptionProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLInternalConsumptionProduct",

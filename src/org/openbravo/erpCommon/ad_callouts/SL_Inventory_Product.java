@@ -109,7 +109,7 @@ public class SL_Inventory_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#User_Org", "SLInventoryProduct"),
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLInventoryProduct"),
             Utility.getContext(this, vars, "#User_Client", "SLInventoryProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLInventoryProduct", "");
         tld = comboTableData.select(false);
@@ -135,7 +135,7 @@ public class SL_Inventory_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#User_Org", "SLInventoryProduct"),
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLInventoryProduct"),
             Utility.getContext(this, vars, "#User_Client", "SLInventoryProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLInventoryProduct", "");
         tld = comboTableData.select(false);
