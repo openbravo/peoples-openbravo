@@ -71,11 +71,11 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strConCodigo = vars.getGlobalVariable("inpConCodigo",
           "GeneralAccountingReports|conCodigo", "N");
       String strOrg = vars.getGlobalVariable("inpOrganizacion",
-          "GeneralAccountingReports|organizacion", vars.getOrg());
+          "GeneralAccountingReports|organizacion", "");
       String strLevel = vars.getGlobalVariable("inpLevel", "GeneralAccountingReports|level", "");
       printPageDataSheet(response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
           strDateFromRef, strDateToRef, strElementValue, strConImporte, strOrg, strLevel,
-          strConCodigo, strcAcctSchemaId);
+          strConCodigo, strcAcctSchemaId, "");
     } else if (vars.commandIn("FIND")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "ReportGeneralLedger|cAcctSchemaId");
@@ -118,113 +118,122 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
     GeneralAccountingReportsData[] strGroups = GeneralAccountingReportsData.selectGroups(this,
         strElementValue);
-    strGroups[strGroups.length - 1].pagebreak = "";
 
-    String[][] strElementValueDes = new String[strGroups.length][];
-    if (log4j.isDebugEnabled())
-      log4j.debug("strElementValue:" + strElementValue + " - strGroups.length:" + strGroups.length);
-    for (int i = 0; i < strGroups.length; i++) {
-      GeneralAccountingReportsData[] strElements = GeneralAccountingReportsData.selectElements(
-          this, strGroups[i].id);
-      strElementValueDes[i] = new String[strElements.length];
+    try {
+      strGroups[strGroups.length - 1].pagebreak = "";
+
+      String[][] strElementValueDes = new String[strGroups.length][];
       if (log4j.isDebugEnabled())
-        log4j.debug("strElements.length:" + strElements.length);
-      for (int j = 0; j < strElements.length; j++) {
-        strElementValueDes[i][j] = strElements[j].id;
+        log4j.debug("strElementValue:" + strElementValue + " - strGroups.length:"
+            + strGroups.length);
+      for (int i = 0; i < strGroups.length; i++) {
+        GeneralAccountingReportsData[] strElements = GeneralAccountingReportsData.selectElements(
+            this, strGroups[i].id);
+        strElementValueDes[i] = new String[strElements.length];
+        if (log4j.isDebugEnabled())
+          log4j.debug("strElements.length:" + strElements.length);
+        for (int j = 0; j < strElements.length; j++) {
+          strElementValueDes[i][j] = strElements[j].id;
+        }
       }
+
+      String strTreeOrg = GeneralAccountingReportsData.treeOrg(this, vars.getClient());
+      AccountTree[] acct = new AccountTree[strGroups.length];
+
+      AccountTreeData[][] elements = new AccountTreeData[strGroups.length][];
+
+      WindowTreeData[] dataTree = WindowTreeData.selectTreeID(this, Utility.stringList(vars
+          .getClient()), "EV");
+      String TreeID = "";
+      if (dataTree != null && dataTree.length != 0)
+        TreeID = dataTree[0].id;
+
+      for (int i = 0; i < strGroups.length; i++) {
+        if (vars.getLanguage().equals("en_US")) {
+          elements[i] = AccountTreeData.select(this, strConCodigo, TreeID);
+        } else {
+          elements[i] = AccountTreeData.selectTrl(this, strConCodigo, vars.getLanguage(), TreeID);
+        }
+        AccountTreeData[] accounts = AccountTreeData.selectAcct(this, Utility.getContext(this,
+            vars, "#AccessibleOrgTree", "GeneralAccountingReports"), Utility.getContext(this, vars,
+            "#User_Client", "GeneralAccountingReports"), strDateFrom, DateTimeData.nDaysAfter(this,
+            strDateTo, "1"), strcAcctSchemaId, Tree.getMembers(this, strTreeOrg, strOrg), strAgno,
+            strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"), strAgnoRef);
+
+        {
+          String strIncomeSummary = GeneralAccountingReportsData.incomesummary(this,
+              strcAcctSchemaId);
+          if (log4j.isDebugEnabled())
+            log4j.debug("*********** strIncomeSummary: " + strIncomeSummary);
+          String strISyear = processIncomeSummary(strDateFrom, DateTimeData.nDaysAfter(this,
+              strDateTo, "1"), strAgno, strTreeOrg, strOrg, strcAcctSchemaId);
+          if (log4j.isDebugEnabled())
+            log4j.debug("*********** strISyear: " + strISyear);
+          String strISyearRef = processIncomeSummary(strDateFromRef, DateTimeData.nDaysAfter(this,
+              strDateToRef, "1"), strAgnoRef, strTreeOrg, strOrg, strcAcctSchemaId);
+          if (log4j.isDebugEnabled())
+            log4j.debug("*********** strISyearRef: " + strISyearRef);
+          accounts = appendRecords(accounts, strIncomeSummary, strISyear, strISyearRef);
+
+        }
+        acct[i] = new AccountTree(vars, this, elements[i], accounts, strElementValueDes[i]);
+        if (acct[i] != null) {
+          acct[i].filterSVC();
+          acct[i].filter(strConImporte.equals("Y"), strLevel, false);
+        } else if (log4j.isDebugEnabled())
+          log4j.debug("acct null!!!");
+      }
+
+      xmlDocument.setData("group", strGroups);
+
+      /*
+       * xmlDocument.setParameter("agno", "Ejercicio "+strAgno); xmlDocument.setParameter("agno2",
+       * "Ejercicio "+strAgno); xmlDocument.setParameter("column", "Ejercicio "+strAgno);
+       * xmlDocument.setParameter("columnRef", "Ejercicio "+strAgnoRef);
+       * xmlDocument.setParameter("column1", "Ejercicio "+strAgno);
+       * xmlDocument.setParameter("columnRef1", "Ejercicio "+strAgnoRef);
+       */
+      xmlDocument.setParameter("agno", strAgno);
+      xmlDocument.setParameter("agno2", strAgno);
+      xmlDocument.setParameter("column", strAgno);
+      xmlDocument.setParameter("columnRef", strAgnoRef);
+      xmlDocument.setParameter("org", AcctServerData.selectOrgName(this, strOrg));
+      xmlDocument.setParameter("column1", strAgno);
+      xmlDocument.setParameter("columnRef1", strAgnoRef);
+      xmlDocument.setParameter("companyName", GeneralAccountingReportsData.companyName(this, vars
+          .getClient()));
+      xmlDocument.setParameter("date", DateTimeData.today(this));
+      if (strDateFrom.equals(""))
+        strDateFrom = "01/01/" + strAgno;
+      if (strDateTo.equals(""))
+        strDateTo = "31/12/" + strAgno;
+      if (strDateFromRef.equals(""))
+        strDateFromRef = "01/01/" + strAgnoRef;
+      if (strDateToRef.equals(""))
+        strDateToRef = "31/12/" + strAgnoRef;
+      xmlDocument.setParameter("period", strDateFrom + " - " + strDateTo);
+      xmlDocument.setParameter("periodRef", strDateFromRef + " - " + strDateToRef);
+      xmlDocument.setParameter("agnoInitial", strAgno);
+      xmlDocument.setParameter("agnoRef", strAgnoRef);
+
+      xmlDocument.setParameter("principalTitle", GeneralAccountingReportsData.rptTitle(this,
+          strElementValue));
+
+      AccountTreeData[][] trees = new AccountTreeData[strGroups.length][];
+
+      for (int i = 0; i < strGroups.length; i++)
+        trees[i] = acct[i].getAccounts();
+
+      xmlDocument.setDataArray("reportDetail", "structure1", trees);
+
+      String strResult = xmlDocument.print();
+      renderFO(strResult, response);
+
+    } catch (ArrayIndexOutOfBoundsException e) {
+      printPageDataSheet(response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
+          strDateFromRef, strDateToRef, strElementValue, strConImporte, strOrg, strLevel,
+          strConCodigo, strcAcctSchemaId, "ReportWithoutNodes");
     }
-
-    String strTreeOrg = GeneralAccountingReportsData.treeOrg(this, vars.getClient());
-    AccountTree[] acct = new AccountTree[strGroups.length];
-
-    AccountTreeData[][] elements = new AccountTreeData[strGroups.length][];
-
-    WindowTreeData[] dataTree = WindowTreeData.selectTreeID(this, Utility.stringList(vars
-        .getClient()), "EV");
-    String TreeID = "";
-    if (dataTree != null && dataTree.length != 0)
-      TreeID = dataTree[0].id;
-
-    for (int i = 0; i < strGroups.length; i++) {
-      if (vars.getLanguage().equals("en_US")) {
-        elements[i] = AccountTreeData.select(this, strConCodigo, TreeID);
-      } else {
-        elements[i] = AccountTreeData.selectTrl(this, strConCodigo, vars.getLanguage(), TreeID);
-      }
-      AccountTreeData[] accounts = AccountTreeData.selectAcct(this, Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client",
-          "GeneralAccountingReports"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-          strcAcctSchemaId, Tree.getMembers(this, strTreeOrg, strOrg), strAgno, strDateFromRef,
-          DateTimeData.nDaysAfter(this, strDateToRef, "1"), strAgnoRef);
-
-      {
-        String strIncomeSummary = GeneralAccountingReportsData
-            .incomesummary(this, strcAcctSchemaId);
-        if (log4j.isDebugEnabled())
-          log4j.debug("*********** strIncomeSummary: " + strIncomeSummary);
-        String strISyear = processIncomeSummary(strDateFrom, DateTimeData.nDaysAfter(this,
-            strDateTo, "1"), strAgno, strTreeOrg, strOrg, strcAcctSchemaId);
-        if (log4j.isDebugEnabled())
-          log4j.debug("*********** strISyear: " + strISyear);
-        String strISyearRef = processIncomeSummary(strDateFromRef, DateTimeData.nDaysAfter(this,
-            strDateToRef, "1"), strAgnoRef, strTreeOrg, strOrg, strcAcctSchemaId);
-        if (log4j.isDebugEnabled())
-          log4j.debug("*********** strISyearRef: " + strISyearRef);
-        accounts = appendRecords(accounts, strIncomeSummary, strISyear, strISyearRef);
-
-      }
-      acct[i] = new AccountTree(vars, this, elements[i], accounts, strElementValueDes[i]);
-      if (acct[i] != null) {
-        acct[i].filterSVC();
-        acct[i].filter(strConImporte.equals("Y"), strLevel, false);
-      } else if (log4j.isDebugEnabled())
-        log4j.debug("acct null!!!");
-    }
-
-    xmlDocument.setData("group", strGroups);
-
-    /*
-     * xmlDocument.setParameter("agno", "Ejercicio "+strAgno); xmlDocument.setParameter("agno2",
-     * "Ejercicio "+strAgno); xmlDocument.setParameter("column", "Ejercicio "+strAgno);
-     * xmlDocument.setParameter("columnRef", "Ejercicio "+strAgnoRef);
-     * xmlDocument.setParameter("column1", "Ejercicio "+strAgno);
-     * xmlDocument.setParameter("columnRef1", "Ejercicio "+strAgnoRef);
-     */
-    xmlDocument.setParameter("agno", strAgno);
-    xmlDocument.setParameter("agno2", strAgno);
-    xmlDocument.setParameter("column", strAgno);
-    xmlDocument.setParameter("columnRef", strAgnoRef);
-    xmlDocument.setParameter("org", AcctServerData.selectOrgName(this, strOrg));
-    xmlDocument.setParameter("column1", strAgno);
-    xmlDocument.setParameter("columnRef1", strAgnoRef);
-    xmlDocument.setParameter("companyName", GeneralAccountingReportsData.companyName(this, vars
-        .getClient()));
-    xmlDocument.setParameter("date", DateTimeData.today(this));
-    if (strDateFrom.equals(""))
-      strDateFrom = "01/01/" + strAgno;
-    if (strDateTo.equals(""))
-      strDateTo = "31/12/" + strAgno;
-    if (strDateFromRef.equals(""))
-      strDateFromRef = "01/01/" + strAgnoRef;
-    if (strDateToRef.equals(""))
-      strDateToRef = "31/12/" + strAgnoRef;
-    xmlDocument.setParameter("period", strDateFrom + " - " + strDateTo);
-    xmlDocument.setParameter("periodRef", strDateFromRef + " - " + strDateToRef);
-    xmlDocument.setParameter("agnoInitial", strAgno);
-    xmlDocument.setParameter("agnoRef", strAgnoRef);
-
-    xmlDocument.setParameter("principalTitle", GeneralAccountingReportsData.rptTitle(this,
-        strElementValue));
-
-    AccountTreeData[][] trees = new AccountTreeData[strGroups.length][];
-
-    for (int i = 0; i < strGroups.length; i++)
-      trees[i] = acct[i].getAccounts();
-
-    xmlDocument.setDataArray("reportDetail", "structure1", trees);
-
-    String strResult = xmlDocument.print();
-    renderFO(strResult, response);
   }
 
   AccountTreeData[] appendRecords(AccountTreeData[] data, String strIncomeSummary,
@@ -278,8 +287,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strAgno,
       String strAgnoRef, String strDateFrom, String strDateTo, String strDateFromRef,
       String strDateToRef, String strElementValue, String strConImporte, String strOrg,
-      String strLevel, String strConCodigo, String strcAcctSchemaId) throws IOException,
-      ServletException {
+      String strLevel, String strConCodigo, String strcAcctSchemaId, String strError)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -317,6 +326,18 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       }
     }
 
+    if (!strError.equals("")) {
+      OBError myMessage = new OBError();
+      myMessage.setMessage(Utility.messageBD(this, strError, vars.getLanguage()));
+      myMessage.setType("Error");
+      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      if (myMessage != null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
+    }
+
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("agno", strAgno);
@@ -335,7 +356,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateToRefsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("conImporte", strConImporte);
     xmlDocument.setParameter("conCodigo", strConCodigo);
-    xmlDocument.setParameter("organizacion", strOrg);
+    xmlDocument.setParameter("C_Org_ID", strOrg);
     xmlDocument.setParameter("C_ElementValue_ID", strElementValue);
     xmlDocument.setParameter("level", strLevel);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
@@ -358,8 +379,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     String balancedOrg;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "AD_OrgType_BU_LE", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"),
-          Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), 0);
+          "AD_OrgType_BU_LE", Utility
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(
+              this, vars, "#User_Client", "ReportCashFlow"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashFlow", "");
       FieldProvider[] dataOrg = comboTableData.select(false);
       balancedOrg = "var arrBalancedOrg = new Array(\n";
@@ -378,12 +400,13 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("balancedOrg", balancedOrg);
 
     String allOrg;
+    FieldProvider[] dataOrg;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(
-              this, vars, "#User_Client", "ReportCashFlow"), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility
+              .getContext(this, vars, "#User_Client", "ReportCashFlow"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashFlow", "");
-      FieldProvider[] dataOrg = comboTableData.select(false);
+      dataOrg = comboTableData.select(false);
       allOrg = "var arrAllOrg = new Array(\n";
       for (int i = 0; i < dataOrg.length; i++) {
         allOrg += "new Array(\"" + dataOrg[i].getField("id") + "\",\""
@@ -398,11 +421,13 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
     xmlDocument.setParameter("allOrg", allOrg);
+    xmlDocument.setData("reportC_Org_ID", "liststructure", dataOrg);
 
     String reportIsBalanced;
     GeneralAccountingReportsData[] dataReportIsBalanced = GeneralAccountingReportsData.selectRpt(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"), Utility
-            .getContext(this, vars, "#User_Client", "GeneralAccountingReports"), strcAcctSchemaId);
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
+        Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"),
+        strcAcctSchemaId);
     reportIsBalanced = "var arrReportIsBalanced = new Array(\n";
     for (int i = 0; i < dataReportIsBalanced.length; i++) {
       reportIsBalanced += "new Array(\"" + dataReportIsBalanced[i].getField("id") + "\",\""
