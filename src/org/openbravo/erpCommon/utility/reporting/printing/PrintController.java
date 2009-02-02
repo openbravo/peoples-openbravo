@@ -199,15 +199,16 @@ public class PrintController extends HttpSecureAppServlet {
       for (int i = 0; i < documentIds.length; i++) {
         String documentId = documentIds[i];
         report = buildReport(response, vars, documentId, reportManager, documentType);
-        try {
-          jasperPrint = reportManager.processReport(report, vars);
-          jrPrintReports.add(jasperPrint);
-        } catch (final ReportingException e) {
-          advisePopUp(request, response, "Report processing failed",
-              "Unable to process report selection");
-          // Utility.messageBD(this, "ERROR", vars.getLanguage());
-          log4j.error(e.getMessage());
-        }
+        if (multipleReports)
+          try {
+            jasperPrint = reportManager.processReport(report, vars);
+            jrPrintReports.add(jasperPrint);
+          } catch (final ReportingException e) {
+            advisePopUp(request, response, "Report processing failed",
+                "Unable to process report selection");
+            // Utility.messageBD(this, "ERROR", vars.getLanguage());
+            log4j.error(e.getMessage());
+          }
         if (multipleReports) {
           report.setFilename(UUID.randomUUID().toString() + "_" + report.getFilename());
           report.setDeleteable(true);
@@ -318,6 +319,7 @@ public class PrintController extends HttpSecureAppServlet {
       } else if (vars.commandIn("EMAIL")) {
         int nrOfEmailsSend = 0;
         for (final PocData documentData : pocData) {
+          getEnvironentInformation(pocData, checks);
           final String documentId = documentData.documentId;
           if (log4j.isDebugEnabled())
             log4j.debug("Processing document with id: " + documentId);
@@ -915,8 +917,20 @@ public class PrintController extends HttpSecureAppServlet {
       final String customer = documentData.contactName;
       if (customer == null || customer.length() == 0) {
         final OBError on = new OBError();
-        on.setMessage(Utility.messageBD(this, "There is at least one document with no contact",
-            vars.getLanguage()));
+        on.setMessage(Utility.messageBD(this,
+            "There is at least one document with no contact. Doc nº (" + documentData.ourreference
+                + ")", vars.getLanguage()));
+        on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
+        on.setType("info");
+        final String tabId = vars.getSessionValue("inpTabId");
+        vars.getStringParameter("tab");
+        vars.setMessage(tabId, on);
+        vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
+        printPageClosePopUpAndRefreshParent(response, vars);
+      } else if (documentData.contactEmail == null || documentData.contactEmail.equals("")) {
+        final OBError on = new OBError();
+        on.setMessage(Utility.messageBD(this, "There is at least one document with no email set ("
+            + customer + ")", vars.getLanguage()));
         on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
         on.setType("info");
         final String tabId = vars.getSessionValue("inpTabId");
@@ -937,7 +951,19 @@ public class PrintController extends HttpSecureAppServlet {
         if (salesRep == null || salesRep.length() == 0) {
           final OBError on = new OBError();
           on.setMessage(Utility.messageBD(this,
-              "There is at least one document with no sales rep.", vars.getLanguage()));
+              "There is at least one document with no sender set", vars.getLanguage()));
+          on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
+          on.setType("info");
+          final String tabId = vars.getSessionValue("inpTabId");
+          vars.getStringParameter("tab");
+          vars.setMessage(tabId, on);
+          vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
+          printPageClosePopUpAndRefreshParent(response, vars);
+        } else if (documentData.salesrepEmail == null || documentData.salesrepEmail.equals("")) {
+          final OBError on = new OBError();
+          on.setMessage(Utility.messageBD(this,
+              "There is at least one document with no sender Email set (" + salesRep + ")", vars
+                  .getLanguage()));
           on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
           on.setType("info");
           final String tabId = vars.getSessionValue("inpTabId");
@@ -1059,6 +1085,27 @@ public class PrintController extends HttpSecureAppServlet {
           .getLanguage());
     }
     return ((lenguages.values().size() > 1) ? true : false);
+  }
+
+  private void getEnvironentInformation(PocData[] pocData, HashMap<String, Boolean> checks) {
+    final Map<String, PocData> customerMap = new HashMap<String, PocData>();
+    final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
+    for (final PocData documentData : pocData) {
+      // Map used to count the different users
+
+      final String customer = documentData.contactName;
+      final String salesRep = documentData.salesrepName;
+      if (!customerMap.containsKey(customer)) {
+        customerMap.put(customer, documentData);
+      }
+      if (!salesRepMap.containsKey(salesRep)) {
+        salesRepMap.put(salesRep, documentData);
+      }
+    }
+    boolean moreThanOneCustomer = (customerMap.size() > 1);
+    boolean moreThanOnesalesRep = (salesRepMap.size() > 1);
+    checks.put("moreThanOneCustomer", new Boolean(moreThanOneCustomer));
+    checks.put("moreThanOnesalesRep", new Boolean(moreThanOnesalesRep));
   }
 
   /**
