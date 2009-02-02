@@ -12,5 +12,5 @@
 package org.openbravo.data;
 
 public interface SetFieldProvider {
-    public FieldProvider setFieldProvider(String line);
+  public FieldProvider setFieldProvider(String line);
 }

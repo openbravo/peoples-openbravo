@@ -22,11 +22,11 @@ import java.util.Properties;
 
 public class WADPrice extends WADNumber {
 
-    public WADPrice() {
-    }
+  public WADPrice() {
+  }
 
-    public WADPrice(Properties prop) {
-        setInfo(prop);
-        initialize();
-    }
+  public WADPrice(Properties prop) {
+    setInfo(prop);
+    initialize();
+  }
 }

@@ -12,19 +12,16 @@
 package org.openbravo.xmlEngine;
 
 class FunctionEvaluationValue extends FunctionValue {
-    protected XmlComponentValue arg1Value;
-    protected XmlComponentValue arg2Value;
+  protected XmlComponentValue arg1Value;
+  protected XmlComponentValue arg2Value;
 
-    public FunctionEvaluationValue(FunctionTemplate functionTemplate,
-            XmlDocument xmlDocument) {
-        this.functionTemplate = functionTemplate;
-        arg1Value = functionTemplate.arg1Template
-                .createXmlComponentValue(xmlDocument);
-        if (functionTemplate.arg2Template != null) {
-            arg2Value = functionTemplate.arg2Template
-                    .createXmlComponentValue(xmlDocument);
-        }
-        xmlDocument.hasXmlComponentValue.put(functionTemplate, this); // CHX
+  public FunctionEvaluationValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
+    this.functionTemplate = functionTemplate;
+    arg1Value = functionTemplate.arg1Template.createXmlComponentValue(xmlDocument);
+    if (functionTemplate.arg2Template != null) {
+      arg2Value = functionTemplate.arg2Template.createXmlComponentValue(xmlDocument);
     }
+    xmlDocument.hasXmlComponentValue.put(functionTemplate, this); // CHX
+  }
 
 }

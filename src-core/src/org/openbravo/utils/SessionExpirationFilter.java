@@ -27,45 +27,44 @@ import javax.servlet.http.HttpSession;
 
 public class SessionExpirationFilter implements Filter {
 
-    public void init(FilterConfig config) {
-    }
+  public void init(FilterConfig config) {
+  }
 
-    public void doFilter(ServletRequest req, ServletResponse resp,
-            FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest hReq = (HttpServletRequest) req;
+  public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
+      throws IOException, ServletException {
+    HttpServletRequest hReq = (HttpServletRequest) req;
 
-        HttpSession session = hReq.getSession(false);
-        if (null != session) {
-            Date expirationDate = (Date) session.getAttribute("expirationDate");
+    HttpSession session = hReq.getSession(false);
+    if (null != session) {
+      Date expirationDate = (Date) session.getAttribute("expirationDate");
 
-            if (expirationDate == null)
-                expirationDate = new Date(System.currentTimeMillis() + 1000000); // only
-                                                                                 // for
-                                                                                 // make
-                                                                                 // false
-                                                                                 // "expirationDate.before(new Date())"
-                                                                                 // in
-                                                                                 // the
-                                                                                 // first
-                                                                                 // execution
+      if (expirationDate == null)
+        expirationDate = new Date(System.currentTimeMillis() + 1000000); // only
+      // for
+      // make
+      // false
+      // "expirationDate.before(new Date())"
+      // in
+      // the
+      // first
+      // execution
 
-            if (expirationDate.before(new Date())) {
-                session.invalidate();
-                session = null;
-            } else {
-                if ("1".equalsIgnoreCase(hReq.getParameter("IsAjaxCall"))) {
-                    // Do nothing; don't update the session timestamp
-                } else {
-                    session.setAttribute("expirationDate", new Date(System
-                            .currentTimeMillis()
-                            + session.getMaxInactiveInterval() * 1000));
-                }
-            }
+      if (expirationDate.before(new Date())) {
+        session.invalidate();
+        session = null;
+      } else {
+        if ("1".equalsIgnoreCase(hReq.getParameter("IsAjaxCall"))) {
+          // Do nothing; don't update the session timestamp
+        } else {
+          session.setAttribute("expirationDate", new Date(System.currentTimeMillis()
+              + session.getMaxInactiveInterval() * 1000));
         }
-        chain.doFilter(req, resp);
+      }
     }
+    chain.doFilter(req, resp);
+  }
 
-    public void destroy() {
-    }
+  public void destroy() {
+  }
 
 }

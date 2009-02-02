@@ -22,11 +22,11 @@ import java.util.Properties;
 
 public class WADText extends WADMemo {
 
-    public WADText() {
-    }
+  public WADText() {
+  }
 
-    public WADText(Properties prop) {
-        setInfo(prop);
-        initialize();
-    }
+  public WADText(Properties prop) {
+    setInfo(prop);
+    initialize();
+  }
 }

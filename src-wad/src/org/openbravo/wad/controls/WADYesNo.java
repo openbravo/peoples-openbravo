@@ -24,109 +24,98 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADYesNo extends WADControl {
 
-    public WADYesNo() {
+  public WADYesNo() {
+  }
+
+  public WADYesNo(Properties prop) {
+    setInfo(prop);
+    initialize();
+  }
+
+  public void initialize() {
+    generateJSCode();
+  }
+
+  private void generateJSCode() {
+    setValidation("");
+    setCalloutJS();
+  }
+
+  public String getType() {
+    return "Radio_Check";
+  }
+
+  public String editMode() {
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+        "org/openbravo/wad/controls/WADYesNo").createXmlDocument();
+
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+
+    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")
+        || getData("IsUpdateable").equals("N")) {
+      xmlDocument.setParameter("disabled", "Y");
+      xmlDocument.setParameter("logChanges", "");
+      xmlDocument.setParameter("disabledFalse", "return false;");
+    } else {
+      xmlDocument.setParameter("disabled", "N");
+      xmlDocument.setParameter("callout", getOnChangeCode());
     }
+    if (getData("IsMandatory").equals("Y"))
+      xmlDocument.setParameter("required", "true");
+    else
+      xmlDocument.setParameter("required", "false");
 
-    public WADYesNo(Properties prop) {
-        setInfo(prop);
-        initialize();
+    return replaceHTML(xmlDocument.print());
+  }
+
+  public String newMode() {
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+        "org/openbravo/wad/controls/WADYesNo").createXmlDocument();
+
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+
+    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")) {
+      xmlDocument.setParameter("disabled", "Y");
+      xmlDocument.setParameter("logChanges", "");
+      xmlDocument.setParameter("disabledFalse", "return false;");
+    } else {
+      xmlDocument.setParameter("disabled", "N");
+      xmlDocument.setParameter("callout", getOnChangeCode());
     }
+    if (getData("IsMandatory").equals("Y"))
+      xmlDocument.setParameter("required", "true");
+    else
+      xmlDocument.setParameter("required", "false");
 
-    public void initialize() {
-        generateJSCode();
+    return replaceHTML(xmlDocument.print());
+  }
+
+  public String toXml() {
+    StringBuffer text = new StringBuffer();
+    if (getData("IsParameter").equals("Y")) {
+      if (getData("IsDisplayed").equals("N")) {
+        text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("\" name=\"").append(
+            getData("ColumnName")).append("\" attribute=\"value\"/>");
+      } else {
+        text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("\" name=\"").append(
+            getData("ColumnName")).append("\" boolean=\"checked\" withId=\"paramCheck\"/>");
+      }
+    } else {
+      if (getData("IsDisplayed").equals("N")) {
+        text.append("<FIELD id=\"").append(getData("ColumnName")).append("\" attribute=\"value\">");
+        text.append(getData("ColumnName")).append("</FIELD>");
+      } else {
+        text.append("<FIELD id=\"").append(getData("ColumnName")).append(
+            "\" boolean=\"checked\" withId=\"paramCheck\">");
+        text.append(getData("ColumnName")).append("</FIELD>");
+      }
     }
+    return text.toString();
+  }
 
-    private void generateJSCode() {
-        setValidation("");
-        setCalloutJS();
-    }
-
-    public String getType() {
-        return "Radio_Check";
-    }
-
-    public String editMode() {
-        XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-                "org/openbravo/wad/controls/WADYesNo").createXmlDocument();
-
-        xmlDocument.setParameter("columnName", getData("ColumnName"));
-        xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-
-        if (getData("IsReadOnly").equals("Y")
-                || getData("IsReadOnlyTab").equals("Y")
-                || getData("IsUpdateable").equals("N")) {
-            xmlDocument.setParameter("disabled", "Y");
-            xmlDocument.setParameter("logChanges", "");
-            xmlDocument.setParameter("disabledFalse", "return false;");
-        } else {
-            xmlDocument.setParameter("disabled", "N");
-            xmlDocument.setParameter("callout", getOnChangeCode());
-        }
-        if (getData("IsMandatory").equals("Y"))
-            xmlDocument.setParameter("required", "true");
-        else
-            xmlDocument.setParameter("required", "false");
-
-        return replaceHTML(xmlDocument.print());
-    }
-
-    public String newMode() {
-        XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-                "org/openbravo/wad/controls/WADYesNo").createXmlDocument();
-
-        xmlDocument.setParameter("columnName", getData("ColumnName"));
-        xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-
-        if (getData("IsReadOnly").equals("Y")
-                || getData("IsReadOnlyTab").equals("Y")) {
-            xmlDocument.setParameter("disabled", "Y");
-            xmlDocument.setParameter("logChanges", "");
-            xmlDocument.setParameter("disabledFalse", "return false;");
-        } else {
-            xmlDocument.setParameter("disabled", "N");
-            xmlDocument.setParameter("callout", getOnChangeCode());
-        }
-        if (getData("IsMandatory").equals("Y"))
-            xmlDocument.setParameter("required", "true");
-        else
-            xmlDocument.setParameter("required", "false");
-
-        return replaceHTML(xmlDocument.print());
-    }
-
-    public String toXml() {
-        StringBuffer text = new StringBuffer();
-        if (getData("IsParameter").equals("Y")) {
-            if (getData("IsDisplayed").equals("N")) {
-                text.append("<PARAMETER id=\"").append(getData("ColumnName"))
-                        .append("\" name=\"").append(getData("ColumnName"))
-                        .append("\" attribute=\"value\"/>");
-            } else {
-                text
-                        .append("<PARAMETER id=\"")
-                        .append(getData("ColumnName"))
-                        .append("\" name=\"")
-                        .append(getData("ColumnName"))
-                        .append(
-                                "\" boolean=\"checked\" withId=\"paramCheck\"/>");
-            }
-        } else {
-            if (getData("IsDisplayed").equals("N")) {
-                text.append("<FIELD id=\"").append(getData("ColumnName"))
-                        .append("\" attribute=\"value\">");
-                text.append(getData("ColumnName")).append("</FIELD>");
-            } else {
-                text
-                        .append("<FIELD id=\"")
-                        .append(getData("ColumnName"))
-                        .append("\" boolean=\"checked\" withId=\"paramCheck\">");
-                text.append(getData("ColumnName")).append("</FIELD>");
-            }
-        }
-        return text.toString();
-    }
-
-    public String toJava() {
-        return "";
-    }
+  public String toJava() {
+    return "";
+  }
 }

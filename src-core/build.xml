@@ -43,7 +43,7 @@ doc: generates the api for the project.
     <delete failonerror="false" file="${build.core.lib}/openbravo-core.jar"/>
   </target>
 
-  <target name="compile" depends="clean, init">
+  <target name="compile" depends="init">
     <javac srcdir="${build.core.src}" destdir="${build.core}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
       <classpath refid="core.class.path"/>  
     </javac>
@@ -61,7 +61,7 @@ doc: generates the api for the project.
   </jar> 
 </target>
 
-<target name="build" depends="compile, doc, build.jar">
+<target name="build" depends="compile, build.jar">
 </target>
 
 <target name="doc" depends="init" description="Generate api">

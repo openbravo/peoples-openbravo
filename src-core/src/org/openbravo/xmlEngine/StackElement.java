@@ -16,49 +16,49 @@ package org.openbravo.xmlEngine;
  **/
 
 class StackElement {
-    String strName;
-    boolean isSection;
-    boolean skipCharacters;
-    SectionTemplate previousSection;
-    boolean printEnabled = true;
+  String strName;
+  boolean isSection;
+  boolean skipCharacters;
+  SectionTemplate previousSection;
+  boolean printEnabled = true;
 
-    public StackElement(String strName) {
-        this.strName = strName;
-        this.isSection = false;
-        this.skipCharacters = false;
-    }
+  public StackElement(String strName) {
+    this.strName = strName;
+    this.isSection = false;
+    this.skipCharacters = false;
+  }
 
-    public void setSection(SectionTemplate previousSection) {
-        isSection = true;
-        this.previousSection = previousSection;
-    }
+  public void setSection(SectionTemplate previousSection) {
+    isSection = true;
+    this.previousSection = previousSection;
+  }
 
-    public boolean isSection() {
-        return isSection;
-    }
+  public boolean isSection() {
+    return isSection;
+  }
 
-    public String name() {
-        return strName;
-    }
+  public String name() {
+    return strName;
+  }
 
-    public SectionTemplate section() {
-        return previousSection;
-    }
+  public SectionTemplate section() {
+    return previousSection;
+  }
 
-    public void setSkipCharacters() {
-        this.skipCharacters = true;
-    }
+  public void setSkipCharacters() {
+    this.skipCharacters = true;
+  }
 
-    public boolean skipCharacters() {
-        return skipCharacters;
-    }
+  public boolean skipCharacters() {
+    return skipCharacters;
+  }
 
-    public void setPrintEnabled(boolean printEnabled) {
-        this.printEnabled = printEnabled;
-    }
+  public void setPrintEnabled(boolean printEnabled) {
+    this.printEnabled = printEnabled;
+  }
 
-    public boolean printEnabled() {
-        return printEnabled;
-    }
+  public boolean printEnabled() {
+    return printEnabled;
+  }
 
 }

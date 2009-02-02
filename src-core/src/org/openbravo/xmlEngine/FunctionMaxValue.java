@@ -15,34 +15,30 @@ import org.apache.log4j.Logger;
 
 class FunctionMaxValue extends FunctionEvaluationValue {
 
-    static Logger log4jFunctionMaxValue = Logger
-            .getLogger(FunctionMaxValue.class);
+  static Logger log4jFunctionMaxValue = Logger.getLogger(FunctionMaxValue.class);
 
-    public FunctionMaxValue(FunctionTemplate functionTemplate,
-            XmlDocument xmlDocument) {
-        super(functionTemplate, xmlDocument);
-    }
+  public FunctionMaxValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
+    super(functionTemplate, xmlDocument);
+  }
 
-    public String print() {
-        if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
-                || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
-            return XmlEngine.strTextDividedByZero;
-        } else {
-            return functionTemplate.printFormatOutput(Math.max(Double.valueOf(
-                    arg1Value.printSimple()).doubleValue(), Double.valueOf(
-                    arg2Value.printSimple()).doubleValue()));
-        }
+  public String print() {
+    if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
+        || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
+      return XmlEngine.strTextDividedByZero;
+    } else {
+      return functionTemplate.printFormatOutput(Math.max(Double.valueOf(arg1Value.printSimple())
+          .doubleValue(), Double.valueOf(arg2Value.printSimple()).doubleValue()));
     }
+  }
 
-    public String printSimple() {
-        if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
-                || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
-            return XmlEngine.strTextDividedByZero;
-        } else {
-            return functionTemplate.printFormatSimple(Math.max(Double.valueOf(
-                    arg1Value.printSimple()).doubleValue(), Double.valueOf(
-                    arg2Value.printSimple()).doubleValue()));
-        }
+  public String printSimple() {
+    if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
+        || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
+      return XmlEngine.strTextDividedByZero;
+    } else {
+      return functionTemplate.printFormatSimple(Math.max(Double.valueOf(arg1Value.printSimple())
+          .doubleValue(), Double.valueOf(arg2Value.printSimple()).doubleValue()));
     }
+  }
 
 }

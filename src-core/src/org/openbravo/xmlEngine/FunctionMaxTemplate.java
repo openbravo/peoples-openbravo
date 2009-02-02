@@ -17,23 +17,22 @@ import org.apache.log4j.Logger;
 
 class FunctionMaxTemplate extends FunctionTemplate {
 
-    static Logger log4jFunctionMaxTemplate = Logger
-            .getLogger(FunctionMaxTemplate.class);
+  static Logger log4jFunctionMaxTemplate = Logger.getLogger(FunctionMaxTemplate.class);
 
-    public FunctionMaxTemplate(String fieldName, DecimalFormat formatOutput,
-            DecimalFormat formatSimple, DataTemplate dataTemplate,
-            XmlComponentTemplate arg1, XmlComponentTemplate arg2) {
-        super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
-    }
+  public FunctionMaxTemplate(String fieldName, DecimalFormat formatOutput,
+      DecimalFormat formatSimple, DataTemplate dataTemplate, XmlComponentTemplate arg1,
+      XmlComponentTemplate arg2) {
+    super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
+  }
 
-    public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
-        FunctionValue functionValue = searchFunction(xmlDocument);
-        if (functionValue == null) {
-            if (log4jFunctionMaxTemplate.isDebugEnabled())
-                log4jFunctionMaxTemplate.debug("New FunctionMaxValue");
-            functionValue = new FunctionMaxValue(this, xmlDocument);
-        }
-        return functionValue;
+  public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
+    FunctionValue functionValue = searchFunction(xmlDocument);
+    if (functionValue == null) {
+      if (log4jFunctionMaxTemplate.isDebugEnabled())
+        log4jFunctionMaxTemplate.debug("New FunctionMaxValue");
+      functionValue = new FunctionMaxValue(this, xmlDocument);
     }
+    return functionValue;
+  }
 
 }

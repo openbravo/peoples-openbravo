@@ -15,30 +15,28 @@ import org.apache.log4j.Logger;
 
 class FunctionEqualValue extends FunctionEvaluationValue {
 
-    static Logger log4jFunctionEqualValue = Logger
-            .getLogger(FunctionEqualValue.class);
+  static Logger log4jFunctionEqualValue = Logger.getLogger(FunctionEqualValue.class);
 
-    public FunctionEqualValue(FunctionTemplate functionTemplate,
-            XmlDocument xmlDocument) {
-        super(functionTemplate, xmlDocument);
-    }
+  public FunctionEqualValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
+    super(functionTemplate, xmlDocument);
+  }
 
-    public String print() {
-        if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)) {
-            return XmlEngine.strTextDividedByZero;
-        } else {
-            return functionTemplate.printFormatOutput(Double.valueOf(
-                    arg1Value.printSimple()).doubleValue());
-        }
+  public String print() {
+    if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)) {
+      return XmlEngine.strTextDividedByZero;
+    } else {
+      return functionTemplate.printFormatOutput(Double.valueOf(arg1Value.printSimple())
+          .doubleValue());
     }
+  }
 
-    public String printSimple() {
-        if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)) {
-            return XmlEngine.strTextDividedByZero;
-        } else {
-            return functionTemplate.printFormatSimple(Double.valueOf(
-                    arg1Value.printSimple()).doubleValue());
-        }
+  public String printSimple() {
+    if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)) {
+      return XmlEngine.strTextDividedByZero;
+    } else {
+      return functionTemplate.printFormatSimple(Double.valueOf(arg1Value.printSimple())
+          .doubleValue());
     }
+  }
 
 }

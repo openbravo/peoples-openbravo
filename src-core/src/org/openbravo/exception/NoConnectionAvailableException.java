@@ -16,23 +16,22 @@ package org.openbravo.exception;
  * 
  */
 public class NoConnectionAvailableException extends Exception {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * Constructs a new NoConnectionAvailableException with no detail message.
-     */
-    public NoConnectionAvailableException() {
-        super();
-    }
+  /**
+   * Constructs a new NoConnectionAvailableException with no detail message.
+   */
+  public NoConnectionAvailableException() {
+    super();
+  }
 
-    /**
-     * Constructs a new NoConnectionAvailableException with the specified detail
-     * message.
-     * 
-     * @param s
-     *            the detail message
-     */
-    public NoConnectionAvailableException(String s) {
-        super(s);
-    }
+  /**
+   * Constructs a new NoConnectionAvailableException with the specified detail message.
+   * 
+   * @param s
+   *          the detail message
+   */
+  public NoConnectionAvailableException(String s) {
+    super(s);
+  }
 }

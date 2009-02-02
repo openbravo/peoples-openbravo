@@ -17,23 +17,22 @@ import org.apache.log4j.Logger;
 
 class FunctionAddTemplate extends FunctionTemplate {
 
-    static Logger log4jFunctionAddTemplate = Logger
-            .getLogger(FunctionAddTemplate.class);
+  static Logger log4jFunctionAddTemplate = Logger.getLogger(FunctionAddTemplate.class);
 
-    public FunctionAddTemplate(String fieldName, DecimalFormat formatOutput,
-            DecimalFormat formatSimple, DataTemplate dataTemplate,
-            XmlComponentTemplate arg1, XmlComponentTemplate arg2) {
-        super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
-    }
+  public FunctionAddTemplate(String fieldName, DecimalFormat formatOutput,
+      DecimalFormat formatSimple, DataTemplate dataTemplate, XmlComponentTemplate arg1,
+      XmlComponentTemplate arg2) {
+    super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
+  }
 
-    public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
-        FunctionValue functionValue = searchFunction(xmlDocument);
-        if (functionValue == null) {
-            if (log4jFunctionAddTemplate.isDebugEnabled())
-                log4jFunctionAddTemplate.debug("New FunctionAddValue");
-            functionValue = new FunctionAddValue(this, xmlDocument);
-        }
-        return functionValue;
+  public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
+    FunctionValue functionValue = searchFunction(xmlDocument);
+    if (functionValue == null) {
+      if (log4jFunctionAddTemplate.isDebugEnabled())
+        log4jFunctionAddTemplate.debug("New FunctionAddValue");
+      functionValue = new FunctionAddValue(this, xmlDocument);
     }
+    return functionValue;
+  }
 
 }

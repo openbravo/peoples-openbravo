@@ -15,20 +15,20 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 public class DirFilter implements FilenameFilter {
-    String afn;
+  String afn;
 
-    public DirFilter(String afn) {
-        this.afn = afn;
-    }
+  public DirFilter(String afn) {
+    this.afn = afn;
+  }
 
-    public boolean accept(File dir, String name) {
-        boolean boolReturn;
-        // the name is obtained only to compare it with the filename and not
-        // with all the names in all the path
-        String f = new File(name).getName();
-        // returns true if the filter agrees or if it is a directory
-        boolReturn = f.indexOf(afn, f.length() - afn.length()) != -1
-                || new File(dir, name).isDirectory();
-        return boolReturn;
-    }
+  public boolean accept(File dir, String name) {
+    boolean boolReturn;
+    // the name is obtained only to compare it with the filename and not
+    // with all the names in all the path
+    String f = new File(name).getName();
+    // returns true if the filter agrees or if it is a directory
+    boolReturn = f.indexOf(afn, f.length() - afn.length()) != -1
+        || new File(dir, name).isDirectory();
+    return boolReturn;
+  }
 }

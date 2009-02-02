@@ -12,28 +12,28 @@
 package org.openbravo.data;
 
 class Parameter {
-    boolean boolSequence;
-    boolean boolRepeated = false;
-    String strName;
-    String strInOut;
-    int type;
-    String strDefault;
-    String strValue;
-    String strAfter;
-    String strText;
-    boolean boolOptional = false;
+  boolean boolSequence;
+  boolean boolRepeated = false;
+  String strName;
+  String strInOut;
+  int type;
+  String strDefault;
+  String strValue;
+  String strAfter;
+  String strText;
+  boolean boolOptional = false;
 
-    public Parameter(boolean sequence, String strName, String strDefault,
-            String strInOut, String strOptional, String strAfter, String strText) {
-        boolSequence = sequence;
-        this.strName = strName;
-        this.strDefault = strDefault;
-        this.strInOut = strInOut;
-        if (strOptional != null)
-            boolOptional = true;
-        type = java.sql.Types.VARCHAR;
-        this.strAfter = strAfter;
-        this.strText = strText;
-    }
+  public Parameter(boolean sequence, String strName, String strDefault, String strInOut,
+      String strOptional, String strAfter, String strText) {
+    boolSequence = sequence;
+    this.strName = strName;
+    this.strDefault = strDefault;
+    this.strInOut = strInOut;
+    if (strOptional != null)
+      boolOptional = true;
+    type = java.sql.Types.VARCHAR;
+    this.strAfter = strAfter;
+    this.strText = strText;
+  }
 
 }

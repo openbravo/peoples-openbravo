@@ -15,34 +15,32 @@ import org.apache.log4j.Logger;
 
 class FunctionSubtractValue extends FunctionEvaluationValue {
 
-    static Logger log4jFunctionSubtractValue = Logger
-            .getLogger(FunctionSubtractValue.class);
+  static Logger log4jFunctionSubtractValue = Logger.getLogger(FunctionSubtractValue.class);
 
-    public FunctionSubtractValue(FunctionTemplate functionTemplate,
-            XmlDocument xmlDocument) {
-        super(functionTemplate, xmlDocument);
-    }
+  public FunctionSubtractValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
+    super(functionTemplate, xmlDocument);
+  }
 
-    public String print() {
-        if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
-                || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
-            return XmlEngine.strTextDividedByZero;
-        } else {
-            return functionTemplate.printFormatOutput(Double.valueOf(
-                    arg1Value.printSimple()).doubleValue()
-                    - Double.valueOf(arg2Value.printSimple()).doubleValue());
-        }
+  public String print() {
+    if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
+        || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
+      return XmlEngine.strTextDividedByZero;
+    } else {
+      return functionTemplate.printFormatOutput(Double.valueOf(arg1Value.printSimple())
+          .doubleValue()
+          - Double.valueOf(arg2Value.printSimple()).doubleValue());
     }
+  }
 
-    public String printSimple() {
-        if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
-                || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
-            return XmlEngine.strTextDividedByZero;
-        } else {
-            return functionTemplate.printFormatSimple(Double.valueOf(
-                    arg1Value.printSimple()).doubleValue()
-                    - Double.valueOf(arg2Value.printSimple()).doubleValue());
-        }
+  public String printSimple() {
+    if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
+        || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
+      return XmlEngine.strTextDividedByZero;
+    } else {
+      return functionTemplate.printFormatSimple(Double.valueOf(arg1Value.printSimple())
+          .doubleValue()
+          - Double.valueOf(arg2Value.printSimple()).doubleValue());
     }
+  }
 
 }

@@ -12,12 +12,12 @@
 package org.openbravo.xmlEngine;
 
 class Discard implements IDComponent {
-    int type = DISCARD;
+  int type = DISCARD;
 
-    public Discard() {
-    }
+  public Discard() {
+  }
 
-    public int type() {
-        return type;
-    }
+  public int type() {
+    return type;
+  }
 }

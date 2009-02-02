@@ -12,12 +12,12 @@
 package org.openbravo.xmlEngine;
 
 class AttributeItemTemplate {
-    String name;
-    boolean attributeBoolean = false;
-    XmlThreeTemplate valueTemplate;
-    XmlComponentTemplate valueToCompareTemplate = null;
+  String name;
+  boolean attributeBoolean = false;
+  XmlThreeTemplate valueTemplate;
+  XmlComponentTemplate valueToCompareTemplate = null;
 
-    public AttributeItemValue createAttributeItemValue(XmlDocument xmlDocument) {
-        return new AttributeItemValue(this, xmlDocument);
-    }
+  public AttributeItemValue createAttributeItemValue(XmlDocument xmlDocument) {
+    return new AttributeItemValue(this, xmlDocument);
+  }
 }

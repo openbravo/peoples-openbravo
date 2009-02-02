@@ -15,55 +15,49 @@ import org.apache.log4j.Logger;
 
 class FunctionModuleValue extends FunctionEvaluationValue {
 
-    static Logger log4jFunctionModuleValue = Logger
-            .getLogger(FunctionModuleValue.class);
+  static Logger log4jFunctionModuleValue = Logger.getLogger(FunctionModuleValue.class);
 
-    public FunctionModuleValue(FunctionTemplate functionTemplate,
-            XmlDocument xmlDocument) {
-        super(functionTemplate, xmlDocument);
+  public FunctionModuleValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
+    super(functionTemplate, xmlDocument);
+  }
+
+  public String print() {
+    log4jFunctionModuleValue.debug("Arg2: " + arg2Value.printSimple());
+    log4jFunctionModuleValue.debug("Arg1: " + arg1Value.printSimple());
+
+    if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
+        || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
+      return XmlEngine.strTextDividedByZero;
+    } else {
+      double division = Double.valueOf(arg1Value.printSimple()).doubleValue()
+          / Double.valueOf(arg2Value.printSimple()).doubleValue();
+      if (Double.isInfinite(division) || Double.isNaN(division)) {
+        return XmlEngine.strTextDividedByZero;
+      } else {
+        return functionTemplate.printFormatOutput(Double.valueOf(arg1Value.printSimple())
+            .doubleValue()
+            - Double.valueOf(arg2Value.printSimple()).doubleValue() * Math.floor(division));
+      }
     }
+  }
 
-    public String print() {
-        log4jFunctionModuleValue.debug("Arg2: " + arg2Value.printSimple());
-        log4jFunctionModuleValue.debug("Arg1: " + arg1Value.printSimple());
+  public String printSimple() {
+    log4jFunctionModuleValue.debug("Arg2: " + arg2Value.printSimple());
+    log4jFunctionModuleValue.debug("Arg1: " + arg1Value.printSimple());
 
-        if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
-                || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
-            return XmlEngine.strTextDividedByZero;
-        } else {
-            double division = Double.valueOf(arg1Value.printSimple())
-                    .doubleValue()
-                    / Double.valueOf(arg2Value.printSimple()).doubleValue();
-            if (Double.isInfinite(division) || Double.isNaN(division)) {
-                return XmlEngine.strTextDividedByZero;
-            } else {
-                return functionTemplate.printFormatOutput(Double.valueOf(
-                        arg1Value.printSimple()).doubleValue()
-                        - Double.valueOf(arg2Value.printSimple()).doubleValue()
-                        * Math.floor(division));
-            }
-        }
+    if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
+        || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
+      return XmlEngine.strTextDividedByZero;
+    } else {
+      double division = Double.valueOf(arg1Value.printSimple()).doubleValue()
+          / Double.valueOf(arg2Value.printSimple()).doubleValue();
+      if (Double.isInfinite(division) || Double.isNaN(division)) {
+        return XmlEngine.strTextDividedByZero;
+      } else {
+        return functionTemplate.printFormatSimple(Double.valueOf(arg1Value.printSimple())
+            .doubleValue()
+            - Double.valueOf(arg2Value.printSimple()).doubleValue() * Math.floor(division));
+      }
     }
-
-    public String printSimple() {
-        log4jFunctionModuleValue.debug("Arg2: " + arg2Value.printSimple());
-        log4jFunctionModuleValue.debug("Arg1: " + arg1Value.printSimple());
-
-        if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
-                || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
-            return XmlEngine.strTextDividedByZero;
-        } else {
-            double division = Double.valueOf(arg1Value.printSimple())
-                    .doubleValue()
-                    / Double.valueOf(arg2Value.printSimple()).doubleValue();
-            if (Double.isInfinite(division) || Double.isNaN(division)) {
-                return XmlEngine.strTextDividedByZero;
-            } else {
-                return functionTemplate.printFormatSimple(Double.valueOf(
-                        arg1Value.printSimple()).doubleValue()
-                        - Double.valueOf(arg2Value.printSimple()).doubleValue()
-                        * Math.floor(division));
-            }
-        }
-    }
+  }
 }

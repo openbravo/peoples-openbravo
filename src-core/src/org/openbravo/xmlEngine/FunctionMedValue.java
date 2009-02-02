@@ -14,43 +14,41 @@ package org.openbravo.xmlEngine;
 import org.apache.log4j.Logger;
 
 class FunctionMedValue extends FunctionValue {
-    int count;
-    double sum;
+  int count;
+  double sum;
 
-    static Logger log4jFunctionMedValue = Logger
-            .getLogger(FunctionMedValue.class);
+  static Logger log4jFunctionMedValue = Logger.getLogger(FunctionMedValue.class);
 
-    public FunctionMedValue(FunctionTemplate functionTemplate,
-            XmlDocument xmlDocument) {
-        super(functionTemplate, xmlDocument);
+  public FunctionMedValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
+    super(functionTemplate, xmlDocument);
+  }
+
+  public String print() {
+    if (functionTemplate.formatOutput != null) {
+      return functionTemplate.formatOutput.format(sum / count);
+    } else {
+      return Double.toString(sum / count);
     }
+  }
 
-    public String print() {
-        if (functionTemplate.formatOutput != null) {
-            return functionTemplate.formatOutput.format(sum / count);
-        } else {
-            return Double.toString(sum / count);
-        }
+  public String printSimple() {
+    if (functionTemplate.formatSimple != null) {
+      return functionTemplate.formatSimple.format(sum / count);
+    } else {
+      return Double.toString(sum / count);
     }
+  }
 
-    public String printSimple() {
-        if (functionTemplate.formatSimple != null) {
-            return functionTemplate.formatSimple.format(sum / count);
-        } else {
-            return Double.toString(sum / count);
-        }
+  public void acumulate() {
+    count++;
+    if (!fieldValue.print().equals("")) {
+      sum += Double.valueOf(fieldValue.printSimple()).doubleValue();
     }
+  }
 
-    public void acumulate() {
-        count++;
-        if (!fieldValue.print().equals("")) {
-            sum += Double.valueOf(fieldValue.printSimple()).doubleValue();
-        }
-    }
-
-    public void init() {
-        sum = 0;
-        count = 0;
-    }
+  public void init() {
+    sum = 0;
+    count = 0;
+  }
 
 }

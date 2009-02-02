@@ -17,23 +17,22 @@ import org.apache.log4j.Logger;
 
 class FunctionDivideTemplate extends FunctionTemplate {
 
-    static Logger log4jFunctionDivideTemplate = Logger
-            .getLogger(FunctionDivideTemplate.class);
+  static Logger log4jFunctionDivideTemplate = Logger.getLogger(FunctionDivideTemplate.class);
 
-    public FunctionDivideTemplate(String fieldName, DecimalFormat formatOutput,
-            DecimalFormat formatSimple, DataTemplate dataTemplate,
-            XmlComponentTemplate arg1, XmlComponentTemplate arg2) {
-        super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
-    }
+  public FunctionDivideTemplate(String fieldName, DecimalFormat formatOutput,
+      DecimalFormat formatSimple, DataTemplate dataTemplate, XmlComponentTemplate arg1,
+      XmlComponentTemplate arg2) {
+    super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
+  }
 
-    public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
-        FunctionValue functionValue = searchFunction(xmlDocument);
-        if (functionValue == null) {
-            if (log4jFunctionDivideTemplate.isDebugEnabled())
-                log4jFunctionDivideTemplate.debug("New FunctionDivideValue");
-            functionValue = new FunctionDivideValue(this, xmlDocument);
-        }
-        return functionValue;
+  public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
+    FunctionValue functionValue = searchFunction(xmlDocument);
+    if (functionValue == null) {
+      if (log4jFunctionDivideTemplate.isDebugEnabled())
+        log4jFunctionDivideTemplate.debug("New FunctionDivideValue");
+      functionValue = new FunctionDivideValue(this, xmlDocument);
     }
+    return functionValue;
+  }
 
 }

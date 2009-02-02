@@ -12,5 +12,5 @@
 package org.openbravo.data;
 
 public interface FieldProvider {
-    public String getField(String fieldName);
+  public String getField(String fieldName);
 }

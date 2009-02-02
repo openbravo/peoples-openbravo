@@ -23,140 +23,129 @@ import java.util.Properties;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADLink extends WADControl {
-    private WADControl button;
+  private WADControl button;
 
-    public WADLink() {
+  public WADLink() {
+  }
+
+  public WADLink(Properties prop) {
+    setInfo(prop);
+    initialize();
+  }
+
+  public void initialize() {
+    generateJSCode();
+    this.button = new WADFieldButton("Link", getData("ColumnName"), getData("ColumnNameInp"),
+        getData("Name"), "window.open(document.getElementById('" + getData("ColumnName")
+            + "').value);");
+  }
+
+  private void generateJSCode() {
+    addImport("UrlTextBox", "../../../../../web/js/default/UrlTextBox.js");
+    if (getData("IsMandatory").equals("Y")) {
+      XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+          "org/openbravo/wad/controls/WADLinkJSValidation").createXmlDocument();
+      xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+      setValidation(replaceHTML(xmlDocument.print()));
     }
+    setCalloutJS();
+  }
 
-    public WADLink(Properties prop) {
-        setInfo(prop);
-        initialize();
+  public String getType() {
+    return "TextBox_btn";
+  }
+
+  public String editMode() {
+    String textButton = "";
+    String buttonClass = "";
+    this.button.setReportEngine(getReportEngine());
+    textButton = this.button.toString();
+    buttonClass = this.button.getType();
+    String[] discard = { "" };
+    if (!getData("IsMandatory").equals("Y")) {
+      // if field is not mandatory, discard it
+      discard[0] = "xxmissingSpan";
     }
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+        "org/openbravo/wad/controls/WADLink", discard).createXmlDocument();
 
-    public void initialize() {
-        generateJSCode();
-        this.button = new WADFieldButton("Link", getData("ColumnName"),
-                getData("ColumnNameInp"), getData("Name"),
-                "window.open(document.getElementById('" + getData("ColumnName")
-                        + "').value);");
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+    xmlDocument.setParameter("size", (textButton.equals("") ? "" : "btn_") + getData("CssSize"));
+    xmlDocument.setParameter("maxlength", getData("FieldLength"));
+    xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
+    xmlDocument.setParameter("invalid", WADControl.invalid);
+    xmlDocument.setParameter("missing", WADControl.missing);
+    xmlDocument.setParameter("button", textButton);
+
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData(
+        "IsUpdateable").equals("N"));
+    xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
+    if (!isDisabled && getData("IsMandatory").equals("Y")) {
+      xmlDocument.setParameter("required", "true");
+      xmlDocument.setParameter("requiredClass", " required");
+    } else {
+      xmlDocument.setParameter("required", "false");
+      xmlDocument.setParameter("requiredClass", (isDisabled ? " readonly" : ""));
     }
+    xmlDocument.setParameter("textBoxCSS", (isDisabled ? "_ReadOnly" : ""));
 
-    private void generateJSCode() {
-        addImport("UrlTextBox", "../../../../../web/js/default/UrlTextBox.js");
-        if (getData("IsMandatory").equals("Y")) {
-            XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-                    "org/openbravo/wad/controls/WADLinkJSValidation")
-                    .createXmlDocument();
-            xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-            setValidation(replaceHTML(xmlDocument.print()));
-        }
-        setCalloutJS();
+    xmlDocument.setParameter("callout", getOnChangeCode());
+
+    return replaceHTML(xmlDocument.print());
+  }
+
+  public String newMode() {
+    String textButton = "";
+    String buttonClass = "";
+    this.button.setReportEngine(getReportEngine());
+    textButton = this.button.toString();
+    buttonClass = this.button.getType();
+    String[] discard = { "" };
+    if (!getData("IsMandatory").equals("Y")) {
+      // if field is not mandatory, discard it
+      discard[0] = "xxmissingSpan";
     }
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+        "org/openbravo/wad/controls/WADLink", discard).createXmlDocument();
 
-    public String getType() {
-        return "TextBox_btn";
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+    xmlDocument.setParameter("size", (textButton.equals("") ? "" : "btn_") + getData("CssSize"));
+    xmlDocument.setParameter("maxlength", getData("FieldLength"));
+    xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
+    xmlDocument.setParameter("invalid", WADControl.invalid);
+    xmlDocument.setParameter("missing", WADControl.missing);
+    xmlDocument.setParameter("button", textButton);
+
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
+    xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
+    if (!isDisabled && getData("IsMandatory").equals("Y")) {
+      xmlDocument.setParameter("required", "true");
+      xmlDocument.setParameter("requiredClass", " required");
+    } else {
+      xmlDocument.setParameter("required", "false");
+      xmlDocument.setParameter("requiredClass", (isDisabled ? " readonly" : ""));
     }
+    xmlDocument.setParameter("textBoxCSS", (isDisabled ? "_ReadOnly" : ""));
 
-    public String editMode() {
-        String textButton = "";
-        String buttonClass = "";
-        this.button.setReportEngine(getReportEngine());
-        textButton = this.button.toString();
-        buttonClass = this.button.getType();
-        String[] discard = { "" };
-        if (!getData("IsMandatory").equals("Y")) {
-            // if field is not mandatory, discard it
-            discard[0] = "xxmissingSpan";
-        }
-        XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-                "org/openbravo/wad/controls/WADLink", discard)
-                .createXmlDocument();
+    xmlDocument.setParameter("callout", getOnChangeCode());
 
-        xmlDocument.setParameter("columnName", getData("ColumnName"));
-        xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-        xmlDocument.setParameter("size", (textButton.equals("") ? "" : "btn_")
-                + getData("CssSize"));
-        xmlDocument.setParameter("maxlength", getData("FieldLength"));
-        xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
-        xmlDocument.setParameter("invalid", WADControl.invalid);
-        xmlDocument.setParameter("missing", WADControl.missing);
-        xmlDocument.setParameter("button", textButton);
+    return replaceHTML(xmlDocument.print());
+  }
 
-        boolean isDisabled = (getData("IsReadOnly").equals("Y")
-                || getData("IsReadOnlyTab").equals("Y") || getData(
-                "IsUpdateable").equals("N"));
-        xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
-        if (!isDisabled && getData("IsMandatory").equals("Y")) {
-            xmlDocument.setParameter("required", "true");
-            xmlDocument.setParameter("requiredClass", " required");
-        } else {
-            xmlDocument.setParameter("required", "false");
-            xmlDocument.setParameter("requiredClass", (isDisabled ? " readonly"
-                    : ""));
-        }
-        xmlDocument.setParameter("textBoxCSS", (isDisabled ? "_ReadOnly" : ""));
+  public String toXml() {
+    String[] discard = { "xx_PARAM" };
+    if (getData("IsParameter").equals("Y"))
+      discard[0] = "xx";
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+        "org/openbravo/wad/controls/WADLinkXML", discard).createXmlDocument();
 
-        xmlDocument.setParameter("callout", getOnChangeCode());
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    return replaceHTML(xmlDocument.print());
+  }
 
-        return replaceHTML(xmlDocument.print());
-    }
-
-    public String newMode() {
-        String textButton = "";
-        String buttonClass = "";
-        this.button.setReportEngine(getReportEngine());
-        textButton = this.button.toString();
-        buttonClass = this.button.getType();
-        String[] discard = { "" };
-        if (!getData("IsMandatory").equals("Y")) {
-            // if field is not mandatory, discard it
-            discard[0] = "xxmissingSpan";
-        }
-        XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-                "org/openbravo/wad/controls/WADLink", discard)
-                .createXmlDocument();
-
-        xmlDocument.setParameter("columnName", getData("ColumnName"));
-        xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-        xmlDocument.setParameter("size", (textButton.equals("") ? "" : "btn_")
-                + getData("CssSize"));
-        xmlDocument.setParameter("maxlength", getData("FieldLength"));
-        xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
-        xmlDocument.setParameter("invalid", WADControl.invalid);
-        xmlDocument.setParameter("missing", WADControl.missing);
-        xmlDocument.setParameter("button", textButton);
-
-        boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData(
-                "IsReadOnlyTab").equals("Y"));
-        xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
-        if (!isDisabled && getData("IsMandatory").equals("Y")) {
-            xmlDocument.setParameter("required", "true");
-            xmlDocument.setParameter("requiredClass", " required");
-        } else {
-            xmlDocument.setParameter("required", "false");
-            xmlDocument.setParameter("requiredClass", (isDisabled ? " readonly"
-                    : ""));
-        }
-        xmlDocument.setParameter("textBoxCSS", (isDisabled ? "_ReadOnly" : ""));
-
-        xmlDocument.setParameter("callout", getOnChangeCode());
-
-        return replaceHTML(xmlDocument.print());
-    }
-
-    public String toXml() {
-        String[] discard = { "xx_PARAM" };
-        if (getData("IsParameter").equals("Y"))
-            discard[0] = "xx";
-        XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-                "org/openbravo/wad/controls/WADLinkXML", discard)
-                .createXmlDocument();
-
-        xmlDocument.setParameter("columnName", getData("ColumnName"));
-        return replaceHTML(xmlDocument.print());
-    }
-
-    public String toJava() {
-        return "";
-    }
+  public String toJava() {
+    return "";
+  }
 }

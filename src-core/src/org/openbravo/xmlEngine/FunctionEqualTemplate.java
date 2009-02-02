@@ -17,23 +17,21 @@ import org.apache.log4j.Logger;
 
 class FunctionEqualTemplate extends FunctionTemplate {
 
-    static Logger log4jFunctionEqualTemplate = Logger
-            .getLogger(FunctionEqualTemplate.class);
+  static Logger log4jFunctionEqualTemplate = Logger.getLogger(FunctionEqualTemplate.class);
 
-    public FunctionEqualTemplate(String fieldName, DecimalFormat formatOutput,
-            DecimalFormat formatSimple, DataTemplate dataTemplate,
-            XmlComponentTemplate arg1) {
-        super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, null);
-    }
+  public FunctionEqualTemplate(String fieldName, DecimalFormat formatOutput,
+      DecimalFormat formatSimple, DataTemplate dataTemplate, XmlComponentTemplate arg1) {
+    super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, null);
+  }
 
-    public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
-        FunctionValue functionValue = searchFunction(xmlDocument);
-        if (functionValue == null) {
-            if (log4jFunctionEqualTemplate.isDebugEnabled())
-                log4jFunctionEqualTemplate.debug("New FunctionEqualValue");
-            functionValue = new FunctionEqualValue(this, xmlDocument);
-        }
-        return functionValue;
+  public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
+    FunctionValue functionValue = searchFunction(xmlDocument);
+    if (functionValue == null) {
+      if (log4jFunctionEqualTemplate.isDebugEnabled())
+        log4jFunctionEqualTemplate.debug("New FunctionEqualValue");
+      functionValue = new FunctionEqualValue(this, xmlDocument);
     }
+    return functionValue;
+  }
 
 }

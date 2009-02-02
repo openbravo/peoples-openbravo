@@ -19,8 +19,8 @@
 package org.openbravo.wad;
 
 class KeyStructure {
-    String name;
-    String method;
-    String field;
-    String special;
+  String name;
+  String method;
+  String field;
+  String special;
 }

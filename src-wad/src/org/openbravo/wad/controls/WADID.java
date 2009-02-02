@@ -22,11 +22,11 @@ import java.util.Properties;
 
 public class WADID extends WADControl {
 
-    public WADID() {
-    }
+  public WADID() {
+  }
 
-    public WADID(Properties prop) {
-        setInfo(prop);
-        initialize();
-    }
+  public WADID(Properties prop) {
+    setInfo(prop);
+    initialize();
+  }
 }

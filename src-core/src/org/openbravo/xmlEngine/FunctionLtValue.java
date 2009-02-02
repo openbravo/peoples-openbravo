@@ -15,32 +15,30 @@ import org.apache.log4j.Logger;
 
 class FunctionLtValue extends FunctionEvaluationValue {
 
-    static Logger log4jFunctionLtValue = Logger
-            .getLogger(FunctionLtValue.class);
+  static Logger log4jFunctionLtValue = Logger.getLogger(FunctionLtValue.class);
 
-    public FunctionLtValue(FunctionTemplate functionTemplate,
-            XmlDocument xmlDocument) {
-        super(functionTemplate, xmlDocument);
-    }
+  public FunctionLtValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
+    super(functionTemplate, xmlDocument);
+  }
 
-    public String print() {
-        log4jFunctionLtValue.debug("Arg1: " + arg1Value.printSimple()
-                + " Arg2: " + arg2Value.printSimple());
-        if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
-                || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
-            return XmlEngine.strTextDividedByZero;
-        } else {
-            if (Double.valueOf(arg1Value.printSimple()).doubleValue() < Double
-                    .valueOf(arg2Value.printSimple()).doubleValue()) {
-                return "1";
-            } else {
-                return "0";
-            }
-        }
+  public String print() {
+    log4jFunctionLtValue.debug("Arg1: " + arg1Value.printSimple() + " Arg2: "
+        + arg2Value.printSimple());
+    if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
+        || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
+      return XmlEngine.strTextDividedByZero;
+    } else {
+      if (Double.valueOf(arg1Value.printSimple()).doubleValue() < Double.valueOf(
+          arg2Value.printSimple()).doubleValue()) {
+        return "1";
+      } else {
+        return "0";
+      }
     }
+  }
 
-    public String printSimple() {
-        return print();
-    }
+  public String printSimple() {
+    return print();
+  }
 
 }

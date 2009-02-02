@@ -22,11 +22,11 @@ import java.util.Properties;
 
 public class WADAmount extends WADNumber {
 
-    public WADAmount() {
-    }
+  public WADAmount() {
+  }
 
-    public WADAmount(Properties prop) {
-        setInfo(prop);
-        initialize();
-    }
+  public WADAmount(Properties prop) {
+    setInfo(prop);
+    initialize();
+  }
 }

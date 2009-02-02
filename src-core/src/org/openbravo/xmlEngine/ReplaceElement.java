@@ -12,11 +12,11 @@
 package org.openbravo.xmlEngine;
 
 class ReplaceElement {
-    String replaceWhat;
-    String replaceWith;
+  String replaceWhat;
+  String replaceWith;
 
-    public ReplaceElement(String replaceWhat, String replaceWith) {
-        this.replaceWhat = replaceWhat;
-        this.replaceWith = replaceWith;
-    }
+  public ReplaceElement(String replaceWhat, String replaceWith) {
+    this.replaceWhat = replaceWhat;
+    this.replaceWith = replaceWith;
+  }
 }

@@ -20,55 +20,52 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class FormatRead extends DefaultHandler {
-    Hashtable<String, FormatCouple> hasFormats;
+  Hashtable<String, FormatCouple> hasFormats;
 
-    static Logger log4jFormatRead = Logger.getLogger(FormatRead.class);
+  static Logger log4jFormatRead = Logger.getLogger(FormatRead.class);
 
-    public FormatRead(Hashtable<String, FormatCouple> hasFormats) {
-        this.hasFormats = hasFormats;
-    }
+  public FormatRead(Hashtable<String, FormatCouple> hasFormats) {
+    this.hasFormats = hasFormats;
+  }
 
-    public void startElement(java.lang.String uri, java.lang.String name,
-            java.lang.String qName, Attributes amap) {
+  public void startElement(java.lang.String uri, java.lang.String name, java.lang.String qName,
+      Attributes amap) {
+    if (log4jFormatRead.isDebugEnabled())
+      log4jFormatRead.debug("FormatRead: startElement is called:" + name);
+
+    if (name.equals("Number")) {
+      String formatName = null;
+      char decimal = '.';
+      char grouping = ',';
+      String formatOutput = null;
+      String formatInternal = null;
+
+      for (int i = 0; i < amap.getLength(); i++) {
         if (log4jFormatRead.isDebugEnabled())
-            log4jFormatRead.debug("FormatRead: startElement is called:" + name);
-
-        if (name.equals("Number")) {
-            String formatName = null;
-            char decimal = '.';
-            char grouping = ',';
-            String formatOutput = null;
-            String formatInternal = null;
-
-            for (int i = 0; i < amap.getLength(); i++) {
-                if (log4jFormatRead.isDebugEnabled())
-                    log4jFormatRead
-                            .debug("  FormatRead (attribute list): attribute name="
-                                    + amap.getQName(i)
-                                    + " value="
-                                    + amap.getValue(i));
-                if (amap.getQName(i).equals("name")) {
-                    formatName = amap.getValue(i);
-                } else if (amap.getQName(i).equals("decimal")) {
-                    decimal = amap.getValue(i).charAt(0);
-                } else if (amap.getQName(i).equals("grouping")) {
-                    grouping = amap.getValue(i).charAt(0);
-                } else if (amap.getQName(i).equals("formatOutput")) {
-                    formatOutput = amap.getValue(i);
-                } else if (amap.getQName(i).equals("formatInternal")) {
-                    formatInternal = amap.getValue(i);
-                }
-            }
-            DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-            dfs.setDecimalSeparator(decimal);
-            dfs.setGroupingSeparator(grouping);
-            DecimalFormatSymbols dfsEsp = new DecimalFormatSymbols();
-            dfsEsp.setDecimalSeparator('.');
-            dfsEsp.setGroupingSeparator(',');
-            FormatCouple fc;
-            fc = new FormatCouple(new DecimalFormat(formatOutput, dfs),
-                    new DecimalFormat(formatInternal, dfsEsp));
-            hasFormats.put(formatName, fc);
-        } // number
-    }
+          log4jFormatRead.debug("  FormatRead (attribute list): attribute name=" + amap.getQName(i)
+              + " value=" + amap.getValue(i));
+        if (amap.getQName(i).equals("name")) {
+          formatName = amap.getValue(i);
+        } else if (amap.getQName(i).equals("decimal")) {
+          decimal = amap.getValue(i).charAt(0);
+        } else if (amap.getQName(i).equals("grouping")) {
+          grouping = amap.getValue(i).charAt(0);
+        } else if (amap.getQName(i).equals("formatOutput")) {
+          formatOutput = amap.getValue(i);
+        } else if (amap.getQName(i).equals("formatInternal")) {
+          formatInternal = amap.getValue(i);
+        }
+      }
+      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+      dfs.setDecimalSeparator(decimal);
+      dfs.setGroupingSeparator(grouping);
+      DecimalFormatSymbols dfsEsp = new DecimalFormatSymbols();
+      dfsEsp.setDecimalSeparator('.');
+      dfsEsp.setGroupingSeparator(',');
+      FormatCouple fc;
+      fc = new FormatCouple(new DecimalFormat(formatOutput, dfs), new DecimalFormat(formatInternal,
+          dfsEsp));
+      hasFormats.put(formatName, fc);
+    } // number
+  }
 }

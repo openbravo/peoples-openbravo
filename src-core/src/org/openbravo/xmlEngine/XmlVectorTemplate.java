@@ -14,5 +14,5 @@ package org.openbravo.xmlEngine;
 import java.util.Vector;
 
 public class XmlVectorTemplate extends Vector<Object> {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 }

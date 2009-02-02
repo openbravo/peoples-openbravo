@@ -12,5 +12,5 @@
 package org.openbravo.xmlEngine;
 
 public interface XmlComponentTemplate {
-    XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument);
+  XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument);
 }

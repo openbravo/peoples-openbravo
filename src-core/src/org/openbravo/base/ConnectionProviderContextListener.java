@@ -32,103 +32,95 @@ import org.openbravo.exception.PoolNotFoundException;
  * 
  * @author Ben Sommerville
  */
-public class ConnectionProviderContextListener implements
-        ServletContextListener {
-    public static final String POOL_ATTRIBUTE = "openbravoPool";
-    private static Logger log4j = Logger
-            .getLogger(ConnectionProviderContextListener.class);
+public class ConnectionProviderContextListener implements ServletContextListener {
+  public static final String POOL_ATTRIBUTE = "openbravoPool";
+  private static Logger log4j = Logger.getLogger(ConnectionProviderContextListener.class);
 
-    public void contextInitialized(ServletContextEvent event) {
-        ServletContext context = event.getServletContext();
-        ConfigParameters configParameters = ConfigParameters
-                .retrieveFrom(context);
+  public void contextInitialized(ServletContextEvent event) {
+    ServletContext context = event.getServletContext();
+    ConfigParameters configParameters = ConfigParameters.retrieveFrom(context);
 
-        try {
-            ConnectionProvider pool = createPool(configParameters);
-            context.setAttribute(POOL_ATTRIBUTE, pool);
-        } catch (PoolNotFoundException e) {
-            log4j.error("Unable to create a connection pool", e);
-        }
-
+    try {
+      ConnectionProvider pool = createPool(configParameters);
+      context.setAttribute(POOL_ATTRIBUTE, pool);
+    } catch (PoolNotFoundException e) {
+      log4j.error("Unable to create a connection pool", e);
     }
 
-    public void contextDestroyed(ServletContextEvent event) {
-        ServletContext context = event.getServletContext();
-        destroyPool(getPool(context));
-        context.removeAttribute(POOL_ATTRIBUTE);
-    }
+  }
 
-    public static ConnectionProvider getPool(ServletContext context) {
-        return (ConnectionProvider) context.getAttribute(POOL_ATTRIBUTE);
-    }
+  public void contextDestroyed(ServletContextEvent event) {
+    ServletContext context = event.getServletContext();
+    destroyPool(getPool(context));
+    context.removeAttribute(POOL_ATTRIBUTE);
+  }
 
-    public static void reloadPool(ServletContext context) throws Exception {
-        ConnectionProvider pool = getPool(context);
-        if (pool instanceof ConnectionProviderImpl) {
-            ConfigParameters configParameters = ConfigParameters
-                    .retrieveFrom(context);
-            String strPoolFile = configParameters.getPoolFilePath();
-            boolean isRelative = !strPoolFile.startsWith("/")
-                    && !strPoolFile.substring(1, 1).equals(":");
-            ((ConnectionProviderImpl) pool).reload(strPoolFile, isRelative,
-                    configParameters.strContext);
-            ;
-        }
-    }
+  public static ConnectionProvider getPool(ServletContext context) {
+    return (ConnectionProvider) context.getAttribute(POOL_ATTRIBUTE);
+  }
 
-    private ConnectionProvider createPool(ConfigParameters configParameters)
-            throws PoolNotFoundException {
-        return createXmlPool(configParameters);
+  public static void reloadPool(ServletContext context) throws Exception {
+    ConnectionProvider pool = getPool(context);
+    if (pool instanceof ConnectionProviderImpl) {
+      ConfigParameters configParameters = ConfigParameters.retrieveFrom(context);
+      String strPoolFile = configParameters.getPoolFilePath();
+      boolean isRelative = !strPoolFile.startsWith("/") && !strPoolFile.substring(1, 1).equals(":");
+      ((ConnectionProviderImpl) pool).reload(strPoolFile, isRelative, configParameters.strContext);
+      ;
     }
+  }
 
-    private static ConnectionProvider createXmlPool(
-            ConfigParameters configParameters) throws PoolNotFoundException {
-        try {
-            String strPoolFile = configParameters.getPoolFilePath();
-            boolean isRelative = !strPoolFile.startsWith("/")
-                    && !strPoolFile.substring(1, 1).equals(":");
-            if (isJndiModeOn(strPoolFile)) {
-                return new JNDIConnectionProvider(strPoolFile, isRelative);
-            } else {
-                return new ConnectionProviderImpl(strPoolFile, isRelative,
-                        configParameters.strContext);
-            }
+  private ConnectionProvider createPool(ConfigParameters configParameters)
+      throws PoolNotFoundException {
+    return createXmlPool(configParameters);
+  }
 
-        } catch (Exception ex) {
-            throw new PoolNotFoundException(ex.getMessage());
-        }
+  private static ConnectionProvider createXmlPool(ConfigParameters configParameters)
+      throws PoolNotFoundException {
+    try {
+      String strPoolFile = configParameters.getPoolFilePath();
+      boolean isRelative = !strPoolFile.startsWith("/") && !strPoolFile.substring(1, 1).equals(":");
+      if (isJndiModeOn(strPoolFile)) {
+        return new JNDIConnectionProvider(strPoolFile, isRelative);
+      } else {
+        return new ConnectionProviderImpl(strPoolFile, isRelative, configParameters.strContext);
+      }
+
+    } catch (Exception ex) {
+      throw new PoolNotFoundException(ex.getMessage());
     }
+  }
 
-    private static boolean isJndiModeOn(String strPoolFile) {
-        Properties properties = new Properties();
-        String jndiUsage = null;
-        try {
-            properties.load(new FileInputStream(strPoolFile));
-            jndiUsage = properties.getProperty("JNDI.usage");
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return ("yes".equals(jndiUsage) ? true : false);
+  private static boolean isJndiModeOn(String strPoolFile) {
+    Properties properties = new Properties();
+    String jndiUsage = null;
+    try {
+      properties.load(new FileInputStream(strPoolFile));
+      jndiUsage = properties.getProperty("JNDI.usage");
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
+    return ("yes".equals(jndiUsage) ? true : false);
+  }
 
-    private static void destroyPool(ConnectionProvider pool) {
-        if (pool != null && pool instanceof JNDIConnectionProvider) {
-            try {
-                ((JNDIConnectionProvider) pool).destroy();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (pool != null && pool instanceof ConnectionProvider) {
-            try {
-                (pool).destroy();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+  private static void destroyPool(ConnectionProvider pool) {
+    if (pool != null && pool instanceof JNDIConnectionProvider) {
+      try {
+        ((JNDIConnectionProvider) pool).destroy();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    } else if (pool != null && pool instanceof ConnectionProvider) {
+      try {
+        (pool).destroy();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
+  }
 
 }

@@ -12,11 +12,11 @@
 package org.openbravo.xmlEngine;
 
 public interface XmlComponentValue {
-    String print();
+  String print();
 
-    String printPrevious();
+  String printPrevious();
 
-    String printSimple();
+  String printSimple();
 
-    String printPreviousSimple();
+  String printPreviousSimple();
 }

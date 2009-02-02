@@ -12,38 +12,32 @@
 package org.openbravo.xmlEngine;
 
 class AttributeItemValue {
-    protected AttributeItemTemplate attributeItemTemplate;
-    XmlThreeValue value;
-    XmlComponentValue valueToCompare = null;
+  protected AttributeItemTemplate attributeItemTemplate;
+  XmlThreeValue value;
+  XmlComponentValue valueToCompare = null;
 
-    public AttributeItemValue(AttributeItemTemplate attributeItemTemplate,
-            XmlDocument xmlDocument) {
-        this.attributeItemTemplate = attributeItemTemplate;
-        value = attributeItemTemplate.valueTemplate
-                .createXmlThreeValue(xmlDocument);
-        if (attributeItemTemplate.valueToCompareTemplate != null) {
-            valueToCompare = attributeItemTemplate.valueToCompareTemplate
-                    .createXmlComponentValue(xmlDocument);
-        }
+  public AttributeItemValue(AttributeItemTemplate attributeItemTemplate, XmlDocument xmlDocument) {
+    this.attributeItemTemplate = attributeItemTemplate;
+    value = attributeItemTemplate.valueTemplate.createXmlThreeValue(xmlDocument);
+    if (attributeItemTemplate.valueToCompareTemplate != null) {
+      valueToCompare = attributeItemTemplate.valueToCompareTemplate
+          .createXmlComponentValue(xmlDocument);
     }
+  }
 
-    String print() {
-        if (attributeItemTemplate.name.equals("id")
-                && value.print().startsWith("field")) {
-            return "";
-        } else {
-            return " " + attributeItemTemplate.name + "=\"" + value.print()
-                    + "\"";
-        }
+  String print() {
+    if (attributeItemTemplate.name.equals("id") && value.print().startsWith("field")) {
+      return "";
+    } else {
+      return " " + attributeItemTemplate.name + "=\"" + value.print() + "\"";
     }
+  }
 
-    String printPrevious() {
-        if (attributeItemTemplate.name.equals("id")
-                && value.printPrevious().startsWith("field")) {
-            return "";
-        } else {
-            return " " + attributeItemTemplate.name + "=\""
-                    + value.printPrevious() + "\"";
-        }
+  String printPrevious() {
+    if (attributeItemTemplate.name.equals("id") && value.printPrevious().startsWith("field")) {
+      return "";
+    } else {
+      return " " + attributeItemTemplate.name + "=\"" + value.printPrevious() + "\"";
     }
+  }
 }

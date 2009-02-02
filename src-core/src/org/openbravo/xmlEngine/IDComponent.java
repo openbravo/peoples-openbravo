@@ -12,8 +12,8 @@
 package org.openbravo.xmlEngine;
 
 interface IDComponent {
-    static final int SECTION = 1, FIELD = 2, FUNCTION = 3, REPORT = 4,
-            ATTRIBUTE = 5, DISCARD = 6, PARAMETER = 7, LABEL = 8;
+  static final int SECTION = 1, FIELD = 2, FUNCTION = 3, REPORT = 4, ATTRIBUTE = 5, DISCARD = 6,
+      PARAMETER = 7, LABEL = 8;
 
-    int type();
+  int type();
 }

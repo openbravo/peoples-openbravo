@@ -12,10 +12,10 @@
 package org.openbravo.data;
 
 class FieldAdded {
-    String strName;
-    String strValue;
+  String strName;
+  String strValue;
 
-    public FieldAdded(String strName) {
-        this.strName = strName;
-    }
+  public FieldAdded(String strName) {
+    this.strName = strName;
+  }
 }

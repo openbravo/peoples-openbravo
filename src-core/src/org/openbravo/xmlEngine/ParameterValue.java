@@ -14,68 +14,66 @@ package org.openbravo.xmlEngine;
 import org.openbravo.utils.Replace;
 
 class ParameterValue implements XmlComponentValue {
-    String strValue = null;
-    ParameterTemplate parameterTemplate;
-    XmlComponentValue xmlComponentValue = null;
+  String strValue = null;
+  ParameterTemplate parameterTemplate;
+  XmlComponentValue xmlComponentValue = null;
 
-    public ParameterValue(ParameterTemplate ParameterTemplate,
-            XmlDocument xmlDocument) {
-        this.parameterTemplate = ParameterTemplate;
-    }
+  public ParameterValue(ParameterTemplate ParameterTemplate, XmlDocument xmlDocument) {
+    this.parameterTemplate = ParameterTemplate;
+  }
 
-    public void setXmlComponentValue(XmlDocument xmlDocument) {
-        if (parameterTemplate.xmlComponentTemplate != null) {
-            xmlComponentValue = parameterTemplate.xmlComponentTemplate
-                    .createXmlComponentValue(xmlDocument.parentXmlDocument);
-        }
+  public void setXmlComponentValue(XmlDocument xmlDocument) {
+    if (parameterTemplate.xmlComponentTemplate != null) {
+      xmlComponentValue = parameterTemplate.xmlComponentTemplate
+          .createXmlComponentValue(xmlDocument.parentXmlDocument);
     }
+  }
 
-    private String replace(String strIni) {
-        if (parameterTemplate.vecReplace != null) {
-            String strFin = strIni;
-            for (ReplaceElement replaceElement : parameterTemplate.vecReplace) {
-                strFin = Replace.replace(strFin, replaceElement.replaceWhat,
-                        replaceElement.replaceWith);
-            }
-            return strFin;
-        } else {
-            return strIni;
-        }
+  private String replace(String strIni) {
+    if (parameterTemplate.vecReplace != null) {
+      String strFin = strIni;
+      for (ReplaceElement replaceElement : parameterTemplate.vecReplace) {
+        strFin = Replace.replace(strFin, replaceElement.replaceWhat, replaceElement.replaceWith);
+      }
+      return strFin;
+    } else {
+      return strIni;
     }
+  }
 
-    public void setValue(String strValue) {
-        this.strValue = replace(strValue);
-    }
+  public void setValue(String strValue) {
+    this.strValue = replace(strValue);
+  }
 
-    public String print() {
-        if (xmlComponentValue != null) {
-            return xmlComponentValue.print();
-        } else {
-            return strValue;
-        }
+  public String print() {
+    if (xmlComponentValue != null) {
+      return xmlComponentValue.print();
+    } else {
+      return strValue;
     }
+  }
 
-    public String printPrevious() {
-        if (xmlComponentValue != null) {
-            return xmlComponentValue.printPrevious();
-        } else {
-            return strValue;
-        }
+  public String printPrevious() {
+    if (xmlComponentValue != null) {
+      return xmlComponentValue.printPrevious();
+    } else {
+      return strValue;
     }
+  }
 
-    public String printSimple() {
-        if (xmlComponentValue != null) {
-            return xmlComponentValue.printSimple();
-        } else {
-            return strValue;
-        }
+  public String printSimple() {
+    if (xmlComponentValue != null) {
+      return xmlComponentValue.printSimple();
+    } else {
+      return strValue;
     }
+  }
 
-    public String printPreviousSimple() {
-        if (xmlComponentValue != null) {
-            return xmlComponentValue.printPreviousSimple();
-        } else {
-            return strValue;
-        }
+  public String printPreviousSimple() {
+    if (xmlComponentValue != null) {
+      return xmlComponentValue.printPreviousSimple();
+    } else {
+      return strValue;
     }
+  }
 }

@@ -22,10 +22,10 @@ import java.util.Properties;
 
 public class WADTableDir extends WADList {
 
-    public WADTableDir() {
-    }
+  public WADTableDir() {
+  }
 
-    public WADTableDir(Properties prop) {
-        super(prop);
-    }
+  public WADTableDir(Properties prop) {
+    super(prop);
+  }
 }

@@ -22,136 +22,126 @@ import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.exception.PoolNotFoundException;
 
 public class CPStandAlone implements ConnectionProvider {
-    protected ConnectionProviderImpl myPool;
+  protected ConnectionProviderImpl myPool;
 
-    public CPStandAlone(String xmlPoolFile) {
-        if (myPool == null) {
-            try {
-                myPool = new ConnectionProviderImpl(xmlPoolFile);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+  public CPStandAlone(String xmlPoolFile) {
+    if (myPool == null) {
+      try {
+        myPool = new ConnectionProviderImpl(xmlPoolFile);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
+  }
 
-    /*
-     * Database access utilities
-     */
-    @SuppressWarnings("unused")
-    // to be used in pool status service
-    private ObjectPool getPool(String poolName) throws PoolNotFoundException {
-        if (myPool == null)
-            throw new PoolNotFoundException(poolName + " not found");
-        else
-            return myPool.getPool(poolName);
-    }
+  /*
+   * Database access utilities
+   */
+  @SuppressWarnings("unused")
+  // to be used in pool status service
+  private ObjectPool getPool(String poolName) throws PoolNotFoundException {
+    if (myPool == null)
+      throw new PoolNotFoundException(poolName + " not found");
+    else
+      return myPool.getPool(poolName);
+  }
 
-    @SuppressWarnings("unused")
-    // to be used in pool status service
-    private ObjectPool getPool() throws PoolNotFoundException {
-        if (myPool == null)
-            throw new PoolNotFoundException("Default pool not found");
-        else
-            return myPool.getPool();
-    }
+  @SuppressWarnings("unused")
+  // to be used in pool status service
+  private ObjectPool getPool() throws PoolNotFoundException {
+    if (myPool == null)
+      throw new PoolNotFoundException("Default pool not found");
+    else
+      return myPool.getPool();
+  }
 
-    public Connection getConnection() throws NoConnectionAvailableException {
-        return (myPool.getConnection());
-    }
+  public Connection getConnection() throws NoConnectionAvailableException {
+    return (myPool.getConnection());
+  }
 
-    public String getRDBMS() {
-        return (myPool.getRDBMS());
-    }
+  public String getRDBMS() {
+    return (myPool.getRDBMS());
+  }
 
-    public Connection getTransactionConnection()
-            throws NoConnectionAvailableException, SQLException {
-        return myPool.getTransactionConnection();
-    }
+  public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
+    return myPool.getTransactionConnection();
+  }
 
-    public void releaseCommitConnection(Connection conn) throws SQLException {
-        myPool.releaseCommitConnection(conn);
-    }
+  public void releaseCommitConnection(Connection conn) throws SQLException {
+    myPool.releaseCommitConnection(conn);
+  }
 
-    public void releaseRollbackConnection(Connection conn) throws SQLException {
-        myPool.releaseRollbackConnection(conn);
-    }
+  public void releaseRollbackConnection(Connection conn) throws SQLException {
+    myPool.releaseRollbackConnection(conn);
+  }
 
-    public PreparedStatement getPreparedStatement(String poolName, String strSql)
-            throws Exception {
-        return myPool.getPreparedStatement(poolName, strSql);
-    }
+  public PreparedStatement getPreparedStatement(String poolName, String strSql) throws Exception {
+    return myPool.getPreparedStatement(poolName, strSql);
+  }
 
-    public PreparedStatement getPreparedStatement(String strSql)
-            throws Exception {
-        return myPool.getPreparedStatement(strSql);
-    }
+  public PreparedStatement getPreparedStatement(String strSql) throws Exception {
+    return myPool.getPreparedStatement(strSql);
+  }
 
-    public PreparedStatement getPreparedStatement(Connection conn, String strSql)
-            throws SQLException {
-        return myPool.getPreparedStatement(conn, strSql);
-    }
+  public PreparedStatement getPreparedStatement(Connection conn, String strSql) throws SQLException {
+    return myPool.getPreparedStatement(conn, strSql);
+  }
 
-    public void releasePreparedStatement(PreparedStatement preparedStatement)
-            throws SQLException {
-        myPool.releasePreparedStatement(preparedStatement);
-    }
+  public void releasePreparedStatement(PreparedStatement preparedStatement) throws SQLException {
+    myPool.releasePreparedStatement(preparedStatement);
+  }
 
-    public Statement getStatement(String poolName) throws Exception {
-        return myPool.getStatement(poolName);
-    }
+  public Statement getStatement(String poolName) throws Exception {
+    return myPool.getStatement(poolName);
+  }
 
-    public Statement getStatement() throws Exception {
-        return myPool.getStatement();
-    }
+  public Statement getStatement() throws Exception {
+    return myPool.getStatement();
+  }
 
-    public Statement getStatement(Connection conn) throws SQLException {
-        return myPool.getStatement(conn);
-    }
+  public Statement getStatement(Connection conn) throws SQLException {
+    return myPool.getStatement(conn);
+  }
 
-    public void releaseStatement(Statement statement) throws SQLException {
-        myPool.releaseStatement(statement);
-    }
+  public void releaseStatement(Statement statement) throws SQLException {
+    myPool.releaseStatement(statement);
+  }
 
-    public void releaseTransactionalStatement(Statement statement)
-            throws SQLException {
-        myPool.releaseTransactionalStatement(statement);
-    }
+  public void releaseTransactionalStatement(Statement statement) throws SQLException {
+    myPool.releaseTransactionalStatement(statement);
+  }
 
-    public void releaseTransactionalPreparedStatement(
-            PreparedStatement preparedStatement) throws SQLException {
-        myPool.releaseTransactionalPreparedStatement(preparedStatement);
-    }
+  public void releaseTransactionalPreparedStatement(PreparedStatement preparedStatement)
+      throws SQLException {
+    myPool.releaseTransactionalPreparedStatement(preparedStatement);
+  }
 
-    public CallableStatement getCallableStatement(String poolName, String strSql)
-            throws Exception {
-        return myPool.getCallableStatement(poolName, strSql);
-    }
+  public CallableStatement getCallableStatement(String poolName, String strSql) throws Exception {
+    return myPool.getCallableStatement(poolName, strSql);
+  }
 
-    public CallableStatement getCallableStatement(String strSql)
-            throws Exception {
-        return myPool.getCallableStatement(strSql);
-    }
+  public CallableStatement getCallableStatement(String strSql) throws Exception {
+    return myPool.getCallableStatement(strSql);
+  }
 
-    public CallableStatement getCallableStatement(Connection conn, String strSql)
-            throws SQLException {
-        return myPool.getCallableStatement(conn, strSql);
-    }
+  public CallableStatement getCallableStatement(Connection conn, String strSql) throws SQLException {
+    return myPool.getCallableStatement(conn, strSql);
+  }
 
-    public void releaseCallableStatement(CallableStatement callableStatement)
-            throws SQLException {
-        myPool.releaseCallableStatement(callableStatement);
-    }
+  public void releaseCallableStatement(CallableStatement callableStatement) throws SQLException {
+    myPool.releaseCallableStatement(callableStatement);
+  }
 
-    public void destroy() {
-        try {
-            myPool.destroy();
-            myPool = null;
-        } catch (Exception ex) {
-        }
+  public void destroy() {
+    try {
+      myPool.destroy();
+      myPool = null;
+    } catch (Exception ex) {
     }
+  }
 
-    public String getStatus() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  public String getStatus() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

@@ -17,24 +17,21 @@ import org.apache.log4j.Logger;
 
 class FunctionMedTemplate extends FunctionTemplate {
 
-    static Logger log4jFunctionMedTemplate = Logger
-            .getLogger(FunctionMedTemplate.class);
+  static Logger log4jFunctionMedTemplate = Logger.getLogger(FunctionMedTemplate.class);
 
-    public FunctionMedTemplate(String fieldName, FieldTemplate field,
-            DecimalFormat formatOutput, DecimalFormat formatSimple,
-            DataTemplate dataTemplate) {
-        super(fieldName, field, formatOutput, formatSimple, dataTemplate);
-    }
+  public FunctionMedTemplate(String fieldName, FieldTemplate field, DecimalFormat formatOutput,
+      DecimalFormat formatSimple, DataTemplate dataTemplate) {
+    super(fieldName, field, formatOutput, formatSimple, dataTemplate);
+  }
 
-    public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
-        FunctionValue functionValue = searchFunction(xmlDocument);
-        if (functionValue == null) {
-            if (log4jFunctionMedTemplate.isDebugEnabled())
-                log4jFunctionMedTemplate.debug("New FunctionMedValue: "
-                        + fieldName);
-            functionValue = new FunctionMedValue(this, xmlDocument);
-        }
-        return functionValue;
+  public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
+    FunctionValue functionValue = searchFunction(xmlDocument);
+    if (functionValue == null) {
+      if (log4jFunctionMedTemplate.isDebugEnabled())
+        log4jFunctionMedTemplate.debug("New FunctionMedValue: " + fieldName);
+      functionValue = new FunctionMedValue(this, xmlDocument);
     }
+    return functionValue;
+  }
 
 }

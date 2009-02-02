@@ -28,127 +28,124 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.apache.tools.ant.Project;
 
 /**
- * This appender can be used to send log4j to a programmatically set
- * OutputStream. The OutputStream is stored in a ThreadLocal so only log events
- * of the thread itself are send to the OutputStream set by that thread.
+ * This appender can be used to send log4j to a programmatically set OutputStream. The OutputStream
+ * is stored in a ThreadLocal so only log events of the thread itself are send to the OutputStream
+ * set by that thread.
  * 
  * @author mtaal
  */
 public class OBLogAppender extends AppenderSkeleton {
 
-    private static final ThreadLocal<OutputStream> outputStreamHolder = new ThreadLocal<OutputStream>();
-    private static final ThreadLocal<Project> projectHolder = new ThreadLocal<Project>();
+  private static final ThreadLocal<OutputStream> outputStreamHolder = new ThreadLocal<OutputStream>();
+  private static final ThreadLocal<Project> projectHolder = new ThreadLocal<Project>();
 
-    /**
-     * @return the ant project held in the threadlocal.
-     */
-    public static Project getProject() {
-        return projectHolder.get();
-    }
+  /**
+   * @return the ant project held in the threadlocal.
+   */
+  public static Project getProject() {
+    return projectHolder.get();
+  }
 
-    /**
-     * Sets an ant project in the project threadlocal. Logging events are send
-     * to the logger of the project to.
-     * 
-     * @param project
-     *            the ant project
-     */
-    public static void setProject(Project project) {
-        projectHolder.set(project);
-    }
+  /**
+   * Sets an ant project in the project threadlocal. Logging events are send to the logger of the
+   * project to.
+   * 
+   * @param project
+   *          the ant project
+   */
+  public static void setProject(Project project) {
+    projectHolder.set(project);
+  }
 
-    /**
-     * Sets the passed OutputStream in a ThreadLocal, this OutputStream is then
-     * used by the appender to pass in log4j statements.
-     * 
-     * @param os
-     *            the OutputStream to which log4j events will be send.
-     */
-    public static void setOutputStream(OutputStream os) {
-        outputStreamHolder.set(os);
-    }
+  /**
+   * Sets the passed OutputStream in a ThreadLocal, this OutputStream is then used by the appender
+   * to pass in log4j statements.
+   * 
+   * @param os
+   *          the OutputStream to which log4j events will be send.
+   */
+  public static void setOutputStream(OutputStream os) {
+    outputStreamHolder.set(os);
+  }
 
-    /**
-     * @return the OutputStream stored in the ThreadLocal, note can be null if
-     *         no OutputStream has been set.
-     */
-    public static OutputStream getOutputStream() {
-        return outputStreamHolder.get();
-    }
+  /**
+   * @return the OutputStream stored in the ThreadLocal, note can be null if no OutputStream has
+   *         been set.
+   */
+  public static OutputStream getOutputStream() {
+    return outputStreamHolder.get();
+  }
 
-    @Override
-    protected void append(LoggingEvent event) {
+  @Override
+  protected void append(LoggingEvent event) {
 
-        try {
-            if (projectHolder.get() != null) {
-                final String msg;
-                if (getLayout() != null) {
-                    msg = getLayout().format(event);
-                } else {
-                    msg = event.getMessage().toString() + "\n";
-                }
-                logToProject(event.getLevel(), msg);
-            }
-
-            if (outputStreamHolder.get() != null) {
-                if (getLayout() != null) {
-                    outputStreamHolder.get().write(
-                            getLayout().format(event).getBytes());
-                } else {
-                    outputStreamHolder.get().write(
-                            (event.getMessage().toString() + "\n").getBytes());
-                }
-                outputStreamHolder.get().flush();
-            }
-        } catch (final IOException e) {
-            // TODO: replace with OBException to log this exception
-            // can be done when OBException has been moved to the core
-            // lib
-            throw new RuntimeException(e);
+    try {
+      if (projectHolder.get() != null) {
+        final String msg;
+        if (getLayout() != null) {
+          msg = getLayout().format(event);
+        } else {
+          msg = event.getMessage().toString() + "\n";
         }
-    }
+        logToProject(event.getLevel(), msg);
+      }
 
-    private void logToProject(Priority prio, String msg) {
-        if (projectHolder.get() == null) {
-            return;
+      if (outputStreamHolder.get() != null) {
+        if (getLayout() != null) {
+          outputStreamHolder.get().write(getLayout().format(event).getBytes());
+        } else {
+          outputStreamHolder.get().write((event.getMessage().toString() + "\n").getBytes());
         }
-        int projectLogLevel = -1;
-        switch (prio.toInt()) {
-        case Priority.DEBUG_INT:
-            projectLogLevel = Project.MSG_DEBUG;
-            break;
-        case Priority.ERROR_INT:
-            projectLogLevel = Project.MSG_ERR;
-            break;
-        case Priority.FATAL_INT:
-            projectLogLevel = Project.MSG_ERR;
-            break;
-        case Priority.INFO_INT:
-            projectLogLevel = Project.MSG_INFO;
-            break;
-        case Priority.OFF_INT:
-            projectLogLevel = Project.MSG_VERBOSE;
-            break;
-        case Priority.WARN_INT:
-            projectLogLevel = Project.MSG_WARN;
-            break;
-        default:
-            throw new IllegalArgumentException("Priority " + prio.toInt()
-                    + " unknown");
-        }
-        projectHolder.get().log(msg, projectLogLevel);
+        outputStreamHolder.get().flush();
+      }
+    } catch (final IOException e) {
+      // TODO: replace with OBException to log this exception
+      // can be done when OBException has been moved to the core
+      // lib
+      throw new RuntimeException(e);
     }
+  }
 
-    /**
-     * Does not do anything in this implementation.
-     */
-    public void close() {
+  private void logToProject(Priority prio, String msg) {
+    if (projectHolder.get() == null) {
+      return;
     }
+    int projectLogLevel = -1;
+    switch (prio.toInt()) {
+    case Priority.DEBUG_INT:
+      projectLogLevel = Project.MSG_DEBUG;
+      break;
+    case Priority.ERROR_INT:
+      projectLogLevel = Project.MSG_ERR;
+      break;
+    case Priority.FATAL_INT:
+      projectLogLevel = Project.MSG_ERR;
+      break;
+    case Priority.INFO_INT:
+      projectLogLevel = Project.MSG_INFO;
+      break;
+    case Priority.OFF_INT:
+      projectLogLevel = Project.MSG_VERBOSE;
+      break;
+    case Priority.WARN_INT:
+      projectLogLevel = Project.MSG_WARN;
+      break;
+    default:
+      throw new IllegalArgumentException("Priority " + prio.toInt() + " unknown");
+    }
+    projectHolder.get().log(msg, projectLogLevel);
+  }
 
-    /**
-     * @return always returns false
-     */
-    public boolean requiresLayout() {
-        return false;
-    }
+  /**
+   * Does not do anything in this implementation.
+   */
+  public void close() {
+  }
+
+  /**
+   * @return always returns false
+   */
+  public boolean requiresLayout() {
+    return false;
+  }
 }

@@ -15,36 +15,35 @@ package org.openbravo.xmlEngine;
  * Class that store the information of the attributes of the configuration file
  */
 class AttributeComponentValue implements XmlComponentValue {
-    protected AttributeComponentTemplate attributeComponentTemplate;
-    // private FieldComponent fieldComponent = null;
-    private FunctionValue functionValue = null;
-    private XmlComponentValue xmlComponentValue = null;
+  protected AttributeComponentTemplate attributeComponentTemplate;
+  // private FieldComponent fieldComponent = null;
+  private FunctionValue functionValue = null;
+  private XmlComponentValue xmlComponentValue = null;
 
-    public AttributeComponentValue(
-            AttributeComponentTemplate attributeComponentTemplate,
-            XmlDocument xmlDocument) {
-        this.attributeComponentTemplate = attributeComponentTemplate;
-        if (attributeComponentTemplate.functionTemplate() != null) {
-            functionValue = attributeComponentTemplate.functionTemplate()
-                    .createFunctionValue(xmlDocument);
-            xmlComponentValue = functionValue;
-        }
+  public AttributeComponentValue(AttributeComponentTemplate attributeComponentTemplate,
+      XmlDocument xmlDocument) {
+    this.attributeComponentTemplate = attributeComponentTemplate;
+    if (attributeComponentTemplate.functionTemplate() != null) {
+      functionValue = attributeComponentTemplate.functionTemplate()
+          .createFunctionValue(xmlDocument);
+      xmlComponentValue = functionValue;
     }
+  }
 
-    public String print() {
-        return xmlComponentValue.print();
-    }
+  public String print() {
+    return xmlComponentValue.print();
+  }
 
-    public String printPrevious() {
-        return xmlComponentValue.printPrevious();
-    }
+  public String printPrevious() {
+    return xmlComponentValue.printPrevious();
+  }
 
-    public String printSimple() {
-        return xmlComponentValue.printSimple();
-    }
+  public String printSimple() {
+    return xmlComponentValue.printSimple();
+  }
 
-    public String printPreviousSimple() {
-        return xmlComponentValue.printPreviousSimple();
-    }
+  public String printPreviousSimple() {
+    return xmlComponentValue.printPreviousSimple();
+  }
 
 }

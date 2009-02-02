@@ -22,19 +22,19 @@ package org.openbravo.utils;
 import org.apache.tools.ant.Task;
 
 public class WADCheckSumTask extends Task {
-    protected String obDir;
+  protected String obDir;
 
-    public void execute() {
-        CheckSum cs = new CheckSum(obDir);
-        cs.calculateCheckSumWad();
-    }
+  public void execute() {
+    CheckSum cs = new CheckSum(obDir);
+    cs.calculateCheckSumWad();
+  }
 
-    public String getObDir() {
-        return obDir;
-    }
+  public String getObDir() {
+    return obDir;
+  }
 
-    public void setObDir(String obDir) {
-        this.obDir = obDir;
-    }
+  public void setObDir(String obDir) {
+    this.obDir = obDir;
+  }
 
 }

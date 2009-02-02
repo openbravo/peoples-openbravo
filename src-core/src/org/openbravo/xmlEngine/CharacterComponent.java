@@ -14,44 +14,44 @@ package org.openbravo.xmlEngine;
 import org.xml.sax.Attributes;
 
 class CharacterComponent implements XmlComponentTemplate, XmlComponentValue {
-    protected String character;
+  protected String character;
 
-    public CharacterComponent() {
-    }
+  public CharacterComponent() {
+  }
 
-    public CharacterComponent(String character) {
-        this.character = character;
-    }
+  public CharacterComponent(String character) {
+    this.character = character;
+  }
 
-    public CharacterComponent(String name, Attributes amap) {
-        character = "<" + name;
-        for (int i = 0; i < amap.getLength(); i++) {
-            String attname = amap.getQName(i);
-            String value = amap.getValue(i);
-            character = character + " " + attname + "=\"" + value + "\"";
-        }
-        character = character + ">";
+  public CharacterComponent(String name, Attributes amap) {
+    character = "<" + name;
+    for (int i = 0; i < amap.getLength(); i++) {
+      String attname = amap.getQName(i);
+      String value = amap.getValue(i);
+      character = character + " " + attname + "=\"" + value + "\"";
     }
+    character = character + ">";
+  }
 
-    public String print() {
-        return character;
-    }
+  public String print() {
+    return character;
+  }
 
-    public String printPrevious() {
-        return character;
-    }
+  public String printPrevious() {
+    return character;
+  }
 
-    public String printSimple() {
-        return character;
-    }
+  public String printSimple() {
+    return character;
+  }
 
-    public String printPreviousSimple() {
-        return character;
-    }
+  public String printPreviousSimple() {
+    return character;
+  }
 
-    public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
-        return this; // this class is constant, therefore the XmlComponentValue
-                     // is it.
-    }
+  public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
+    return this; // this class is constant, therefore the XmlComponentValue
+    // is it.
+  }
 
 }

@@ -17,24 +17,21 @@ import org.apache.log4j.Logger;
 
 class FunctionSumTemplate extends FunctionTemplate {
 
-    static Logger log4jFunctionSumTemplate = Logger
-            .getLogger(FunctionSumTemplate.class);
+  static Logger log4jFunctionSumTemplate = Logger.getLogger(FunctionSumTemplate.class);
 
-    public FunctionSumTemplate(String fieldName, FieldTemplate field,
-            DecimalFormat formatOutput, DecimalFormat formatSimple,
-            DataTemplate dataTemplate) {
-        super(fieldName, field, formatOutput, formatSimple, dataTemplate);
-    }
+  public FunctionSumTemplate(String fieldName, FieldTemplate field, DecimalFormat formatOutput,
+      DecimalFormat formatSimple, DataTemplate dataTemplate) {
+    super(fieldName, field, formatOutput, formatSimple, dataTemplate);
+  }
 
-    public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
-        FunctionValue functionValue = searchFunction(xmlDocument);
-        if (functionValue == null) {
-            if (log4jFunctionSumTemplate.isDebugEnabled())
-                log4jFunctionSumTemplate.debug("New FunctionSumValue: "
-                        + fieldName);
-            functionValue = new FunctionSumValue(this, xmlDocument);
-        }
-        return functionValue;
+  public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
+    FunctionValue functionValue = searchFunction(xmlDocument);
+    if (functionValue == null) {
+      if (log4jFunctionSumTemplate.isDebugEnabled())
+        log4jFunctionSumTemplate.debug("New FunctionSumValue: " + fieldName);
+      functionValue = new FunctionSumValue(this, xmlDocument);
     }
+    return functionValue;
+  }
 
 }

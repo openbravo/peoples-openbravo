@@ -22,11 +22,11 @@ import java.util.Properties;
 
 public class WADQuantity extends WADNumber {
 
-    public WADQuantity() {
-    }
+  public WADQuantity() {
+  }
 
-    public WADQuantity(Properties prop) {
-        setInfo(prop);
-        initialize();
-    }
+  public WADQuantity(Properties prop) {
+    setInfo(prop);
+    initialize();
+  }
 }

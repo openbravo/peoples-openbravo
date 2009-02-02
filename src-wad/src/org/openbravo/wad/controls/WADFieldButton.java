@@ -22,30 +22,29 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADFieldButton extends WADControl {
 
-    public WADFieldButton(String _buttonName, String _columnName,
-            String _columnNameInp, String _name, String _onclick) {
-        setData("ButtonName", _buttonName);
-        setData("ColumnName", _columnName);
-        setData("ColumnNameInp", _columnNameInp);
-        setData("Name", _name);
-        setData("OnClick", _onclick);
-    }
+  public WADFieldButton(String _buttonName, String _columnName, String _columnNameInp,
+      String _name, String _onclick) {
+    setData("ButtonName", _buttonName);
+    setData("ColumnName", _columnName);
+    setData("ColumnNameInp", _columnNameInp);
+    setData("Name", _name);
+    setData("OnClick", _onclick);
+  }
 
-    public String getType() {
-        return "FieldButton";
-    }
+  public String getType() {
+    return "FieldButton";
+  }
 
-    public String toString() {
-        XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-                "org/openbravo/wad/controls/WADFieldButton")
-                .createXmlDocument();
+  public String toString() {
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+        "org/openbravo/wad/controls/WADFieldButton").createXmlDocument();
 
-        xmlDocument.setParameter("columnName", getData("ColumnName"));
-        // xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-        xmlDocument.setParameter("name", getData("Name"));
-        xmlDocument.setParameter("buttonName", getData("ButtonName"));
-        xmlDocument.setParameter("onclick", getData("OnClick"));
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    // xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+    xmlDocument.setParameter("name", getData("Name"));
+    xmlDocument.setParameter("buttonName", getData("ButtonName"));
+    xmlDocument.setParameter("onclick", getData("OnClick"));
 
-        return replaceHTML(xmlDocument.print());
-    }
+    return replaceHTML(xmlDocument.print());
+  }
 }

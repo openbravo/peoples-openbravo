@@ -12,40 +12,38 @@
 package org.openbravo.xmlEngine;
 
 class FunctionValue implements XmlComponentValue {
-    FunctionTemplate functionTemplate;
-    FieldValue fieldValue;
+  FunctionTemplate functionTemplate;
+  FieldValue fieldValue;
 
-    public FunctionValue() {
-    }
+  public FunctionValue() {
+  }
 
-    public FunctionValue(FunctionTemplate functionTemplate,
-            XmlDocument xmlDocument) {
-        this.functionTemplate = functionTemplate;
-        fieldValue = functionTemplate.fieldTemplate
-                .createFieldValue(xmlDocument);
-        xmlDocument.hasXmlComponentValue.put(functionTemplate, this); // CHX
-    }
+  public FunctionValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
+    this.functionTemplate = functionTemplate;
+    fieldValue = functionTemplate.fieldTemplate.createFieldValue(xmlDocument);
+    xmlDocument.hasXmlComponentValue.put(functionTemplate, this); // CHX
+  }
 
-    public String print() {
-        return null;
-    }
+  public String print() {
+    return null;
+  }
 
-    public void acumulate() {
-    }
+  public void acumulate() {
+  }
 
-    public void init() {
-    }
+  public void init() {
+  }
 
-    public String printPrevious() {
-        return print();
-    }
+  public String printPrevious() {
+    return print();
+  }
 
-    public String printSimple() {
-        return print();
-    }
+  public String printSimple() {
+    return print();
+  }
 
-    public String printPreviousSimple() {
-        return printPrevious();
-    }
+  public String printPreviousSimple() {
+    return printPrevious();
+  }
 
 }

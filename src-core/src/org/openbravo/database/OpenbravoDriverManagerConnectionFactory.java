@@ -20,78 +20,75 @@ import java.util.Properties;
 
 import org.apache.commons.dbcp.ConnectionFactory;
 
-public class OpenbravoDriverManagerConnectionFactory implements
-        ConnectionFactory {
-    protected String _connectUri;
-    protected String _uname;
-    protected String _passwd;
-    protected Properties _props;
-    protected String _dbSessionConfig;
+public class OpenbravoDriverManagerConnectionFactory implements ConnectionFactory {
+  protected String _connectUri;
+  protected String _uname;
+  protected String _passwd;
+  protected Properties _props;
+  protected String _dbSessionConfig;
 
-    public OpenbravoDriverManagerConnectionFactory(String connectUri,
-            Properties props) {
-        _connectUri = null;
-        _uname = null;
-        _passwd = null;
-        _props = null;
-        _connectUri = connectUri;
-        _props = props;
+  public OpenbravoDriverManagerConnectionFactory(String connectUri, Properties props) {
+    _connectUri = null;
+    _uname = null;
+    _passwd = null;
+    _props = null;
+    _connectUri = connectUri;
+    _props = props;
+  }
+
+  public OpenbravoDriverManagerConnectionFactory(String connectUri, String uname, String passwd,
+      String dbSessionConfig) {
+    _connectUri = null;
+    _uname = null;
+    _passwd = null;
+    _props = null;
+    _dbSessionConfig = null;
+    _connectUri = connectUri;
+    _uname = uname;
+    _passwd = passwd;
+    _dbSessionConfig = dbSessionConfig;
+  }
+
+  public Connection createConnection() throws SQLException {
+    Connection conn = null;
+    if (null == _props) {
+      if (_uname == null)
+        conn = DriverManager.getConnection(_connectUri);
+      else
+        conn = DriverManager.getConnection(_connectUri, _uname, _passwd);
+    } else {
+      conn = DriverManager.getConnection(_connectUri, _props);
     }
+    if (conn != null && _dbSessionConfig != null)
+      executeDefaultSQL(conn);
+    return conn;
+  }
 
-    public OpenbravoDriverManagerConnectionFactory(String connectUri,
-            String uname, String passwd, String dbSessionConfig) {
-        _connectUri = null;
-        _uname = null;
-        _passwd = null;
-        _props = null;
-        _dbSessionConfig = null;
-        _connectUri = connectUri;
-        _uname = uname;
-        _passwd = passwd;
-        _dbSessionConfig = dbSessionConfig;
+  private void executeDefaultSQL(Connection conn) {
+    Statement stmt = null;
+    ResultSet rset = null;
+
+    try {
+      stmt = conn.createStatement();
+      if (!_dbSessionConfig.equals(""))
+        rset = stmt.executeQuery(_dbSessionConfig);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        if (rset != null)
+          rset.close();
+      } catch (Exception e) {
+      }
+      try {
+        if (stmt != null)
+          stmt.close();
+      } catch (Exception e) {
+      }
+      try {
+        conn.commit();
+      } catch (Exception e) {
+      }
     }
-
-    public Connection createConnection() throws SQLException {
-        Connection conn = null;
-        if (null == _props) {
-            if (_uname == null)
-                conn = DriverManager.getConnection(_connectUri);
-            else
-                conn = DriverManager
-                        .getConnection(_connectUri, _uname, _passwd);
-        } else {
-            conn = DriverManager.getConnection(_connectUri, _props);
-        }
-        if (conn != null && _dbSessionConfig != null)
-            executeDefaultSQL(conn);
-        return conn;
-    }
-
-    private void executeDefaultSQL(Connection conn) {
-        Statement stmt = null;
-        ResultSet rset = null;
-
-        try {
-            stmt = conn.createStatement();
-            if (!_dbSessionConfig.equals(""))
-                rset = stmt.executeQuery(_dbSessionConfig);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rset != null)
-                    rset.close();
-            } catch (Exception e) {
-            }
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (Exception e) {
-            }
-            try {
-                conn.commit();
-            } catch (Exception e) {
-            }
-        }
-    }
+  }
 }

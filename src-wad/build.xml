@@ -31,81 +31,72 @@ build: compile the project, including the xsql's files and generates the jar and
 doc: generates the api for the project.
 -->
 <project name="openbravo-wad" default="compile" basedir=".">
-  <property name="build.wad" value="${basedir}/build/classes"/>
-  <property name="build.wad.docs" value="${basedir}/docs"/>
-  <property name="build.wad.sqlc" value="${basedir}/build/javasqlc"/>
-  <property name="build.wad.src" value="${basedir}/src"/>
+  <property name="build.wad" value="${basedir}/build/classes" />
+  <property name="build.wad.docs" value="${basedir}/docs" />
+  <property name="build.wad.sqlc" value="${basedir}/build/javasqlc" />
+  <property name="build.wad.src" value="${basedir}/src" />
 
   <path id="wad.class.path">
-    <pathelement path="../src-core/build/classes"/>
+    <pathelement path="../src-core/build/classes" />
     <fileset dir="${base.lib}">
-      <include name="**/*.jar"/>
+      <include name="**/*.jar" />
     </fileset>
   </path>
 
   <target name="init">
-    <mkdir dir="${build.wad}"/>
-    <mkdir dir="${build.wad.docs}"/>
-    <mkdir dir="${build.wad.sqlc}"/>
+    <mkdir dir="${build.wad}" />
+    <mkdir dir="${build.wad.docs}" />
+    <mkdir dir="${build.wad.sqlc}" />
   </target>
 
   <target name="clean">
-    <delete dir="${build.wad}" failonerror="false" includeemptydirs="true"/>
-    <delete dir="${build.wad.sqlc}" failonerror="false" includeemptydirs="true"/>
-    <delete dir="${build.wad.docs}" failonerror="false" includeemptydirs="true"/>
-    <delete failonerror="false" file="${build.wad.lib}/openbravo-wad.jar"/>
+    <delete dir="${build.wad}" failonerror="false" includeemptydirs="true" />
+    <delete dir="${build.wad.sqlc}" failonerror="false" includeemptydirs="true" />
+    <delete dir="${build.wad.docs}" failonerror="false" includeemptydirs="true" />
+    <delete failonerror="false" file="${build.wad.lib}/openbravo-wad.jar" />
   </target>
 
   <target name="sqlc" depends="init">
     <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}'/Openbravo.properties .xsql ./src/org '${build.wad.sqlc}'"/>
-      <classpath refid="wad.class.path"/>
+      <arg line="'${base.config}'/Openbravo.properties .xsql ./src/org '${build.wad.sqlc}'" />
+      <classpath refid="wad.class.path" />
     </java>
   </target>
 
   <target name="compileSqlc" depends="sqlc">
     <javac srcdir="${build.wad.sqlc}/src" destdir="${build.wad}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
-      <classpath refid="wad.class.path"/>
+      <classpath refid="wad.class.path" />
     </javac>
   </target>
 
-  <target name="compile" depends="clean, compileSqlc">
+  <target name="compile" depends="compileSqlc">
     <javac srcdir="${build.wad.src}" destdir="${build.wad}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
-      <classpath refid="wad.class.path"/>  
+      <classpath refid="wad.class.path" />
     </javac>
     <copy todir="${build.wad}" encoding="UTF-8">
-      <fileset dir="${build.wad.src}" includes="**/*xml"/>
-      <fileset dir="${build.wad.src}" includes="**/*html"/>
+      <fileset dir="${build.wad.src}" includes="**/*xml" />
+      <fileset dir="${build.wad.src}" includes="**/*html" />
     </copy>
   </target>
 
   <target name="build.jar">
     <jar destfile="${build.wad.lib}/openbravo-wad.jar">
-      <fileset dir="${build.wad}"/>
+      <fileset dir="${build.wad}" />
       <manifest>
-        <attribute name="Built-By" value="Openbravo S.L."/>
+        <attribute name="Built-By" value="Openbravo S.L." />
         <!--section name="common/class1.class">
         <attribute name="Sealed" value="false"/>
       </section-->
-    </manifest>
-  </jar>  
-</target>   
+      </manifest>
+    </jar>
+  </target>
 
-<target name="build" depends="compile, doc, build.jar">
-</target>
+  <target name="build" depends="compile, build.jar">
+  </target>
 
-<target name="doc" depends="init" description="Generate api">
-  <javadoc packagenames="org.openbravo.*" 
-    sourcepath="${build.wad.sqlc}/src:${build.wad.src}"
-    destdir="${build.wad.docs}"
-    author="true"
-    version="true"
-    use="true"
-    docencoding="UTF-8"
-    encoding="UTF-8"
-    failonerror="false"
-    windowtitle="${ant.project.name}">
-    <classpath refid="wad.class.path"/>
-  </javadoc>
-</target>
+  <target name="doc" depends="init" description="Generate api">
+    <javadoc packagenames="org.openbravo.*" sourcepath="${build.wad.sqlc}/src:${build.wad.src}" destdir="${build.wad.docs}" author="true" version="true" use="true" docencoding="UTF-8" encoding="UTF-8" failonerror="false" windowtitle="${ant.project.name}">
+      <classpath refid="wad.class.path" />
+    </javadoc>
+  </target>
 </project>

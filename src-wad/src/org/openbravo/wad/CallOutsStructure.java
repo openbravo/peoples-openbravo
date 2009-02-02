@@ -19,6 +19,6 @@
 package org.openbravo.wad;
 
 class CallOutsStructure {
-    String name;
-    String method;
+  String name;
+  String method;
 }

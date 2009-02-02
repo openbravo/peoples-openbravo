@@ -17,25 +17,22 @@ import org.apache.log4j.Logger;
 
 class FunctionMultiplyTemplate extends FunctionTemplate {
 
-    static Logger log4jFunctionMultiplyTemplate = Logger
-            .getLogger(FunctionMultiplyTemplate.class);
+  static Logger log4jFunctionMultiplyTemplate = Logger.getLogger(FunctionMultiplyTemplate.class);
 
-    public FunctionMultiplyTemplate(String fieldName,
-            DecimalFormat formatOutput, DecimalFormat formatSimple,
-            DataTemplate dataTemplate, XmlComponentTemplate arg1,
-            XmlComponentTemplate arg2) {
-        super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
-    }
+  public FunctionMultiplyTemplate(String fieldName, DecimalFormat formatOutput,
+      DecimalFormat formatSimple, DataTemplate dataTemplate, XmlComponentTemplate arg1,
+      XmlComponentTemplate arg2) {
+    super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
+  }
 
-    public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
-        FunctionValue functionValue = searchFunction(xmlDocument);
-        if (functionValue == null) {
-            if (log4jFunctionMultiplyTemplate.isDebugEnabled())
-                log4jFunctionMultiplyTemplate
-                        .debug("New FunctionMultiplyValue");
-            functionValue = new FunctionMultiplyValue(this, xmlDocument);
-        }
-        return functionValue;
+  public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
+    FunctionValue functionValue = searchFunction(xmlDocument);
+    if (functionValue == null) {
+      if (log4jFunctionMultiplyTemplate.isDebugEnabled())
+        log4jFunctionMultiplyTemplate.debug("New FunctionMultiplyValue");
+      functionValue = new FunctionMultiplyValue(this, xmlDocument);
     }
+    return functionValue;
+  }
 
 }

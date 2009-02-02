@@ -14,26 +14,24 @@ package org.openbravo.xmlEngine;
 import org.apache.log4j.Logger;
 
 class FunctionOrderValue extends FunctionValue {
-    int order;
+  int order;
 
-    static Logger log4jFunctionOrderValue = Logger
-            .getLogger(FunctionOrderValue.class);
+  static Logger log4jFunctionOrderValue = Logger.getLogger(FunctionOrderValue.class);
 
-    public FunctionOrderValue(FunctionTemplate functionTemplate,
-            XmlDocument xmlDocument) {
-        super(functionTemplate, xmlDocument);
-    }
+  public FunctionOrderValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
+    super(functionTemplate, xmlDocument);
+  }
 
-    public String print() {
-        return Integer.toString(order);
-    }
+  public String print() {
+    return Integer.toString(order);
+  }
 
-    public void acumulate() {
-        ;
-    }
+  public void acumulate() {
+    ;
+  }
 
-    public void init() {
-        order++;
-    }
+  public void init() {
+    order++;
+  }
 
 }

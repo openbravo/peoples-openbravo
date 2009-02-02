@@ -17,23 +17,21 @@ import org.apache.log4j.Logger;
 
 class FunctionCountTemplate extends FunctionTemplate {
 
-    static Logger log4jFunctionCountTemplate = Logger
-            .getLogger(FunctionCountTemplate.class);
+  static Logger log4jFunctionCountTemplate = Logger.getLogger(FunctionCountTemplate.class);
 
-    public FunctionCountTemplate(String fieldName, FieldTemplate field,
-            DecimalFormat format, DataTemplate dataTemplate) {
-        super(fieldName, field, format, format, dataTemplate);
-    }
+  public FunctionCountTemplate(String fieldName, FieldTemplate field, DecimalFormat format,
+      DataTemplate dataTemplate) {
+    super(fieldName, field, format, format, dataTemplate);
+  }
 
-    public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
-        FunctionValue functionValue = searchFunction(xmlDocument);
-        if (functionValue == null) {
-            if (log4jFunctionCountTemplate.isDebugEnabled())
-                log4jFunctionCountTemplate.debug("New FunctionCountValue: "
-                        + fieldName);
-            functionValue = new FunctionCountValue(this, xmlDocument);
-        }
-        return functionValue;
+  public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
+    FunctionValue functionValue = searchFunction(xmlDocument);
+    if (functionValue == null) {
+      if (log4jFunctionCountTemplate.isDebugEnabled())
+        log4jFunctionCountTemplate.debug("New FunctionCountValue: " + fieldName);
+      functionValue = new FunctionCountValue(this, xmlDocument);
     }
+    return functionValue;
+  }
 
 }

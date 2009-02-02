@@ -18,34 +18,34 @@ package org.openbravo.exception;
  * @version 1.0, 15/10/2001
  */
 public class PoolNotFoundException extends Exception {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * Constructs a new PoolNotFoundException with no detail message.
-     */
-    public PoolNotFoundException() {
-        super();
-    }
+  /**
+   * Constructs a new PoolNotFoundException with no detail message.
+   */
+  public PoolNotFoundException() {
+    super();
+  }
 
-    /**
-     * Constructs a new PoolNotFoundException with the specified detail message.
-     * 
-     * @param s
-     *            the detail message
-     */
-    public PoolNotFoundException(String s) {
-        super(s);
-    }
+  /**
+   * Constructs a new PoolNotFoundException with the specified detail message.
+   * 
+   * @param s
+   *          the detail message
+   */
+  public PoolNotFoundException(String s) {
+    super(s);
+  }
 
-    /**
-     * Constructs a new PoolNotFoundException with the specified detail message.
-     * 
-     * @param s
-     *            the detail message
-     * @param t
-     *            the exception cause
-     */
-    public PoolNotFoundException(String s, Throwable t) {
-        super(s, t);
-    }
+  /**
+   * Constructs a new PoolNotFoundException with the specified detail message.
+   * 
+   * @param s
+   *          the detail message
+   * @param t
+   *          the exception cause
+   */
+  public PoolNotFoundException(String s, Throwable t) {
+    super(s, t);
+  }
 }
