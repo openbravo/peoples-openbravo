@@ -475,7 +475,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "C_BPartner_ID",
-          "C_BPartner Employee w Address", "", Utility.getContext(this, vars, "#User_Org",
+          "C_BPartner Employee w Address", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ExpenseAPInvoice"), Utility.getContext(this, vars, "#User_Client",
               "ExpenseAPInvoice"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ExpenseAPInvoice", "");

@@ -151,8 +151,8 @@ public class SendMailText extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "R_MailText_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "SendMailText"), Utility.getContext(
-              this, vars, "#User_Client", "SendMailText"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SendMailText"), Utility
+              .getContext(this, vars, "#User_Client", "SendMailText"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SendMailText", strMailTemplate);
       xmlDocument.setData("reportMailTemplate", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -162,8 +162,8 @@ public class SendMailText extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "R_InterestArea_ID", "", "", Utility.getContext(this, vars, "#User_Org", "SendMailText"),
-          Utility.getContext(this, vars, "#User_Client", "SendMailText"), 0);
+          "R_InterestArea_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "SendMailText"), Utility.getContext(this, vars, "#User_Client", "SendMailText"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SendMailText", strInterestArea);
       xmlDocument.setData("reportInterestArea", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -173,8 +173,8 @@ public class SendMailText extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "SendMailText"), Utility.getContext(
-              this, vars, "#User_Client", "SendMailText"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SendMailText"), Utility
+              .getContext(this, vars, "#User_Client", "SendMailText"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SendMailText", strBPGroup);
       xmlDocument.setData("reportBPGroup", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -184,8 +184,8 @@ public class SendMailText extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "User",
-          "AD_User - Internal", "", Utility.getContext(this, vars, "#User_Org", "SendMailText"),
-          Utility.getContext(this, vars, "#User_Client", "SendMailText"), 0);
+          "AD_User - Internal", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "SendMailText"), Utility.getContext(this, vars, "#User_Client", "SendMailText"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SendMailText", strUser);
       xmlDocument.setData("reportUser", "liststructure", comboTableData.select(false));
       comboTableData = null;

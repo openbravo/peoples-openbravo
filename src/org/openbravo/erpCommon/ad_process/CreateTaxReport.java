@@ -257,8 +257,8 @@ public class CreateTaxReport extends HttpSecureAppServlet {
       log4j.debug("**********************data[0]*********************data[0].id: " + data[0].id
           + "- data[0].name:" + data[0].name + "  data[0].total:" + data[0].total);
     CreateTaxReportData[] dataAux = CreateTaxReportData.selectChild(this, Utility.getContext(this,
-        vars, "#User_Client", "CreateTaxReport"), Utility.getContext(this, vars, "#User_Org",
-        "CreateTaxReport"), data[0].id);
+        vars, "#User_Client", "CreateTaxReport"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "CreateTaxReport"), data[0].id);
     if (log4j.isDebugEnabled())
       log4j.debug("**********************dataAux.length: " + dataAux.length);
     for (int i = 0; i < dataAux.length; i++) {

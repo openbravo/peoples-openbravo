@@ -267,8 +267,8 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Tax_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", "ChangeOrderOrg"), Utility.getContext(
-              this, vars, "#User_Client", "ChangeOrderOrg"), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ChangeOrderOrg"), Utility
+              .getContext(this, vars, "#User_Client", "ChangeOrderOrg"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ChangeOrderOrg", strTax);
       xmlDocument.setData("reportC_TAX_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -278,7 +278,7 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ChangeOrderOrg"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ChangeOrderOrg"), Utility
               .getContext(this, vars, "#User_Client", "ChangeOrderOrg"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ChangeOrderOrg", strShipperpath);
       xmlDocument.setData("reportM_Warehouse_ID", "liststructure", comboTableData.select(false));
@@ -289,8 +289,9 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "", Utility.getContext(this, vars, "#User_Org", "ChangeOrderOrg"),
-          Utility.getContext(this, vars, "#User_Client", "ChangeOrderOrg"), 0);
+          "All_Payment Rule", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ChangeOrderOrg"), Utility.getContext(this, vars, "#User_Client", "ChangeOrderOrg"),
+          0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ChangeOrderOrg", "");
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
       comboTableData = null;

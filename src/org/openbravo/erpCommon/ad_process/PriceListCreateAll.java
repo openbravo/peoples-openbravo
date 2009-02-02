@@ -78,8 +78,8 @@ public class PriceListCreateAll extends HttpSecureAppServlet {
     try {
       conn = getTransactionConnection();
       PriceListCreateAllData[] data = PriceListCreateAllData.selectParent(conn, this,
-          strPriceListVersion, Utility.getContext(this, vars, "#User_Org", windowId), Utility
-              .getContext(this, vars, "#User_Client", windowId));
+          strPriceListVersion, Utility.getContext(this, vars, "#AccessibleOrgTree", windowId),
+          Utility.getContext(this, vars, "#User_Client", windowId));
       if (data == null || data.length == 0) {
         releaseRollbackConnection(conn);
 
@@ -257,7 +257,7 @@ public class PriceListCreateAll extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_PriceList_Version_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "M_PriceList_Version_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "PriceListCreateAll"), Utility.getContext(this, vars, "#User_Client",
               "PriceListCreateAll"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "PriceListCreateAll", "");

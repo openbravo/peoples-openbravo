@@ -125,8 +125,8 @@ public class ImportBudgetServlet extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Budget_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this,
-              vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
+              .getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       xmlDocument.setData("reportC_BUDGET", "liststructure", comboTableData.select(false));
       comboTableData = null;

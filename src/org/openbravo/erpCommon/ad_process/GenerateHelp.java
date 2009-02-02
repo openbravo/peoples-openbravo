@@ -190,8 +190,8 @@ public class GenerateHelp extends HttpSecureAppServlet {
      */
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Window_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "GenerateHelp"), Utility.getContext(
-              this, vars, "#User_Client", "GenerateHelp"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "GenerateHelp"), Utility
+              .getContext(this, vars, "#User_Client", "GenerateHelp"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "GenerateHelp", "");
       xmlDocument.setData("reportAD_Window_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;

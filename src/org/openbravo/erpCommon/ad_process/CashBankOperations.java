@@ -324,9 +324,9 @@ public class CashBankOperations extends HttpSecureAppServlet {
      */
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "",
-          Utility.getContext(this, vars, "#User_Org", "CashBankOperations"), Utility.getContext(
-              this, vars, "#User_Client", "CashBankOperations"), 0);
+          "All_Payment Rule", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "CashBankOperations"), Utility.getContext(this, vars, "#User_Client",
+              "CashBankOperations"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "CashBankOperations", "");
       xmlDocument.setData("reportPaymentRuleFrom", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -336,9 +336,9 @@ public class CashBankOperations extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "",
-          Utility.getContext(this, vars, "#User_Org", "CashBankOperations"), Utility.getContext(
-              this, vars, "#User_Client", "CashBankOperations"), 0);
+          "All_Payment Rule", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "CashBankOperations"), Utility.getContext(this, vars, "#User_Client",
+              "CashBankOperations"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "CashBankOperations", "");
       xmlDocument.setData("reportPaymentRuleTo", "liststructure", comboTableData.select(false));
       comboTableData = null;
