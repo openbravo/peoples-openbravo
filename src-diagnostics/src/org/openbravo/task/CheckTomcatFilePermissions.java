@@ -27,19 +27,18 @@ import org.apache.tools.ant.Task;
 import org.openbravo.utils.ServerConnection;
 
 public class CheckTomcatFilePermissions extends Task {
-    static Logger log4j = Logger.getLogger(CheckTomcatFilePermissions.class);
+  static Logger log4j = Logger.getLogger(CheckTomcatFilePermissions.class);
 
-    @Override
-    public void execute() throws BuildException {
-        final File f = new File("src-diagnostics/build.xml");
-        final String fileName = f.getAbsolutePath();
-        log4j.info("Checking tomcat's user file permissions...");
-        final String result = new ServerConnection().getCheck("ant", "&file="
-                + fileName + "&task=check.permissions");
-        if (result.equals("OK"))
-            log4j.info("Tomcat's user permissions. OK");
-        else
-            throw new BuildException(
-                    "Tomcat's user do not have read/write permissions in all files");
-    }
+  @Override
+  public void execute() throws BuildException {
+    final File f = new File("src-diagnostics/build.xml");
+    final String fileName = f.getAbsolutePath();
+    log4j.info("Checking tomcat's user file permissions...");
+    final String result = new ServerConnection().getCheck("ant", "&file=" + fileName
+        + "&task=check.permissions");
+    if (result.equals("OK"))
+      log4j.info("Tomcat's user permissions. OK");
+    else
+      throw new BuildException("Tomcat's user do not have read/write permissions in all files");
+  }
 }

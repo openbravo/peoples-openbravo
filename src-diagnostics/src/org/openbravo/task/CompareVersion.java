@@ -24,24 +24,24 @@ import org.apache.tools.ant.Task;
 import org.openbravo.utils.Version;
 
 public class CompareVersion extends Task {
-    private String v1;
-    private String v2;
-    static Logger log4j = Logger.getLogger(CompareVersion.class);
+  private String v1;
+  private String v2;
+  static Logger log4j = Logger.getLogger(CompareVersion.class);
 
-    @Override
-    public void execute() throws BuildException {
-        final String msg = "Minimum version " + v2 + " current version " + v1;
-        if (Version.compareVersion(v1, v2) < 0)
-            throw new BuildException(msg);
-        log4j.info(msg);
-    }
+  @Override
+  public void execute() throws BuildException {
+    final String msg = "Minimum version " + v2 + " current version " + v1;
+    if (Version.compareVersion(v1, v2) < 0)
+      throw new BuildException(msg);
+    log4j.info(msg);
+  }
 
-    public void setV1(String v1) {
-        this.v1 = v1;
-    }
+  public void setV1(String v1) {
+    this.v1 = v1;
+  }
 
-    public void setV2(String v2) {
-        this.v2 = v2;
-    }
+  public void setV2(String v2) {
+    this.v2 = v2;
+  }
 
 }

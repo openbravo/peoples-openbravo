@@ -27,33 +27,30 @@ import org.openbravo.utils.ServerConnection;
 import org.openbravo.utils.Version;
 
 public class CheckJVMVersion extends Task {
-    static Logger log4j = Logger.getLogger(CheckJVMVersion.class);
+  static Logger log4j = Logger.getLogger(CheckJVMVersion.class);
 
-    @Override
-    public void execute() throws BuildException {
-        log4j.info("Checking Tomcat's JVM version...");
+  @Override
+  public void execute() throws BuildException {
+    log4j.info("Checking Tomcat's JVM version...");
 
-        final String jvmVersion = new ServerConnection()
-                .getCheck("jvm-version");
-        final String minJvmVersion = new PropertiesManager()
-                .getProperty("jvm-version");
+    final String jvmVersion = new ServerConnection().getCheck("jvm-version");
+    final String minJvmVersion = new PropertiesManager().getProperty("jvm-version");
 
-        final String msg = "Current Tomcat's JVM version: " + jvmVersion
-                + " minimum required version: " + minJvmVersion;
+    final String msg = "Current Tomcat's JVM version: " + jvmVersion
+        + " minimum required version: " + minJvmVersion;
 
-        if (Version.compareVersion(jvmVersion, minJvmVersion) < 0)
-            throw new BuildException(
-                    msg
-                            + "\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Tomcat");
-        else {
-            log4j.info(msg);
-            log4j.info("Tomcat's JVM version OK");
-        }
+    if (Version.compareVersion(jvmVersion, minJvmVersion) < 0)
+      throw new BuildException(msg
+          + "\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Tomcat");
+    else {
+      log4j.info(msg);
+      log4j.info("Tomcat's JVM version OK");
     }
+  }
 
-    public static void main(String[] args) {
-        final CheckJVMVersion c = new CheckJVMVersion();
-        c.execute();
-    }
+  public static void main(String[] args) {
+    final CheckJVMVersion c = new CheckJVMVersion();
+    c.execute();
+  }
 
 }

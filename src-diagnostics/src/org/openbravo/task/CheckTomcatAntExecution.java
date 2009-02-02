@@ -27,31 +27,26 @@ import org.apache.tools.ant.Task;
 import org.openbravo.utils.ServerConnection;
 
 public class CheckTomcatAntExecution extends Task {
-    static Logger log4j = Logger.getLogger(CheckTomcatAntExecution.class);
+  static Logger log4j = Logger.getLogger(CheckTomcatAntExecution.class);
 
-    @Override
-    public void execute() throws BuildException {
-        final File f = new File("src-diagnostics/build.xml");
-        final String fileName = f.getAbsolutePath().replace("\\", "/");
-        System.out.println(fileName);
-        log4j.info("Checking tomcat executing ant tasks...");
-        String result = new ServerConnection().getCheck("ant", "&file="
-                + fileName + "&task=test1");
-        if (result.equals("OK"))
-            log4j.info("Possible to execute simple tasks. OK");
-        else
-            throw new BuildException("Tomcat cannot execute simple ant tasks: "
-                    + result);
+  @Override
+  public void execute() throws BuildException {
+    final File f = new File("src-diagnostics/build.xml");
+    final String fileName = f.getAbsolutePath().replace("\\", "/");
+    System.out.println(fileName);
+    log4j.info("Checking tomcat executing ant tasks...");
+    String result = new ServerConnection().getCheck("ant", "&file=" + fileName + "&task=test1");
+    if (result.equals("OK"))
+      log4j.info("Possible to execute simple tasks. OK");
+    else
+      throw new BuildException("Tomcat cannot execute simple ant tasks: " + result);
 
-        result = new ServerConnection().getCheck("ant", "&file=" + fileName
-                + "&task=test2");
-        if (result.equals("OK"))
-            log4j.info("Possible to execute ant javac task. OK");
-        else
-            throw new BuildException(
-                    "Tomcat cannot execute ant javac task: "
-                            + result
-                            + "Tip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Tomcat");
-    }
+    result = new ServerConnection().getCheck("ant", "&file=" + fileName + "&task=test2");
+    if (result.equals("OK"))
+      log4j.info("Possible to execute ant javac task. OK");
+    else
+      throw new BuildException("Tomcat cannot execute ant javac task: " + result
+          + "Tip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Tomcat");
+  }
 
 }

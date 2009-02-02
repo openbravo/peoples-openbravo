@@ -27,23 +27,22 @@ import org.apache.tools.ant.Task;
 import org.openbravo.utils.ServerConnection;
 
 public class CheckX extends Task {
-    static Logger log4j = Logger.getLogger(CheckX.class);
+  static Logger log4j = Logger.getLogger(CheckX.class);
 
-    @Override
-    public void execute() throws BuildException {
-        final File f = new File("src-diagnostics/build.xml");
-        final String fileName = f.getAbsolutePath();
-        log4j.info("Checking tomcat's user has X...");
-        final String result = new ServerConnection().getCheck("ant", "&file="
-                + fileName + "&task=compile.web");
-        if (result.equals("OK"))
-            log4j.info("Tomcat's user X. OK");
-        else {
-            if (result.contains("X11"))
-                throw new BuildException(
-                        "Tomcat's user do not have X. Tip try executing xhost+");
-            else
-                throw new BuildException(result);
-        }
+  @Override
+  public void execute() throws BuildException {
+    final File f = new File("src-diagnostics/build.xml");
+    final String fileName = f.getAbsolutePath();
+    log4j.info("Checking tomcat's user has X...");
+    final String result = new ServerConnection().getCheck("ant", "&file=" + fileName
+        + "&task=compile.web");
+    if (result.equals("OK"))
+      log4j.info("Tomcat's user X. OK");
+    else {
+      if (result.contains("X11"))
+        throw new BuildException("Tomcat's user do not have X. Tip try executing xhost+");
+      else
+        throw new BuildException(result);
     }
+  }
 }

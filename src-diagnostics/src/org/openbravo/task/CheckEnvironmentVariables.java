@@ -36,49 +36,45 @@ import org.apache.tools.ant.Task;
  */
 public class CheckEnvironmentVariables extends Task {
 
-    static Logger log4j = Logger.getLogger(CheckEnvironmentVariables.class);
+  static Logger log4j = Logger.getLogger(CheckEnvironmentVariables.class);
 
-    /**
-     * A mapping of the required variables and the message to display if not
-     * found.
-     */
-    static Map<String, String> varsToCheck;
+  /**
+   * A mapping of the required variables and the message to display if not found.
+   */
+  static Map<String, String> varsToCheck;
 
-    static {
-        varsToCheck = new HashMap<String, String>();
-        varsToCheck
-                .put(
-                        "CATALINA_HOME",
-                        "CATALINA_HOME environment variable is required. "
-                                + "Tip: Set a CATALINA_HOME environment variable to the"
-                                + " directory where Tomcat is installed.");
+  static {
+    varsToCheck = new HashMap<String, String>();
+    varsToCheck.put("CATALINA_HOME", "CATALINA_HOME environment variable is required. "
+        + "Tip: Set a CATALINA_HOME environment variable to the"
+        + " directory where Tomcat is installed.");
+  }
+
+  /**
+   * Verifies that all of the required environment variables are set.
+   */
+  @Override
+  public void execute() throws BuildException {
+    log4j.info("Checking for required environment variables...");
+    String msg = "";
+
+    final Set<Entry<String, String>> vars = varsToCheck.entrySet();
+
+    for (final Entry<String, String> var : vars) {
+      final String name = var.getKey();
+      final String tip = var.getValue();
+
+      final String value = System.getenv(name);
+      if (value == null) {
+        msg += tip + "\n";
+      } else {
+        log4j.info(name + " found: " + value);
+      }
     }
-
-    /**
-     * Verifies that all of the required environment variables are set.
-     */
-    @Override
-    public void execute() throws BuildException {
-        log4j.info("Checking for required environment variables...");
-        String msg = "";
-
-        final Set<Entry<String, String>> vars = varsToCheck.entrySet();
-
-        for (final Entry<String, String> var : vars) {
-            final String name = var.getKey();
-            final String tip = var.getValue();
-
-            final String value = System.getenv(name);
-            if (value == null) {
-                msg += tip + "\n";
-            } else {
-                log4j.info(name + " found: " + value);
-            }
-        }
-        if (!"".equals(msg)) {
-            throw new BuildException(msg);
-        } else {
-            log4j.info("Environment variables OK");
-        }
+    if (!"".equals(msg)) {
+      throw new BuildException(msg);
+    } else {
+      log4j.info("Environment variables OK");
     }
+  }
 }

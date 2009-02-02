@@ -26,27 +26,24 @@ import org.openbravo.utils.PropertiesManager;
 import org.openbravo.utils.ServerConnection;
 
 public class CheckTomcatMemory extends Task {
-    static Logger log4j = Logger.getLogger(CheckTomcatMemory.class);
+  static Logger log4j = Logger.getLogger(CheckTomcatMemory.class);
 
-    @Override
-    public void execute() throws BuildException {
-        log4j.info("Checking tomcat's memory...");
-        final long maxCurrentMemory = new Long(new ServerConnection()
-                .getCheck("memory"));
-        final long MaxMemory = new Long(new PropertiesManager()
-                .getProperty("max.memory"));
-        final String msg = "Current max memory in server:" + maxCurrentMemory
-                + "M, minimum required:" + MaxMemory + "M";
+  @Override
+  public void execute() throws BuildException {
+    log4j.info("Checking tomcat's memory...");
+    final long maxCurrentMemory = new Long(new ServerConnection().getCheck("memory"));
+    final long MaxMemory = new Long(new PropertiesManager().getProperty("max.memory"));
+    final String msg = "Current max memory in server:" + maxCurrentMemory + "M, minimum required:"
+        + MaxMemory + "M";
 
-        // check max memory +- 5%, because it is not accurate
-        if (MaxMemory > maxCurrentMemory * 1.05)
-            throw new BuildException(
-                    msg
-                            + "Tip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Tomcat");
-        else {
-            log4j.info(msg);
-            log4j.info("Tomcat's memory OK ");
-        }
-
+    // check max memory +- 5%, because it is not accurate
+    if (MaxMemory > maxCurrentMemory * 1.05)
+      throw new BuildException(msg
+          + "Tip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Tomcat");
+    else {
+      log4j.info(msg);
+      log4j.info("Tomcat's memory OK ");
     }
+
+  }
 }

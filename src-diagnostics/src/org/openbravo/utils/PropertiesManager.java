@@ -24,22 +24,22 @@ import java.util.Properties;
 
 public class PropertiesManager {
 
-    Properties obProperties;
+  Properties obProperties;
 
-    public PropertiesManager(String propertiesFile) {
-        try {
-            obProperties = new Properties();
-            obProperties.load(new FileInputStream(propertiesFile));
-        } catch (final Exception e) {
-            // do nothing
-        }
+  public PropertiesManager(String propertiesFile) {
+    try {
+      obProperties = new Properties();
+      obProperties.load(new FileInputStream(propertiesFile));
+    } catch (final Exception e) {
+      // do nothing
     }
+  }
 
-    public PropertiesManager() {
-        this("src-diagnostics/config/diagnostics.properties");
-    }
+  public PropertiesManager() {
+    this("src-diagnostics/config/diagnostics.properties");
+  }
 
-    public String getProperty(String name) {
-        return obProperties.getProperty(name);
-    }
+  public String getProperty(String name) {
+    return obProperties.getProperty(name);
+  }
 }
