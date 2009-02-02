@@ -143,7 +143,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
         if (pricelimit.equals(""))
           pricelimit = "0";
         int line = 0;
-        String strCTaxID = Tax.get(this, data[i].mProductId, DateTimeData.today(this),
+        String strCTaxID = Tax.get(this, data[i].mProductId, order[0].datepromised,
             order[0].adOrgId, order[0].mWarehouseId.equals("") ? vars.getWarehouse()
                 : order[0].mWarehouseId, CopyFromPOOrderData.cBPartnerLocationId(this,
                 order[0].cBpartnerId), CopyFromPOOrderData.cBPartnerLocationId(this,
@@ -161,7 +161,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
               order[0].adOrgId, vars.getUser(), strKey, Integer.toString(line),
               order[0].cBpartnerId, order[0].cBpartnerLocationId.equals("") ? ExpenseSOrderData
                   .cBPartnerLocationId(this, order[0].cBpartnerId) : order[0].cBpartnerLocationId,
-              DateTimeData.today(this), DateTimeData.today(this), data[i].description,
+                  order[0].dateordered, order[0].datepromised, data[i].description,
               data[i].mProductId, order[0].mWarehouseId.equals("") ? vars.getWarehouse()
                   : order[0].mWarehouseId, data[i].cUomId, data[i].qtyordered,
               data[i].quantityorder, data[i].cCurrencyId, pricelist, priceactual, pricelimit,
