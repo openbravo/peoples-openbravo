@@ -147,7 +147,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
             order[0].adOrgId, order[0].mWarehouseId.equals("") ? vars.getWarehouse()
                 : order[0].mWarehouseId, CopyFromPOOrderData.cBPartnerLocationId(this,
                 order[0].cBpartnerId), CopyFromPOOrderData.cBPartnerLocationId(this,
-                order[0].cBpartnerId), order[0].cProjectId, true);
+                order[0].cBpartnerId), order[0].cProjectId, order[0].issotrx.equals("Y")?true:false);
         if (strCTaxID.equals("")) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this,
               "TaxNotFound", vars.getLanguage()));
