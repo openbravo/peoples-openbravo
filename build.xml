@@ -98,6 +98,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="obx.export.DB" value="false" />
   <property name="obx.export.CS" value="false" />
   <property name="chekPerms" value="false" />
+  <property name="force" value="false" />
 
   <available file=".svn/entries" property="is.svn" />
 
@@ -223,7 +224,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="build.quick" depends="init">
-
+    <antcall target="update.database" />
     <ant dir="${base.src}" target="build.quick" inheritAll="true" inheritRefs="true" />
   </target>
 
