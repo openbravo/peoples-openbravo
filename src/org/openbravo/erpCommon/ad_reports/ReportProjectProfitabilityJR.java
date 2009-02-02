@@ -250,7 +250,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       ComboTableData comboTableData = null;
 
       comboTableData = new ComboTableData(vars, this, "TABLE", "Responsible_ID",
-          "Responsible employee", "", Utility.getContext(this, vars, "#User_Org",
+          "Responsible employee", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportProjectProfitabilityJR"), Utility.getContext(this, vars, "#User_Client",
               "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
@@ -259,7 +259,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       comboTableData = null;
 
       comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "", Utility
-          .getContext(this, vars, "#User_Org", "ReportProjectProfitabilityJR"), Utility.getContext(
+          .getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility.getContext(
           this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
           strOrg);
@@ -267,7 +267,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       comboTableData = null;
 
       comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Project_ID", "", "", Utility
-          .getContext(this, vars, "#User_Org", "ReportProjectProfitabilityJR"), Utility.getContext(
+          .getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility.getContext(
           this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
           strProject);
@@ -275,7 +275,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       comboTableData = null;
 
       comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_ProjectType_ID", "", "",
-          Utility.getContext(this, vars, "#User_Org", "ReportProjectProfitabilityJR"), Utility
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility
               .getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
           strProjectType);
@@ -289,7 +289,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportProjectProfitabilityJR"),
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
           Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
           strCurrencyId);

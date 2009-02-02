@@ -103,8 +103,8 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
         log4j.debug("printPageDataSheet - select - #User_Client = "
             + Utility.getContext(this, vars, "#User_Client", "ReportTrialBalanceDetail"));
       if (log4j.isDebugEnabled())
-        log4j.debug("printPageDataSheet - select - #User_Org = "
-            + Utility.getContext(this, vars, "#User_Org", "ReportTrialBalanceDetail"));
+        log4j.debug("printPageDataSheet - select - #AccessibleOrgTree = "
+            + Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalanceDetail"));
       if (log4j.isDebugEnabled())
         log4j.debug("printPageDataSheet - select - strDateFrom = " + strDateFrom);
       if (log4j.isDebugEnabled())
@@ -115,7 +115,7 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("printPageDataSheet - select - strId = " + strId);
       data = ReportTrialBalanceDetailData.select(this, strOrgFamily, Utility.getContext(this, vars,
-          "#User_Client", "ReportTrialBalanceDetail"), Utility.getContext(this, vars, "#User_Org",
+          "#User_Client", "ReportTrialBalanceDetail"), Utility.getContext(this, vars, "#AccessibleOrgTree",
           "ReportTrialBalanceDetail"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
           strIdFamily, strId);
     }

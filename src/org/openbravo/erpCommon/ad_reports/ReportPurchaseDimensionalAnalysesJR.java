@@ -239,7 +239,7 @@ public class ReportPurchaseDimensionalAnalysesJR extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
           "", "", Utility
-              .getContext(this, vars, "#User_Org", "ReportPurchaseDimensionalAnalysesJR"), Utility
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportPurchaseDimensionalAnalysesJR"), Utility
               .getContext(this, vars, "#User_Client", "ReportPurchaseDimensionalAnalysesJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportPurchaseDimensionalAnalysesJR", strPartnerGroup);
@@ -251,7 +251,7 @@ public class ReportPurchaseDimensionalAnalysesJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportPurchaseDimensionalAnalysesJR"), Utility.getContext(this, vars,
               "#User_Client", "ReportPurchaseDimensionalAnalysesJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -267,7 +267,7 @@ public class ReportPurchaseDimensionalAnalysesJR extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
           "", "", Utility
-              .getContext(this, vars, "#User_Org", "ReportPurchaseDimensionalAnalysesJR"), Utility
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportPurchaseDimensionalAnalysesJR"), Utility
               .getContext(this, vars, "#User_Client", "ReportPurchaseDimensionalAnalysesJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportPurchaseDimensionalAnalysesJR", strCurrencyId);
@@ -281,10 +281,10 @@ public class ReportPurchaseDimensionalAnalysesJR extends HttpSecureAppServlet {
         vars.getRole()));
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportPurchaseDimensionalAnalysesJRData.selectBpartner(this, Utility.getContext(this, vars,
-            "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure",
         ReportPurchaseDimensionalAnalysesJRData.selectMproduct(this, Utility.getContext(this, vars,
-            "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
+            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
 
     if (vars.getLanguage().equals("en_US")) {
       xmlDocument.setData("structure1", ReportPurchaseDimensionalAnalysesJRData.selectNotShown(

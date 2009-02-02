@@ -152,7 +152,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         elements[i] = AccountTreeData.selectTrl(this, strConCodigo, vars.getLanguage(), TreeID);
       }
       AccountTreeData[] accounts = AccountTreeData.selectAcct(this, Utility.getContext(this, vars,
-          "#User_Org", "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client",
+          "#AccessibleOrgTree", "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client",
           "GeneralAccountingReports"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
           strcAcctSchemaId, Tree.getMembers(this, strTreeOrg, strOrg), strAgno, strDateFromRef,
           DateTimeData.nDaysAfter(this, strDateToRef, "1"), strAgnoRef);
@@ -340,12 +340,12 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("level", strLevel);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
-        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#User_Org",
+        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client",
             "GeneralAccountingReports"), strcAcctSchemaId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_ElementValue level", "", Utility.getContext(this, vars, "#User_Org",
+          "C_ElementValue level", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client",
               "GeneralAccountingReports"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "GeneralAccountingReports", "");
@@ -358,7 +358,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     String balancedOrg;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "AD_OrgType_BU_LE", Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"),
+          "AD_OrgType_BU_LE", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"),
           Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashFlow", "");
       FieldProvider[] dataOrg = comboTableData.select(false);
@@ -380,7 +380,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     String allOrg;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(
               this, vars, "#User_Client", "ReportCashFlow"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashFlow", "");
       FieldProvider[] dataOrg = comboTableData.select(false);
@@ -401,7 +401,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
     String reportIsBalanced;
     GeneralAccountingReportsData[] dataReportIsBalanced = GeneralAccountingReportsData.selectRpt(
-        this, Utility.getContext(this, vars, "#User_Org", "GeneralAccountingReports"), Utility
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"), Utility
             .getContext(this, vars, "#User_Client", "GeneralAccountingReports"), strcAcctSchemaId);
     reportIsBalanced = "var arrReportIsBalanced = new Array(\n";
     for (int i = 0; i < dataReportIsBalanced.length; i++) {
@@ -420,7 +420,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         GeneralAccountingReportsData.selectRptDouble(this)));
     /*
      * try { ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-     * "C_Acct_Rpt_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+     * "C_Acct_Rpt_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
      * "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client",
      * "GeneralAccountingReports"), 0); Utility.fillSQLParameters(this, vars, null, comboTableData,
      * "GeneralAccountingReports", "");

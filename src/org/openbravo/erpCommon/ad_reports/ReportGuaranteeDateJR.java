@@ -72,7 +72,7 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
     ReportGuaranteeDateData[] data = null;
     String discard[] = { "discard" };
     data = ReportGuaranteeDateData.select(this, Utility.getContext(this, vars, "#User_Client",
-        "ReportGuaranteeDateJR"), Utility.getContext(this, vars, "#User_Org",
+        "ReportGuaranteeDateJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
         "ReportGuaranteeDateJR"), DateTimeData.nDaysAfter(this, strDate, "1"), strcBpartnerId,
         strmWarehouseId);
 
@@ -146,7 +146,7 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
         strcBpartnerId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportGuaranteeDateJR"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGuaranteeDateJR"), Utility
               .getContext(this, vars, "#User_Client", "ReportGuaranteeDateJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportGuaranteeDateJR",
           strmWarehouseId);

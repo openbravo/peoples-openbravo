@@ -119,7 +119,7 @@ public class ReportWarehouseDetailInventoryJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportWarehouseDetailInventoryJR"),
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseDetailInventoryJR"),
           Utility.getContext(this, vars, "#User_Client", "ReportWarehouseDetailInventoryJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportWarehouseDetailInventoryJR", strWarehouse);
@@ -146,7 +146,7 @@ public class ReportWarehouseDetailInventoryJR extends HttpSecureAppServlet {
 
     ReportWarehouseDetailInventoryData[] data = ReportWarehouseDetailInventoryData.select(this,
         Utility.getContext(this, vars, "#User_Client", "ReportWarehouseDetailInventory"), Utility
-            .getContext(this, vars, "#User_Org", "ReportWarehouseDetailInventory"), strDateFromSql,
+            .getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseDetailInventory"), strDateFromSql,
         DateTimeData.nDaysAfter(this, strDateTo, "1"), strWarehouse);
 
     if (log4j.isDebugEnabled())

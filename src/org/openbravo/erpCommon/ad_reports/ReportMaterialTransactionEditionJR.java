@@ -127,7 +127,7 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
           "", "",
-          Utility.getContext(this, vars, "#User_Org", "ReportMaterialTransactionEditionJR"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportMaterialTransactionEditionJR"),
           Utility.getContext(this, vars, "#User_Client", "ReportMaterialTransactionEditionJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportMaterialTransactionEditionJR", "");
@@ -139,7 +139,7 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
 
     /*
      * try { ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-     * "C_Project_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+     * "C_Project_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
      * "ReportMaterialTransactionEditionJR"), Utility.getContext(this, vars, "#User_Client",
      * "ReportMaterialTransactionEditionJR"), 0); Utility.fillSQLParameters(this, vars, null,
      * comboTableData, "ReportMaterialTransactionEditionJR", "");
@@ -162,7 +162,7 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
     InoutEditionData[] data = null;
     String discard[] = { "discard" };
     data = InoutEditionData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-        "#User_Org", "ReportMaterialTransactionEditionJR"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportMaterialTransactionEditionJR"), Utility.getContext(this, vars,
         "#User_Client", "ReportMaterialTransactionEditionJR"), strdateFrom, strdateTo,
         strcBpartnetId, strmWarehouseId, strcProjectId);
 

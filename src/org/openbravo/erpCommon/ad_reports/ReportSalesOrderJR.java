@@ -151,7 +151,7 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("mProductCatId", "");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "SalesOrderFilterJR"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SalesOrderFilterJR"), Utility
               .getContext(this, vars, "#User_Client", "SalesOrderFilter"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SalesOrderFilterJR", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
@@ -162,7 +162,7 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Projectkind_ID",
-          "Projectkind", "", Utility.getContext(this, vars, "#User_Org", "SalesOrderFilterJR"),
+          "Projectkind", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SalesOrderFilterJR"),
           Utility.getContext(this, vars, "#User_Client", "SalesOrderFilterJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SalesOrderFilterJR", "");
       xmlDocument.setData("reportC_PROJECTKIND", "liststructure", comboTableData.select(false));
@@ -173,7 +173,7 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Region_ID", "",
-          "C_Region of Country", Utility.getContext(this, vars, "#User_Org", "SalesOrderFilterJR"),
+          "C_Region of Country", Utility.getContext(this, vars, "#AccessibleOrgTree", "SalesOrderFilterJR"),
           Utility.getContext(this, vars, "#User_Client", "SalesOrderFilterJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SalesOrderFilterJR", "");
       xmlDocument.setData("reportC_REGIONID", "liststructure", comboTableData.select(false));
@@ -184,7 +184,7 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Projectkind_ID",
-          "PublicPrivate", "", Utility.getContext(this, vars, "#User_Org", "SalesOrderFilterJR"),
+          "PublicPrivate", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SalesOrderFilterJR"),
           Utility.getContext(this, vars, "#User_Client", "SalesOrderFilterJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SalesOrderFilter", "");
       xmlDocument.setData("reportC_PROJECTKIND", "liststructure", comboTableData.select(false));
@@ -196,7 +196,7 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "SalesOrderFilterJR"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SalesOrderFilterJR"), Utility
               .getContext(this, vars, "#User_Client", "SalesOrderFilterJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SalesOrderFilterJR",
           strCurrencyId);
@@ -207,13 +207,13 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportProjectBuildingSiteData
-        .selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
             this, vars, "#User_Client", ""), ""));
     xmlDocument.setData("reportMProductId_IN", "liststructure", ReportProjectBuildingSiteData
-        .selectMproduct(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(
+        .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
             this, vars, "#User_Client", ""), ""));
     xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", SubCategoryProductData.select(
-        this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars,
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
             "#User_Client", "")));
     response.setContentType("text/html; charset=UTF-8");
 
@@ -244,7 +244,7 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
     myMessage = new OBError();
     try {
       data = OrderEditionData.select(this, strCurrencyId, Utility.getContext(this, vars,
-          "#User_Org", "SalesOrderFilterJR"), Utility.getContext(this, vars, "#User_Client",
+          "#AccessibleOrgTree", "SalesOrderFilterJR"), Utility.getContext(this, vars, "#User_Client",
           "SalesOrderFilterJR"), strdateFrom, strdateTo, strmWarehouseId, strcProjectId,
           strProjectpublic, strcRegionId, strmProductCategoryId, strProjectkind, strcBpartnerId,
           strmProductId);

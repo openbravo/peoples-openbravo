@@ -97,7 +97,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
       data = ReportPricelistData.set();
     } else {
       data = ReportPricelistData.select(this, Utility.getContext(this, vars, "#User_Client",
-          "ReportPricelist"), Utility.getContext(this, vars, "#User_Org", "ReportPricelist"),
+          "ReportPricelist"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportPricelist"),
           strPricelistversionId, strProductCategory, strmProductId);
     }
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportPricelist",
@@ -141,7 +141,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "MProductId_IN",
-          "null", "", Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this,
+          "null", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
               vars, "#User_Client", ""), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "", strmProductId);
       xmlDocument.setData("reportMProductId_IN", "liststructure", comboTableData.select(false));
@@ -152,7 +152,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportPricelist"),
           Utility.getContext(this, vars, "#User_Client", "ReportPricelist"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportPricelist",
@@ -166,7 +166,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_PriceList_Version_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "M_PriceList_Version_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportPricelist"),
           Utility.getContext(this, vars, "#User_Client", "ReportPricelist"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportPricelist",
@@ -193,7 +193,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportPricelist_Pdf").createXmlDocument();
     xmlDocument.setData("structure1", ReportPricelistData.selectPDF(this, Utility.getContext(this,
-        vars, "#User_Client", "ReportPricelist"), Utility.getContext(this, vars, "#User_Org",
+        vars, "#User_Client", "ReportPricelist"), Utility.getContext(this, vars, "#AccessibleOrgTree",
         "ReportPricelist"), strPricelistversionId, strProductCategory, strmProductId));
     String strResult = xmlDocument.print();
     if (log4j.isDebugEnabled())

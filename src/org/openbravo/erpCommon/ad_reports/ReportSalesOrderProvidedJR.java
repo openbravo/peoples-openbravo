@@ -149,7 +149,7 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
           .bPartnerDescription(this, strcBpartnerId));
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+            "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportSalesOrderProvidedJR"), Utility.getContext(this, vars, "#User_Client",
                 "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderProvidedJR",
@@ -162,7 +162,7 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+            "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportSalesOrderProvidedJR"), Utility.getContext(this, vars, "#User_Client",
                 "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderProvidedJR",
@@ -176,7 +176,7 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Projectkind_ID",
-            "Projectkind", "", Utility.getContext(this, vars, "#User_Org",
+            "Projectkind", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportSalesOrderProvidedJR"), Utility.getContext(this, vars, "#User_Client",
                 "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderProvidedJR",
@@ -189,7 +189,7 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Region_ID",
-            "", "C_Region of Country", Utility.getContext(this, vars, "#User_Org",
+            "", "C_Region of Country", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportSalesOrderProvidedJR"), Utility.getContext(this, vars, "#User_Client",
                 "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderProvidedJR",
@@ -202,7 +202,7 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST",
-            "C_Project_Public_ID", "PublicPrivate", "", Utility.getContext(this, vars, "#User_Org",
+            "C_Project_Public_ID", "PublicPrivate", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportSalesOrderProvidedJR"), Utility.getContext(this, vars, "#User_Client",
                 "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderProvidedJR",
@@ -216,7 +216,7 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderProvidedJR"),
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderProvidedJR"),
             Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderProvidedJR",
             strCurrencyId);
@@ -227,10 +227,10 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
       }
 
       SubCategoryProductData[] dataSub = SubCategoryProductData.select(this, Utility.getContext(
-          this, vars, "#User_Org", "ReportSalesOrderProvidedJR"), Utility.getContext(this, vars,
+          this, vars, "#AccessibleOrgTree", "ReportSalesOrderProvidedJR"), Utility.getContext(this, vars,
           "#User_Client", "ReportSalesOrderProvidedJR"));
       xmlDocument.setParameter("product", arrayDobleEntrada("array", SubCategoryProductData
-          .selectProduct(this, Utility.getContext(this, vars, "#User_Org",
+          .selectProduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportSalesOrderProvidedJR"), Utility.getContext(this, vars, "#User_Client",
               "ReportSalesOrderProvidedJR"))));
 
@@ -242,7 +242,7 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
     } else {
       ReportSalesOrderProvidedData[] data = ReportSalesOrderProvidedData
           .select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client",
-              "ReportSalesOrderProvided"), Utility.getContext(this, vars, "#User_Org",
+              "ReportSalesOrderProvided"), Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportSalesOrderProvided"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,
               "1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind,
               strcRegionId, strProjectpublic, strProduct);
@@ -311,7 +311,7 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
     try {
       data = ReportSalesOrderProvidedData.select(this, strCurrencyId, Utility.getContext(this,
           vars, "#User_Client", "ReportSalesOrderProvided"), Utility.getContext(this, vars,
-          "#User_Org", "ReportSalesOrderProvided"), strdateFrom, DateTimeData.nDaysAfter(this,
+          "#AccessibleOrgTree", "ReportSalesOrderProvided"), strdateFrom, DateTimeData.nDaysAfter(this,
           strdateTo, "1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId,
           strProjectkind, strcRegionId, strProjectpublic, strProduct);
     } catch (ServletException ex) {

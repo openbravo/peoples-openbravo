@@ -80,7 +80,7 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
 
     ReportWarehouseControlData[] data = ReportWarehouseControlData.select(this, Utility.getContext(
         this, vars, "#User_Client", "ReportWarehouseControl"), Utility.getContext(this, vars,
-        "#User_Org", "ReportWarehouseControl"), strDateFrom, DateTimeData.nDaysAfter(this,
+        "#AccessibleOrgTree", "ReportWarehouseControl"), strDateFrom, DateTimeData.nDaysAfter(this,
         strDateTo, "1"), strRef);
 
     if (data == null || data.length == 0 || vars.commandIn("DEFAULT")) {
@@ -97,7 +97,7 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
       // data = ReportWarehouseControlData.select(this,
       // Utility.getContext(this, vars, "#User_Client",
       // "ReportWarehouseControl"), Utility.getContext(this, vars,
-      // "#User_Org", "ReportWarehouseControl"), strDateFrom,
+      // "#AccessibleOrgTree", "ReportWarehouseControl"), strDateFrom,
       // DateTimeData.nDaysAfter(this, strDateTo,"1"), strRef);
 
     }

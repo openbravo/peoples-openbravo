@@ -141,7 +141,7 @@ public class ReportToInvoiceConsignment extends HttpSecureAppServlet {
     ReportToInvoiceConsignmentData[] data = ReportToInvoiceConsignmentData.select(this,
         strCurrencyId,
         Utility.getContext(this, vars, "#User_Client", "ReportToInvoiceConsignment"), Utility
-            .getContext(this, vars, "#User_Org", "ReportToInvoiceConsignment"), strDateFrom,
+            .getContext(this, vars, "#AccessibleOrgTree", "ReportToInvoiceConsignment"), strDateFrom,
         DateTimeData.nDaysAfter(this, strDateTo, "1"), strWarehouse);
     String strTitle = "";
     if (!strDateFrom.equals("")) {

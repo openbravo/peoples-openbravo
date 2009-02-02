@@ -125,7 +125,7 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("mWarehouseId", strWarehouse);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "M_Warehouse_ID",
-          "M_Warehouse of Client", "", Utility.getContext(this, vars, "#User_Org", ""), Utility
+          "M_Warehouse of Client", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
               .getContext(this, vars, "#User_Client", ""), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
@@ -137,7 +137,7 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportToInvoiceConsignmentJR"),
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportToInvoiceConsignmentJR"),
           Utility.getContext(this, vars, "#User_Client", "ReportToInvoiceConsignmentJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportToInvoiceConsignmentJR",
           strCurrencyId);
@@ -168,7 +168,7 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
     try {
       data = ReportToInvoiceConsignmentData.select(this, strCurrencyId, Utility.getContext(this,
           vars, "#User_Client", "ReportToInvoiceConsignmentJR"), Utility.getContext(this, vars,
-          "#User_Org", "ReportToInvoiceConsignmentJR"), strDateFrom, DateTimeData.nDaysAfter(this,
+          "#AccessibleOrgTree", "ReportToInvoiceConsignmentJR"), strDateFrom, DateTimeData.nDaysAfter(this,
           strDateTo, "1"), strWarehouse);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());

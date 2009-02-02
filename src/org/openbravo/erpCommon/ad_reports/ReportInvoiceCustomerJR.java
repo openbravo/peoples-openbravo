@@ -171,7 +171,7 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "Projectkind", "",
-          Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility
               .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
           strProjectkind);
@@ -183,7 +183,7 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "Projectphase", "",
-          Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility
               .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
           strProjectphase);
@@ -195,7 +195,7 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "ProjectStatus", "",
-          Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility
               .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
           strProjectstatus);
@@ -207,7 +207,7 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "PublicPrivate", "",
-          Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility
               .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
           strProjectpublic);
@@ -218,12 +218,12 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", SubCategoryProductData.select(
-        this, Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility
             .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR")));
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "C_REGION_ID", "",
-          "C_Region of Country", Utility.getContext(this, vars, "#User_Org",
+          "C_Region of Country", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportInvoiceCustomerJR"), Utility.getContext(this, vars, "#User_Client",
               "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
@@ -237,7 +237,7 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLE", "", "190",
           "AD_User SalesRep", Utility
-              .getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility.getContext(
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility.getContext(
               this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
           strSalesRep);
@@ -250,7 +250,7 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility
               .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
           strCurrencyId);
@@ -261,10 +261,10 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportProjectBuildingSiteData
-        .selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
             this, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure", ReportProjectBuildingSiteData
-        .selectMproduct(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(
+        .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
             this, vars, "#User_Client", ""), strProduct));
 
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -295,7 +295,7 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     myMessage = new OBError();
     try {
       data = InvoiceCustomerEditionData.select(this, strCurrencyId, Utility.getContext(this, vars,
-          "#User_Org", "InvoiceCustomerFilter"), Utility.getContext(this, vars, "#User_Client",
+          "#AccessibleOrgTree", "InvoiceCustomerFilter"), Utility.getContext(this, vars, "#User_Client",
           "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId, strcProjectId,
           strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic,
           strcRegionId, strSalesRep, strProduct);

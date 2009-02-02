@@ -67,7 +67,7 @@ public class ReportInventory extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
     ReportInventoryData[] data = ReportInventoryData.selectSinDetalle(this, strmWarehouseId,
         Utility.getContext(this, vars, "#User_Client", "ReportInventory"), Utility.getContext(this,
-            vars, "#User_Org", "ReportInventory"));
+            vars, "#AccessibleOrgTree", "ReportInventory"));
 
     if (data.length == 0) {
       String[] discard = { "sectionLocator" };
@@ -100,7 +100,7 @@ public class ReportInventory extends HttpSecureAppServlet {
           ReportInventoryData[] data2 = ReportInventoryData.select(this, data[i].mProductId,
               data[i].cUomId, data[i].mLocatorId, Utility.getContext(this, vars, "#User_Client",
                   "ReportInventory"), Utility
-                  .getContext(this, vars, "#User_Org", "ReportInventory"));
+                  .getContext(this, vars, "#AccessibleOrgTree", "ReportInventory"));
           for (int k = 0; k < data2.length; k++) {
             if (!data2[k].lot.equals("")) {
               subreport[j] = data2;
@@ -176,7 +176,7 @@ public class ReportInventory extends HttpSecureAppServlet {
     xmlDocument.setParameter("Detalle", strDetalle);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportInventory"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInventory"), Utility
               .getContext(this, vars, "#User_Client", "ReportInventory"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInventory",
           strmWarehouseId);
@@ -196,7 +196,7 @@ public class ReportInventory extends HttpSecureAppServlet {
    * response.setContentType("text/html; charset=UTF-8"); PrintWriter out = response.getWriter();
    * XmlDocument xmlDocument=null; ReportInventoryData [] data =
    * ReportInventoryData.selectSinDetalle(this, strmWarehouseId, Utility.getContext(this, vars,
-   * "#User_Client", "ReportInventory"), Utility.getContext(this, vars, "#User_Org",
+   * "#User_Client", "ReportInventory"), Utility.getContext(this, vars, "#AccessibleOrgTree",
    * "ReportInventory"));
    * 
    * 
@@ -219,7 +219,7 @@ public class ReportInventory extends HttpSecureAppServlet {
    * data[i].mLocatorId; strProduct = data[i].mProductId; strUom = data[i].productUom;
    * ReportInventoryData [] data2 = ReportInventoryData.select(this, data[i].mProductId,
    * data[i].cUomId, data[i].mLocatorId, Utility.getContext(this, vars, "#User_Client",
-   * "ReportInventory"), Utility.getContext(this, vars, "#User_Org", "ReportInventory")); for (int
+   * "ReportInventory"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInventory")); for (int
    * k=0;k<data2.length ;k++ ){ if (!data2[k].lot.equals("")){ subreport[j] = data2; existsAtt =
    * true; break; } } if (!existsAtt) { subreport[j] = new ReportInventoryData [0]; } j++; } }
    * 

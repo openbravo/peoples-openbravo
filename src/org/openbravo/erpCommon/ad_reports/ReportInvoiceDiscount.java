@@ -84,7 +84,7 @@ public class ReportInvoiceDiscount extends HttpSecureAppServlet {
     String strCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     xmlDocument.setData("structure1", ReportInvoiceDiscountData.select(this, strCurrencyId, Utility
         .getContext(this, vars, "#User_Client", "ReportInvoiceDiscount"), Utility.getContext(this,
-        vars, "#User_Org", "ReportInvoiceDiscount"), strDateFrom, strDateTo, strcBpartnerId,
+        vars, "#AccessibleOrgTree", "ReportInvoiceDiscount"), strDateFrom, strDateTo, strcBpartnerId,
         (strDiscount.equals("N")) ? "" : "discount"));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -145,7 +145,7 @@ public class ReportInvoiceDiscount extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("discount", strDiscount);
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-        ReportInvoiceDiscountData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org",
+        ReportInvoiceDiscountData.selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#User_Client",
             "ReportInvoiceDiscount"), strcBpartnerId));
 
@@ -187,11 +187,11 @@ public class ReportInvoiceDiscount extends HttpSecureAppServlet {
    * xmlDocument.setParameter("dateFrom", strDateFrom); xmlDocument.setParameter("dateTo",
    * strDateTo); xmlDocument.setParameter("discount", strDiscount);
    * xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-   * ReportInvoiceDiscountData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org",
+   * ReportInvoiceDiscountData.selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
    * "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#User_Client",
    * "ReportInvoiceDiscount"), strcBpartnerId)); xmlDocument.setData("structure1",
    * ReportInvoiceDiscountData.select(this, Utility.getContext(this, vars, "#User_Client",
-   * "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#User_Org", "ReportInvoiceDiscount"),
+   * "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscount"),
    * strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strcBpartnerId,
    * (strDiscount.equals("N"))?"":"discount")); response.setContentType("text/html; charset=UTF-8");
    * PrintWriter out = response.getWriter(); out.println(xmlDocument.print()); out.close(); }

@@ -123,7 +123,7 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("projectName", "");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "InvoiceVendorJR"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "InvoiceVendorJR"), Utility
               .getContext(this, vars, "#User_Client", "InvoiceVendorJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "InvoiceVendorFilter", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
@@ -135,7 +135,7 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceVendorJR"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceVendorJR"), Utility
               .getContext(this, vars, "#User_Client", "ReportInvoiceVendorJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceVendorJR",
           strCurrencyId);
@@ -168,7 +168,7 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
     myMessage = new OBError();
     try {
       data = InvoiceEditionData.select(this, strCurrencyId, Utility.getContext(this, vars,
-          "#User_Org", "InvoiceVendorJR"), Utility.getContext(this, vars, "#User_Client",
+          "#AccessibleOrgTree", "InvoiceVendorJR"), Utility.getContext(this, vars, "#User_Client",
           "InvoiceVendorJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
           strcBpartnetId, strcProjectId, strissotrx);
     } catch (ServletException ex) {

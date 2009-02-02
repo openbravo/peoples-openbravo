@@ -425,10 +425,10 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
    * 
    * xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
    * ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this,
-   * Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client",
+   * Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
    * ""), strcBpartnerId)); xmlDocument.setData("reportMProductId_IN", "liststructure",
    * ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(this,
-   * Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client",
+   * Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
    * ""), strmProductId)); xmlDocument.setData("reportAD_ORGID", "liststructure",
    * OrganizationComboData.selectCombo(this, vars.getRole()));
    * 
@@ -451,7 +451,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
    * xmlDocument.setParameter("messageMessage", myMessage.getMessage()); } }
    * 
    * try { ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "Account_ID",
-   * "C_ElementValue (Accounts)", "", Utility.getContext(this, vars, "#User_Org", "Account"),
+   * "C_ElementValue (Accounts)", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
    * Utility.getContext(this, vars, "#User_Client", "Account"), 0); Utility.fillSQLParameters(this,
    * vars, null, comboTableData, "Account", strAccountingCount);
    * xmlDocument.setData("reportAccount_ID","liststructure", comboTableData.select(false));
@@ -518,11 +518,11 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(
-            this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""),
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
             strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(this, Utility.getContext(
-            this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""),
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
             strmProductId));
     xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
         vars.getRole()));
@@ -556,7 +556,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "Account_ID",
-          "C_ElementValue (Accounts)", "", Utility.getContext(this, vars, "#User_Org", "Account"),
+          "C_ElementValue (Accounts)", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
           Utility.getContext(this, vars, "#User_Client", "Account"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "Account", strAccountingCount);
       xmlDocument.setData("reportAccount_ID", "liststructure", comboTableData.select(false));

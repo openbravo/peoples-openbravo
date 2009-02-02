@@ -97,7 +97,7 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     myMessage = new OBError();
     try {
       data = ReportInvoiceDiscountData.select(this, strCurrencyId, Utility.getContext(this, vars,
-          "#User_Client", "ReportInvoiceDiscountJR"), Utility.getContext(this, vars, "#User_Org",
+          "#User_Client", "ReportInvoiceDiscountJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
           "ReportInvoiceDiscountJR"), strDateFrom, strDateTo, strcBpartnerId, (strDiscount
           .equals("N")) ? "" : "discount");
     } catch (ServletException ex) {
@@ -175,13 +175,13 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("discount", strDiscount);
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInvoiceDiscountData
         .selectBpartner(this, Utility
-            .getContext(this, vars, "#User_Org", "ReportInvoiceDiscountJR"), Utility.getContext(
+            .getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"), Utility.getContext(
             this, vars, "#User_Client", "ReportInvoiceDiscountJR"), strcBpartnerId));
 
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceDiscountJR"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"), Utility
               .getContext(this, vars, "#User_Client", "ReportInvoiceDiscountJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceDiscountJR",
           strCurrencyId);

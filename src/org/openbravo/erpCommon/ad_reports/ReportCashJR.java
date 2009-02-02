@@ -68,14 +68,14 @@ public class ReportCashJR extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strCashbook);
     } else {
       data = ReportCashJRData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-          "#User_Client", "ReportCashJR"), Utility.getContext(this, vars, "#User_Org",
+          "#User_Client", "ReportCashJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
           "ReportCashJR"), strDateFrom, strCashbook, strDateTo);
 
       String strReportPath = "@basedesign@"
           + "/org/openbravo/erpCommon/ad_reports/ReportCashJR.jrxml";
       HashMap<String, Object> parameters = new HashMap<String, Object>();
       parameters.put("DATE_FROM", strDateFrom);
-      parameters.put("USER_ORG", Utility.getContext(this, vars, "#User_Org", "ReportBankJR"));
+      parameters.put("USER_ORG", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR"));
       parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client", "ReportBankJR"));
       renderJR(vars, response, strReportPath, "html", parameters, data, null);
     }
@@ -84,10 +84,10 @@ public class ReportCashJR extends HttpSecureAppServlet {
      * xmlDocument =xmlEngine.readXmlTemplate( "org/openbravo/erpCommon/ad_reports/ReportCashJREdit"
      * ).createXmlDocument(); data = ReportCashJRData.select(this, vars.getLanguage(),
      * Utility.getContext(this, vars, "#User_Client", "ReportCashJR"), Utility.getContext(this,
-     * vars, "#User_Org", "ReportCashJR"), strDateFrom, DateTimeData.nDaysAfter(this,
+     * vars, "#AccessibleOrgTree", "ReportCashJR"), strDateFrom, DateTimeData.nDaysAfter(this,
      * strDateTo,"1"), strCashbook); xmlDocument.setParameter("sumAmount",
      * ReportCashJRData.BeginningBalance(this, Utility.getContext(this, vars, "#User_Client",
-     * "ReportCashJR"), Utility.getContext(this, vars, "#User_Org", "ReportCashJR"), strDateFrom,
+     * "ReportCashJR"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashJR"), strDateFrom,
      * strCashbook)); xmlDocument.setData("structure1", data); out.println(xmlDocument.print());
      * out.close();
      */
@@ -149,7 +149,7 @@ public class ReportCashJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_CashBook_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportCashJR"), Utility.getContext(
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashJR"), Utility.getContext(
               this, vars, "#User_Client", "ReportCashJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashJR", strCashbook);
       xmlDocument.setData("reportC_CASHBOOK", "liststructure", comboTableData.select(false));

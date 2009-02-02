@@ -111,7 +111,7 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
     myMessage = new OBError();
     try {
       data = ReportInvoicesData.select(this, strCurrencyId, Utility.getContext(this, vars,
-          "#User_Client", "ReportInvoices"), Utility.getContext(this, vars, "#User_Org",
+          "#User_Client", "ReportInvoices"), Utility.getContext(this, vars, "#AccessibleOrgTree",
           "ReportInvoices"), strC_BpGroup_ID, strM_Product_Category_ID, strC_BPartner_ID,
           strM_Product_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
           strDocumentNo, (strOrder.equals("PurchaseOrder")) ? "" : "sales", (strOrder
@@ -203,7 +203,7 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoices"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"), Utility
               .getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
       Utility
           .fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices", strC_BpGroup_ID);
@@ -215,7 +215,7 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportInvoices"), Utility.getContext(this, vars, "#User_Client", "ReportInvoices"),
           0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices",
@@ -230,7 +230,7 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoices"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"), Utility
               .getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));

@@ -174,14 +174,14 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     ReportDebtPaymentData[] data = null;
     if (!strGroup.equals(""))
       data = ReportDebtPaymentData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-          "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars, "#User_Org",
+          "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars, "#AccessibleOrgTree",
           "ReportDebtPayment"), strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(this,
           strDateTo, "1"), strCal1, strCalc2, strPaymentRule, strReceipt, strStatus, strAux,
           strcbankaccount);
     else
       data = ReportDebtPaymentData.selectNoBpartner(this, vars.getLanguage(), Utility.getContext(
           this, vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars,
-          "#User_Org", "ReportDebtPayment"), strC_BPartner_ID, strDateFrom, DateTimeData
+          "#AccessibleOrgTree", "ReportDebtPayment"), strC_BPartner_ID, strDateFrom, DateTimeData
           .nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strPaymentRule, strReceipt,
           strStatus, strAux, strcbankaccount);
     if (data == null || data.length == 0) {
@@ -252,9 +252,9 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     xmlDocument.setParameter("cBankAccount", strcbankaccount);
     xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
         this, Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility
-            .getContext(this, vars, "#User_Org", "ReportDebtPayment")));
+            .getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment")));
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInOutData.selectBpartner(
-        this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars,
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
             "#User_Client", ""), strC_BPartner_ID));
     // xmlDocument.setParameter("paramBPartnerId", strC_BPartner_ID);
     xmlDocument.setParameter("dateFrom", strDateFrom);
@@ -281,7 +281,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       log4j.debug("ListData.select PaymentRule:" + strPaymentRule);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "", Utility.getContext(this, vars, "#User_Org", "ReportDebtPayment"),
+          "All_Payment Rule", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
           Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportDebtPayment",
           strPaymentRule);
@@ -294,7 +294,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       log4j.debug("ListData.select Status:" + strPaymentRule);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_DP_Management_Status", "", Utility.getContext(this, vars, "#User_Org",
+          "C_DP_Management_Status", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportDebtPayment"), Utility.getContext(this, vars, "#User_Client",
               "ReportDebtPayment"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportDebtPayment", strStatus);

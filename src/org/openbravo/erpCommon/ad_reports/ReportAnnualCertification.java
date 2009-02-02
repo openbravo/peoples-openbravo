@@ -250,7 +250,7 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
       data = ReportAnnualCertificationData.set();
     } else {
       data = ReportAnnualCertificationData.select(this, Utility.getContext(this, vars,
-          "#User_Client", "ReportAnnualCertification"), Utility.getContext(this, vars, "#User_Org",
+          "#User_Client", "ReportAnnualCertification"), Utility.getContext(this, vars, "#AccessibleOrgTree",
           "ReportAnnualCertification"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
           strcBpartnerId, initRecordNumber, intRecordRange);
     }
@@ -264,7 +264,7 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
      * xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
      * xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
      * ReportRefundInvoiceCustomerDimensionalAnalysesData .selectBpartner(this,
-     * Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars,
+     * Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
      * "#User_Client", ""), strcBpartnerIdAux));
      */
     out.println(xmlDocument.print());
@@ -280,7 +280,7 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
       log4j.debug("Output: PDF");
     ReportAnnualCertificationData[] data = null;
     data = ReportAnnualCertificationData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "ReportAnnualCertification"), Utility.getContext(this, vars, "#User_Org",
+        "#User_Client", "ReportAnnualCertification"), Utility.getContext(this, vars, "#AccessibleOrgTree",
         "ReportAnnualCertification"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
         strcBpartnerId);
 

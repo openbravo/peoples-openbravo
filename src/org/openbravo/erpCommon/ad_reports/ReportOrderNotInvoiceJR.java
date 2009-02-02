@@ -140,7 +140,7 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("adOrgId", strCOrgId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_Order InvoiceRule", "", Utility.getContext(this, vars, "#User_Org",
+          "C_Order InvoiceRule", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportOrderNotInvoiceFilterJR"), Utility.getContext(this, vars, "#User_Client",
               "ReportOrderNotInvoiceJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotInvoiceJR",
@@ -154,7 +154,7 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportOrderNotInvoiceJR"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceJR"), Utility
               .getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotInvoiceJR",
           strCurrencyId);
@@ -188,7 +188,7 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     try {
       data = ReportOrderNotInvoiceData.select(this, strCurrencyId, vars.getLanguage(), Utility
           .getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), Utility.getContext(
-          this, vars, "#User_Org", "ReportOrderNotInvoiceJR"), strcBpartnetId, strCOrgId,
+          this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceJR"), strcBpartnetId, strCOrgId,
           strInvoiceRule, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"));
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());

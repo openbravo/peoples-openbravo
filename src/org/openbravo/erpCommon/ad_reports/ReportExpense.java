@@ -113,7 +113,7 @@ public class ReportExpense extends HttpSecureAppServlet {
       try {
         data1 = ReportExpenseData.select(this, strCurrencyId, strBaseCurrencyId,
             vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportExpense"),
-            Utility.getContext(this, vars, "#User_Org", "ReportExpense"), strDateFrom, DateTimeData
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportExpense"), strDateFrom, DateTimeData
                 .nDaysAfter(this, strDateTo, "1"), strcBpartnerId, strPartner, strProject,
             (strExpense.equals("time") ? "Y" : ""), (strExpense.equals("expense") ? "N" : ""));
       } catch (ServletException ex) {
@@ -204,12 +204,12 @@ public class ReportExpense extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "C_BPartner_ID",
-          "C_BPartner Employee w Address", "", Utility.getContext(this, vars, "#User_Org",
+          "C_BPartner Employee w Address", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportExpense"), Utility.getContext(this, vars, "#User_Client", "ReportExpense"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportExpense", "");
 
       ComboTableData comboTableDataProject = new ComboTableData(this, "TABLE", "C_Project_ID",
-          "C_Project", "", Utility.getContext(this, vars, "#User_Org", "ReportExpense"), Utility
+          "C_Project", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportExpense"), Utility
               .getContext(this, vars, "#User_Client", "ReportExpense"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableDataProject, "ReportExpense", "");
 
@@ -222,7 +222,7 @@ public class ReportExpense extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportExpense"), Utility.getContext(
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportExpense"), Utility.getContext(
               this, vars, "#User_Client", "ReportExpense"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportExpense", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));

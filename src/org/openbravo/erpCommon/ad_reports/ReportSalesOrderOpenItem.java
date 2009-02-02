@@ -65,7 +65,7 @@ public class ReportSalesOrderOpenItem extends HttpSecureAppServlet {
     XmlDocument xmlDocument;
     ReportSalesOrderOpenItemData[] data = ReportSalesOrderOpenItemData.select(this, Utility
         .getContext(this, vars, "#User_Client", "ReportSalesOrderOpenItem"), Utility.getContext(
-        this, vars, "#User_Org", "ReportSalesOrderOpenItem"), strWarehouse);
+        this, vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItem"), strWarehouse);
     if (data == null || data.length == 0) {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportSalesOrderOpenItemEdit", discard)
@@ -132,7 +132,7 @@ public class ReportSalesOrderOpenItem extends HttpSecureAppServlet {
     xmlDocument.setParameter("mWarehouseId", strWarehouse);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderOpenItem"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItem"), Utility
               .getContext(this, vars, "#User_Client", "ReportSalesOrderOpenItem"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderOpenItem",
           strWarehouse);
@@ -154,7 +154,7 @@ public class ReportSalesOrderOpenItem extends HttpSecureAppServlet {
    * PrintWriter out = response.getWriter(); String discard[]={"discard"}; XmlDocument xmlDocument;
    * ReportSalesOrderOpenItemData[] data=ReportSalesOrderOpenItemData.select(this,
    * Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderOpenItem"),
-   * Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderOpenItem"), strWarehouse); if
+   * Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItem"), strWarehouse); if
    * (data == null || data.length == 0){ xmlDocument = xmlEngine.readXmlTemplate(
    * "org/openbravo/erpCommon/ad_reports/ReportSalesOrderOpenItem", discard).createXmlDocument();
    * data = ReportSalesOrderOpenItemData.set(); } else { xmlDocument =xmlEngine.readXmlTemplate(
@@ -186,7 +186,7 @@ public class ReportSalesOrderOpenItem extends HttpSecureAppServlet {
    * xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
    * xmlDocument.setParameter("mWarehouseId", strWarehouse); try { ComboTableData comboTableData =
    * new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID", "", "", Utility.getContext(this,
-   * vars, "#User_Org", "ReportSalesOrderOpenItem"), Utility.getContext(this, vars, "#User_Client",
+   * vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItem"), Utility.getContext(this, vars, "#User_Client",
    * "ReportSalesOrderOpenItem"), 0); Utility.fillSQLParameters(this, vars, null, comboTableData,
    * "ReportSalesOrderOpenItem", strWarehouse);
    * xmlDocument.setData("reportM_WAREHOUSESHIPPER","liststructure", comboTableData.select(false));

@@ -144,7 +144,7 @@ public class ReportProductionJR extends HttpSecureAppServlet {
 
     ReportProductionData[] data = ReportProductionData.select(this, strRawMaterial, Utility
         .getContext(this, vars, "#User_Client", "ReportProductionJR"), Utility.getContext(this,
-        vars, "#User_Org", "ReportProductionJR"), strDateFrom, DateTimeData.nDaysAfter(this,
+        vars, "#AccessibleOrgTree", "ReportProductionJR"), strDateFrom, DateTimeData.nDaysAfter(this,
         strDateTo, "1"));
 
     if (data == null || data.length == 0) {

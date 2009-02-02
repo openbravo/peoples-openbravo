@@ -105,7 +105,7 @@ public class ReportInvoices extends HttpSecureAppServlet {
       // Get user Client's base currency
       String strCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
       data = ReportInvoicesData.select(this, strCurrencyId, Utility.getContext(this, vars,
-          "#User_Client", "ReportInvoices"), Utility.getContext(this, vars, "#User_Org",
+          "#User_Client", "ReportInvoices"), Utility.getContext(this, vars, "#AccessibleOrgTree",
           "ReportInvoices"), strC_BpGroup_ID, strM_Product_Category_ID, strC_BPartner_ID,
           strM_Product_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
           strDocumentNo, (strOrder.equals("PurchaseOrder")) ? "" : "sales", (strOrder
@@ -187,7 +187,7 @@ public class ReportInvoices extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoices"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"), Utility
               .getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
       Utility
           .fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices", strC_BpGroup_ID);
@@ -199,7 +199,7 @@ public class ReportInvoices extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportInvoices"), Utility.getContext(this, vars, "#User_Client", "ReportInvoices"),
           0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices",
@@ -229,7 +229,7 @@ public class ReportInvoices extends HttpSecureAppServlet {
    * discard).createXmlDocument(); data = ReportInvoicesData.set(); } else { xmlDocument =
    * xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportInvoices"
    * ).createXmlDocument(); data = ReportInvoicesData.select(this, Utility.getContext(this, vars,
-   * "#User_Client", "ReportInvoices"), Utility.getContext(this, vars, "#User_Org",
+   * "#User_Client", "ReportInvoices"), Utility.getContext(this, vars, "#AccessibleOrgTree",
    * "ReportInvoices"), strC_BpGroup_ID, strM_Product_Category_ID, strC_BPartner_ID,
    * strM_Product_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDocumentNo,
    * (strOrder.equals("PurchaseOrder"))?"":"sales",
@@ -271,7 +271,7 @@ public class ReportInvoices extends HttpSecureAppServlet {
    * 
    * 
    * try { ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-   * "C_BP_Group_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoices"),
+   * "C_BP_Group_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"),
    * Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
    * Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices", strC_BpGroup_ID);
    * xmlDocument.setData("reportC_Bp_Group","liststructure", comboTableData.select(false));
@@ -280,7 +280,7 @@ public class ReportInvoices extends HttpSecureAppServlet {
    * 
    * 
    * try { ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-   * "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoices"),
+   * "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"),
    * Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
    * Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices",
    * strM_Product_Category_ID); xmlDocument.setData("reportM_Product_Category","liststructure",

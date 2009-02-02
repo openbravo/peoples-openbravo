@@ -110,7 +110,7 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesDimensionalAnalyzeJR"),
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesDimensionalAnalyzeJR"),
           Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportSalesDimensionalAnalyzeJR", strCurrencyId);
@@ -138,10 +138,10 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("datesaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this,
         Utility.getContext(this, vars, "#User_Client", "ReportStandardCostJR"), Utility.getContext(
-            this, vars, "#User_Org", "ReportStandardCostJR")));
+            this, vars, "#AccessibleOrgTree", "ReportStandardCostJR")));
     xmlDocument.setData("reportMA_PROCESSVERSIONPLAN", "liststructure", ProcessPlanVersionComboData
         .select(this, Utility.getContext(this, vars, "#User_Client", "ReportStandardCostJR"),
-            Utility.getContext(this, vars, "#User_Org", "ReportStandardCostJR")));
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportStandardCostJR")));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

@@ -61,7 +61,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|AccountFrom", "");
       String strAccountTo = vars.getGlobalVariable("inpAccountTo", "ReportTrialBalance|AccountTo",
           ReportTrialBalanceData.selectLastAccount(this, Utility.getContext(this, vars,
-              "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account")));
+              "#AccessibleOrgTree", "Account"), Utility.getContext(this, vars, "#User_Client", "Account")));
 
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportTrialBalance|cBpartnerId");
@@ -170,20 +170,20 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           discard[1] = "sectionNoBP";
           data = ReportTrialBalanceData.selectBP(this, strDateFrom, strDateTo, strOrg,
               strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
-              Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom,
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), strDateFrom,
               DateTimeData.nDaysAfter(this, strDateTo, "1"), strAccountFrom, strAccountTo,
               strcBpartnerId, strcAcctSchemaId);
         } else {
           data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg,
               strTreeAccount, strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars,
                   "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars,
-                  "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this,
+                  "#AccessibleOrgTree", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this,
                   strDateTo, "1"), strAccountFrom, strAccountTo);
         }
       } else {
         data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount,
             strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars, "#User_Client",
-                "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org",
+                "ReportTrialBalance"), Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
             "", "");
       }
@@ -207,7 +207,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_reports/ReportTrialBalance", discard).createXmlDocument();
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_ElementValue level", "", Utility.getContext(this, vars, "#User_Org",
+          "C_ElementValue level", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Client",
               "ReportTrialBalance"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportTrialBalance", "");
@@ -250,15 +250,15 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("reportAccountFrom_ID", "liststructure", ReportTrialBalanceData
-        .selectAccount(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility
+        .selectAccount(this, Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"), Utility
             .getContext(this, vars, "#User_Client", "Account"), "", strcAcctSchemaId));
     xmlDocument.setData("reportAccountTo_ID", "liststructure", ReportTrialBalanceData
-        .selectAccount(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility
+        .selectAccount(this, Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"), Utility
             .getContext(this, vars, "#User_Client", "Account"), "", strcAcctSchemaId));
     xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData
         .selectCombo(this, vars.getRole()));
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
-        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#User_Org",
+        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Client",
             "ReportTrialBalance"), strcAcctSchemaId));
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
@@ -281,16 +281,16 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramAll0", strAll.equals("") ? "0" : "1");
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(
-            this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""),
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
             strcBpartnerIdAux));
 
     xmlDocument.setParameter("accounFromArray",
         arrayDobleEntrada("arrAccountFrom", ReportTrialBalanceData.selectAccountDouble(this,
-            Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"), Utility.getContext(this, vars,
                 "#User_Client", "Account"), "")));
     xmlDocument.setParameter("accounToArray",
         arrayDobleEntrada("arrAccountTo", ReportTrialBalanceData.selectAccountDouble(this, Utility
-            .getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars,
+            .getContext(this, vars, "#AccessibleOrgTree", "Account"), Utility.getContext(this, vars,
             "#User_Client", "Account"), "")));
     if (new_data == null || new_data.length == 0)
       new_data = ReportTrialBalanceData.set();
@@ -353,20 +353,20 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           discard[1] = "sectionNoBP";
           data = ReportTrialBalanceData.selectBP(this, strDateFrom, strDateTo, strOrg,
               strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
-              Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom,
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), strDateFrom,
               DateTimeData.nDaysAfter(this, strDateTo, "1"), strAccountFrom, strAccountTo,
               strcBpartnerId, strcAcctSchemaId);
         } else {
           data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg,
               strTreeAccount, strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars,
                   "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars,
-                  "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this,
+                  "#AccessibleOrgTree", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this,
                   strDateTo, "1"), strAccountFrom, strAccountTo);
         }
       } else {
         data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount,
             strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars, "#User_Client",
-                "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org",
+                "ReportTrialBalance"), Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
             "", "");
       }

@@ -81,7 +81,7 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
 
     ReportWarehousePartnerData[] data = ReportWarehousePartnerData.select(this, vars.getLanguage(),
         Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"), Utility
-            .getContext(this, vars, "#User_Org", "ReportWarehouseControl"), DateTimeData
+            .getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"), DateTimeData
             .nDaysAfter(this, strDate, "1"), strmProductId, strProductCategory, strX, strY, strZ);
 
     String strOutput = "html";
@@ -147,11 +147,11 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("mProductCategoryId", strProductCategory);
 
     xmlDocument.setData("reportMProductId_IN", "liststructure", ReportWarehousePartnerData
-        .selectMproduct2(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(
+        .selectMproduct2(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
             this, vars, "#User_Client", ""), strmProductId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportPricelist"),
           Utility.getContext(this, vars, "#User_Client", "ReportPricelist"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportPricelist",
@@ -204,10 +204,10 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
    * xmlDocument.setParameter("mProductCategoryId", strProductCategory);
    * 
    * xmlDocument.setData("reportMProductId_IN", "liststructure",
-   * ReportWarehousePartnerData.selectMproduct2(this, Utility.getContext(this, vars, "#User_Org",
+   * ReportWarehousePartnerData.selectMproduct2(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
    * ""), Utility.getContext(this, vars, "#User_Client", ""), strmProductId)); try { ComboTableData
    * comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Product_Category_ID", "", "",
-   * Utility.getContext(this, vars, "#User_Org", "ReportPricelist"), Utility.getContext(this, vars,
+   * Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportPricelist"), Utility.getContext(this, vars,
    * "#User_Client", "ReportPricelist"), 0); Utility.fillSQLParameters(this, vars, null,
    * comboTableData, "ReportPricelist", strProductCategory);
    * xmlDocument.setData("reportM_PRODUCT_CATEGORYID","liststructure",
@@ -217,7 +217,7 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
    * 
    * xmlDocument.setData("structure1", ReportWarehousePartnerData.select(this, vars.getLanguage(),
    * Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"),
-   * Utility.getContext(this, vars, "#User_Org", "ReportWarehouseControl"),
+   * Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
    * DateTimeData.nDaysAfter(this, strDate,"1"), strmProductId, strProductCategory, strX, strY,
    * strZ)); out.println(xmlDocument.print()); out.close(); }
    */

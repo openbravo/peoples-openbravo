@@ -77,7 +77,7 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
 
     data = ReportWorkRequirementDailyData.select(this, vars.getLanguage(), Utility.getContext(this,
         vars, "#User_Client", "ReportWorkRequirementDaily"), Utility.getContext(this, vars,
-        "#User_Org", "ReportWorkRequirementDaily"), strStartDateFrom, strStartDateTo,
+        "#AccessibleOrgTree", "ReportWorkRequirementDaily"), strStartDateFrom, strStartDateTo,
         strmaProcessPlan);
     for (int i = 0; i < data.length; i++) {
       ReportWorkRequirementDailyData[] product = ReportWorkRequirementDailyData.producedproduct(
@@ -154,7 +154,7 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this,
         Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDaily"), Utility
-            .getContext(this, vars, "#User_Org", "ReportWorkRequirementDaily")));
+            .getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDaily")));
 
     out.println(xmlDocument.print());
     out.close();
@@ -169,7 +169,7 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
    * xmlEngine.readXmlTemplate ("org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDaily"
    * ).createXmlDocument(); data = ReportWorkRequirementDailyData.select(this,
    * Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDaily"),
-   * Utility.getContext(this, vars, "#User_Org", "ReportWorkRequirementDaily"), strStartDateFrom,
+   * Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDaily"), strStartDateFrom,
    * strStartDateTo, strmaProcessPlan); for (int i=0; i<data.length; i++) {
    * ReportWorkRequirementDailyData[] product = ReportWorkRequirementDailyData.producedproduct(this,
    * data[i].wrpid); data[i].prodproduct = product[0].name; String strqty =
@@ -205,7 +205,7 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
    * xmlDocument.setParameter("startDateTo", strStartDateTo);
    * xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this,
    * Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDaily"),
-   * Utility.getContext(this, vars, "#User_Org", "ReportWorkRequirementDaily")));
+   * Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDaily")));
    * xmlDocument.setData("structure1", data); out.println(xmlDocument.print()); out.close(); }
    */
   public String getServletInfo() {

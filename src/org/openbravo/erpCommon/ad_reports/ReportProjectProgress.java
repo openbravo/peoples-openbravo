@@ -213,7 +213,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
     // Project selector
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Project_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportProjectProgress"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProgress"), Utility
               .getContext(this, vars, "#User_Client", "ReportProjectProgress"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProgress",
           strProject);
@@ -227,7 +227,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Project_status",
           "ProjectStatus", "",
-          Utility.getContext(this, vars, "#User_Org", "ReportProjectProgress"), Utility.getContext(
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProgress"), Utility.getContext(
               this, vars, "#User_Client", "ReportProjectProgress"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProgress",
           strProjectStatus);
@@ -240,7 +240,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
     // Person in Charge drop-down list
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "Responsible_ID",
-          "Responsible employee", "", Utility.getContext(this, vars, "#User_Org",
+          "Responsible employee", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportProjectProgress"), Utility.getContext(this, vars, "#User_Client",
               "ReportProjectProgress"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProgress",
@@ -270,7 +270,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
 
     ReportProjectProgressData[] data = null;
     data = ReportProjectProgressData.select(this, vars.getLanguage(), Utility.getContext(this,
-        vars, "#User_Client", "ReportProjectProgress"), Utility.getContext(this, vars, "#User_Org",
+        vars, "#User_Client", "ReportProjectProgress"), Utility.getContext(this, vars, "#AccessibleOrgTree",
         "ReportProjectProgress"), strStartDateFrom, DateTimeData.nDaysAfter(this, strStartDateTo,
         "1"), strContractDateFrom, DateTimeData.nDaysAfter(this, strContractDateTo, "1"),
         strEndingDateFrom, DateTimeData.nDaysAfter(this, strEndingDateTo, "1"), strProject,

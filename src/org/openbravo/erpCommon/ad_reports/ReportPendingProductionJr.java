@@ -60,7 +60,7 @@ public class ReportPendingProductionJr extends HttpSecureAppServlet {
     // xmlDocument =
     // xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportPendingProductionEdit").createXmlDocument();
     data = ReportPendingProductionJrData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "ReportPendingProductionJr"), Utility.getContext(this, vars, "#User_Org",
+        "#User_Client", "ReportPendingProductionJr"), Utility.getContext(this, vars, "#AccessibleOrgTree",
         "ReportPendingProductionJr"));
 
     String strOutput = "html";

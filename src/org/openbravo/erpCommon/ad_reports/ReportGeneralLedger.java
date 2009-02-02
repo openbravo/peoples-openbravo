@@ -216,7 +216,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           log4j.debug("##################### strcelementvalueto= " + strcelementvalueto);
         if (strHide.equals(""))
           data = ReportGeneralLedgerData.select(this, strcelementvaluefrom, strcelementvalueto,
-              Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
                   .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId,
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily,
               strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("") && (strAll
@@ -224,7 +224,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         else
           data = ReportGeneralLedgerData.selectHiding(this, strcelementvaluefrom,
               strcelementvalueto, Utility
-                  .getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(
+                  .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(
                   this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId,
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily,
               strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("") && (strAll
@@ -232,14 +232,14 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       } else {
         if (strHide.equals(""))
           data = ReportGeneralLedgerData.selectAll(this, Utility.getContext(this, vars,
-              "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+              "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
               "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this,
               strDateTo, "1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId
               .equals("") && strAll.equals("")) ? "value" : "partner", initRecordNumber,
               intRecordRange);
         else
           data = ReportGeneralLedgerData.selectAllHiding(this, Utility.getContext(this, vars,
-              "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+              "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
               "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this,
               strDateTo, "1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId
               .equals("") && strAll.equals("")) ? "value" : "partner", initRecordNumber,
@@ -251,14 +251,14 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         ReportGeneralLedgerData[] data2 = null;
         if (strHide.equals(""))
           data2 = ReportGeneralLedgerData.select(this, strTreeAccount, data[0].id, Utility
-              .getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this,
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this,
               vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom,
               DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily, strcBpartnerId,
               strAmtFrom, strAmtTo, (strcBpartnerId.equals("") && (strAll.equals("")) ? "value"
                   : "partner"));
         else
           data2 = ReportGeneralLedgerData.selectHiding(this, strTreeAccount, data[0].id, Utility
-              .getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this,
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this,
               vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom,
               DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily, strcBpartnerId,
               strAmtFrom, strAmtTo, (strcBpartnerId.equals("") && (strAll.equals("")) ? "value"
@@ -380,28 +380,28 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramHide0", strHide.equals("") ? "0" : "1");
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(
-            this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""),
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
             strcBpartnerIdAux));
     xmlDocument.setData("reportC_ELEMENTVALUEFROM", "liststructure", ReportGeneralLedgerData
-        .selectC_ElementValue_ID(this, Utility.getContext(this, vars, "#User_Org",
+        .selectC_ElementValue_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
             "ReportGeneralLedger"), strcelementvaluefrom, strcAcctSchemaId));
     xmlDocument.setData("reportC_ELEMENTVALUETO", "liststructure", ReportGeneralLedgerData
-        .selectC_ElementValue_ID(this, Utility.getContext(this, vars, "#User_Org",
+        .selectC_ElementValue_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
             "ReportGeneralLedger"), strcelementvaluefrom, strcAcctSchemaId));
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
-        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#User_Org",
+        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
             "ReportGeneralLedger"), strcAcctSchemaId));
 
     xmlDocument.setParameter("accounFromArray", arrayDobleEntrada("arrAccountFrom",
         ReportGeneralLedgerData.selectC_ElementValue_ID_Double(this, Utility.getContext(this, vars,
-            "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+            "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
             "ReportGeneralLedger"), strcelementvaluefrom)));
     xmlDocument.setParameter("accounToArray", arrayDobleEntrada("arrAccountTo",
         ReportGeneralLedgerData.selectC_ElementValue_ID_Double(this, Utility.getContext(this, vars,
-            "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+            "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
             "ReportGeneralLedger"), strcelementvaluefrom)));
 
     if (log4j.isDebugEnabled())
@@ -450,7 +450,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         // strcelementvaluefrom);
         if (strHide.equals(""))
           data = ReportGeneralLedgerData.select(this, strcelementvaluefrom, strcelementvalueto,
-              Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
                   .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId,
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily,
               strcBpartnerId, strAmtFrom, strAmtTo,
@@ -458,7 +458,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         else
           data = ReportGeneralLedgerData.selectHiding(this, strcelementvaluefrom,
               strcelementvalueto, Utility
-                  .getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(
+                  .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(
                   this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId,
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily,
               strcBpartnerId, strAmtFrom, strAmtTo,
@@ -466,13 +466,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       } else {
         if (strHide.equals(""))
           data = ReportGeneralLedgerData.selectAll(this, Utility.getContext(this, vars,
-              "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+              "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
               "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this,
               strDateTo, "1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId
               .equals("") && strAll.equals("")) ? "value" : "partner");
         else
           data = ReportGeneralLedgerData.selectAllHiding(this, Utility.getContext(this, vars,
-              "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+              "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
               "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this,
               strDateTo, "1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId
               .equals("") && strAll.equals("")) ? "value" : "partner");

@@ -110,7 +110,7 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','" + strDPGNA
           + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
       data = ReportDebtPaymentTrackData.select(this, vars.getLanguage(), Utility.getContext(this,
-          vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars, "#User_Org",
+          vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars, "#AccessibleOrgTree",
           "ReportDebtPayment"), strcBpartnerId, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
           strDocTypes);
     }
@@ -168,7 +168,7 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     xmlDocument.setParameter("DPB", strDPB);
     xmlDocument.setParameter("Invoice", strInvoice);
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInOutData.selectBpartner(
-        this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars,
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
             "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());

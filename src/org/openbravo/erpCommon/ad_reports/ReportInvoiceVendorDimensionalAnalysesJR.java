@@ -241,7 +241,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     xmlDocument.setParameter("comparative", strComparative);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org",
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportInvoiceVendorDimensionalAnalysesJR"), Utility.getContext(this, vars,
               "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -254,7 +254,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportInvoiceVendorDimensionalAnalysesJR"), Utility.getContext(this, vars,
               "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -270,15 +270,15 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
         vars.getRole()));
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportInvoiceVendorDimensionalAnalysesJRData.selectBpartner(this, Utility.getContext(this,
-            vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""),
+            vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
             strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure",
         ReportInvoiceVendorDimensionalAnalysesJRData.selectMproduct(this, Utility.getContext(this,
-            vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""),
+            vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
             strmProductId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "M_Product_ProductType", "", Utility.getContext(this, vars, "#User_Org",
+          "M_Product_ProductType", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportInvoiceVendorDimensionalAnalysesJRData"), Utility.getContext(this, vars,
               "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJRData"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -292,7 +292,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org",
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportInvoiceVendorDimensionalAnalysesJR"), Utility.getContext(this, vars,
               "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,

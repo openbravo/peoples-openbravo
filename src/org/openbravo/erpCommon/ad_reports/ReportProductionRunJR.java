@@ -91,7 +91,7 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
 
     ReportProductionRunData[] data = null;
     data = ReportProductionRunData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-        "#User_Client", "ReportProductionRunJR"), Utility.getContext(this, vars, "#User_Org",
+        "#User_Client", "ReportProductionRunJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
         "ReportProductionRunJR"), strLaunchDateFrom, strLaunchDateTo, strStartDateFrom,
         strStartDateTo, strEndDateFrom, strEndDateTo, strmaWorkRequirement);
 
@@ -196,7 +196,7 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "MA_Workrequirement_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "MA_Workrequirement_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportProductionRunJR"), Utility.getContext(this, vars, "#User_Client",
               "ReportProductionRunJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProductionRunJR",
@@ -222,7 +222,7 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
    * data=null; xmlDocument = xmlEngine
    * .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProductionRun"
    * ).createXmlDocument(); data = ReportProductionRunData.select(this, Utility.getContext(this,
-   * vars, "#User_Client", "ReportProductionRun"), Utility.getContext(this, vars, "#User_Org",
+   * vars, "#User_Client", "ReportProductionRun"), Utility.getContext(this, vars, "#AccessibleOrgTree",
    * "ReportProductionRun"), strLaunchDateFrom, strLaunchDateTo, strStartDateFrom, strStartDateTo,
    * strEndDateFrom, strEndDateTo, strmaWorkRequirement);
    * 
@@ -256,7 +256,7 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
    * xmlDocument.setParameter("endDateFrom", strEndDateFrom); xmlDocument.setParameter("endDateTo",
    * strEndDateTo); xmlDocument.setData("reportMA_WORKREQUIREMENT", "liststructure",
    * WorkRequirementComboData.select(this, Utility.getContext(this, vars, "#User_Client",
-   * "ReportProductionRun"), Utility.getContext(this, vars, "#User_Org", "ReportProductionRun")));
+   * "ReportProductionRun"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductionRun")));
    * xmlDocument.setData("structure1", data); out.println(xmlDocument.print()); out.close(); }
    */
   public String getServletInfo() {

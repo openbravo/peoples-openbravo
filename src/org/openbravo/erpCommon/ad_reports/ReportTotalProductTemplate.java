@@ -60,7 +60,7 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplateEdit").createXmlDocument();
 
     data = ReportTotalProductTemplateData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "ReportTotalProductTemplate"), Utility.getContext(this, vars, "#User_Org",
+        "#User_Client", "ReportTotalProductTemplate"), Utility.getContext(this, vars, "#AccessibleOrgTree",
         "ReportTotalProductTemplate"));
     vars.removeSessionValue("Default.value");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -156,7 +156,7 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
     // data = ReportTotalProductTemplateData.select(this,
     // Utility.getContext(this, vars, "#User_Client",
     // "ReportTotalProductTemplate"), Utility.getContext(this, vars,
-    // "#User_Org", "ReportTotalProductTemplate"));
+    // "#AccessibleOrgTree", "ReportTotalProductTemplate"));
     vars.removeSessionValue("Default.value");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");

@@ -180,7 +180,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("salesRep", strSalesRep);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Project_kind",
-            "Projectkind", "", Utility.getContext(this, vars, "#User_Org",
+            "Projectkind", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
                 "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectBuildingSiteJR",
@@ -193,7 +193,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Project_phase",
-            "Projectphase", "", Utility.getContext(this, vars, "#User_Org",
+            "Projectphase", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
                 "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectBuildingSiteJR",
@@ -206,7 +206,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Project_status",
-            "ProjectStatus", "", Utility.getContext(this, vars, "#User_Org",
+            "ProjectStatus", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
                 "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectBuildingSiteJR",
@@ -220,7 +220,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST",
             "C_Project_publicprivate", "PublicPrivate", "", Utility.getContext(this, vars,
-                "#User_Org", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars,
+                "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars,
                 "#User_Client", "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectBuildingSiteJR",
             strProjectpublic);
@@ -231,12 +231,12 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       }
 
       xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", SubCategoryProductData
-          .select(this, Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSiteJR"),
+          .select(this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
               Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR")));
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Region_ID",
-            "", "C_Region of Country", Utility.getContext(this, vars, "#User_Org", "Account"),
+            "", "C_Region of Country", Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
             Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderProvided"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderProvided",
             strcRegionId);
@@ -248,7 +248,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "AD_User SalesRep", "", Utility.getContext(this, vars, "#User_Org",
+            "AD_User SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
                 "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderProvided",
@@ -262,7 +262,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSiteJR"),
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
             Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectBuildingSiteJR",
             strCurrencyId);
@@ -273,15 +273,15 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       }
 
       xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportProjectBuildingSiteData
-          .selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility
+          .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
               .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
       xmlDocument.setData("reportMProductId_IN", "liststructure", ReportProjectBuildingSiteData
-          .selectMproduct(this, Utility.getContext(this, vars, "#User_Org", ""), Utility
+          .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
               .getContext(this, vars, "#User_Client", ""), strProduct));
     } else {
       ReportProjectBuildingSiteData[] data = ReportProjectBuildingSiteData.select(this,
           strCurrencyId, Utility.getContext(this, vars, "#User_Client",
-              "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Org",
+              "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportProjectBuildingSiteJR"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,
               "1"), strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase,
           strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
@@ -311,7 +311,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
             + Utility.messageBD(this, "ForTheSalesRep", vars.getLanguage())
             + " "
             + ReportProjectBuildingSiteData.selectSalesRep(this, Utility.getContext(this, vars,
-                "#User_Org", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars,
+                "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars,
                 "#User_Client", "ReportProjectBuildingSiteJR"), strSalesRep);
       xmlDocument.setParameter("title", strTitle);
     }
@@ -343,7 +343,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
     try {
       data = ReportProjectBuildingSiteData.select(this, strCurrencyId, Utility.getContext(this,
           vars, "#User_Client", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars,
-          "#User_Org", "ReportProjectBuildingSiteJR"), strdateFrom, DateTimeData.nDaysAfter(this,
+          "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"), strdateFrom, DateTimeData.nDaysAfter(this,
           strdateTo, "1"), strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind,
           strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep,
           strProduct);

@@ -178,7 +178,7 @@ public class ReportRefundInvoiceCustomerDimensionalAnalyses extends HttpSecureAp
     xmlDocument.setParameter("command", strCommand);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org",
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportRefundInvoiceCustomerDimensionalAnalyses"), Utility.getContext(this, vars,
               "#User_Client", "ReportRefundInvoiceCustomerDimensionalAnalyses"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -191,7 +191,7 @@ public class ReportRefundInvoiceCustomerDimensionalAnalyses extends HttpSecureAp
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportRefundInvoiceCustomerDimensionalAnalyses"), Utility.getContext(this, vars,
               "#User_Client", "ReportRefundInvoiceCustomerDimensionalAnalyses"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -207,7 +207,7 @@ public class ReportRefundInvoiceCustomerDimensionalAnalyses extends HttpSecureAp
         vars.getRole()));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "SalesRep_ID",
-          "AD_User SalesRep", "", Utility.getContext(this, vars, "#User_Org",
+          "AD_User SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportRefundInvoiceCustomerDimensionalAnalyses"), Utility.getContext(this, vars,
               "#User_Client", "ReportRefundInvoiceCustomerDimensionalAnalyses"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -220,11 +220,11 @@ public class ReportRefundInvoiceCustomerDimensionalAnalyses extends HttpSecureAp
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(
-            this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""),
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
             strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(this, Utility.getContext(
-            this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""),
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
             strmProductId));
 
     if (vars.getLanguage().equals("en_US")) {

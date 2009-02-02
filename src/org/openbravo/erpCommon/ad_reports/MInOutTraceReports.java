@@ -104,7 +104,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
       data = new MInOutTraceReportsData[0];
     } else {
       data = MInOutTraceReportsData.select(this, vars.getLanguage(), strmProductIdGlobal,
-          strmAttributesetinstanceIdGlobal, Utility.getContext(this, vars, "#User_Org",
+          strmAttributesetinstanceIdGlobal, Utility.getContext(this, vars, "#AccessibleOrgTree",
               "MInOutTraceReports"), Utility.getContext(this, vars, "#User_Client",
               "MInOutTraceReports"));
     }
@@ -117,7 +117,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     xmlDocument.setData("reportM_ATTRIBUTESETINSTANCE_ID", "liststructure",
         AttributeSetInstanceComboData.select(this, vars.getLanguage(), strmProductIdGlobal, Utility
             .getContext(this, vars, "#User_Client", "MInOutTraceReports"), Utility.getContext(this,
-            vars, "#User_Org", "MInOutTraceReports")));
+            vars, "#AccessibleOrgTree", "MInOutTraceReports")));
     xmlDocument.setParameter("productDescription", MInOutTraceReportsData.selectMproduct(this,
         strmProductIdGlobal));
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");

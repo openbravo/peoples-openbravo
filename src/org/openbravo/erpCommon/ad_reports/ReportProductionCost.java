@@ -160,7 +160,7 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#User_Org", "ReportProductionCost"), Utility
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductionCost"), Utility
                 .getContext(this, vars, "#User_Client", "ReportProductionCost"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProductionCost",
             strCurrencyId);
@@ -364,7 +364,7 @@ public class ReportProductionCost extends HttpSecureAppServlet {
    * discard).createXmlDocument(); } else { xmlDocument = xmlEngine.readXmlTemplate
    * ("org/openbravo/erpCommon/ad_reports/ReportOrderNotInvoice" ).createXmlDocument(); } data =
    * ReportOrderNotInvoiceData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-   * "#User_Client", "ReportOrderNotInvoice"), Utility.getContext(this, vars, "#User_Org",
+   * "#User_Client", "ReportOrderNotInvoice"), Utility.getContext(this, vars, "#AccessibleOrgTree",
    * "ReportOrderNotInvoice"), strcBpartnetId, strCOrgId, strInvoiceRule, strdateFrom,
    * DateTimeData.nDaysAfter(this, strdateTo,"1")); xmlDocument.setData("structure1", data);
    * response.setContentType("text/html; charset=UTF-8"); PrintWriter out = response.getWriter();

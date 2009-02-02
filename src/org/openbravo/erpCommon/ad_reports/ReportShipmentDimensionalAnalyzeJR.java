@@ -270,7 +270,7 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
           "", "",
-          Utility.getContext(this, vars, "#User_Org", "ReportShipmentDimensionalAnalyzeJR"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipmentDimensionalAnalyzeJR"),
           Utility.getContext(this, vars, "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportShipmentDimensionalAnalyzeJR", strmWarehouseId);
@@ -283,7 +283,7 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
           "", "",
-          Utility.getContext(this, vars, "#User_Org", "ReportShipmentDimensionalAnalyzeJR"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipmentDimensionalAnalyzeJR"),
           Utility.getContext(this, vars, "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportShipmentDimensionalAnalyzeJR", strPartnerGroup);
@@ -295,7 +295,7 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportShipmentDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
               "ReportShipmentDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -309,7 +309,7 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "SalesRep_ID",
-          "AD_User SalesRep", "", Utility.getContext(this, vars, "#User_Org",
+          "AD_User SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
               "ReportSalesDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -324,14 +324,14 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
         vars.getRole()));
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportShipmentDimensionalAnalyzeJRData.selectBpartner(this, Utility.getContext(this, vars,
-            "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure",
         ReportShipmentDimensionalAnalyzeJRData.selectMproduct(this, Utility.getContext(this, vars,
-            "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
+            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-          "C_BPartner SalesRep", "", Utility.getContext(this, vars, "#User_Org",
+          "C_BPartner SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
               "ReportShipmentDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -347,7 +347,7 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
           "", "",
-          Utility.getContext(this, vars, "#User_Org", "ReportShipmentDimensionalAnalyzeJR"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipmentDimensionalAnalyzeJR"),
           Utility.getContext(this, vars, "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportShipmentDimensionalAnalyzeJR", strCurrencyId);

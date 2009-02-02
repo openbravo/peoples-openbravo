@@ -117,7 +117,7 @@ public class ReportBank extends HttpSecureAppServlet {
         + "');"));
     xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
         this, Utility.getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(
-            this, vars, "#User_Org", "ReportBank")));
+            this, vars, "#AccessibleOrgTree", "ReportBank")));
 
     out.println(xmlDocument.print());
     out.close();
@@ -157,16 +157,16 @@ public class ReportBank extends HttpSecureAppServlet {
           + "');"));
       xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
           this, Utility.getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(
-              this, vars, "#User_Org", "ReportBank")));
+              this, vars, "#AccessibleOrgTree", "ReportBank")));
     } else {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBankEdit")
           .createXmlDocument();
       data = ReportBankData.select(this, Utility.getContext(this, vars, "#User_Client",
-          "ReportBank"), Utility.getContext(this, vars, "#User_Org", "ReportBank"), strDateFrom,
+          "ReportBank"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"), strDateFrom,
           DateTimeData.nDaysAfter(this, strDateTo, "1"), strcbankaccount);
       xmlDocument.setParameter("sumAmount", ReportBankData.BeginningBalance(this, Utility
           .getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this, vars,
-          "#User_Org", "ReportBank"), strDateFrom, strcbankaccount));
+          "#AccessibleOrgTree", "ReportBank"), strDateFrom, strcbankaccount));
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("theme", vars.getTheme());

@@ -90,7 +90,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     // Jarenor
     /*
      * String strClient=Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"); String
-     * strOrg= Utility.getContext(this, vars, "#User_Org", "ReportAgingBalance");
+     * strOrg= Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance");
      */
 
     String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
@@ -103,7 +103,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       data = ReportAgingBalanceData.select(this, vars.getLanguage(), strOrgTrx, strcolumn1,
           strcolumn2, strcolumn3, strcolumn4, strisReceipt, strcBpartnerId, strOrgFamily, Utility
               .getContext(this, vars, "#User_Client", "ReportAgingBalance"), Utility.getContext(
-              this, vars, "#User_Org", "ReportAgingBalance"));
+              this, vars, "#AccessibleOrgTree", "ReportAgingBalance"));
     }
     if (strfirstPrint == "Y" || data == null || data.length == 0) {
       xmlDocument = xmlEngine.readXmlTemplate(
@@ -157,7 +157,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramAD_ORG_Id", strOrgTrx);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "AD_ORG NAME", "",
-          Utility.getContext(this, vars, "#User_Org", "ReportAgingBalanceData"), Utility
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalanceData"), Utility
               .getContext(this, vars, "#User_Client", "ReportAgingBalanceData"), '*');
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportAgingBalanceData",
           strOrgTrx);
@@ -203,7 +203,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateToCol5", "");
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInOutData.selectBpartner(
-        this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars,
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
             "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());

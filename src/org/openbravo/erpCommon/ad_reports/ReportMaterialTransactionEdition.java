@@ -126,7 +126,7 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
     xmlDocument.setParameter("cProjectId", "");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "MaterialReceiptFilter"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "MaterialReceiptFilter"), Utility
               .getContext(this, vars, "#User_Client", "MaterialReceiptFilter"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "MaterialReceiptFilter", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
@@ -137,7 +137,7 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Project_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "MaterialReceiptFilter"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "MaterialReceiptFilter"), Utility
               .getContext(this, vars, "#User_Client", "MaterialReceiptFilter"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "MaterialReceiptFilter", "");
       xmlDocument.setData("reportC_PROJECTID", "liststructure", comboTableData.select(false));
@@ -162,7 +162,7 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_reports/ReportMaterialTransactionEdition").createXmlDocument();
     InoutEditionData[] data = null;
     data = InoutEditionData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-        "#User_Org", "MaterialReceiptFilter"), Utility.getContext(this, vars, "#User_Client",
+        "#AccessibleOrgTree", "MaterialReceiptFilter"), Utility.getContext(this, vars, "#User_Client",
         "MaterialReceiptFilter"), strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId,
         strcProjectId);
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -186,7 +186,7 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
         .createXmlDocument();
     InoutEditionData[] data = null;
     data = InoutEditionData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-        "#User_Org", "MaterialReceiptFilter"), Utility.getContext(this, vars, "#User_Client",
+        "#AccessibleOrgTree", "MaterialReceiptFilter"), Utility.getContext(this, vars, "#User_Client",
         "MaterialReceiptFilter"), strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId,
         strcProjectId);
     xmlDocument.setData("structure1", data);

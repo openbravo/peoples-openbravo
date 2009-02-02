@@ -134,14 +134,14 @@ public class ReportProduction extends HttpSecureAppServlet {
 
     ReportProductionData[] data = ReportProductionData.select(this, strRawMaterial, Utility
         .getContext(this, vars, "#User_Client", "ReportProduction"), Utility.getContext(this, vars,
-        "#User_Org", "ReportProduction"), strDateFrom, DateTimeData
+        "#AccessibleOrgTree", "ReportProduction"), strDateFrom, DateTimeData
         .nDaysAfter(this, strDateTo, "1"));
     if (data == null || data.length == 0) {
       data = ReportProductionData.set();
     }
     ReportProductionData[] dataSummering = ReportProductionData.selectSummering(this, Utility
         .getContext(this, vars, "#User_Client", "ReportProduction"), Utility.getContext(this, vars,
-        "#User_Org", "ReportProduction"), strDateFrom, DateTimeData
+        "#AccessibleOrgTree", "ReportProduction"), strDateFrom, DateTimeData
         .nDaysAfter(this, strDateTo, "1"));
 
     if (dataSummering == null || dataSummering.length == 0) {

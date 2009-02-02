@@ -119,7 +119,7 @@ public class ReportBankJR extends HttpSecureAppServlet {
         + "');"));
     xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
         this, Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(
-            this, vars, "#User_Org", "ReportBankJR")));
+            this, vars, "#AccessibleOrgTree", "ReportBankJR")));
 
     out.println(xmlDocument.print());
     out.close();
@@ -158,27 +158,27 @@ public class ReportBankJR extends HttpSecureAppServlet {
           + "');"));
       xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
           this, Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(
-              this, vars, "#User_Org", "ReportBankJR")));
+              this, vars, "#AccessibleOrgTree", "ReportBankJR")));
     } else {
       // initialBalance = new BigDecimal(
       // ReportBankJRData.BeginningBalance(this, Utility.getContext(this,
       // vars, "#User_Client", "ReportBankJR"), Utility.getContext(this,
-      // vars, "#User_Org", "ReportBankJR"),strDateFrom,
+      // vars, "#AccessibleOrgTree", "ReportBankJR"),strDateFrom,
       // strcbankaccount));
       data = ReportBankJRData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-          "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#User_Org",
+          "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
           "ReportBankJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
           strcbankaccount);
       // xmlDocument.setParameter("sumAmount",
       // ReportBankJRData.BeginningBalance(this, Utility.getContext(this,
       // vars, "#User_Client", "ReportBankJR"), Utility.getContext(this,
-      // vars, "#User_Org", "ReportBankJR"),strDateFrom,
+      // vars, "#AccessibleOrgTree", "ReportBankJR"),strDateFrom,
       // strcbankaccount));
     }
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("DATE_FROM", strDateFrom);
-    parameters.put("USER_ORG", Utility.getContext(this, vars, "#User_Org", "ReportBankJR"));
+    parameters.put("USER_ORG", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR"));
     parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client", "ReportBankJR"));
     String strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportBankJR.jrxml";
     renderJR(vars, response, strReportPath, "html", parameters, data, null);

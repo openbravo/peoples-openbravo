@@ -83,7 +83,7 @@ public class ReportWorkRequirementJR extends HttpSecureAppServlet {
     ReportWorkRequirementJRData[] data = null;
     data = ReportWorkRequirementJRData.select(this, vars.getLanguage(), Utility.getContext(this,
         vars, "#User_Client", "ReportWorkRequirementJR"), Utility.getContext(this, vars,
-        "#User_Org", "ReportWorkRequirementJR"), strStartDateFrom, strStartDateTo, strEndDateFrom,
+        "#AccessibleOrgTree", "ReportWorkRequirementJR"), strStartDateFrom, strStartDateTo, strEndDateFrom,
         strEndDateTo, strmaProcessPlan);
     for (int i = 0; i < data.length; i++) {
       String strqty = ReportWorkRequirementJRData.inprocess(this, data[i].wrid, data[i].productid);
@@ -158,7 +158,7 @@ public class ReportWorkRequirementJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this,
         Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementJR"), Utility
-            .getContext(this, vars, "#User_Org", "ReportWorkRequirementJR")));
+            .getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementJR")));
 
     out.println(xmlDocument.print());
     out.close();

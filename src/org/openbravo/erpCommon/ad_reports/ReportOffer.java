@@ -77,13 +77,13 @@ public class ReportOffer extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
 
     ReportOfferData[] data = ReportOfferData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "ReportOffer"), Utility.getContext(this, vars, "#User_Org", "ReportOffer"),
+        "#User_Client", "ReportOffer"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOffer"),
         strDateFrom, strDateTo, strcBpartnerId);
     /*
      * SubreportOfferProductData[][] dataProduct = new SubreportOfferProductData[data.length][]; for
      * (int i=0; i<data.length; i++) { dataProduct[i] = SubreportOfferProductData.select(this,
      * Utility.getContext(this, vars, "#User_Client", "ReportOffer"), Utility.getContext(this, vars,
-     * "#User_Org", "ReportOffer"), data[i].mOfferId); }
+     * "#AccessibleOrgTree", "ReportOffer"), data[i].mOfferId); }
      */
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
@@ -123,7 +123,7 @@ public class ReportOffer extends HttpSecureAppServlet {
     xmlDocument.setParameter("today", DateTimeData.today(this));
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportOfferData.selectBpartner(
-        this, Utility.getContext(this, vars, "#User_Org", "ReportOffer"), Utility.getContext(this,
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOffer"), Utility.getContext(this,
             vars, "#User_Client", "ReportOffer"), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     // xmlDocument.setDataArray("reportProduct", "structure1" ,
@@ -141,7 +141,7 @@ public class ReportOffer extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
 
     SubreportOfferProductData[] data = SubreportOfferProductData.select(this, Utility.getContext(
-        this, vars, "#User_Client", "ReportOffer"), Utility.getContext(this, vars, "#User_Org",
+        this, vars, "#User_Client", "ReportOffer"), Utility.getContext(this, vars, "#AccessibleOrgTree",
         "ReportOffer"), strOfferId);
 
     xmlDocument = xmlEngine.readXmlTemplate(

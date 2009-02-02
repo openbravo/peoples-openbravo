@@ -180,7 +180,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       // Load Business Partner Group combo with data
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+            "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportParetoProduct"), Utility.getContext(this, vars, "#User_Client",
                 "ReportParetoProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
@@ -193,7 +193,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-            "", Utility.getContext(this, vars, "#User_Org", "ReportParetoProduct"), Utility
+            "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProduct"), Utility
                 .getContext(this, vars, "#User_Client", "ReportParetoProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
             strAD_Org_ID);
@@ -206,7 +206,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#User_Org", "ReportParetoProduct"), Utility
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProduct"), Utility
                 .getContext(this, vars, "#User_Client", "ReportParetoProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
             strCurrencyId);

@@ -140,13 +140,13 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     xmlDocument.setData("cAccount", "liststructure", ReportBudgetGenerateExcelData.set());
     xmlDocument.setParameter("accounts", arrayDobleEntrada("arrAccounts",
         ReportBudgetGenerateExcelData.selectAccounts(this, vars.getLanguage(), Utility.getContext(
-            this, vars, "#User_Org", "ReportBudgetGenerateExcel"), Utility.getContext(this, vars,
+            this, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"), Utility.getContext(this, vars,
             "#User_Client", "ReportBudgetGenerateExcel"))));
     // xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
     // ReportBudgetGenerateExcelData.selectBpartner(this));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_ACCTSCHEMA_ID",
-          "", "C_AcctSchema validation", Utility.getContext(this, vars, "#User_Org",
+          "", "C_AcctSchema validation", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportBudgetGenerateExcel"), Utility.getContext(this, vars, "#User_Client",
               "ReportBudgetGenerateExcel"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
@@ -158,7 +158,7 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportBudgetGenerateExcel"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"), Utility
               .getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
       xmlDocument.setData("reportCBPGroupId", "liststructure", comboTableData.select(false));
@@ -171,7 +171,7 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     // ReportBudgetGenerateExcelData.selectMproduct(this));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportBudgetGenerateExcel"), Utility.getContext(this, vars, "#User_Client",
               "ReportBudgetGenerateExcel"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
@@ -183,7 +183,7 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "C_SalesRegion_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+          "C_SalesRegion_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportBudgetGenerateExcel"), Utility.getContext(this, vars, "#User_Client",
               "ReportBudgetGenerateExcel"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
@@ -195,7 +195,7 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Campaign_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportBudgetGenerateExcel"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"), Utility
               .getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
       xmlDocument.setData("reportCCampaignId", "liststructure", comboTableData.select(false));
@@ -206,7 +206,7 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Activity_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportBudgetGenerateExcel"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"), Utility
               .getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
       xmlDocument.setData("reportCActivityId", "liststructure", comboTableData.select(false));
@@ -217,7 +217,7 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Project_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportBudgetGenerateExcel"), Utility
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"), Utility
               .getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
       xmlDocument.setData("reportCProjectId", "liststructure", comboTableData.select(false));
@@ -228,7 +228,7 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", "ReportBudgetGenerateExcel"), Utility
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"), Utility
               .getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
       xmlDocument.setData("reportTrxOrg", "liststructure", comboTableData.select(false));

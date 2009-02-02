@@ -149,7 +149,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
           .bPartnerDescription(this, strcBpartnerId));
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+            "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client",
                 "ReportSalesOrderInvoicedJasper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -162,7 +162,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org",
+            "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client",
                 "ReportSalesOrderInvoicedJasper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -176,7 +176,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Projectkind_ID",
-            "Projectkind", "", Utility.getContext(this, vars, "#User_Org",
+            "Projectkind", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client",
                 "ReportSalesOrderInvoicedJasper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -189,7 +189,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Region_ID",
-            "", "C_Region of Country", Utility.getContext(this, vars, "#User_Org",
+            "", "C_Region of Country", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client",
                 "ReportSalesOrderInvoicedJasper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -202,7 +202,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST",
-            "C_Project_Public_ID", "PublicPrivate", "", Utility.getContext(this, vars, "#User_Org",
+            "C_Project_Public_ID", "PublicPrivate", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client",
                 "ReportSalesOrderInvoicedJasper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -216,7 +216,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderInvoicedJasper"),
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderInvoicedJasper"),
             Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData,
             "ReportSalesOrderInvoicedJasper", strCurrencyId);
@@ -227,10 +227,10 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       }
 
       SubCategoryProductData[] dataSub = SubCategoryProductData.select(this, Utility.getContext(
-          this, vars, "#User_Org", "ReportSalesOrderInvoicedJasper"), Utility.getContext(this,
+          this, vars, "#AccessibleOrgTree", "ReportSalesOrderInvoicedJasper"), Utility.getContext(this,
           vars, "#User_Client", "ReportSalesOrderInvoicedJasper"));
       xmlDocument.setParameter("product", arrayDobleEntrada("array", SubCategoryProductData
-          .selectProduct(this, Utility.getContext(this, vars, "#User_Org",
+          .selectProduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client",
               "ReportSalesOrderInvoicedJasper"))));
 
@@ -243,7 +243,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
     } else {
       ReportSalesOrderInvoicedData[] data = ReportSalesOrderInvoicedData
           .select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client",
-              "ReportSalesOrderInvoiced"), Utility.getContext(this, vars, "#User_Org",
+              "ReportSalesOrderInvoiced"), Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportSalesOrderInvoiced"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,
               "1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind,
               strcRegionId, strProjectpublic, strProduct);
@@ -312,7 +312,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
     try {
       data = ReportSalesOrderInvoicedData.select(this, strCurrencyId, Utility.getContext(this,
           vars, "#User_Client", "ReportSalesOrderInvoiced"), Utility.getContext(this, vars,
-          "#User_Org", "ReportSalesOrderInvoiced"), strdateFrom, DateTimeData.nDaysAfter(this,
+          "#AccessibleOrgTree", "ReportSalesOrderInvoiced"), strdateFrom, DateTimeData.nDaysAfter(this,
           strdateTo, "1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId,
           strProjectkind, strcRegionId, strProjectpublic, strProduct);
     } catch (ServletException ex) {

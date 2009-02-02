@@ -184,7 +184,7 @@ public class ReportShipper extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramShipper", strShipper);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Shipper_ID",
-            "", "", Utility.getContext(this, vars, "#User_Org", "ReportShipper"), Utility
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipper"), Utility
                 .getContext(this, vars, "#User_Client", "ReportShipper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportShipper", strShipper);
         xmlDocument.setData("reportShipper", "liststructure", comboTableData.select(false));
@@ -196,7 +196,7 @@ public class ReportShipper extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#User_Org", "ReportShipper"), Utility
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipper"), Utility
                 .getContext(this, vars, "#User_Client", "ReportShipper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportShipper", strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));

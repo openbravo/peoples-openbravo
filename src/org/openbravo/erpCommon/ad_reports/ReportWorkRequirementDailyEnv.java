@@ -79,7 +79,7 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnvEdit").createXmlDocument();
     data = ReportWorkRequirementDailyEnvData.select(this, vars.getLanguage(), Utility.getContext(
         this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"), Utility.getContext(this,
-        vars, "#User_Org", "ReportWorkRequirementDailyEnv"), strStartDateFrom, strStartDateTo,
+        vars, "#AccessibleOrgTree", "ReportWorkRequirementDailyEnv"), strStartDateFrom, strStartDateTo,
         strmaProcessPlan);
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -144,7 +144,7 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this,
         Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"), Utility
-            .getContext(this, vars, "#User_Org", "ReportWorkRequirementDailyEnv")));
+            .getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDailyEnv")));
 
     out.println(xmlDocument.print());
     out.close();
@@ -159,7 +159,7 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
    * xmlEngine.readXmlTemplate ("org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnv"
    * ).createXmlDocument(); data = ReportWorkRequirementDailyEnvData.select(this,
    * vars.getLanguage(), Utility.getContext(this, vars, "#User_Client",
-   * "ReportWorkRequirementDailyEnv"), Utility.getContext(this, vars, "#User_Org",
+   * "ReportWorkRequirementDailyEnv"), Utility.getContext(this, vars, "#AccessibleOrgTree",
    * "ReportWorkRequirementDailyEnv"), strStartDateFrom, strStartDateTo, strmaProcessPlan);
    * 
    * ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportWorkRequirementDailyEnv", false,
@@ -191,7 +191,7 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
    * xmlDocument.setParameter("startDateTo", strStartDateTo);
    * xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this,
    * Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"),
-   * Utility.getContext(this, vars, "#User_Org", "ReportWorkRequirementDailyEnv")));
+   * Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDailyEnv")));
    * xmlDocument.setData("structure1", data); out.println(xmlDocument.print()); out.close(); }
    */
 

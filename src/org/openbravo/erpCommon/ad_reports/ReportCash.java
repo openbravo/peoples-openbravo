@@ -73,11 +73,11 @@ public class ReportCash extends HttpSecureAppServlet {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportCashEdit")
           .createXmlDocument();
       data = ReportCashData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-          "#User_Client", "ReportCash"), Utility.getContext(this, vars, "#User_Org", "ReportCash"),
+          "#User_Client", "ReportCash"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCash"),
           strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCashbook);
       xmlDocument.setParameter("sumAmount", ReportCashData.BeginningBalance(this, Utility
           .getContext(this, vars, "#User_Client", "ReportCash"), Utility.getContext(this, vars,
-          "#User_Org", "ReportCash"), strDateFrom, strCashbook));
+          "#AccessibleOrgTree", "ReportCash"), strDateFrom, strCashbook));
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("theme", vars.getTheme());
@@ -100,7 +100,7 @@ public class ReportCash extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportCash")
         .createXmlDocument();
     xmlDocument.setParameter("sumAmount", ReportCashData.BeginningBalance(this, Utility.getContext(
-        this, vars, "#User_Client", "ReportCash"), Utility.getContext(this, vars, "#User_Org",
+        this, vars, "#User_Client", "ReportCash"), Utility.getContext(this, vars, "#AccessibleOrgTree",
         "ReportCash"), strDateFrom, strCashbook));
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportCash", false, "", "", "", false,
@@ -144,7 +144,7 @@ public class ReportCash extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_CashBook_ID",
-          "", "", Utility.getContext(this, vars, "#User_Org", "ReportCash"), Utility.getContext(
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCash"), Utility.getContext(
               this, vars, "#User_Client", "ReportCash"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCash", strCashbook);
       xmlDocument.setData("reportC_CASHBOOK", "liststructure", comboTableData.select(false));
