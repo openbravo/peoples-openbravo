@@ -12,116 +12,412 @@
 
 package org.openbravo.base.secureApp;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.WindowTreeData;
-import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.enterprise.OrganizationType;
+import org.openbravo.database.ConnectionProvider;
 
-public class OrgTreeNode implements Serializable {
+public class OrgTree implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String id;
-    private String parentId;
-    private String value;
-    private String isReady;
-    private OrganizationType orgType;
-    private String serializedOrgTypeId;
+    private List<OrgTreeNode> nodes;
 
     /**
-     * Creates a node from data related to it
+     * Creates a new Organization tree with all the nodes
      * 
-     * @param nodeData
-     *            info for the node
+     * @param conn
+     *            DB connection
+     * @param strClient
+     *            client to get the org tree from
      */
-    public OrgTreeNode(WindowTreeData nodeData) {
-        id = nodeData.id;
-        parentId = nodeData.parentId;
-        value = nodeData.name;
-        isReady = nodeData.isready;
-        orgType = OBDal.getInstance().get(OrganizationType.class,
-                nodeData.adOrgtypeId);
-    }
-
-    /**
-     * Creates a node from the DAL object using the organization's identifier
-     * 
-     * @param AD_Org_ID
-     *            Organization's identifier
-     */
-    public OrgTreeNode(String AD_Org_ID) {
-        final Organization org = OBDal.getInstance().get(Organization.class,
-                AD_Org_ID);
-        id = AD_Org_ID;
-        value = org.getName();
-        isReady = org.isReady().toString();
-        orgType = org.getOrganizationType();
-    }
-
-    // The orgtreenode is serialized in a persistent http session by tomcat
-    // the Openbravo BusinessObjects which have been read from the db can
-    // only be deserialized if they are connected to the db because some
-    // of the references maybe a cglib proxy
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        serializedOrgTypeId = orgType.getId();
-        orgType = null;
-        out.defaultWriteObject();
-    }
-
-    /**
-     * Creates a tree from data and returns the root node
-     * 
-     * @param data
-     *            information to generete the tree
-     * @return Node[]: Complete tree's nodes
-     */
-    public static List<OrgTreeNode> createTree(WindowTreeData[] data) {
-        final List<OrgTreeNode> nodes = new ArrayList<OrgTreeNode>();
-
-        for (int i = 0; i < data.length; i++)
-            nodes.add(new OrgTreeNode(data[i]));
-
-        return nodes;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public String getIsReady() {
-        return isReady;
-    }
-
-    public void setIsReady(String isReady) {
-        this.isReady = isReady;
-    }
-
-    public OrganizationType getOrgType() {
-        if (serializedOrgTypeId != null) {
-            orgType = OBDal.getInstance().get(OrganizationType.class,
-                    serializedOrgTypeId);
-            serializedOrgTypeId = null;
+    public OrgTree(ConnectionProvider conn, String strClient) {
+        try {
+            String treeID = WindowTreeData.selectTreeID(conn, "'" + strClient
+                    + "'", "OO")[0].id;
+            WindowTreeData[] data = WindowTreeData.selectOrg(conn, "", "", "",
+                    "", treeID);
+            this.nodes = OrgTreeNode.createTree(data);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return orgType;
     }
 
-    public void setOrgType(OrganizationType orgType) {
-        this.orgType = orgType;
+    /**
+     * Creates an empty Tree
+     */
+    public OrgTree() {
+        nodes = new ArrayList<OrgTreeNode>();
+
     }
 
-    public boolean equals(String s) {
-        return id.equals(s);
+    /**
+     * Creates a tree with the nodes in nodeList
+     * 
+     * @param nodeList
+     */
+    public OrgTree(List<OrgTreeNode> nodeList) {
+        nodes = nodeList;
     }
+
+    /**
+     * Creates a tree with a colon-separated AD_Org_ID in strOrgs
+     * 
+     * @param strOrgs
+     *            colon-separated AD_Org_ID. Example "'0','1000000'"
+     */
+    public OrgTree(String strOrgs) {
+        OrgTreeNode orgTreeNode;
+        List<OrgTreeNode> nodeList = new ArrayList<OrgTreeNode>();
+
+        int i = 0;
+        int charAt_Old = 0;
+        while (i < strOrgs.length()) {
+            char c = strOrgs.charAt(i++);
+            if (c == ',') {
+                String AD_Org_ID = strOrgs.substring(charAt_Old + 1, i - 2);
+                charAt_Old = i;
+                orgTreeNode = new OrgTreeNode(AD_Org_ID);
+                nodeList.add(orgTreeNode);
+            }
+            // Get the last org of the string
+            if (i == strOrgs.length() - 1) {
+                String AD_Org_ID = strOrgs.substring(charAt_Old + 1, i);
+                orgTreeNode = new OrgTreeNode(AD_Org_ID);
+                nodeList.add(orgTreeNode);
+            }
+        }
+
+        nodes = nodeList;
+    }
+
+    /**
+     * Returns a String with the Ready Organizations which are able to manage
+     * transactions (like for example Invoices)
+     * 
+     * @param strOrgs
+     *            colon-separated AD_Org_ID. Example "'0','1000000'"
+     * @return colon-separated AD_Org_ID of Ready Organizations which are able
+     *         to manage transactions. Example: "'0','1000000'"
+     */
+    public static String getTransactionAllowedOrgs(String strOrgs) {
+        StringBuffer sb = new StringBuffer();
+        OrgTree orgTree = new OrgTree(strOrgs);
+        Iterator<OrgTreeNode> iterator = orgTree.iterator();
+        while (iterator.hasNext()) {
+            OrgTreeNode n = iterator.next();
+            if (n.getIsReady() == "true"
+                    && n.getOrgType().isTransactionsAllowed()) {
+                sb.append("'" + n.getId() + "',");
+            }
+        }
+        // Remove the last ','
+        if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ',') {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Returns a sub-tree of the original tree with those organizations
+     * accessible by the role
+     * 
+     * @param conn
+     * @param strRole
+     * @return
+     */
+    public OrgTree getAccessibleTree(ConnectionProvider conn, String strRole,
+            boolean withZero) {
+        // TODO: this method with boolean should be removed.
+        return getAccessibleTree(conn, strRole);
+    }
+
+    public OrgTree getAccessibleTree(ConnectionProvider conn, String strRole) {
+        try {
+            OrgTreeData[] data = OrgTreeData.select(conn, strRole);
+            OrgTree accessibleOrgTree = new OrgTree();
+            for (int i = 0; i < data.length; i++) {
+                accessibleOrgTree.addTree(this.getLogicPath(data[i].adOrgId));
+            }
+            return accessibleOrgTree;
+        } catch (Exception e) {
+            return new OrgTree();
+        }
+    }
+
+    /**
+     * Obtains a tree with all the nodes that can be referenced from the
+     * original one.
+     * 
+     * @param tree
+     *            tree contains all the nodes to reference from
+     * @return new tree with referenceable nodes.
+     */
+    public OrgTree getReferenceableTree(OrgTree tree) {
+        Iterator<OrgTreeNode> iterator = tree.iterator();
+        OrgTree refeTree = new OrgTree();
+        while (iterator.hasNext()) {
+            OrgTreeNode o = iterator.next();
+            refeTree.addTree(this.getLogicPath(o.getId()));
+        }
+        return refeTree;
+    }
+
+    /**
+     * Obtains all nodes descendant of the given parentNodeId
+     * 
+     * @param parentNodeId
+     * @return the new tree with the desdentant elements
+     */
+    public OrgTree getDescendantTree(String parentNodeId) {
+        try {
+            List<OrgTreeNode> treeNodes = new ArrayList<OrgTreeNode>();
+            getDescendantTreeList(parentNodeId, treeNodes);
+            return new OrgTree(treeNodes);
+        } catch (Exception e) {
+            return new OrgTree();
+        }
+    }
+
+    /**
+     * Obtains all nodes ascendant of the given nodId
+     * 
+     * @param nodeId
+     * @return the new tree with the ascendant elements
+     */
+    public OrgTree getAscendantTree(String nodeId) {
+        try {
+            List<OrgTreeNode> treeNodes = new ArrayList<OrgTreeNode>();
+            OrgTreeNode parentNode = getNodeById(nodeId);
+            while (parentNode != null) {
+                treeNodes.add(parentNode);
+                parentNode = getNodeById(parentNode.getParentId());
+            }
+            return new OrgTree(treeNodes);
+        } catch (Exception e) {
+            return new OrgTree();
+        }
+    }
+
+    /**
+     * Obtains the logic path for a node, this is the sum of all desdendat nodes
+     * and all ascendant ones.
+     * 
+     * @param nodeId
+     * @return the new tree with the Logic Path
+     */
+    public OrgTree getLogicPath(String nodeId) {
+        try {
+            return addTree(this.getDescendantTree(nodeId), this
+                    .getAscendantTree(nodeId));
+        } catch (Exception e) {
+            return new OrgTree();
+        }
+    }
+
+    public Iterator<OrgTreeNode> iterator() {
+        return nodes.iterator();
+    }
+
+    public static String getAllOrgsString(ConnectionProvider conn, String name) {
+        try {
+            OrgTreeData[] dataClients = OrgTreeData.selectAllClients(conn);
+            String retVal = "";
+            if (dataClients == null)
+                return "";
+            retVal += "var " + name + "=new Array(";
+            for (int i = 0; i < dataClients.length; i++) {
+                OrgTree t = new OrgTree(conn, dataClients[i].adClientId);
+                OrgTreeData[] dataRole = OrgTreeData.selectRoles(conn,
+                        dataClients[i].adClientId);
+                if (dataRole != null) {
+                    for (int j = 0; j < dataRole.length; j++) {
+                        OrgTree tRole = t.getAccessibleTree(conn,
+                                dataRole[j].adRoleId, dataRole[j].userlevel
+                                        .contains("S"));
+                        Iterator<OrgTreeNode> iterator = tRole.iterator();
+                        while (iterator.hasNext()) {
+                            OrgTreeNode n = iterator.next();
+                            retVal += "new Array(\""
+                                    + dataRole[j].adRoleId
+                                    + "\", \""
+                                    + n.getId()
+                                    + "\", \""
+                                    + n.getValue()
+                                    + "\")"
+                                    + ((!iterator.hasNext()
+                                            && (j == dataRole.length - 1) && (i == dataClients.length - 1)) ? "\n"
+                                            : ",\n");
+                        }
+                    }
+                }
+            }
+            retVal += ");";
+
+            return retVal;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * Converts the tree into String. Nodes comma separated.
+     */
+    public String toString() {
+        String s = "";
+        if (nodes == null)
+            return "";
+        for (int i = 0; i < nodes.toArray().length; i++) {
+            if (nodes.get(i) != null)
+                s += "'" + nodes.get(i).getId() + "'"
+                        + ((i < nodes.toArray().length - 1) ? "," : "");
+        }
+        return s;
+    }
+
+    /**
+     * Converts the tree into String. Displaying the name in order to make it
+     * more understandable
+     */
+    public String toDebugString() {
+        String s = "";
+        if (nodes == null)
+            return "";
+        for (int i = 0; i < nodes.toArray().length; i++) {
+            if (nodes.get(i) != null)
+                s += nodes.get(i).getId() + " - " + nodes.get(i).getValue()
+                        + ((i < nodes.toArray().length - 1) ? "\n" : "");
+        }
+        return s;
+    }
+
+    /**
+     * Sums the nodes in t1 which do not exist in the current tree.
+     * 
+     * @param t1
+     */
+    public void addTree(OrgTree t1) {
+        if ((t1 != null) && (t1.nodes != null)) {
+            for (int i = 0; i < t1.nodes.toArray().length; i++) {
+                if (!this.isNodeInTree(t1.nodes.get(i).getId()))
+                    this.nodes.add(t1.nodes.get(i));
+            }
+        }
+    }
+
+    /**
+     * Sums different nodes of two trees. And returns a new one.
+     * 
+     * @param t1
+     *            tree1
+     * @param t2
+     *            tree2
+     * @return new tree (t1+t2)
+     */
+    public static OrgTree addTree(OrgTree t1, OrgTree t2) {
+        List<OrgTreeNode> treeNodes = new ArrayList<OrgTreeNode>();
+
+        treeNodes.addAll(t1.nodes);
+
+        OrgTree returnTree = new OrgTree(treeNodes);
+        returnTree.addTree(t2);
+        return returnTree;
+    }
+
+    /**
+     * List param is modified with all the child nodes, repeatNodes decides what
+     * to do in case of repeated nodes.
+     * 
+     * @param parentNodeId
+     * @param list
+     * @param repeatNodes
+     */
+    private void getDescendantTreeList(String parentNodeId,
+            List<OrgTreeNode> list, boolean repeatNodes, boolean withZero) {
+        List<OrgTreeNode> childNodes = getNodesWithParent(parentNodeId);
+        if (repeatNodes) {
+            if (withZero || !getNodeById(parentNodeId).getId().equals("0"))
+                list.add(getNodeById(parentNodeId));
+        } else {
+            if ((list.size() == 0)
+                    && (withZero || !getNodeById(parentNodeId).getId().equals(
+                            "0")))
+                list.add(getNodeById(parentNodeId));
+            else {
+                boolean exists = false;
+                for (int i = 0; i < list.toArray().length; i++)
+                    if (list.get(i).equals(parentNodeId))
+                        exists = true;
+                if ((!exists)
+                        && (withZero || !getNodeById(parentNodeId).getId()
+                                .equals("0")))
+                    list.add(getNodeById(parentNodeId));
+            }
+        }
+        if (childNodes.toArray().length != 0)
+            for (int i = 0; i < childNodes.toArray().length; i++)
+                getDescendantTreeList(childNodes.get(i).getId(), list,
+                        repeatNodes, withZero);
+
+    }
+
+    /**
+     * List param is modified with all the child nodes
+     * 
+     * @param parentNodeId
+     * @param list
+     */
+    private void getDescendantTreeList(String parentNodeId,
+            List<OrgTreeNode> list) {
+        getDescendantTreeList(parentNodeId, list, true, true);
+    }
+
+    /**
+     * Returns the node matching the id, in case it does not exists it returns
+     * null
+     * 
+     * @param id
+     * @return
+     */
+    private OrgTreeNode getNodeById(String id) {
+        if (nodes == null)
+            return null;
+        for (int i = 0; i < nodes.toArray().length; i++)
+            if (nodes.get(i).equals(id))
+                return nodes.get(i);
+        return null;
+    }
+
+    /**
+     * In case the node id is in the tree it returns true, if not false.
+     * 
+     * @param id
+     * @return
+     */
+    private boolean isNodeInTree(String id) {
+        if (nodes == null)
+            return false;
+        for (int i = 0; i < nodes.toArray().length; i++)
+            if (nodes.get(i).equals(id))
+                return true;
+        return false;
+    }
+
+    /**
+     * Returns the list of the nodes that have a determinate node.
+     * 
+     * @param parentId
+     * @return
+     */
+    private List<OrgTreeNode> getNodesWithParent(String parentId) {
+        List<OrgTreeNode> vecNodes = new ArrayList<OrgTreeNode>();
+        int idx = 0;
+        for (int i = 0; i < nodes.toArray().length; i++)
+            if (nodes.get(i).getParentId().equals(parentId)) {
+                vecNodes.add(idx++, nodes.get(i));
+            }
+        return vecNodes;
+    }
+
 }
