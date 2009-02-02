@@ -789,7 +789,8 @@ public class PrintController extends HttpSecureAppServlet {
       throw new ServletException(exception);
     } catch (final MessagingException exception) {
       log4j.error(exception);
-      throw new ServletException(exception);
+      throw new ServletException("problems with the SMTP server configuration: "
+          + exception.getMessage(), exception);
     }
   }
 
