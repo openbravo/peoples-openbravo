@@ -246,8 +246,6 @@ public class VerticalMenu extends HttpSecureAppServlet {
             else
               strText.append(target);
             strText.append("'");
-            if (menuData[i].action.equals("F"))
-              strText.append(", 600, 600");
             strText.append(", false, " + (menuData[i].action.equals("F") ? "false" : "true")
                 + ");return false;\"");
           } else {
