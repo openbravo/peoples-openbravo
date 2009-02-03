@@ -225,9 +225,19 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="build.quick" depends="init">
     <antcall target="update.database" />
+
     <ant dir="${base.src}" target="build.quick" inheritAll="true" inheritRefs="true" />
+
+    <!-- only restart tomcat if the restart prop was set to true -->
+    <condition property="dorestart">
+      <istrue value="${restart}" />
+    </condition>
+    <antcall target="if.restart.tomcat" />
   </target>
 
+  <target name="if.restart.tomcat" if="dorestart">
+    <antcall target="tomcat.restart" />
+  </target>
 
   <target name="compile" depends="init">
     <ant dir="${base.src}" target="compile" inheritAll="true" inheritRefs="true" />
@@ -548,6 +558,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 		calls the restart.tomcat.do task as a spawned task.
 	-->
   <target name="tomcat.restart" description="Restart the tomcat server process">
+    <echo message="Restarting tomcat..." />
     <java classname="org.openbravo.service.system.RestartTomcat" spawn="true" fork="true" maxmemory="${build.maxmemory}">
       <arg line="${base.src}" />
       <classpath refid="project.class.path" />
@@ -585,6 +596,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 		calls the tomcat.reload.do task as a spawned task.
 	-->
   <target name="tomcat.reload" description="Reload the Openbravo context">
+    <echo message="Reloading webapp..." />
     <java classname="org.openbravo.service.system.ReloadContext" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" spawn="true" fork="true">
       <arg line="${base.src}" />
       <classpath refid="project.class.path" />
