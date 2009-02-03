@@ -91,7 +91,7 @@ public class ProcessBundle {
    *          clients security/context variables
    */
   public ProcessBundle(String processId, VariablesSecureApp vars) {
-    this(processId, vars, Channel.DIRECT, vars.getClient(), vars.getOrg());
+    this(processId, vars, Channel.DIRECT, vars.getClient(), vars.getOrg(), true);
   }
 
   /**
@@ -109,9 +109,9 @@ public class ProcessBundle {
    *          the organization under which this process will run
    */
   public ProcessBundle(String processId, VariablesSecureApp vars, Channel channel, String client,
-      String organization) {
+      String organization, boolean roleSecurity) {
     this.processId = processId;
-    this.context = new ProcessContext(vars, client, organization);
+    this.context = new ProcessContext(vars, client, organization, roleSecurity);
     this.channel = channel;
   }
 
@@ -309,8 +309,9 @@ public class ProcessBundle {
     final ProcessRequestData data = ProcessRequestData.select(conn, requestId);
 
     final String processId = data.processId;
+    final boolean isRoleSecurity = data.isrolesecurity != null && data.isrolesecurity.equals("Y");
     final ProcessBundle bundle = new ProcessBundle(processId, vars, Channel.SCHEDULED, data.client,
-        data.organization).init(conn);
+        data.organization, isRoleSecurity).init(conn);
 
     final String paramString = data.params;
     if (paramString == null || paramString.trim().equals("")) {

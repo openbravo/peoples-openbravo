@@ -10,13 +10,13 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
 import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.scheduling.ProcessBundle.Channel;
+import org.openbravo.service.db.DalBaseProcess;
 
-public class AcctServerProcess implements Process {
+public class AcctServerProcess extends DalBaseProcess {
 
   public final static String BATCH_SIZE = "50";
 
@@ -30,7 +30,7 @@ public class AcctServerProcess implements Process {
   private ProcessLogger logger;
   private ConnectionProvider connection;
 
-  public void execute(ProcessBundle bundle) throws Exception {
+  public void doExecute(ProcessBundle bundle) throws Exception {
 
     logger = bundle.getLogger();
     connection = bundle.getConnection();

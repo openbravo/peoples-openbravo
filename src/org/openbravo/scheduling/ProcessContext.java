@@ -48,22 +48,13 @@ public class ProcessContext {
   private String sqlDateFormat;
   private String accessLevel;
 
+  private boolean roleSecurity;
+
   /**
    * 
    */
   public ProcessContext() {
 
-  }
-
-  /**
-   * @param user
-   * @param client
-   * @param organization
-   */
-  public ProcessContext(String user, String client, String organization) {
-    this.user = user;
-    this.client = client;
-    this.organization = organization;
   }
 
   /**
@@ -87,6 +78,8 @@ public class ProcessContext {
     this.sqlDateFormat = vars.getSqlDateFormat();
     this.accessLevel = vars.getAccessLevel();
 
+    this.roleSecurity = true;
+
   }
 
   /**
@@ -96,10 +89,11 @@ public class ProcessContext {
    * @param client
    * @param org
    */
-  public ProcessContext(VariablesSecureApp vars, String client, String org) {
+  public ProcessContext(VariablesSecureApp vars, String client, String org, boolean roleSecurity) {
     this(vars);
     this.client = client;
     this.organization = org;
+    this.roleSecurity = roleSecurity;
   }
 
   /**
@@ -219,6 +213,13 @@ public class ProcessContext {
    */
   public String getAccessLevel() {
     return accessLevel;
+  }
+
+  /**
+   * @return whether the security for the process is based on role.
+   */
+  public boolean isRoleSecurity() {
+    return roleSecurity;
   }
 
   /**
