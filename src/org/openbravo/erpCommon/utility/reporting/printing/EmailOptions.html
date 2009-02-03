@@ -194,29 +194,33 @@
 
 					<tr id="customer">
 						<td style="width: 1%; text-align: right;">
-							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Customer Email</span>
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">To:</span>
 						</td>
 						<td id="contactEmailArea"colspan="2">
 							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
 									class="dojoValidateValid required TextBox_btn_TwoCells_width"
 									maxlength="200" name="contactEmail" id="contactEmail" value=""
-									required="true" onkeyup="validateTextBox(this.id);"><span>(</span><span class="LabelText" name="contactName" id="contactName" value=""></span>
-									<span class="LabelText">)</span>
+									required="true" onkeyup="validateTextBox(this.id);"><span class="LabelText" name="contactName" id="contactName" value=""></span>
+									
 						</td>
+					</tr>
+					<tr style="height: 3px">
 					</tr>
 
 					<tr id="salesRep">
 						<td style="width: 1%; text-align: right;">
-							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">SalesRep Email</span>
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">From:</span>
 						</td>						
 						<td id="salesrepEmailArea" colspan="2">
 							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
 									class="dojoValidateValid required TextBox_btn_TwoCells_width"
 									maxlength="200" name="salesrepEmail" id="salesrepEmail" value=""
-									required="true" onkeyup="validateTextBox(this.id);"><span>(</span><span class="LabelText" name="salesrepName" id="salesrepName" value=""></span>
-									<span class="LabelText">)</span>
+									required="true" onkeyup="validateTextBox(this.id);"><span class="LabelText" name="salesrepName" id="salesrepName" value=""></span>
+									
 						</td>
 					</tr>
+					<tr style="height: 3px">
+                    </tr>
 
 					<tr id="emailField03">
 						<td style="width: 1%; text-align: right;">
@@ -230,6 +234,8 @@
 						</td>
 						
 					</tr>
+					<tr style="height: 3px">
+                    </tr>
 
 					<tr id="emailField03" nowrap="nowrap">
 						<td style="width: 1%; text-align: right;" >
@@ -248,14 +254,18 @@
 							</spam>
 						</td>
 					</tr>
+					<tr style="height: 3px">
+                    </tr>
 					<tr id="discardSelect">
  						<td class="TitleCell"><span class="LabelText">Template to use</span></td>
-						<td class="Combo_ContentCell" colspan="2">
+						<td colspan="2">
 	    					<select style="width: 55%;" name="templates" id="templates" class="ComboKey Combo_TwoCells_width" required="true" onchange="displayLogic();return true;">
 	                    	<div id="reportEmail"></div>
 	        			</select>
 						</td>
-				</tr>		
+				</tr>	
+				<tr style="height: 3px">
+                    </tr>	
 					<tr id="discardTable">
 						<td style="width: 1%; text-align: right;">
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Attached Documents</span>
@@ -265,12 +275,12 @@
     						<tbody>
     						<tr class="DataGrid_Body_Row"> 
     							<th class="DataGrid_Header_Cell"><span>File name</span></th>
-      							<th width="5" colspan="1" class="DataGrid_Header_Cell" id="fieldPartnerName"><span>Archive</span><th>
+      							<th width="20%" colspan="1" class="DataGrid_Header_Cell" id="fieldPartnerName"><span>Archive</span><th>
         					</tr>
         					<div id="sectionDetail2">
         					<tr id="funcEvenOddRowxx" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
       							<td class="DataGrid_Body_Cell" id="fileDocName" value="tt">xx</td>
-								<td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="checkbox" id="paramcheck" name="paramcheck" onclick="javascript:storeDoc();"/></span></td>
+								<td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused" style="text-align: center;"><input type="checkbox" id="paramcheck" name="paramcheck" onclick="javascript:storeDoc();"/></span></td>
          					</tr>
     						<div id="sectionDetail">
       						<tr id="view" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
@@ -301,7 +311,7 @@
     <table width="175" onmouseout="this.className='Button'; window.status=''; return true;" onmouseover="this.className='Button_hover'; window.status='Copy Lines'; return true;" onmouseup="this.className='Button'; return true;" onmousedown="this.className='Button_active'; return true;" class="Button">
       <tbody><tr>
         <td class="Button_left"><img border="0" src="../web/images/blank.gif" title="Copy Lines" alt="Copy Lines" class="Button_Icon Button_Icon_process"/></td>
-     	 <td id="CopyFrom_BTNname"  class="Button_text">Add file to the List</td>
+     	 <td id="CopyFrom_BTNname"  class="Button_text">Add Attachment</td>
         <td class="Button_right"/>
       </tr>
     </tbody></table>

@@ -33,6 +33,7 @@ import java.util.Vector;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -695,10 +696,14 @@ public class PrintController extends HttpSecureAppServlet {
           .newMailSession(this, vars.getClient(), report.getOrgId());
 
       final Message message = new MimeMessage(session);
+
+      Address[] address = new InternetAddress[1];
+      address[0] = new InternetAddress(salesrepEmail);
+      message.setReplyTo(address);
       message.setFrom(new InternetAddress(senderAddess));
       message.addRecipient(Message.RecipientType.TO, new InternetAddress(contactEmail));
 
-      message.addRecipient(Message.RecipientType.BCC, new InternetAddress(salesrepEmail));
+      // message.addRecipient(Message.RecipientType.BCC, new InternetAddress(salesrepEmail));
 
       if (userEmail != null && userEmail.length() > 0)
         message.addRecipient(Message.RecipientType.BCC, new InternetAddress(userEmail));

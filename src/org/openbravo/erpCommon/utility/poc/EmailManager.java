@@ -69,6 +69,7 @@ public class EmailManager {
     props.put("mail.debug", "true");
     props.put("mail.smtp.auth", (configuration.issmtpauthorization.equals("Y") ? "true" : "false"));
     props.put("mail.transport.protocol", "smtp");
+    props.put("mail.smtp.mail.sender", "email_admin@openbravo.com");
     props.put("mail.host", configuration.smtpserver);
 
     ClientAuthenticator authenticator = null;
