@@ -115,9 +115,26 @@ public class OBContext implements OBNotSingleton {
    *          the id of the user (as present in the database)
    */
   public static void setOBContext(String userId) {
+    setOBContext(userId, null, null, null);
+  }
+
+  /**
+   * Creates the context using the userId, roleId, clientId, orgId and sets it in the thread (as
+   * ThreadLocal).
+   * 
+   * @param userId
+   *          the id of the user
+   * @param roleId
+   *          the id of the role under which the user is currently working
+   * @param clientId
+   *          the id of the user's client
+   * @param orgId
+   *          the ud of the user's organization
+   */
+  public static void setOBContext(String userId, String roleId, String clientId, String orgId) {
     final OBContext context = OBProvider.getInstance().get(OBContext.class);
     setOBContext((OBContext) null);
-    context.initialize(userId);
+    context.initialize(userId, roleId, clientId, orgId);
     setOBContext(context);
   }
 

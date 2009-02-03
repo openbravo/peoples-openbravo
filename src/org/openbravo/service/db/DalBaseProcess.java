@@ -51,8 +51,15 @@ public abstract class DalBaseProcess implements Process {
     boolean errorOccured = true;
     final OBContext currentOBContext = OBContext.getOBContext();
     try {
-      log.debug("Setting user context to user " + processContext.getUser());
-      OBContext.setOBContext(processContext.getUser());
+      String userId = processContext.getUser();
+      String roleId = processContext.getRole();
+      String clientId = processContext.getClient();
+      String orgId = processContext.getOrganization();
+
+      log.debug("Setting user context to user=" + userId + ",roleId=" + roleId + ",client="
+          + clientId + ",org=" + orgId);
+
+      OBContext.setOBContext(userId, roleId, clientId, orgId);
       doExecute(bundle);
       errorOccured = false;
     } finally {
