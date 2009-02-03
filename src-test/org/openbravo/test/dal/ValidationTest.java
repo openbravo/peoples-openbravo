@@ -147,7 +147,7 @@ public class ValidationTest extends BaseTest {
           InvoiceSchedule.class);
       for (final InvoiceSchedule is : obc.list()) {
         try {
-          is.setInvoiceDay(40);
+          is.setInvoiceDay((long) 40);
           fail("Maxvalue constraint not enforced");
         } catch (final ValidationException ve) {
           // success
@@ -170,7 +170,7 @@ public class ValidationTest extends BaseTest {
           InvoiceSchedule.class);
       for (final InvoiceSchedule is : obc.list()) {
         try {
-          is.setInvoiceDay(0);
+          is.setInvoiceDay((long) 0);
           fail();
         } catch (final ValidationException ve) {
           // success

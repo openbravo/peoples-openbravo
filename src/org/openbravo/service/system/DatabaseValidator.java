@@ -25,11 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.ddlutils.Platform;
-import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.model.Database;
 import org.apache.ddlutils.model.ForeignKey;
 import org.apache.ddlutils.model.Index;
@@ -40,7 +36,6 @@ import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
@@ -54,6 +49,8 @@ import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
  * 
  * @author mtaal
  */
+
+// check naming rule of a table, use ad_exceptions table
 public class DatabaseValidator implements SystemValidator {
   private Database database;
 
@@ -69,8 +66,6 @@ public class DatabaseValidator implements SystemValidator {
   }
 
   public SystemValidationResult validate() {
-    initialize();
-
     final SystemValidationResult result = new SystemValidationResult();
 
     // read the tables
@@ -426,22 +421,6 @@ public class DatabaseValidator implements SystemValidator {
   // System.err.println(dbColumn.getType() + " " + dbColumn.getSize());
   // }
   // }
-
-  private void initialize() {
-    final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-    final BasicDataSource ds = new BasicDataSource();
-    ds.setDriverClassName(props.getProperty("bbdd.driver"));
-    if (props.getProperty("bbdd.rdbms").equals("POSTGRE")) {
-      ds.setUrl(props.getProperty("bbdd.url") + "/" + props.getProperty("bbdd.sid"));
-    } else {
-      ds.setUrl(props.getProperty("bbdd.url"));
-    }
-    ds.setUsername(props.getProperty("bbdd.user"));
-    ds.setPassword(props.getProperty("bbdd.password"));
-    Platform platform = PlatformFactory.createNewPlatformInstance(ds);
-    platform.getModelLoader().setOnlyLoadTableColumns(true);
-    setDatabase(platform.loadModelFromDatabase(null));
-  }
 
   public Database getDatabase() {
     return database;

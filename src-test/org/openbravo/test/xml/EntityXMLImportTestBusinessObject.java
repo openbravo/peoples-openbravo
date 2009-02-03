@@ -232,7 +232,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
           .getFinancialMgmtPaymentTermLineList().get(0));
       ptl.setClient(null);
       ptl.setOrganization(null);
-      ptl.setLine(NO_OF_PT_LINE);
+      ptl.setLine((long) NO_OF_PT_LINE);
       pt.getFinancialMgmtPaymentTermLineList().add(ptl);
     }
 
@@ -315,14 +315,14 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       for (int j = 0; j < NO_OF_PT_LINE; j++) {
         final PaymentTermLine ptl = OBProvider.getInstance().get(PaymentTermLine.class);
         ptl.setExcludetax(true);
-        ptl.setFixMonthCutoff(new Integer(10));
-        ptl.setFixMonthDay(new Integer(5));
-        ptl.setFixMonthDay2(new Integer(1));
-        ptl.setFixMonthDay3(new Integer(1));
-        ptl.setFixMonthOffset(new Integer(j));
-        ptl.setLine(j);
+        ptl.setFixMonthCutoff(new Long(10));
+        ptl.setFixMonthDay(new Long(5));
+        ptl.setFixMonthDay2(new Long(1));
+        ptl.setFixMonthDay3(new Long(1));
+        ptl.setFixMonthOffset(new Long(j));
+        ptl.setLine((long) j);
         ptl.setNetDay("1");
-        ptl.setNetDays(10);
+        ptl.setNetDays((long) 10);
         ptl.setNextBusinessDay(true);
         ptl.setOnremainder(true);
         ptl.setPaymentTerm(pt);

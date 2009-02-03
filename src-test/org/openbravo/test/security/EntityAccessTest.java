@@ -49,9 +49,9 @@ public class EntityAccessTest extends BaseTest {
       c.setCurSymbol("TE2");
       c.setDescription("test currency");
       c.setISOCode("TE2");
-      c.setPricePrecision(5);
-      c.setStdPrecision(6);
-      c.setCostingPrecision(4);
+      c.setPricePrecision((long) 5);
+      c.setStdPrecision((long) 6);
+      c.setCostingPrecision((long) 4);
       OBDal.getInstance().save(c);
     }
     setErrorOccured(false);

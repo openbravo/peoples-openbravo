@@ -19,16 +19,20 @@
 
 package org.openbravo.service.system;
 
-import java.util.List;
+import java.util.Properties;
 
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.ddlutils.Platform;
+import org.apache.ddlutils.PlatformFactory;
+import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.DalInitializingTask;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
-import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
 /**
  * Performs different types of validations on the basis of the type parameter.
@@ -46,67 +50,56 @@ public class SystemValidationTask extends DalInitializingTask {
   protected void doExecute() {
     final Module module = getModule();
 
+    final Database database = createDatabaseObject();
+
     if (getType().contains("database")) {
       log.info("Validating Database and Application Dictionary");
       final DatabaseValidator databaseValidator = new DatabaseValidator();
       databaseValidator.setValidateModule(module);
+      databaseValidator.setDatabase(database);
       final SystemValidationResult result = databaseValidator.validate();
       if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
         log.warn("Validation successfull no warnings or errors");
       } else {
-        printResult(result);
+        final String errors = SystemService.getInstance().logValidationResult(log, result);
+        if (failOnError) {
+          throw new OBException(errors);
+        }
       }
     }
     // does both module and database
     if (getType().contains("module")) {
       log.info("Validating Modules");
 
-      final DatabaseValidator databaseValidator = new DatabaseValidator();
-      databaseValidator.setValidateModule(module);
-      final SystemValidationResult result = databaseValidator.validate();
-
-      final ModuleValidator moduleValidator = new ModuleValidator();
-      moduleValidator.setValidateModule(module);
-      result.addAll(moduleValidator.validate());
+      final SystemValidationResult result = SystemService.getInstance().validateModule(module,
+          database);
 
       if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
         log.warn("Validation successfull no warnings or errors");
       } else {
-        printResult(result);
+        final String errors = SystemService.getInstance().logValidationResult(log, result);
+        if (failOnError) {
+          throw new OBException(errors);
+        }
       }
     }
   }
 
-  private void printResult(SystemValidationResult result) {
-    for (SystemValidationType validationType : result.getWarnings().keySet()) {
-      log.warn("\n");
-      log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-      log.warn("Warnings for Validation type: " + validationType);
-      log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-      final List<String> warnings = result.getWarnings().get(validationType);
-      for (String warning : warnings) {
-        log.warn(warning);
-      }
-    }
+  private Database createDatabaseObject() {
+    final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
 
-    final StringBuilder sb = new StringBuilder();
-    for (SystemValidationType validationType : result.getErrors().keySet()) {
-      sb.append("\n");
-      sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-      sb.append("Errors for Validation type: " + validationType);
-      sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-      final List<String> errors = result.getErrors().get(validationType);
-      for (String err : errors) {
-        sb.append(err);
-        if (sb.length() > 0) {
-          sb.append("\n");
-        }
-      }
+    final BasicDataSource ds = new BasicDataSource();
+    ds.setDriverClassName(props.getProperty("bbdd.driver"));
+    if (props.getProperty("bbdd.rdbms").equals("POSTGRE")) {
+      ds.setUrl(props.getProperty("bbdd.url") + "/" + props.getProperty("bbdd.sid"));
+    } else {
+      ds.setUrl(props.getProperty("bbdd.url"));
     }
-    log.error(sb.toString());
-    if (failOnError) {
-      throw new OBException(sb.toString());
-    }
+    ds.setUsername(props.getProperty("bbdd.user"));
+    ds.setPassword(props.getProperty("bbdd.password"));
+    Platform platform = PlatformFactory.createNewPlatformInstance(ds);
+    platform.getModelLoader().setOnlyLoadTableColumns(true);
+    return platform.loadModelFromDatabase(null);
   }
 
   private Module getModule() {

@@ -89,7 +89,7 @@ public class DalMappingGenerator implements OBSingleton {
       log.debug(result);
     }
 
-    if (false) {
+    if (true) {
       try {
         final File f = new File("/tmp/hibernate.hbm.xml");
         if (f.exists()) {

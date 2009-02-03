@@ -20,7 +20,10 @@
 package org.openbravo.service.system;
 
 import java.util.Date;
+import java.util.List;
 
+import org.apache.ddlutils.model.Database;
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -29,9 +32,11 @@ import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.DataSetTable;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
 /**
  * Provides utility like services.
@@ -98,5 +103,65 @@ public class SystemService implements OBSingleton {
       }
     }
     return false;
+  }
+
+  /**
+   * Validates a specific module, both the database model as the module data itself
+   * 
+   * @param module
+   *          the module to validate
+   * @param database
+   *          the database to read the dbschema from
+   * @return the validation result
+   */
+  public SystemValidationResult validateModule(Module module, Database database) {
+    final DatabaseValidator databaseValidator = new DatabaseValidator();
+    databaseValidator.setValidateModule(module);
+    databaseValidator.setDatabase(database);
+    final SystemValidationResult result = databaseValidator.validate();
+
+    final ModuleValidator moduleValidator = new ModuleValidator();
+    moduleValidator.setValidateModule(module);
+    result.addAll(moduleValidator.validate());
+    return result;
+  }
+
+  /**
+   * Prints the validation result grouped by validation type to the log.
+   * 
+   * @param log
+   *          the log to which the validation result is printed
+   * @param result
+   *          the validation result containing both errors and warning
+   * @return the errors are returned as a string
+   */
+  public String logValidationResult(Logger log, SystemValidationResult result) {
+    for (SystemValidationType validationType : result.getWarnings().keySet()) {
+      log.warn("\n");
+      log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      log.warn("Warnings for Validation type: " + validationType);
+      log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      final List<String> warnings = result.getWarnings().get(validationType);
+      for (String warning : warnings) {
+        log.warn(warning);
+      }
+    }
+
+    final StringBuilder sb = new StringBuilder();
+    for (SystemValidationType validationType : result.getErrors().keySet()) {
+      sb.append("\n");
+      sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      sb.append("Errors for Validation type: " + validationType);
+      sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      final List<String> errors = result.getErrors().get(validationType);
+      for (String err : errors) {
+        sb.append(err);
+        if (sb.length() > 0) {
+          sb.append("\n");
+        }
+      }
+    }
+    log.error(sb.toString());
+    return sb.toString();
   }
 }

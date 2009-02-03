@@ -65,7 +65,7 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
       for (int j = 0; j < NO_LINE; j++) {
         final InventoryCountLine icl = (InventoryCountLine) DalUtil.copy(baseLine, false);
         icl.setInventoryCount(ic);
-        icl.setLine(j);
+        icl.setLine((long) j);
         ic.getMaterialMgmtInventoryCountLineList().add(icl);
       }
       OBDal.getInstance().save(ic);
@@ -98,7 +98,7 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
       cnt++;
       final InventoryCountLine icl = (InventoryCountLine) DalUtil.copy(baseLine, false);
       icl.setInventoryCount(ic);
-      icl.setLine(ic.getMaterialMgmtInventoryCountLineList().size() + 1);
+      icl.setLine((long) (ic.getMaterialMgmtInventoryCountLineList().size() + 1));
       ic.getMaterialMgmtInventoryCountLineList().add(icl);
 
       cntLine = ic.getMaterialMgmtInventoryCountLineList().size();

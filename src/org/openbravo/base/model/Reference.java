@@ -57,7 +57,7 @@ public class Reference extends ModelObject {
     primitiveTypes = new HashMap<String, Class>();
 
     primitiveTypes.put("10", String.class);
-    primitiveTypes.put("11", Integer.class);
+    primitiveTypes.put("11", Long.class);
     primitiveTypes.put("12", BigDecimal.class);
     primitiveTypes.put("13", String.class);
     primitiveTypes.put("14", String.class);
