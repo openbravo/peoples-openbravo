@@ -194,32 +194,32 @@
 
 					<tr id="customer">
 						<td style="width: 1%; text-align: right;">
-							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">To:</span>
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">To</span>
 						</td>
 						<td id="contactEmailArea"colspan="2">
 							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
 									class="dojoValidateValid required TextBox_btn_TwoCells_width"
 									maxlength="200" name="contactEmail" id="contactEmail" value=""
-									required="true" onkeyup="validateTextBox(this.id);"><span class="LabelText" name="contactName" id="contactName" value=""></span>
+									required="true" onkeyup="validateTextBox(this.id);"><span class="LabelText" name="contactName" id="contactName" value="" style="padding-left: 10px"></span>
 									
 						</td>
 					</tr>
-					<tr style="height: 3px">
+					<tr style="height: 8px">
 					</tr>
 
 					<tr id="salesRep">
 						<td style="width: 1%; text-align: right;">
-							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">From:</span>
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">From</span>
 						</td>						
 						<td id="salesrepEmailArea" colspan="2">
 							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
 									class="dojoValidateValid required TextBox_btn_TwoCells_width"
 									maxlength="200" name="salesrepEmail" id="salesrepEmail" value=""
-									required="true" onkeyup="validateTextBox(this.id);"><span class="LabelText" name="salesrepName" id="salesrepName" value=""></span>
+									required="true" onkeyup="validateTextBox(this.id);"><span class="LabelText" name="salesrepName" id="salesrepName" value="" style="padding-left: 10px"></span>
 									
 						</td>
 					</tr>
-					<tr style="height: 3px">
+					<tr style="height: 8px">
                     </tr>
 
 					<tr id="emailField03">
@@ -234,27 +234,27 @@
 						</td>
 						
 					</tr>
-					<tr style="height: 3px">
+					<tr style="height: 8px">
                     </tr>
 
 					<tr id="emailField03" nowrap="nowrap">
-						<td style="width: 1%; text-align: right;" >
-							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Message body</span>
+						<td style="width: 1%; text-align: right; vertical-align: top" >
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Message Body</span>
 						</td>
 						<td nowrap="nowrap" style="width: 55%;">
-							<textarea id="emailBody" style="height: 100px; width: 99%;" class="dojoValidateValid" maxlength="2000" name="emailBody" onkeyup="" onchange=""></textarea>
+							<textarea id="emailBody" style="height: 100px; width: 99.1%;" class="dojoValidateValid" maxlength="2000" name="emailBody" onkeyup="" onchange=""></textarea>
 						</td>
 						<td>
-							<spam class="LabelText">
+							<ul class="LabelText"  style="list-style: none; padding-left: 10px;" >
 								<li>References will be replaced by values:</li>
 								<li>@cus_ref@: The document reference of the customer</li>
 								<li>@our_ref@: The reference of the document</li>
 								<li>@cus_nam@: The name of the customer</li>
 								<li>@sal_nam@: The name of the sales rep.</li>
-							</spam>
+							</u>
 						</td>
 					</tr>
-					<tr style="height: 3px">
+					<tr style="height: 8px">
                     </tr>
 					<tr id="discardSelect">
  						<td class="TitleCell"><span class="LabelText">Template to use</span></td>
@@ -264,7 +264,7 @@
 	        			</select>
 						</td>
 				</tr>	
-				<tr style="height: 3px">
+				<tr style="height: 8px">
                     </tr>	
 					<tr id="discardTable">
 						<td style="width: 1%; text-align: right;">
@@ -298,10 +298,12 @@
 					</td>
 					<td colspan="2" class="TextBox_ContentCell">
                     	<input type="text" onblur="isInputFile=false;" onfocus="isInputFile=true;" style="border: 0pt none ; margin: 0pt; padding: 0pt; font-size: 0pt; width: 0px; height: 0px;"/>
-                    	<input type="file" name="inpFile" class="dojoValidateValid TextBox_TwoCells_width"/>
+                    	<input type="file" size="32px" name="inpFile" class="dojoValidateValid TextBox_TwoCells_width" style="width: 100px"/>
                     	<input type="text" onblur="isInputFile=false;" onfocus="isInputFile=true;" style="border: 0pt none ; margin: 0pt; padding: 0pt; font-size: 0pt; width: 0px; height: 0px;"/>
    	 				</td>
-				</tr>	
+				</tr>
+				<tr style="height: 8px">
+                    </tr>	
 				<tr>
 					<td>
 					</td>
@@ -328,7 +330,7 @@
 				
 					<table cellspacing="0" cellpadding="0" style="margin: 0px; padding: 0px;" class="Popup_Client_TablePopup">	
 					<tr>
-						<td class="Button_RightAlign_ContentCell">
+						<td class="Button_RightAlign_ContentCell" style="padding-top: 30px">
 							<div>
 								<a class="ButtonLink" href="#"
 									onfocus="this.className='ButtonLink_hover'; window.status='Send'; return true;"
@@ -352,7 +354,7 @@
 								</a>
 							</div>
 						</td>
-						<td class="Button_LeftAlign_ContentCell">
+						<td class="Button_LeftAlign_ContentCell" style="padding-top: 30px">
 							<div>
 								<a class="ButtonLink" href="#"
 									onfocus="this.className='ButtonLink_hover'; window.status='Cancel'; return true;"
