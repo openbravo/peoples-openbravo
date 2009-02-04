@@ -36115,6 +36115,10 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--1000500003-->              <NAME><![CDATA[Document Type]]></NAME>
 <!--1000500003 PRINTNAME-->
 <!--1000500003-->              <PRINTNAME><![CDATA[Document Type]]></PRINTNAME>
+<!--1000500003 DESCRIPTION-->
+<!--1000500003-->              <DESCRIPTION><![CDATA[The document type]]></DESCRIPTION>
+<!--1000500003 HELP-->
+<!--1000500003-->              <HELP><![CDATA[Informs about the document type we are configuring]]></HELP>
 <!--1000500003 AD_MODULE_ID-->
 <!--1000500003-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500003**************--></AD_ELEMENT>
@@ -36153,6 +36157,10 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--1000500005-->              <NAME><![CDATA[Template Location]]></NAME>
 <!--1000500005 PRINTNAME-->
 <!--1000500005-->              <PRINTNAME><![CDATA[Template Location]]></PRINTNAME>
+<!--1000500005 DESCRIPTION-->
+<!--1000500005-->              <DESCRIPTION><![CDATA[The location of the template]]></DESCRIPTION>
+<!--1000500005 HELP-->
+<!--1000500005-->              <HELP><![CDATA[Set up the location of the jasper template in your system]]></HELP>
 <!--1000500005 AD_MODULE_ID-->
 <!--1000500005-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500005**************--></AD_ELEMENT>
@@ -36210,6 +36218,15 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--1000500008-->              <NAME><![CDATA[Subject]]></NAME>
 <!--1000500008 PRINTNAME-->
 <!--1000500008-->              <PRINTNAME><![CDATA[Subject]]></PRINTNAME>
+<!--1000500008 DESCRIPTION-->
+<!--1000500008-->              <DESCRIPTION><![CDATA[The Subject of the mail ]]></DESCRIPTION>
+<!--1000500008 HELP-->
+<!--1000500008-->              <HELP><![CDATA[ References will be replaced by values:
+    * @cus_ref@: The document reference of the customer
+    * @our_ref@: The reference of the document
+    * @cus_nam@: The name of the customer
+    * @sal_nam@: The name of the sales rep.
+]]></HELP>
 <!--1000500008 AD_MODULE_ID-->
 <!--1000500008-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500008**************--></AD_ELEMENT>
@@ -36248,6 +36265,10 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--1000500010-->              <NAME><![CDATA[Template Filename]]></NAME>
 <!--1000500010 PRINTNAME-->
 <!--1000500010-->              <PRINTNAME><![CDATA[Template Filename]]></PRINTNAME>
+<!--1000500010 DESCRIPTION-->
+<!--1000500010-->              <DESCRIPTION><![CDATA[Name of the template]]></DESCRIPTION>
+<!--1000500010 HELP-->
+<!--1000500010-->              <HELP><![CDATA[Configure the name of the Jasper JRXML template]]></HELP>
 <!--1000500010 AD_MODULE_ID-->
 <!--1000500010-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500010**************--></AD_ELEMENT>
@@ -36305,6 +36326,10 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--1000500013-->              <NAME><![CDATA[Report Filename]]></NAME>
 <!--1000500013 PRINTNAME-->
 <!--1000500013-->              <PRINTNAME><![CDATA[Report Filename]]></PRINTNAME>
+<!--1000500013 DESCRIPTION-->
+<!--1000500013-->              <DESCRIPTION><![CDATA[The name of the generated file]]></DESCRIPTION>
+<!--1000500013 HELP-->
+<!--1000500013-->              <HELP><![CDATA[Configure the name of the generated name. Set up a pattern and each time that this jasper template is used the patter will be used to generate the file name]]></HELP>
 <!--1000500013 AD_MODULE_ID-->
 <!--1000500013-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500013**************--></AD_ELEMENT>
@@ -36343,6 +36368,16 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--1000500015-->              <NAME><![CDATA[Body]]></NAME>
 <!--1000500015 PRINTNAME-->
 <!--1000500015-->              <PRINTNAME><![CDATA[Body]]></PRINTNAME>
+<!--1000500015 DESCRIPTION-->
+<!--1000500015-->              <DESCRIPTION><![CDATA[The body side of the email]]></DESCRIPTION>
+<!--1000500015 HELP-->
+<!--1000500015-->              <HELP><![CDATA[As in the subject some tags are available 
+References will be replaced by values:
+    * @cus_ref@: The document reference of the customer
+    * @our_ref@: The reference of the document
+    * @cus_nam@: The name of the customer
+    * @sal_nam@: The name of the sales rep.
+]]></HELP>
 <!--1000500015 AD_MODULE_ID-->
 <!--1000500015-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500015**************--></AD_ELEMENT>
