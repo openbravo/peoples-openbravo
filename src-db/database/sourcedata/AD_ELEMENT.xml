@@ -2261,7 +2261,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--224 COLUMNNAME-->
 <!--224-->              <COLUMNNAME><![CDATA[Callout]]></COLUMNNAME>
 <!--224 NAME-->
-<!--224-->              <NAME><![CDATA[Callout]]></NAME>
+<!--224-->              <NAME><![CDATA[Callout Function]]></NAME>
 <!--224 PRINTNAME-->
 <!--224-->              <PRINTNAME><![CDATA[Callout]]></PRINTNAME>
 <!--224 DESCRIPTION-->
@@ -8337,7 +8337,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--632 COLUMNNAME-->
 <!--632-->              <COLUMNNAME><![CDATA[Workflow_ID]]></COLUMNNAME>
 <!--632 NAME-->
-<!--632-->              <NAME><![CDATA[Workflow]]></NAME>
+<!--632-->              <NAME><![CDATA[Workflow Action]]></NAME>
 <!--632 PRINTNAME-->
 <!--632-->              <PRINTNAME><![CDATA[Workflow]]></PRINTNAME>
 <!--632 DESCRIPTION-->
