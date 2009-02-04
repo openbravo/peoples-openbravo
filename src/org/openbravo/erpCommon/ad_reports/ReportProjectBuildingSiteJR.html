@@ -59,15 +59,6 @@ function validate() {
 	    showJSMessage(7);
 	    return false;
 	}
-	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
-		setWindowElementFocus(frm.inpDateFrom);
-		showJSMessage(7);
-		return false;
-	} else if (frm.inpDateTo.value == null || frm.inpDateTo.value == ""){
-		setWindowElementFocus(frm.inpDateTo);
-		showJSMessage(7);
-		return false;
-	}
 	markCheckedAllElements(frm.inpcBPartnerId_IN);
 	markCheckedAllElements(frm.inpmProductId_IN);
 	return true;
@@ -259,7 +250,7 @@ new Array(2,4,'F4')
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
+                          <input dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
                         </td>
                         <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
@@ -281,7 +272,7 @@ new Array(2,4,'F4')
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
+                          <input dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
                         </td>
                         <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;">
