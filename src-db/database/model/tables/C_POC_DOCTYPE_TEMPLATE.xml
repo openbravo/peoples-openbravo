@@ -37,15 +37,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TEMPLATELOCATION" primaryKey="false" required="false" type="VARCHAR" size="500" autoIncrement="false">
+      <column name="NAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="REPORTFILENAME" primaryKey="false" required="false" type="VARCHAR" size="300" autoIncrement="false">
+      <column name="TEMPLATELOCATION" primaryKey="false" required="true" type="VARCHAR" size="500" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TEMPLATEFILENAME" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false">
+      <column name="REPORTFILENAME" primaryKey="false" required="true" type="VARCHAR" size="300" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TEMPLATEFILENAME" primaryKey="false" required="true" type="VARCHAR" size="200" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

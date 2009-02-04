@@ -26999,7 +26999,7 @@
 <!--1000500012 AD_TAB_ID-->
 <!--1000500012-->              <AD_TAB_ID><![CDATA[1000500000]]></AD_TAB_ID>
 <!--1000500012 CLASSNAME-->
-<!--1000500012-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.Client.PocConfiguration]]></CLASSNAME>
+<!--1000500012-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.Client.EmailConfiguration]]></CLASSNAME>
 <!--1000500012 ISDEFAULT-->
 <!--1000500012-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1000500012 OBJECT_TYPE-->

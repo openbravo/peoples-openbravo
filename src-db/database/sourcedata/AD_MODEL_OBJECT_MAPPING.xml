@@ -40098,7 +40098,7 @@
 <!--1000500020 AD_MODEL_OBJECT_ID-->
 <!--1000500020-->              <AD_MODEL_OBJECT_ID><![CDATA[1000500012]]></AD_MODEL_OBJECT_ID>
 <!--1000500020 MAPPINGNAME-->
-<!--1000500020-->              <MAPPINGNAME><![CDATA[/Client/PocConfiguration_Relation.html]]></MAPPINGNAME>
+<!--1000500020-->              <MAPPINGNAME><![CDATA[/Client/EmailConfiguration_Relation.html]]></MAPPINGNAME>
 <!--1000500020 ISDEFAULT-->
 <!--1000500020-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1000500020**************--></AD_MODEL_OBJECT_MAPPING>
@@ -40115,7 +40115,7 @@
 <!--1000500021 AD_MODEL_OBJECT_ID-->
 <!--1000500021-->              <AD_MODEL_OBJECT_ID><![CDATA[1000500012]]></AD_MODEL_OBJECT_ID>
 <!--1000500021 MAPPINGNAME-->
-<!--1000500021-->              <MAPPINGNAME><![CDATA[/Client/PocConfiguration_Edition.html]]></MAPPINGNAME>
+<!--1000500021-->              <MAPPINGNAME><![CDATA[/Client/EmailConfiguration_Edition.html]]></MAPPINGNAME>
 <!--1000500021 ISDEFAULT-->
 <!--1000500021-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--1000500021**************--></AD_MODEL_OBJECT_MAPPING>
@@ -40132,7 +40132,7 @@
 <!--1000500022 AD_MODEL_OBJECT_ID-->
 <!--1000500022-->              <AD_MODEL_OBJECT_ID><![CDATA[1000500012]]></AD_MODEL_OBJECT_ID>
 <!--1000500022 MAPPINGNAME-->
-<!--1000500022-->              <MAPPINGNAME><![CDATA[/Client/PocConfiguration_Excel.xls]]></MAPPINGNAME>
+<!--1000500022-->              <MAPPINGNAME><![CDATA[/Client/EmailConfiguration_Excel.xls]]></MAPPINGNAME>
 <!--1000500022 ISDEFAULT-->
 <!--1000500022-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--1000500022**************--></AD_MODEL_OBJECT_MAPPING>
