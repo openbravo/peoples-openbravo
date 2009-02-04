@@ -257,22 +257,19 @@ public class PrintController extends HttpSecureAppServlet {
             final String senderAddress = PocConfigurationData.getSenderAddress(this, vars
                 .getClient(), report.getOrgId());
             boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep").booleanValue();
-            if (moreThanOnesalesRep) {
-              if ("".equals(senderAddress) || senderAddress == null) {
-                final OBError on = new OBError();
-                on.setMessage(Utility.messageBD(this, "No sender defined: Please go to client "
-                    + "configuration to complete de email configuration", vars.getLanguage()));
-                on.setTitle(Utility
-                    .messageBD(this, "Email Configuration Error", vars.getLanguage()));
-                on.setType("Error");
-                final String tabId = vars.getSessionValue("inpTabId");
-                vars.getStringParameter("tab");
-                vars.setMessage(tabId, on);
-                vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
-                printPageClosePopUpAndRefreshParent(response, vars);
-                throw new ServletException("Configuration Error no sender defined");
-              }
 
+            if ("".equals(senderAddress) || senderAddress == null) {
+              final OBError on = new OBError();
+              on.setMessage(Utility.messageBD(this, "No sender defined: Please go to client "
+                  + "configuration to complete de email configuration", vars.getLanguage()));
+              on.setTitle(Utility.messageBD(this, "Email Configuration Error", vars.getLanguage()));
+              on.setType("Error");
+              final String tabId = vars.getSessionValue("inpTabId");
+              vars.getStringParameter("tab");
+              vars.setMessage(tabId, on);
+              vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
+              printPageClosePopUpAndRefreshParent(response, vars);
+              throw new ServletException("Configuration Error no sender defined");
             }
 
             // check the different doc typeId's if all the selected
@@ -920,7 +917,7 @@ public class PrintController extends HttpSecureAppServlet {
       // Map used to count the different users
 
       final String customer = documentData.contactName;
-
+      getEnvironentInformation(pocData, checks);
       if (checks.get("moreThanOneDoc")) {
         if (customer == null || customer.length() == 0) {
           final OBError on = new OBError();
