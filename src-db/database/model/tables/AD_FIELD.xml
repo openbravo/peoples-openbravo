@@ -97,7 +97,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="SHOWINRELATION" primaryKey="false" required="false" type="VARCHAR" size="1" autoIncrement="false">
+      <column name="SHOWINRELATION" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>

@@ -52,6 +52,7 @@ public class Property {
   private Property referencedProperty;
   private String name;
   private String columnName;
+  private String nameOfColumn; // AD_COLUMN.NAME
   // note defaultValue contains the value as it exists in the db, for booleans
   // this for example Y or N
   private String defaultValue;
@@ -96,6 +97,7 @@ public class Property {
     setIdentifier(fromColumn.isIdentifier());
     setParent(fromColumn.isParent());
     setColumnName(fromColumn.getColumnName());
+    setNameOfColumn(fromColumn.getName());
     setDefaultValue(fromColumn.getDefaultValue());
     setMandatory(overrideMandatoryCustom(fromColumn));
     setMinValue(fromColumn.getValueMin());
@@ -860,5 +862,13 @@ public class Property {
 
   public void setModule(Module module) {
     this.module = module;
+  }
+
+  public String getNameOfColumn() {
+    return nameOfColumn;
+  }
+
+  public void setNameOfColumn(String nameOfColumn) {
+    this.nameOfColumn = nameOfColumn;
   }
 }

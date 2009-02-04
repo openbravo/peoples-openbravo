@@ -85,7 +85,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PAYINADVANCE" primaryKey="false" required="false" type="VARCHAR" size="1" autoIncrement="false">
+      <column name="PAYINADVANCE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

@@ -49,8 +49,20 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADEXCEPTIONS">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADEXCEPTIONS">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_ADEXCEPTIONS">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <index name="FKI_ADCLIENT_ADEXCEPTIONS" unique="false">
+        <index-column name="AD_CLIENT_ID"/>
+      </index>
+      <index name="FKI_ADORG_ADEXCEPTIONS" unique="false">
+        <index-column name="AD_ORG_ID"/>
+      </index>
     </table>
   </database>

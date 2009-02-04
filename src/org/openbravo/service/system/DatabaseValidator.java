@@ -126,21 +126,19 @@ public class DatabaseValidator implements SystemValidator {
     }
 
     // only check this one if the global validate check is done
-    if (getValidateModule() == null) {
-      for (org.apache.ddlutils.model.Table dbTable : tmpDBTablesByName.values()) {
-        result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
-            + dbTable.getName() + " present in the database "
-            + " but not defined in the Application Dictionary");
-      }
-
-      for (View view : dbViews.values()) {
-        result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "View "
-            + view.getName() + " present in the database "
-            + " but not defined in the Application Dictionary");
-      }
+    for (org.apache.ddlutils.model.Table dbTable : tmpDBTablesByName.values()) {
+      result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
+          + dbTable.getName() + " present in the database "
+          + " but not defined in the Application Dictionary");
     }
 
-    System.err.println(updateSql);
+    for (View view : dbViews.values()) {
+      result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "View "
+          + view.getName() + " present in the database "
+          + " but not defined in the Application Dictionary");
+    }
+
+    // System.err.println(updateSql);
 
     return result;
   }
@@ -174,8 +172,8 @@ public class DatabaseValidator implements SystemValidator {
   private void checkTableWithoutPrimaryKey(org.apache.ddlutils.model.Table dbTable,
       SystemValidationResult result) {
     if (dbTable.getPrimaryKeyColumns().length == 0) {
-      result.addWarning(SystemValidationResult.SystemValidationType.NO_PRIMARY_KEY_COLUMNS,
-          "Table " + dbTable.getName() + " has no primary key columns.");
+      result.addError(SystemValidationResult.SystemValidationType.NO_PRIMARY_KEY_COLUMNS, "Table "
+          + dbTable.getName() + " has no primary key columns.");
     }
   }
 
@@ -230,7 +228,7 @@ public class DatabaseValidator implements SystemValidator {
           }
         }
         if (!found) {
-          result.addWarning(SystemValidationResult.SystemValidationType.NOT_PART_OF_FOREIGN_KEY,
+          result.addError(SystemValidationResult.SystemValidationType.NOT_PART_OF_FOREIGN_KEY,
               "Foreign Key Column " + table.getName() + "." + property.getColumnName()
                   + " is not part of a foreign key constraint.");
         }
@@ -274,7 +272,7 @@ public class DatabaseValidator implements SystemValidator {
         || (adTable.getDataPackage().getModule() != null && adTable.getDataPackage().getModule()
             .getId().equals(moduleId))) {
       for (org.apache.ddlutils.model.Column dbColumn : dbColumnsByName.values()) {
-        result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Column "
+        result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Column "
             + dbTable.getName() + "." + dbColumn.getName() + " present in the database "
             + " but not defined in the Application Dictionary.");
       }
@@ -287,7 +285,7 @@ public class DatabaseValidator implements SystemValidator {
     final Property property = getProperty(dbTable.getName(), dbColumn.getName());
 
     if (property != null && !property.isMandatory() && dbColumn.isRequired()) {
-      result.addWarning(
+      result.addError(
           SystemValidationResult.SystemValidationType.NOT_NULL_IN_DB_NOT_MANDATORY_IN_AD, "Column "
               + dbTable.getName() + "." + dbColumn.getName()
               + " is required (not-null) but in the Application Dictonary"
@@ -304,7 +302,7 @@ public class DatabaseValidator implements SystemValidator {
     // disabled this check, will be done in 2.60
     if (false) {
       if (property != null && property.isMandatory() && !dbColumn.isRequired()) {
-        result.addWarning(SystemValidationType.MANDATORY_IN_AD_NULLABLE_IN_DB, "Column "
+        result.addError(SystemValidationType.MANDATORY_IN_AD_NULLABLE_IN_DB, "Column "
             + dbTable.getName() + "." + dbColumn.getName()
             + " is not-required (null-allowed) but in the Application Dictonary"
             + " it is set as mandatory");
@@ -323,8 +321,12 @@ public class DatabaseValidator implements SystemValidator {
     }
 
     if (dbColumn.isPrimaryKey()) {
-      checkType(dbColumn, dbTable, result, "VARCHAR");
-      checkLength(dbColumn, dbTable, result, 32);
+      // there is a special case, the ad_script_sql has a
+      // seqno has key
+      if (!dbTable.getName().equalsIgnoreCase("ad_script_sql")) {
+        checkType(dbColumn, dbTable, result, "VARCHAR");
+        checkLength(dbColumn, dbTable, result, 32);
+      }
     } else if (property != null && property.getAllowedValues().size() > 0) {
       checkType(dbColumn, dbTable, result, "VARCHAR");
       checkLength(dbColumn, dbTable, result, 60);
@@ -341,7 +343,8 @@ public class DatabaseValidator implements SystemValidator {
     } else if (property != null && property.getPrimitiveObjectType() != null) {
       final Class<?> prim = property.getPrimitiveObjectType();
       if (prim == String.class) {
-        checkType(dbColumn, dbTable, result, new String[] { "VARCHAR", "NVARCHAR", "CHAR" });
+        checkType(dbColumn, dbTable, result,
+            new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR" });
       } else if (prim == Integer.class) {
         checkType(dbColumn, dbTable, result, "DECIMAL");
       } else if (prim == BigDecimal.class) {
@@ -373,7 +376,7 @@ public class DatabaseValidator implements SystemValidator {
       }
     }
     if (!found) {
-      result.addWarning(SystemValidationType.WRONG_TYPE, "Column " + dbTable.getName() + "."
+      result.addError(SystemValidationType.WRONG_TYPE, "Column " + dbTable.getName() + "."
           + dbColumn.getName() + " has incorrect type, expecting " + sb.toString() + "but was "
           + dbColumn.getType());
     }
@@ -394,7 +397,7 @@ public class DatabaseValidator implements SystemValidator {
                 + "');\n");
       }
 
-      result.addWarning(SystemValidationType.WRONG_TYPE, "Column " + dbTable.getName() + "."
+      result.addError(SystemValidationType.WRONG_TYPE, "Column " + dbTable.getName() + "."
           + dbColumn.getName() + " has incorrect type, expecting " + expectedType + " but was "
           + dbColumn.getType());
     }
@@ -408,7 +411,7 @@ public class DatabaseValidator implements SystemValidator {
     }
 
     if (dbColumn.getSizeAsInt() != expectedLength) {
-      result.addWarning(SystemValidationType.WRONG_LENGTH, "Column " + dbTable.getName() + "."
+      result.addError(SystemValidationType.WRONG_LENGTH, "Column " + dbTable.getName() + "."
           + dbColumn.getName() + " has incorrect length, expecting " + expectedLength + " but was "
           + dbColumn.getSizeAsInt());
     }

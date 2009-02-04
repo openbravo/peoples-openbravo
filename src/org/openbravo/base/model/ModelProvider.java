@@ -226,6 +226,7 @@ public class ModelProvider implements OBSingleton {
       for (final Property p : e.getProperties()) {
         p.initializeName();
       }
+      // dumpPropertyNames(e);
     }
     clearLists();
   }
@@ -534,6 +535,14 @@ public class ModelProvider implements OBSingleton {
 
     // and now add the id property again
     e.addProperty(compId);
+  }
+
+  private void dumpPropertyNames(Entity e) {
+    System.err.println("\n++++++++++++++++++++++++++++++++++++++");
+    System.err.println(">>> " + e.getName());
+    for (Property p : e.getProperties()) {
+      System.err.println(p.getName());
+    }
   }
 
   private void createPropertyInParentEntity(Entity e) {

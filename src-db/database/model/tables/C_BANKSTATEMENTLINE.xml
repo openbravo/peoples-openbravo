@@ -89,7 +89,7 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="C_DEBT_PAYMENT_CREATE" primaryKey="false" required="false" type="VARCHAR" size="1" autoIncrement="false">
+      <column name="C_DEBT_PAYMENT_CREATE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
