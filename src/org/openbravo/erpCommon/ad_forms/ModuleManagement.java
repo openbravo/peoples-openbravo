@@ -441,7 +441,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("help", module.getHelp());
     xmlDocument.setParameter("author", module.getAuthor());
     String url = module.getUrl();
-    xmlDocument.setParameter("url", url == null || url.equals("") ? "Not supplied. " : url);
+    if (url == null || url.equals("")) {
+      xmlDocument.setParameter("urlDisplay", "none");
+    } else {
+      xmlDocument.setParameter("urlLink", url);
+      xmlDocument.setParameter("url", url);
+    }
     xmlDocument.setParameter("license", module.getLicenseType());
 
     if (dependencies != null && dependencies.length > 0)

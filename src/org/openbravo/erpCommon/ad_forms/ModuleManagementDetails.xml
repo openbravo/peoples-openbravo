@@ -32,7 +32,9 @@
   <PARAMETER id="description"      name="description"      default=""/>
   <PARAMETER id="help"             name="help"             default=""/>
   <PARAMETER id="author"           name="author"           default=""/>
-  <PARAMETER id="url"              name="url"              default=""/>
+  <PARAMETER id="urlDisplay"       name="urlDisplay"       default="" attribute="style" replace="xx" />
+  <PARAMETER id="url"              name="urlLink"          default="" attribute="onclick" replace="xx"/>
+  <PARAMETER id="url"              name="url"              default="" />
   <PARAMETER id="license"          name="license"          default=""/>
   <PARAMETER id="type"             name="type"             default="Module"/>
   <PARAMETER id="icon"  name="type" attribute="class" replace="xx"  default="Module"/>
