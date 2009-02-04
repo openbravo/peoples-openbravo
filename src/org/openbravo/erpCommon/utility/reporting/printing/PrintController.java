@@ -231,8 +231,7 @@ public class PrintController extends HttpSecureAppServlet {
         try {
           reportManager.processReport(report, vars);
         } catch (final ReportingException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          log4j.error(e);
         }
         reportManager.saveTempReport(report, vars);
         savedReports.add(report);
@@ -415,15 +414,12 @@ public class PrintController extends HttpSecureAppServlet {
       // }
     } catch (final IOException e) {
       log4j.error(e.getMessage());
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log4j.error(e);
     } catch (final JRException e) {
       log4j.error(e.getMessage());
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log4j.error(e);
     } catch (final Exception e) {
-      log4j.error(e.getMessage());
-      e.printStackTrace();
+      log4j.error(e);
     } finally {
       try {
         os.close();
@@ -440,17 +436,13 @@ public class PrintController extends HttpSecureAppServlet {
       response.setContentType("application/pdf");
       concatReport(reports.toArray(new Report[] {}), response);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       log4j.error(e.getMessage());
-      e.printStackTrace();
     } finally {
       try {
         os.close();
         response.flushBuffer();
       } catch (IOException e) {
-        log4j.error(e.getMessage());
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        log4j.error(e.getMessage(), e);
       }
     }
   }
@@ -522,7 +514,7 @@ public class PrintController extends HttpSecureAppServlet {
       // step 5: we close the document
       document.close();
     } catch (Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
     }
   }
 
@@ -535,11 +527,9 @@ public class PrintController extends HttpSecureAppServlet {
     try {
       report = new Report(this, documentType, strDocumentId, vars.getLanguage(), "default");
     } catch (final ReportingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log4j.error(e);
     } catch (final ServletException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log4j.error(e);
     }
 
     reportManager.setTargetDirectory(report);
