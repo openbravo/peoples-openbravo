@@ -42,7 +42,7 @@ public class UnscheduleProcess extends HttpSecureAppServlet {
       throws ServletException, IOException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    final String windowId = request.getParameter("inpwindowId");
+    final String windowId = vars.getStringParameter("inpwindowId");
     final String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
 
     String message;
