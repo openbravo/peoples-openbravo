@@ -1310,5 +1310,225 @@ $BODY$
   LANGUAGE 'plpgsql' VOLATILE
 /-- END
 
+CREATE or replace FUNCTION AD_DB_MODIFIED(p_Update char) RETURNS CHAR AS
+$BODY$
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2009 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+declare
+  proc_name varchar(50000);
+  c numeric;
+  v_md5 varchar(32);
+  i record;
+  j record;
+  aux varchar(32);
+  aux_char char[];
+  aux_text text[];
+  v_Modified char(1);
+begin
+  v_md5 = ''; 
+  --Checksum for PL functions
+  for i in (
+	select upper(proname) as proname
+	from pg_proc p, pg_namespace n 
+         where  pronamespace = n.oid   and n.nspname=current_schema() 
+         and p.oid not in (select tgfoid   from pg_trigger) 
+         and p.proname <> 'temp_findinarray'
+         order by 1) loop
+     --name
+     v_md5 := md5(v_md5||i.proname);
 
+     --body
+     select md5(p.prosrc) 
+       into aux
+       from pg_proc p
+      where UPPER(p.proname) = i.proname;
+      v_md5 := md5(v_md5||aux);
+
+     --parameters
+        
+       SELECT    pg_proc.proargmodes,
+                 pg_proc.proargnames
+            into aux_char, aux_text
+	    FROM pg_catalog.pg_proc         JOIN pg_catalog.pg_namespace
+		 ON (pg_proc.pronamespace = pg_namespace.oid)
+	   WHERE pg_proc.prorettype <> 'pg_catalog.cstring'::pg_catalog.regtype
+	     AND (pg_proc.proargtypes[0] IS NULL
+	      OR pg_proc.proargtypes[0] <> 'pg_catalog.cstring'::pg_catalog.regtype)
+	     AND NOT pg_proc.proisagg
+	     AND pg_catalog.pg_function_is_visible(pg_proc.oid)
+	     AND upper(pg_proc.proname) = i.proname
+	     and (pg_proc.proargmodes is not null
+	     or pg_proc.proargnames is not null)
+		 ORDER BY 1,2;
+
+         c := array_lower(aux_char, 1);
+
+        while (c <= array_upper(aux_char, 1)) loop
+          v_md5 := md5(v_md5||coalesce(aux_char[c],'.')||coalesce(aux_text[c],'.'));
+          c := c +1;
+        end loop;
+  end loop;
+
+  --triggers
+  for i in (
+          SELECT md5(upper(trg.tgname)||upper(tbl.relname)||( 
+          CASE trg.tgtype & cast(3 as int2) 
+          WHEN 0 THEN 'AFTER EACH STATEMENT' 
+          WHEN 1 THEN 'AFTER EACH ROW' 
+          WHEN 2 THEN 'BEFORE EACH STATEMENT' 
+          WHEN 3 THEN 'BEFORE EACH ROW' END) || ( 
+          CASE trg.tgtype & cast(28 as int2) WHEN 16 THEN 'UPDATE' 
+          WHEN  8 THEN 'DELETE' 
+          WHEN  4 THEN 'INSERT' 
+          WHEN 20 THEN 'INSERT, UPDATE' 
+          WHEN 28 THEN 'INSERT, UPDATE, DELETE' 
+          WHEN 24 THEN 'UPDATE, DELETE' 
+          WHEN 12 THEN 'INSERT, DELETE' 
+          END)||p.prosrc) AS trg_md5 
+          FROM pg_trigger trg, pg_class tbl, pg_proc p 
+          WHERE trg.tgrelid = tbl.oid AND trg.tgfoid = p.oid AND tbl.relname !~ '^pg_' AND trg.tgname !~ '^RI'
+          order by trg.tgname) loop
+    v_md5 := md5(v_md5||i.trg_md5);
+  end loop;
+
+  --views
+  for i in (SELECT md5(upper(viewname)||pg_get_viewdef(viewname, true)) as v
+           FROM pg_views 
+          WHERE SCHEMANAME = CURRENT_SCHEMA() AND viewname !~ '^pg_' 
+          order by upper(viewname)) loop
+    v_md5 := md5(v_md5||i.v);
+  end loop;
+
+  --tables
+  for i in (SELECT UPPER(TABLENAME) as tablename
+              FROM PG_TABLES t
+              WHERE SCHEMANAME = CURRENT_SCHEMA()
+             ORDER BY 1) loop
+    v_md5 := md5(v_md5||i.tablename);
+    
+    --pk
+    for j in (SELECT md5(upper(PG_CONSTRAINT.CONNAME)||upper(pg_attribute.attname::text)) as pk
+              FROM  pg_attribute, pg_constraint JOIN PG_CLASS ON PG_CLASS.OID = PG_CONSTRAINT.CONRELID 
+              WHERE pg_constraint.conrelid = pg_class.oid AND pg_attribute.attrelid = pg_constraint.conrelid AND (pg_attribute.attnum = ANY (pg_constraint.conkey))
+              and PG_CONSTRAINT.CONTYPE::TEXT = 'p' 
+	      AND UPPER(PG_CLASS.RELNAME::TEXT) =  i.tablename
+              ORDER BY PG_CONSTRAINT.CONNAME, pg_attribute.attnum::integer) loop
+        v_md5 := md5(v_md5||j.pk);
+     end loop;
+
+     --columns
+     for j in (SELECT MD5(UPPER(PG_ATTRIBUTE.ATTNAME::TEXT)|| COALESCE(UPPER(PG_TYPE.TYPNAME::TEXT),'.')||
+              COALESCE(TO_CHAR(CASE PG_TYPE.TYPNAME
+                  WHEN 'varchar'::name THEN pg_attribute.atttypmod - 4
+                  WHEN 'bpchar'::name THEN pg_attribute.atttypmod - 4
+                  ELSE NULL::integer
+              END),'.')||
+              COALESCE(TO_CHAR(CASE PG_TYPE.TYPNAME
+                  WHEN 'bytea'::nameDB_CHECKSUM  THEN 4000
+                  WHEN 'text'::name THEN 4000
+                  WHEN 'oid'::name THEN 4000
+                  ELSE CASE PG_ATTRIBUTE.ATTLEN 
+                           WHEN -1 THEN PG_ATTRIBUTE.ATTTYPMOD - 4 
+                           ELSE PG_ATTRIBUTE.ATTLEN 
+                       END
+              END),'.') ||
+              COALESCE(TO_CHAR(
+              CASE pg_type.typname
+                  WHEN 'bytea'::name THEN 4000
+                  WHEN 'text'::name THEN 4000
+                  WHEN 'oid'::name THEN 4000
+                  ELSE
+                      CASE atttypmod
+                          WHEN -1 THEN 0
+                          ELSE 10
+                      END
+              END),'.')|| (not pg_attribute.attnotnull)::TEXT||
+              COALESCE(
+              (CASE pg_attribute.atthasdef
+                  WHEN true THEN ( SELECT pg_attrdef.adsrc FROM pg_attrdef WHERE pg_attrdef.adrelid = pg_class.oid AND pg_attrdef.adnum = pg_attribute.attnum)
+                  ELSE NULL::text
+              END),'.')) as cl
+              FROM pg_class, pg_namespace, pg_attribute, pg_type
+              WHERE pg_attribute.attrelid = pg_class.oid AND pg_attribute.atttypid = pg_type.oid AND pg_class.relnamespace = pg_namespace.oid AND pg_namespace.nspname = current_schema() AND pg_attribute.attnum > 0 
+              AND upper(pg_class.relname::text) = i.tablename
+              ORDER BY pg_attribute.attnum) loop
+      v_md5 := md5(v_md5||j.cl);
+    end loop;
+    
+    --checks
+    for j in (SELECT md5(upper(pg_constraint.conname::text)|| pg_constraint.consrc) as ck
+              FROM pg_constraint JOIN pg_class ON pg_class.oid = pg_constraint.conrelid
+              WHERE pg_constraint.contype::text = 'c' and upper(pg_class.relname::text) = i.tablename
+              ORDER BY upper(pg_constraint.conname::text)) loop
+      v_md5 := md5(v_md5||j.ck);
+    end loop;
+
+    --fk
+    for j in (SELECT md5(upper(pc.conname::text)|| upper(fk_table.relname::text)|| upper(pc.confdeltype::text)||  upper(pa1.attname)|| upper(pa2.attname)) as ck
+              FROM pg_class pc1, pg_attribute pa1, pg_class pc2, pg_attribute pa2, pg_constraint pc JOIN pg_class ON pg_class.oid = pc.conrelid LEFT JOIN pg_class fk_table ON fk_table.oid = pc.confrelid
+              WHERE pc.contype::text = 'f' and upper(pg_class.relname::text) = i.tablename
+              AND  pc.conrelid= pc1.oid and upper(pc.conname) = upper(pc.conname) 
+              and pa1.attrelid = pc1.oid and pa1.attnum = ANY(pc.conkey)
+              and pc.confrelid = pc2.oid and pa2.attrelid = pc2.oid and pa2.attnum = ANY(pc.confkey)
+              ORDER BY upper(pc.conname::text), upper(pa1.attname), upper(pa2.attname)) loop
+      v_md5 := md5(v_md5||j.ck);
+    end loop;
+    
+
+    --indexes
+    for j in (
+             SELECT md5(upper(pg_attribute.attname::text)||UPPER(PG_CLASS.RELNAME)||(CASE PG_INDEX.indisunique WHEN true THEN 'UNIQUE' ELSE 'NONUNIQUE' END)) as ck
+              FROM PG_INDEX, PG_CLASS, PG_CLASS PG_CLASS1, PG_NAMESPACE, pg_attribute
+              WHERE PG_INDEX.indexrelid = PG_CLASS.OID
+              AND PG_INDEX.indrelid = PG_CLASS1.OID
+              AND PG_CLASS.RELNAMESPACE = PG_NAMESPACE.OID
+              AND PG_CLASS1.RELNAMESPACE = PG_NAMESPACE.OID
+              AND PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA()
+              AND PG_INDEX.INDISPRIMARY ='f'
+               AND pg_attribute.attrelid = pg_index.indrelid
+          AND pg_attribute.attnum = ANY (indkey)
+              AND UPPER(PG_CLASS1.RELNAME) = i.tablename
+              ORDER BY UPPER(PG_CLASS.RELNAME), upper(pg_attribute.attname::text)) loop
+      v_md5 := md5(v_md5||j.ck);
+    end loop;
+    
+  end loop;
+
+  select db_checksum
+    into aux
+    from ad_system_info;
+
+  if aux = v_md5 then
+    v_Modified = 'N';
+  else
+    v_Modified = 'Y';
+  end if;
+  
+  if p_Update = 'Y' then
+    update ad_system_info
+       set LAST_DBUPDATE = NOW(),
+           DB_CHECKSUM = v_md5;
+  end if;
+  return v_Modified;
+EXCEPTION 
+     WHEN OTHERS THEN
+       RETURN 'N';
+end;$BODY$
+LANGUAGE 'plpgsql' VOLATILE;
+
+/-- END
 
