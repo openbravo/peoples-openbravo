@@ -200,16 +200,15 @@ public class PrintController extends HttpSecureAppServlet {
       for (int i = 0; i < documentIds.length; i++) {
         String documentId = documentIds[i];
         report = buildReport(response, vars, documentId, reportManager, documentType);
-        if (multipleReports)
-          try {
-            jasperPrint = reportManager.processReport(report, vars);
-            jrPrintReports.add(jasperPrint);
-          } catch (final ReportingException e) {
-            advisePopUp(request, response, "Report processing failed",
-                "Unable to process report selection");
-            // Utility.messageBD(this, "ERROR", vars.getLanguage());
-            log4j.error(e.getMessage());
-          }
+        try {
+          jasperPrint = reportManager.processReport(report, vars);
+          jrPrintReports.add(jasperPrint);
+        } catch (final ReportingException e) {
+          advisePopUp(request, response, "Report processing failed",
+              "Unable to process report selection");
+          // Utility.messageBD(this, "ERROR", vars.getLanguage());
+          log4j.error(e.getMessage());
+        }
         if (multipleReports) {
           report.setFilename(UUID.randomUUID().toString() + "_" + report.getFilename());
           report.setDeleteable(true);
