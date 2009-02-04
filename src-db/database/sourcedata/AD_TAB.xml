@@ -21476,6 +21476,10 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000500001 NAME-->
 <!--1000500001-->              <NAME><![CDATA[Report Templates]]></NAME>
+<!--1000500001 DESCRIPTION-->
+<!--1000500001-->              <DESCRIPTION><![CDATA[Configure Report templates]]></DESCRIPTION>
+<!--1000500001 HELP-->
+<!--1000500001-->              <HELP><![CDATA[Set up the Jasper JRXML templates for each document type. ]]></HELP>
 <!--1000500001 AD_TABLE_ID-->
 <!--1000500001-->              <AD_TABLE_ID><![CDATA[1000500001]]></AD_TABLE_ID>
 <!--1000500001 AD_WINDOW_ID-->
@@ -21517,6 +21521,10 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000500002 NAME-->
 <!--1000500002-->              <NAME><![CDATA[Email Definitions]]></NAME>
+<!--1000500002 DESCRIPTION-->
+<!--1000500002-->              <DESCRIPTION><![CDATA[Configure template for emails]]></DESCRIPTION>
+<!--1000500002 HELP-->
+<!--1000500002-->              <HELP><![CDATA[Configure different templates in different lenguage. Using these template allow you not to write each email you send out.]]></HELP>
 <!--1000500002 AD_TABLE_ID-->
 <!--1000500002-->              <AD_TABLE_ID><![CDATA[1000500004]]></AD_TABLE_ID>
 <!--1000500002 AD_WINDOW_ID-->
