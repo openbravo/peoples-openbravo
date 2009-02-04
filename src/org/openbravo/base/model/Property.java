@@ -612,10 +612,6 @@ public class Property {
       return;
     }
 
-    // this specific conversion is allowed
-    final boolean intToLong = getPrimitiveObjectType().isAssignableFrom(Long.class)
-        && value.getClass().isAssignableFrom(Integer.class);
-
     if (!isPrimitive() && !(value instanceof BaseOBObjectDef)) {
       final ValidationException ve = new ValidationException();
       ve.addMessage(this, "Property " + this + " only allows reference instances of type "
@@ -623,6 +619,10 @@ public class Property {
           + value.getClass().getName());
       throw ve;
     } else if (isPrimitive()) {
+      // this specific conversion is allowed
+      final boolean intToLong = getPrimitiveObjectType().isAssignableFrom(Long.class)
+          && value.getClass().isAssignableFrom(Integer.class);
+
       if (!intToLong && !getPrimitiveObjectType().isInstance(value)) {
         final ValidationException ve = new ValidationException();
         ve.addMessage(this, "Property " + this + " only allows instances of "
