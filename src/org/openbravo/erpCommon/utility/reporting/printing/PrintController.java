@@ -920,29 +920,33 @@ public class PrintController extends HttpSecureAppServlet {
       // Map used to count the different users
 
       final String customer = documentData.contactName;
-      if (customer == null || customer.length() == 0) {
-        final OBError on = new OBError();
-        on.setMessage(Utility.messageBD(this,
-            "There is at least one document with no contact. Doc nº (" + documentData.ourreference
-                + ")", vars.getLanguage()));
-        on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
-        on.setType("info");
-        final String tabId = vars.getSessionValue("inpTabId");
-        vars.getStringParameter("tab");
-        vars.setMessage(tabId, on);
-        vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
-        printPageClosePopUpAndRefreshParent(response, vars);
-      } else if (documentData.contactEmail == null || documentData.contactEmail.equals("")) {
-        final OBError on = new OBError();
-        on.setMessage(Utility.messageBD(this, "There is at least one document with no email set ("
-            + customer + ")", vars.getLanguage()));
-        on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
-        on.setType("info");
-        final String tabId = vars.getSessionValue("inpTabId");
-        vars.getStringParameter("tab");
-        vars.setMessage(tabId, on);
-        vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
-        printPageClosePopUpAndRefreshParent(response, vars);
+
+      if (checks.get("moreThanOneDoc")) {
+        if (customer == null || customer.length() == 0) {
+          final OBError on = new OBError();
+          on.setMessage(Utility.messageBD(this,
+              "There is at least one document with no contact. Doc nº ("
+                  + documentData.ourreference + ")", vars.getLanguage()));
+          on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
+          on.setType("info");
+          final String tabId = vars.getSessionValue("inpTabId");
+          vars.getStringParameter("tab");
+          vars.setMessage(tabId, on);
+          vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
+          printPageClosePopUpAndRefreshParent(response, vars);
+        } else if (documentData.contactEmail == null || documentData.contactEmail.equals("")) {
+          final OBError on = new OBError();
+          on.setMessage(Utility.messageBD(this,
+              "There is at least one document with no email set (" + customer + ")", vars
+                  .getLanguage()));
+          on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
+          on.setType("info");
+          final String tabId = vars.getSessionValue("inpTabId");
+          vars.getStringParameter("tab");
+          vars.setMessage(tabId, on);
+          vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
+          printPageClosePopUpAndRefreshParent(response, vars);
+        }
       }
 
       if (!customerMap.containsKey(customer)) {
@@ -1095,9 +1099,11 @@ public class PrintController extends HttpSecureAppServlet {
   private void getEnvironentInformation(PocData[] pocData, HashMap<String, Boolean> checks) {
     final Map<String, PocData> customerMap = new HashMap<String, PocData>();
     final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
+    int docCounter = 0;
+    checks.put("moreThanOneDoc", false);
     for (final PocData documentData : pocData) {
       // Map used to count the different users
-
+      docCounter++;
       final String customer = documentData.contactName;
       final String salesRep = documentData.salesrepName;
       if (!customerMap.containsKey(customer)) {
@@ -1106,6 +1112,9 @@ public class PrintController extends HttpSecureAppServlet {
       if (!salesRepMap.containsKey(salesRep)) {
         salesRepMap.put(salesRep, documentData);
       }
+    }
+    if (docCounter > 1) {
+      checks.put("moreThanOneDoc", true);
     }
     boolean moreThanOneCustomer = (customerMap.size() > 1);
     boolean moreThanOnesalesRep = (salesRepMap.size() > 1);
