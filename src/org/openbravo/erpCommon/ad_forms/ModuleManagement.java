@@ -835,13 +835,18 @@ public class ModuleManagement extends HttpSecureAppServlet {
         icon = (icon == null ? "M" : icon).equals("M") ? "Module" : icon.equals("T") ? "Template"
             : "Pack";
         modules[i].setType(icon);
+
+        // If there is no url, we need to hide the 'Visit Site' link and separator.
+        String url = modules[i].getUrl();
+        modules[i].setUrl(url == null || url.equals("") ? "HIDDEN" : url);
       }
     }
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/modules/ModuleBox").createXmlDocument();
-    xmlDocument.setData("structureBox", FieldProviderFactory.getFieldProviderArray(modules));
-    return xmlDocument.print();
 
+    FieldProvider[] fieldProviders = FieldProviderFactory.getFieldProviderArray(modules);
+    xmlDocument.setData("structureBox", fieldProviders);
+    return xmlDocument.print();
   }
 
   /**
