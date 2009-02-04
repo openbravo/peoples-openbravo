@@ -653,7 +653,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     </taskdef>
 
     <echo message="Validating Module..." />
-    <validateModules moduleName="${module}" failOnError="true" userId="0" propertiesFile="${base.config}/Openbravo.properties" type="module" />
+    <validateModules moduleJavaPackage="${module}" failOnError="false" userId="0" propertiesFile="${base.config}/Openbravo.properties" type="module" />
 
     <antcall target="obx.export.database" />
     <antcall target="obx.export.config.script" />
