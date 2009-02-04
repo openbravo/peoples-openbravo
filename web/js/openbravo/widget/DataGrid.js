@@ -94,6 +94,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
 * @param {Object} parentComp - component parent
 */
   postMixInProperties: function(args, frag, parentComp) {
+    setCalloutProcessing(true);
     if (this.updatesUrl == ""){
       this.updatesUrl = dataUrl;
     }
@@ -896,6 +897,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
 * @param {String} rowName - name of the row
 */
   requestColumnTotals: function(rowName){
+    setCalloutProcessing(true);
     var handlerRef = dojo.hitch(this, "showColumnTotals");
     var params = [];
     params["action"] = "getColumnTotals";
@@ -1148,6 +1150,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
     }
     dojo.connect(this.scroller, "handleScroll", this, "handleScroll");
     dojo.addOnUnload(this, "cleanup");
+    setCalloutProcessing(false);
   },
 
 /**
@@ -1829,6 +1832,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
     this.processingRequest = null;
     this.processQueuedRequest();
     showJSMessage(24);
+    setCalloutProcessing(false);
   },
 
 /**
@@ -1843,6 +1847,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
       this.unprocessedRequest = new openbravo.widget.DataGrid.ContentRequest(offset);
       return;
     }
+    setCalloutProcessing(true);
     var bufferStartPos = this.buffer.getFetchOffset(offset);
     this.processingRequest = new openbravo.widget.DataGrid.ContentRequest(offset);
     this.processingRequest.bufferOffset = bufferStartPos;   
@@ -1910,6 +1915,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
       this.moveTableContent(this.offsetBeforeResize);
     }
     this.processQueuedRequest();
+    setCalloutProcessing(false);
   },
 
 /**
@@ -1920,7 +1926,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
       this.requestContentRefresh(this.unprocessedRequest.requestOffset);
       this.unprocessedRequest = null
     }
-  }    
+  }
 });
 
 /**
