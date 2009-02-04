@@ -37,7 +37,6 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class CopyFromPOOrder extends HttpSecureAppServlet {
@@ -64,17 +63,11 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       String strOrder = vars.getStringParameter("inpcOrderId");
       String strKey = vars.getRequestGlobalVariable("inpKey", strWindow + "|C_Order_ID");
       String strTab = vars.getStringParameter("inpTabId");
-      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
-      String strWindowPath = "", strTabName = "";
-      if (tab != null && tab.length != 0) {
-        strTabName = FormatUtilities.replace(tab[0].name);
-        if (tab[0].help.equals("Y"))
-          strWindowPath = "../utility/WindowTree_FS.html?inpTabId=" + strTab;
-        else
-          strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-              + "_Relation.html";
-      } else
+
+      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
+
       OBError myError = processButton(vars, strKey, strOrder, strWindow);
       if (log4j.isDebugEnabled())
         log4j.debug(myError.getMessage());
@@ -147,7 +140,8 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
             order[0].adOrgId, order[0].mWarehouseId.equals("") ? vars.getWarehouse()
                 : order[0].mWarehouseId, CopyFromPOOrderData.cBPartnerLocationId(this,
                 order[0].cBpartnerId), CopyFromPOOrderData.cBPartnerLocationId(this,
-                order[0].cBpartnerId), order[0].cProjectId, order[0].issotrx.equals("Y")?true:false);
+                order[0].cBpartnerId), order[0].cProjectId, order[0].issotrx.equals("Y") ? true
+                : false);
         if (strCTaxID.equals("")) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this,
               "TaxNotFound", vars.getLanguage()));
@@ -161,11 +155,11 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
               order[0].adOrgId, vars.getUser(), strKey, Integer.toString(line),
               order[0].cBpartnerId, order[0].cBpartnerLocationId.equals("") ? ExpenseSOrderData
                   .cBPartnerLocationId(this, order[0].cBpartnerId) : order[0].cBpartnerLocationId,
-                  order[0].dateordered, order[0].datepromised, data[i].description,
-              data[i].mProductId, order[0].mWarehouseId.equals("") ? vars.getWarehouse()
-                  : order[0].mWarehouseId, data[i].cUomId, data[i].qtyordered,
-              data[i].quantityorder, data[i].cCurrencyId, pricelist, priceactual, pricelimit,
-              strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline);
+              order[0].dateordered, order[0].datepromised, data[i].description, data[i].mProductId,
+              order[0].mWarehouseId.equals("") ? vars.getWarehouse() : order[0].mWarehouseId,
+              data[i].cUomId, data[i].qtyordered, data[i].quantityorder, data[i].cCurrencyId,
+              pricelist, priceactual, pricelimit, strCTaxID, strDiscount, data[i].mProductUomId,
+              data[i].orderline);
         } catch (ServletException ex) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           releaseRollbackConnection(conn);

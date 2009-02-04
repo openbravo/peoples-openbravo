@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
-import org.openbravo.utils.FormatUtilities;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class TabFilter extends HttpSecureAppServlet {
@@ -56,13 +56,11 @@ public class TabFilter extends HttpSecureAppServlet {
       String strOrderBy = vars.getInStringParameter("inpSelectedField");
       String strTab = vars.getStringParameter("inpTabId");
       ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
-      String strWindowPath = "", strTabName = "";
+      String strWindowPath = "";
       if (tab != null && tab.length != 0) {
         if (tab[0].help.equals("Y"))
           strWindowPath = "../utility/WindowTree_FS.html?inpTabId=" + strTab;
-        strTabName = FormatUtilities.replace(tab[0].name);
-        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-            + "_Relation.html";
+        strWindowPath = Utility.getTabURL(this, strTab, "R");
       } else
         strWindowPath = strDefaultServlet;
       if (strOrderBy != null && strOrderBy.length() > 0) {

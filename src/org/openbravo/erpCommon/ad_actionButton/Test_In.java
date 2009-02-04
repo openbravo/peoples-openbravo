@@ -34,7 +34,6 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Test_In extends HttpSecureAppServlet {
@@ -66,14 +65,11 @@ public class Test_In extends HttpSecureAppServlet {
       String strKey = vars.getStringParameter("inpatTestId");
       vars.setSessionValue(strWindow + "|AT_Test_ID", strKey);
       String strTab = vars.getStringParameter("inpTabId");
-      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
-      String strWindowPath = "", strTabName = "";
-      if (tab != null && tab.length != 0) {
-        strTabName = FormatUtilities.replace(tab[0].name);
-        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-            + "_Relation.html";
-      } else
+
+      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
+
       OBError myMessage = processButton(vars, tl.getFieldProvider(), strKey, strWindow);
       vars.setMessage(strTab, myMessage);
       printPageClosePopUp(response, vars, strWindowPath);

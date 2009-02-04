@@ -29,7 +29,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ImportBPartnerServlet extends HttpSecureAppServlet {
@@ -57,20 +56,9 @@ public class ImportBPartnerServlet extends HttpSecureAppServlet {
       String strDeleteOld = vars.getStringParameter("inpDeleteOld", "N");
       String strRecord = vars.getGlobalVariable("inpKey", "ImportBPartnerServlet|key");
       String strTabId = vars.getRequestGlobalVariable("inpTabId", "ImportBPartnerServlet|tabId");
-      String strWindowId = vars.getRequestGlobalVariable("inpwindowId",
-          "ImportBPartnerServlet|windowId");
 
-      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
-      String strWindowPath = "";
-      String strTabName = "";
-      if (tab != null && tab.length != 0) {
-        strTabName = FormatUtilities.replace(tab[0].name);
-        if (tab[0].help.equals("Y"))
-          strWindowPath = "../utility/WindowTree_FS.html?inpTabId=" + strTabId;
-        else
-          strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-              + "_Relation.html";
-      } else
+      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 
       ImportBPartner bp = new ImportBPartner(this, process, strRecord, strDeleteOld.equals("Y"));

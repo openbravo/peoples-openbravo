@@ -32,7 +32,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class CopyFromSettlement extends HttpSecureAppServlet {
@@ -79,13 +78,9 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
           "CopyFromSettlement|C_Settlement_ID");
       String strKey = vars.getRequestGlobalVariable("inpcSettlementFromId",
           "CopyFromSettlement|C_SettlementFrom_ID");
-      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
-      String strWindowPath = "", strTabName = "";
-      if (tab != null && tab.length != 0) {
-        strTabName = FormatUtilities.replace(tab[0].name);
-        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-            + "_Relation.html";
-      } else
+
+      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 
       OBError myError = processButton(vars, strSettlement, strKey);

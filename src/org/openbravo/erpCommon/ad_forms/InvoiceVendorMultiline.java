@@ -244,8 +244,7 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
     xmlDocument.setParameter("windowId", windowId);
     xmlDocument.setParameter("tabId", tabId);
     xmlDocument.setParameter("tableId", tableId);
-    xmlDocument.setParameter("windowPath", FormatUtilities.replace(windowNameEnUS) + "/"
-        + FormatUtilities.replace(tabNameEnUS) + "_Edition.html");
+    xmlDocument.setParameter("windowPath", Utility.getTabURL(this, tabId, "E"));
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "Expenseinvoice", (strCommand
         .equals("NEW") || (data == null || data.length == 0)), "document.frmMain.inpcInvoiceId",

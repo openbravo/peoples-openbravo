@@ -35,7 +35,6 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -68,13 +67,9 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       String strSOTrx = vars.getStringParameter("inpissotrx");
       String strTabId = vars.getStringParameter("inpTabId");
       OBError myError = copyLines(vars, strRownum, strKey, strWindowId, strSOTrx);
-      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
-      String strWindowPath = "", strTabName = "";
-      if (tab != null && tab.length != 0) {
-        strTabName = FormatUtilities.replace(tab[0].name);
-        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-            + "_Relation.html";
-      } else
+
+      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 
       vars.setMessage(strTabId, myError);

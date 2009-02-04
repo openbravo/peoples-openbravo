@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.Sqlc;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class UsedByLink extends HttpSecureAppServlet {
@@ -207,9 +206,8 @@ public class UsedByLink extends HttpSecureAppServlet {
       bdError(request, response, "RecordError", vars.getLanguage());
       return;
     }
-    final String windowRef = FormatUtilities.replace(dataRef[0].windowname) + "/"
-        + FormatUtilities.replace(dataRef[0].tabname) + "_Edition.html";
-    strScript.append("top.opener.submitFormGetParams('DIRECT', '../").append(windowRef).append(
+    final String windowRef = Utility.getTabURL(this, strAD_TAB_ID, "E");
+    strScript.append("top.opener.submitFormGetParams('DIRECT', '").append(windowRef).append(
         "', getParamsScript(document.forms[0]));\n");
     strScript.append("top.close();\n");
     strScript.append("return true;\n");

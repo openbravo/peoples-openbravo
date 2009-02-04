@@ -35,7 +35,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.service.db.DataExportService;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ExportReferenceData extends HttpSecureAppServlet {
@@ -63,13 +62,9 @@ public class ExportReferenceData extends HttpSecureAppServlet {
       vars.getGlobalVariable("inpwindowId", "ExportReferenceData|Window_ID");
       String strTab = vars.getGlobalVariable("inpTabId", "ExportReferenceData|Tab_ID");
       String strKey = vars.getRequestGlobalVariable("inpKey", "ExportReferenceData|AD_DataSet_ID");
-      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
-      String strWindowPath = "", strTabName = "";
-      if (tab != null && tab.length != 0) {
-        strTabName = FormatUtilities.replace(tab[0].name);
-        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-            + "_Relation.html";
-      } else
+
+      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 
       OBError myError = processButton(vars, strKey);

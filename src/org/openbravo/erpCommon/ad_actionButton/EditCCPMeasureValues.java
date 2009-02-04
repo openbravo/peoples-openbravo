@@ -32,7 +32,6 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class EditCCPMeasureValues extends HttpSecureAppServlet {
@@ -65,13 +64,11 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
       String[] strValueId = request.getParameterValues("strKey");
       String[] strGroupId = request.getParameterValues("strGroup");
       ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
-      String strWindowPath = "", strTabName = "";
-      if (tab != null && tab.length != 0) {
-        strTabName = FormatUtilities.replace(tab[0].name);
-        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-            + "_Relation.html";
-      } else
+
+      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
+
       OBError myMessage = updateValues(vars, strValueId, strGroupId, strKey, strWindowId);
       vars.setMessage(strTabId, myMessage);
       printPageClosePopUp(response, vars, strWindowPath);

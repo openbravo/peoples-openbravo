@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.Sqlc;
-import org.openbravo.utils.FormatUtilities;
+import org.openbravo.erpCommon.utility.Utility;
 
 public class ReportAcctRedirectUtility extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -52,9 +52,12 @@ public class ReportAcctRedirectUtility extends HttpSecureAppServlet {
         bdError(request, response, "RecordError", vars.getLanguage());
       else {
         String inputName = "inp" + Sqlc.TransformaNombreColumna(data[0].columnname);
-        String ubicacion = "/" + FormatUtilities.replace(data[0].windowName) + "/"
-            + FormatUtilities.replace(data[0].tabName) + "_Relation.html";
-        response.sendRedirect(strDireccion + ubicacion + "?" + "Command=DIRECT&" + inputName + "="
+
+        String strWindowPath = Utility.getTabURL(this, data[0].adTabId, "R");
+        if (strWindowPath.equals(""))
+          strWindowPath = strDefaultServlet;
+
+        response.sendRedirect(strWindowPath + "?" + "Command=DIRECT&" + inputName + "="
             + strRecordId);
       }
     } else

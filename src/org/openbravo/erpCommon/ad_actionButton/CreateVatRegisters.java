@@ -33,7 +33,6 @@ import org.openbravo.erpCommon.ad_forms.DocInvoice;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateVatRegisters extends HttpSecureAppServlet {
@@ -77,14 +76,11 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 
       // String strWindowId = vars.getStringParameter("inpWindowId");
       String strTabId = vars.getStringParameter("inpTabId");
-      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
-      String strWindowPath = "", strTabName = "";
-      if (tab != null && tab.length != 0) {
-        strTabName = FormatUtilities.replace(tab[0].name);
-        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-            + "_Relation.html";
-      } else
+
+      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
+
       // if (!message.equals("")) vars.setSessionValue(strWindowId + "|" +
       // strTabName + ".message", message);
 

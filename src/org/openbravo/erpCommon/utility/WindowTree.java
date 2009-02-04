@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.Sqlc;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -274,10 +273,9 @@ public class WindowTree extends HttpSecureAppServlet {
         strTreeID = data[0].id;
     }
     WindowTreeData[] data = WindowTreeData.selectTabName(this, TabId);
-    String windowName = FormatUtilities.replace(data[0].description);
-    String tabName = FormatUtilities.replace(data[0].name);
+
     xmlDocument.setParameter("description", data[0].name);
-    xmlDocument.setParameter("page", "../" + windowName + "/" + tabName + "_Edition.html");
+    xmlDocument.setParameter("page", Utility.getTabURL(this, TabId, "E"));
     xmlDocument.setParameter("menu", loadNodes(vars, key, WindowTreeData
         .selectEditable(this, TabId).equals("Y"), TabId));
     xmlDocument.setParameter("treeID", strTreeID);

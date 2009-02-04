@@ -52,6 +52,7 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -2132,6 +2133,27 @@ public class Utility {
     JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
 
     return jasperReport;
+  }
+
+  /**
+   * Returns the complete URL for a tab
+   * 
+   * @param servlet
+   * @param tabId
+   *          Id for the tab to obtain the url for
+   * @param type
+   *          "R" -> Relation, "E" -> Edition, "X" -> Excel
+   * @return
+   */
+  public static String getTabURL(HttpSecureAppServlet servlet, String tabId, String type) {
+    if (!(type.equals("R") || type.equals("E") || type.equals("X")))
+      type = "E";
+    try {
+      return servlet.strDireccion + "/" + TabData.selectUrl(servlet, tabId, type);
+    } catch (Exception e) {
+      log4j.error(e.getMessage());
+      return "";
+    }
   }
 
 }

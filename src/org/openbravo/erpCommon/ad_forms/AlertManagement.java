@@ -36,7 +36,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.UsedByLink;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class AlertManagement extends HttpSecureAppServlet {
@@ -142,8 +141,7 @@ public class AlertManagement extends HttpSecureAppServlet {
             rules[i].display = "none";
           else
             for (int j = 0; j < data.length; j++) {
-              data[j].url = FormatUtilities.replace(data[j].windowname) + "/"
-                  + FormatUtilities.replace(data[j].tabname) + "_Edition.html";
+              data[j].url = Utility.getTabURL(this, data[j].adTabId, "E");
               data[j].columnname = "inp" + Sqlc.TransformaNombreColumna(data[j].columnname);
             }
           alerts[i] = data;

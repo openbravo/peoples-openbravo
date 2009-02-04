@@ -33,7 +33,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
@@ -72,14 +71,11 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
       String strKey = vars.getStringParameter("inpmaMaintPartId");
       String strTabId = vars.getStringParameter("inpTabId");
       OBError myMessage = updateValues(request, vars, strKey);
-      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
-      String strWindowPath = "", strTabName = "";
-      if (tab != null && tab.length != 0) {
-        strTabName = FormatUtilities.replace(tab[0].name);
-        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-            + "_Relation.html";
-      } else
+
+      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
+
       vars.setMessage(strTabId, myMessage);
       printPageClosePopUp(response, vars, strWindowPath);
     } else

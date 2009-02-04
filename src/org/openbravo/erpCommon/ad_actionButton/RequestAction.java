@@ -61,13 +61,14 @@ public class RequestAction extends HttpSecureAppServlet {
       String strWindow = vars.getStringParameter("inpwindowId");
       String strKey = vars.getRequestGlobalVariable("inprRequestId", strWindow + "|R_Request_ID");
       String strTab = vars.getStringParameter("inpTabId");
+
       ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
-      String strWindowPath = "", strTabName = "";
+      String strTabName = "";
       if (tab != null && tab.length != 0) {
         strTabName = FormatUtilities.replace(tab[0].name);
-        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-            + "_Relation.html";
-      } else
+      }
+      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 
       processButton(vars, strKey, strWindow);

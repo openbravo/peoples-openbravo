@@ -36,7 +36,6 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ProjectSetType extends HttpSecureAppServlet {
@@ -67,14 +66,11 @@ public class ProjectSetType extends HttpSecureAppServlet {
       String strDateFrom = vars.getStringParameter("inpDateFrom");
       String strKey = vars.getRequestGlobalVariable("inpcProjectId", strWindow + "|C_Project_ID");
       String strTab = vars.getStringParameter("inpTabId");
-      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
-      String strWindowPath = "", strTabName = "";
-      if (tab != null && tab.length != 0) {
-        strTabName = FormatUtilities.replace(tab[0].name);
-        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-            + "_Relation.html";
-      } else
+
+      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
+
       OBError myMessage = processButton(vars, strKey, strProjectType, strDateFrom, strWindow);
       vars.setMessage(strTab, myMessage);
       printPageClosePopUp(response, vars, strWindowPath);

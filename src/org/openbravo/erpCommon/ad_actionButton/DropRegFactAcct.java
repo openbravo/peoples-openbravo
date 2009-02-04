@@ -31,7 +31,6 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class DropRegFactAcct extends HttpSecureAppServlet {
@@ -58,14 +57,11 @@ public class DropRegFactAcct extends HttpSecureAppServlet {
       String stradOrgId = vars.getStringParameter("inpadOrgId", "");
       String strKey = vars.getRequiredGlobalVariable("inpcYearId", strWindow + "|C_Year_ID");
       String strTab = vars.getStringParameter("inpTabId");
-      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
-      String strWindowPath = "", strTabName = "";
-      if (tab != null && tab.length != 0) {
-        strTabName = FormatUtilities.replace(tab[0].name);
-        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName
-            + "_Relation.html";
-      } else
+
+      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
+
       OBError myError = processButton(vars, stradOrgId, strKey);
       vars.setMessage(strTab, myError);
       printPageClosePopUp(response, vars, strWindowPath);
