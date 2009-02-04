@@ -19,6 +19,7 @@
 
 package org.openbravo.erpCommon.utility;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -41,6 +42,10 @@ public class DownloadReport extends HttpSecureAppServlet {
 
   private void downloadReport(VariablesSecureApp vars, HttpServletResponse response, String report)
       throws IOException, ServletException {
+
+    if (report.contains("..") || report.contains(File.separator))
+      throw new ServletException("Invalid report name");
+
     FileUtility f = new FileUtility(globalParameters.strFTPDirectory, report, false, true);
     if (!f.exists())
       return;
@@ -48,7 +53,15 @@ public class DownloadReport extends HttpSecureAppServlet {
     String filename = report.substring(0, pos);
     pos = report.lastIndexOf(".");
     String extension = report.substring(pos);
-    response.setContentType("application/x-download");
+    if (extension.equalsIgnoreCase(".pdf")) {
+      response.setContentType("application/pdf");
+    } else if (extension.equalsIgnoreCase(".csv")) {
+      response.setContentType("text/csv");
+    } else if (extension.equalsIgnoreCase(".xls")) {
+      response.setContentType("application/vnd.ms-excel");
+    } else {
+      response.setContentType("application/x-download");
+    }
     response.setHeader("Content-Disposition", "attachment; filename=" + filename + extension);
     f.dumpFile(response.getOutputStream());
     response.getOutputStream().flush();
