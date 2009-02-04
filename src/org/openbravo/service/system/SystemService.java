@@ -150,15 +150,13 @@ public class SystemService implements OBSingleton {
     final StringBuilder sb = new StringBuilder();
     for (SystemValidationType validationType : result.getErrors().keySet()) {
       sb.append("\n");
-      sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-      sb.append("Errors for Validation type: " + validationType);
-      sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      sb.append("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      sb.append("\nErrors for Validation type: " + validationType);
+      sb.append("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
       final List<String> errors = result.getErrors().get(validationType);
       for (String err : errors) {
+        sb.append("\n");
         sb.append(err);
-        if (sb.length() > 0) {
-          sb.append("\n");
-        }
       }
     }
     log.error(sb.toString());

@@ -132,10 +132,12 @@ public class DatabaseValidator implements SystemValidator {
           + " but not defined in the Application Dictionary");
     }
 
-    for (View view : dbViews.values()) {
-      result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "View "
-          + view.getName() + " present in the database "
-          + " but not defined in the Application Dictionary");
+    if (getValidateModule() == null) {
+      for (View view : dbViews.values()) {
+        result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "View "
+            + view.getName() + " present in the database "
+            + " but not defined in the Application Dictionary");
+      }
     }
 
     // System.err.println(updateSql);
