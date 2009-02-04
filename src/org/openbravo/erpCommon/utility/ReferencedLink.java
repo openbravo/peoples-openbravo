@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.utils.FormatUtilities;
 
 public class ReferencedLink extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -95,20 +94,18 @@ public class ReferencedLink extends HttpSecureAppServlet {
       ReferencedLinkData[] data = ReferencedLinkData.select(this, strWindowId, strTableReferenceId);
       if (data == null || data.length == 0)
         throw new ServletException("Window not found: " + strWindowId);
-      String windowName = data[0].windowname;
-      String tabName = data[0].tabname;
+      String tabId = data[0].adTabId;
       if (strKeyReferenceId.equals("")) {
         data = ReferencedLinkData.selectParent(this, strWindowId);
         if (data == null || data.length == 0)
           throw new ServletException("Window parent not found: " + strWindowId);
-        windowName = data[0].windowname;
-        tabName = data[0].tabname;
+        tabId = data[0].adTabId;
       }
       StringBuffer cadena = new StringBuffer();
-      cadena.append(strDireccion).append("/").append(FormatUtilities.replace(windowName)).append(
-          "/").append(FormatUtilities.replace(tabName));
-      cadena.append("_Edition.html?Command=").append(
-          (strKeyReferenceId.equals("") ? "DEFAULT" : "DIRECT")).append("&");
+
+      cadena.append(Utility.getTabURL(this, tabId, "E"));
+      cadena.append("?Command=").append((strKeyReferenceId.equals("") ? "DEFAULT" : "DIRECT"))
+          .append("&");
       cadena.append("inpDirectKey").append("=").append(strKeyReferenceId);
       if (log4j.isDebugEnabled())
         log4j.debug(cadena.toString());
