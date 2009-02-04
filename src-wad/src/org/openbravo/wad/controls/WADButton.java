@@ -139,8 +139,7 @@ public class WADButton extends WADControl {
         text.append("_BTN\" replaceCharacters=\"htmlPreformated\"/>");
       }
     } else {
-      if (getData("IsDisplayed").equals("Y")
-          && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
+      if (getData("IsDisplayed").equals("Y")) {
         text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("_BTNname\" name=\"")
             .append(getData("ColumnName")).append("_BTNname\" default=\"\"/>\n");
       }
@@ -158,9 +157,9 @@ public class WADButton extends WADControl {
 
   public String toJava() {
 
-    if (getData("IsDisplayed").equals("Y")
-        && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus"))
-      if (!getData("AD_Reference_Value_ID").equals(""))
+    if (getData("IsDisplayed").equals("Y"))
+      if (!getData("AD_Reference_Value_ID").equals("")
+          && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus"))
         return "xmlDocument.setParameter(\"" + getData("ColumnName")
             + "_BTNname\", Utility.getButtonName(this, vars, \"" + getData("AD_Reference_Value_ID")
             + "\", (dataField==null?data[0].getField(\"" + getData("ColumnNameInp")
@@ -175,17 +174,4 @@ public class WADButton extends WADControl {
       return "";
   }
 
-  private WADLabelControl prepareLabel(String columnName) {
-    WADLabelControl label = new WADLabelControl();
-    label.setLabelType(WADLabelControl.BUTTON_LABEL);
-    label.setColumnName(columnName);
-
-    return label;
-  }
-
-  private String createLabelText(WADLabelControl label) {
-    WadControlLabelBuilder builder = new WadControlLabelBuilder(label);
-    builder.buildLabelControl();
-    return builder.getBasicLabelText();
-  }
 }
