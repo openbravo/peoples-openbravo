@@ -109,6 +109,10 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
+      <column name="DB_CHECKSUM" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_SYSTEM_INFO_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
