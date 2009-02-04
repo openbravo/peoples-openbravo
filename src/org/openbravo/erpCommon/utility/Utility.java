@@ -352,7 +352,7 @@ public class Utility {
           if (retValue.equals("'0'"))
             retValue = "";
           else if (retValue.startsWith("'0',"))
-            retValue = retValue.substring(2);
+            retValue = retValue.substring(4);
           else
             retValue = retValue.replace(",'0'", "");
         } else { // add *
