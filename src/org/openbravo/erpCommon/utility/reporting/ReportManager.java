@@ -61,10 +61,11 @@ public class ReportManager {
   private ClassInfoData _classInfo;
   private String _prefix;
   private String _strAttachmentPath;
+  private boolean multiReports = false;
 
   public ReportManager(ConnectionProvider connectionProvider, String ftpDirectory,
       String replaceWithFull, String baseDesignPath, String defaultDesignPath, String prefix,
-      ClassInfoData classInfo) {
+      ClassInfoData classInfo, boolean multiReport) {
     _connectionProvider = connectionProvider;
     _strBaseWeb = replaceWithFull;
     _strBaseDesignPath = baseDesignPath;
@@ -72,6 +73,7 @@ public class ReportManager {
     _strAttachmentPath = ftpDirectory;
     _classInfo = classInfo;
     _prefix = prefix;
+    multiReports = multiReport;
 
     // Strip of ending slash character
     if (_strBaseDesignPath.endsWith("/"))
@@ -83,7 +85,6 @@ public class ReportManager {
 
   public JasperPrint processReport(Report report, VariablesSecureApp variables)
       throws ReportingException {
-    // String baseDesignPath = getBaseDesignPath(variables.getLanguage());
 
     setTargetDirectory(report);
     final String language = variables.getLanguage();
@@ -101,9 +102,6 @@ public class ReportManager {
 
     JasperPrint jasperPrint = null;
 
-    // TODO: Rename parameter to BASE_ATTACH_PATH
-    designParameters.put("BASE_ATTACH", _strAttachmentPath);
-    designParameters.put("BASE_WEB", _strBaseWeb);
     try {
       JasperDesign jasperDesign = JRXmlLoader.load(templateFile);
 
@@ -140,9 +138,11 @@ public class ReportManager {
 
     } catch (final JRException exception) {
       log4j.error(exception.getMessage());
+      exception.printStackTrace();
       throw new ReportingException(exception);
     } catch (final Exception exception) {
       log4j.error(exception.getMessage());
+      exception.getStackTrace();
       throw new ReportingException(exception);
     }
 
@@ -171,10 +171,8 @@ public class ReportManager {
       saveReport(report, jasperPrint);
     } catch (final ReportingException e) {
       log4j.error(e.getMessage());
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    // saveReport(report, jasperPrint);
   }
 
   private void saveReport(Report report, JasperPrint jasperPrint) {
@@ -186,14 +184,13 @@ public class ReportManager {
     try {
       JasperExportManager.exportReportToPdfFile(jasperPrint, target);
     } catch (final JRException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
   private JasperPrint fillReport(HashMap<String, Object> designParameters, JasperReport jasperReport)
       throws ReportingException, SQLException {
-    JasperPrint jasperPrint;
+    JasperPrint jasperPrint = null;
 
     Connection con = null;
     try {
@@ -201,6 +198,7 @@ public class ReportManager {
       jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
     } catch (final Exception e) {
       log4j.error(e.getMessage());
+      e.printStackTrace();
       throw new ReportingException(e.getMessage());
     } finally {
       _connectionProvider.releaseRollbackConnection(con);
@@ -283,13 +281,8 @@ public class ReportManager {
 
     designParameters.put("DOCUMENT_ID", report.getDocumentId());
 
-    // TODO: Rename parameter to BASE_ATTACH_PATH
     designParameters.put("BASE_ATTACH", _strAttachmentPath);
-
-    // TODO: Do not use Base web, this is an url and generates web traffic,
-    // a local path reference should be used
     designParameters.put("BASE_WEB", _strBaseWeb);
-
     designParameters.put("IS_IGNORE_PAGINATION", false);
     designParameters.put("USER_CLIENT", Utility.getContext(_connectionProvider, variables,
         "#User_Client", ""));

@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Vector;
 
 import javax.activation.DataHandler;
@@ -74,6 +73,7 @@ import org.openbravo.erpCommon.utility.reporting.ReportingException;
 import org.openbravo.erpCommon.utility.reporting.TemplateData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
 import org.openbravo.erpCommon.utility.reporting.ToolsData;
+import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -87,9 +87,8 @@ import com.lowagie.text.pdf.PdfReader;
 public class PrintController extends HttpSecureAppServlet {
   final Map<String, TemplateData[]> differentDocTypes = new HashMap<String, TemplateData[]>();
   private PocData[] pocData;
-
-  // TODO: When an email is in draft status add the notification that the
-  // document can not be emailed
+  private boolean multiReports = false;
+  private boolean archivedReports = false;
 
   @Override
   public void init(ServletConfig config) {
@@ -179,10 +178,13 @@ public class PrintController extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Number of documents selected: " + documentIds.length);
 
+    if (documentIds.length > 1)
+      multiReports = true;
+
     reports = (Map<String, Report>) vars.getSessionObject(sessionValuePrefix + ".Documents");
     final ReportManager reportManager = new ReportManager(this, globalParameters.strFTPDirectory,
         strReplaceWithFull, globalParameters.strBaseDesignPath,
-        globalParameters.strDefaultDesignPath, globalParameters.prefix, classInfo);
+        globalParameters.strDefaultDesignPath, globalParameters.prefix, classInfo, multiReports);
 
     if (vars.commandIn("PRINT")) {
       /*
@@ -194,40 +196,37 @@ public class PrintController extends HttpSecureAppServlet {
       JasperPrint jasperPrint = null;
       Collection<JasperPrint> jrPrintReports = new ArrayList<JasperPrint>();
       final Collection<Report> savedReports = new ArrayList<Report>();
-      boolean multipleReports = false;
-      if (documentIds.length > 1)
-        multipleReports = true;
       for (int i = 0; i < documentIds.length; i++) {
         String documentId = documentIds[i];
-        report = buildReport(response, vars, documentId, reportManager, documentType);
+        report = buildReport(response, vars, documentId, reportManager, documentType,
+            Report.OutputTypeEnum.PRINT);
         try {
           jasperPrint = reportManager.processReport(report, vars);
           jrPrintReports.add(jasperPrint);
         } catch (final ReportingException e) {
           advisePopUp(request, response, "Report processing failed",
               "Unable to process report selection");
-          // Utility.messageBD(this, "ERROR", vars.getLanguage());
           log4j.error(e.getMessage());
+          e.getStackTrace();
         }
-        if (multipleReports) {
-          report.setFilename(UUID.randomUUID().toString() + "_" + report.getFilename());
-          report.setDeleteable(true);
+        savedReports.add(report);
+        if (multiReports) {
           reportManager.saveTempReport(report, vars);
-          savedReports.add(report);
         }
       }
-      printReports(response, jrPrintReports, savedReports, multipleReports, report);
+      printReports(response, jrPrintReports, savedReports);
     } else if (vars.commandIn("ARCHIVE")) {
       /*
        * ARCHIVE will save each report individually and then print the reports in a single printable
        * (concatenated) format.
        */
+      archivedReports = true;
       Report report = null;
       final Collection<Report> savedReports = new ArrayList<Report>();
       for (int index = 0; index < documentIds.length; index++) {
         String documentId = documentIds[index];
-        report = buildReport(response, vars, documentId, reportManager, documentType);
-        // JasperPrint jasperPrint = null;
+        report = buildReport(response, vars, documentId, reportManager, documentType,
+            OutputTypeEnum.ARCHIVE);
         try {
           reportManager.processReport(report, vars);
         } catch (final ReportingException e) {
@@ -236,7 +235,7 @@ public class PrintController extends HttpSecureAppServlet {
         reportManager.saveTempReport(report, vars);
         savedReports.add(report);
       }
-      printReports(response, null, savedReports, true, null);
+      printReports(response, null, savedReports);
     } else if (!request.getRequestURI().endsWith(".html")) {
       buildReport(response, vars, strDocumentId, reports, reportManager);
     } else {
@@ -250,7 +249,7 @@ public class PrintController extends HttpSecureAppServlet {
 
           try {
             final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
-                "default");
+                "default", multiReports, OutputTypeEnum.DEFAULT);
             reports.put(documentId, report);
 
             final String senderAddress = PocConfigurationData.getSenderAddress(this, vars
@@ -320,8 +319,8 @@ public class PrintController extends HttpSecureAppServlet {
           if (log4j.isDebugEnabled())
             log4j.debug("Processing document with id: " + documentId);
 
-          // final Report report = reports.get(documentId);
-          final Report report = buildReport(response, vars, documentId, reportManager, documentType);
+          final Report report = buildReport(response, vars, documentId, reportManager,
+              documentType, OutputTypeEnum.EMAIL);
 
           // if there is only one document type id the user should be
           // able to choose between different templates
@@ -379,64 +378,31 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   private void printReports(HttpServletResponse response, Collection<JasperPrint> jrPrintReports,
-      Collection<Report> reports, boolean fromSavedFile, Report report) {
-    if (fromSavedFile) {
-      printReportFromFile(response, reports);
-    } else {
-      printReportClean(response, jrPrintReports, report.getFilename());
-    }
-
-  }
-
-  private void printReportClean(HttpServletResponse response,
-      Collection<JasperPrint> jrPrintReports, String filename) {
-    boolean singleReport = false;
-    String finalFileName = filename;
-    if (jrPrintReports.size() == 1) {
-      singleReport = true;
-    } else {
-      finalFileName = filename.substring(0, filename.indexOf("_")) + ".pdf";
-    }
-    printReportClean(response, jrPrintReports, finalFileName, singleReport);
-  }
-
-  private void printReportClean(HttpServletResponse response,
-      Collection<JasperPrint> jrPrintReports, String filename, boolean singleReport) {
+      Collection<Report> reports) {
     ServletOutputStream os = null;
+    String filename = "";
     try {
       os = response.getOutputStream();
       response.setContentType("application/pdf");
-      response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
-      for (Iterator<JasperPrint> iterator = jrPrintReports.iterator(); iterator.hasNext();) {
-        JasperPrint jasperPrint = (JasperPrint) iterator.next();
-        JasperExportManager.exportReportToPdfStream(jasperPrint, os);
-      }
-      // }
-    } catch (final IOException e) {
-      log4j.error(e.getMessage());
-      log4j.error(e);
-    } catch (final JRException e) {
-      log4j.error(e.getMessage());
-      log4j.error(e);
-    } catch (final Exception e) {
-      log4j.error(e);
-    } finally {
-      try {
-        os.close();
-      } catch (final Exception e) {
-        log4j.error(e.getMessage());
-      }
-    }
-  }
 
-  private void printReportFromFile(HttpServletResponse response, Collection<Report> reports) {
-    ServletOutputStream os = null;
-    try {
-      os = response.getOutputStream();
-      response.setContentType("application/pdf");
-      concatReport(reports.toArray(new Report[] {}), response);
+      if (!multiReports && !archivedReports) {
+        for (Iterator<Report> iterator = reports.iterator(); iterator.hasNext();) {
+          Report report = iterator.next();
+          filename = report.getFilename();
+        }
+        response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
+        for (Iterator<JasperPrint> iterator = jrPrintReports.iterator(); iterator.hasNext();) {
+          JasperPrint jasperPrint = (JasperPrint) iterator.next();
+          JasperExportManager.exportReportToPdfStream(jasperPrint, os);
+        }
+      } else {
+        response.setContentType("application/pdf");
+        concatReport(reports.toArray(new Report[] {}), response);
+      }
     } catch (IOException e) {
       log4j.error(e.getMessage());
+    } catch (JRException e) {
+      e.printStackTrace();
     } finally {
       try {
         os.close();
@@ -475,8 +441,16 @@ public class PrintController extends HttpSecureAppServlet {
       while (f < reports.length) {
         if (filename == null || filename.equals("")) {
           outFile = reports[f];
-          filename = outFile.getFilename().substring(0, outFile.getFilename().indexOf("_"))
-              + ".pdf";
+          if (multiReports) {
+            filename = outFile.getTemplateInfo().getReportFilename();
+            filename = filename.replaceAll("@our_ref@", "");
+            filename = filename.replaceAll("@cus_ref@", "");
+            filename = filename.replaceAll(" ", "_");
+            filename = filename.replaceAll("-", "");
+            filename = filename + ".pdf";
+          } else {
+            filename = outFile.getFilename();
+          }
         }
         response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
         // we create a reader for a certain document
@@ -509,9 +483,6 @@ public class PrintController extends HttpSecureAppServlet {
         }
         f++;
       }
-      // if (!master.isEmpty())
-      // writer.setOutlines(master);
-      // step 5: we close the document
       document.close();
     } catch (Exception e) {
       log4j.error(e);
@@ -519,13 +490,15 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   private Report buildReport(HttpServletResponse response, VariablesSecureApp vars,
-      String strDocumentId, final ReportManager reportManager, DocumentType documentType) {
+      String strDocumentId, final ReportManager reportManager, DocumentType documentType,
+      OutputTypeEnum outputType) {
     Report report = null;
     if (strDocumentId != null) {
       strDocumentId = strDocumentId.replaceAll("\\(|\\)|'", "");
     }
     try {
-      report = new Report(this, documentType, strDocumentId, vars.getLanguage(), "default");
+      report = new Report(this, documentType, strDocumentId, vars.getLanguage(), "default",
+          multiReports, outputType);
     } catch (final ReportingException e) {
       log4j.error(e);
     } catch (final ServletException e) {
@@ -853,12 +826,6 @@ public class PrintController extends HttpSecureAppServlet {
       xmlDocument.setParameter("closed", "yes");
       request.getSession().removeAttribute("files");
     }
-
-    // new TemplateInfo(this, documentType., (String) request.getSession()
-    // .getAttribute("AD_ORG_ID"), vars.getLanguage(), vars
-    // .getRequestGlobalVariable("templates", "templates"));
-    // xmlDocument.setData("reportEmail", "liststructure", report
-    // .getTemplate());
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("language", vars.getLanguage());

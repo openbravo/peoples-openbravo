@@ -18,6 +18,7 @@ package org.openbravo.erpCommon.utility.reporting;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 
@@ -35,6 +36,12 @@ public class Report {
     this.orgId = orgId;
   }
 
+  public enum OutputTypeEnum {
+    DEFAULT, PRINT, ARCHIVE, EMAIL
+  }
+
+  public OutputTypeEnum outputType = OutputTypeEnum.DEFAULT;
+
   private static Logger log4j = Logger.getLogger(Report.class);
 
   private DocumentType _DocumentType;
@@ -50,6 +57,7 @@ public class Report {
   private String docTypeId;
   private String orgId;
   private boolean deleteReport = false;
+  private boolean multiReports = false;
 
   public String getDocTypeId() {
     return docTypeId;
@@ -62,10 +70,11 @@ public class Report {
   private TemplateInfo templateInfo;
 
   public Report(ConnectionProvider connectionProvider, DocumentType documentType,
-      String documentId, String strLanguage, String templateId) throws ReportingException,
-      ServletException {
+      String documentId, String strLanguage, String templateId, boolean multiReport,
+      OutputTypeEnum outputTypeString) throws ReportingException, ServletException {
     _DocumentType = documentType;
     _DocumentId = documentId;
+    outputType = outputTypeString;
     ReportData[] reportData = null;
 
     switch (_DocumentType) {
@@ -90,6 +99,7 @@ public class Report {
           + _DocumentType);
     }
 
+    multiReports = multiReport;
     if (reportData.length == 1) {
       orgId = reportData[0].getField("ad_Org_Id");
       docTypeId = reportData[0].getField("docTypeTargetId");
@@ -125,6 +135,11 @@ public class Report {
     reportFilename = reportFilename + "." + dateStamp + ".pdf";
     if (log4j.isDebugEnabled())
       log4j.debug("target report filename: " + reportFilename);
+
+    if (multiReports && outputType.equals(OutputTypeEnum.PRINT)) {
+      reportFilename = UUID.randomUUID().toString() + "_" + reportFilename;
+      setDeleteable(true);
+    }
 
     return reportFilename;
   }
@@ -169,11 +184,6 @@ public class Report {
     return _DocumentStatus.equals("DR");
   }
 
-  // public boolean isCompleted()
-  // {
-  // return _DocumentStatus.equals( "CO" );
-  // }
-
   public String getFilename() {
     return _Filename;
   }
@@ -216,4 +226,5 @@ public class Report {
   public void setDeleteable(boolean deleteable) {
     deleteReport = deleteable;
   }
+
 }
