@@ -38,6 +38,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.Traceable;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -92,6 +93,20 @@ public class DataSetService implements OBSingleton {
       // todo: count is slower than exists, is exists possible?
       if (obc.count() > 0) {
         return true;
+      }
+    }
+    return false;
+  }
+
+  public <T extends BaseOBObject> boolean hasChangedCheck(DataSet dataSet, Date afterDate) {
+    for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
+      final Entity entity = ModelProvider.getInstance().getEntityByTableName(
+          dataSetTable.getTable().getTableName());
+      final OBCriteria<T> obc = OBDal.getInstance().createCriteria(entity.getName());
+      obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
+      // todo: count is slower than exists, is exists possible?
+      for (BaseOBObject bob : obc.list()) {
+        System.err.println(bob.getIdentifier() + " " + ((Traceable) bob).getUpdated());
       }
     }
     return false;

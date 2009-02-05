@@ -99,6 +99,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="obx.export.CS" value="false" />
   <property name="chekPerms" value="false" />
   <property name="force" value="false" />
+  <property name="onlyIfModified" value="false" />
 
   <available file=".svn/entries" property="is.svn" />
 
