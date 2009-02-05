@@ -383,11 +383,13 @@ public class DataGrid extends HttpSecureAppServlet {
     FieldProvider[] res = null;
     if (tableSQL != null) {
       try {
+        // minOffset and maxOffset are zero based so pageSize is difference +1
+        int pageSize = maxOffset - minOffset + 1;
         String strSQL = ModelSQLGeneration.generateSQLonlyId(this, vars, tableSQL, (tableSQL
             .getTableName()
             + "." + tableSQL.getKeyColumn() + "AS ID"), new Vector<String>(), new Vector<String>(),
-            minOffset, maxOffset - minOffset);
-        ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
+            minOffset, pageSize);
+        ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValuesOnlyId());
         data = execquery.select();
         res = new FieldProvider[data.length];
         for (int i = 0; i < data.length; i++) {

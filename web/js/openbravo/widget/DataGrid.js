@@ -602,7 +602,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
           }
           var content = [];
           content["action"] = "getIdsInRange";
-          content["minOffset"] = minValue + 1;
+          content["minOffset"] = minValue;
           content["maxOffset"] = maxValue;
           if (this.sortCols) {
             content["sort_cols"] = this.sortCols;
