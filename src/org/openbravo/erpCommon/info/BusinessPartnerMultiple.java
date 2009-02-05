@@ -72,6 +72,9 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
+      String action = vars.getStringParameter("action");
+      log4j.debug("command DATA - action: " + action);
+
       String strKey = vars.getGlobalVariable("inpKey", "BusinessPartnerMultiple.key", "");
       String strName = vars.getGlobalVariable("inpName", "BusinessPartnerMultiple.name", "");
       String strContact = vars.getStringParameter("inpContact");
@@ -86,9 +89,20 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
       String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
       String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Invoice.adorgid", "");
-      printGridData(response, vars, strKey, strName, strContact, strZIP, strProvincia,
-          strBpartners, strCity, strSortCols + " " + strSortDirs, strOffset, strPageSize,
-          strNewFilter, strOrg);
+
+      if (action.equalsIgnoreCase("getRows")) { // Asking for data rows
+        printGridData(response, vars, strKey, strName, strContact, strZIP, strProvincia,
+            strBpartners, strCity, strSortCols + " " + strSortDirs, strOffset, strPageSize,
+            strNewFilter, strOrg);
+
+      } else if (action.equalsIgnoreCase("getIdsInRange")) {
+        // asking for selected rows
+        printGridDataSelectedRows(response, vars, strKey, strName, strContact, strZIP,
+            strProvincia, strBpartners, strCity, strSortCols + " " + strSortDirs);
+      } else {
+        throw new ServletException("Unimplemented action in DATA request: " + action);
+      }
+
     } else
       pageError(response);
   }
@@ -298,6 +312,71 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug(strRowsData.toString());
     out.print(strRowsData.toString());
+    out.close();
+  }
+
+  /**
+   * Prints the response for the getRowsIds action. It returns the rowkey for the identifier column
+   * for the list of selected rows [minOffset..maxOffset]
+   * 
+   */
+  void printGridDataSelectedRows(HttpServletResponse response, VariablesSecureApp vars,
+      String strKey, String strName, String strContact, String strZIP, String strProvincia,
+      String strBpartners, String strCity, String strOrderBy) throws IOException, ServletException {
+    int minOffset = new Integer(vars.getStringParameter("minOffset")).intValue();
+    int maxOffset = new Integer(vars.getStringParameter("maxOffset")).intValue();
+    log4j.debug("Output: print page ids, minOffset: " + minOffset + ", maxOffset: " + maxOffset);
+    String type = "Hidden";
+    String title = "";
+    String description = "";
+    FieldProvider[] data = null;
+    FieldProvider[] res = null;
+    try {
+      // Filtering result
+      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+        String oraLimit = (minOffset + 1) + " AND " + maxOffset;
+        data = BusinessPartnerMultipleData.select(this, "ROWNUM", Utility.getContext(this, vars,
+            "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
+            "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
+            strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
+                .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, oraLimit, "");
+      } else {
+        // minOffset and maxOffset are zero based so pageSize is difference +1
+        int pageSize = maxOffset - minOffset + 1;
+        String pgLimit = pageSize + " OFFSET " + minOffset;
+        data = BusinessPartnerMultipleData.select(this, "1", Utility.getContext(this, vars,
+            "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
+            "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
+            strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
+                .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", pgLimit);
+      }
+
+      // result field has to be named id -> rename by copy the list
+      res = new FieldProvider[data.length];
+      for (int i = 0; i < data.length; i++) {
+        SQLReturnObject sqlReturnObject = new SQLReturnObject();
+        sqlReturnObject.setData("id", data[i].getField("rowkey"));
+        res[i] = sqlReturnObject;
+      }
+    } catch (Exception e) {
+      log4j.error("Error obtaining id-list for getIdsInRange", e);
+      type = "Error";
+      title = "Error";
+      if (!e.getMessage().startsWith("<![CDATA["))
+        description = "<![CDATA[" + e.getMessage() + "]]>";
+    }
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/utility/DataGridID").createXmlDocument();
+    xmlDocument.setParameter("type", type);
+    xmlDocument.setParameter("title", title);
+    xmlDocument.setParameter("description", description);
+    xmlDocument.setData("structure1", res);
+    response.setContentType("text/xml; charset=UTF-8");
+    response.setHeader("Cache-Control", "no-cache");
+    PrintWriter out = response.getWriter();
+    log4j.debug(xmlDocument.print());
+    out.println(xmlDocument.print());
     out.close();
   }
 

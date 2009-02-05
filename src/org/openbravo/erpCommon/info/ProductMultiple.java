@@ -62,6 +62,9 @@ public class ProductMultiple extends HttpSecureAppServlet {
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
+      String action = vars.getStringParameter("action");
+      log4j.debug("command DATA - action: " + action);
+
       if (vars.getStringParameter("clear").equals("true")) {
         vars.removeSessionValue("ProductMultiple.key");
         vars.removeSessionValue("ProductMultiple.name");
@@ -78,8 +81,17 @@ public class ProductMultiple extends HttpSecureAppServlet {
       String strPageSize = vars.getStringParameter("page_size");
       String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
       String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
-      printGridData(response, vars, strKey, strName, strProductCategory, strOrg, strSortCols + " "
-          + strSortDirs, strOffset, strPageSize, strNewFilter);
+
+      if (action.equalsIgnoreCase("getRows")) { // Asking for data rows
+        printGridData(response, vars, strKey, strName, strProductCategory, strOrg, strSortCols
+            + " " + strSortDirs, strOffset, strPageSize, strNewFilter);
+      } else if (action.equalsIgnoreCase("getIdsInRange")) {
+        // asking for selected rows
+        printGridDataSelectedRows(response, vars, strKey, strName, strProductCategory, strOrg,
+            strSortCols + " " + strSortDirs);
+      } else {
+        throw new ServletException("Unimplemented action in DATA request: " + action);
+      }
     } else
       pageError(response);
   }
@@ -327,6 +339,68 @@ public class ProductMultiple extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug(strRowsData.toString());
     out.print(strRowsData.toString());
+    out.close();
+  }
+
+  /**
+   * Prints the response for the getRowsIds action. It returns the rowkey for the identifier column
+   * for the list of selected rows [minOffset..maxOffset]
+   * 
+   */
+  private void printGridDataSelectedRows(HttpServletResponse response, VariablesSecureApp vars,
+      String strKey, String strName, String strProductCategory, String strOrg, String strOrderBy)
+      throws IOException, ServletException {
+    int minOffset = new Integer(vars.getStringParameter("minOffset")).intValue();
+    int maxOffset = new Integer(vars.getStringParameter("maxOffset")).intValue();
+    log4j.debug("Output: print page ids, minOffset: " + minOffset + ", maxOffset: " + maxOffset);
+    String type = "Hidden";
+    String title = "";
+    String description = "";
+    FieldProvider[] data = null;
+    FieldProvider[] res = null;
+    try {
+      // Filtering result
+      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+        String oraLimit = (minOffset + 1) + " AND " + maxOffset;
+        data = ProductMultipleData.select(this, "ROWNUM", strKey, strName, strProductCategory,
+            Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), Utility
+                .getSelectorOrgs(this, vars, strOrg), strOrderBy, oraLimit, "");
+      } else {
+        // minOffset and maxOffset are zero based so pageSize is difference +1
+        int pageSize = maxOffset - minOffset + 1;
+        String pgLimit = pageSize + " OFFSET " + minOffset;
+        data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory, Utility
+            .getContext(this, vars, "#User_Client", "ProductMultiple"), Utility.getSelectorOrgs(
+            this, vars, strOrg), strOrderBy, "", pgLimit);
+
+      }
+
+      // result field has to be named id -> rename by copy the list
+      res = new FieldProvider[data.length];
+      for (int i = 0; i < data.length; i++) {
+        SQLReturnObject sqlReturnObject = new SQLReturnObject();
+        sqlReturnObject.setData("id", data[i].getField("rowkey"));
+        res[i] = sqlReturnObject;
+      }
+    } catch (Exception e) {
+      log4j.error("Error obtaining id-list for getIdsInRange", e);
+      type = "Error";
+      title = "Error";
+      if (!e.getMessage().startsWith("<![CDATA["))
+        description = "<![CDATA[" + e.getMessage() + "]]>";
+    }
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/utility/DataGridID").createXmlDocument();
+    xmlDocument.setParameter("type", type);
+    xmlDocument.setParameter("title", title);
+    xmlDocument.setParameter("description", description);
+    xmlDocument.setData("structure1", res);
+    response.setContentType("text/xml; charset=UTF-8");
+    response.setHeader("Cache-Control", "no-cache");
+    PrintWriter out = response.getWriter();
+    log4j.debug(xmlDocument.print());
+    out.println(xmlDocument.print());
     out.close();
   }
 
