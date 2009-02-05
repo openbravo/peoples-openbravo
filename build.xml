@@ -227,12 +227,28 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="update.database" />
 
     <ant dir="${base.src}" target="build.quick" inheritAll="true" inheritRefs="true" />
-
+    
+    <antcall target="build.deploy"/>
     <!-- only restart tomcat if the restart prop was set to true -->
     <condition property="dorestart">
       <istrue value="${restart}" />
     </condition>
     <antcall target="if.restart.tomcat" />
+  </target>
+    
+  <target name="build.deploy">
+    <antcall target="build.deploy.war"/>
+    <antcall target="build.deploy.class"/>
+  </target>
+    
+  <target name="build.deploy.class" if="mode.class">
+    <ant dir="${base.src}" target="copy.files" inheritAll="true" inheritRefs="true" />
+    <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" />
+    <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8"/>
+  </target>
+    
+  <target name="build.deploy.war" if="mode.war">
+    <antcall target="war"/>
   </target>
 
   <target name="if.restart.tomcat" if="dorestart">
