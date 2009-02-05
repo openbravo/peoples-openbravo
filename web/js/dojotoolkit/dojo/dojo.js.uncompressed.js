@@ -17912,7 +17912,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
 * @param {XML Structure} data - data structure
 * @param {EventHandler} evt - event handler
 */
-  showColumnTotals: function(type, data, evt) {
+  showColumnTotals: function(data, evt) {
     this.lastAddition = openbravo.widget.DataGrid.html.getContentAsString(data.getElementsByTagName('total')[0]);
     window.status = parseFloat(this.lastAddition);
   },
