@@ -241,10 +241,11 @@ public class WindowTabs {
     aux.push(tabsAux[pos]);
     final String actualLevel = tabsAux[pos].tablevel;
     for (int i = pos + 1; i < tabsAux.length; i++) {
-      if (tabsAux[pos].tablevel.equals(tabsAux[i].tablevel))
+      if (tabsAux[pos].tablevel.equals(tabsAux[i].tablevel) && tabsAux[i].isactive.equals("Y"))
         aux.push(tabsAux[i]);
       else if (Integer.valueOf(tabsAux[pos].tablevel).intValue() > Integer.valueOf(
-          tabsAux[i].tablevel).intValue())
+          tabsAux[i].tablevel).intValue()
+          || tabsAux[i].isactive.equals("N"))
         break;
     }
     int nextPos = -1;
@@ -252,10 +253,11 @@ public class WindowTabs {
     while (!aux.empty())
       result.push(aux.pop());
     for (int i = pos - 1; i >= 0; i--) {
-      if (tabsAux[pos].tablevel.equals(tabsAux[i].tablevel))
+      if (tabsAux[pos].tablevel.equals(tabsAux[i].tablevel) && tabsAux[i].isactive.equals("Y"))
         result.push(tabsAux[i]);
       else if (Integer.valueOf(tabsAux[pos].tablevel).intValue() > Integer.valueOf(
-          tabsAux[i].tablevel).intValue()) {
+          tabsAux[i].tablevel).intValue()
+          || tabsAux[i].isactive.equals("N")) {
         nextPos = i;
         break;
       }

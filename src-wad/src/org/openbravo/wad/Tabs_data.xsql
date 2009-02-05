@@ -311,4 +311,35 @@
       </Sql>
       <Parameter name="adFormId"/>
   </SqlMethod>
+  
+  <SqlMethod name="isTabActive" type="preparedStatement" return="boolean">
+      <Sql><![CDATA[
+        SELECT COUNT(*) as ad_tab_id
+          FROM AD_TAB
+         WHERE AD_TAB_ID = ?
+           AND ISACTIVE = 'Y' 
+        ]]>
+      </Sql>
+      <Parameter name="adTabId"/>
+  </SqlMethod>
+  
+  <SqlMethod name="selectParentTab" type="preparedStatement" return="string">
+      <Sql><![CDATA[
+        select t.ad_tab_id
+         from ad_tab t, ad_tab t1
+        where t1.ad_window_id = t.ad_window_id
+          and t1.ad_tab_id = ?
+          and t.seqno < t1.seqno
+          and t.tablevel < t1.tablevel
+          and t.seqno = (select max(t2.seqno)
+                           from ad_tab t2, ad_tab t3
+                          where t3.ad_window_id = t2.ad_window_id
+                            and t3.ad_tab_id = t1.ad_tab_id
+                            and t2.seqno < t3.seqno
+                            and t2.tablevel < t3.tablevel) 
+        ]]>
+      </Sql>
+      <Parameter name="adTabId"/>
+  </SqlMethod>
+  
 </SqlClass>

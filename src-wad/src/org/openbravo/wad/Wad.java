@@ -397,11 +397,14 @@ public class Wad extends DefaultHandler {
           log4j.info("No windows to compile");
         if (generateTabs) {
           for (int i = 0; i < tabsData.length; i++) {
-            log4j.info("Processing Window: " + tabsData[i].windowname + " - Tab: "
-                + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
-            log4j.debug("Processing: " + tabsData[i].tabid);
-            wad.processTab(fileFin, fileFinReloads, tabsData[i], fileTrl, dirBaseTrl, translateStr,
-                fileBase, fileBaseAplication);
+            // don't compile if it is in an unactive branch
+            if (wad.allTabParentsActive(tabsData[i].tabid)) {
+              log4j.info("Processing Window: " + tabsData[i].windowname + " - Tab: "
+                  + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
+              log4j.debug("Processing: " + tabsData[i].tabid);
+              wad.processTab(fileFin, fileFinReloads, tabsData[i], fileTrl, dirBaseTrl,
+                  translateStr, fileBase, fileBaseAplication);
+            }
           }
         }
       }
@@ -411,6 +414,21 @@ public class Wad extends DefaultHandler {
       throw new Exception(e);
     } finally {
       wad.pool.destroy();
+    }
+  }
+
+  private boolean allTabParentsActive(String tabId) {
+    try {
+      if (!TabsData.isTabActive(pool, tabId))
+        return false;
+      else {
+        String parentTabId = TabsData.selectParentTab(pool, tabId);
+        if (parentTabId != null && !parentTabId.equals(""))
+          return allTabParentsActive(parentTabId);
+      }
+      return true;
+    } catch (Exception e) {
+      return true;
     }
   }
 
