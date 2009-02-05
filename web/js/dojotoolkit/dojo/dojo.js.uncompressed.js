@@ -17578,14 +17578,14 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
             method: "POST",
             handleAs: "xml"
           };
+          var content = [];
           if (this.requestParams) {
             for (var param in this.requestParams) {
               content[param] = this.requestParams[param];
             }
           }
-          var content = [];
           content["action"] = "getIdsInRange";
-          content["minOffset"] = minValue + 1;
+          content["minOffset"] = minValue;
           content["maxOffset"] = maxValue;
           if (this.sortCols) {
             content["sort_cols"] = this.sortCols;
