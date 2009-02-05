@@ -49,7 +49,7 @@ public class ExportReferenceDataTask extends ReferenceDataTask {
       parameters.put(DataExportService.CLIENT_ID_PARAMETER_NAME, client.getId());
 
       log.info("Exporting client " + client.getName());
-      final String xml = DataExportService.getInstance().exportClientToXML(parameters);
+      final String xml = DataExportService.getInstance().exportClientToXML(parameters, false);
 
       final File exportFile = new File(exportDir, getExportFileName(client.getName()));
       if (exportFile.exists()) {

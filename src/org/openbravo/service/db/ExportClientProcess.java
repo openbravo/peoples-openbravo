@@ -77,6 +77,9 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
   public void execute(ProcessBundle bundle) throws Exception {
     try {
       final String clientId = (String) bundle.getParams().get("adClientId");
+      final String exportAuditInfoStr = (String) bundle.getParams().get("exportauditinfo");
+      final boolean exportAuditInfo = exportAuditInfoStr != null
+          && exportAuditInfoStr.equalsIgnoreCase("Y");
       if (clientId == null) {
         throw new OBException(
             "Parameter adClientId not present, is the Client combo displayed in the window?");
@@ -88,7 +91,7 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
       final Map<String, Object> params = new HashMap<String, Object>();
       params.put(DataExportService.CLIENT_ID_PARAMETER_NAME, clientId);
       log.debug("Reading data from database into in-mem xml string");
-      final String xml = DataExportService.getInstance().exportClientToXML(params);
+      final String xml = DataExportService.getInstance().exportClientToXML(params, exportAuditInfo);
       log.debug("Done reading data into in-mem xml string");
 
       final Client client = OBDal.getInstance().get(Client.class, clientId);

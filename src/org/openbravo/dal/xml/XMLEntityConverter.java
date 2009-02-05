@@ -102,6 +102,8 @@ public class XMLEntityConverter implements OBNotSingleton {
   // organization in this object are null
   private boolean optionClientImport = false;
 
+  private boolean optionImportAuditInfo = false;
+
   // process stops at 20 errors
   private int noOfErrors = 0;
 
@@ -227,8 +229,8 @@ public class XMLEntityConverter implements OBNotSingleton {
         log.debug(">>> Exporting property " + p.getName());
 
         // TODO: make this option controlled
-        final boolean isNotImportableProperty = p.isTransient(bob) || p.isAuditInfo()
-            || p.isInactive();
+        final boolean isNotImportableProperty = p.isTransient(bob)
+            || (p.isAuditInfo() && !isOptionImportAuditInfo()) || p.isInactive();
         if (isNotImportableProperty) {
           log.debug("Property " + p + " is inactive, transient or auditinfo, " + "ignoring it");
           continue;
@@ -626,5 +628,13 @@ public class XMLEntityConverter implements OBNotSingleton {
 
   public void setEntityResolver(EntityResolver entityResolver) {
     this.entityResolver = entityResolver;
+  }
+
+  public boolean isOptionImportAuditInfo() {
+    return optionImportAuditInfo;
+  }
+
+  public void setOptionImportAuditInfo(boolean optionImportAuditInfo) {
+    this.optionImportAuditInfo = optionImportAuditInfo;
   }
 }

@@ -73,6 +73,9 @@ public class EntityXMLConverter implements OBNotSingleton {
   // should transient info also be exported
   private boolean optionExportTransientInfo = true;
 
+  // should audit info also be exported
+  private boolean optionExportAuditInfo = true;
+
   // controls if the client and organization property are exported to
   private boolean optionExportClientOrganizationReferences = false;
 
@@ -250,7 +253,7 @@ public class EntityXMLConverter implements OBNotSingleton {
       // not exported, a mandatory field should always be exported
       // auditinfo is mandatory but can be ignored for export
       // as it is always set
-      if (p.isAuditInfo() && !isOptionExportTransientInfo()) {
+      if (p.isAuditInfo() && !isOptionExportAuditInfo()) {
         continue;
       }
       final boolean isTransientField = p.isTransient(obObject);
@@ -530,5 +533,13 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   public void setClient(Client client) {
     this.client = client;
+  }
+
+  public boolean isOptionExportAuditInfo() {
+    return optionExportAuditInfo;
+  }
+
+  public void setOptionExportAuditInfo(boolean optionExportAuditInfo) {
+    this.optionExportAuditInfo = optionExportAuditInfo;
   }
 }

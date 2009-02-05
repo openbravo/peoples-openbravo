@@ -109,7 +109,7 @@ public class DataImportService implements OBSingleton {
       Module module) {
     try {
       final Document doc = DocumentHelper.parseText(xml);
-      return importDataFromXML(client, organization, doc, true, module, null, false);
+      return importDataFromXML(client, organization, doc, true, module, null, false, false);
     } catch (final Exception e) {
       throw new OBException(e);
     }
@@ -131,10 +131,12 @@ public class DataImportService implements OBSingleton {
    * 
    * @see #importDataFromXML(Client, Organization, String)
    */
-  public ImportResult importClientData(String xml, EntityXMLProcessor importProcessor) {
+  public ImportResult importClientData(String xml, EntityXMLProcessor importProcessor,
+      boolean importAuditInfo) {
     try {
       final Document doc = DocumentHelper.parseText(xml);
-      final ImportResult ir = importDataFromXML(null, null, doc, true, null, importProcessor, true);
+      final ImportResult ir = importDataFromXML(null, null, doc, true, null, importProcessor, true,
+          importAuditInfo);
 
       // do a special thing to update the clientlist and orglist columns
       // in the ad_role table with the newly created id's
@@ -151,7 +153,7 @@ public class DataImportService implements OBSingleton {
 
   private ImportResult importDataFromXML(Client client, Organization organization, Document doc,
       boolean createReferencesIfNotFound, Module module, EntityXMLProcessor importProcessor,
-      boolean isClientImport) {
+      boolean isClientImport, boolean importAuditInfo) {
 
     if (!isClientImport) {
       log.debug("Importing data for client " + client.getId()
@@ -170,6 +172,7 @@ public class DataImportService implements OBSingleton {
       xec.setClient(client);
       xec.setOrganization(organization);
       xec.setOptionClientImport(isClientImport);
+      xec.setOptionImportAuditInfo(importAuditInfo);
       xec.getEntityResolver().setOptionCreateReferencedIfNotFound(createReferencesIfNotFound);
       if (isClientImport) {
         xec.setEntityResolver(ClientImportEntityResolver.getInstance());

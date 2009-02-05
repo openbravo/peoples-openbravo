@@ -45,13 +45,16 @@ public class ImportClientProcess implements org.openbravo.scheduling.Process {
 
     try {
       final String newName = (String) bundle.getParams().get("name");
+      final String importAuditInfoStr = (String) bundle.getParams().get("importauditinfo");
+      final boolean importAuditInfo = importAuditInfoStr != null
+          && importAuditInfoStr.equalsIgnoreCase("Y");
       log.debug("Importing file using name " + newName);
 
       final String xml = DbUtility.readFile(getImportFile());
       final ClientImportProcessor importProcessor = new ClientImportProcessor();
       importProcessor.setNewName((newName != null ? newName.trim() : newName));
-      final ImportResult ir = DataImportService.getInstance()
-          .importClientData(xml, importProcessor);
+      final ImportResult ir = DataImportService.getInstance().importClientData(xml,
+          importProcessor, importAuditInfo);
       if (ir.hasErrorOccured()) {
         final StringBuilder sb = new StringBuilder();
         if (ir.getException() != null) {

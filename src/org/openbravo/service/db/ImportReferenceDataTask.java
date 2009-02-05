@@ -49,8 +49,8 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
       String xml = DbUtility.readFile(importFile);
       final ClientImportProcessor importProcessor = new ClientImportProcessor();
       importProcessor.setNewName(null);
-      final ImportResult ir = DataImportService.getInstance()
-          .importClientData(xml, importProcessor);
+      final ImportResult ir = DataImportService.getInstance().importClientData(xml,
+          importProcessor, false);
       xml = null; // set to null to make debugging faster
       if (ir.hasErrorOccured()) {
         if (ir.getException() != null) {
