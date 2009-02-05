@@ -419,7 +419,7 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("<tr>\n");
         strHtml.append("<td class=\"TextBox_ContentCell\">\n");
         strHtml
-            .append("<input dojoType=\"openbravo:DateTextbox\" type=\"text\" class=\"TextBox_btn_OneCell_width required\" ");
+            .append("<input dojoType=\"openbravo:DateTextbox\" type=\"text\" class=\"TextBox_btn_OneCell_width\" ");
         strHtml.append("displayFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat"))
             .append("\" ");
         strHtml.append("saveFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat")).append(
