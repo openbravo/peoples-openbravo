@@ -190,10 +190,11 @@ build.war: build a war file in the lib directory.
         <path refid="project.class.path" />
       </classpath>
     </workflow>
-    <javac srcdir="${base.src.gen}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
-      <classpath refid="project.class.path" />
-    </javac>
-    <javac srcdir="${base.src}" includes="org/openbravo/base/model/**, org/openbravo/dal/**, org/openbravo/base/structure/**, org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+    
+    <javac  destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+      <src path="${base.src.gen}"/>
+      <src path="${base.src}"/>
+      <include name="${base.src.gen}/**, org/openbravo/base/model/**, org/openbravo/dal/**, org/openbravo/base/structure/**, org/openbravo/service/dataset/**"/>
       <classpath refid="project.class.path" />
     </javac>
   </target>
@@ -217,11 +218,11 @@ build.war: build a war file in the lib directory.
         <path refid="project.class.path" />
       </classpath>
     </workflow>
-    <javac srcdir="${base.src.gen}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
-      <classpath refid="project.class.path" />
-    </javac>
-    <javac srcdir="${base.src}" includes="org/openbravo/base/model/**, org/openbravo/dal/**, org/openbravo/base/structure/**, org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
-      <classpath refid="project.class.path" />
+    <javac  destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+        <src path="${base.src.gen}"/>
+        <src path="${base.src}"/>
+        <include name="${base.src.gen}/**, org/openbravo/base/model/**, org/openbravo/dal/**, org/openbravo/base/structure/**, org/openbravo/service/dataset/**"/>
+        <classpath refid="project.class.path" />
     </javac>
   </target>
 
@@ -350,6 +351,7 @@ build.war: build a war file in the lib directory.
         <exclude name="**/eclipse/**" />
         <exclude name="**/setup-properties**" />
         <exclude name="*.template" />
+        <exclude name="checksums"/>
       </fileset>
     </copy>
     <copy todir="${base.context}/WEB-INF" encoding="UTF-8">
@@ -510,9 +512,6 @@ build.war: build a war file in the lib directory.
 
   <target name="build.quick.new.wad" if="new.wad">
     <antcall inheritall="true" inheritrefs="true" target="wad" />
-    <antcall inheritall="true" inheritrefs="true" target="compileSqlc" />
-    <antcall inheritall="true" inheritrefs="true" target="postsrc" />
-    <antcall inheritall="true" inheritrefs="true" target="translate" />
     <taskdef name="updateWADmd5" classname="org.openbravo.utils.WADCheckSumTask">
       <classpath refid="project.class.path" />
     </taskdef>
@@ -521,15 +520,14 @@ build.war: build a war file in the lib directory.
 
   <target name="build.quick.no.new.wad" unless="new.wad">
     <antcall inheritall="true" inheritrefs="true" target="wad.quick" />
-    <antcall inheritall="true" inheritrefs="true" target="compileSqlc" />
-    <antcall inheritall="true" inheritrefs="true" target="postsrc" />
-    <antcall inheritall="true" inheritrefs="true" target="translate" />
   </target>
 
   <target name="build.quick">
-
     <antcall inheritall="true" inheritrefs="true" target="build.quick.new.wad" />
     <antcall inheritall="true" inheritrefs="true" target="build.quick.no.new.wad" />
+    <antcall inheritall="true" inheritrefs="true" target="compileSqlc" />
+    <antcall inheritall="true" inheritrefs="true" target="postsrc" />
+    <antcall inheritall="true" inheritrefs="true" target="translate" />
     <antcall inheritall="true" inheritrefs="true" target="update.build.timestamp" />
   </target>
 
