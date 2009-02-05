@@ -27,7 +27,7 @@
    Cur_Elements RECORD;
 
 
- v_Combination      VARCHAR(255) := '';
+ v_Combination      VARCHAR(60) := '';
  v_Description      VARCHAR(255) := '';
  v_IsFullyQualified CHAR(1) := 'Y';
  v_Separator      CHAR(1);
@@ -197,8 +197,8 @@ BEGIN
   END IF;
 
   -- Construct Info Fields
-  v_Combination := COALESCE(v_Combination,'') || COALESCE(v_TempValue,'') || COALESCE(v_Separator,'');
-  v_Description := COALESCE(v_Description,'') || COALESCE(v_TempName,'') || COALESCE(v_Separator,'');
+  v_Combination := SUBSTR(COALESCE(v_Combination,'') || COALESCE(v_TempValue,'') || COALESCE(v_Separator,''),1,(CASE LENGTH(v_Combination) WHEN 0 THEN 1 ELSE LENGTH(v_Combination)-1 END));
+  v_Description := SUBSTR(COALESCE(v_Description,'') || COALESCE(v_TempName,'') || COALESCE(v_Separator,''),1,(CASE LENGTH(v_Description) WHEN 0 THEN 1 ELSE LENGTH(v_Description)-1 END));
   v_TempValue := '_';
   v_TempName := '_';
  END LOOP;
@@ -211,8 +211,8 @@ BEGIN
  END IF;
 
  --  Finish
- :new.Combination := SUBSTR(v_Combination,1,LENGTH(v_Combination)-1);
- :new.Description := SUBSTR(v_Description,1,LENGTH(v_Description)-1);
+ :new.Combination := SUBSTR(v_Combination,1,(CASE LENGTH(v_Combination) WHEN 0 THEN 1 ELSE LENGTH(v_Combination)-1 END));
+ :new.Description := SUBSTR(v_Description,1,(CASE LENGTH(v_Description) WHEN 0 THEN 1 ELSE LENGTH(v_Description)-1 END));
  :new.IsFullyQualified := v_IsFullyQualified;
  IF NOT INSERTING THEN
   IF NOT (:new.Combination=:old.Combination AND :new.Description=:old.Description) THEN
