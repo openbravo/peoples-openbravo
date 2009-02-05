@@ -34,6 +34,7 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.utils.FormatUtilities;
 
 public class EmailManager {
   private static Logger log4j = Logger.getLogger(EmailManager.class);
@@ -74,8 +75,8 @@ public class EmailManager {
 
     ClientAuthenticator authenticator = null;
     if (configuration.smtpserveraccount != null) {
-      authenticator = new ClientAuthenticator(configuration.smtpserveraccount,
-          configuration.smtpserverpassword);
+      authenticator = new ClientAuthenticator(configuration.smtpserveraccount, FormatUtilities
+          .encryptDecrypt(configuration.smtpserverpassword, false));
     }
 
     return Session.getInstance(props, authenticator);
