@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.DataSetColumn;
 import org.openbravo.model.ad.utility.DataSetTable;
+import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * Offers services around datasets. The main function is to retrieve DataSets and to determine which
@@ -67,6 +69,32 @@ public class DataSetService implements OBSingleton {
 
   public static void setInstance(DataSetService instance) {
     DataSetService.instance = instance;
+  }
+
+  /**
+   * Checks if objects of a {@link DataSetTable} of the {@link DataSet} have changed since a
+   * specific date. Note that this method does not use whereclauses or other filters defined in the
+   * dataSetTable. It checks all instances of the table of the DataSetTable.
+   * 
+   * @param dataSet
+   *          the DataSetTables of this dataSet are checked.
+   * @param afterDate
+   *          the time limit
+   * @return true if there is at least one object which has changed since afterDate, false
+   *         afterwards
+   */
+  public <T extends BaseOBObject> boolean hasChanged(DataSet dataSet, Date afterDate) {
+    for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
+      final Entity entity = ModelProvider.getInstance().getEntityByTableName(
+          dataSetTable.getTable().getTableName());
+      final OBCriteria<T> obc = OBDal.getInstance().createCriteria(entity.getName());
+      obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
+      // todo: count is slower than exists, is exists possible?
+      if (obc.count() > 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -118,7 +146,7 @@ public class DataSetService implements OBSingleton {
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
     obc.add(Expression.eq(DataSet.PROPERTY_VALUE, value));
     final List<DataSet> ds = obc.list();
-    //Check.isTrue(ds.size() > 0, "There is no DataSet with name " + value);
+    // Check.isTrue(ds.size() > 0, "There is no DataSet with name " + value);
     if (ds.size() == 0) {
       // TODO: throw an exception?
       return null;

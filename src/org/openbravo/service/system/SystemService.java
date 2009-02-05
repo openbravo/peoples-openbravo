@@ -25,16 +25,12 @@ import java.util.List;
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
-import org.openbravo.model.ad.utility.DataSet;
-import org.openbravo.model.ad.utility.DataSetTable;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
@@ -70,32 +66,6 @@ public class SystemService implements OBSingleton {
   public boolean hasChanged(Class<?>[] clzs, Date afterDate) {
     for (Class<?> clz : clzs) {
       final OBCriteria<?> obc = OBDal.getInstance().createCriteria((Class<BaseOBObject>) clz);
-      obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
-      // todo: count is slower than exists, is exists possible?
-      if (obc.count() > 0) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Checks if objects of a {@link DataSetTable} of the {@link DataSet} have changed since a
-   * specific date. Note that this method does not use whereclauses or other filters defined in the
-   * dataSetTable. It checks all instances of the table of the DataSetTable.
-   * 
-   * @param dataSet
-   *          the DataSetTables of this dataSet are checked.
-   * @param afterDate
-   *          the time limit
-   * @return true if there is at least one object which has changed since afterDate, false
-   *         afterwards
-   */
-  public <T extends BaseOBObject> boolean hasChanged(DataSet dataSet, Date afterDate) {
-    for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
-      final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-          dataSetTable.getTable().getTableName());
-      final OBCriteria<T> obc = OBDal.getInstance().createCriteria(entity.getName());
       obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
       // todo: count is slower than exists, is exists possible?
       if (obc.count() > 0) {
