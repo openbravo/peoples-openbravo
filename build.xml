@@ -648,13 +648,6 @@ compare.database.structure: refer to compare.database.structure target of databa
       <classpath refid="project.class.path" />
     </taskdef>
 
-    <taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-
-    <echo message="Validating Module..." />
-    <validateModules moduleJavaPackage="${module}" failOnError="false" userId="0" propertiesFile="${base.config}/Openbravo.properties" type="module" />
-
     <antcall target="obx.export.database" />
     <antcall target="obx.export.config.script" />
 
