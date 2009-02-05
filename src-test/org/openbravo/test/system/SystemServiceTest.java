@@ -27,6 +27,7 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.utility.DataSet;
+import org.openbravo.service.dataset.DataSetService;
 import org.openbravo.service.system.SystemService;
 import org.openbravo.test.base.BaseTest;
 
@@ -44,13 +45,13 @@ public class SystemServiceTest extends BaseTest {
     final List<DataSet> dss = OBDal.getInstance().createCriteria(DataSet.class).list();
     final Date now = new Date(System.currentTimeMillis());
     for (DataSet ds : dss) {
-      assertFalse(SystemService.getInstance().hasChanged(ds, now));
+      assertFalse(DataSetService.getInstance().hasChanged(ds, now));
     }
 
     // 600 days in the past
     final Date past = new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 600));
     for (DataSet ds : dss) {
-      assertTrue(SystemService.getInstance().hasChanged(ds, past));
+      assertTrue(DataSetService.getInstance().hasChanged(ds, past));
     }
     setErrorOccured(false);
   }
