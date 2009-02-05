@@ -241,9 +241,9 @@ public class ProductMultiple extends HttpSecureAppServlet {
               + " AND "
               + String
                   .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
-          data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory, Utility
-              .getContext(this, vars, "#User_Client", "ProductMultiple"), Utility.getSelectorOrgs(
-              this, vars, strOrg), strOrderBy, oraLimit, "");
+          data = ProductMultipleData.select(this, "ROWNUM", strKey, strName, strProductCategory,
+              Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), Utility
+                  .getSelectorOrgs(this, vars, strOrg), strOrderBy, oraLimit, "");
         } else {
           String pgLimit = strPageSize + " OFFSET " + strOffset;
           data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory, Utility
