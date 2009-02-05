@@ -4942,6 +4942,12 @@ table.Login_ToolBar_bg {
   clear: left;
 }
 
+.AddModule_Url_LinkHIDDEN {
+  height: 0px;
+  display: none;
+  visibility: collapse;
+}
+
 /*
  ****************
  * InstallationHistory
