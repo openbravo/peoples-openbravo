@@ -396,7 +396,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="database.lib" depends="init">
     <ant dir="${base.src.db}" target="jar" inheritAll="true" inheritRefs="true" />
-    <copy file="${base.src.db}/build/lib/dbmanager.jar" todir="${base.db}/lib" overwrite="true" failonerror="false" />
+    <copy file="${base.src.db}/build/lib/dbmanager.jar" todir="${base.db}/lib" failonerror="false" />
   </target>
 
   <target name="clean" depends="init">

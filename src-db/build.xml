@@ -38,7 +38,7 @@
     <delete dir="${build.db.docs}" failonerror="false" includeemptydirs="true" />
   </target>
 
-  <target name="compile" depends="clean, init">
+  <target name="compile" depends="init">
     <javac srcdir="${build.db.src}" destdir="${build.db.classes}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
       <classpath refid="db.class.path" />
     </javac>
