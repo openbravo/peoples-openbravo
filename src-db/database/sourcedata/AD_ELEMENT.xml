@@ -934,9 +934,9 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--149 COLUMNNAME-->
 <!--149-->              <COLUMNNAME><![CDATA[Acct2_Active]]></COLUMNNAME>
 <!--149 NAME-->
-<!--149-->              <NAME><![CDATA[Second Accounting Schema]]></NAME>
+<!--149-->              <NAME><![CDATA[Enable Second Accounting Schema]]></NAME>
 <!--149 PRINTNAME-->
-<!--149-->              <PRINTNAME><![CDATA[Second Accounting Schema]]></PRINTNAME>
+<!--149-->              <PRINTNAME><![CDATA[Enable Second Accounting Schema]]></PRINTNAME>
 <!--149 DESCRIPTION-->
 <!--149-->              <DESCRIPTION><![CDATA[For parallel reporting using different accounting currency or field selection]]></DESCRIPTION>
 <!--149 HELP-->
@@ -957,9 +957,9 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--150 COLUMNNAME-->
 <!--150-->              <COLUMNNAME><![CDATA[Acct3_Active]]></COLUMNNAME>
 <!--150 NAME-->
-<!--150-->              <NAME><![CDATA[Third Accounting Schema]]></NAME>
+<!--150-->              <NAME><![CDATA[Enable Third Accounting Schema]]></NAME>
 <!--150 PRINTNAME-->
-<!--150-->              <PRINTNAME><![CDATA[Third Accounting Schema]]></PRINTNAME>
+<!--150-->              <PRINTNAME><![CDATA[Enable Third Accounting Schema]]></PRINTNAME>
 <!--150 DESCRIPTION-->
 <!--150-->              <DESCRIPTION><![CDATA[For parallel reporting using different accounting currency or field selection]]></DESCRIPTION>
 <!--150 HELP-->
@@ -2813,7 +2813,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--262 COLUMNNAME-->
 <!--262-->              <COLUMNNAME><![CDATA[Date1]]></COLUMNNAME>
 <!--262 NAME-->
-<!--262-->              <NAME><![CDATA[Non Business Day]]></NAME>
+<!--262-->              <NAME><![CDATA[Non Business Day Date]]></NAME>
 <!--262 PRINTNAME-->
 <!--262-->              <PRINTNAME><![CDATA[Date]]></PRINTNAME>
 <!--262 DESCRIPTION-->
@@ -5717,9 +5717,9 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--479 COLUMNNAME-->
 <!--479-->              <COLUMNNAME><![CDATA[Org_ID]]></COLUMNNAME>
 <!--479 NAME-->
-<!--479-->              <NAME><![CDATA[Organization]]></NAME>
+<!--479-->              <NAME><![CDATA[Default Organization]]></NAME>
 <!--479 PRINTNAME-->
-<!--479-->              <PRINTNAME><![CDATA[Organization]]></PRINTNAME>
+<!--479-->              <PRINTNAME><![CDATA[Default Organization]]></PRINTNAME>
 <!--479 DESCRIPTION-->
 <!--479-->              <DESCRIPTION><![CDATA[Organizational entity within client]]></DESCRIPTION>
 <!--479 HELP-->
@@ -9479,9 +9479,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--950 COLUMNNAME-->
 <!--950-->              <COLUMNNAME><![CDATA[PaymentRulePO]]></COLUMNNAME>
 <!--950 NAME-->
-<!--950-->              <NAME><![CDATA[Form of Payment]]></NAME>
+<!--950-->              <NAME><![CDATA[PO Form of Payment]]></NAME>
 <!--950 PRINTNAME-->
-<!--950-->              <PRINTNAME><![CDATA[Payment Rule]]></PRINTNAME>
+<!--950-->              <PRINTNAME><![CDATA[PO Form of Payment]]></PRINTNAME>
 <!--950 DESCRIPTION-->
 <!--950-->              <DESCRIPTION><![CDATA[The method used to pay the request.]]></DESCRIPTION>
 <!--950 HELP-->
@@ -11302,9 +11302,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1100 COLUMNNAME-->
 <!--1100-->              <COLUMNNAME><![CDATA[IsBankAccount]]></COLUMNNAME>
 <!--1100 NAME-->
-<!--1100-->              <NAME><![CDATA[Bank Account]]></NAME>
+<!--1100-->              <NAME><![CDATA[Is Bank Account]]></NAME>
 <!--1100 PRINTNAME-->
-<!--1100-->              <PRINTNAME><![CDATA[Bank Account]]></PRINTNAME>
+<!--1100-->              <PRINTNAME><![CDATA[Is Bank Account]]></PRINTNAME>
 <!--1100 DESCRIPTION-->
 <!--1100-->              <DESCRIPTION><![CDATA[A monetary account of funds held in a recognized banking institution.]]></DESCRIPTION>
 <!--1100 HELP-->
@@ -14820,9 +14820,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1448 COLUMNNAME-->
 <!--1448-->              <COLUMNNAME><![CDATA[Withholding_Acct]]></COLUMNNAME>
 <!--1448 NAME-->
-<!--1448-->              <NAME><![CDATA[Withholding]]></NAME>
+<!--1448-->              <NAME><![CDATA[Withholding Account]]></NAME>
 <!--1448 PRINTNAME-->
-<!--1448-->              <PRINTNAME><![CDATA[Withholding]]></PRINTNAME>
+<!--1448-->              <PRINTNAME><![CDATA[Withholding Account]]></PRINTNAME>
 <!--1448 DESCRIPTION-->
 <!--1448-->              <DESCRIPTION><![CDATA[not part of task]]></DESCRIPTION>
 <!--1448 HELP-->
@@ -16466,9 +16466,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1576 COLUMNNAME-->
 <!--1576-->              <COLUMNNAME><![CDATA[PO_PaymentTerm_ID]]></COLUMNNAME>
 <!--1576 NAME-->
-<!--1576-->              <NAME><![CDATA[Payment Terms]]></NAME>
+<!--1576-->              <NAME><![CDATA[PO Payment Terms]]></NAME>
 <!--1576 PRINTNAME-->
-<!--1576-->              <PRINTNAME><![CDATA[Payment Term]]></PRINTNAME>
+<!--1576-->              <PRINTNAME><![CDATA[PO Payment Term]]></PRINTNAME>
 <!--1576 DESCRIPTION-->
 <!--1576-->              <DESCRIPTION><![CDATA[The setup and timing defined to complete a specified payment.]]></DESCRIPTION>
 <!--1576 HELP-->
@@ -20483,11 +20483,11 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1988 COLUMNNAME-->
 <!--1988-->              <COLUMNNAME><![CDATA[A_Country]]></COLUMNNAME>
 <!--1988 NAME-->
-<!--1988-->              <NAME><![CDATA[Country]]></NAME>
+<!--1988-->              <NAME><![CDATA[Country Name]]></NAME>
 <!--1988 PRINTNAME-->
-<!--1988-->              <PRINTNAME><![CDATA[Country]]></PRINTNAME>
+<!--1988-->              <PRINTNAME><![CDATA[Country Name]]></PRINTNAME>
 <!--1988 DESCRIPTION-->
-<!--1988-->              <DESCRIPTION><![CDATA[Country]]></DESCRIPTION>
+<!--1988-->              <DESCRIPTION><![CDATA[Country Name]]></DESCRIPTION>
 <!--1988 HELP-->
 <!--1988-->              <HELP><![CDATA[Account Country Name]]></HELP>
 <!--1988 AD_MODULE_ID-->
@@ -30190,9 +30190,9 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800520 COLUMNNAME-->
 <!--800520-->              <COLUMNNAME><![CDATA[PO_Fixmonthday]]></COLUMNNAME>
 <!--800520 NAME-->
-<!--800520-->              <NAME><![CDATA[Maturity Date 1]]></NAME>
+<!--800520-->              <NAME><![CDATA[PO Maturity Date 1]]></NAME>
 <!--800520 PRINTNAME-->
-<!--800520-->              <PRINTNAME><![CDATA[Fix month day]]></PRINTNAME>
+<!--800520-->              <PRINTNAME><![CDATA[PO Fix month day]]></PRINTNAME>
 <!--800520 DESCRIPTION-->
 <!--800520-->              <DESCRIPTION><![CDATA[The day of the month that invoices are due.   3 maturity dates can be defined.]]></DESCRIPTION>
 <!--800520 HELP-->
@@ -30213,9 +30213,9 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800521 COLUMNNAME-->
 <!--800521-->              <COLUMNNAME><![CDATA[PO_Fixmonthday2]]></COLUMNNAME>
 <!--800521 NAME-->
-<!--800521-->              <NAME><![CDATA[Maturity Date 2]]></NAME>
+<!--800521-->              <NAME><![CDATA[PO Maturity Date 2]]></NAME>
 <!--800521 PRINTNAME-->
-<!--800521-->              <PRINTNAME><![CDATA[Fix month day 2]]></PRINTNAME>
+<!--800521-->              <PRINTNAME><![CDATA[PO Fix month day 2]]></PRINTNAME>
 <!--800521 DESCRIPTION-->
 <!--800521-->              <DESCRIPTION><![CDATA[Day of the month of the due date]]></DESCRIPTION>
 <!--800521 HELP-->
@@ -30236,9 +30236,9 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800522 COLUMNNAME-->
 <!--800522-->              <COLUMNNAME><![CDATA[PO_Fixmonthday3]]></COLUMNNAME>
 <!--800522 NAME-->
-<!--800522-->              <NAME><![CDATA[Maturity Date 3]]></NAME>
+<!--800522-->              <NAME><![CDATA[PO Maturity Date 3]]></NAME>
 <!--800522 PRINTNAME-->
-<!--800522-->              <PRINTNAME><![CDATA[Fix month day 3]]></PRINTNAME>
+<!--800522-->              <PRINTNAME><![CDATA[PO Fix month day 3]]></PRINTNAME>
 <!--800522 DESCRIPTION-->
 <!--800522-->              <DESCRIPTION><![CDATA[Day of the month of the due date]]></DESCRIPTION>
 <!--800522 HELP-->
@@ -35982,9 +35982,9 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800819 COLUMNNAME-->
 <!--800819-->              <COLUMNNAME><![CDATA[Bank_Name]]></COLUMNNAME>
 <!--800819 NAME-->
-<!--800819-->              <NAME><![CDATA[Name]]></NAME>
+<!--800819-->              <NAME><![CDATA[Bank Name]]></NAME>
 <!--800819 PRINTNAME-->
-<!--800819-->              <PRINTNAME><![CDATA[Name]]></PRINTNAME>
+<!--800819-->              <PRINTNAME><![CDATA[Bank Name]]></PRINTNAME>
 <!--800819 DESCRIPTION-->
 <!--800819-->              <DESCRIPTION><![CDATA[Name of the bank]]></DESCRIPTION>
 <!--800819 HELP-->
@@ -43166,9 +43166,9 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--F6D57D6135DA4C4B9FF73062A73E020E COLUMNNAME-->
 <!--F6D57D6135DA4C4B9FF73062A73E020E-->              <COLUMNNAME><![CDATA[AcctDescription]]></COLUMNNAME>
 <!--F6D57D6135DA4C4B9FF73062A73E020E NAME-->
-<!--F6D57D6135DA4C4B9FF73062A73E020E-->              <NAME><![CDATA[Description]]></NAME>
+<!--F6D57D6135DA4C4B9FF73062A73E020E-->              <NAME><![CDATA[Accounting entry Description]]></NAME>
 <!--F6D57D6135DA4C4B9FF73062A73E020E PRINTNAME-->
-<!--F6D57D6135DA4C4B9FF73062A73E020E-->              <PRINTNAME><![CDATA[Description]]></PRINTNAME>
+<!--F6D57D6135DA4C4B9FF73062A73E020E-->              <PRINTNAME><![CDATA[Accounting entry Description]]></PRINTNAME>
 <!--F6D57D6135DA4C4B9FF73062A73E020E DESCRIPTION-->
 <!--F6D57D6135DA4C4B9FF73062A73E020E-->              <DESCRIPTION><![CDATA[Description of the accounting entry]]></DESCRIPTION>
 <!--F6D57D6135DA4C4B9FF73062A73E020E HELP-->
