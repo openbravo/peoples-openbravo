@@ -9434,15 +9434,15 @@
     <iBANNoDigits/>
     <iBANCountry/>
   </Country>
-  <Country id="235" identifier="Republic of Macedonia">
+  <Country id="235" identifier="Macedonia, The Former Yugoslav Republic Of">
     <id>235</id>
     <isActive>true</isActive>
     <created transient="true">2009-01-20T11:29:22.0Z</created>
     <createdBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
     <updated transient="true">2009-01-20T11:29:22.0Z</updated>
     <updatedBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
-    <name>Republic of Macedonia</name>
-    <description>Republic of Macedonia</description>
+    <name>Macedonia, The Former Yugoslav Republic Of</name>
+    <description>Macedonia, The Former Yugoslav Republic Of</description>
     <countryCode>MK</countryCode>
     <hasRegion>false</hasRegion>
     <regionName>State</regionName>
@@ -9756,15 +9756,15 @@
     <iBANNoDigits/>
     <iBANCountry/>
   </Country>
-  <Country id="249" identifier="Moldova Republic Of">
+  <Country id="249" identifier="Moldova">
     <id>249</id>
     <isActive>true</isActive>
     <created transient="true">2009-01-20T11:29:22.0Z</created>
     <createdBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
     <updated transient="true">2009-01-20T11:29:22.0Z</updated>
     <updatedBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
-    <name>Moldova Republic Of</name>
-    <description>Moldova Republic Of</description>
+    <name>Moldova</name>
+    <description>Moldova</description>
     <countryCode>MD</countryCode>
     <hasRegion>false</hasRegion>
     <regionName>State</regionName>
@@ -10538,15 +10538,15 @@
     <iBANNoDigits/>
     <iBANCountry/>
   </Country>
-  <Country id="284" identifier="Reunion">
+  <Country id="284" identifier="Réunion">
     <id>284</id>
     <isActive>true</isActive>
     <created transient="true">2009-01-20T11:29:22.0Z</created>
     <createdBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
     <updated transient="true">2009-01-20T11:29:22.0Z</updated>
     <updatedBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
-    <name>Reunion</name>
-    <description>Reunion</description>
+    <name>Réunion</name>
+    <description>Réunion</description>
     <countryCode>RE</countryCode>
     <hasRegion>false</hasRegion>
     <regionName>State</regionName>
@@ -11228,15 +11228,15 @@
     <iBANNoDigits/>
     <iBANCountry/>
   </Country>
-  <Country id="316" identifier="Taiwan">
+  <Country id="316" identifier="Taiwan, Province Of China">
     <id>316</id>
     <isActive>true</isActive>
     <created transient="true">2009-01-20T11:29:22.0Z</created>
     <createdBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
     <updated transient="true">2009-01-20T11:29:22.0Z</updated>
     <updatedBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
-    <name>Taiwan</name>
-    <description>Taiwan</description>
+    <name>Taiwan, Province Of China</name>
+    <description>Taiwan, Province Of China</description>
     <countryCode>TW</countryCode>
     <hasRegion>false</hasRegion>
     <regionName>State</regionName>
@@ -11941,15 +11941,15 @@
     <iBANNoDigits/>
     <iBANCountry/>
   </Country>
-  <Country id="349" identifier="Republic of Serbia">
+  <Country id="349" identifier="Serbia">
     <id>349</id>
     <isActive>true</isActive>
     <created transient="true">2009-01-20T11:29:22.0Z</created>
     <createdBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
     <updated transient="true">2009-01-20T11:29:22.0Z</updated>
     <updatedBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
-    <name>Republic of Serbia</name>
-    <description>Republic of Serbia</description>
+    <name>Serbia</name>
+    <description>Serbia</description>
     <countryCode>RS</countryCode>
     <hasRegion>false</hasRegion>
     <regionName>State</regionName>
