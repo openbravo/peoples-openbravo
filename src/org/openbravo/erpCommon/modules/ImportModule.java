@@ -170,6 +170,8 @@ public class ImportModule {
           addLog(moduleName + " " + version + " is not an update to "
               + " already installed version " + installedVersion, MSG_WARN);
         }
+      } else {
+        return true;
       }
     }
     return isUpdate;
