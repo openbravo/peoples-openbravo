@@ -372,16 +372,43 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="build.web.folder">
-    <delete includeEmptyDirs="true" dir="${base.context}/web/skins" quiet="yes" />
-    <mkdir dir="${base.context}/web" />
-
     <copy todir="${base.context}/web" encoding="UTF-8">
       <fileset dir="${base.web}">
         <include name="*/**" />
         <exclude name="skins/**" />
       </fileset>
     </copy>
+    
+    <taskdef name="CheckSumCondition" classname="org.openbravo.utils.CheckSumCondition">
+        <classpath refid="project.class.path" />
+      </taskdef>
+    
+    <CheckSumCondition obDir="${basedir}/.."
+                       type="md5.skins"
+                       property="changes.in.md5.skins"/>
+    <condition property="do.skins">
+      <or>
+        <istrue value="${changes.in.md5.skins}" />
+        <not>
+          <istrue value="${quick.mode}"/>
+        </not>
+      </or>
+    </condition>
+    
+    <antcall target="build.web.folder.skins"  inheritAll="true" inheritrefs="true" />
+    
+    <condition property="generateSpritesBool">
+        <istrue value="${generateSprites}" />
+    </condition>
+    <antcall target="generate.sprites" inheritAll="true" inheritrefs="true" />
+    <antcall target="minimizeJSandCSS" inheritAll="true" inheritrefs="true" />
+  </target>
+    
 
+  <target name="build.web.folder.skins" if="do.skins">
+
+    <delete includeEmptyDirs="true" dir="${base.context}/web/skins" quiet="yes" />
+    <mkdir dir="${base.context}/web" />
     <mkdir dir="${base.context}/web/skins" />
     <mkdir dir="${base.context}/web/skins/ltr" />
     <copy todir="${base.context}/web/skins/ltr" encoding="UTF-8">
@@ -418,11 +445,7 @@ build.war: build a war file in the lib directory.
       <arg line="${base.context}/web/skins/rtl ${base.context}/web/skins/ltr ${base.web}/skins" />
       <classpath refid="project.class.path" />
     </java>
-    <condition property="generateSpritesBool">
-      <istrue value="${generateSprites}" />
-    </condition>
-    <antcall target="generate.sprites" inheritAll="true" inheritrefs="true" />
-    <antcall target="minimizeJSandCSS" inheritAll="true" inheritrefs="true" />
+    
   </target>
 
   <target name="generate.sprites" description="Performs CSS sprite processing" if="generateSpritesBool">

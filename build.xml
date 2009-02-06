@@ -111,6 +111,8 @@ compare.database.structure: refer to compare.database.structure target of databa
     </not>
   </condition>
 
+
+ 
   <condition property="deploy.mode" value="class">
     <not>
       <isset property="${deploy.mode}" />
@@ -225,6 +227,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="build.quick" depends="init">
+    <property name="quick.mode" value="true"/>
     <antcall target="update.database" />
 
     <ant dir="${base.src}" target="build.quick" inheritAll="true" inheritRefs="true" />
@@ -360,7 +363,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="copy.core.lib">
-    <copy file="${base.src.core}/lib/openbravo-core.jar" todir="${base.lib}/runtime" overwrite="true" failonerror="false" />
+    <copy file="${base.src.core}/lib/openbravo-core.jar" todir="${base.lib}/runtime" failonerror="false" />
   </target>
 
   <target name="eclipse.wad.lib" depends="init">
@@ -677,7 +680,8 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="test">
-    <echo message="testing..." />
+    <echo message="${test.md5.skins}" />
+    
   </target>
 
   <target name="setup.check.os">
@@ -748,4 +752,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <chmod file="config/setup-properties-${osname}${osarch}.${bin.ext}" perm="+x" />
   </target>
 
+  <target name="test1">
+    
+</target>
 </project>

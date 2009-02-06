@@ -88,6 +88,9 @@ public class CheckSum {
     } else if (type.equals("md5.wad")) {
       String rt[] = { obDir + "src-wad/lib/openbravo-wad.jar" };
       return rt;
+    } else if (type.equals("md5.skins")) {
+      String rt[] = { obDir + "web/skins" };
+      return rt;
     } else {
       String rt[] = new String[0];
       return rt;
@@ -100,7 +103,7 @@ public class CheckSum {
     properties.store(file, "Checksums for build tasks comparation");
   }
 
-  private String calculateCheckSum(String type) {
+  public String calculateCheckSum(String type) {
     try {
       String[] files = getFiles(type);
       String checkSum = getCheckSum(files);
@@ -125,6 +128,10 @@ public class CheckSum {
     return calculateCheckSum("md5.wad");
   }
 
+  public String calculateCheckSkins() {
+    return calculateCheckSum("md5.sinks");
+  }
+
   public String getCheckSumDBSTructure() {
     return properties.getProperty("md5.db.structure", "0");
   }
@@ -137,9 +144,13 @@ public class CheckSum {
     return properties.getProperty("md5.wad", "0");
   }
 
+  public String getCheckSum(String type) {
+    return properties.getProperty(type, "0");
+  }
+
   public static void main(String[] args) {
     CheckSum cs = new CheckSum("/home/openbravo/ws/trunk/openbravo");
-    cs.calculateCheckSumWad();
+    cs.calculateCheckSum("md5.skins");
   }
 
 }

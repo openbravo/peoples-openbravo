@@ -21,15 +21,20 @@ package org.openbravo.utils;
 
 import org.apache.tools.ant.Task;
 
-public class WADCheckSumTask extends Task {
+public class CheckSumCondition extends Task {
+
   protected String obDir;
   protected String type;
+  protected String property;
 
   public void execute() {
     CheckSum cs = new CheckSum(obDir);
-    if (type == null || type.equals(""))
-      type = "md5.wad";
-    cs.calculateCheckSum(type);
+    // project.setProperty(property,
+    // !cs.getCheckSum(type).equals(cs.calculateCheckSum(type).toString());//
+
+    getProject().setProperty(property,
+        (!cs.getCheckSum(type).equals(cs.calculateCheckSum(type))) ? "true" : "false");
+    // return !cs.getCheckSum(type).equals(cs.calculateCheckSum(type));
   }
 
   public String getObDir() {
@@ -46,6 +51,14 @@ public class WADCheckSumTask extends Task {
 
   public void setType(String type) {
     this.type = type;
+  }
+
+  public String getProperty() {
+    return property;
+  }
+
+  public void setProperty(String property) {
+    this.property = property;
   }
 
 }
