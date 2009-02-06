@@ -99,6 +99,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="obx.export.CS" value="false" />
   <property name="chekPerms" value="false" />
   <property name="force" value="false" />
+  <property name="local" value="true" />
 
   <available file=".svn/entries" property="is.svn" />
 
@@ -228,7 +229,12 @@ compare.database.structure: refer to compare.database.structure target of databa
   <target name="build.quick" depends="init">
     <property name="quick.mode" value="true"/>
     <property name="onlyIfModified" value="true" />
-    <antcall target="update.database" />
+    <condition property="no.local">
+      <not>
+        <istrue value="${local}"/>
+      </not>
+    </condition>
+    <antcall target="update.database.if.no.local" />
 
     <ant dir="${base.src}" target="build.quick" inheritAll="true" inheritRefs="true" />
     
@@ -238,6 +244,10 @@ compare.database.structure: refer to compare.database.structure target of databa
       <istrue value="${restart}" />
     </condition>
     <antcall target="if.restart.tomcat" />
+  </target>
+  
+  <target name="update.database.if.no.local" if="no.local">
+    <antcall target="update.database" />
   </target>
 
   <target name="build.deploy">
