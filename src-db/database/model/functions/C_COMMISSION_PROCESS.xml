@@ -237,7 +237,7 @@
         ELSE
           IF(v_ListDetails='Y') THEN
             v_Cmd:='SELECT h.C_Currency_ID, l.LineNetAmt, l.QtyOrdered, '
-            || 'l.C_OrderLine_ID, NULL, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),0,60) '
+            || 'l.C_OrderLine_ID, NULL, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),1,60) '
             || 'FROM C_Order h, C_OrderLine l LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID '
             || 'WHERE h.C_Order_ID = l.C_Order_ID'
             || ' AND h.DocStatus IN (''CL'',''CO'')'
