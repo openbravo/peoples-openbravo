@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2008 Openbravo S.L.
+ * Copyright (C) 2008-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -73,17 +73,21 @@ public class OrgTree implements Serializable {
     int charAt_Old = 0;
     while (i < strOrgs.length()) {
       char c = strOrgs.charAt(i++);
-      if (c == ',') {
-        String AD_Org_ID = strOrgs.substring(charAt_Old + 1, i - 2);
+      if (c == ' ')
         charAt_Old = i;
-        orgTreeNode = new OrgTreeNode(AD_Org_ID);
-        nodeList.add(orgTreeNode);
-      }
-      // Get the last org of the string
-      if (i == strOrgs.length() - 1) {
-        String AD_Org_ID = strOrgs.substring(charAt_Old + 1, i);
-        orgTreeNode = new OrgTreeNode(AD_Org_ID);
-        nodeList.add(orgTreeNode);
+      else {
+        if (c == ',') {
+          String AD_Org_ID = strOrgs.substring(charAt_Old + 1, i - 2);
+          charAt_Old = i;
+          orgTreeNode = new OrgTreeNode(AD_Org_ID);
+          nodeList.add(orgTreeNode);
+        }
+        // Get the last org of the string
+        if (i == strOrgs.length() - 1) {
+          String AD_Org_ID = strOrgs.substring(charAt_Old + 1, i);
+          orgTreeNode = new OrgTreeNode(AD_Org_ID);
+          nodeList.add(orgTreeNode);
+        }
       }
     }
 

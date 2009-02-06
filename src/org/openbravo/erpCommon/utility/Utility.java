@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -428,7 +428,13 @@ public class Utility {
         try {
           window = org.openbravo.dal.service.OBDal.getInstance().get(Window.class, strWindow);
           if (window.getWindowType().equals("T")) {
-            return OrgTree.getTransactionAllowedOrgs(retValue);
+            String transactionalOrgs = OrgTree.getTransactionAllowedOrgs(retValue);
+            if (transactionalOrgs.equals(""))
+              // Will show no organizations into the organization's field of the transactional
+              // windows
+              return "'-1'";
+            else
+              return transactionalOrgs;
           } else {
             if ((accessLevel == 1) || (userLevel.equals("  O"))) { // No
               // *:

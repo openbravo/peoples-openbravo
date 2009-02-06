@@ -107,10 +107,6 @@ public class OrgTreeNode implements Serializable {
   }
 
   public OrganizationType getOrgType() {
-    if (serializedOrgTypeId != null) {
-      orgType = OBDal.getInstance().get(OrganizationType.class, serializedOrgTypeId);
-      serializedOrgTypeId = null;
-    }
     return orgType;
   }
 
