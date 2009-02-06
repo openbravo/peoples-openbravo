@@ -214,7 +214,7 @@
         ELSIF(v_DocBasisType='I') THEN
           IF(v_ListDetails='Y') THEN
             v_Cmd:='SELECT h.C_Currency_ID, l.LineNetAmt, l.QtyInvoiced, '
-            || 'NULL, l.C_InvoiceLine_ID, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),0,60) '
+            || 'NULL, l.C_InvoiceLine_ID, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),1,60) '
             || 'FROM C_Invoice h, C_InvoiceLine l LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID '
             || 'WHERE h.C_Invoice_ID = l.C_Invoice_ID'
             || ' AND h.DocStatus IN (''CL'',''CO'')'
