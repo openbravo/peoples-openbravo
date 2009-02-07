@@ -1042,7 +1042,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       PrintWriter out = response.getWriter();
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/EncryptedButtons").createXmlDocument();
 
-      if (<PARENT_TMP id="class">Almacen</PARENT_TMP>Data.check<FIELD_TMP id="EncryptedUpdateName2">button</FIELD_TMP>(this, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>).equals("0")) {
+      if (<PARENT_TMP id="class">Almacen</PARENT_TMP>Data.check<FIELD_TMP id="EncryptedUpdateName2">button</FIELD_TMP>(this, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>).equals("0")) {
         bdErrorGeneralPopUp(request, response,Utility.messageBD(this,"Error", vars.getLanguage()),Utility.messageBD(this,"SaveAndTry", vars.getLanguage()));
       } else {
         xmlDocument.setParameter("theme", vars.getTheme());
