@@ -226,8 +226,8 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src}" target="compile.complete" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="build.quick" depends="init">
-    <property name="quick.mode" value="true"/>
+  <target name="smartbuild" depends="init">
+    <property name="smart.mode" value="true"/>
     <property name="onlyIfModified" value="true" />
     <condition property="no.local">
       <not>
@@ -236,7 +236,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     </condition>
     <antcall target="update.database.if.no.local" />
 
-    <ant dir="${base.src}" target="build.quick" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
     
     <antcall target="build.deploy"/>
     <!-- only restart tomcat if the restart prop was set to true -->

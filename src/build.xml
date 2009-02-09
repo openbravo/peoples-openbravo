@@ -390,7 +390,7 @@ build.war: build a war file in the lib directory.
       <or>
         <istrue value="${changes.in.md5.skins}" />
         <not>
-          <istrue value="${quick.mode}"/>
+          <istrue value="${smart.mode}"/>
         </not>
       </or>
     </condition>
@@ -522,7 +522,7 @@ build.war: build a war file in the lib directory.
   </target>
 
 
-  <target name="build.quick.new.wad" if="new.wad">
+  <target name="smartbuild.new.wad" if="new.wad">
     <antcall inheritall="true" inheritrefs="true" target="wad" />
     <taskdef name="updateWADmd5" classname="org.openbravo.utils.WADCheckSumTask">
       <classpath refid="project.class.path" />
@@ -530,13 +530,13 @@ build.war: build a war file in the lib directory.
     <updateWADmd5 obDir="${basedir}/.." />
   </target>
 
-  <target name="build.quick.no.new.wad" unless="new.wad">
+  <target name="smartbuild.no.new.wad" unless="new.wad">
     <antcall inheritall="true" inheritrefs="true" target="wad.quick" />
   </target>
 
-  <target name="build.quick">
-    <antcall inheritall="true" inheritrefs="true" target="build.quick.new.wad" />
-    <antcall inheritall="true" inheritrefs="true" target="build.quick.no.new.wad" />
+  <target name="smartbuild">
+    <antcall inheritall="true" inheritrefs="true" target="smartbuild.new.wad" />
+    <antcall inheritall="true" inheritrefs="true" target="smartbuild.no.new.wad" />
     <antcall inheritall="true" inheritrefs="true" target="compileSqlc" />
     <antcall inheritall="true" inheritrefs="true" target="postsrc" />
     <antcall inheritall="true" inheritrefs="true" target="translate" />
