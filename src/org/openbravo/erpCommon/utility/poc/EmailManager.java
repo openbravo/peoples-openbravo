@@ -75,9 +75,13 @@ public class EmailManager {
 
     ClientAuthenticator authenticator = null;
     if (configuration.smtpserveraccount != null) {
-      authenticator = new ClientAuthenticator(configuration.smtpserveraccount, FormatUtilities
-          .encryptDecrypt(configuration.smtpserverpassword, false));
+      authenticator = new ClientAuthenticator(configuration.smtpserveraccount,
+          configuration.smtpserverpassword);
     }
+//    if (configuration.smtpserveraccount != null) {
+//      authenticator = new ClientAuthenticator(configuration.smtpserveraccount, FormatUtilities
+//          .encryptDecrypt(configuration.smtpserverpassword, false));
+//    }
 
     return Session.getInstance(props, authenticator);
   }
