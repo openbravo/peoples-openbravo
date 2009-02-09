@@ -51,7 +51,7 @@ BEGIN --BODY
     p_Currency := cur_parameter.C_Currency_ID;
     IF (Cur_Parameter.ParameterName = 'C_Budget_ID') THEN
       p_Budget_ID := Cur_Parameter.P_String;
-    ELSIF (Cur_Parameter.ParameterName = 'MA_ProcessPlan_ID') THEN
+    ELSIF (Cur_Parameter.ParameterName = 'MA_Processplan_ID') THEN
       p_ProcessPlan := Cur_Parameter.P_String;
     ELSIF (Cur_Parameter.ParameterName = 'CalcDate') THEN
       p_CalcDate := COALESCE(Cur_Parameter.P_Date, TRUNC(now()));
