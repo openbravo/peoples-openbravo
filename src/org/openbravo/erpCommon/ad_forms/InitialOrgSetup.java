@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -275,7 +276,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
           .append(SALTO_LINEA);
       m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "StartingOrg", vars.getLanguage()))
           .append(SALTO_LINEA);
-      if (!createOrg(vars, strOrganization, strOrgType, strParentOrg, strOrgUser, strcLocationId)) {
+      if (!createOrg(request, vars, strOrganization, strOrgType, strParentOrg, strOrgUser, strcLocationId)) {
         releaseRollbackConnection(conn);
         m_info.append(SALTO_LINEA).append(
             Utility.messageBD(this, "createOrgFailed", vars.getLanguage())).append(SALTO_LINEA);
@@ -406,7 +407,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       return true;
   }
 
-  public boolean createOrg(VariablesSecureApp vars, String orgName, String strOrgType,
+  public boolean createOrg(HttpServletRequest request, VariablesSecureApp vars, String orgName, String strOrgType,
       String strParentOrg, String userOrg, String strcLocationId) throws ServletException {
 
     Connection conn = null;
@@ -490,7 +491,9 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       vars.setSessionValue("#ORG_CLIENT", vars.getSessionValue("#ORG_CLIENT") + ", '" + AD_Org_ID
           + "'");
       vars.setSessionValue("#AccessibleOrgTree", vars.getSessionValue("#AccessibleOrgTree") + ", '"
-          + AD_Org_ID + "'");
+              + AD_Org_ID + "'");
+      vars.setSessionObject("#CompleteOrgTree", new OrgTree(((OrgTree)vars.getSessionObject("#CompleteOrgTree")).toString() + ", '"
+              + AD_Org_ID + "'"));
       OBContext.getOBContext().addWritableOrganization(AD_Org_ID);
       // * Create User-Role
 
@@ -1020,7 +1023,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the error. "" if there is no error
-   * 
+   *
    * @param vars
    * @param strOrganization
    * @param strClient
@@ -1111,7 +1114,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   * 
+   *
    * @param modules
    * @return
    */
