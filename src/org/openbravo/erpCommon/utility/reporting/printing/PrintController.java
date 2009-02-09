@@ -256,18 +256,21 @@ public class PrintController extends HttpSecureAppServlet {
                 .getClient(), report.getOrgId());
             boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep").booleanValue();
 
-            if ("".equals(senderAddress) || senderAddress == null) {
-              final OBError on = new OBError();
-              on.setMessage(Utility.messageBD(this, "No sender defined: Please go to client "
-                  + "configuration to complete de email configuration", vars.getLanguage()));
-              on.setTitle(Utility.messageBD(this, "Email Configuration Error", vars.getLanguage()));
-              on.setType("Error");
-              final String tabId = vars.getSessionValue("inpTabId");
-              vars.getStringParameter("tab");
-              vars.setMessage(tabId, on);
-              vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
-              printPageClosePopUpAndRefreshParent(response, vars);
-              throw new ServletException("Configuration Error no sender defined");
+            if (request.getServletPath().toLowerCase().indexOf("print.html") == -1) {
+              if ("".equals(senderAddress) || senderAddress == null) {
+                final OBError on = new OBError();
+                on.setMessage(Utility.messageBD(this, "No sender defined: Please go to client "
+                    + "configuration to complete de email configuration", vars.getLanguage()));
+                on.setTitle(Utility
+                    .messageBD(this, "Email Configuration Error", vars.getLanguage()));
+                on.setType("Error");
+                final String tabId = vars.getSessionValue("inpTabId");
+                vars.getStringParameter("tab");
+                vars.setMessage(tabId, on);
+                vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
+                printPageClosePopUpAndRefreshParent(response, vars);
+                throw new ServletException("Configuration Error no sender defined");
+              }
             }
 
             // check the different doc typeId's if all the selected
