@@ -20,8 +20,6 @@
 package org.openbravo.base.structure;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.BaseOBObjectDef;
@@ -57,10 +55,9 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
   // object should be preserved when it is imported
   private boolean newOBObject = false;
 
-  // contains all the data
-  // TODO: an important one: the propertynames used in the subclasses should
-  // be externalised so that always the same string instance is used.
-  private Map<String, Object> data = new HashMap<String, Object>();
+  // contains all the data, data is indexed by the index of the property
+  // in the entity, property.getIndexInEntity()
+  private Object[] data = null;;
 
   // computed once therefore an object type
   private Boolean isDerivedReadable;
@@ -74,7 +71,27 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
       log.error(ve.getMessage());
     }
     Check.isNotNull(value, "Null default values are not allowed");
-    data.put(propName, value);
+    setData(propName, value);
+  }
+
+  private Object getData(String propName) {
+    return getData(getEntity().getProperty(propName));
+  }
+
+  private Object getData(Property p) {
+    if (data == null) {
+      data = new Object[getEntity().getProperties().size()];
+      return null;
+    }
+    return data[p.getIndexInEntity()];
+  }
+
+  private void setData(String propName, Object value) {
+    if (data == null) {
+      data = new Object[getEntity().getProperties().size()];
+    }
+    final Property p = getEntity().getProperty(propName);
+    data[p.getIndexInEntity()] = value;
   }
 
   public Object getId() {
@@ -102,7 +119,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
   public Object get(String propName) {
     final Property p = getEntity().getProperty(propName);
     checkDerivedReadable(p);
-    return data.get(propName);
+    return getData(p);
   }
 
   /**
@@ -151,10 +168,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
    * @param value
    */
   public void setValue(String propName, Object value) {
-    if (value == null) {
-      data.remove(propName);
-    }
-    data.put(propName, value);
+    setData(propName, value);
   }
 
   /**
@@ -166,7 +180,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
    * @return the value
    */
   public Object getValue(String propName) {
-    return data.get(propName);
+    return getData(propName);
   }
 
   /**

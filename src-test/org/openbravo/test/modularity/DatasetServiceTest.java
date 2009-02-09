@@ -81,7 +81,7 @@ public class DatasetServiceTest extends BaseTest {
 
     for (final DataSet ds : dss) {
       final String xml = DataExportService.getInstance().exportDataSetToXML(ds, "0", parameters,
-          true, true, OBDal.getInstance().get(Client.class, "0"));
+          true, true, OBDal.getInstance().get(Client.class, "0"), true);
       System.err.println("DataSet " + ds.getName() + " exported " + xml.length() + " characters");
     }
     setErrorOccured(false);

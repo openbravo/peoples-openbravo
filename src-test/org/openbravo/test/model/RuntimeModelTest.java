@@ -44,6 +44,16 @@ public class RuntimeModelTest extends BaseTest {
     super.setUp();
   }
 
+  public void testDumpModel() {
+    for (Entity e : ModelProvider.getInstance().getModel()) {
+      System.err.println(">>>>>>>>>>>>>> " + e.getName() + " (" + e.getTableName()
+          + ") <<<<<<<<<<<<<<<<<");
+      for (Property p : e.getProperties()) {
+        System.err.println(p.getName() + " (" + p.getColumnName() + ")");
+      }
+    }
+  }
+
   public void testPK() {
     final ArrayList<Table> tablesWithoutPK = new ArrayList<Table>();
     for (final Table t : ModelProvider.getInstance().getTables()) {

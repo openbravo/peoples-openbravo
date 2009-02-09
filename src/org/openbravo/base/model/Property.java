@@ -83,6 +83,10 @@ public class Property {
 
   private Module module;
 
+  // keeps track of the index of this property in the entity.getProperties()
+  // gives a lot of performance/memory improvements when getting property values
+  private int indexInEntity;
+
   /**
    * Initializes this Property using the information from the Column.
    * 
@@ -870,5 +874,13 @@ public class Property {
 
   public void setNameOfColumn(String nameOfColumn) {
     this.nameOfColumn = nameOfColumn;
+  }
+
+  public int getIndexInEntity() {
+    return indexInEntity;
+  }
+
+  public void setIndexInEntity(int indexInEntity) {
+    this.indexInEntity = indexInEntity;
   }
 }

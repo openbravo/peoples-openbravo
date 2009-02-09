@@ -58,8 +58,8 @@ public class ClientExportImportTest extends XMLBaseTest {
       String xml = DbUtility.readFile(importFile);
       final ClientImportProcessor importProcessor = new ClientImportProcessor();
       importProcessor.setNewName(null);
-      final ImportResult ir = DataImportService.getInstance()
-          .importClientData(xml, importProcessor);
+      final ImportResult ir = DataImportService.getInstance().importClientData(xml,
+          importProcessor, false);
       xml = null; // set to null to make debugging faster
       if (ir.hasErrorOccured()) {
         if (ir.getException() != null) {
@@ -86,7 +86,7 @@ public class ClientExportImportTest extends XMLBaseTest {
     setUserContext("0");
     final Map<String, Object> parameters = new HashMap<String, Object>();
     parameters.put(DataExportService.CLIENT_ID_PARAMETER_NAME, clientId);
-    String xml = DataExportService.getInstance().exportClientToXML(parameters);
+    String xml = DataExportService.getInstance().exportClientToXML(parameters, false);
 
     try {
       final File f = new File("/tmp/export.xml");
@@ -103,8 +103,8 @@ public class ClientExportImportTest extends XMLBaseTest {
     final ClientImportProcessor importProcessor = new ClientImportProcessor();
     importProcessor.setNewName("" + System.currentTimeMillis());
     try {
-      final ImportResult ir = DataImportService.getInstance()
-          .importClientData(xml, importProcessor);
+      final ImportResult ir = DataImportService.getInstance().importClientData(xml,
+          importProcessor, false);
       xml = null;
       if (ir.getException() != null) {
         ir.getException().printStackTrace(System.err);

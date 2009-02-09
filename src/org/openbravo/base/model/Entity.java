@@ -116,6 +116,8 @@ public class Entity {
       p.setEntity(this);
       p.initializeFromColumn(c);
       properties.add(p);
+      p.setIndexInEntity(properties.size() - 1);
+
       propertiesByName.put(p.getName(), p);
       if (p.getColumnName() != null) {
         propertiesByColumnName.put(p.getColumnName().toLowerCase(), p);
@@ -168,6 +170,8 @@ public class Entity {
    */
   public void addProperty(Property property) {
     getProperties().add(property);
+    property.setIndexInEntity(getProperties().size() - 1);
+
     if (property.getColumnName() != null) {
       propertiesByColumnName.put(property.getColumnName().toLowerCase(), property);
     }
