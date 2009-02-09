@@ -103,5 +103,8 @@
       <foreign-key foreignTable="M_INOUTLINE" name="MINOUTLINE_MCOSTING">
         <reference local="M_INOUTLINE_ID" foreign="M_INOUTLINE_ID"/>
       </foreign-key>
+      <index name="M_COSTING_M_PRODUCT_ID" unique="false">
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
     </table>
   </database>
