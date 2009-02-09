@@ -80,10 +80,6 @@ public class ModuleValidator implements SystemValidator {
 
     final File moduleDir = new File(modulesDir, module.getJavaPackage());
     if (!moduleDir.exists()) {
-      result.addError(SystemValidationType.MODULE_ERROR,
-
-      "Module directory (" + moduleDir.getAbsolutePath()
-          + ") not found, has the module been installed?");
       return;
     }
 
@@ -107,7 +103,7 @@ public class ModuleValidator implements SystemValidator {
     if (module.getType().equals("T")) {
       boolean found = false;
       for (ModuleDependency md : module.getModuleDependencyList()) {
-        if (md.getModule().getId().equals("0") && md.isIncluded()) {
+        if (md.getDependentModule().getId().equals("0") && md.isIncluded()) {
           found = true;
           break;
         }
