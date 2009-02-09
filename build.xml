@@ -103,13 +103,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <available file=".svn/entries" property="is.svn" />
 
-  <checksum file="${base.src.wad}/lib/openbravo-wad.jar" algorithm="MD5" property="test.md5.wad" />
-
-  <condition property="new.wad">
-    <not>
-      <equals arg1="${test.md5.wad}" arg2="${md5.wad}" />
-    </not>
-  </condition>
+ 
 
 
  
@@ -229,6 +223,20 @@ compare.database.structure: refer to compare.database.structure target of databa
   <target name="smartbuild" depends="init">
     <property name="smart.mode" value="true"/>
     <property name="onlyIfModified" value="true" />
+    <antcall target="core.lib"/>
+    <antcall target="wad.lib"/>
+    
+      <checksum file="${base.src.wad}/lib/openbravo-wad.jar" algorithm="MD5" property="test.md5.wad"/>
+
+       <condition property="new.wad">
+         <not>
+           <equals arg1="${test.md5.wad}" arg2="${md5.wad}" />
+         </not>
+       </condition>
+    
+    <antcall target="trl.lib"/>
+    
+    
     <condition property="no.local">
       <not>
         <istrue value="${local}"/>
@@ -437,7 +445,9 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="install.source" depends="init,code.rev">
     <antcall target="database.lib" />
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
+    <antcall target="wad.lib" />
+    <antcall target="trl.lib" />
     <ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true" />
 
     <antcall target="compile.complete.deploy" />
@@ -457,7 +467,9 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="eclipse.install.source" depends="init,code.rev">
     <antcall target="database.lib" />
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
+    <antcall target="wad.lib" />
+    <antcall target="trl.lib" />
     <eclipse.incrementalBuild project="OpenbravoCore" kind="full" />
     <ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true" />
 
@@ -475,14 +487,14 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="create.database" depends="init,code.rev">
     <antcall target="database.lib" />
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true" />
     <antcall target="db.apply.modules.sampledata" />
   </target>
 
   <target name="update.database" depends="init,code.rev,generate.entities.quick">
     <antcall target="database.lib" />
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" target="update.database" inheritAll="true" inheritRefs="true" />
     <antcall target="db.apply.modules" />
     <antcall target="generate.entities.quick" />
@@ -490,60 +502,60 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="update.database.mod" depends="init,code.rev">
     <antcall target="database.lib" />
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" target="update.database.mod" inheritAll="true" inheritRefs="true" />
     <antcall target="db.apply.modules" />
   </target>
 
   <target name="update.customized.database" depends="init,code.rev">
     <antcall target="database.lib" />
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" target="update.customized.database" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="create.database.structure" depends="init">
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" target="create.database.structure" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="update.database.structure" depends="init">
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" target="update.database.structure" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="create.database.script" depends="init">
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" target="create.database.script" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="update.database.script" depends="init">
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" target="update.database.script" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="export.database" depends="init,code.rev">
     <antcall target="database.lib" />
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="export.database.structure" depends="init,code.rev">
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="export.config.script" depends="init,code.rev">
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" target="export.config.script" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="export.database.data" depends="init,code.rev">
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" target="export.database.data" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="import.database.data" depends="init,code.rev">
-    <antcall target="copy.core.lib" />
+    <antcall target="core.lib" />
     <ant dir="${base.db}" target="import.database.data" inheritAll="true" inheritRefs="true" />
   </target>
 
@@ -689,12 +701,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="src-diagnostics" target="check.all" />
   </target>
 
-  <target name="test">
-    <echo message="${test.md5.skins}" />
-    
-  </target>
-
-  <target name="setup.check.os">
+   <target name="setup.check.os">
     <condition property="osname" value="linux">
       <equals arg1="${os.name}" arg2="Linux" />
     </condition>
@@ -762,7 +769,4 @@ compare.database.structure: refer to compare.database.structure target of databa
     <chmod file="config/setup-properties-${osname}${osarch}.${bin.ext}" perm="+x" />
   </target>
 
-  <target name="test1">
-    
-</target>
 </project>
