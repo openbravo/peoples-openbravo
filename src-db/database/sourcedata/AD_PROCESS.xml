@@ -4297,7 +4297,7 @@
 <!--800005 DESCRIPTION-->
 <!--800005-->              <DESCRIPTION><![CDATA[Generate Sales Order From Project]]></DESCRIPTION>
 <!--800005 HELP-->
-<!--800005-->              <HELP><![CDATA[This process will create a new Sales Order header with the Business Partner in the project and the newly created price list. Lines are not created in this process, the must be added manually selecting the products using the associated price list.]]></HELP>
+<!--800005-->              <HELP><![CDATA[This process will create a new Sales Order, both header and lines, with the Business Partner of the project and the newly created price list.]]></HELP>
 <!--800005 ACCESSLEVEL-->
 <!--800005-->              <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--800005 ISUSERSTARTABLE-->
@@ -4312,6 +4312,8 @@
 <!--800005-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800005 ISJASPER-->
 <!--800005-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800005 ISEXTERNALSERVICE-->
+<!--800005-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800005 AD_MODULE_ID-->
 <!--800005-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800005 UIPATTERN-->
