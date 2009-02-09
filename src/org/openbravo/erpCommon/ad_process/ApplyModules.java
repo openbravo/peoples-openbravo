@@ -205,28 +205,13 @@ public class ApplyModules extends HttpSecureAppServlet {
 
       final String unnappliedModules = getUnnapliedModules();
 
+      ant.setProperty("force", "true");
       if (ApplyModulesData.isUpdatingCore(this)) {
         tasks.add("update.database");
         tasks.add("core.lib");
         tasks.add("wad.lib");
         tasks.add("trl.lib");
         tasks.add("compile.complete.deploy");
-        ant.setProperty("apply.on.create", "true");
-      } else if (false) { // ApplyModulesData.selectUninstalledModules(this))
-        // { // there're
-        // uninstalled
-        // modules
-        tasks.add("update.database");
-        tasks.add("compile.deploy");
-        if (!unnappliedModules.equals("")) { // There are also installed
-          // modules, let's compile
-          // them
-          ant.setProperty("module", unnappliedModules);
-        } else {
-          ant.setProperty("tab", "xx"); // Only uninstall, compile no
-          // window to re-generate
-          // web.xml
-        }
         ant.setProperty("apply.on.create", "true");
       } else {
         tasks.add("apply.modules");
