@@ -34,7 +34,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -58,61 +58,38 @@
   ************************************************************************/
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
+  v_result NUMBER(1):=1;
   v_Message VARCHAR2(4000):='';
-  result_String VARCHAR2(80):='';
+  result_String VARCHAR2(2000):='';
+  v_ResultLinesStr VARCHAR2(2000):='';
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Record Info
     v_AD_Org_ID VARCHAR2(32);
     v_AD_Client_ID VARCHAR2(32);
-    v_Ordered_Total NUMBER;
-    v_Delivered_Total NUMBER;
+    v_allownegativestock CHAR(1);
+    v_order_count NUMBER:=0;
+    v_order_delivered_count NUMBER:=0;
+    v_order_partial_count NUMBER:= 0;
     v_Record_ID VARCHAR2(32):=NULL;
     v_Selection VARCHAR2(1):='N';
-    v_Product_Name VARCHAR(60);
     -- Orders to process  - one per warehouse
     Cur_Order RECORD;
     -- Order Lines per Warehouse
-    CURSOR Cur_OrderLine (Order_ID VARCHAR, Warehouse_ID VARCHAR, IsForced CHAR) IS
-    SELECT *
-    FROM C_ORDERLINE l
+    CURSOR Cur_OrderLine (Order_ID VARCHAR, Warehouse_ID VARCHAR) IS
+    SELECT l.*, p.name
+    FROM C_ORDERLINE l LEFT JOIN M_Product p ON l.M_Product_ID = p.M_Product_ID
     WHERE C_Order_ID=Order_ID -- Parameter
       AND
-      M_Warehouse_ID=Warehouse_ID -- Parameter
+      l.M_Warehouse_ID=Warehouse_ID -- Parameter
       -- Incomplete lines and comments
       AND(QtyOrdered<>QtyDelivered OR(QtyOrdered=0 AND
-      M_Product_ID IS NULL)) -- Don't include Direct Ship's
+      l.M_Product_ID IS NULL)) -- Don't include Direct Ship's
       AND
-      DirectShip='N' AND -- We ship it anyway
-      (IsForced = 'Y' -- Parameter
-      OR -- we have it on stock
-      (EXISTS  (SELECT 1
-    FROM M_STORAGE_DETAIL s,
-      M_LOCATOR loc,
-      C_ORDER o
-    WHERE s.M_Product_ID=l.M_Product_ID AND
-      s.M_Locator_ID=loc.M_Locator_ID AND
-      loc.M_Warehouse_ID=l.M_Warehouse_ID AND(s.M_AttributeSetInstance_ID=COALESCE(l.M_AttributeSetInstance_ID, '0') OR
-      l.M_AttributeSetInstance_ID IS NULL) AND
-      l.C_Order_ID=o.C_Order_ID -- Delivery Rule: (L)ine, (O)rder
-    GROUP BY o.DeliveryRule
-    HAVING((o.DeliveryRule IN('L', 'O') AND
-      SUM(s.QtyOnHand)>=l.QtyOrdered-l.QtyDelivered) -- Delivery Rule: (A)vailability
-      OR
-      SUM(s.QtyOnHand)>0) ) --  Delivery Rule (R)eceipt ** NOT HANDELED **
-      -- Service
-      OR
-      EXISTS
-      (SELECT *
-      FROM M_PRODUCT p
-      WHERE l.M_Product_ID=p.M_Product_ID AND(p.IsStocked='N' OR
-        p.ProductType<>'I')
-      )
-      -- Comment + AdHoc
-      OR
-      l.M_Product_ID IS NULL)) --
-    ORDER BY M_Product_ID;
+      DirectShip='N' 
+    ORDER BY l.M_Product_ID, l.M_Warehouse_id, l.c_uom_id, l.m_attributesetinstance_id, 
+      l.m_product_uom_id, qtyordered-qtydelivered;
     ol Cur_OrderLine%ROWTYPE;
     CURSOR Cur_Storage (p_Product varchar, p_Warehouse varchar, p_UOM varchar, p_Product_UOM varchar, p_Attribute varchar) IS
     SELECT T.C_UOM_ID,
@@ -145,6 +122,7 @@
     v_QtyAux NUMBER;
     --
     v_lines NUMBER:=0;
+    v_lines_per_orderline NUMBER:=0;
     v_count NUMBER:=0;
     CREATE_FROM_INVOICE BOOLEAN:=false;
     Next_Line BOOLEAN:=false;
@@ -174,9 +152,11 @@
       -- Get Parameters
       v_ResultStr:='ReadingParameters';
       FOR Cur_Parameter IN
-        (SELECT i.Record_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date, p.AD_CLIENT_ID
-        FROM AD_PInstance i LEFT JOIN AD_PInstance_Para p ON i.AD_PInstance_ID=p.AD_PInstance_ID
+        (SELECT i.Record_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date, 
+          p.AD_CLIENT_ID, ci.allownegativestock
+        FROM AD_ClientInfo ci, AD_PInstance i LEFT JOIN AD_PInstance_Para p ON i.AD_PInstance_ID=p.AD_PInstance_ID
         WHERE i.AD_PInstance_ID=p_PInstance_ID
+          AND p.ad_client_id = ci.ad_client_id
         ORDER BY p.SeqNo) LOOP
         IF(Cur_Parameter.ParameterName='AD_Org_ID') THEN
           v_AD_Org_ID:=Cur_Parameter.P_String;
@@ -188,6 +168,7 @@
           DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
         END IF;
         v_AD_Client_ID:=Cur_Parameter.AD_CLIENT_ID;
+        v_allownegativestock := cur_parameter.allownegativestock;
         v_Record_ID:=Cur_Parameter.Record_ID;
       END LOOP; -- Get Parameter
       DBMS_OUTPUT.PUT_LINE('  v_Record_ID=' || v_Record_ID) ;
@@ -257,6 +238,7 @@
            ORDER BY o.PriorityRule
           ) LOOP
           v_DocumentNo:='';
+          v_order_count := v_order_count +1;
           DBMS_OUTPUT.PUT_LINE('Order ' || Cur_Order.DocumentNo || '/' || Cur_Order.C_Order_ID || ', Wh=' || Cur_Order.M_Warehouse_ID || ', Force=' || p_ForceDelivery || ', Delivery=' || Cur_Order.DeliveryRule) ;
           -- Delivery Rules
           --  (A)vailability
@@ -266,7 +248,7 @@
           -- (A)vailability (L)ine   -- Do we have something to ship ?
           IF(Cur_Order.DeliveryRule IN('A', 'L', 'R', 'O')) THEN
             v_ResultStr:='CheckSomethingToShip';
-            OPEN Cur_OrderLine(Cur_Order.C_Order_ID, Cur_Order.M_Warehouse_ID, p_ForceDelivery) ;
+            OPEN Cur_OrderLine(Cur_Order.C_Order_ID, Cur_Order.M_Warehouse_ID) ;
             Cur_OrderLine_ISOPEN:=true;
             v_ResultStr:='Fetching';
             FETCH Cur_OrderLine INTO ol;
@@ -279,29 +261,14 @@
             Next_Order:=true;
           END IF;
 
-          --Ensure that for Delivery Rules = 'Complete Order' we have enough stock
-          SELECT SUM(QTYORDERED) INTO v_Ordered_Total
-            FROM C_ORDERLINE
-            WHERE C_ORDER_ID = Cur_Order.C_Order_ID
-            GROUP BY C_ORDER_ID;
-          SELECT SUM(QTYDELIVERED) INTO v_Delivered_Total
-            FROM C_ORDERLINE
-            WHERE C_ORDER_ID = Cur_Order.C_Order_ID
-            GROUP BY C_ORDER_ID;
-          IF(Cur_Order.DeliveryRule='O' AND (v_Delivered_Total<v_Ordered_Total)) THEN 
-            v_ResultStr:='Skiped Order '|| Cur_Order.C_Order_ID ||' because delivery rules = Complete (O)rder and we do not have enough stock';
-            DBMS_OUTPUT.PUT_LINE('Skiped Order '||Cur_Order.C_Order_ID||' because delivery rules = Complete (O)rder and we do not have enough stock');
-            Next_Order:=true;
-          END IF;
-		  		  
           IF(NOT Next_Order) THEN
             /**
             * Create Order Header
             *  if forced or if there is a line to ship
             */
             v_ResultStr:='CreateInOut-S';
-            SAVEPOINT sp_new_shipment;
             v_lines:=10;
+            v_lines_per_orderline := 0;
             --
             Ad_Sequence_Next('M_InOut', Cur_Order.C_Order_ID, p_InOut_ID) ;
             v_ResultStr:='CreateInOut DocType=' || Cur_Order.C_DocType_ID;
@@ -463,6 +430,7 @@
                               --MODIFIED BY F.IRIAZABAL
                               v_ActualQty, v_storage.M_PRODUCT_UOM_ID, v_storage.M_AttributeSetInstance_ID);
                             v_lines:=v_lines + 10;
+                            v_lines_per_orderline:= v_lines_per_orderline + 10;
                             DBMS_OUTPUT.PUT_LINE('v_lines' || v_lines) ;
                           END IF;
                           v_Qty:=v_Qty - v_LocatorQty;
@@ -478,7 +446,7 @@
                       END IF;--NEXT_PRODUCT
                       --<<NEXT_PRODUCT>>
                       NEXT_PRODUCT:=false;
-                      IF(v_Qty<>0 AND p_ForceDelivery='Y') THEN
+                      IF(v_Qty<>0 AND (p_ForceDelivery='Y' OR v_allownegativestock = 'Y')) THEN
                         -- Create InOut Line
                         Ad_Sequence_Next('M_InOutLine', Cur_Order.C_Order_ID, v_NextNo) ;
                         IF(v_ProductUOM IS NOT NULL) THEN
@@ -509,6 +477,22 @@
                           'N',
                           --MODIFIED BY F.IRIAZABAL
                           v_ActualQty, ol.M_PRODUCT_UOM_ID, ol.M_AttributeSetInstance_ID);
+                      ELSIF (v_qty <> 0) THEN
+                        IF (cur_order.deliveryrule = 'O') THEN
+                          DBMS_OUTPUT.PUT_LINE('Not enough stocked products, delivery type Order');
+                          next_order := true;
+                          v_lines := 0;
+                          EXIT;
+                        ELSIF (Cur_order.deliveryrule = 'L') THEN
+                          DBMS_OUTPUT.PUT_LINE('Not enough stocked products, delivery type Line');
+                          v_lines := v_lines - v_lines_per_orderline;
+                          v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockDeliveryRuleLine@.' ;
+                          DELETE FROM M_INOUTLINE
+                          WHERE M_INOUT_ID = v_documentno
+                            AND C_ORDERLINE_ID = ol.C_ORDERLINE_ID;
+                        ELSE
+                          v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockPartial@' || '.' ;
+                        END IF;
                       END IF;
                       -- Copy Ad-hoc lines, Comments OR Service Items
                     ELSE
@@ -540,14 +524,42 @@
                 --<<Next_Line>>
                 Next_Line:=false;
                 FETCH Cur_OrderLine INTO ol;
+                v_lines_per_orderline := 0;
                 EXIT WHEN Cur_OrderLine%NOTFOUND;
               END LOOP; -- Order Line Loop
             END;--END DECLARE VARIABLES FOR ORDER LINE LOOP
           END IF;--Next_Order
+          -- Validate result message for user
+          IF (Cur_Order.DeliveryRule='O' AND v_lines <= 10) THEN
+              DELETE FROM M_INOUTLINE
+              WHERE M_INOUT_ID  = p_InOut_ID;
+              DELETE FROM M_INOUT
+              WHERE M_INOUT_ID = p_InOut_ID;
+              next_order := TRUE;
+            result_String := '@OrderDocumentno@ ' || cur_order.DocumentNo || ': ' || '@ShipmentError@. @notEnoughStockDeliveryRuleOrder@.';
+          ELSIF (v_lines <= 10) THEN
+              DELETE FROM M_INOUTLINE
+              WHERE M_INOUT_ID  = p_InOut_ID;
+              DELETE FROM M_INOUT
+              WHERE M_INOUT_ID = p_InOut_ID;
+            result_String := '@OrderDocumentno@ ' || cur_order.DocumentNo || ': ' || '@ShipmentError@.' || v_resultlinesstr;
+          ELSIF (v_resultlinesstr IS NOT NULL OR  v_resultlinesstr != '') THEN
+            v_order_partial_count := v_order_partial_count +1;
+            result_String := '@OrderDocumentno@ ' || cur_order.DocumentNo || ' @InoutDocumentno@ ' || v_DocumentNo || ': @ShipmentPartial@.' || v_resultlinesstr;
+          ELSE
+            v_order_delivered_count := v_order_delivered_count +1;
+            result_String := '@OrderDocumentno@ ' || cur_order.DocumentNo || ' @InoutDocumentno@ ' || v_DocumentNo || ': @ShipmentSuccess@.' ;
+          END IF;
+          v_Message:=v_Message || result_String || '<br><br>';          
+          result_String := '';
+          v_resultlinesstr := '';
           IF(NOT Next_Order) THEN
             IF(v_lines=0) THEN
               DBMS_OUTPUT.PUT_LINE('v_lines!!!!!!!!!!!!!!!!!' || v_lines) ;
-              ROLLBACK TO SAVEPOINT sp_new_shipment;
+              DELETE FROM M_INOUTLINE
+              WHERE M_INOUT_ID  = p_InOut_ID;
+              DELETE FROM M_INOUT
+              WHERE M_INOUT_ID = p_InOut_ID;
             ELSE
               -- Post Shipment
               DECLARE
@@ -570,32 +582,12 @@
             CLOSE Cur_OrderLine;
             Cur_OrderLine_ISOPEN:=false;
           END IF;
-          -- Validate result message for user
-          SELECT SUM(QTYORDERED) INTO v_Ordered_Total
-            FROM C_ORDERLINE
-            WHERE C_ORDER_ID = Cur_Order.C_Order_ID
-            GROUP BY C_ORDER_ID;
-          SELECT SUM(QTYDELIVERED) INTO v_Delivered_Total
-            FROM C_ORDERLINE
-            WHERE C_ORDER_ID = Cur_Order.C_Order_ID
-            GROUP BY C_ORDER_ID;
-          SELECT p.NAME  INTO v_Product_Name
-            FROM M_PRODUCT p, C_ORDERLINE c
-            WHERE c.C_ORDER_ID = Cur_Order.C_Order_ID AND p.M_Product_ID = c.M_Product_ID;
-          result_String:='@OrderDocumentno@ ' || Cur_Order.DocumentNo || ' - ';
-          IF (v_DocumentNo='') OR (v_DocumentNo IS NULL) THEN
-            IF(Cur_Order.DeliveryRule='O' AND (v_Delivered_Total<v_Ordered_Total)) THEN 
-              result_String:=result_String || 'NO SHIPMENT CREATED: NOT ENOUGH STOCK & DELIVERY RULE = ''Complete Order''';
-            ELSE
-              result_String:=result_String || 'No enough stock for product ' ||  v_Product_Name || '<br>'; 
-            END IF;
-          ELSIF (v_Delivered_Total<v_Ordered_Total OR v_Delivered_Total=0) THEN
-              result_String:=result_String || 'No enough stock for product ' ||  v_Product_Name || '<br>'; 
-          ELSE 
-            result_String:=result_String || '@InoutDocumentno@ ' || v_DocumentNo || '<br>';
-          END IF;
-          v_Message:=v_Message || result_String;          
         END LOOP; -- Order Header Loop
+        IF (v_order_delivered_count = 0 AND v_order_partial_count = 0) THEN
+          v_result :=0;
+        ELSIF (v_order_partial_count <> 0 OR v_order_delivered_count <> v_order_count) THEN
+          v_result :=2;
+        END IF;
         FINISH_PROCESS:=true;
       END IF;--CREATE_FROM_INVOICE
       IF(NOT FINISH_PROCESS) THEN
@@ -720,7 +712,7 @@
       IF(p_PInstance_ID IS NOT NULL) THEN
         --  Update AD_PInstance
         DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-        AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
+        AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_result, v_Message) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('--<<M_InOut_Create finished>> ' || v_Message);
       END IF;

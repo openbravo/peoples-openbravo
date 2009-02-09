@@ -87,38 +87,14 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
           .getClient(), vars.getOrg(), vars.getUser());
       ActionButtonData.process199(this, pinstance);
 
-      PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
-      if (pinstanceData != null && pinstanceData.length > 0) {
-        if (!pinstanceData[0].errormsg.equals("")) {
-          myMessage.setType("Success");
-          myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-          String message = pinstanceData[0].errormsg;
-          String[] errMessages = message.split("<br>");
-          int errCount = 0;
-          for (String errMessage : errMessages) {
-            errCount += Pattern.matches("@+[A-z]+@.\\d*+\\s.\\s+@+[A-z]+@.\\d*", errMessage) ? 0
-                : 1;
-          }
-          if (errCount > 0 && errCount < errMessages.length) {
-            myMessage.setType("Warning");
-            myMessage.setTitle(Utility.messageBD(this, "ShipmentWarning", vars.getLanguage()));
-          } else if (errCount > 0 && errCount == errMessages.length) {
-            myMessage.setType("Error");
-            myMessage.setTitle(Utility.messageBD(this, "ShipmentError", vars.getLanguage()));
-          }
 
-          if (message.startsWith("@") && message.endsWith("@")) {
-            message = message.substring(1, message.length() - 1);
-            if (message.indexOf("@") == -1) {
-              myMessage.setMessage(Utility.messageBD(this, message, vars.getLanguage()));
-            } else {
-              myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), "@"
-                  + message + "@"));
-            }
-          } else {
-            myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), message));
-          }
-        }
+      try {
+        PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
+        myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
+      } catch (Exception e) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+          e.printStackTrace();
+          log4j.warn("Error");
       }
       GenerateShipmentsmanualData.updateReset(this, strSalesOrder);
 
