@@ -2953,7 +2953,7 @@ table.MessageBoxWARNING {
   width: 100%;
 }
 
-table.MessageBoxHIDDEN {
+table.MessageBoxHIDDEN, table.MessageBox {
   height: 0px;
   display: none;
   visibility: collapse;
