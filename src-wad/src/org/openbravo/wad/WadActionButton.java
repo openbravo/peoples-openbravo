@@ -1024,9 +1024,9 @@ public class WadActionButton {
           || WadUtility.isDecimalNumber(efd.adReferenceId)
           || WadUtility.isQtyNumber(efd.adReferenceId)
           || WadUtility.isPriceNumber(efd.adReferenceId))
-        html.append("\" onkeydown=\"auto_complete_number(this, true, true, event);return true;");
+        html.append("\" onkeydown=\"autoCompleteNumber(this, true, true, event);return true;");
       else if (WadUtility.isIntegerNumber(efd.adReferenceId))
-        html.append("\" onkeydown=\"auto_complete_number(this, false, true, event);return true;");
+        html.append("\" onkeydown=\"autoCompleteNumber(this, false, true, event);return true;");
       html.append("\">");
     } else if ((efd.adReferenceId.equals("17") || efd.adReferenceId.equals("18") || efd.adReferenceId
         .equals("19"))
@@ -1066,9 +1066,9 @@ public class WadActionButton {
             || WadUtility.isDecimalNumber(efd.adReferenceId)
             || WadUtility.isQtyNumber(efd.adReferenceId)
             || WadUtility.isPriceNumber(efd.adReferenceId))
-          html.append(" onkeydown=\"auto_complete_number(this, true, true, event);return true;\"");
+          html.append(" onkeydown=\"autoCompleteNumber(this, true, true, event);return true;\"");
         else if (WadUtility.isIntegerNumber(efd.adReferenceId))
-          html.append(" onkeydown=\"auto_complete_number(this, false, true, event);return true;\"");
+          html.append(" onkeydown=\"autoCompleteNumber(this, false, true, event);return true;\"");
         html.append(" size=\"" + efd.fieldlength + "\" ");
         html.append(classRequiredUpdateable(efd));
         if (!WadUtility.isSearchType(efd.adReferenceId))

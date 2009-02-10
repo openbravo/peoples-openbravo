@@ -693,9 +693,9 @@ public class WadUtility {
         html.append("xxV");
       if (isDecimalNumber(efd.reference) || isPriceNumber(efd.reference)
           || isGeneralNumber(efd.reference) || isQtyNumber(efd.reference))
-        html.append("\" onkeydown=\"auto_complete_number(this, true, true, event);return true;");
+        html.append("\" onkeydown=\"autoCompleteNumber(this, true, true, event);return true;");
       else if (isIntegerNumber(efd.reference))
-        html.append("\" onkeydown=\"auto_complete_number(this, false, true, event);return true;");
+        html.append("\" onkeydown=\"autoCompleteNumber(this, false, true, event);return true;");
       html.append("\"");
       html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
       html.append(" ></input>");
@@ -875,9 +875,9 @@ public class WadUtility {
           html.append("text\"");
         if (isDecimalNumber(efd.reference) || isPriceNumber(efd.reference)
             || isGeneralNumber(efd.reference) || isQtyNumber(efd.reference))
-          html.append(" onkeydown=\"auto_complete_number(this, true, true, event);return true;\"");
+          html.append(" onkeydown=\"autoCompleteNumber(this, true, true, event);return true;\"");
         else if (isIntegerNumber(efd.reference))
-          html.append(" onkeydown=\"auto_complete_number(this, false, true, event);return true;\"");
+          html.append(" onkeydown=\"autoCompleteNumber(this, false, true, event);return true;\"");
         html.append(" size=\"" + efd.displaysize + "\" ");
         html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
         if (!isSearchType(efd.reference))

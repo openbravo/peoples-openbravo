@@ -244,7 +244,7 @@ function onloadFunctions() {
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpRefDate" id="paramRefDate" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramRefDate");</script>
+                          <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpRefDate" id="paramRefDate" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramRefDate");</script>
                         </td>
                         <td class="FieldButton_bg">
                           <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="showCalendar('frmMain.paramRefDate', document.frmMain.paramRefDate.value, false);return false;" >
@@ -272,7 +272,7 @@ function onloadFunctions() {
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:DateTextbox" lowerThan="paramStartDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpStartDateFrom" id="paramStartDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramStartDateFrom");</script>
+                          <input dojoType="openbravo:DateTextbox" lowerThan="paramStartDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpStartDateFrom" id="paramStartDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramStartDateFrom");</script>
                         </td>
                         <td class="FieldButton_bg">
                           <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="showCalendar('frmMain.paramStartDateFrom', document.frmMain.paramStartDateFrom.value, false);return false;" >
@@ -294,7 +294,7 @@ function onloadFunctions() {
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:DateTextbox" greaterThan="paramStartDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpStartDateTo" id="paramStartDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramStartDateTo");</script>
+                          <input dojoType="openbravo:DateTextbox" greaterThan="paramStartDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpStartDateTo" id="paramStartDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramStartDateTo");</script>
                         </td>
                         <td class="FieldButton_bg">
                           <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="showCalendar('frmMain.inpStartDateTo', document.frmMain.inpStartDateTo.value, false);return false;" >
@@ -319,7 +319,7 @@ function onloadFunctions() {
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:DateTextbox" lowerThan="paramContractDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpContractDateFrom" id="paramContractDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramContractDateFrom");</script>
+                          <input dojoType="openbravo:DateTextbox" lowerThan="paramContractDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpContractDateFrom" id="paramContractDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramContractDateFrom");</script>
                         </td>
                         <td class="FieldButton_bg">
                           <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="showCalendar('frmMain.paramContractDateFrom', document.frmMain.paramContractDateFrom.value, false);return false;" >
@@ -341,7 +341,7 @@ function onloadFunctions() {
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:DateTextbox" greaterThan="paramContractDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpContractDateTo" id="paramContractDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramContractDateTo");</script>
+                          <input dojoType="openbravo:DateTextbox" greaterThan="paramContractDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpContractDateTo" id="paramContractDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramContractDateTo");</script>
                         </td>
                         <td class="FieldButton_bg">
                           <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="showCalendar('frmMain.inpContractDateTo', document.frmMain.inpContractDateTo.value, false);return false;" >
@@ -366,7 +366,7 @@ function onloadFunctions() {
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:DateTextbox" lowerThan="paramEndingDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpEndingDateFrom" id="paramEndingDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramEndingDateFrom");</script>
+                          <input dojoType="openbravo:DateTextbox" lowerThan="paramEndingDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpEndingDateFrom" id="paramEndingDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramEndingDateFrom");</script>
                         </td>
                         <td class="FieldButton_bg">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.paramEndingDateFrom', document.frmMain.paramEndingDateFrom.value, false);return false;" >
@@ -388,7 +388,7 @@ function onloadFunctions() {
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:DateTextbox" greaterThan="paramEndingDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpEndingDateTo" id="paramEndingDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramEndingDateTo");</script>
+                          <input dojoType="openbravo:DateTextbox" greaterThan="paramEndingDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpEndingDateTo" id="paramEndingDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramEndingDateTo");</script>
                         </td>
                         <td class="FieldButton_bg">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpEndingDateTo', document.frmMain.inpEndingDateTo.value, false);return false;" >

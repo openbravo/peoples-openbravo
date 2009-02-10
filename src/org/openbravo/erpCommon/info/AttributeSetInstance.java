@@ -458,7 +458,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       strHtml.append("name=\"inplot\" ");
       strHtml.append("maxlength=\"20\" ");
       strHtml.append("class=\"dojoValidateValid TextBox_OneCell_width");
-      // strHtml.append("onkeydown=\"auto_complete_number(this, true, true, event);return true;\" ");
+      // strHtml.append("onkeydown=\"autoCompleteNumber(this, true, true, event);return true;\" ");
       if (!fields[0].mLotctlId.equals("") && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
         strHtml.append(" readonly\" readonly=true ");
       } else {
@@ -482,7 +482,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       strHtml.append("name=\"inpserno\" ");
       strHtml.append("maxlength=\"20\" ");
       strHtml.append("class=\"dojoValidateValid TextBox_OneCell_width");
-      // strHtml.append("onkeydown=\"auto_complete_number(this, true, true, event);return true;\" ");
+      // strHtml.append("onkeydown=\"autoCompleteNumber(this, true, true, event);return true;\" ");
       if (!fields[0].mSernoctlId.equals("")
           && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
         strHtml.append(" readonly\" readonly=true ");
@@ -528,7 +528,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
               + vars.getSessionValue("#AD_SqlDateFormat")
               + "\" class=\"TextBox_btn_OneCell_width\"  type=\"text\" name=\"inpDateFrom\" id=\"paramDateFrom\" size=\"10\" maxlength=\"10\" value=\""
               + strGuaranteeDate
-              + "\" onkeyup=\"auto_complete_date(this.textbox, this.displayFormat);return true;\"></input><script>djConfig.searchIds.push(\"paramDateFrom\");</script>");
+              + "\" onkeyup=\"autoCompleteDate(this.textbox, this.displayFormat);return true;\"></input><script>djConfig.searchIds.push(\"paramDateFrom\");</script>");
       strHtml.append("</td>");
       strHtml.append("<td class=\"FieldButton_ContentCell\">");
       strHtml.append("<a class=\"FieldButtonLink\" href=\"#\"");

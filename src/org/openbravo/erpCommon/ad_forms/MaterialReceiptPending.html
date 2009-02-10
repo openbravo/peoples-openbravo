@@ -286,7 +286,7 @@ function onloadFunctions() {
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="xx"  class="dojoValidateValid TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
+                          <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="xx"  class="dojoValidateValid TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
                         </td>
                         <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.paramDateFrom', document.frmMain.paramDateFrom.value, false);return false;">
@@ -308,7 +308,7 @@ function onloadFunctions() {
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="xx"  class="dojoValidateValid TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
+                          <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="xx"  class="dojoValidateValid TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
                         </td>
                         <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;">
@@ -364,7 +364,7 @@ function onloadFunctions() {
 					      <table style="border:0px;border-collapse:collapse;">
 					        <tr>
 					          <td style="padding-top: 0px;">
-                        		  <input displayFormat="DD-MM-YYYY" saveFormat="DD-MM-YYYY"  class="dojoValidateValid TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateReceiptxx" id="paramDateReceiptxx" onchange="validateDateTextBox(this.id);logChanges(this);return true;" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);"></input>
+                        		  <input displayFormat="DD-MM-YYYY" saveFormat="DD-MM-YYYY"  class="dojoValidateValid TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateReceiptxx" id="paramDateReceiptxx" onchange="validateDateTextBox(this.id);logChanges(this);return true;" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this);"></input>
                               </td>			
 							</tr>
 					      </table>
@@ -440,7 +440,7 @@ function onloadFunctions() {
                   <td width="409" class="DataGrid_Body_Cell" id="fieldProductName">xx</td>
                   <td width="198" class="DataGrid_Body_Cell" id="fieldDescription">xx</td>
                   <td width="146" class="DataGrid_Body_Cell" id="fieldTotalQty">xx</td>
-                  <td width="131" class="DataGrid_Body_Cell"> <input name="inpQtyorderedxx" type="text" id="fieldQtyordered" size="5" style="width:80px" value="0" onkeyup="auto_complete_number(this, true, true, event);return true;" class="dojoValidateValid readonly required" required="true" disabled></input>
+                  <td width="131" class="DataGrid_Body_Cell"> <input name="inpQtyorderedxx" type="text" id="fieldQtyordered" size="5" style="width:80px" value="0" onkeyup="autoCompleteNumber(this, true, true, event);return true;" class="dojoValidateValid readonly required" required="true" disabled></input>
                   </td>
                   <td class="DataGrid_Body_Cell">
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">

@@ -68,11 +68,11 @@ function onloadFunctions() {
   <table width="80%" border="0" cellspacing="0" cellpadding="0">
     <tr> 
       <td width="24%" > <span >From</span></td>
-      <td width="19%"> <input type="text" name="inpDesde" id="paramDesde" size="10" maxlength="10" value=""  onkeup="auto_complete_date(this);return true;"></input> 
+      <td width="19%"> <input type="text" name="inpDesde" id="paramDesde" size="10" maxlength="10" value=""  onkeup="autoCompleteDate(this);return true;"></input> 
         <a href="#" onclick="showCalendar('frmMain.inpDesde', document.frmMain.inpDesde.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
         <img width="16" height="16"  alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></img></a></td>
       <td width="12%" > <span >To</span></td>
-      <td width="19%"> <input type="text" name="inpHasta" id="paramHasta" value="" size="10" maxlength="10"  onkeup="auto_complete_date(this);return true;"></input> 
+      <td width="19%"> <input type="text" name="inpHasta" id="paramHasta" value="" size="10" maxlength="10"  onkeup="autoCompleteDate(this);return true;"></input> 
         <a href="#" onclick="showCalendar('frmMain.inpHasta', document.frmMain.inpHasta.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
         <img width="16" height="16"  alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></img></a></td>
       <td width="26%"> <a href="#" onclick="submitCommandForm('FIND',true, null, null, 'EXCEL');return false;" onmouseover="window.status='Get indirect's report';return true;" onmouseout="window.status='';return true;" id="buttonSearch"> 

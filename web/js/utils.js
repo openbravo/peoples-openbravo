@@ -61,7 +61,7 @@ var isUserClick = false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '12690';
+  var number = '12987';
   return number;
 }
 
@@ -3015,7 +3015,7 @@ function readOnlyLogicElement(id, readonly) {
 * @type Boolean
 * @see #obtainKeyCode
 */
-function auto_complete_number(obj, isFloatAllowed, isNegativeAllowed, evt) {
+function autoCompleteNumber(obj, isFloatAllowed, isNegativeAllowed, evt) {
   if (!evt) evt = window.event;
   var number = evt.keyCode ? evt.keyCode : evt.which ? evt.which : evt.charCode;
   if (number != obtainKeyCode("ENTER") && number != obtainKeyCode("LEFTARROW") && number != obtainKeyCode("RIGHTARROW") && number != obtainKeyCode("UPARROW") && number != obtainKeyCode("DOWNARROW") && number != obtainKeyCode("DELETE") && number != obtainKeyCode("BACKSPACE") && number != obtainKeyCode("END") && number != obtainKeyCode("HOME") && !evt["ctrlKey"]) {
@@ -3958,6 +3958,16 @@ function abrirPDFSession(strPage, strDirectPrinting, strHiddenKey, strHiddenValu
 //Deprecated in 2.50, use openSearchWindow instead
 function abrirBusqueda(url, _name, tabId, windowName, windowId, checkChanges) {
   openSearchWindow(url, _name, tabId, windowName, windowId, checkChanges);
+}
+
+//Deprecated in 2.50, use autoCompleteNumber instead
+function auto_complete_number(obj, isFloatAllowed, isNegativeAllowed, evt) {
+  autoCompleteNumber(obj, isFloatAllowed, isNegativeAllowed, evt);
+}
+
+//Deprecated in 2.50, use autoCompleteData instead
+function auto_complete_date(field, fmt) {
+  autoCompleteDate(field, fmt);
 }
 
 /**

@@ -163,7 +163,7 @@ getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
 /****************************************
 Test insertion of mask at inserting time
 *****************************************/
-function auto_complete_date(field, fmt) {
+function autoCompleteDate(field, fmt) {
   if (!isTabPressed) {
     try {
     if (getCaretPosition(field).start != field.value.length) return; //If we are inserting in a position different from the last one, we don't autocomplete

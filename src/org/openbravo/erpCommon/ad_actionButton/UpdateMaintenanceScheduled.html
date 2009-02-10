@@ -171,7 +171,7 @@ function submitThisPage(strCommand) {
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td>
-                      <input dojoType="openbravo:DateTextbox" lowerThan="paramPartDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpPartDateFrom" id="paramPartDateFrom" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"/><script>djConfig.searchIds.push("paramPartDateFrom");</script>
+                      <input dojoType="openbravo:DateTextbox" lowerThan="paramPartDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpPartDateFrom" id="paramPartDateFrom" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"/><script>djConfig.searchIds.push("paramPartDateFrom");</script>
                     </td>
                     <td valign="top">
                       <table class="FieldButton" onclick="showCalendar('frmMain.inpPartDateFrom', document.frmMain.inpPartDateFrom.value, false);return false;" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
@@ -190,7 +190,7 @@ function submitThisPage(strCommand) {
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td>
-                      <input dojoType="openbravo:DateTextbox" greaterThan="paramPartDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpPartDateTo" id="paramPartDateTo" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"/><script>djConfig.searchIds.push("paramPartDateTo");</script>
+                      <input dojoType="openbravo:DateTextbox" greaterThan="paramPartDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpPartDateTo" id="paramPartDateTo" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"/><script>djConfig.searchIds.push("paramPartDateTo");</script>
                     </td>
                     <td valign="top">
                       <table class="FieldButton" onclick="showCalendar('frmMain.inpPartDateTo', document.frmMain.inpPartDateTo.value, false);return false;"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">

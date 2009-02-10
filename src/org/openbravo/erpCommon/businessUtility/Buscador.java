@@ -431,7 +431,7 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("value=\"").append(fields[i].value).append("\" ");
         strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields[i].columnname))
             .append("\" ");
-        strHtml.append("onkeyup=\"auto_complete_date(this.textbox);\"></input> ");
+        strHtml.append("onkeyup=\"autoCompleteDate(this.textbox);\"></input> ");
         strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam").append(
             FormatUtilities.replace(fields[i].columnname)).append("\") </script>");
         strHtml.append("</td>\n");
@@ -556,11 +556,11 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("value=\"").append(fields[i].value).append("\" ");
         if (Utility.isDecimalNumber(fields[i].reference))
           strHtml
-              .append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, true, true, event);return true;\" ")
+              .append("onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, true, true, event);return true;\" ")
               .append("id=\"").append(randomId4Num1).append("\" ");
         else if (Utility.isIntegerNumber(fields[i].reference))
           strHtml
-              .append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, false, false, event);return true;\" ")
+              .append("onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, false, false, event);return true;\" ")
               .append("id=\"").append(randomId4Num1).append("\" ");
         strHtml.append(">");
         if (Utility.isDecimalNumber(fields[i].reference)
@@ -623,11 +623,11 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("value=\"").append(fields[i].value).append("\" ");
         if (Utility.isDecimalNumber(fields[i].reference)) {
           scriptCalculator = true;
-          strHtml.append("onkeydown=\"auto_complete_number(this, true, true, event);return true;\" ");
+          strHtml.append("onkeydown=\"autoCompleteNumber(this, true, true, event);return true;\" ");
           strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         } else if (Utility.isIntegerNumber(fields[i].reference)) {
           scriptCalculator = true;
-          strHtml.append("onkeydown=\"auto_complete_number(this, false, false, event);return true;\" ");
+          strHtml.append("onkeydown=\"autoCompleteNumber(this, false, false, event);return true;\" ");
           strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         }
         strHtml.append(">");
@@ -658,11 +658,11 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("value=\"").append(value).append("\" ");
           if (Utility.isDecimalNumber(fields[i].reference))
             strHtml
-                .append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, true, true, event);return true;\" ")
+                .append("onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, true, true, event);return true;\" ")
                 .append("id=\"").append(randomId4Num3).append("\" ");
           else if (Utility.isIntegerNumber(fields[i].reference))
             strHtml
-                .append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, false, false, event);return true;\" ")
+                .append("onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, false, false, event);return true;\" ")
                 .append("id=\"").append(randomId4Num3).append("\" ");
           strHtml.append(">");
 
@@ -707,7 +707,7 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("value=\"").append(value).append("\" ");
           strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append("_f\" ");
-          strHtml.append("onkeyup=\"auto_complete_date(this.textbox);\"></input> ");
+          strHtml.append("onkeyup=\"autoCompleteDate(this.textbox);\"></input> ");
           strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam").append(
               FormatUtilities.replace(fields[i].columnname)).append("_f\") </script>");
           strHtml.append("</td>\n");

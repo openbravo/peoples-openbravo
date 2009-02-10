@@ -288,7 +288,7 @@ function validate() {
               <table border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                 <tr>
                   <td class="TextBox_ContentCell">
-                    <input dojotype="openbravo:DateTextbox" lowerthan="paramDateTo" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true"  type="text" name="inpReportDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
+                    <input dojotype="openbravo:DateTextbox" lowerthan="paramDateTo" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true"  type="text" name="inpReportDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
                   </td>
                   <td class="FieldButton_ContentCell">
                     <a class="FieldButtonLink" href="#"
@@ -317,7 +317,7 @@ function validate() {
              <table border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                <tr>
                  <td class="TextBox_ContentCell">
-                   <input dojotype="openbravo:DateTextbox" greaterthan="paramDateFrom" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpReportDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
+                   <input dojotype="openbravo:DateTextbox" greaterthan="paramDateFrom" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpReportDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
                       </td>
                       <td class="FieldButton_ContentCell">
                         <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='xx'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;">
@@ -344,7 +344,7 @@ function validate() {
 	              <table border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
 	                <tr>
 	                  <td class="TextBox_ContentCell">
-	                    <input dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true"  type="text" name="inpDateinvoiced" id="paramDateinvoiced" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateinvoiced");</script>
+	                    <input dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true"  type="text" name="inpDateinvoiced" id="paramDateinvoiced" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateinvoiced");</script>
 	                  </td>
 	                  <td class="FieldButton_ContentCell">
 	                    <a class="FieldButtonLink" href="#"  onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;"  onblur="window.status=''; return true;"  onkeypress="this.className='FieldButtonLink_active'; return true;"  onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateinvoiced', document.frmMain.inpDateinvoiced.value, false);return false;" >
