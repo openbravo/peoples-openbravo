@@ -4131,7 +4131,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--286 ISACTIVE-->
 <!--286-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--286 NAME-->
-<!--286-->              <NAME><![CDATA[Default Organization]]></NAME>
+<!--286-->              <NAME><![CDATA[Trx Organization]]></NAME>
 <!--286 DESCRIPTION-->
 <!--286-->              <DESCRIPTION><![CDATA[Organizational entity within client]]></DESCRIPTION>
 <!--286 HELP-->

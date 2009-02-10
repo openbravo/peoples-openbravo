@@ -21,7 +21,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="JAVAPACKAGE" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
+      <column name="JAVAPACKAGE" primaryKey="false" required="true" type="NVARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

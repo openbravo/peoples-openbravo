@@ -2284,9 +2284,9 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--225 COLUMNNAME-->
 <!--225-->              <COLUMNNAME><![CDATA[City]]></COLUMNNAME>
 <!--225 NAME-->
-<!--225-->              <NAME><![CDATA[City]]></NAME>
+<!--225-->              <NAME><![CDATA[City Name]]></NAME>
 <!--225 PRINTNAME-->
-<!--225-->              <PRINTNAME><![CDATA[City]]></PRINTNAME>
+<!--225-->              <PRINTNAME><![CDATA[City Name]]></PRINTNAME>
 <!--225 DESCRIPTION-->
 <!--225-->              <DESCRIPTION><![CDATA[A populated defined area located within a larger area such as a state, province, or country.]]></DESCRIPTION>
 <!--225 HELP-->
@@ -4813,9 +4813,9 @@ You find the current status in the Document Status field. The options are listed
 <!--409 COLUMNNAME-->
 <!--409-->              <COLUMNNAME><![CDATA[IsSalesRep]]></COLUMNNAME>
 <!--409 NAME-->
-<!--409-->              <NAME><![CDATA[Sales Representative]]></NAME>
+<!--409-->              <NAME><![CDATA[Is Sales Representative]]></NAME>
 <!--409 PRINTNAME-->
-<!--409-->              <PRINTNAME><![CDATA[Sales Rep]]></PRINTNAME>
+<!--409-->              <PRINTNAME><![CDATA[Is Sales Representative]]></PRINTNAME>
 <!--409 DESCRIPTION-->
 <!--409-->              <DESCRIPTION><![CDATA[The person in charge of carry out an order.]]></DESCRIPTION>
 <!--409 HELP-->
@@ -5256,9 +5256,9 @@ You find the current status in the Document Status field. The options are listed
 <!--446 COLUMNNAME-->
 <!--446-->              <COLUMNNAME><![CDATA[Lot]]></COLUMNNAME>
 <!--446 NAME-->
-<!--446-->              <NAME><![CDATA[Lot]]></NAME>
+<!--446-->              <NAME><![CDATA[Lot Name]]></NAME>
 <!--446 PRINTNAME-->
-<!--446-->              <PRINTNAME><![CDATA[Lot]]></PRINTNAME>
+<!--446-->              <PRINTNAME><![CDATA[Lot Name]]></PRINTNAME>
 <!--446 DESCRIPTION-->
 <!--446-->              <DESCRIPTION><![CDATA[A group of identical or similar items organized and placed into inventory under one number.]]></DESCRIPTION>
 <!--446 HELP-->
@@ -5717,9 +5717,9 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--479 COLUMNNAME-->
 <!--479-->              <COLUMNNAME><![CDATA[Org_ID]]></COLUMNNAME>
 <!--479 NAME-->
-<!--479-->              <NAME><![CDATA[Default Organization]]></NAME>
+<!--479-->              <NAME><![CDATA[Trx Organization]]></NAME>
 <!--479 PRINTNAME-->
-<!--479-->              <PRINTNAME><![CDATA[Default Organization]]></PRINTNAME>
+<!--479-->              <PRINTNAME><![CDATA[Trx Organization]]></PRINTNAME>
 <!--479 DESCRIPTION-->
 <!--479-->              <DESCRIPTION><![CDATA[Organizational entity within client]]></DESCRIPTION>
 <!--479 HELP-->
@@ -7067,9 +7067,9 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--566 COLUMNNAME-->
 <!--566-->              <COLUMNNAME><![CDATA[SeqNo]]></COLUMNNAME>
 <!--566 NAME-->
-<!--566-->              <NAME><![CDATA[Sequence]]></NAME>
+<!--566-->              <NAME><![CDATA[Sequence Number]]></NAME>
 <!--566 PRINTNAME-->
-<!--566-->              <PRINTNAME><![CDATA[Sequence]]></PRINTNAME>
+<!--566-->              <PRINTNAME><![CDATA[Sequence Number]]></PRINTNAME>
 <!--566 DESCRIPTION-->
 <!--566-->              <DESCRIPTION><![CDATA[The order of records in a specified document.]]></DESCRIPTION>
 <!--566 HELP-->
@@ -12108,7 +12108,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1159 COLUMNNAME-->
 <!--1159-->              <COLUMNNAME><![CDATA[C_Greeting_ID]]></COLUMNNAME>
 <!--1159 NAME-->
-<!--1159-->              <NAME><![CDATA[Title]]></NAME>
+<!--1159-->              <NAME><![CDATA[Greeting]]></NAME>
 <!--1159 PRINTNAME-->
 <!--1159-->              <PRINTNAME><![CDATA[Greeting]]></PRINTNAME>
 <!--1159 DESCRIPTION-->
@@ -12133,7 +12133,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1171 NAME-->
 <!--1171-->              <NAME><![CDATA[Title]]></NAME>
 <!--1171 PRINTNAME-->
-<!--1171-->              <PRINTNAME><![CDATA[Greeting]]></PRINTNAME>
+<!--1171-->              <PRINTNAME><![CDATA[Title]]></PRINTNAME>
 <!--1171 DESCRIPTION-->
 <!--1171-->              <DESCRIPTION><![CDATA[A description, often abbreviated, of how to address a business partner.]]></DESCRIPTION>
 <!--1171 HELP-->
@@ -16052,9 +16052,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1554 COLUMNNAME-->
 <!--1554-->              <COLUMNNAME><![CDATA[CommissionAmt]]></COLUMNNAME>
 <!--1554 NAME-->
-<!--1554-->              <NAME><![CDATA[Commission Amount]]></NAME>
+<!--1554-->              <NAME><![CDATA[Amount]]></NAME>
 <!--1554 PRINTNAME-->
-<!--1554-->              <PRINTNAME><![CDATA[Commission Amt]]></PRINTNAME>
+<!--1554-->              <PRINTNAME><![CDATA[Amount]]></PRINTNAME>
 <!--1554 DESCRIPTION-->
 <!--1554-->              <DESCRIPTION><![CDATA[Commission Amount]]></DESCRIPTION>
 <!--1554 HELP-->
@@ -19042,9 +19042,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1841 COLUMNNAME-->
 <!--1841-->              <COLUMNNAME><![CDATA[DocumentType]]></COLUMNNAME>
 <!--1841 NAME-->
-<!--1841-->              <NAME><![CDATA[Document Type]]></NAME>
+<!--1841-->              <NAME><![CDATA[Document Type Name]]></NAME>
 <!--1841 PRINTNAME-->
-<!--1841-->              <PRINTNAME><![CDATA[Document Type]]></PRINTNAME>
+<!--1841-->              <PRINTNAME><![CDATA[Document Type Name]]></PRINTNAME>
 <!--1841 DESCRIPTION-->
 <!--1841-->              <DESCRIPTION><![CDATA[Document Type]]></DESCRIPTION>
 <!--1841 HELP-->
@@ -19318,9 +19318,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1886 COLUMNNAME-->
 <!--1886-->              <COLUMNNAME><![CDATA[SalesRep_Name]]></COLUMNNAME>
 <!--1886 NAME-->
-<!--1886-->              <NAME><![CDATA[Sales Representative]]></NAME>
+<!--1886-->              <NAME><![CDATA[Sales Representative Name]]></NAME>
 <!--1886 PRINTNAME-->
-<!--1886-->              <PRINTNAME><![CDATA[Sales Rep]]></PRINTNAME>
+<!--1886-->              <PRINTNAME><![CDATA[Sales Representative Name]]></PRINTNAME>
 <!--1886 PO_NAME-->
 <!--1886-->              <PO_NAME><![CDATA[Company Agent]]></PO_NAME>
 <!--1886 PO_PRINTNAME-->
@@ -22592,9 +22592,9 @@ The values of the actual Product Attributes]]></HELP>
 <!--2161 COLUMNNAME-->
 <!--2161-->              <COLUMNNAME><![CDATA[ProjectName]]></COLUMNNAME>
 <!--2161 NAME-->
-<!--2161-->              <NAME><![CDATA[Project]]></NAME>
+<!--2161-->              <NAME><![CDATA[Project Name]]></NAME>
 <!--2161 PRINTNAME-->
-<!--2161-->              <PRINTNAME><![CDATA[Project]]></PRINTNAME>
+<!--2161-->              <PRINTNAME><![CDATA[Project Name]]></PRINTNAME>
 <!--2161 DESCRIPTION-->
 <!--2161-->              <DESCRIPTION><![CDATA[Name of the Project]]></DESCRIPTION>
 <!--2161 HELP-->
@@ -22638,9 +22638,9 @@ The values of the actual Product Attributes]]></HELP>
 <!--2163 COLUMNNAME-->
 <!--2163-->              <COLUMNNAME><![CDATA[ProjectTypeName]]></COLUMNNAME>
 <!--2163 NAME-->
-<!--2163-->              <NAME><![CDATA[Project Type]]></NAME>
+<!--2163-->              <NAME><![CDATA[Project Type Name]]></NAME>
 <!--2163 PRINTNAME-->
-<!--2163-->              <PRINTNAME><![CDATA[Project Type]]></PRINTNAME>
+<!--2163-->              <PRINTNAME><![CDATA[Project Type Name]]></PRINTNAME>
 <!--2163 DESCRIPTION-->
 <!--2163-->              <DESCRIPTION><![CDATA[Name of the Project Type]]></DESCRIPTION>
 <!--2163 HELP-->
@@ -25181,9 +25181,9 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800131 COLUMNNAME-->
 <!--800131-->              <COLUMNNAME><![CDATA[PreQtyOnHand]]></COLUMNNAME>
 <!--800131 NAME-->
-<!--800131-->              <NAME><![CDATA[Quantity Awaiting Delivery]]></NAME>
+<!--800131-->              <NAME><![CDATA[Quantity in draft transactions]]></NAME>
 <!--800131 PRINTNAME-->
-<!--800131-->              <PRINTNAME><![CDATA[On Hand Quantity previsted]]></PRINTNAME>
+<!--800131-->              <PRINTNAME><![CDATA[Quantity in draft transactions]]></PRINTNAME>
 <!--800131 HELP-->
 <!--800131-->              <HELP><![CDATA[The quantity that we have already purchased but are not still in the warehouse]]></HELP>
 <!--800131 AD_MODULE_ID-->
@@ -25202,9 +25202,9 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800132 COLUMNNAME-->
 <!--800132-->              <COLUMNNAME><![CDATA[PreQtyOrderOnHand]]></COLUMNNAME>
 <!--800132 NAME-->
-<!--800132-->              <NAME><![CDATA[Quantity Awaiting Delivery]]></NAME>
+<!--800132-->              <NAME><![CDATA[Quantity Order in draft transactions]]></NAME>
 <!--800132 PRINTNAME-->
-<!--800132-->              <PRINTNAME><![CDATA[Previsted qty order on hand]]></PRINTNAME>
+<!--800132-->              <PRINTNAME><![CDATA[Quantity Order in draft transactions]]></PRINTNAME>
 <!--800132 HELP-->
 <!--800132-->              <HELP><![CDATA[The quantity that we have already purchased but are not still in the warehouse in the second uom]]></HELP>
 <!--800132 AD_MODULE_ID-->
@@ -26574,9 +26574,9 @@ For example, if you want to create different invoices for each ship location for
 <!--800204 COLUMNNAME-->
 <!--800204-->              <COLUMNNAME><![CDATA[Product_Description]]></COLUMNNAME>
 <!--800204 NAME-->
-<!--800204-->              <NAME><![CDATA[Description]]></NAME>
+<!--800204-->              <NAME><![CDATA[Product Description]]></NAME>
 <!--800204 PRINTNAME-->
-<!--800204-->              <PRINTNAME><![CDATA[Product_Description]]></PRINTNAME>
+<!--800204-->              <PRINTNAME><![CDATA[Product Description]]></PRINTNAME>
 <!--800204 DESCRIPTION-->
 <!--800204-->              <DESCRIPTION><![CDATA[A space to write additional related information.]]></DESCRIPTION>
 <!--800204 HELP-->
@@ -28611,9 +28611,9 @@ For example, if you want to create different invoices for each ship location for
 <!--800343 COLUMNNAME-->
 <!--800343-->              <COLUMNNAME><![CDATA[MA_Sequence_ID]]></COLUMNNAME>
 <!--800343 NAME-->
-<!--800343-->              <NAME><![CDATA[Sequence]]></NAME>
+<!--800343-->              <NAME><![CDATA[MA Sequence]]></NAME>
 <!--800343 PRINTNAME-->
-<!--800343-->              <PRINTNAME><![CDATA[MA_Sequence_ID]]></PRINTNAME>
+<!--800343-->              <PRINTNAME><![CDATA[MA Sequence]]></PRINTNAME>
 <!--800343 DESCRIPTION-->
 <!--800343-->              <DESCRIPTION><![CDATA[The order of records in a specified document.]]></DESCRIPTION>
 <!--800343 HELP-->
@@ -29016,9 +29016,9 @@ For example, if you want to create different invoices for each ship location for
 <!--800438 COLUMNNAME-->
 <!--800438-->              <COLUMNNAME><![CDATA[Explote]]></COLUMNNAME>
 <!--800438 NAME-->
-<!--800438-->              <NAME><![CDATA[Insert Phases]]></NAME>
+<!--800438-->              <NAME><![CDATA[Insert Products and/or Phases]]></NAME>
 <!--800438 PRINTNAME-->
-<!--800438-->              <PRINTNAME><![CDATA[Explode phases]]></PRINTNAME>
+<!--800438-->              <PRINTNAME><![CDATA[Insert Products and/or Phases]]></PRINTNAME>
 <!--800438 HELP-->
 <!--800438-->              <HELP><![CDATA[Process to explode the phases and/or insert the correspondent products to them.]]></HELP>
 <!--800438 AD_MODULE_ID-->
@@ -29168,9 +29168,9 @@ For example, if you want to create different invoices for each ship location for
 <!--800453 COLUMNNAME-->
 <!--800453-->              <COLUMNNAME><![CDATA[Explodephases]]></COLUMNNAME>
 <!--800453 NAME-->
-<!--800453-->              <NAME><![CDATA[Insert Phases]]></NAME>
+<!--800453-->              <NAME><![CDATA[Include Phases when inserting]]></NAME>
 <!--800453 PRINTNAME-->
-<!--800453-->              <PRINTNAME><![CDATA[Explode Phases]]></PRINTNAME>
+<!--800453-->              <PRINTNAME><![CDATA[Include Phases when inserting]]></PRINTNAME>
 <!--800453 HELP-->
 <!--800453-->              <HELP><![CDATA[Indicates if the work requirement phases will be generated automatically.]]></HELP>
 <!--800453 AD_MODULE_ID-->
@@ -33214,9 +33214,9 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800673 COLUMNNAME-->
 <!--800673-->              <COLUMNNAME><![CDATA[Priceoffer]]></COLUMNNAME>
 <!--800673 NAME-->
-<!--800673-->              <NAME><![CDATA[Price Adjustment]]></NAME>
+<!--800673-->              <NAME><![CDATA[Adjusted price]]></NAME>
 <!--800673 PRINTNAME-->
-<!--800673-->              <PRINTNAME><![CDATA[Price Offer]]></PRINTNAME>
+<!--800673-->              <PRINTNAME><![CDATA[Adjusted price]]></PRINTNAME>
 <!--800673 DESCRIPTION-->
 <!--800673-->              <DESCRIPTION><![CDATA[The price to be offered after discounts or price increases.]]></DESCRIPTION>
 <!--800673 HELP-->
@@ -33281,9 +33281,9 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800680 COLUMNNAME-->
 <!--800680-->              <COLUMNNAME><![CDATA[C_Salary_Category_Cost_ID]]></COLUMNNAME>
 <!--800680 NAME-->
-<!--800680-->              <NAME><![CDATA[Cost]]></NAME>
+<!--800680-->              <NAME><![CDATA[Salary Category Cost]]></NAME>
 <!--800680 PRINTNAME-->
-<!--800680-->              <PRINTNAME><![CDATA[C_Salary_Category_Cost_ID]]></PRINTNAME>
+<!--800680-->              <PRINTNAME><![CDATA[Salary Category Cost]]></PRINTNAME>
 <!--800680 HELP-->
 <!--800680-->              <HELP><![CDATA[Identifies a cost of a salary category during a time period.]]></HELP>
 <!--800680 AD_MODULE_ID-->
@@ -36112,9 +36112,9 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--1000500003 COLUMNNAME-->
 <!--1000500003-->              <COLUMNNAME><![CDATA[C_Poc_Doctype_Template_ID]]></COLUMNNAME>
 <!--1000500003 NAME-->
-<!--1000500003-->              <NAME><![CDATA[Document Type]]></NAME>
+<!--1000500003-->              <NAME><![CDATA[Poc Document Type]]></NAME>
 <!--1000500003 PRINTNAME-->
-<!--1000500003-->              <PRINTNAME><![CDATA[Document Type]]></PRINTNAME>
+<!--1000500003-->              <PRINTNAME><![CDATA[Poc Document Type]]></PRINTNAME>
 <!--1000500003 DESCRIPTION-->
 <!--1000500003-->              <DESCRIPTION><![CDATA[The document type]]></DESCRIPTION>
 <!--1000500003 HELP-->
@@ -42825,29 +42825,6 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--61A0316BE9F43875E040007F01005314-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--61A0316BE9F43875E040007F01005314**************--></AD_ELEMENT>
 
-<!--61A0316BE9F73875E040007F01005314**************--><AD_ELEMENT>
-<!--61A0316BE9F73875E040007F01005314 AD_ELEMENT_ID-->
-<!--61A0316BE9F73875E040007F01005314-->              <AD_ELEMENT_ID><![CDATA[61A0316BE9F73875E040007F01005314]]></AD_ELEMENT_ID>
-<!--61A0316BE9F73875E040007F01005314 AD_CLIENT_ID-->
-<!--61A0316BE9F73875E040007F01005314-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--61A0316BE9F73875E040007F01005314 AD_ORG_ID-->
-<!--61A0316BE9F73875E040007F01005314-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--61A0316BE9F73875E040007F01005314 ISACTIVE-->
-<!--61A0316BE9F73875E040007F01005314-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--61A0316BE9F73875E040007F01005314 COLUMNNAME-->
-<!--61A0316BE9F73875E040007F01005314-->              <COLUMNNAME><![CDATA[Last_Genentities]]></COLUMNNAME>
-<!--61A0316BE9F73875E040007F01005314 NAME-->
-<!--61A0316BE9F73875E040007F01005314-->              <NAME><![CDATA[Last Generate Entities]]></NAME>
-<!--61A0316BE9F73875E040007F01005314 PRINTNAME-->
-<!--61A0316BE9F73875E040007F01005314-->              <PRINTNAME><![CDATA[Last Generate Entities]]></PRINTNAME>
-<!--61A0316BE9F73875E040007F01005314 DESCRIPTION-->
-<!--61A0316BE9F73875E040007F01005314-->              <DESCRIPTION><![CDATA[Last time DAL entities were generated]]></DESCRIPTION>
-<!--61A0316BE9F73875E040007F01005314 HELP-->
-<!--61A0316BE9F73875E040007F01005314-->              <HELP><![CDATA[Indicates the last time DAL entities were generated, iits purpose is to add the ability of knowing if entities need to be re-generated.]]></HELP>
-<!--61A0316BE9F73875E040007F01005314 AD_MODULE_ID-->
-<!--61A0316BE9F73875E040007F01005314-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--61A0316BE9F73875E040007F01005314**************--></AD_ELEMENT>
-
 <!--61A0316BE9F83875E040007F01005314**************--><AD_ELEMENT>
 <!--61A0316BE9F83875E040007F01005314 AD_ELEMENT_ID-->
 <!--61A0316BE9F83875E040007F01005314-->              <AD_ELEMENT_ID><![CDATA[61A0316BE9F83875E040007F01005314]]></AD_ELEMENT_ID>
@@ -43143,9 +43120,9 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--D498E8A6CB6711DDBAC06BA41F5FDE11 COLUMNNAME-->
 <!--D498E8A6CB6711DDBAC06BA41F5FDE11-->              <COLUMNNAME><![CDATA[TEL_C_Bpartner_ID]]></COLUMNNAME>
 <!--D498E8A6CB6711DDBAC06BA41F5FDE11 NAME-->
-<!--D498E8A6CB6711DDBAC06BA41F5FDE11-->              <NAME><![CDATA[Business Partner]]></NAME>
+<!--D498E8A6CB6711DDBAC06BA41F5FDE11-->              <NAME><![CDATA[Charged Business Partner]]></NAME>
 <!--D498E8A6CB6711DDBAC06BA41F5FDE11 PRINTNAME-->
-<!--D498E8A6CB6711DDBAC06BA41F5FDE11-->              <PRINTNAME><![CDATA[Business Partner]]></PRINTNAME>
+<!--D498E8A6CB6711DDBAC06BA41F5FDE11-->              <PRINTNAME><![CDATA[Charged Business Partner]]></PRINTNAME>
 <!--D498E8A6CB6711DDBAC06BA41F5FDE11 DESCRIPTION-->
 <!--D498E8A6CB6711DDBAC06BA41F5FDE11-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--D498E8A6CB6711DDBAC06BA41F5FDE11 HELP-->

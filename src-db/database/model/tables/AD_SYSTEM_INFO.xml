@@ -105,10 +105,6 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
-      <column name="LAST_GENENTITIES" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
-        <default><![CDATA[SYSDATE]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="DB_CHECKSUM" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
