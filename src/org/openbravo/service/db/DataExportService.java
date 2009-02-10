@@ -197,7 +197,7 @@ public class DataExportService implements OBSingleton {
       final List<BaseOBObject> list = DataSetService.getInstance().getExportableObjects(dt,
           moduleId, parameters);
       toExport.addAll(list);
-      System.err.println("Read total " + list.size() + " records ");
+      // System.err.println("Read total " + list.size() + " records ");
     }
 
     if (toExport.size() > 0) {
