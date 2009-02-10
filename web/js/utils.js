@@ -2553,9 +2553,13 @@ function formElementValue(form, ElementName, Value) {
     if (obj.type.toUpperCase().indexOf("SELECT")==-1) obj.select();
     //document.focus();
   } else {
-    if (ElementName.indexOf("_BTN")!=-1) {
+    if (ElementName.toUpperCase().indexOf("_BTN")!=-1) {
       if (Value==null || Value=="null") Value="";
       layer(ElementName, Value, true);
+      return true;
+    } else if (ElementName.toUpperCase().indexOf("_LBL")!=-1) {
+      if (Value==null || Value=="null") Value="";
+      document.getElementById(ElementName).innerHTML = Value;
       return true;
     }
     var obj = eval("document." + form.name + "." + ElementName + ";");
