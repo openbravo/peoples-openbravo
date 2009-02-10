@@ -27,7 +27,7 @@
    Cur_Elements RECORD;
 
 
- v_Combination      VARCHAR(60) := '';
+ v_Combination      VARCHAR(120) := '';
  v_Description      VARCHAR(255) := '';
  v_IsFullyQualified CHAR(1) := 'Y';
  v_Separator      CHAR(1);
@@ -110,8 +110,8 @@ BEGIN
    IF (Cur_AC%NOTFOUND) THEN -- mandatory
     v_IsFullyQualified := 'N';
    ELSE
-    IF NOT INSERTING THEN
-      IF (:new.Alias IS NULL) THEN
+    IF INSERTING THEN
+      IF (:new.Alias IS NULL OR :new.Alias = '%') THEN
        :new.Alias := v_TempValue; --Alias is the account no
       END IF;
     END IF;
@@ -197,8 +197,8 @@ BEGIN
   END IF;
 
   -- Construct Info Fields
-  v_Combination := SUBSTR(COALESCE(v_Combination,'') || COALESCE(v_TempValue,'') || COALESCE(v_Separator,''),1,(CASE LENGTH(v_Combination) WHEN 0 THEN 1 ELSE LENGTH(v_Combination)-1 END));
-  v_Description := SUBSTR(COALESCE(v_Description,'') || COALESCE(v_TempName,'') || COALESCE(v_Separator,''),1,(CASE LENGTH(v_Description) WHEN 0 THEN 1 ELSE LENGTH(v_Description)-1 END));
+  v_Combination := COALESCE(v_Combination,'') || COALESCE(v_TempValue,'') || COALESCE(v_Separator,'');
+  v_Description := COALESCE(v_Description,'') || COALESCE(v_TempName,'') || COALESCE(v_Separator,'');
   v_TempValue := '_';
   v_TempName := '_';
  END LOOP;
