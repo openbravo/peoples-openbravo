@@ -213,9 +213,8 @@
     <Sql>
       <![CDATA[
         UPDATE I_ElementValue
-        SET AccountType='E'
-        WHERE AccountType IS NULL
-        AND I_IsImported<>'Y'
+        SET AccountType = substr(coalesce(AccountType,'E'),1,1)
+        WHERE I_IsImported<>'Y'
         AND AD_Client_ID = ?
       ]]>
     </Sql>
@@ -228,7 +227,7 @@
       <![CDATA[
         UPDATE I_ElementValue
         SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid AccountType, '
-        WHERE AccountType NOT IN ('A','E','L','M','O','R')
+        WHERE substr(AccountType,1,1) NOT IN ('A','E','L','M','O','R')
         AND I_IsImported<>'Y'
         AND AD_Client_ID = ?
       ]]>
@@ -241,9 +240,8 @@
     <Sql>
       <![CDATA[
         UPDATE I_ElementValue
-        SET AccountSign='N'
-        WHERE AccountSign IS NULL
-        AND I_IsImported<>'Y'
+        SET AccountSign = substr(coalesce(AccountSign,'N'),1,1)
+        WHERE I_IsImported<>'Y'
         AND AD_Client_ID = ?
       ]]>
     </Sql>
@@ -256,7 +254,7 @@
       <![CDATA[
         UPDATE I_ElementValue
         SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid AccountSign, '
-        WHERE AccountSign NOT IN ('N','C','D')
+        WHERE substr(AccountSign,1,1) NOT IN ('N','C','D')
         AND I_IsImported<>'Y'
         AND AD_Client_ID = ?
       ]]>
