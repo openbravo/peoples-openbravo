@@ -87,6 +87,8 @@ public class Translation extends HttpSecureAppServlet {
   public static final String XML_VALUE_ATTRIBUTE_COLUMN = "column";
   /** XML Value Original */
   public static final String XML_VALUE_ATTRIBUTE_ORIGINAL = "original";
+  /** XML Value Original */
+  public static final String XML_VALUE_ATTRIBUTE_ISTRL = "isTrl";
 
   public static final String CONTRIBUTORS_FILENAME = "CONTRIBUTORS";
   public static final String XML_CONTRIB = "Contributors";
@@ -529,12 +531,20 @@ public class Translation extends HttpSecureAppServlet {
           final Element value = document.createElement(XML_VALUE_TAG);
           value.setAttribute(XML_VALUE_ATTRIBUTE_COLUMN, trlColumns[i].c);
           String origString = rs.getString(trlColumns[i].c + "O"); // Original
+          String isTrlString = "Y";
           // Value
-          if (origString == null)
+          if (origString == null) {
             origString = "";
+            isTrlString = "N";
+          }
           String valueString = rs.getString(trlColumns[i].c); // Value
-          if (valueString == null)
+          if (valueString == null) {
             valueString = "";
+            isTrlString = "N";
+          }
+          if (origString.equals(valueString))
+            isTrlString = "N";
+          value.setAttribute(XML_VALUE_ATTRIBUTE_ISTRL, isTrlString);
           value.setAttribute(XML_VALUE_ATTRIBUTE_ORIGINAL, origString);
           value.appendChild(document.createTextNode(valueString));
           row.appendChild(value);
