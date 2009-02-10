@@ -209,7 +209,7 @@ public class FileImport extends HttpSecureAppServlet {
       releaseCommitConnection(con);
       myMessage = new OBError();
       myMessage.setType("Success");
-      myMessage.setTitle("Success");
+      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
       myMessage.setMessage(Utility.messageBD(this, "Records inserted in the temporary table", vars
           .getLanguage())
           + ": " + i);
