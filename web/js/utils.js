@@ -3965,7 +3965,7 @@ function auto_complete_number(obj, isFloatAllowed, isNegativeAllowed, evt) {
   autoCompleteNumber(obj, isFloatAllowed, isNegativeAllowed, evt);
 }
 
-//Deprecated in 2.50, use autoCompleteData instead
+//Deprecated in 2.50, use autoCompleteDate instead
 function auto_complete_date(field, fmt) {
   autoCompleteDate(field, fmt);
 }

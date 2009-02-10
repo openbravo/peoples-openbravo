@@ -258,7 +258,7 @@ function onloadFunctions(){
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onautoCompleteDateeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
+                      <input dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onautoCompleteDateeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
                     </td>
                     <td class="FieldButton_bg">
                       <a class="FieldButtonLinautoCompleteDate" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onautoCompleteDateeypress="this.className='FieldButtonLinautoCompleteDate_active'; return true;" onautoCompleteDateeyup="this.className='FieldButtonLinautoCompleteDate_focus'; return true;" onclicautoCompleteDate="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
@@ -280,7 +280,7 @@ function onloadFunctions(){
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onautoCompleteDateeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
+                      <input dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onautoCompleteDateeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
                     </td>
                     <td class="FieldButton_bg">
                       <a class="FieldButtonLinautoCompleteDate" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onautoCompleteDateeypress="this.className='FieldButtonLinautoCompleteDate_active'; return true;" onautoCompleteDateeyup="this.className='FieldButtonLinautoCompleteDate_focus'; return true;"  onclicautoCompleteDate="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;">
