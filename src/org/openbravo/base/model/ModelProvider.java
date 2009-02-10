@@ -166,11 +166,6 @@ public class ModelProvider implements OBSingleton {
       for (final Table t : tables) {
         // tables are stored case insensitive!
         tablesByTableName.put(t.getTableName().toLowerCase(), t);
-
-        if (t.getName().contains("_")) {
-          System.err.println(t.getName());
-        }
-
       }
 
       log.debug("Setting referencetypes for columns");

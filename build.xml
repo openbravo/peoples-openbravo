@@ -103,10 +103,10 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <available file=".svn/entries" property="is.svn" />
 
- 
 
 
- 
+
+
   <condition property="deploy.mode" value="class">
     <not>
       <isset property="${deploy.mode}" />
@@ -221,56 +221,56 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="smartbuild" depends="init">
-    <property name="smart.mode" value="true"/>
+    <property name="smart.mode" value="true" />
     <property name="onlyIfModified" value="true" />
-    <antcall target="core.lib"/>
-    <antcall target="wad.lib"/>
-    
-      <checksum file="${base.src.wad}/lib/openbravo-wad.jar" algorithm="MD5" property="test.md5.wad"/>
+    <antcall target="core.lib" />
+    <antcall target="wad.lib" />
 
-       <condition property="new.wad">
-         <not>
-           <equals arg1="${test.md5.wad}" arg2="${md5.wad}" />
-         </not>
-       </condition>
-    
-    <antcall target="trl.lib"/>
-    
-    
+    <checksum file="${base.src.wad}/lib/openbravo-wad.jar" algorithm="MD5" property="test.md5.wad" />
+
+    <condition property="new.wad">
+      <not>
+        <equals arg1="${test.md5.wad}" arg2="${md5.wad}" />
+      </not>
+    </condition>
+
+    <antcall target="trl.lib" />
+
+
     <condition property="no.local">
       <not>
-        <istrue value="${local}"/>
+        <istrue value="${local}" />
       </not>
     </condition>
     <antcall target="update.database.if.no.local" />
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
-    
-    <antcall target="build.deploy"/>
+
+    <antcall target="build.deploy" />
     <!-- only restart tomcat if the restart prop was set to true -->
     <condition property="dorestart">
       <istrue value="${restart}" />
     </condition>
     <antcall target="if.restart.tomcat" />
   </target>
-  
+
   <target name="update.database.if.no.local" if="no.local">
     <antcall target="update.database" />
   </target>
 
   <target name="build.deploy">
-    <antcall target="build.deploy.war"/>
-    <antcall target="build.deploy.class"/>
+    <antcall target="build.deploy.war" />
+    <antcall target="build.deploy.class" />
   </target>
-    
+
   <target name="build.deploy.class" if="mode.class">
     <ant dir="${base.src}" target="copy.files" inheritAll="true" inheritRefs="true" />
     <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" />
-    <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8"/>
+    <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8" />
   </target>
-    
+
   <target name="build.deploy.war" if="mode.war">
-    <antcall target="war"/>
+    <antcall target="war" />
   </target>
 
   <target name="if.restart.tomcat" if="dorestart">
@@ -690,6 +690,13 @@ compare.database.structure: refer to compare.database.structure target of databa
       <classpath refid="project.class.path" />
     </taskdef>
 
+    <taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+
+    <echo message="Validating Module..." />
+    <validateModules moduleJavaPackage="${module}" failOnError="false" userId="0" propertiesFile="${base.config}/Openbravo.properties" type="module" />
+
     <antcall target="obx.export.database" />
     <antcall target="obx.export.config.script" />
 
@@ -701,7 +708,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="src-diagnostics" target="check.all" />
   </target>
 
-   <target name="setup.check.os">
+  <target name="setup.check.os">
     <condition property="osname" value="linux">
       <equals arg1="${os.name}" arg2="Linux" />
     </condition>

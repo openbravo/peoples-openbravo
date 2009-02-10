@@ -188,12 +188,16 @@ public class DataExportService implements OBSingleton {
     Collections.sort(dts, new DatasetTableComparator());
 
     final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
+    System.err.println("Total dts " + dts.size());
+    int i = 0;
     for (final DataSetTable dt : dts) {
       final Boolean isbo = dt.isBusinessObject();
       exc.setOptionIncludeChildren(isbo != null && isbo.booleanValue());
+      System.err.println(i++ + " Reading " + dt.getTable().getName() + "...");
       final List<BaseOBObject> list = DataSetService.getInstance().getExportableObjects(dt,
           moduleId, parameters);
       toExport.addAll(list);
+      System.err.println("Read total " + list.size() + " records ");
     }
 
     if (toExport.size() > 0) {

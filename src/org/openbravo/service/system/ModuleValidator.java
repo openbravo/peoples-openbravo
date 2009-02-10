@@ -126,15 +126,16 @@ public class ModuleValidator implements SystemValidator {
     final String[] paths = javaPackage.split("\\.");
     for (String part : paths) {
       final File partDir = new File(curDir, part);
-      if (!partDir.exists()) {
+      if (curDir.listFiles() == null || !partDir.exists()) {
         result.addError(SystemValidationType.MODULE_ERROR, "The source directory of the Module "
-            + module.getName() + " is invalid, it should follow the "
-            + "javaPackage of the module: " + javaPackage);
-      }
-      if (curDir.listFiles().length > 1) {
+            + module.getName()
+            + " is invalid, the source directory structure does not correspond to the "
+            + "javaPackage of the module (" + javaPackage + ").");
+        return;
+      } else if (curDir.listFiles().length > 1) {
         result.addError(SystemValidationType.MODULE_ERROR, "The source directory of the Module "
-            + module.getName() + " is invalid, it contains directories "
-            + "which are not part of the javaPackage of the module: " + javaPackage);
+            + module.getName() + " is invalid, it contains directories which are not part of "
+            + "the javaPackage of the module: " + javaPackage);
 
       }
       curDir = partDir;
@@ -188,7 +189,8 @@ public class ModuleValidator implements SystemValidator {
 
   private void checkJavaPackages(Module module, SystemValidationResult result) {
     for (org.openbravo.model.ad.module.DataPackage pckg : module.getDataPackageList()) {
-      if (!pckg.getJavaPackage().startsWith(module.getJavaPackage())) {
+      if (pckg.getJavaPackage() != null
+          && !pckg.getJavaPackage().startsWith(module.getJavaPackage())) {
         result.addError(SystemValidationType.MODULE_ERROR, "Data package " + pckg.getName()
             + " has a java package which is not within the java package of its module "
             + module.getName());

@@ -71,22 +71,22 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
       log.error(ve.getMessage());
     }
     Check.isNotNull(value, "Null default values are not allowed");
-    setData(propName, value);
+    setDataValue(propName, value);
   }
 
   private Object getData(String propName) {
-    return getData(getEntity().getProperty(propName));
+    return getDataValue(getEntity().getProperty(propName));
   }
 
-  private Object getData(Property p) {
+  private Object getDataValue(Property p) {
     if (data == null) {
-      data = new Object[getEntity().getProperties().size()];
+      // nothing set in this case anyway
       return null;
     }
     return data[p.getIndexInEntity()];
   }
 
-  private void setData(String propName, Object value) {
+  private void setDataValue(String propName, Object value) {
     if (data == null) {
       data = new Object[getEntity().getProperties().size()];
     }
@@ -119,7 +119,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
   public Object get(String propName) {
     final Property p = getEntity().getProperty(propName);
     checkDerivedReadable(p);
-    return getData(p);
+    return getDataValue(p);
   }
 
   /**
@@ -168,7 +168,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
    * @param value
    */
   public void setValue(String propName, Object value) {
-    setData(propName, value);
+    setDataValue(propName, value);
   }
 
   /**

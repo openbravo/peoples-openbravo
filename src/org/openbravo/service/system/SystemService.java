@@ -76,7 +76,8 @@ public class SystemService implements OBSingleton {
   }
 
   /**
-   * Validates a specific module, both the database model as the module data itself
+   * Validates a specific module, checks the javapackage, dependency on core etc. The database
+   * changes of the module are not checked. This is a separate task.
    * 
    * @param module
    *          the module to validate
@@ -85,15 +86,25 @@ public class SystemService implements OBSingleton {
    * @return the validation result
    */
   public SystemValidationResult validateModule(Module module, Database database) {
+    final ModuleValidator moduleValidator = new ModuleValidator();
+    moduleValidator.setValidateModule(module);
+    return moduleValidator.validate();
+  }
+
+  /**
+   * Validates the database for a specific module.
+   * 
+   * @param module
+   *          the module to validate
+   * @param database
+   *          the database to read the dbschema from
+   * @return the validation result
+   */
+  public SystemValidationResult validateDatabase(Module module, Database database) {
     final DatabaseValidator databaseValidator = new DatabaseValidator();
     databaseValidator.setValidateModule(module);
     databaseValidator.setDatabase(database);
-    final SystemValidationResult result = databaseValidator.validate();
-
-    final ModuleValidator moduleValidator = new ModuleValidator();
-    moduleValidator.setValidateModule(module);
-    result.addAll(moduleValidator.validate());
-    return result;
+    return databaseValidator.validate();
   }
 
   /**
