@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -293,14 +293,26 @@
    <SqlMethod name="selectTreeID" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT AD_Client_ID as Node_ID, AD_Tree_ID AS ID, NAME 
+        SELECT NODE_ID, ID, NAME 
+        FROM (
+         SELECT AD_Client_ID as Node_ID, AD_Tree_ID AS ID, NAME, 1 AS SEQNO
         FROM AD_Tree 
-        WHERE AD_Client_ID IN ('1') 
+        WHERE AD_Client_ID IN ('1')  
+        AND AD_Client_ID != '0'
         AND TreeType = ? 
         AND IsActive = 'Y'
-        order by ad_client_id desc
+      UNION
+       SELECT AD_Client_ID as Node_ID, AD_Tree_ID AS ID, NAME, 2 AS SEQNO
+        FROM AD_Tree 
+        WHERE AD_Client_ID IN ('2') 
+        AND AD_Client_id = '0'
+        AND TreeType = ?
+        AND IsActive = 'Y') 
+        ORDER BY SEQNO
       </Sql>
         <Parameter name="adClientId" optional="true" type="replace" after="AD_Client_ID IN (" text="'1'"/>
+        <Parameter name="treetype"/>
+        <Parameter name="adClientId" optional="true" type="replace" after="AD_Client_id IN (" text="'2'"/>
         <Parameter name="treetype"/>
    </SqlMethod>
    <SqlMethod name="TreeName" type="preparedStatement" return="multiple">
