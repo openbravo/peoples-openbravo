@@ -24,6 +24,68 @@ validateDateTextBox= function(/*String*/ id){
   if (required == "true") isMissingDateTextBox(id);
 }
 
+expandDateYear= function(/*String*/ id){
+  var str_dateFormat = document.getElementById(id).getAttribute("displayformat");
+  if (!str_dateFormat) str_dateFormat = defaultDateFormat; 
+  if (str_dateFormat.indexOf('YYYY') != -1) {
+    var centuryReference = 50;
+    var str_datetime = document.getElementById(id).value;
+    var dateBlock = new Array();
+    dateBlock[1] = getDateBlock(str_datetime, 1);
+    dateBlock[2] = getDateBlock(str_datetime, 2);
+    dateBlock[3] = getDateBlock(str_datetime, 3);
+
+    if (!dateBlock[1] || !dateBlock[2] || !dateBlock[3]) {
+      return false;
+    }
+
+    if (str_dateFormat.substr(1,1) == 'Y') {
+      var yearBlock = 1;
+    } else if (str_dateFormat.substr(7,1) == 'Y') {
+      var yearBlock = 3;
+    } else {
+      return false;
+    }
+
+    if (dateBlock[yearBlock].length == 1) {
+      dateBlock[yearBlock] = '000' + dateBlock[yearBlock];
+    } else if (dateBlock[yearBlock].length == 2) {
+      if (dateBlock[yearBlock] < centuryReference) {
+        dateBlock[yearBlock] = '20' + dateBlock[yearBlock];
+      } else {
+        dateBlock[yearBlock] = '19' + dateBlock[yearBlock];
+      }
+    } else if (dateBlock[yearBlock].length == 3) {
+      dateBlock[yearBlock] = '0' + dateBlock[yearBlock];
+    } else if (dateBlock[yearBlock].length == 4) {
+      return true;
+    }
+
+    var dateSeparator = str_dateFormat.replace(/D/g,"").replace(/M/g,"").replace(/Y/g,"").substr(0,1);
+    var normalizedDate = dateBlock[1] + dateSeparator + dateBlock[2] + dateSeparator + dateBlock[3];
+    document.getElementById(id).value = normalizedDate;
+  } else {
+    return false;
+  }
+  return true;
+}
+
+getDateBlock= function(/*String*/ str_date, block){
+  // datetime parsing and formatting routimes. modify them if you wish other datetime format 
+  //function str2dt (str_datetime) { 
+  var re_date = /^(\d+)[\-|\/|/|:|.|\.](\d+)[\-|\/|/|:|.|\.](\d+)$/; 
+  if (!re_date.exec(str_date)) 
+    return false; 
+  var dateBlock = new Array();
+  dateBlock[1] = RegExp.$1;
+  dateBlock[2] = RegExp.$2;
+  dateBlock[3] = RegExp.$3;
+  if (block == 1 || block == '1') return dateBlock[1];
+  else if (block == 2 || block == '2') return dateBlock[2];
+  else if (block == 3 || block == '3') return dateBlock[3];
+  else dateBlock;
+}
+
 isValidDateTextBox= function(/*String*/ id){
   var isValid = this.isValidDate(document.getElementById(id).value, getDateFormat(document.getElementById(id).getAttribute("displayformat")));
   var element = document.getElementById(id+"invalidSpan");
@@ -53,42 +115,47 @@ isValidDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
 getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) { 
   var inputDate=new Date(0,0,0); 
   if (str_datetime.length == 0) return inputDate; 
-  // datetime parsing and formatting routimes. modify them if you wish other datetime format 
-  //function str2dt (str_datetime) { 
-  var re_date = /^(\d+)[\-|\/|/|:|.|\.](\d+)[\-|\/|/|:|.|\.](\d+)$/; 
-  if (!re_date.exec(str_datetime)) 
-    return false; 
+
+
+  var dateBlock = new Array();
+  dateBlock[1] = getDateBlock(str_datetime, 1);
+  dateBlock[2] = getDateBlock(str_datetime, 2);
+  dateBlock[3] = getDateBlock(str_datetime, 3);
+
+  if (!dateBlock[1] || !dateBlock[2] || !dateBlock[3]) {
+    return false;
+  }
   if (!str_dateFormat) str_dateFormat = defaultDateFormat; 
   switch (str_dateFormat) { 
     case "%m-%d-%Y": 
     case "%m/%d/%Y": 
     case "%m.%d.%Y": 
     case "%m:%d:%Y": 
-      if (RegExp.$2 < 1 || RegExp.$2 > 31) return false; 
-      if (RegExp.$1 < 1 || RegExp.$1 > 12) return false; 
-      if (RegExp.$3 < 1 || RegExp.$3 > 9999) return false; 
-      inputDate=new Date(parseFloat(RegExp.$3), parseFloat(RegExp.$1)-1, parseFloat(RegExp.$2)); 
+      if (dateBlock[2] < 1 || dateBlock[2] > 31) return false; 
+      if (dateBlock[1] < 1 || dateBlock[1] > 12) return false; 
+      if (dateBlock[3] < 1 || dateBlock[3] > 9999) return false; 
+      inputDate=new Date(parseFloat(dateBlock[3]), parseFloat(dateBlock[1])-1, parseFloat(dateBlock[2])); 
       return inputDate; 
     case "%Y-%m-%d": 
     case "%Y/%m/%d": 
     case "%Y.%m.%d": 
     case "%Y:%m:%d": 
-      if (RegExp.$3 < 1 || RegExp.$3 > 31) return false; 
-      if (RegExp.$2 < 1 || RegExp.$2 > 12) return false; 
-      if (RegExp.$1 < 1 || RegExp.$1 > 9999) return false; 
-      inputDate=new Date(parseFloat(RegExp.$1), parseFloat(RegExp.$2)-1, parseFloat(RegExp.$3)); 
+      if (dateBlock[3] < 1 || dateBlock[3] > 31) return false; 
+      if (dateBlock[2] < 1 || dateBlock[2] > 12) return false; 
+      if (dateBlock[1] < 1 || dateBlock[1] > 9999) return false; 
+      inputDate=new Date(parseFloat(dateBlock[1]), parseFloat(dateBlock[2])-1, parseFloat(dateBlock[3])); 
       return inputDate; 
     case "%d-%m-%Y": 
     case "%d/%m/%Y": 
     case "%d.%m.%Y": 
     case "%d:%m:%Y": 
     default: 
-      if (RegExp.$1 < 1 || RegExp.$1 > 31) return false; 
-      if (RegExp.$2 < 1 || RegExp.$2 > 12) return false; 
-      if (RegExp.$3 < 1 || RegExp.$3 > 9999) return false; 
-      inputDate=new Date(parseFloat(RegExp.$3), parseFloat(RegExp.$2)-1, parseFloat(RegExp.$1)); 
+      if (dateBlock[1] < 1 || dateBlock[1] > 31) return false; 
+      if (dateBlock[2] < 1 || dateBlock[2] > 12) return false; 
+      if (dateBlock[3] < 1 || dateBlock[3] > 9999) return false; 
+      inputDate=new Date(parseFloat(dateBlock[3]), parseFloat(dateBlock[2])-1, parseFloat(dateBlock[1])); 
       return inputDate; 
-  } 
+  }
   return false; 
 }
 
