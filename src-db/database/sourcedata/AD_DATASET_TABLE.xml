@@ -633,7 +633,7 @@
 <!--5E0A2E1896E011DDA64C001B388C61A4 INCLUDEALLCOLUMNS-->
 <!--5E0A2E1896E011DDA64C001B388C61A4-->              <INCLUDEALLCOLUMNS><![CDATA[Y]]></INCLUDEALLCOLUMNS>
 <!--5E0A2E1896E011DDA64C001B388C61A4 WHERECLAUSE-->
-<!--5E0A2E1896E011DDA64C001B388C61A4-->              <WHERECLAUSE><![CDATA[as mo left join mo.callout left join mo.reference left join mo.form left join mo.process left join mo.workflow left join mo.tab where (mo.callout.module.id=:moduleid or mo.reference.module.id=:moduleid or mo.form.module.id=:moduleid or mo.process.module.id=:moduleid or mo.workflow.module.id=:moduleid or mo.tab.module.id=:moduleid) or (mo.callout is null and mo.reference is null and mo.form is null and mo.process is null and mo.workflow is null and mo.tab is null and mo.module.id=:moduleid) or (mo.id='801180' and :moduleid='0')]]></WHERECLAUSE>
+<!--5E0A2E1896E011DDA64C001B388C61A4-->              <WHERECLAUSE><![CDATA[as mo left join mo.callout left join mo.reference left join mo.specialForm left join mo.process left join mo.workflow left join mo.tab where (mo.callout.module.id=:moduleid or mo.reference.module.id=:moduleid or mo.specialForm.module.id=:moduleid or mo.process.module.id=:moduleid or mo.workflow.module.id=:moduleid or mo.tab.module.id=:moduleid) or (mo.callout is null and mo.reference is null and mo.specialForm is null and mo.process is null and mo.workflow is null and mo.tab is null and mo.module.id=:moduleid) or (mo.id='801180' and :moduleid='0')]]></WHERECLAUSE>
 <!--5E0A2E1896E011DDA64C001B388C61A4 EXCLUDEAUDITINFO-->
 <!--5E0A2E1896E011DDA64C001B388C61A4-->              <EXCLUDEAUDITINFO><![CDATA[Y]]></EXCLUDEAUDITINFO>
 <!--5E0A2E1896E011DDA64C001B388C61A4 ISBUSINESSOBJECT-->
@@ -658,7 +658,7 @@
 <!--60CA90DE96E011DD9026001B388C61A4 INCLUDEALLCOLUMNS-->
 <!--60CA90DE96E011DD9026001B388C61A4-->              <INCLUDEALLCOLUMNS><![CDATA[Y]]></INCLUDEALLCOLUMNS>
 <!--60CA90DE96E011DD9026001B388C61A4 WHERECLAUSE-->
-<!--60CA90DE96E011DD9026001B388C61A4-->              <WHERECLAUSE><![CDATA[as mom left join mom.modelImplementation as mo left join mo.callout left join mo.reference left join mo.form left join mo.process left join mo.workflow left join mo.tab where (mo.callout.module.id=:moduleid or mo.reference.module.id=:moduleid or mo.form.module.id=:moduleid or mo.process.module.id=:moduleid or mo.workflow.module.id=:moduleid or mo.tab.module.id=:moduleid) or  (mo.callout is null and mo.reference is null and mo.form is null and mo.process is null and mo.workflow is null and mo.tab is null and mo.module.id=:moduleid) or (mo.id='801180' and :moduleid='0')]]></WHERECLAUSE>
+<!--60CA90DE96E011DD9026001B388C61A4-->              <WHERECLAUSE><![CDATA[as mom left join mom.modelObject as mo left join mo.callout left join mo.reference left join mo.specialForm left join mo.process left join mo.workflow left join mo.tab where (mo.callout.module.id=:moduleid or mo.reference.module.id=:moduleid or mo.specialForm.module.id=:moduleid or mo.process.module.id=:moduleid or mo.workflow.module.id=:moduleid or mo.tab.module.id=:moduleid) or  (mo.callout is null and mo.reference is null and mo.specialForm is null and mo.process is null and mo.workflow is null and mo.tab is null and mo.module.id=:moduleid) or (mo.id='801180' and :moduleid='0')]]></WHERECLAUSE>
 <!--60CA90DE96E011DD9026001B388C61A4 EXCLUDEAUDITINFO-->
 <!--60CA90DE96E011DD9026001B388C61A4-->              <EXCLUDEAUDITINFO><![CDATA[Y]]></EXCLUDEAUDITINFO>
 <!--60CA90DE96E011DD9026001B388C61A4 ISBUSINESSOBJECT-->
@@ -808,7 +808,7 @@
 <!--742BF79896E111DD9F89001B388C61A4 INCLUDEALLCOLUMNS-->
 <!--742BF79896E111DD9F89001B388C61A4-->              <INCLUDEALLCOLUMNS><![CDATA[Y]]></INCLUDEALLCOLUMNS>
 <!--742BF79896E111DD9F89001B388C61A4 WHERECLAUSE-->
-<!--742BF79896E111DD9F89001B388C61A4-->              <WHERECLAUSE><![CDATA[selector.reference.module.id=:moduleid]]></WHERECLAUSE>
+<!--742BF79896E111DD9F89001B388C61A4-->              <WHERECLAUSE><![CDATA[search.reference.module.id=:moduleid]]></WHERECLAUSE>
 <!--742BF79896E111DD9F89001B388C61A4 EXCLUDEAUDITINFO-->
 <!--742BF79896E111DD9F89001B388C61A4-->              <EXCLUDEAUDITINFO><![CDATA[Y]]></EXCLUDEAUDITINFO>
 <!--742BF79896E111DD9F89001B388C61A4 ISBUSINESSOBJECT-->
@@ -975,7 +975,7 @@
 <!--8D9F0E70A05211DDB76B001B388C61A4 INCLUDEALLCOLUMNS-->
 <!--8D9F0E70A05211DDB76B001B388C61A4-->              <INCLUDEALLCOLUMNS><![CDATA[Y]]></INCLUDEALLCOLUMNS>
 <!--8D9F0E70A05211DDB76B001B388C61A4 WHERECLAUSE-->
-<!--8D9F0E70A05211DDB76B001B388C61A4-->              <WHERECLAUSE><![CDATA[tree.id='10' and exists( from ADMenu as menu where menu.id = node_id) or (tree.id='10' and parent is null) or (tree.id='50')]]></WHERECLAUSE>
+<!--8D9F0E70A05211DDB76B001B388C61A4-->              <WHERECLAUSE><![CDATA[tree.id='10' and exists( from ADMenu as menu where menu.id = node_id) or (tree.id='10' and reportSet is null) or (tree.id='50')]]></WHERECLAUSE>
 <!--8D9F0E70A05211DDB76B001B388C61A4 EXCLUDEAUDITINFO-->
 <!--8D9F0E70A05211DDB76B001B388C61A4-->              <EXCLUDEAUDITINFO><![CDATA[Y]]></EXCLUDEAUDITINFO>
 <!--8D9F0E70A05211DDB76B001B388C61A4 ISBUSINESSOBJECT-->
@@ -1767,7 +1767,7 @@
 <!--9C642B25C5B540EE97B4363AB384985E INCLUDEALLCOLUMNS-->
 <!--9C642B25C5B540EE97B4363AB384985E-->              <INCLUDEALLCOLUMNS><![CDATA[Y]]></INCLUDEALLCOLUMNS>
 <!--9C642B25C5B540EE97B4363AB384985E WHERECLAUSE-->
-<!--9C642B25C5B540EE97B4363AB384985E-->              <WHERECLAUSE><![CDATA[as mom left join mom.modelImplementation as mo left join mo.callout left join mo.reference left join mo.form left join mo.process left join mo.workflow left join mo.tab where (mo.callout.module.id=:moduleid or mo.reference.module.id=:moduleid or mo.form.module.id=:moduleid or mo.process.module.id=:moduleid or mo.workflow.module.id=:moduleid or mo.tab.module.id=:moduleid) or  (mo.callout is null and mo.reference is null and mo.form is null and mo.process is null and mo.workflow is null and mo.tab is null and mo.module.id=:moduleid)]]></WHERECLAUSE>
+<!--9C642B25C5B540EE97B4363AB384985E-->              <WHERECLAUSE><![CDATA[as mom left join mom.modelObject as mo left join mo.callout left join mo.reference left join mo.specialForm left join mo.process left join mo.workflow left join mo.tab where (mo.callout.module.id=:moduleid or mo.reference.module.id=:moduleid or mo.specialForm.module.id=:moduleid or mo.process.module.id=:moduleid or mo.workflow.module.id=:moduleid or mo.tab.module.id=:moduleid) or  (mo.callout is null and mo.reference is null and mo.specialForm is null and mo.process is null and mo.workflow is null and mo.tab is null and mo.module.id=:moduleid)]]></WHERECLAUSE>
 <!--9C642B25C5B540EE97B4363AB384985E EXCLUDEAUDITINFO-->
 <!--9C642B25C5B540EE97B4363AB384985E-->              <EXCLUDEAUDITINFO><![CDATA[Y]]></EXCLUDEAUDITINFO>
 <!--9C642B25C5B540EE97B4363AB384985E AD_MODULE_ID-->
@@ -11015,7 +11015,7 @@
 <!--C4A8525296E111DDBAF2001B388C61A4 INCLUDEALLCOLUMNS-->
 <!--C4A8525296E111DDBAF2001B388C61A4-->              <INCLUDEALLCOLUMNS><![CDATA[Y]]></INCLUDEALLCOLUMNS>
 <!--C4A8525296E111DDBAF2001B388C61A4 WHERECLAUSE-->
-<!--C4A8525296E111DDBAF2001B388C61A4-->              <WHERECLAUSE><![CDATA[(tree.id='10' and exists( from ADMenu as menu where menu.id = node_id and menu.module.id=:moduleid)) or (:moduleid='0' and tree.id='10' and parent is null) or (:moduleid='0' and tree.id='50')]]></WHERECLAUSE>
+<!--C4A8525296E111DDBAF2001B388C61A4-->              <WHERECLAUSE><![CDATA[(tree.id='10' and exists( from ADMenu as menu where menu.id = node_id and menu.module.id=:moduleid)) or (:moduleid='0' and tree.id='10' and reportSet is null) or (:moduleid='0' and tree.id='50')]]></WHERECLAUSE>
 <!--C4A8525296E111DDBAF2001B388C61A4 EXCLUDEAUDITINFO-->
 <!--C4A8525296E111DDBAF2001B388C61A4-->              <EXCLUDEAUDITINFO><![CDATA[Y]]></EXCLUDEAUDITINFO>
 <!--C4A8525296E111DDBAF2001B388C61A4 ISBUSINESSOBJECT-->
@@ -11365,7 +11365,7 @@
 <!--EBB65FEC96E111DDAFA8001B388C61A4 INCLUDEALLCOLUMNS-->
 <!--EBB65FEC96E111DDAFA8001B388C61A4-->              <INCLUDEALLCOLUMNS><![CDATA[Y]]></INCLUDEALLCOLUMNS>
 <!--EBB65FEC96E111DDAFA8001B388C61A4 WHERECLAUSE-->
-<!--EBB65FEC96E111DDAFA8001B388C61A4-->              <WHERECLAUSE><![CDATA[wFNode.workflow.module.id=:moduleid]]></WHERECLAUSE>
+<!--EBB65FEC96E111DDAFA8001B388C61A4-->              <WHERECLAUSE><![CDATA[node.workflow.module.id=:moduleid]]></WHERECLAUSE>
 <!--EBB65FEC96E111DDAFA8001B388C61A4 EXCLUDEAUDITINFO-->
 <!--EBB65FEC96E111DDAFA8001B388C61A4-->              <EXCLUDEAUDITINFO><![CDATA[Y]]></EXCLUDEAUDITINFO>
 <!--EBB65FEC96E111DDAFA8001B388C61A4 ISBUSINESSOBJECT-->
