@@ -229,7 +229,7 @@ public class DalMappingGenerator implements OBSingleton {
       if (p.getTargetEntity().getOrderByProperties().size() > 0) {
         order.append("order-by=\"");
         for (final Property po : p.getTargetEntity().getOrderByProperties()) {
-          order.append(po.getName() + " ASC,");
+          order.append(po.getColumnName() + " ASC,");
         }
         order = order.replace(order.length() - 1, order.length(), "");
         order.append("\"");

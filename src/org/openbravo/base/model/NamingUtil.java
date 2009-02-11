@@ -163,6 +163,24 @@ public class NamingUtil {
     mappingName = camelCaseIt(mappingName, " ");
     mappingName = stripIllegalCharacters(mappingName);
     mappingName = lowerCaseFirst(mappingName);
+
+    // check for doublures and be robust....
+    for (Property p : property.getEntity().getProperties()) {
+      if (p.getName() != null && p.getName().equalsIgnoreCase(mappingName)) {
+        log
+            .error("ERROR: Property name computation fails for property "
+                + property
+                + " there is more then one property with the same name, being robust and "
+                + "renaming property automatically. If this error appears during update.database then "
+                + "this is possibly solved automatically. Otherwise this should be repaired manually by "
+                + "changing the AD_Column.name of the column "
+                + property.getEntity().getTableName() + "." + property.getColumnName());
+
+        mappingName += property.getIndexInEntity();
+        return mappingName;
+      }
+    }
+
     return mappingName;
   }
 
