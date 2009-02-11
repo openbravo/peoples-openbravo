@@ -261,8 +261,8 @@ public class OBContext implements OBNotSingleton {
             + " roa where o." + Organization.PROPERTY_ID + "=roa."
             + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID + " and roa."
             + RoleOrganization.PROPERTY_ROLE + "." + Organization.PROPERTY_ID + "='"
-            + thisRole.getId() + "' and roa." + RoleOrganization.PROPERTY_ISACTIVE + "='Y' and o."
-            + Organization.PROPERTY_ISACTIVE + "='Y'");
+            + thisRole.getId() + "' and roa." + RoleOrganization.PROPERTY_ACTIVE + "='Y' and o."
+            + Organization.PROPERTY_ACTIVE + "='Y'");
     organizationList = qry.list();
     for (final String orgId : additionalWritableOrganizations) {
       final Organization org = OBDal.getInstance().get(Organization.class, orgId);
@@ -277,7 +277,7 @@ public class OBContext implements OBNotSingleton {
   private List<Organization> getOrganizations(Client client) {
     final Query qry = SessionHandler.getInstance().createQuery(
         "select o from " + Organization.class.getName() + " o where " + "o."
-            + Organization.PROPERTY_CLIENT + "=? and o." + Organization.PROPERTY_ISACTIVE + "='Y'");
+            + Organization.PROPERTY_CLIENT + "=? and o." + Organization.PROPERTY_ACTIVE + "='Y'");
     qry.setParameter(0, client);
     organizationList = qry.list();
     return organizationList;
@@ -421,10 +421,10 @@ public class OBContext implements OBNotSingleton {
       setUser(u);
       Hibernate.initialize(getUser().getClient());
       Hibernate.initialize(getUser().getOrganization());
-      Hibernate.initialize(getUser().getDefaultAdOrg());
-      Hibernate.initialize(getUser().getDefaultAdClient());
-      Hibernate.initialize(getUser().getDefaultAdRole());
-      Hibernate.initialize(getUser().getDefaultAdLanguage());
+      Hibernate.initialize(getUser().getDefaultOrganization());
+      Hibernate.initialize(getUser().getDefaultClient());
+      Hibernate.initialize(getUser().getDefaultRole());
+      Hibernate.initialize(getUser().getDefaultLanguage());
 
       organizationStructureProviderByClient = new HashMap<String, OrganizationStructureProvider>();
 
@@ -436,14 +436,14 @@ public class OBContext implements OBNotSingleton {
         final Role r = getOne(Role.class, "select r from " + Role.class.getName() + " r where "
             + " r." + Role.PROPERTY_ID + "='" + roleId + "'");
         setRole(r);
-      } else if (getUser().getDefaultAdRole() != null && getUser().getDefaultAdRole().isActive()) {
-        setRole(getUser().getDefaultAdRole());
+      } else if (getUser().getDefaultRole() != null && getUser().getDefaultRole().isActive()) {
+        setRole(getUser().getDefaultRole());
       } else {
 
         final UserRoles ur = getOne(UserRoles.class, "select ur from " + UserRoles.class.getName()
-            + " ur where " + " ur." + UserRoles.PROPERTY_USER + "." + User.PROPERTY_ID + "='"
-            + u.getId() + "' and ur." + UserRoles.PROPERTY_ISACTIVE + "='Y' and ur."
-            + UserRoles.PROPERTY_ROLE + "." + Role.PROPERTY_ISACTIVE + "='Y' order by ur."
+            + " ur where " + " ur." + UserRoles.PROPERTY_USERCONTACT + "." + User.PROPERTY_ID
+            + "='" + u.getId() + "' and ur." + UserRoles.PROPERTY_ACTIVE + "='Y' and ur."
+            + UserRoles.PROPERTY_ROLE + "." + Role.PROPERTY_ACTIVE + "='Y' order by ur."
             + UserRoles.PROPERTY_ROLE + "." + Role.PROPERTY_ID + " asc", false);
         if (ur == null) {
           throw new OBSecurityException("There are no valid and active user roles "
@@ -461,14 +461,15 @@ public class OBContext implements OBNotSingleton {
             + Organization.class.getName() + " r where " + " r." + Organization.PROPERTY_ID + "='"
             + orgId + "'");
         setCurrentOrganization(o);
-      } else if (getUser().getDefaultAdOrg() != null && getUser().getDefaultAdOrg().isActive()) {
-        setCurrentOrganization(getUser().getDefaultAdOrg());
+      } else if (getUser().getDefaultOrganization() != null
+          && getUser().getDefaultOrganization().isActive()) {
+        setCurrentOrganization(getUser().getDefaultOrganization());
       } else {
         final RoleOrganization roa = getOne(RoleOrganization.class, "select roa from "
             + RoleOrganization.class.getName() + " roa where roa." + RoleOrganization.PROPERTY_ROLE
             + "." + Organization.PROPERTY_ID + "='" + getRole().getId() + "' and roa."
-            + RoleOrganization.PROPERTY_ISACTIVE + "='Y' and roa."
-            + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ISACTIVE
+            + RoleOrganization.PROPERTY_ACTIVE + "='Y' and roa."
+            + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ACTIVE
             + "='Y' order by roa." + RoleOrganization.PROPERTY_ORGANIZATION + "."
             + Organization.PROPERTY_ID + " desc", false);
         Hibernate.initialize(roa.getOrganization());
@@ -500,9 +501,8 @@ public class OBContext implements OBNotSingleton {
         final Client c = getOne(Client.class, "select r from " + Client.class.getName()
             + " r where " + " r." + Client.PROPERTY_ID + "='" + localClientId + "'");
         setCurrentClient(c);
-      } else if (getUser().getDefaultAdClient() != null
-          && getUser().getDefaultAdClient().isActive()) {
-        setCurrentClient(getUser().getDefaultAdClient());
+      } else if (getUser().getDefaultClient() != null && getUser().getDefaultClient().isActive()) {
+        setCurrentClient(getUser().getDefaultClient());
       } else {
         // The HttpSecureAppServlet reads the client after the
         // organization
@@ -519,12 +519,12 @@ public class OBContext implements OBNotSingleton {
       Check.isTrue(getCurrentClient().isActive(), "Current Client " + getCurrentClient().getName()
           + " is not active!");
 
-      if (getUser().getDefaultAdLanguage() != null && getUser().getDefaultAdLanguage().isActive()) {
-        setLanguage(getUser().getDefaultAdLanguage());
+      if (getUser().getDefaultLanguage() != null && getUser().getDefaultLanguage().isActive()) {
+        setLanguage(getUser().getDefaultLanguage());
       } else {
         final Language l = getOne(Language.class, "select l from " + Language.class.getName()
-            + " l where l." + Language.PROPERTY_ISACTIVE + "='Y' order by l."
-            + Language.PROPERTY_ID + " asc");
+            + " l where l." + Language.PROPERTY_ACTIVE + "='Y' order by l." + Language.PROPERTY_ID
+            + " asc");
         Hibernate.initialize(l);
         setLanguage(l);
       }

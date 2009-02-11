@@ -58,7 +58,7 @@ public class ValidationTest extends BaseTest {
     setValue(c, Currency.PROPERTY_UPDATEDBY, "test", "only allows reference instances of type");
     setValue(c, Currency.PROPERTY_CLIENT, "test", "only allows reference instances of type");
     setValue(c, Currency.PROPERTY_PRICEPRECISION, new Double(400.0), "only allows instances of");
-    setValue(c, Currency.PROPERTY_CREATED, new BigDecimal(100.0), "only allows instances of");
+    setValue(c, Currency.PROPERTY_CREATIONDATE, new BigDecimal(100.0), "only allows instances of");
     try {
       setValue(c, "asdads", null, "does not exist for entity");
       fail("Property does not exist is not checked");
@@ -74,8 +74,7 @@ public class ValidationTest extends BaseTest {
     bpGroup.setEntityName(Category.ENTITY_NAME);
     setValue(bpGroup, Category.PROPERTY_CLIENT, "test", "only allows reference instances of type");
     setValue(bpGroup, Category.PROPERTY_DESCRIPTION, new Double(400.0), "only allows instances of");
-    setValue(bpGroup, Category.PROPERTY_ISDEFAULT, new BigDecimal(100.0),
-        "only allows instances of");
+    setValue(bpGroup, Category.PROPERTY_DEFAULT, new BigDecimal(100.0), "only allows instances of");
     setErrorOccured(false);
   }
 
@@ -147,7 +146,7 @@ public class ValidationTest extends BaseTest {
           InvoiceSchedule.class);
       for (final InvoiceSchedule is : obc.list()) {
         try {
-          is.setInvoiceDay((long) 40);
+          is.setInvoiceCutOffDay((long) 40);
           fail("Maxvalue constraint not enforced");
         } catch (final ValidationException ve) {
           // success
@@ -170,7 +169,7 @@ public class ValidationTest extends BaseTest {
           InvoiceSchedule.class);
       for (final InvoiceSchedule is : obc.list()) {
         try {
-          is.setInvoiceDay((long) 0);
+          is.setInvoiceCutOffDay((long) 0);
           fail();
         } catch (final ValidationException ve) {
           // success

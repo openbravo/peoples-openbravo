@@ -92,7 +92,7 @@ public class ModuleValidator implements SystemValidator {
 
     checkHasUIArtifact(module, result);
 
-    if (module.getLicense() == null || module.getLicenseType() == null) {
+    if (module.getLicenseText() == null || module.getLicenseType() == null) {
       result.addError(SystemValidationType.MODULE_ERROR,
 
       "The license and/or the licenseType of the Module " + module.getName()

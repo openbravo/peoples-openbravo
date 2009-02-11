@@ -133,7 +133,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     // change some data and export
     final PaymentTerm pt = (PaymentTerm) pts.get(0);
     pt.setName("testtest");
-    pt.getFinancialMgmtPaymentTermLineList().get(0).setPaymentRule("R");
+    pt.getFinancialMgmtPaymentTermLineList().get(0).setOverduePaymentDayRule("R");
 
     String xml = getXML(pts);
     xml = xml.replaceAll("</name>", "t</name>");
@@ -153,7 +153,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       assertTrue(o instanceof PaymentTerm || o instanceof PaymentTermLine);
       if (o instanceof PaymentTermLine) {
         final PaymentTermLine ptl = (PaymentTermLine) o;
-        assertTrue(ir.getUpdatedObjects().contains(ptl.getPaymentTerm()));
+        assertTrue(ir.getUpdatedObjects().contains(ptl.getPaymentTerms()));
       }
     }
 
@@ -208,7 +208,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     for (final PaymentTerm pt : pts) {
       assertEquals(NO_OF_PT_LINE - 1, pt.getFinancialMgmtPaymentTermLineList().size());
       for (final PaymentTermLine ptl : pt.getFinancialMgmtPaymentTermLineList()) {
-        assertTrue(!ptl.getLine().equals(new Integer(1)));
+        assertTrue(!ptl.getLineNo().equals(new Integer(1)));
       }
     }
     setErrorOccured(false);
@@ -232,7 +232,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
           .getFinancialMgmtPaymentTermLineList().get(0));
       ptl.setClient(null);
       ptl.setOrganization(null);
-      ptl.setLine((long) NO_OF_PT_LINE);
+      ptl.setLineNo((long) NO_OF_PT_LINE);
       pt.getFinancialMgmtPaymentTermLineList().add(ptl);
     }
 
@@ -276,7 +276,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       assertEquals(NO_OF_PT_LINE + 1, pt.getFinancialMgmtPaymentTermLineList().size());
       int i = 0;
       for (final PaymentTermLine ptl : pt.getFinancialMgmtPaymentTermLineList()) {
-        assertEquals(new Integer(i++), ptl.getLine());
+        assertEquals(new Integer(i++), ptl.getLineNo());
       }
     }
     setErrorOccured(false);
@@ -314,19 +314,19 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       // now add a payment termline
       for (int j = 0; j < NO_OF_PT_LINE; j++) {
         final PaymentTermLine ptl = OBProvider.getInstance().get(PaymentTermLine.class);
-        ptl.setExcludetax(true);
-        ptl.setFixMonthCutoff(new Long(10));
-        ptl.setFixMonthDay(new Long(5));
-        ptl.setFixMonthDay2(new Long(1));
-        ptl.setFixMonthDay3(new Long(1));
-        ptl.setFixMonthOffset(new Long(j));
-        ptl.setLine((long) j);
-        ptl.setNetDay("1");
-        ptl.setNetDays((long) 10);
+        ptl.setExcludeTax(true);
+        ptl.setLastDayCutoff(new Long(10));
+        ptl.setMaturityDate1(new Long(5));
+        ptl.setMaturityDate2(new Long(1));
+        ptl.setMaturityDate3(new Long(1));
+        ptl.setOffsetMonthDue(new Long(j));
+        ptl.setLineNo((long) j);
+        ptl.setOverduePaymentDayRule("1");
+        ptl.setOverduePaymentDaysRule((long) 10);
         ptl.setNextBusinessDay(true);
-        ptl.setOnremainder(true);
-        ptl.setPaymentTerm(pt);
-        ptl.setPercentage(1.0f);
+        ptl.setRest(true);
+        ptl.setPaymentTerms(pt);
+        ptl.setPercentageDue(1.0f);
         pt.getFinancialMgmtPaymentTermLineList().add(ptl);
       }
       result.add(pt);

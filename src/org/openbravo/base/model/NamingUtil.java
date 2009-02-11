@@ -21,9 +21,7 @@ package org.openbravo.base.model;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 
 /**
@@ -35,33 +33,15 @@ import org.openbravo.base.exception.OBException;
  */
 
 public class NamingUtil {
-  private static final Logger log = Logger.getLogger(NamingUtil.class);
+  private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+      .getLogger(NamingUtil.class);
 
   public static final String ENTITY_NAME_CONSTANT = "ENTITY_NAME";
   public static final String PROPERTY_CONSTANT_PREFIX = "PROPERTY_";
 
-  private static HashMap<String, String> specialPropertyMappings = null;
   private static HashMap<String, String> reservedNames = null;
-  private static HashMap<String, String> abbreviations = null;
 
   static {
-    specialPropertyMappings = new HashMap<String, String>();
-
-    try {
-      final Properties props = new Properties();
-      props.load(NamingUtil.class.getResourceAsStream("column_property_mapping.properties"));
-      for (final Object keyObj : props.keySet()) {
-        final String key = (String) keyObj;
-        specialPropertyMappings.put(key.toLowerCase(), props.getProperty(key));
-      }
-    } catch (final Exception e) {
-      throw new OBException(e);
-    }
-
-    abbreviations = new HashMap<String, String>();
-    abbreviations.put("acct", "Account");
-    abbreviations.put("qty", "Quantity");
-    abbreviations.put("amt", "Amount");
 
     reservedNames = new HashMap<String, String>();
     reservedNames.put("default", "deflt");
@@ -133,21 +113,8 @@ public class NamingUtil {
   }
 
   static String getPropertyMappingName(Property property) {
-    if (property.getColumnName() != null
-        && !(property.isId() && property.getEntity().getIdProperties().size() == 1)) {
-      final String checkName = (property.getEntity().getTableName() + "." + property
-          .getColumnName()).toLowerCase();
-      if (specialPropertyMappings.get(checkName) != null) {
-        return specialPropertyMappings.get(checkName);
-      }
-      if (specialPropertyMappings.get(property.getColumnName().toLowerCase()) != null) {
-        return specialPropertyMappings.get(property.getColumnName().toLowerCase());
-      }
-    }
-    String mappingName;
+    String mappingName = getPropName(property);
     if (property.isPrimitive()) {
-      mappingName = property.getColumnName();
-
       if (property.isId() && property.getEntity().getIdProperties().size() == 1) {
         mappingName = "id";
       }
@@ -167,24 +134,21 @@ public class NamingUtil {
       // }
       // }
     } else {
-      if (property.getTargetEntity() == null && property.getColumnName() != null) {
+      if (property.getTargetEntity() == null && mappingName != null) {
         log.error("Property " + property + " does not have a target entity");
-        mappingName = property.getColumnName();
       } else if (property.isOneToMany()) {
-        if ((mappingName = getOneToManyCorrectedName(property)) != null) {
-          // nothing to set anyway
-        } else if (columnNameSameAsKeyColumn(property.getReferencedProperty())) {
+        if (columnNameSameAsKeyColumn(property.getReferencedProperty())) {
           mappingName = property.getTargetEntity().getName() + "List";
         } else {
           // for a one-to-many the referenced property is the
           // property which models the real foreign key column
           mappingName = property.getTargetEntity().getName() + "_"
-              + property.getReferencedProperty().getColumnName() + "List";
+              + getPropName(property.getReferencedProperty()) + "List";
         }
       } else if (columnNameSameAsKeyColumn(property)) {
-        mappingName = property.getTargetEntity().getSimpleClassName();
+        mappingName = getPropName(property); // property.getTargetEntity().getSimpleClassName();
       } else {
-        mappingName = property.getColumnName();
+        mappingName = getPropName(property);
       }
     }
     // only strip for core module
@@ -195,9 +159,9 @@ public class NamingUtil {
     if (coreModuleProp || coreModuleEntity) {
       mappingName = stripPrefix(mappingName);
     }
+    mappingName = camelCaseIt(mappingName, "_");
+    mappingName = camelCaseIt(mappingName, " ");
     mappingName = stripIllegalCharacters(mappingName);
-    mappingName = camelCaseItStripUnderscores(mappingName);
-    mappingName = correctAbbreviations(mappingName);
     mappingName = lowerCaseFirst(mappingName);
     return mappingName;
   }
@@ -207,9 +171,14 @@ public class NamingUtil {
     // TODO: probably it is faster to use a char array
     // instead of the stringbuilder
     final StringBuilder result = new StringBuilder();
+
+    boolean first = true;
     for (char ch : value.toCharArray()) {
-      if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')) {
+
+      if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
+          || (!first && ch >= '0' && ch <= '9')) {
         result.append(ch);
+        first = false;
       } else {
         result.append("");
       }
@@ -217,11 +186,8 @@ public class NamingUtil {
     return result.toString();
   }
 
-  // checks if the one-to-many has a correct name
-  private static String getOneToManyCorrectedName(Property p) {
-    final String checkName = p.getReferencedProperty().getEntity().getTableName() + "."
-        + p.getReferencedProperty().getColumnName() + "." + p.getEntity().getTableName();
-    return specialPropertyMappings.get(checkName.toLowerCase());
+  private static String getPropName(Property prop) {
+    return prop.getNameOfColumn();
   }
 
   // checks if the columname is the same as the pk column name of the
@@ -259,6 +225,20 @@ public class NamingUtil {
     return localMappingName;
   }
 
+  private static String camelCaseIt(String mappingName, String separator) {
+    String localMappingName = mappingName;
+    // "CamelCasing"
+    int pos = localMappingName.indexOf(separator);
+    while (pos != -1) {
+      final String leftPart = localMappingName.substring(0, pos);
+      final String camelLetter = String.valueOf(localMappingName.charAt(pos + 1)).toUpperCase();
+      final String rightPart = localMappingName.substring(pos + 2);
+      localMappingName = leftPart + camelLetter + rightPart;
+      pos = localMappingName.indexOf(separator);
+    }
+    return localMappingName;
+  }
+
   private static String camelCaseItStripUnderscores(String mappingName) {
     String localMappingName = mappingName;
     // "CamelCasing"
@@ -271,21 +251,6 @@ public class NamingUtil {
       pos = localMappingName.indexOf("_");
     }
     return localMappingName;
-  }
-
-  private static String correctAbbreviations(String value) {
-    String localValue = value;
-    for (final String abbreviation : abbreviations.keySet()) {
-      final int index = value.toLowerCase().indexOf(abbreviation);
-      if (index == 0) {
-        localValue = abbreviations.get(abbreviation)
-            + value.substring(index + abbreviation.length());
-      } else if (index != -1) {
-        localValue = value.substring(0, index) + abbreviations.get(abbreviation)
-            + value.substring(index + abbreviation.length());
-      }
-    }
-    return localValue;
   }
 
   private static String lowerCaseFirst(String value) {

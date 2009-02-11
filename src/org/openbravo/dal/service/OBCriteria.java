@@ -21,7 +21,6 @@ package org.openbravo.dal.service;
 
 import static org.openbravo.model.ad.system.Client.PROPERTY_ORGANIZATION;
 import static org.openbravo.model.common.enterprise.Organization.PROPERTY_CLIENT;
-import static org.openbravo.model.common.enterprise.Organization.PROPERTY_ISACTIVE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +44,7 @@ import org.hibernate.transform.ResultTransformer;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * This object is an implementation of the Hibernate Criteria interface. It adds transparent client
@@ -145,7 +145,7 @@ public class OBCriteria<E extends BaseOBObject> implements Criteria {
     }
 
     if (isFilterOnActive() && e.isActiveEnabled()) {
-      c.add(Restrictions.eq(PROPERTY_ISACTIVE, true));
+      c.add(Restrictions.eq(Organization.PROPERTY_ACTIVE, true));
     }
 
     // add the order by and create a join if necessary

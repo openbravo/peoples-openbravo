@@ -93,14 +93,14 @@ public class EntityAccessChecker implements OBNotSingleton {
     final List<WindowAccess> was = qry.list();
     for (final WindowAccess wa : was) {
       final Window w = wa.getWindow();
-      final boolean writeAccess = wa.isReadWrite();
+      final boolean writeAccess = wa.isEditableField();
       // get the ttabs
       final String tfQryStr = "select t from " + Tab.class.getName() + " t where window.id='"
           + w.getId() + "'";
       @SuppressWarnings("unchecked")
       final List<Tab> ts = SessionHandler.getInstance().createQuery(tfQryStr).list();
       for (final Tab t : ts) {
-        final String tableName = t.getTable().getTableName();
+        final String tableName = t.getTable().getDBTableName();
         final Entity e = mp.getEntityByTableName(tableName);
         if (e == null) { // happens for AD_Client_Info
           continue;

@@ -92,14 +92,14 @@ public class EntityXMLIssues extends XMLBaseTest {
     {
       final List<Greeting> gs = getList(Greeting.class);
       for (final Greeting g : gs) {
-        g.setGreetingName(spaces);
+        g.setTitle(spaces);
       }
       OBDal.getInstance().commitAndClose();
     }
 
     final List<Greeting> gs = getList(Greeting.class);
     for (final Greeting g : gs) {
-      assertEquals(spaces, g.getGreetingName());
+      assertEquals(spaces, g.getTitle());
     }
 
     // only do one greeting
@@ -129,7 +129,7 @@ public class EntityXMLIssues extends XMLBaseTest {
     // now reread the greeting and check that the space is still there
     final Greeting newGreeting = OBDal.getInstance().get(Greeting.class, id);
     assertTrue(greeting != newGreeting);
-    assertEquals(spaces, newGreeting.getGreetingName());
+    assertEquals(spaces, newGreeting.getTitle());
     setErrorOccured(false);
   }
 

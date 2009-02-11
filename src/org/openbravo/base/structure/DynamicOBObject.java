@@ -46,11 +46,11 @@ public class DynamicOBObject extends BaseOBObject implements Traceable, ClientEn
   }
 
   public boolean isActive() {
-    return (Boolean) get(Organization.PROPERTY_ISACTIVE);
+    return (Boolean) get(Organization.PROPERTY_ACTIVE);
   }
 
   public void setActive(boolean active) {
-    set(Organization.PROPERTY_ISACTIVE, active);
+    set(Organization.PROPERTY_ACTIVE, active);
   }
 
   @Override
@@ -86,12 +86,12 @@ public class DynamicOBObject extends BaseOBObject implements Traceable, ClientEn
     set(Organization.PROPERTY_CREATEDBY, createdby);
   }
 
-  public Date getCreated() {
-    return (Date) get(Organization.PROPERTY_CREATED);
+  public Date getCreationDate() {
+    return (Date) get(Organization.PROPERTY_CREATIONDATE);
   }
 
-  public void setCreated(Date created) {
-    set(Organization.PROPERTY_CREATED, created);
+  public void setCreationDate(Date created) {
+    set(Organization.PROPERTY_CREATIONDATE, created);
   }
 
   @Override

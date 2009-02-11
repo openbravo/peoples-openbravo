@@ -86,7 +86,7 @@ public class ExportReferenceDataTask extends ReferenceDataTask {
   private Client getClient(String clientValue) {
     final org.openbravo.dal.service.OBCriteria<Client> obc = org.openbravo.dal.service.OBDal
         .getInstance().createCriteria(Client.class);
-    obc.add(Expression.eq(Client.PROPERTY_VALUE, clientValue));
+    obc.add(Expression.eq(Client.PROPERTY_SEARCHKEY, clientValue));
     final List<Client> result = obc.list();
     if (result.size() == 0) {
       throw new OBException("No client found using " + clientValue + " as the value in the query");

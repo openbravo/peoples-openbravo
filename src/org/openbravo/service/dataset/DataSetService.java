@@ -87,7 +87,7 @@ public class DataSetService implements OBSingleton {
   public <T extends BaseOBObject> boolean hasChanged(DataSet dataSet, Date afterDate) {
     for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
       final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-          dataSetTable.getTable().getTableName());
+          dataSetTable.getTable().getDBTableName());
       final OBCriteria<T> obc = OBDal.getInstance().createCriteria(entity.getName());
       obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
       // todo: count is slower than exists, is exists possible?
@@ -101,7 +101,7 @@ public class DataSetService implements OBSingleton {
   public <T extends BaseOBObject> boolean hasChangedCheck(DataSet dataSet, Date afterDate) {
     for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
       final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-          dataSetTable.getTable().getTableName());
+          dataSetTable.getTable().getDBTableName());
       final OBCriteria<T> obc = OBDal.getInstance().createCriteria(entity.getName());
       obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
       // todo: count is slower than exists, is exists possible?
@@ -125,7 +125,7 @@ public class DataSetService implements OBSingleton {
     final Module module = OBDal.getInstance().get(Module.class, moduleId);
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
     obc.add(Expression.eq(DataSet.PROPERTY_MODULE, module));
-    obc.add(Expression.eq(DataSet.PROPERTY_VALUE, value));
+    obc.add(Expression.eq(DataSet.PROPERTY_SEARCHKEY, value));
     final List<?> list = obc.list();
     Check.isTrue(list.size() <= 1,
         "There is more than one dataset available when searching using the name/id " + value + "/"
@@ -159,7 +159,7 @@ public class DataSetService implements OBSingleton {
    */
   public DataSet getDataSetByValue(String value) {
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
-    obc.add(Expression.eq(DataSet.PROPERTY_VALUE, value));
+    obc.add(Expression.eq(DataSet.PROPERTY_SEARCHKEY, value));
     final List<DataSet> ds = obc.list();
     // Check.isTrue(ds.size() > 0, "There is no DataSet with name " + value);
     if (ds.size() == 0) {
@@ -237,7 +237,7 @@ public class DataSetService implements OBSingleton {
       return new ArrayList<BaseOBObject>();
     }
 
-    String whereClause = dataSetTable.getWhereClause();
+    String whereClause = dataSetTable.getSQLWhereClause();
 
     final Map<String, Object> existingParams = new HashMap<String, Object>();
     if (whereClause != null) {
@@ -297,7 +297,7 @@ public class DataSetService implements OBSingleton {
       return new ArrayList<BaseOBObject>().iterator();
     }
 
-    String whereClause = dataSetTable.getWhereClause();
+    String whereClause = dataSetTable.getSQLWhereClause();
     final Map<String, Object> existingParams = new HashMap<String, Object>();
     for (final String name : parameters.keySet()) {
       if (whereClause.indexOf(":" + name) != -1) {
@@ -404,7 +404,7 @@ public class DataSetService implements OBSingleton {
       // now remove the excluded
       for (final DataSetColumn dsc : dataSetColumns) {
         if (dsc.isExcluded()) {
-          exportables.remove(entity.getPropertyByColumnName(dsc.getColumn().getColumnName()));
+          exportables.remove(entity.getPropertyByColumnName(dsc.getColumn().getDBColumnName()));
         }
       }
     } else {
@@ -413,7 +413,7 @@ public class DataSetService implements OBSingleton {
       exportables = new ArrayList<Property>();
       for (final DataSetColumn dsc : dataSetColumns) {
         if (!dsc.isExcluded()) {
-          exportables.add(entity.getPropertyByColumnName(dsc.getColumn().getColumnName()));
+          exportables.add(entity.getPropertyByColumnName(dsc.getColumn().getDBColumnName()));
         }
       }
     }

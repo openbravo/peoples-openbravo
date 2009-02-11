@@ -63,13 +63,13 @@ public class DalQueryTest extends BaseTest {
     setErrorOccured(true);
     setUserContext("100");
     final String where = "as mom left join mom."
-        + ModelImplementationMapping.PROPERTY_MODELIMPLEMENTATION
+        + ModelImplementationMapping.PROPERTY_MODELOBJECT
         + " as mo left join mo."
         + ModelImplementation.PROPERTY_CALLOUT
         + " left join mo."
         + ModelImplementation.PROPERTY_REFERENCE
         + " left join mo."
-        + ModelImplementation.PROPERTY_FORM
+        + ModelImplementation.PROPERTY_SPECIALFORM
         + " left join mo."
         + ModelImplementation.PROPERTY_PROCESS
         + " left join mo."
@@ -121,7 +121,7 @@ public class DalQueryTest extends BaseTest {
     bpg.setDefault(true);
     bpg.setDescription("testdescription");
     bpg.setName("testname");
-    bpg.setValue("testvalue");
+    bpg.setSearchKey("testvalue");
     OBDal.getInstance().save(bpg);
     setErrorOccured(false);
   }
@@ -131,7 +131,7 @@ public class DalQueryTest extends BaseTest {
     setErrorOccured(true);
     setUserContext("1000001");
     final OBQuery<Category> obQuery = OBDal.getInstance().createQuery(Category.class,
-        Category.PROPERTY_NAME + "='testname' or " + Category.PROPERTY_VALUE + "='testvalue'");
+        Category.PROPERTY_NAME + "='testname' or " + Category.PROPERTY_SEARCHKEY + "='testvalue'");
     final List<Category> bpgs = obQuery.list();
     assertEquals(1, bpgs.size());
     final Category bpg = bpgs.get(0);
@@ -143,7 +143,7 @@ public class DalQueryTest extends BaseTest {
     // currency in the database which has for sure a created/updated time
     // longer in the past, You need to manually delete the currency record
     if (false) {
-      assertTrue("Created time not updated", (System.currentTimeMillis() - bpg.getCreated()
+      assertTrue("Created time not updated", (System.currentTimeMillis() - bpg.getCreationDate()
           .getTime()) < 2000);
       assertTrue("Updated time not updated", (System.currentTimeMillis() - bpg.getUpdated()
           .getTime()) < 2000);
@@ -153,7 +153,7 @@ public class DalQueryTest extends BaseTest {
     final List<Object> parameters = new ArrayList<Object>();
     parameters.add(bpgs.get(0));
     final OBQuery<CategoryAccounts> q2 = OBDal.getInstance().createQuery(CategoryAccounts.class,
-        " " + CategoryAccounts.PROPERTY_CATEGORY + "=?", parameters);
+        " " + CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY + "=?", parameters);
     final List<CategoryAccounts> bpgas = q2.list();
     for (final CategoryAccounts bga : bpgas) {
       OBDal.getInstance().remove(bga);
@@ -167,7 +167,7 @@ public class DalQueryTest extends BaseTest {
     setErrorOccured(true);
     setUserContext("1000001");
     final OBQuery<Category> obQuery = OBDal.getInstance().createQuery(Category.class,
-        Category.PROPERTY_NAME + "='testname' or " + Category.PROPERTY_VALUE + "='testvalue'");
+        Category.PROPERTY_NAME + "='testname' or " + Category.PROPERTY_SEARCHKEY + "='testvalue'");
     final List<Category> bpgs = obQuery.list();
     assertEquals(0, bpgs.size());
     setErrorOccured(false);

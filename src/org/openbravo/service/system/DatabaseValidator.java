@@ -70,11 +70,11 @@ public class DatabaseValidator implements SystemValidator {
 
     // read the tables
     final OBCriteria<Table> tcs = OBDal.getInstance().createCriteria(Table.class);
-    tcs.add(Expression.eq(Table.PROPERTY_ISVIEW, false));
+    tcs.add(Expression.eq(Table.PROPERTY_VIEW, false));
     final List<Table> adTables = tcs.list();
     final Map<String, Table> adTablesByName = new HashMap<String, Table>();
     for (Table adTable : adTables) {
-      adTablesByName.put(adTable.getTableName(), adTable);
+      adTablesByName.put(adTable.getDBTableName(), adTable);
     }
 
     // the following cases are checked:
@@ -98,16 +98,16 @@ public class DatabaseValidator implements SystemValidator {
 
     final String moduleId = (getValidateModule() == null ? null : getValidateModule().getId());
     for (Table adTable : adTables) {
-      final org.apache.ddlutils.model.Table dbTable = dbTablesByName.get(adTable.getTableName()
+      final org.apache.ddlutils.model.Table dbTable = dbTablesByName.get(adTable.getDBTableName()
           .toUpperCase());
-      final View view = dbViews.get(adTable.getTableName().toUpperCase());
+      final View view = dbViews.get(adTable.getDBTableName().toUpperCase());
       if (view == null && dbTable == null) {
         // in Application Dictionary not in Physical Table
         if (moduleId == null
             || (adTable.getDataPackage().getModule() != null && adTable.getDataPackage()
                 .getModule().getId().equals(moduleId))) {
           result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_DB, "Table "
-              + adTable.getTableName() + " defined in the Application Dictionary"
+              + adTable.getDBTableName() + " defined in the Application Dictionary"
               + " but is not present in the database");
         }
       } else if (view != null) {
@@ -230,7 +230,7 @@ public class DatabaseValidator implements SystemValidator {
           }
         }
         if (!found) {
-          result.addError(SystemValidationResult.SystemValidationType.NOT_PART_OF_FOREIGN_KEY,
+          result.addWarning(SystemValidationResult.SystemValidationType.NOT_PART_OF_FOREIGN_KEY,
               "Foreign Key Column " + table.getName() + "." + property.getColumnName()
                   + " is not part of a foreign key constraint.");
         }
@@ -255,18 +255,18 @@ public class DatabaseValidator implements SystemValidator {
       if (!checkColumn) {
         continue;
       }
-      final org.apache.ddlutils.model.Column dbColumn = dbColumnsByName.get(column.getColumnName()
-          .toUpperCase());
+      final org.apache.ddlutils.model.Column dbColumn = dbColumnsByName.get(column
+          .getDBColumnName().toUpperCase());
       if (dbColumn == null) {
         result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_DB, "Column "
-            + adTable.getTableName() + "." + column.getColumnName()
+            + adTable.getDBTableName() + "." + column.getDBColumnName()
             + " defined in the Application Dictionary " + " but not present in the database.");
       } else {
         checkDataType(column, dbColumn, result, dbTable);
 
         checkNameLength("(table: " + dbTable.getName() + ") Column ", dbColumn.getName(), result);
 
-        dbColumnsByName.remove(column.getColumnName().toUpperCase());
+        dbColumnsByName.remove(column.getDBColumnName().toUpperCase());
       }
     }
 

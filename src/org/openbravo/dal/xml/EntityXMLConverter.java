@@ -452,7 +452,8 @@ public class EntityXMLConverter implements OBNotSingleton {
       Check.isTrue(sis.size() > 0, "There should be at least one SystemInfo record but there are "
           + sis.size());
       element.addAttribute(XMLConstants.DATE_TIME_ATTRIBUTE, "" + new Date());
-      element.addAttribute(XMLConstants.OB_VERSION_ATTRIBUTE, sis.get(0).getObVersion() + "");
+      element
+          .addAttribute(XMLConstants.OB_VERSION_ATTRIBUTE, sis.get(0).getOpenbravoVersion() + "");
       element.addAttribute(XMLConstants.OB_REVISION_ATTRIBUTE, sis.get(0).getCodeRevision() + "");
     } finally {
       OBContext.getOBContext().setInAdministratorMode(adminMode);

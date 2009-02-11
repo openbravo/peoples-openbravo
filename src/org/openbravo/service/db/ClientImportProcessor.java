@@ -92,13 +92,13 @@ public class ClientImportProcessor implements EntityXMLProcessor {
       role.setName(replace(role.getName(), originalName));
     } else if (bob instanceof User) {
       final User user = (User) bob;
-      if (user.getUserName() == null) {
+      if (user.getUsername() == null) {
         return;
       }
-      if (user.getUserName().indexOf(originalName) == -1) {
-        user.setUserName(user.getUserName() + " " + getNewName());
+      if (user.getUsername().indexOf(originalName) == -1) {
+        user.setUsername(user.getUsername() + " " + getNewName());
       } else {
-        user.setUserName(replace(user.getUserName(), originalName));
+        user.setUsername(replace(user.getUsername(), originalName));
       }
     } else if (bob instanceof Organization) {
       final Organization org = (Organization) bob;

@@ -52,8 +52,8 @@ public class WSUpdateTest extends BaseWSTest {
     final City city = OBProvider.getInstance().get(City.class);
     city.setAreaCode("3941");
     city.setCoordinates("00");
-    city.setLocode("lo");
-    city.setPostal("postal");
+    city.setCoordinates("lo");
+    city.setPostalCode("postal");
     city.setName("name");
     city.setCountry(getOneInstance(Country.class));
     city.setRegion(getOneInstance(Region.class));

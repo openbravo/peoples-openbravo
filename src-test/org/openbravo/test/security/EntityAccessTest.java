@@ -46,11 +46,11 @@ public class EntityAccessTest extends BaseTest {
     final List<Currency> cs = obc.list();
     if (cs.size() == 0) {
       final Currency c = OBProvider.getInstance().get(Currency.class);
-      c.setCurSymbol("TE2");
+      c.setSymbol("TE2");
       c.setDescription("test currency");
       c.setISOCode("TE2");
       c.setPricePrecision((long) 5);
-      c.setStdPrecision((long) 6);
+      c.setStandardPrecision((long) 6);
       c.setCostingPrecision((long) 4);
       OBDal.getInstance().save(c);
     }
@@ -87,7 +87,7 @@ public class EntityAccessTest extends BaseTest {
     System.err.println(c.getIdentifier());
     System.err.println(c.getId());
     try {
-      System.err.println(c.getCurSymbol());
+      System.err.println(c.getSymbol());
       fail("Derived readable not applied");
     } catch (final OBSecurityException e) {
       assertTrue("Wrong exception thrown:  " + e.getMessage(), e.getMessage().indexOf(

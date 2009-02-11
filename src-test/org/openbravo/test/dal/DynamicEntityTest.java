@@ -46,10 +46,10 @@ public class DynamicEntityTest extends BaseTest {
     setUserContext("1000001");
     final DynamicOBObject bpGroup = new DynamicOBObject();
     bpGroup.setEntityName(Category.ENTITY_NAME);
-    bpGroup.set(Category.PROPERTY_ISDEFAULT, true);
+    bpGroup.set(Category.PROPERTY_DEFAULT, true);
     bpGroup.set(Category.PROPERTY_DESCRIPTION, "hello world");
     bpGroup.set(Category.PROPERTY_NAME, "hello world");
-    bpGroup.set(Category.PROPERTY_VALUE, "hello world");
+    bpGroup.set(Category.PROPERTY_SEARCHKEY, "hello world");
     OBDal.getInstance().save(bpGroup);
     printXML(bpGroup);
     setErrorOccured(false);
@@ -72,7 +72,7 @@ public class DynamicEntityTest extends BaseTest {
     // currency in the database which has for sure a created/updated time
     // longer in the past, You need to manually delete the currency record
     if (true) {
-      assertTrue("Created time not updated", (System.currentTimeMillis() - bog.getCreated()
+      assertTrue("Created time not updated", (System.currentTimeMillis() - bog.getCreationDate()
           .getTime()) < 2000);
       assertTrue("Updated time not updated", (System.currentTimeMillis() - bog.getUpdated()
           .getTime()) < 2000);
@@ -81,7 +81,7 @@ public class DynamicEntityTest extends BaseTest {
     // first delete the related accounts
     final OBCriteria<CategoryAccounts> obc2 = OBDal.getInstance().createCriteria(
         CategoryAccounts.class);
-    obc2.add(Expression.eq(CategoryAccounts.PROPERTY_CATEGORY, bpgs.get(0)));
+    obc2.add(Expression.eq(CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY, bpgs.get(0)));
     final List<CategoryAccounts> bogas = obc2.list();
     for (final CategoryAccounts bga : bogas) {
       OBDal.getInstance().remove(bga);

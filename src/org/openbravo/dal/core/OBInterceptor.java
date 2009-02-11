@@ -21,8 +21,6 @@ package org.openbravo.dal.core;
 
 import static org.openbravo.model.ad.system.Client.PROPERTY_ORGANIZATION;
 import static org.openbravo.model.common.enterprise.Organization.PROPERTY_CLIENT;
-import static org.openbravo.model.common.enterprise.Organization.PROPERTY_CREATED;
-import static org.openbravo.model.common.enterprise.Organization.PROPERTY_CREATEDBY;
 import static org.openbravo.model.common.enterprise.Organization.PROPERTY_UPDATED;
 import static org.openbravo.model.common.enterprise.Organization.PROPERTY_UPDATEDBY;
 
@@ -292,10 +290,10 @@ public class OBInterceptor extends EmptyInterceptor {
       if (PROPERTY_UPDATEDBY.equals(propertyNames[i])) {
         currentState[i] = currentUser;
       }
-      if (PROPERTY_CREATED.equals(propertyNames[i])) {
+      if (Organization.PROPERTY_CREATIONDATE.equals(propertyNames[i])) {
         currentState[i] = new Date();
       }
-      if (PROPERTY_CREATEDBY.equals(propertyNames[i])) {
+      if (Organization.PROPERTY_CREATEDBY.equals(propertyNames[i])) {
         currentState[i] = currentUser;
       }
       if (PROPERTY_CLIENT.equals(propertyNames[i]) && currentState[i] == null) {

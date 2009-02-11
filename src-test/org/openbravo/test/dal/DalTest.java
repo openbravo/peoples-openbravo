@@ -61,7 +61,7 @@ public class DalTest extends BaseTest {
     setUserContext("0");
     final Role r = OBDal.getInstance().get(Role.class, "1000004");
     final User u = OBDal.getInstance().get(User.class, "1000000");
-    u.setDefaultAdRole(r);
+    u.setDefaultRole(r);
     OBDal.getInstance().commitAndClose();
   }
 
@@ -74,7 +74,7 @@ public class DalTest extends BaseTest {
     bpg.setDefault(true);
     bpg.setDescription("testdescription");
     bpg.setName("testname");
-    bpg.setValue("testvalue");
+    bpg.setSearchKey("testvalue");
     OBDal.getInstance().save(bpg);
     setErrorOccured(false);
   }
@@ -96,7 +96,7 @@ public class DalTest extends BaseTest {
     // currency in the database which has for sure a created/updated time
     // longer in the past, You need to manually delete the currency record
     if (true) {
-      assertTrue("Created time not updated", (System.currentTimeMillis() - bpg.getCreated()
+      assertTrue("Created time not updated", (System.currentTimeMillis() - bpg.getCreationDate()
           .getTime()) < 2000);
       assertTrue("Updated time not updated", (System.currentTimeMillis() - bpg.getUpdated()
           .getTime()) < 2000);
@@ -105,7 +105,7 @@ public class DalTest extends BaseTest {
     // first delete the related accounts
     final OBCriteria<CategoryAccounts> obc2 = OBDal.getInstance().createCriteria(
         CategoryAccounts.class);
-    obc2.add(Expression.eq(CategoryAccounts.PROPERTY_CATEGORY, bpgs.get(0)));
+    obc2.add(Expression.eq(CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY, bpgs.get(0)));
     final List<CategoryAccounts> bpgas = obc2.list();
     for (final CategoryAccounts bga : bpgas) {
       OBDal.getInstance().remove(bga);
@@ -259,7 +259,7 @@ public class DalTest extends BaseTest {
 
       System.err.println("PAGE>>> " + (1 + i));
       for (final Currency c : obc.list()) {
-        System.err.println(c.getISOCode() + " " + c.getCurSymbol());
+        System.err.println(c.getISOCode() + " " + c.getSymbol());
       }
     }
     setErrorOccured(false);
@@ -322,7 +322,7 @@ public class DalTest extends BaseTest {
     assertTrue(cbas.size() > 0);
     for (final Object co : cbas) {
       final CashBookAccounts cba = (CashBookAccounts) co;
-      System.err.println(cba.getUpdated() + " " + cba.getCashBook().getName());
+      System.err.println(cba.getUpdated() + " " + cba.getCashbook().getName());
     }
     setErrorOccured(false);
   }

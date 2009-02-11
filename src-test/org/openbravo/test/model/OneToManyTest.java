@@ -58,7 +58,7 @@ public class OneToManyTest extends BaseTest {
     setErrorOccured(true);
     setUserContext("1000001");
     final OBCriteria<Order> orders = OBDal.getInstance().createCriteria(Order.class);
-    orders.add(Expression.eq(Order.PROPERTY_DOCSTATUS, "DR")); // Draft
+    orders.add(Expression.eq(Order.PROPERTY_DOCUMENTSTATUS, "DR")); // Draft
     // document
 
     for (final Order o : orders.list()) {
@@ -95,7 +95,7 @@ public class OneToManyTest extends BaseTest {
     setUserContext("1000001");
     final OBCriteria<BusinessPartner> bpartners = OBDal.getInstance().createCriteria(
         BusinessPartner.class);
-    bpartners.add(Expression.eq(BusinessPartner.PROPERTY_VALUE, "mafalda"));
+    bpartners.add(Expression.eq(BusinessPartner.PROPERTY_SEARCHKEY, "mafalda"));
 
     if (bpartners.list().size() > 0) {
       final BusinessPartner partner = bpartners.list().get(0);
@@ -103,8 +103,8 @@ public class OneToManyTest extends BaseTest {
       user1.setName("test");
       user1.setEmail("email@domain.com");
       user1.setActive(true);
-      user1.setFirstname("Firstname");
-      user1.setLastname("Lastname");
+      user1.setFirstName("Firstname");
+      user1.setLastName("Lastname");
       user1.setBusinessPartner(partner);
       user1.setClient(partner.getClient());
       user1.setOrganization(partner.getOrganization());

@@ -67,7 +67,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
       countryTrl.setDescription(country.getDescription());
       countryTrl.setName(country.getName());
       countryTrl.setRegionName(country.getRegionName());
-      countryTrl.setDisplaySequence(country.getDisplaySequence());
+      // countryTrl.setDescription(getName())isplaySequence(country.getDisplaySequence());
       OBDal.getInstance().save(countryTrl);
       created++;
     }

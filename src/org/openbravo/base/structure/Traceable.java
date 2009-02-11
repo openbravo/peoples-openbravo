@@ -35,9 +35,9 @@ public interface Traceable {
 
   public void setCreatedBy(User user);
 
-  public Date getCreated();
+  public Date getCreationDate();
 
-  public void setCreated(Date date);
+  public void setCreationDate(Date date);
 
   public User getUpdatedBy();
 

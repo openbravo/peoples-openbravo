@@ -170,7 +170,7 @@ build.war: build a war file in the lib directory.
     <exportsampledata userId="0" propertiesFile="${base.config}/Openbravo.properties" clients="BigBazaar,Accounting Test" />
   </target>
 
-  <target name="import.sample.data" description="Import Sample Data">
+  <target name="import.sample.data" description="Import Sample Data" depends="generate.entities">
     <taskdef name="importsampledata" classname="org.openbravo.service.db.ImportReferenceDataTask">
       <classpath refid="project.class.path" />
     </taskdef>

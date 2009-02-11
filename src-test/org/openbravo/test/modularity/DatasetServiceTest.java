@@ -95,7 +95,7 @@ public class DatasetServiceTest extends BaseTest {
     final Table t = OBProvider.getInstance().get(Table.class);
     t.setName("ADTable");
     dst.setTable(t);
-    dst.setWhereClause("(" + Table.PROPERTY_ISDELETEABLE + "='N' or " + Table.PROPERTY_ISVIEW
+    dst.setSQLWhereClause("(" + Table.PROPERTY_DELETABLERECORDS + "='N' or " + Table.PROPERTY_VIEW
         + "='N') and client.id='0'");
     final List<BaseOBObject> l = DataSetService.getInstance().getExportableObjects(dst, "0");
     for (final BaseOBObject bob : l) {

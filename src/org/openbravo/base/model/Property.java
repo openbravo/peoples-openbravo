@@ -174,10 +174,10 @@ public class Property {
 
     getEntity().addPropertyByName(this);
 
-    if (getName().equals("created") && isPrimitive()
+    if (getName().toLowerCase().equals("creationdate") && isPrimitive()
         && Date.class.isAssignableFrom(getPrimitiveType())) {
       setAuditInfo(true);
-    } else if (getName().equals("updated") && isPrimitive()
+    } else if (getName().toLowerCase().equals("updated") && isPrimitive()
         && Date.class.isAssignableFrom(getPrimitiveType())) {
       setAuditInfo(true);
     } else if (getName().toLowerCase().equals("updatedby") && !isPrimitive()) {

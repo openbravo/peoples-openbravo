@@ -56,7 +56,7 @@ public class ClientDataSetCompleteTest extends XMLBaseTest {
       }
     }
     for (final DataSetTable dst : dataSet.getDataSetTableList()) {
-      names.remove(dst.getTable().getTableName().toUpperCase() + ".xml");
+      names.remove(dst.getTable().getDBTableName().toUpperCase() + ".xml");
     }
     for (final String name : names) {
       System.err.println(name);

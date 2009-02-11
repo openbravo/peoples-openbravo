@@ -163,11 +163,11 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     }
 
     public void resolve(List<OrgNode> nodes) {
-      if (treeNode.getParent() == null) {
+      if (treeNode.getReportSet() == null) {
         return;
       }
       for (final OrgNode on : nodes) {
-        if (on.getTreeNode().getNode().equals(treeNode.getParent())) {
+        if (on.getTreeNode().getNode().equals(treeNode.getReportSet())) {
           on.addChild(this);
           setParent(on);
           break;

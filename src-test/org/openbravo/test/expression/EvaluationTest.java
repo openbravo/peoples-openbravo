@@ -54,7 +54,8 @@ public class EvaluationTest extends BaseTest {
     boolean found = false;
     for (final Table t : tables) {
       final String script = Table.PROPERTY_CLIENT + "." + Client.PROPERTY_ID + " == '0' && "
-          + Table.PROPERTY_TABLENAME + "== 'AD_Client' && " + Table.PROPERTY_ACCESSLEVEL + " > 5";
+          + Table.PROPERTY_DBTABLENAME + "== 'AD_Client' && " + Table.PROPERTY_DATAACCESSLEVEL
+          + " > 5";
       final Boolean result = Evaluator.getInstance().evaluateBoolean(t, script);
       System.err.println(t.getName() + " : " + result);
       found = found || result;
