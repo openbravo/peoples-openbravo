@@ -1009,7 +1009,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
         }
       } catch (final Exception e) {
-        throw new ServletException(e.getMessage());
+        throw new ServletException(e.getCause().getMessage());
       } finally {
         releaseRollbackConnection(con);
       }
