@@ -50,6 +50,7 @@
   v_NewCount NUMBER;
   v_New CHAR := 'N';
   v_Aux_ID VARCHAR2(32);
+  v_lastProductID VARCHAR2(32);
 
   FINISH_PROCESS BOOLEAN DEFAULT FALSE;
   --  Parameter
@@ -68,6 +69,7 @@ BEGIN
 
     WHILE (v_Count <> 0) LOOP
       v_New := 'N';
+      v_lastProductID := ''; -- non-existant value
       FOR Cur_Run_Lines IN (
         SELECT MRP_RUN_PRODUCTIONLINE.MRP_RUN_PRODUCTIONLINE_ID AS MRP_RUN_LINE_ID, InOutTrxType,
                MRP_RUN_PRODUCTIONLINE.QTY, MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID, M_PRODUCT.ISPURCHASED,
@@ -81,6 +83,7 @@ BEGIN
         WHERE MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
           AND isexploded = 'N'
           AND MRP_RUN_PRODUCTION_ID = p_Run_ID
+        ORDER BY M_PRODUCT_ID
       ) LOOP
         IF (Cur_Run_Lines.Qty < 0) THEN
           v_New := 'Y';
@@ -100,19 +103,25 @@ BEGIN
           END LOOP;
         END IF;
 
-        v_ResultStr := 'Other dependant products';
-        FOR Cur_Parents IN (SELECT pt.PRODUCED
-                            FROM MA_PROCESSPLAN_TOTALIZED pt
-                            WHERE pt.DEPENDANTPRODUCT = Cur_Run_Lines.M_Product_ID) LOOP
-          MRP_RUN_INITIALIZE(p_User_ID, p_Org_ID, p_Client_ID, p_Run_ID, p_Planner_ID, Cur_Parents.Produced,
-                     NULL, NULL, NULL, NULL, p_TimeHorizon,
-                     p_PlanningDate, 'Y');
-        END LOOP;
+        -- skip processing if product did not change from last row
+        if (v_lastProductID = Cur_Run_Lines.M_PRODUCT_ID) THEN
+
+          v_ResultStr := 'Other dependant products';
+          FOR Cur_Parents IN (SELECT pt.PRODUCED
+                              FROM MA_PROCESSPLAN_TOTALIZED pt
+                              WHERE pt.DEPENDANTPRODUCT = Cur_Run_Lines.M_Product_ID) LOOP
+            MRP_RUN_INITIALIZE(p_User_ID, p_Org_ID, p_Client_ID, p_Run_ID, p_Planner_ID, Cur_Parents.Produced,
+                       NULL, NULL, NULL, NULL, p_TimeHorizon,
+                       p_PlanningDate, 'Y');
+          END LOOP;
+        END IF; -- same product
 
         UPDATE MRP_RUN_PRODUCTIONLINE
         SET isexploded = 'Y'
         WHERE MRP_RUN_PRODUCTIONLINE_ID = Cur_Run_Lines.MRP_RUN_Line_ID;
 
+        -- remember last product id to skip duplicate processing
+        v_lastProductID := Cur_Run_Lines.M_PRODUCT_ID;
 
       END LOOP;
 /*
