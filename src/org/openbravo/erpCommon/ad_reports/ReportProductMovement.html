@@ -22,8 +22,8 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Article movements report</title>
-    <linautoCompleteDate rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
-    <linautoCompleteDate rel="stylesheet" type="text/css" href="../../../../../web/sautoCompleteDateins/Default/Openbravo_ERP_250.css" id="paramCSS" />
+    <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
 
     <script language="JavaScript" type="text/javascript" id="paramDirectory">
       var baseDirectory = "../../../../../web/";
@@ -48,7 +48,7 @@
       <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
       <script type="text/javascript">
-        dojo.hostenv.writeIncludes(); //maautoCompleteDatees debugging in VenautoCompleteDateman possible
+        dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
 <script language="JavaScript" type="text/javascript">
  function abrirVentana(id, issotrx){
@@ -70,9 +70,9 @@ function validate(action)
   return true;
 }
 
-function debugSearch(autoCompleteDateey, text, autoCompleteDateeyField) {
-    if (autoCompleteDateeyField=="inpmProductId") {
-      calloutSL_MInOutTraceReports(autoCompleteDateeyField);
+function debugSearch(key, text, keyField) {
+    if (keyField=="inpmProductId") {
+      calloutSL_MInOutTraceReports(keyField);
     }
   return true;
   }
@@ -82,8 +82,8 @@ function calloutSL_MInOutTraceReports(changedField) {
   }
 
 function onloadFunctions(){
-  autoCompleteDateeyArray[autoCompleteDateeyArray.length] = new autoCompleteDateeyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");
-  autoCompleteDateeyArray[autoCompleteDateeyArray.length] = new autoCompleteDateeyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null");
   }
 </script>
 	<script language="JavaScript" type="text/javascript">
@@ -242,9 +242,9 @@ function onloadFunctions(){
                 <tbody>
                   <tr class="FieldGroup_TopMargin"/>
                   <tr>
-                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blanautoCompleteDate.gif"/></td>
+                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupTitle">Filter</td>
-                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blanautoCompleteDate.gif"/></td>
+                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupContent"/>
                   </tr>
                   <tr class="FieldGroup_BottomMargin"/>
@@ -258,14 +258,14 @@ function onloadFunctions(){
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onautoCompleteDateeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
+                      <input dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
                     </td>
                     <td class="FieldButton_bg">
-                      <a class="FieldButtonLinautoCompleteDate" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onautoCompleteDateeypress="this.className='FieldButtonLinautoCompleteDate_active'; return true;" onautoCompleteDateeyup="this.className='FieldButtonLinautoCompleteDate_focus'; return true;" onclicautoCompleteDate="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                         <tr>
                           <td class="FieldButton_bg">
-                            <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blanautoCompleteDate.gif" border="0"></img>
+                            <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
                           </td>
                         </tr>
                       </table>
@@ -280,14 +280,14 @@ function onloadFunctions(){
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onautoCompleteDateeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
+                      <input dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
                     </td>
                     <td class="FieldButton_bg">
-                      <a class="FieldButtonLinautoCompleteDate" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onautoCompleteDateeypress="this.className='FieldButtonLinautoCompleteDate_active'; return true;" onautoCompleteDateeyup="this.className='FieldButtonLinautoCompleteDate_focus'; return true;"  onclicautoCompleteDate="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                         <tr>
                           <td class="FieldButton_bg">
-                            <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blanautoCompleteDate.gif" border="0"></img>
+                            <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
                           </td>
                         </tr>
                       </table>
@@ -309,11 +309,11 @@ function onloadFunctions(){
                       <input id="paramProductDescription" class="dojoValidateValid TextBox_btn_TwoCells_width" type="text" name="inpmProductId_D" maxlength="20" value=""></input>
                     </td>
                     <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLinautoCompleteDate" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onautoCompleteDateeypress="this.className='FieldButtonLinautoCompleteDate_active'; return true;" onautoCompleteDateeyup="this.className='FieldButtonLinautoCompleteDate_focus'; return true;"  onclicautoCompleteDate="openSearch(null, null, '../info/ProductComplete.html', null, true, 'frmMain', 'inpmProductId', 'inpmProductId_D', document.frmMain.inpmProductId_D.value, 'WindowID', 'ReportProductMovement');return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/ProductComplete.html', null, true, 'frmMain', 'inpmProductId', 'inpmProductId_D', document.frmMain.inpmProductId_D.value, 'WindowID', 'ReportProductMovement');return false;">
                       <table class="FieldButton" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;"> 
                         <tr>
                           <td class="FieldButton_bg">
-                            <img alt="Product" class="FieldButton_Icon FieldButton_Icon_Product" title="Product" src="../../../../../web/images/blanautoCompleteDate.gif" border="0"></img>
+                            <img alt="Product" class="FieldButton_Icon FieldButton_Icon_Product" title="Product" src="../../../../../web/images/blank.gif" border="0"></img>
 
                           </td>
                         </tr>
@@ -340,11 +340,11 @@ function onloadFunctions(){
                       <input id="paramBPartnerDescription" class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpBpartnerId_DES" maxlength="20" value=""></input>
                     </td>
                     <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLinautoCompleteDate" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onautoCompleteDateeypress="this.className='FieldButtonLinautoCompleteDate_active'; return true;" onautoCompleteDateeyup="this.className='FieldButtonLinautoCompleteDate_focus'; return true;"  onclicautoCompleteDate="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Search';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                         <tr>
                           <td class="FieldButton_bg">
-                            <img alt="Business Partner" class="FieldButton_Icon FieldButton_Icon_BusinessPartner" title="Business Partner" src="../../../../../web/images/blanautoCompleteDate.gif" border="0"></img>
+                            <img alt="Business Partner" class="FieldButton_Icon FieldButton_Icon_BusinessPartner" title="Business Partner" src="../../../../../web/images/blank.gif" border="0"></img>
                           </td>
                         </tr>
                       </table>
@@ -356,18 +356,18 @@ function onloadFunctions(){
             </tr> 
             <tr>
               <td class="TitleCell"><span class="LabelText">Shipment/Receipt</span></td>
-              <td class="Radio_ChecautoCompleteDate_ContentCell"><span class="ChecautoCompleteDatebox_container_NOT_Focused"><input type="checautoCompleteDatebox" name="inpInout" id="paramInOut" value="-1" checautoCompleteDateed></input></span></td>
+              <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpInout" id="paramInOut" value="-1" checked></input></span></td>
               <td class="ContentCell"> </td>
               <td class="TitleCell"><span class="LabelText">Physical Inventory</span></td>
-              <td class="Radio_ChecautoCompleteDate_ContentCell"><span class="ChecautoCompleteDatebox_container_NOT_Focused"><input type="checautoCompleteDatebox" name="inpInventory" id="paramInventory" value="-1" checautoCompleteDateed></input></span></td>
+              <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpInventory" id="paramInventory" value="-1" checked></input></span></td>
               <td class="ContentCell"> </td>
             </tr>
             <tr>
               <td class="TitleCell"><span class="LabelText">Inventory Move</span></td>
-              <td class="Radio_ChecautoCompleteDate_ContentCell"><span class="ChecautoCompleteDatebox_container_NOT_Focused"><input type="checautoCompleteDatebox" name="inpMovement" id="paramMovement" value="-1" checautoCompleteDateed></input></span></td>
+              <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpMovement" id="paramMovement" value="-1" checked></input></span></td>
               <td class="ContentCell"> </td>
               <td class="TitleCell"><span class="LabelText">Production</span></td>
-              <td class="Radio_ChecautoCompleteDate_ContentCell"><span class="ChecautoCompleteDatebox_container_NOT_Focused"><input type="checautoCompleteDatebox" name="inpProduction" id="paramProduction" value="-1" checautoCompleteDateed></input></span></td>
+              <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpProduction" id="paramProduction" value="-1" checked></input></span></td>
               <td class="ContentCell"> </td>
             </tr>
             <tr>
@@ -376,9 +376,9 @@ function onloadFunctions(){
                 <tbody>
                   <tr class="FieldGroup_TopMargin"/>
                   <tr>
-                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blanautoCompleteDate.gif"/></td>
+                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupTitle">View Results</td>
-                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blanautoCompleteDate.gif"/></td>
+                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupContent"/>
                   </tr>
                   <tr class="FieldGroup_BottomMargin"/>
@@ -391,10 +391,10 @@ function onloadFunctions(){
               <td class="TitleCell"></td>
               <td class="Button_CenterAlign_ContentCell">
                 <div>
-                  <a class="ButtonLinautoCompleteDate" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onautoCompleteDateeypress="this.className='ButtonLinautoCompleteDate_active'; return true;" onautoCompleteDateeyup="this.className='ButtonLinautoCompleteDate_focus'; return true;"onclicautoCompleteDate="submitCommandForm('FIND', true, null, 'ReportProductMovement.html', '_self', null, false);return false;" id="buttonHTML">
+                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;"onclick="submitCommandForm('FIND', true, null, 'ReportProductMovement.html', '_self', null, false);return false;" id="buttonHTML">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blanautoCompleteDate.gif" border=0/></td>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
                       <td class="Button_text">HTML Format</td>
                       <td class="Button_right"></td>
                     </tr>
@@ -427,26 +427,26 @@ function onloadFunctions(){
                       <th width="10%" class="DataGrid_Header_Cell">Date</th>
                       <th width="34%" class="DataGrid_Header_Cell">Description</th>
                       <th width="12%" class="DataGrid_Header_Cell" colspan="3">
-                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="bacautoCompleteDateground: none; border: 0px none">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
                           <tr class="DataGrid_Body_Row">
-                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="bacautoCompleteDateground: none; border: 0px none">Starting location</th>
+                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Starting location</th>
                           </tr>
                           <tr class="DataGrid_Body_Row">
-                            <th class="DataGrid_Header_Cell" width="34%" style="bacautoCompleteDateground: none; border: 0px none">X</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Y</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Z</th>
+                            <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
                           </tr>
                         </table>
                       </th>
                       <th width="12%" class="DataGrid_Header_Cell" colspan="3">
-                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="bacautoCompleteDateground: none; border: 0px none">
-                          <tr class="DataGrid_Body_Row" style="bacautoCompleteDateground: none; border: 0px none">
-                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="bacautoCompleteDateground: none; border: 0px none">Final location</th>
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
+                          <tr class="DataGrid_Body_Row" style="background: none; border: 0px none">
+                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Final location</th>
                           </tr>
                           <tr class="DataGrid_Body_Row">
-                            <th class="DataGrid_Header_Cell" width="34%" style="bacautoCompleteDateground: none; border: 0px none">X</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Y</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Z</th>
+                            <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
                           </tr>
                         </table>
                       </th>
@@ -455,7 +455,7 @@ function onloadFunctions(){
                     </tr>
                     <div id="sectionDetail"> 
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
-                        <td width="10%" class="DataGrid_Body_Cell"><a href="#" onclicautoCompleteDate="abrirVentana(xx, 'yy');return false;" onmouseover="window.status='Incoming/Outgoing';return true;" onmouseout="window.status='';return true;" class="LabelLinautoCompleteDate" id="fieldId"> 
+                        <td width="10%" class="DataGrid_Body_Cell"><a href="#" onclick="abrirVentana(xx, 'yy');return false;" onmouseover="window.status='Incoming/Outgoing';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
                           <span id="fieldDocumentNo">xx850000007</span></a></td>
                         <td width="10%" class="DataGrid_Body_Cell" id="fieldMovementdate">xxfd200</td>
                         <td width="34%" class="DataGrid_Body_Cell" id="fieldName">xx2345</td>
@@ -485,14 +485,14 @@ function onloadFunctions(){
                       <th class="DataGrid_Header_Cell" width="26%">Movement</td>
                       <th class="DataGrid_Header_Cell" width="26%">Description</td>
                       <th class="DataGrid_Header_Cell" width="12%" colspan="3">
-                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="bacautoCompleteDateground: none; border: 0px none">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
                           <tr class="DataGrid_Body_Row">
-                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="bacautoCompleteDateground: none; border: 0px none">Location</th>
+                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Location</th>
                           </tr>
                           <tr class="DataGrid_Body_Row">
-                            <th class="DataGrid_Header_Cell" width="34%" style="bacautoCompleteDateground: none; border: 0px none">X</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Y</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Z</th>
+                            <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
                           </tr>
                         </table>
                       </th>
@@ -502,7 +502,7 @@ function onloadFunctions(){
                     <div id="sectionDetail1"> 
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow2xx">
                         <td class="DataGrid_Body_Cell" width="8%" id="fieldMovementdate1">xx23-02-2004</td>
-                        <td class="DataGrid_Body_Cell" width="26%"> <a href="#" onclicautoCompleteDate="submitCommandFormParameter('DIRECT', document.frmMain.inpmInventoryId, xx, false, document.frmMain, '../PhysicalInventory/Header_Relation.html', null, false, true);return false;" onmouseover="window.status='yy';return true;" onmouseout="window.status='';return true;" class="LabelLinautoCompleteDate" id="fieldId2"> 
+                        <td class="DataGrid_Body_Cell" width="26%"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpmInventoryId, xx, false, document.frmMain, '../PhysicalInventory/Header_Relation.html', null, false, true);return false;" onmouseover="window.status='yy';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId2"> 
                           <span id="fieldMovement">xx850000007</span></a></td>
                         <td class="DataGrid_Body_Cell" width="26%" id="fieldName1">xx2345</td>
                         <td class="DataGrid_Body_Cell" width="4%"  id="fieldXOrigin1">xx3</td>
@@ -528,26 +528,26 @@ function onloadFunctions(){
                       <th class="DataGrid_Header_Cell" width="20%">Movement</th>
                       <th class="DataGrid_Header_Cell" width="26%">Description</th>
                       <th class="DataGrid_Header_Cell" width="12%" colspan="3">
-                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="bacautoCompleteDateground: none; border: 0px none">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
                           <tr class="Border TableDetailHeader"> 
-                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="bacautoCompleteDateground: none; border: 0px none">Location</th>
+                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Location</th>
                           </tr>
                           <tr class="Border TableDetailHeader"> 
-                            <th class="DataGrid_Header_Cell" width="34%" style="bacautoCompleteDateground: none; border: 0px none">X</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Y</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Z</th>
+                            <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
                           </tr>
                         </table>
                       </th>
                       <th class="DataGrid_Header_Cell" width="12%" colspan="3">
-                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="bacautoCompleteDateground: none; border: 0px none">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
                           <tr class="Border TableDetailHeader"> 
-                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="bacautoCompleteDateground: none; border: 0px none">Location</th>
+                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Location</th>
                           </tr>
                           <tr class="Border TableDetailHeader"> 
-                            <th class="DataGrid_Header_Cell" width="34%" style="bacautoCompleteDateground: none; border: 0px none">X</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Y</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Z</th>
+                            <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
                           </tr>
                         </table>
                       </th>
@@ -557,7 +557,7 @@ function onloadFunctions(){
                     <div id="sectionDetail2">
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow3xx">
                         <td class="DataGrid_Body_Cell" width="7%" id="fieldMovementdate2">xxfd200</td>
-                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclicautoCompleteDate="submitCommandFormParameter('DIRECT', document.frmMain.inpmMovementId, xx, false,     document.frmMain, '../GoodsMovements/Header_Relation.html', null, false, true);return false;" onmouseover="window.status='Inventory Move';return true;" onmouseout="window.status='';return true;" class="LabelLinautoCompleteDate" id="fieldId3"> 
+                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpmMovementId, xx, false,     document.frmMain, '../GoodsMovements/Header_Relation.html', null, false, true);return false;" onmouseover="window.status='Inventory Move';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId3"> 
                           <span id="fieldMovement2">xx850000007</span></a></td>
                         <td class="DataGrid_Body_Cell" width="26%" id="fieldName2">xx2345</td>
                         <td class="DataGrid_Body_Cell" width="4%" id="fieldXOrigin2">xx3</td>
@@ -586,26 +586,26 @@ function onloadFunctions(){
                       <th class="DataGrid_Header_Cell" width="20%">Movement</th>
                       <th class="DataGrid_Header_Cell" width="26%">Description</th>
                       <th class="DataGrid_Header_Cell" width="12%" colspan="3">
-                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="bacautoCompleteDateground: none; border: 0px none">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
                           <tr class="Border TableDetailHeader"> 
-                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="bacautoCompleteDateground: none; border: 0px none">Location</th>
+                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Location</th>
                           </tr>
                           <tr class="Border TableDetailHeader"> 
-                            <th class="DataGrid_Header_Cell" width="34%" style="bacautoCompleteDateground: none; border: 0px none">X</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Y</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Z</th>
+                            <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
                           </tr>
                         </table>
                       </th>
                       <th class="DataGrid_Header_Cell" width="12%" colspan="3">
-                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="bacautoCompleteDateground: none; border: 0px none">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
                           <tr class="Border TableDetailHeader"> 
-                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="bacautoCompleteDateground: none; border: 0px none">Location</th>
+                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Location</th>
                           </tr>
                           <tr class="Border TableDetailHeader"> 
-                            <th class="DataGrid_Header_Cell" width="34%" style="bacautoCompleteDateground: none; border: 0px none">X</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Y</th>
-                            <th class="DataGrid_Header_Cell" width="33%" style="bacautoCompleteDateground: none; border: 0px none">Z</th>
+                            <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
                           </tr>
                         </table>
                       </th>
@@ -616,7 +616,7 @@ function onloadFunctions(){
                     <div id="sectionDetail3"> 
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow4xx">
                         <td class="DataGrid_Body_Cell" width="7%" id="fieldMovementdate3">xxfd200</td>
-                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclicautoCompleteDate="submitCommandFormParameter('DIRECT', document.frmMain.inpmProductionplanId, xx, false, document.frmMain, '../BillofMaterialsProduction/ProductionPlan_Relation.html', null, false, true);return false;" onmouseover="window.status='Production Plan';return true;" onmouseout="window.status='';return true;" class="LabelLinautoCompleteDate" id="fieldId4"> 
+                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpmProductionplanId, xx, false, document.frmMain, '../BillofMaterialsProduction/ProductionPlan_Relation.html', null, false, true);return false;" onmouseover="window.status='Production Plan';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId4"> 
                         <span id="fieldProductionPlan">xx850000007</span></a></td>
                         <td class="DataGrid_Body_Cell" width="26%" id="fieldName3">xx2345</td>
                         <td class="DataGrid_Body_Cell" width="4%" id="fieldXOrigin3">xx3</td>
@@ -640,7 +640,7 @@ function onloadFunctions(){
         </div>
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
           <tr>
-            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blanautoCompleteDate.gif" border="0"></td>
+            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"></td>
           </tr>
         </table></td>
       <td valign="top">
