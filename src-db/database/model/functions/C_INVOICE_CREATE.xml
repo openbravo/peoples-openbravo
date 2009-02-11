@@ -55,6 +55,7 @@
     --
     v_DateInvoiced DATE;
     v_NoRecords NUMBER:=0;
+    v_NoRecNotComplDelivered NUMBER:=0;
     -- Orders to process
     Cur_Order RECORD;
     --
@@ -290,11 +291,11 @@
             ELSIF((Cur_Order.InvoiceRule IN('D', 'O'))) THEN
               DBMS_OUTPUT.PUT_LINE('Invoice Rule: Delivery and Order completely delivered') ;
               IF(Cur_Order.InvoiceRule='O') THEN  SELECT COUNT(*)
-                INTO v_NoRecords
+                INTO v_NoRecNotComplDelivered
                 FROM C_ORDERLINE
                 WHERE C_Order_ID=Cur_Order.C_Order_ID
                   AND qtyOrdered<>qtyDelivered;
-                IF(v_NoRecords>0) THEN
+                IF(v_NoRecNotComplDelivered>0) THEN
                   DBMS_OUTPUT.PUT_LINE('Order not completely delivered') ;
                   Next_Order:=TRUE;
                 END IF;
