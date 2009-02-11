@@ -10938,7 +10938,7 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--BDB3B6FCA0AB453DB4E83503BAB82470 DESCRIPTION-->
 <!--BDB3B6FCA0AB453DB4E83503BAB82470-->              <DESCRIPTION><![CDATA[This process apply all the installed modules]]></DESCRIPTION>
 <!--BDB3B6FCA0AB453DB4E83503BAB82470 HELP-->
-<!--BDB3B6FCA0AB453DB4E83503BAB82470-->              <HELP><![CDATA[This process applies all the installed modules. Updating DB with their info, generating and compiling their code.]]></HELP>
+<!--BDB3B6FCA0AB453DB4E83503BAB82470-->              <HELP><![CDATA[This process applies all the installed modules. It loads the module definition in the database and generate and compiles the corresponding code.]]></HELP>
 <!--BDB3B6FCA0AB453DB4E83503BAB82470 ACCESSLEVEL-->
 <!--BDB3B6FCA0AB453DB4E83503BAB82470-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--BDB3B6FCA0AB453DB4E83503BAB82470 ISUSERSTARTABLE-->
