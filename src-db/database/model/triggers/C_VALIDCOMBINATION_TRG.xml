@@ -197,8 +197,8 @@ BEGIN
   END IF;
 
   -- Construct Info Fields
-  v_Combination := COALESCE(v_Combination,'') || COALESCE(v_TempValue,'') || COALESCE(v_Separator,'');
-  v_Description := COALESCE(v_Description,'') || COALESCE(v_TempName,'') || COALESCE(v_Separator,'');
+  v_Combination := SUBSTR(COALESCE(v_Combination,'') || COALESCE(v_TempValue,'') || COALESCE(v_Separator,''),1,120);
+  v_Description := SUBSTR(COALESCE(v_Description,'') || COALESCE(v_TempName,'') || COALESCE(v_Separator,''),1,255);
   v_TempValue := '_';
   v_TempName := '_';
  END LOOP;
