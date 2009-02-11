@@ -1,1828 +1,1059 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--100**************--><AD_VAL_RULE>
-<!--100 AD_VAL_RULE_ID-->
-<!--100-->              <AD_VAL_RULE_ID><![CDATA[100]]></AD_VAL_RULE_ID>
-<!--100 AD_CLIENT_ID-->
-<!--100-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--100 AD_ORG_ID-->
-<!--100-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--100 ISACTIVE-->
-<!--100-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--100 NAME-->
-<!--100-->              <NAME><![CDATA[AD_Column must be in AD_Table]]></NAME>
-<!--100 DESCRIPTION-->
-<!--100-->              <DESCRIPTION><![CDATA[Table must be previously defined]]></DESCRIPTION>
-<!--100 TYPE-->
-<!--100-->              <TYPE><![CDATA[S]]></TYPE>
-<!--100 CODE-->
-<!--100-->              <CODE><![CDATA[AD_Column.AD_Table_ID=@AD_Table_ID@]]></CODE>
-<!--100 AD_MODULE_ID-->
-<!--100-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--100**************--></AD_VAL_RULE>
+<!--100--><AD_VAL_RULE>
+<!--100-->  <AD_VAL_RULE_ID><![CDATA[100]]></AD_VAL_RULE_ID>
+<!--100-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100-->  <NAME><![CDATA[AD_Column must be in AD_Table]]></NAME>
+<!--100-->  <DESCRIPTION><![CDATA[Table must be previously defined]]></DESCRIPTION>
+<!--100-->  <TYPE><![CDATA[S]]></TYPE>
+<!--100-->  <CODE><![CDATA[AD_Column.AD_Table_ID=@AD_Table_ID@]]></CODE>
+<!--100-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--100--></AD_VAL_RULE>
 
-<!--102**************--><AD_VAL_RULE>
-<!--102 AD_VAL_RULE_ID-->
-<!--102-->              <AD_VAL_RULE_ID><![CDATA[102]]></AD_VAL_RULE_ID>
-<!--102 AD_CLIENT_ID-->
-<!--102-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--102 AD_ORG_ID-->
-<!--102-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--102 ISACTIVE-->
-<!--102-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--102 NAME-->
-<!--102-->              <NAME><![CDATA[C_DocType Journals]]></NAME>
-<!--102 DESCRIPTION-->
-<!--102-->              <DESCRIPTION><![CDATA[Document Type Journal]]></DESCRIPTION>
-<!--102 TYPE-->
-<!--102-->              <TYPE><![CDATA[S]]></TYPE>
-<!--102 CODE-->
-<!--102-->              <CODE><![CDATA[C_DocType.DocBaseType='GLJ' AND AD_ISORGINCLUDED( @AD_Org_ID@, C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
-<!--102 AD_MODULE_ID-->
-<!--102-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--102**************--></AD_VAL_RULE>
+<!--102--><AD_VAL_RULE>
+<!--102-->  <AD_VAL_RULE_ID><![CDATA[102]]></AD_VAL_RULE_ID>
+<!--102-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--102-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--102-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--102-->  <NAME><![CDATA[C_DocType Journals]]></NAME>
+<!--102-->  <DESCRIPTION><![CDATA[Document Type Journal]]></DESCRIPTION>
+<!--102-->  <TYPE><![CDATA[S]]></TYPE>
+<!--102-->  <CODE><![CDATA[C_DocType.DocBaseType='GLJ' AND AD_ISORGINCLUDED( @AD_Org_ID@, C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--102-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--102--></AD_VAL_RULE>
 
-<!--103**************--><AD_VAL_RULE>
-<!--103 AD_VAL_RULE_ID-->
-<!--103-->              <AD_VAL_RULE_ID><![CDATA[103]]></AD_VAL_RULE_ID>
-<!--103 AD_CLIENT_ID-->
-<!--103-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--103 AD_ORG_ID-->
-<!--103-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--103 ISACTIVE-->
-<!--103-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--103 NAME-->
-<!--103-->              <NAME><![CDATA[AD_Client Security validation]]></NAME>
-<!--103 DESCRIPTION-->
-<!--103-->              <DESCRIPTION><![CDATA[Clients with user access rights]]></DESCRIPTION>
-<!--103 TYPE-->
-<!--103-->              <TYPE><![CDATA[S]]></TYPE>
-<!--103 CODE-->
-<!--103-->              <CODE><![CDATA[AD_Client.AD_Client_ID in (@#User_Client@)]]></CODE>
-<!--103 AD_MODULE_ID-->
-<!--103-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--103**************--></AD_VAL_RULE>
+<!--103--><AD_VAL_RULE>
+<!--103-->  <AD_VAL_RULE_ID><![CDATA[103]]></AD_VAL_RULE_ID>
+<!--103-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--103-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--103-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--103-->  <NAME><![CDATA[AD_Client Security validation]]></NAME>
+<!--103-->  <DESCRIPTION><![CDATA[Clients with user access rights]]></DESCRIPTION>
+<!--103-->  <TYPE><![CDATA[S]]></TYPE>
+<!--103-->  <CODE><![CDATA[AD_Client.AD_Client_ID in (@#User_Client@)]]></CODE>
+<!--103-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--103--></AD_VAL_RULE>
 
-<!--104**************--><AD_VAL_RULE>
-<!--104 AD_VAL_RULE_ID-->
-<!--104-->              <AD_VAL_RULE_ID><![CDATA[104]]></AD_VAL_RULE_ID>
-<!--104 AD_CLIENT_ID-->
-<!--104-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--104 AD_ORG_ID-->
-<!--104-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--104 ISACTIVE-->
-<!--104-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--104 NAME-->
-<!--104-->              <NAME><![CDATA[AD_Org Security validation]]></NAME>
-<!--104 DESCRIPTION-->
-<!--104-->              <DESCRIPTION><![CDATA[Organizations of the Client with user acces rights]]></DESCRIPTION>
-<!--104 TYPE-->
-<!--104-->              <TYPE><![CDATA[S]]></TYPE>
-<!--104 CODE-->
-<!--104-->              <CODE><![CDATA[(@AD_Client_ID@='0' AND AD_Org.AD_Org_ID='0') OR (@AD_Client_ID@!='0' AND ((AD_Org.AD_Client_ID IN (@#User_Client@) AND AD_Org.AD_Org_ID IN (@#User_Org@)) OR AD_Org.AD_Org_ID='0' AND AD_Org.IsSummary='N'))]]></CODE>
-<!--104 AD_MODULE_ID-->
-<!--104-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--104**************--></AD_VAL_RULE>
+<!--104--><AD_VAL_RULE>
+<!--104-->  <AD_VAL_RULE_ID><![CDATA[104]]></AD_VAL_RULE_ID>
+<!--104-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--104-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--104-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--104-->  <NAME><![CDATA[AD_Org Security validation]]></NAME>
+<!--104-->  <DESCRIPTION><![CDATA[Organizations of the Client with user acces rights]]></DESCRIPTION>
+<!--104-->  <TYPE><![CDATA[S]]></TYPE>
+<!--104-->  <CODE><![CDATA[(@AD_Client_ID@='0' AND AD_Org.AD_Org_ID='0') OR (@AD_Client_ID@!='0' AND ((AD_Org.AD_Client_ID IN (@#User_Client@) AND AD_Org.AD_Org_ID IN (@#User_Org@)) OR AD_Org.AD_Org_ID='0' AND AD_Org.IsSummary='N'))]]></CODE>
+<!--104-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--104--></AD_VAL_RULE>
 
-<!--105**************--><AD_VAL_RULE>
-<!--105 AD_VAL_RULE_ID-->
-<!--105-->              <AD_VAL_RULE_ID><![CDATA[105]]></AD_VAL_RULE_ID>
-<!--105 AD_CLIENT_ID-->
-<!--105-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--105 AD_ORG_ID-->
-<!--105-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--105 ISACTIVE-->
-<!--105-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--105 NAME-->
-<!--105-->              <NAME><![CDATA[AD_User Security validation]]></NAME>
-<!--105 DESCRIPTION-->
-<!--105-->              <DESCRIPTION><![CDATA[Users with access to organization]]></DESCRIPTION>
-<!--105 TYPE-->
-<!--105-->              <TYPE><![CDATA[S]]></TYPE>
-<!--105 CODE-->
-<!--105-->              <CODE><![CDATA[AD_User.AD_Client_ID=@AD_Client_ID@ AND AD_User.AD_Org_ID in (@User_Org@)]]></CODE>
-<!--105 AD_MODULE_ID-->
-<!--105-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--105**************--></AD_VAL_RULE>
+<!--105--><AD_VAL_RULE>
+<!--105-->  <AD_VAL_RULE_ID><![CDATA[105]]></AD_VAL_RULE_ID>
+<!--105-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--105-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--105-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--105-->  <NAME><![CDATA[AD_User Security validation]]></NAME>
+<!--105-->  <DESCRIPTION><![CDATA[Users with access to organization]]></DESCRIPTION>
+<!--105-->  <TYPE><![CDATA[S]]></TYPE>
+<!--105-->  <CODE><![CDATA[AD_User.AD_Client_ID=@AD_Client_ID@ AND AD_User.AD_Org_ID in (@User_Org@)]]></CODE>
+<!--105-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--105--></AD_VAL_RULE>
 
-<!--106**************--><AD_VAL_RULE>
-<!--106 AD_VAL_RULE_ID-->
-<!--106-->              <AD_VAL_RULE_ID><![CDATA[106]]></AD_VAL_RULE_ID>
-<!--106 AD_CLIENT_ID-->
-<!--106-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--106 AD_ORG_ID-->
-<!--106-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--106 ISACTIVE-->
-<!--106-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--106 NAME-->
-<!--106-->              <NAME><![CDATA[C_AcctSchema validation]]></NAME>
-<!--106 DESCRIPTION-->
-<!--106-->              <DESCRIPTION><![CDATA[Validated AcctSchema (Client)]]></DESCRIPTION>
-<!--106 TYPE-->
-<!--106-->              <TYPE><![CDATA[S]]></TYPE>
-<!--106 CODE-->
-<!--106-->              <CODE><![CDATA[C_AcctSchema.AD_Client_ID=@AD_Client_ID@]]></CODE>
-<!--106 AD_MODULE_ID-->
-<!--106-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--106**************--></AD_VAL_RULE>
+<!--106--><AD_VAL_RULE>
+<!--106-->  <AD_VAL_RULE_ID><![CDATA[106]]></AD_VAL_RULE_ID>
+<!--106-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--106-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--106-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--106-->  <NAME><![CDATA[C_AcctSchema validation]]></NAME>
+<!--106-->  <DESCRIPTION><![CDATA[Validated AcctSchema (Client)]]></DESCRIPTION>
+<!--106-->  <TYPE><![CDATA[S]]></TYPE>
+<!--106-->  <CODE><![CDATA[C_AcctSchema.AD_Client_ID=@AD_Client_ID@]]></CODE>
+<!--106-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--106--></AD_VAL_RULE>
 
-<!--115**************--><AD_VAL_RULE>
-<!--115 AD_VAL_RULE_ID-->
-<!--115-->              <AD_VAL_RULE_ID><![CDATA[115]]></AD_VAL_RULE_ID>
-<!--115 AD_CLIENT_ID-->
-<!--115-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--115 AD_ORG_ID-->
-<!--115-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--115 ISACTIVE-->
-<!--115-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--115 NAME-->
-<!--115-->              <NAME><![CDATA[AD_Reference List or Table]]></NAME>
-<!--115 DESCRIPTION-->
-<!--115-->              <DESCRIPTION><![CDATA[List or Table validation choices]]></DESCRIPTION>
-<!--115 TYPE-->
-<!--115-->              <TYPE><![CDATA[S]]></TYPE>
-<!--115 CODE-->
-<!--115-->              <CODE><![CDATA[AD_Reference.ValidationType=(CASE @AD_Reference_ID@ WHEN '17' THEN 'L' WHEN '25' THEN 'L' WHEN '30' THEN 'S' WHEN '28' THEN 'L' ELSE 'T' END)]]></CODE>
-<!--115 AD_MODULE_ID-->
-<!--115-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--115**************--></AD_VAL_RULE>
+<!--115--><AD_VAL_RULE>
+<!--115-->  <AD_VAL_RULE_ID><![CDATA[115]]></AD_VAL_RULE_ID>
+<!--115-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--115-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--115-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--115-->  <NAME><![CDATA[AD_Reference List or Table]]></NAME>
+<!--115-->  <DESCRIPTION><![CDATA[List or Table validation choices]]></DESCRIPTION>
+<!--115-->  <TYPE><![CDATA[S]]></TYPE>
+<!--115-->  <CODE><![CDATA[AD_Reference.ValidationType=(CASE @AD_Reference_ID@ WHEN '17' THEN 'L' WHEN '25' THEN 'L' WHEN '30' THEN 'S' WHEN '28' THEN 'L' ELSE 'T' END)]]></CODE>
+<!--115-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--115--></AD_VAL_RULE>
 
-<!--116**************--><AD_VAL_RULE>
-<!--116 AD_VAL_RULE_ID-->
-<!--116-->              <AD_VAL_RULE_ID><![CDATA[116]]></AD_VAL_RULE_ID>
-<!--116 AD_CLIENT_ID-->
-<!--116-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--116 AD_ORG_ID-->
-<!--116-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--116 ISACTIVE-->
-<!--116-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--116 NAME-->
-<!--116-->              <NAME><![CDATA[AD_Client Login]]></NAME>
-<!--116 DESCRIPTION-->
-<!--116-->              <DESCRIPTION><![CDATA[Restrict to login client]]></DESCRIPTION>
-<!--116 TYPE-->
-<!--116-->              <TYPE><![CDATA[S]]></TYPE>
-<!--116 CODE-->
-<!--116-->              <CODE><![CDATA[AD_Client.AD_Client_ID=@#AD_Client_ID@]]></CODE>
-<!--116 AD_MODULE_ID-->
-<!--116-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--116**************--></AD_VAL_RULE>
+<!--116--><AD_VAL_RULE>
+<!--116-->  <AD_VAL_RULE_ID><![CDATA[116]]></AD_VAL_RULE_ID>
+<!--116-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--116-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--116-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--116-->  <NAME><![CDATA[AD_Client Login]]></NAME>
+<!--116-->  <DESCRIPTION><![CDATA[Restrict to login client]]></DESCRIPTION>
+<!--116-->  <TYPE><![CDATA[S]]></TYPE>
+<!--116-->  <CODE><![CDATA[AD_Client.AD_Client_ID=@#AD_Client_ID@]]></CODE>
+<!--116-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--116--></AD_VAL_RULE>
 
-<!--117**************--><AD_VAL_RULE>
-<!--117 AD_VAL_RULE_ID-->
-<!--117-->              <AD_VAL_RULE_ID><![CDATA[117]]></AD_VAL_RULE_ID>
-<!--117 AD_CLIENT_ID-->
-<!--117-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--117 AD_ORG_ID-->
-<!--117-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--117 ISACTIVE-->
-<!--117-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--117 NAME-->
-<!--117-->              <NAME><![CDATA[AD_Org Login]]></NAME>
-<!--117 DESCRIPTION-->
-<!--117-->              <DESCRIPTION><![CDATA[Restrict to Login Organization]]></DESCRIPTION>
-<!--117 TYPE-->
-<!--117-->              <TYPE><![CDATA[S]]></TYPE>
-<!--117 CODE-->
-<!--117-->              <CODE><![CDATA[AD_Org.AD_Org_ID=@#AD_Org_ID@ AND AD_Org.IsSummary='N']]></CODE>
-<!--117 AD_MODULE_ID-->
-<!--117-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--117**************--></AD_VAL_RULE>
+<!--117--><AD_VAL_RULE>
+<!--117-->  <AD_VAL_RULE_ID><![CDATA[117]]></AD_VAL_RULE_ID>
+<!--117-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--117-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--117-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--117-->  <NAME><![CDATA[AD_Org Login]]></NAME>
+<!--117-->  <DESCRIPTION><![CDATA[Restrict to Login Organization]]></DESCRIPTION>
+<!--117-->  <TYPE><![CDATA[S]]></TYPE>
+<!--117-->  <CODE><![CDATA[AD_Org.AD_Org_ID=@#AD_Org_ID@ AND AD_Org.IsSummary='N']]></CODE>
+<!--117-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--117--></AD_VAL_RULE>
 
-<!--118**************--><AD_VAL_RULE>
-<!--118 AD_VAL_RULE_ID-->
-<!--118-->              <AD_VAL_RULE_ID><![CDATA[118]]></AD_VAL_RULE_ID>
-<!--118 AD_CLIENT_ID-->
-<!--118-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--118 AD_ORG_ID-->
-<!--118-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--118 ISACTIVE-->
-<!--118-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--118 NAME-->
-<!--118-->              <NAME><![CDATA[GL_Category for Manual Journals]]></NAME>
-<!--118 DESCRIPTION-->
-<!--118-->              <DESCRIPTION><![CDATA[Manual Journal GL Category]]></DESCRIPTION>
-<!--118 TYPE-->
-<!--118-->              <TYPE><![CDATA[S]]></TYPE>
-<!--118 CODE-->
-<!--118-->              <CODE><![CDATA[GL_Category.CategoryType='M']]></CODE>
-<!--118 AD_MODULE_ID-->
-<!--118-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--118**************--></AD_VAL_RULE>
+<!--118--><AD_VAL_RULE>
+<!--118-->  <AD_VAL_RULE_ID><![CDATA[118]]></AD_VAL_RULE_ID>
+<!--118-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--118-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--118-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--118-->  <NAME><![CDATA[GL_Category for Manual Journals]]></NAME>
+<!--118-->  <DESCRIPTION><![CDATA[Manual Journal GL Category]]></DESCRIPTION>
+<!--118-->  <TYPE><![CDATA[S]]></TYPE>
+<!--118-->  <CODE><![CDATA[GL_Category.CategoryType='M']]></CODE>
+<!--118-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--118--></AD_VAL_RULE>
 
-<!--119**************--><AD_VAL_RULE>
-<!--119 AD_VAL_RULE_ID-->
-<!--119-->              <AD_VAL_RULE_ID><![CDATA[119]]></AD_VAL_RULE_ID>
-<!--119 AD_CLIENT_ID-->
-<!--119-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--119 AD_ORG_ID-->
-<!--119-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--119 ISACTIVE-->
-<!--119-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--119 NAME-->
-<!--119-->              <NAME><![CDATA[C_BPartner Location - Bill To]]></NAME>
-<!--119 TYPE-->
-<!--119-->              <TYPE><![CDATA[S]]></TYPE>
-<!--119 CODE-->
-<!--119-->              <CODE><![CDATA[C_BPartner_Location.C_BPartner_ID=@C_BPartner_ID@ AND C_BPartner_Location.IsBillTo='Y' AND C_BPartner_Location.IsActive='Y']]></CODE>
-<!--119 AD_MODULE_ID-->
-<!--119-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--119**************--></AD_VAL_RULE>
+<!--119--><AD_VAL_RULE>
+<!--119-->  <AD_VAL_RULE_ID><![CDATA[119]]></AD_VAL_RULE_ID>
+<!--119-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--119-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--119-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--119-->  <NAME><![CDATA[C_BPartner Location - Bill To]]></NAME>
+<!--119-->  <TYPE><![CDATA[S]]></TYPE>
+<!--119-->  <CODE><![CDATA[C_BPartner_Location.C_BPartner_ID=@C_BPartner_ID@ AND C_BPartner_Location.IsBillTo='Y' AND C_BPartner_Location.IsActive='Y']]></CODE>
+<!--119-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--119--></AD_VAL_RULE>
 
-<!--120**************--><AD_VAL_RULE>
-<!--120 AD_VAL_RULE_ID-->
-<!--120-->              <AD_VAL_RULE_ID><![CDATA[120]]></AD_VAL_RULE_ID>
-<!--120 AD_CLIENT_ID-->
-<!--120-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--120 AD_ORG_ID-->
-<!--120-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--120 ISACTIVE-->
-<!--120-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--120 NAME-->
-<!--120-->              <NAME><![CDATA[C_BPartner Location - Drop Ship To]]></NAME>
-<!--120 TYPE-->
-<!--120-->              <TYPE><![CDATA[S]]></TYPE>
-<!--120 CODE-->
-<!--120-->              <CODE><![CDATA[C_BPartner_Location.C_BPartner_ID=@DropShip_BPartner_ID@ AND C_BPartner_Location.IsShipTo='Y']]></CODE>
-<!--120 AD_MODULE_ID-->
-<!--120-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--120**************--></AD_VAL_RULE>
+<!--120--><AD_VAL_RULE>
+<!--120-->  <AD_VAL_RULE_ID><![CDATA[120]]></AD_VAL_RULE_ID>
+<!--120-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--120-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--120-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--120-->  <NAME><![CDATA[C_BPartner Location - Drop Ship To]]></NAME>
+<!--120-->  <TYPE><![CDATA[S]]></TYPE>
+<!--120-->  <CODE><![CDATA[C_BPartner_Location.C_BPartner_ID=@DropShip_BPartner_ID@ AND C_BPartner_Location.IsShipTo='Y']]></CODE>
+<!--120-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--120--></AD_VAL_RULE>
 
-<!--121**************--><AD_VAL_RULE>
-<!--121 AD_VAL_RULE_ID-->
-<!--121-->              <AD_VAL_RULE_ID><![CDATA[121]]></AD_VAL_RULE_ID>
-<!--121 AD_CLIENT_ID-->
-<!--121-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--121 AD_ORG_ID-->
-<!--121-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--121 ISACTIVE-->
-<!--121-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--121 NAME-->
-<!--121-->              <NAME><![CDATA[C_DocType GL Documents]]></NAME>
-<!--121 DESCRIPTION-->
-<!--121-->              <DESCRIPTION><![CDATA[Document Type GL Document]]></DESCRIPTION>
-<!--121 TYPE-->
-<!--121-->              <TYPE><![CDATA[S]]></TYPE>
-<!--121 CODE-->
-<!--121-->              <CODE><![CDATA[C_DocType.DocBaseType='GLD']]></CODE>
-<!--121 AD_MODULE_ID-->
-<!--121-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--121**************--></AD_VAL_RULE>
+<!--121--><AD_VAL_RULE>
+<!--121-->  <AD_VAL_RULE_ID><![CDATA[121]]></AD_VAL_RULE_ID>
+<!--121-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--121-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--121-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--121-->  <NAME><![CDATA[C_DocType GL Documents]]></NAME>
+<!--121-->  <DESCRIPTION><![CDATA[Document Type GL Document]]></DESCRIPTION>
+<!--121-->  <TYPE><![CDATA[S]]></TYPE>
+<!--121-->  <CODE><![CDATA[C_DocType.DocBaseType='GLD']]></CODE>
+<!--121-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--121--></AD_VAL_RULE>
 
-<!--123**************--><AD_VAL_RULE>
-<!--123 AD_VAL_RULE_ID-->
-<!--123-->              <AD_VAL_RULE_ID><![CDATA[123]]></AD_VAL_RULE_ID>
-<!--123 AD_CLIENT_ID-->
-<!--123-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--123 AD_ORG_ID-->
-<!--123-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--123 ISACTIVE-->
-<!--123-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--123 NAME-->
-<!--123-->              <NAME><![CDATA[AD_User C_BPartner User/Contacts]]></NAME>
-<!--123 TYPE-->
-<!--123-->              <TYPE><![CDATA[S]]></TYPE>
-<!--123 CODE-->
-<!--123-->              <CODE><![CDATA[AD_User.C_BPartner_ID=@C_BPartner_ID@]]></CODE>
-<!--123 AD_MODULE_ID-->
-<!--123-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--123**************--></AD_VAL_RULE>
+<!--123--><AD_VAL_RULE>
+<!--123-->  <AD_VAL_RULE_ID><![CDATA[123]]></AD_VAL_RULE_ID>
+<!--123-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--123-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--123-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--123-->  <NAME><![CDATA[AD_User C_BPartner User/Contacts]]></NAME>
+<!--123-->  <TYPE><![CDATA[S]]></TYPE>
+<!--123-->  <CODE><![CDATA[AD_User.C_BPartner_ID=@C_BPartner_ID@]]></CODE>
+<!--123-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--123--></AD_VAL_RULE>
 
-<!--124**************--><AD_VAL_RULE>
-<!--124 AD_VAL_RULE_ID-->
-<!--124-->              <AD_VAL_RULE_ID><![CDATA[124]]></AD_VAL_RULE_ID>
-<!--124 AD_CLIENT_ID-->
-<!--124-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--124 AD_ORG_ID-->
-<!--124-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--124 ISACTIVE-->
-<!--124-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--124 NAME-->
-<!--124-->              <NAME><![CDATA[C_DocType AR/AP Invoices and Credit Memos]]></NAME>
-<!--124 DESCRIPTION-->
-<!--124-->              <DESCRIPTION><![CDATA[Document Type AR/AP Invoice and Credit Memos]]></DESCRIPTION>
-<!--124 TYPE-->
-<!--124-->              <TYPE><![CDATA[S]]></TYPE>
-<!--124 CODE-->
-<!--124-->              <CODE><![CDATA[C_DocType.DocBaseType IN ('ARI', 'API','ARC','APC') AND C_DocType.IsSOTrx='@IsSOTrx@' AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
-<!--124 AD_MODULE_ID-->
-<!--124-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--124**************--></AD_VAL_RULE>
+<!--124--><AD_VAL_RULE>
+<!--124-->  <AD_VAL_RULE_ID><![CDATA[124]]></AD_VAL_RULE_ID>
+<!--124-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--124-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--124-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--124-->  <NAME><![CDATA[C_DocType AR/AP Invoices and Credit Memos]]></NAME>
+<!--124-->  <DESCRIPTION><![CDATA[Document Type AR/AP Invoice and Credit Memos]]></DESCRIPTION>
+<!--124-->  <TYPE><![CDATA[S]]></TYPE>
+<!--124-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('ARI', 'API','ARC','APC') AND C_DocType.IsSOTrx='@IsSOTrx@' AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--124-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--124--></AD_VAL_RULE>
 
-<!--125**************--><AD_VAL_RULE>
-<!--125 AD_VAL_RULE_ID-->
-<!--125-->              <AD_VAL_RULE_ID><![CDATA[125]]></AD_VAL_RULE_ID>
-<!--125 AD_CLIENT_ID-->
-<!--125-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--125 AD_ORG_ID-->
-<!--125-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--125 ISACTIVE-->
-<!--125-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--125 NAME-->
-<!--125-->              <NAME><![CDATA[C_DocType Material Shipments/Receipts]]></NAME>
-<!--125 DESCRIPTION-->
-<!--125-->              <DESCRIPTION><![CDATA[Document Type Material Shipments and Receipts]]></DESCRIPTION>
-<!--125 TYPE-->
-<!--125-->              <TYPE><![CDATA[S]]></TYPE>
-<!--125 CODE-->
-<!--125-->              <CODE><![CDATA[C_DocType.DocBaseType IN ('MMR', 'MMS') AND C_DocType.IsSOTrx='@IsSOTrx@' AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
-<!--125 AD_MODULE_ID-->
-<!--125-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--125**************--></AD_VAL_RULE>
+<!--125--><AD_VAL_RULE>
+<!--125-->  <AD_VAL_RULE_ID><![CDATA[125]]></AD_VAL_RULE_ID>
+<!--125-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--125-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--125-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--125-->  <NAME><![CDATA[C_DocType Material Shipments/Receipts]]></NAME>
+<!--125-->  <DESCRIPTION><![CDATA[Document Type Material Shipments and Receipts]]></DESCRIPTION>
+<!--125-->  <TYPE><![CDATA[S]]></TYPE>
+<!--125-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('MMR', 'MMS') AND C_DocType.IsSOTrx='@IsSOTrx@' AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--125-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--125--></AD_VAL_RULE>
 
-<!--126**************--><AD_VAL_RULE>
-<!--126 AD_VAL_RULE_ID-->
-<!--126-->              <AD_VAL_RULE_ID><![CDATA[126]]></AD_VAL_RULE_ID>
-<!--126 AD_CLIENT_ID-->
-<!--126-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--126 AD_ORG_ID-->
-<!--126-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--126 ISACTIVE-->
-<!--126-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--126 NAME-->
-<!--126-->              <NAME><![CDATA[C_DocType AR Pro Forma Invoices]]></NAME>
-<!--126 DESCRIPTION-->
-<!--126-->              <DESCRIPTION><![CDATA[Document Type AR Pro Forma Invoice]]></DESCRIPTION>
-<!--126 TYPE-->
-<!--126-->              <TYPE><![CDATA[S]]></TYPE>
-<!--126 CODE-->
-<!--126-->              <CODE><![CDATA[C_DocType.DocBaseType='ARF']]></CODE>
-<!--126 AD_MODULE_ID-->
-<!--126-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--126**************--></AD_VAL_RULE>
+<!--126--><AD_VAL_RULE>
+<!--126-->  <AD_VAL_RULE_ID><![CDATA[126]]></AD_VAL_RULE_ID>
+<!--126-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--126-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--126-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--126-->  <NAME><![CDATA[C_DocType AR Pro Forma Invoices]]></NAME>
+<!--126-->  <DESCRIPTION><![CDATA[Document Type AR Pro Forma Invoice]]></DESCRIPTION>
+<!--126-->  <TYPE><![CDATA[S]]></TYPE>
+<!--126-->  <CODE><![CDATA[C_DocType.DocBaseType='ARF']]></CODE>
+<!--126-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--126--></AD_VAL_RULE>
 
-<!--127**************--><AD_VAL_RULE>
-<!--127 AD_VAL_RULE_ID-->
-<!--127-->              <AD_VAL_RULE_ID><![CDATA[127]]></AD_VAL_RULE_ID>
-<!--127 AD_CLIENT_ID-->
-<!--127-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--127 AD_ORG_ID-->
-<!--127-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--127 ISACTIVE-->
-<!--127-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--127 NAME-->
-<!--127-->              <NAME><![CDATA[M_Locator of Warehouse]]></NAME>
-<!--127 TYPE-->
-<!--127-->              <TYPE><![CDATA[S]]></TYPE>
-<!--127 CODE-->
-<!--127-->              <CODE><![CDATA[M_Locator.M_Warehouse_ID=@M_Warehouse_ID@]]></CODE>
-<!--127 AD_MODULE_ID-->
-<!--127-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--127**************--></AD_VAL_RULE>
+<!--127--><AD_VAL_RULE>
+<!--127-->  <AD_VAL_RULE_ID><![CDATA[127]]></AD_VAL_RULE_ID>
+<!--127-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--127-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--127-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--127-->  <NAME><![CDATA[M_Locator of Warehouse]]></NAME>
+<!--127-->  <TYPE><![CDATA[S]]></TYPE>
+<!--127-->  <CODE><![CDATA[M_Locator.M_Warehouse_ID=@M_Warehouse_ID@]]></CODE>
+<!--127-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--127--></AD_VAL_RULE>
 
-<!--128**************--><AD_VAL_RULE>
-<!--128 AD_VAL_RULE_ID-->
-<!--128-->              <AD_VAL_RULE_ID><![CDATA[128]]></AD_VAL_RULE_ID>
-<!--128 AD_CLIENT_ID-->
-<!--128-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--128 AD_ORG_ID-->
-<!--128-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--128 ISACTIVE-->
-<!--128-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--128 NAME-->
-<!--128-->              <NAME><![CDATA[AD_Process Reports]]></NAME>
-<!--128 TYPE-->
-<!--128-->              <TYPE><![CDATA[S]]></TYPE>
-<!--128 CODE-->
-<!--128-->              <CODE><![CDATA[AD_Process.IsReport='Y']]></CODE>
-<!--128 AD_MODULE_ID-->
-<!--128-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--128**************--></AD_VAL_RULE>
+<!--128--><AD_VAL_RULE>
+<!--128-->  <AD_VAL_RULE_ID><![CDATA[128]]></AD_VAL_RULE_ID>
+<!--128-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--128-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--128-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--128-->  <NAME><![CDATA[AD_Process Reports]]></NAME>
+<!--128-->  <TYPE><![CDATA[S]]></TYPE>
+<!--128-->  <CODE><![CDATA[AD_Process.IsReport='Y']]></CODE>
+<!--128-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--128--></AD_VAL_RULE>
 
-<!--129**************--><AD_VAL_RULE>
-<!--129 AD_VAL_RULE_ID-->
-<!--129-->              <AD_VAL_RULE_ID><![CDATA[129]]></AD_VAL_RULE_ID>
-<!--129 AD_CLIENT_ID-->
-<!--129-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--129 AD_ORG_ID-->
-<!--129-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--129 ISACTIVE-->
-<!--129-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--129 NAME-->
-<!--129-->              <NAME><![CDATA[AD_Client Trx Security validation]]></NAME>
-<!--129 TYPE-->
-<!--129-->              <TYPE><![CDATA[S]]></TYPE>
-<!--129 CODE-->
-<!--129-->              <CODE><![CDATA[AD_Client.AD_Client_ID<>'0']]></CODE>
-<!--129 AD_MODULE_ID-->
-<!--129-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--129**************--></AD_VAL_RULE>
+<!--129--><AD_VAL_RULE>
+<!--129-->  <AD_VAL_RULE_ID><![CDATA[129]]></AD_VAL_RULE_ID>
+<!--129-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--129-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--129-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--129-->  <NAME><![CDATA[AD_Client Trx Security validation]]></NAME>
+<!--129-->  <TYPE><![CDATA[S]]></TYPE>
+<!--129-->  <CODE><![CDATA[AD_Client.AD_Client_ID<>'0']]></CODE>
+<!--129-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--129--></AD_VAL_RULE>
 
-<!--130**************--><AD_VAL_RULE>
-<!--130 AD_VAL_RULE_ID-->
-<!--130-->              <AD_VAL_RULE_ID><![CDATA[130]]></AD_VAL_RULE_ID>
-<!--130 AD_CLIENT_ID-->
-<!--130-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--130 AD_ORG_ID-->
-<!--130-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--130 ISACTIVE-->
-<!--130-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--130 NAME-->
-<!--130-->              <NAME><![CDATA[AD_Org Trx Security validation]]></NAME>
-<!--130 TYPE-->
-<!--130-->              <TYPE><![CDATA[S]]></TYPE>
-<!--130 CODE-->
-<!--130-->              <CODE><![CDATA[AD_Org.AD_Org_ID<> '0']]></CODE>
-<!--130 AD_MODULE_ID-->
-<!--130-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--130**************--></AD_VAL_RULE>
+<!--130--><AD_VAL_RULE>
+<!--130-->  <AD_VAL_RULE_ID><![CDATA[130]]></AD_VAL_RULE_ID>
+<!--130-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--130-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--130-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--130-->  <NAME><![CDATA[AD_Org Trx Security validation]]></NAME>
+<!--130-->  <TYPE><![CDATA[S]]></TYPE>
+<!--130-->  <CODE><![CDATA[AD_Org.AD_Org_ID<> '0']]></CODE>
+<!--130-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--130--></AD_VAL_RULE>
 
-<!--131**************--><AD_VAL_RULE>
-<!--131 AD_VAL_RULE_ID-->
-<!--131-->              <AD_VAL_RULE_ID><![CDATA[131]]></AD_VAL_RULE_ID>
-<!--131 AD_CLIENT_ID-->
-<!--131-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--131 AD_ORG_ID-->
-<!--131-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--131 ISACTIVE-->
-<!--131-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--131 NAME-->
-<!--131-->              <NAME><![CDATA[C_BPartner Location]]></NAME>
-<!--131 TYPE-->
-<!--131-->              <TYPE><![CDATA[S]]></TYPE>
-<!--131 CODE-->
-<!--131-->              <CODE><![CDATA[C_BPartner_Location.C_BPartner_ID=@C_BPartner_ID@]]></CODE>
-<!--131 AD_MODULE_ID-->
-<!--131-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--131**************--></AD_VAL_RULE>
+<!--131--><AD_VAL_RULE>
+<!--131-->  <AD_VAL_RULE_ID><![CDATA[131]]></AD_VAL_RULE_ID>
+<!--131-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--131-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--131-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--131-->  <NAME><![CDATA[C_BPartner Location]]></NAME>
+<!--131-->  <TYPE><![CDATA[S]]></TYPE>
+<!--131-->  <CODE><![CDATA[C_BPartner_Location.C_BPartner_ID=@C_BPartner_ID@]]></CODE>
+<!--131-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--131--></AD_VAL_RULE>
 
-<!--132**************--><AD_VAL_RULE>
-<!--132 AD_VAL_RULE_ID-->
-<!--132-->              <AD_VAL_RULE_ID><![CDATA[132]]></AD_VAL_RULE_ID>
-<!--132 AD_CLIENT_ID-->
-<!--132-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--132 AD_ORG_ID-->
-<!--132-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--132 ISACTIVE-->
-<!--132-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--132 NAME-->
-<!--132-->              <NAME><![CDATA[M_PriceList Base]]></NAME>
-<!--132 DESCRIPTION-->
-<!--132-->              <DESCRIPTION><![CDATA[Base Pricelists need to have same currency]]></DESCRIPTION>
-<!--132 TYPE-->
-<!--132-->              <TYPE><![CDATA[S]]></TYPE>
-<!--132 CODE-->
-<!--132-->              <CODE><![CDATA[M_PriceList.C_Currency_ID=@C_Currency_ID@]]></CODE>
-<!--132 AD_MODULE_ID-->
-<!--132-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--132**************--></AD_VAL_RULE>
+<!--132--><AD_VAL_RULE>
+<!--132-->  <AD_VAL_RULE_ID><![CDATA[132]]></AD_VAL_RULE_ID>
+<!--132-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--132-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--132-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--132-->  <NAME><![CDATA[M_PriceList Base]]></NAME>
+<!--132-->  <DESCRIPTION><![CDATA[Base Pricelists need to have same currency]]></DESCRIPTION>
+<!--132-->  <TYPE><![CDATA[S]]></TYPE>
+<!--132-->  <CODE><![CDATA[M_PriceList.C_Currency_ID=@C_Currency_ID@]]></CODE>
+<!--132-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--132--></AD_VAL_RULE>
 
-<!--133**************--><AD_VAL_RULE>
-<!--133 AD_VAL_RULE_ID-->
-<!--133-->              <AD_VAL_RULE_ID><![CDATA[133]]></AD_VAL_RULE_ID>
-<!--133 AD_CLIENT_ID-->
-<!--133-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--133 AD_ORG_ID-->
-<!--133-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--133 ISACTIVE-->
-<!--133-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--133 NAME-->
-<!--133-->              <NAME><![CDATA[C_DocType PO/SO]]></NAME>
-<!--133 DESCRIPTION-->
-<!--133-->              <DESCRIPTION><![CDATA[Document Tpe for orders]]></DESCRIPTION>
-<!--133 TYPE-->
-<!--133-->              <TYPE><![CDATA[S]]></TYPE>
-<!--133 CODE-->
-<!--133-->              <CODE><![CDATA[C_DocType.DocBaseType IN ('SOO', 'POO') AND C_DocType.IsSOTrx='@IsSOTrx@' AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
-<!--133 AD_MODULE_ID-->
-<!--133-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--133**************--></AD_VAL_RULE>
+<!--133--><AD_VAL_RULE>
+<!--133-->  <AD_VAL_RULE_ID><![CDATA[133]]></AD_VAL_RULE_ID>
+<!--133-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--133-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--133-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--133-->  <NAME><![CDATA[C_DocType PO/SO]]></NAME>
+<!--133-->  <DESCRIPTION><![CDATA[Document Tpe for orders]]></DESCRIPTION>
+<!--133-->  <TYPE><![CDATA[S]]></TYPE>
+<!--133-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('SOO', 'POO') AND C_DocType.IsSOTrx='@IsSOTrx@' AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--133-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--133--></AD_VAL_RULE>
 
-<!--134**************--><AD_VAL_RULE>
-<!--134 AD_VAL_RULE_ID-->
-<!--134-->              <AD_VAL_RULE_ID><![CDATA[134]]></AD_VAL_RULE_ID>
-<!--134 AD_CLIENT_ID-->
-<!--134-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--134 AD_ORG_ID-->
-<!--134-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--134 ISACTIVE-->
-<!--134-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--134 NAME-->
-<!--134-->              <NAME><![CDATA[C_Order SO to be invoiced]]></NAME>
-<!--134 DESCRIPTION-->
-<!--134-->              <DESCRIPTION><![CDATA[Ordered <> Invoiced]]></DESCRIPTION>
-<!--134 TYPE-->
-<!--134-->              <TYPE><![CDATA[S]]></TYPE>
-<!--134 CODE-->
-<!--134-->              <CODE><![CDATA[DocStatus NOT IN ('DR','IP') AND InvoiceRule <> 'S' AND EXISTS (SELECT * FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced) AND IsSOTrx='Y']]></CODE>
-<!--134 AD_MODULE_ID-->
-<!--134-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--134**************--></AD_VAL_RULE>
+<!--134--><AD_VAL_RULE>
+<!--134-->  <AD_VAL_RULE_ID><![CDATA[134]]></AD_VAL_RULE_ID>
+<!--134-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--134-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--134-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--134-->  <NAME><![CDATA[C_Order SO to be invoiced]]></NAME>
+<!--134-->  <DESCRIPTION><![CDATA[Ordered <> Invoiced]]></DESCRIPTION>
+<!--134-->  <TYPE><![CDATA[S]]></TYPE>
+<!--134-->  <CODE><![CDATA[DocStatus NOT IN ('DR','IP') AND InvoiceRule <> 'S' AND EXISTS (SELECT * FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced) AND IsSOTrx='Y']]></CODE>
+<!--134-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--134--></AD_VAL_RULE>
 
-<!--135**************--><AD_VAL_RULE>
-<!--135 AD_VAL_RULE_ID-->
-<!--135-->              <AD_VAL_RULE_ID><![CDATA[135]]></AD_VAL_RULE_ID>
-<!--135 AD_CLIENT_ID-->
-<!--135-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--135 AD_ORG_ID-->
-<!--135-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--135 ISACTIVE-->
-<!--135-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--135 NAME-->
-<!--135-->              <NAME><![CDATA[C_BPartner w SO to invoice]]></NAME>
-<!--135 DESCRIPTION-->
-<!--135-->              <DESCRIPTION><![CDATA[BPartners with invoices to be invoiced]]></DESCRIPTION>
-<!--135 TYPE-->
-<!--135-->              <TYPE><![CDATA[S]]></TYPE>
-<!--135 CODE-->
-<!--135-->              <CODE><![CDATA[C_BPartner_ID in (
+<!--135--><AD_VAL_RULE>
+<!--135-->  <AD_VAL_RULE_ID><![CDATA[135]]></AD_VAL_RULE_ID>
+<!--135-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--135-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--135-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--135-->  <NAME><![CDATA[C_BPartner w SO to invoice]]></NAME>
+<!--135-->  <DESCRIPTION><![CDATA[BPartners with invoices to be invoiced]]></DESCRIPTION>
+<!--135-->  <TYPE><![CDATA[S]]></TYPE>
+<!--135-->  <CODE><![CDATA[C_BPartner_ID in (
 SELECT distinct o.C_BPartner_ID FROM C_Order o
   INNER JOIN C_OrderLine l ON (o.C_Order_ID=l.C_Order_ID)
   WHERE o.DocStatus NOT IN ('DR','IP') AND l.QtyOrdered <> l.QtyInvoiced
   AND o.IsSOTrx='Y'
  )]]></CODE>
-<!--135 AD_MODULE_ID-->
-<!--135-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--135**************--></AD_VAL_RULE>
+<!--135-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--135--></AD_VAL_RULE>
 
-<!--136**************--><AD_VAL_RULE>
-<!--136 AD_VAL_RULE_ID-->
-<!--136-->              <AD_VAL_RULE_ID><![CDATA[136]]></AD_VAL_RULE_ID>
-<!--136 AD_CLIENT_ID-->
-<!--136-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--136 AD_ORG_ID-->
-<!--136-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--136 ISACTIVE-->
-<!--136-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--136 NAME-->
-<!--136-->              <NAME><![CDATA[AD_Find Column]]></NAME>
-<!--136 DESCRIPTION-->
-<!--136-->              <DESCRIPTION><![CDATA[Columns of Table]]></DESCRIPTION>
-<!--136 TYPE-->
-<!--136-->              <TYPE><![CDATA[S]]></TYPE>
-<!--136 CODE-->
-<!--136-->              <CODE><![CDATA[AD_Column.AD_Table_ID=@Find_Table_ID@]]></CODE>
-<!--136 AD_MODULE_ID-->
-<!--136-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--136**************--></AD_VAL_RULE>
+<!--136--><AD_VAL_RULE>
+<!--136-->  <AD_VAL_RULE_ID><![CDATA[136]]></AD_VAL_RULE_ID>
+<!--136-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--136-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--136-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--136-->  <NAME><![CDATA[AD_Find Column]]></NAME>
+<!--136-->  <DESCRIPTION><![CDATA[Columns of Table]]></DESCRIPTION>
+<!--136-->  <TYPE><![CDATA[S]]></TYPE>
+<!--136-->  <CODE><![CDATA[AD_Column.AD_Table_ID=@Find_Table_ID@]]></CODE>
+<!--136-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--136--></AD_VAL_RULE>
 
-<!--137**************--><AD_VAL_RULE>
-<!--137 AD_VAL_RULE_ID-->
-<!--137-->              <AD_VAL_RULE_ID><![CDATA[137]]></AD_VAL_RULE_ID>
-<!--137 AD_CLIENT_ID-->
-<!--137-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--137 AD_ORG_ID-->
-<!--137-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--137 ISACTIVE-->
-<!--137-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--137 NAME-->
-<!--137-->              <NAME><![CDATA[C_Accounts]]></NAME>
-<!--137 DESCRIPTION-->
-<!--137-->              <DESCRIPTION><![CDATA[based on C_AcctSchema_ID]]></DESCRIPTION>
-<!--137 TYPE-->
-<!--137-->              <TYPE><![CDATA[S]]></TYPE>
-<!--137 CODE-->
-<!--137-->              <CODE><![CDATA[EXISTS (SELECT * FROM C_AcctSchema_Element ae WHERE C_ElementValue.C_Element_ID=ae.C_Element_ID AND ae.ElementType='AC' AND ae.C_AcctSchema_ID=@C_AcctSchema_ID@)]]></CODE>
-<!--137 AD_MODULE_ID-->
-<!--137-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--137**************--></AD_VAL_RULE>
+<!--137--><AD_VAL_RULE>
+<!--137-->  <AD_VAL_RULE_ID><![CDATA[137]]></AD_VAL_RULE_ID>
+<!--137-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--137-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--137-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--137-->  <NAME><![CDATA[C_Accounts]]></NAME>
+<!--137-->  <DESCRIPTION><![CDATA[based on C_AcctSchema_ID]]></DESCRIPTION>
+<!--137-->  <TYPE><![CDATA[S]]></TYPE>
+<!--137-->  <CODE><![CDATA[EXISTS (SELECT * FROM C_AcctSchema_Element ae WHERE C_ElementValue.C_Element_ID=ae.C_Element_ID AND ae.ElementType='AC' AND ae.C_AcctSchema_ID=@C_AcctSchema_ID@)]]></CODE>
+<!--137-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--137--></AD_VAL_RULE>
 
-<!--138**************--><AD_VAL_RULE>
-<!--138 AD_VAL_RULE_ID-->
-<!--138-->              <AD_VAL_RULE_ID><![CDATA[138]]></AD_VAL_RULE_ID>
-<!--138 AD_CLIENT_ID-->
-<!--138-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--138 AD_ORG_ID-->
-<!--138-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--138 ISACTIVE-->
-<!--138-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--138 NAME-->
-<!--138-->              <NAME><![CDATA[C_Accounts User1]]></NAME>
-<!--138 DESCRIPTION-->
-<!--138-->              <DESCRIPTION><![CDATA[based on C_AcctSchema_ID]]></DESCRIPTION>
-<!--138 TYPE-->
-<!--138-->              <TYPE><![CDATA[S]]></TYPE>
-<!--138 CODE-->
-<!--138-->              <CODE><![CDATA[EXISTS (SELECT * FROM C_AcctSchema_Element ae WHERE C_ElementValue.C_Element_ID=ae.C_Element_ID AND ae.ElementType='U1' AND ae.C_AcctSchema_ID=@C_AcctSchema_ID@)]]></CODE>
-<!--138 AD_MODULE_ID-->
-<!--138-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--138**************--></AD_VAL_RULE>
+<!--138--><AD_VAL_RULE>
+<!--138-->  <AD_VAL_RULE_ID><![CDATA[138]]></AD_VAL_RULE_ID>
+<!--138-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--138-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--138-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--138-->  <NAME><![CDATA[C_Accounts User1]]></NAME>
+<!--138-->  <DESCRIPTION><![CDATA[based on C_AcctSchema_ID]]></DESCRIPTION>
+<!--138-->  <TYPE><![CDATA[S]]></TYPE>
+<!--138-->  <CODE><![CDATA[EXISTS (SELECT * FROM C_AcctSchema_Element ae WHERE C_ElementValue.C_Element_ID=ae.C_Element_ID AND ae.ElementType='U1' AND ae.C_AcctSchema_ID=@C_AcctSchema_ID@)]]></CODE>
+<!--138-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--138--></AD_VAL_RULE>
 
-<!--139**************--><AD_VAL_RULE>
-<!--139 AD_VAL_RULE_ID-->
-<!--139-->              <AD_VAL_RULE_ID><![CDATA[139]]></AD_VAL_RULE_ID>
-<!--139 AD_CLIENT_ID-->
-<!--139-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--139 AD_ORG_ID-->
-<!--139-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--139 ISACTIVE-->
-<!--139-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--139 NAME-->
-<!--139-->              <NAME><![CDATA[C_Accounts User2]]></NAME>
-<!--139 DESCRIPTION-->
-<!--139-->              <DESCRIPTION><![CDATA[based on C_AcctSchema_ID]]></DESCRIPTION>
-<!--139 TYPE-->
-<!--139-->              <TYPE><![CDATA[S]]></TYPE>
-<!--139 CODE-->
-<!--139-->              <CODE><![CDATA[EXISTS (SELECT * FROM C_AcctSchema_Element ae WHERE C_ElementValue.C_Element_ID=ae.C_Element_ID AND ae.ElementType='U2' AND ae.C_AcctSchema_ID=@C_AcctSchema_ID@)]]></CODE>
-<!--139 AD_MODULE_ID-->
-<!--139-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--139**************--></AD_VAL_RULE>
+<!--139--><AD_VAL_RULE>
+<!--139-->  <AD_VAL_RULE_ID><![CDATA[139]]></AD_VAL_RULE_ID>
+<!--139-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--139-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--139-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--139-->  <NAME><![CDATA[C_Accounts User2]]></NAME>
+<!--139-->  <DESCRIPTION><![CDATA[based on C_AcctSchema_ID]]></DESCRIPTION>
+<!--139-->  <TYPE><![CDATA[S]]></TYPE>
+<!--139-->  <CODE><![CDATA[EXISTS (SELECT * FROM C_AcctSchema_Element ae WHERE C_ElementValue.C_Element_ID=ae.C_Element_ID AND ae.ElementType='U2' AND ae.C_AcctSchema_ID=@C_AcctSchema_ID@)]]></CODE>
+<!--139-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--139--></AD_VAL_RULE>
 
-<!--140**************--><AD_VAL_RULE>
-<!--140 AD_VAL_RULE_ID-->
-<!--140-->              <AD_VAL_RULE_ID><![CDATA[140]]></AD_VAL_RULE_ID>
-<!--140 AD_CLIENT_ID-->
-<!--140-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--140 AD_ORG_ID-->
-<!--140-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--140 ISACTIVE-->
-<!--140-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--140 NAME-->
-<!--140-->              <NAME><![CDATA[AD_Workflow_Nodes within current Workflow]]></NAME>
-<!--140 TYPE-->
-<!--140-->              <TYPE><![CDATA[S]]></TYPE>
-<!--140 CODE-->
-<!--140-->              <CODE><![CDATA[AD_WF_Node.AD_WorkFlow_ID=@AD_Workflow_ID@]]></CODE>
-<!--140 AD_MODULE_ID-->
-<!--140-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--140**************--></AD_VAL_RULE>
+<!--140--><AD_VAL_RULE>
+<!--140-->  <AD_VAL_RULE_ID><![CDATA[140]]></AD_VAL_RULE_ID>
+<!--140-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--140-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--140-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--140-->  <NAME><![CDATA[AD_Workflow_Nodes within current Workflow]]></NAME>
+<!--140-->  <TYPE><![CDATA[S]]></TYPE>
+<!--140-->  <CODE><![CDATA[AD_WF_Node.AD_WorkFlow_ID=@AD_Workflow_ID@]]></CODE>
+<!--140-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--140--></AD_VAL_RULE>
 
-<!--141**************--><AD_VAL_RULE>
-<!--141 AD_VAL_RULE_ID-->
-<!--141-->              <AD_VAL_RULE_ID><![CDATA[141]]></AD_VAL_RULE_ID>
-<!--141 AD_CLIENT_ID-->
-<!--141-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--141 AD_ORG_ID-->
-<!--141-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--141 ISACTIVE-->
-<!--141-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--141 NAME-->
-<!--141-->              <NAME><![CDATA[AD_Table Import Tables]]></NAME>
-<!--141 TYPE-->
-<!--141-->              <TYPE><![CDATA[S]]></TYPE>
-<!--141 CODE-->
-<!--141-->              <CODE><![CDATA[AD_Table.TableName LIKE 'I%']]></CODE>
-<!--141 AD_MODULE_ID-->
-<!--141-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--141**************--></AD_VAL_RULE>
+<!--141--><AD_VAL_RULE>
+<!--141-->  <AD_VAL_RULE_ID><![CDATA[141]]></AD_VAL_RULE_ID>
+<!--141-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--141-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--141-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--141-->  <NAME><![CDATA[AD_Table Import Tables]]></NAME>
+<!--141-->  <TYPE><![CDATA[S]]></TYPE>
+<!--141-->  <CODE><![CDATA[AD_Table.TableName LIKE 'I%']]></CODE>
+<!--141-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--141--></AD_VAL_RULE>
 
-<!--142**************--><AD_VAL_RULE>
-<!--142 AD_VAL_RULE_ID-->
-<!--142-->              <AD_VAL_RULE_ID><![CDATA[142]]></AD_VAL_RULE_ID>
-<!--142 AD_CLIENT_ID-->
-<!--142-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--142 AD_ORG_ID-->
-<!--142-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--142 ISACTIVE-->
-<!--142-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--142 NAME-->
-<!--142-->              <NAME><![CDATA[No Sales Transactions]]></NAME>
-<!--142 TYPE-->
-<!--142-->              <TYPE><![CDATA[S]]></TYPE>
-<!--142 CODE-->
-<!--142-->              <CODE><![CDATA[IsSOTrx='N']]></CODE>
-<!--142 AD_MODULE_ID-->
-<!--142-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--142**************--></AD_VAL_RULE>
+<!--142--><AD_VAL_RULE>
+<!--142-->  <AD_VAL_RULE_ID><![CDATA[142]]></AD_VAL_RULE_ID>
+<!--142-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--142-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--142-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--142-->  <NAME><![CDATA[No Sales Transactions]]></NAME>
+<!--142-->  <TYPE><![CDATA[S]]></TYPE>
+<!--142-->  <CODE><![CDATA[IsSOTrx='N']]></CODE>
+<!--142-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--142--></AD_VAL_RULE>
 
-<!--143**************--><AD_VAL_RULE>
-<!--143 AD_VAL_RULE_ID-->
-<!--143-->              <AD_VAL_RULE_ID><![CDATA[143]]></AD_VAL_RULE_ID>
-<!--143 AD_CLIENT_ID-->
-<!--143-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--143 AD_ORG_ID-->
-<!--143-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--143 ISACTIVE-->
-<!--143-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--143 NAME-->
-<!--143-->              <NAME><![CDATA[Sales Transactions]]></NAME>
-<!--143 TYPE-->
-<!--143-->              <TYPE><![CDATA[S]]></TYPE>
-<!--143 CODE-->
-<!--143-->              <CODE><![CDATA[IsSOTrx='Y']]></CODE>
-<!--143 AD_MODULE_ID-->
-<!--143-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--143**************--></AD_VAL_RULE>
+<!--143--><AD_VAL_RULE>
+<!--143-->  <AD_VAL_RULE_ID><![CDATA[143]]></AD_VAL_RULE_ID>
+<!--143-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--143-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--143-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--143-->  <NAME><![CDATA[Sales Transactions]]></NAME>
+<!--143-->  <TYPE><![CDATA[S]]></TYPE>
+<!--143-->  <CODE><![CDATA[IsSOTrx='Y']]></CODE>
+<!--143-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--143--></AD_VAL_RULE>
 
-<!--144**************--><AD_VAL_RULE>
-<!--144 AD_VAL_RULE_ID-->
-<!--144-->              <AD_VAL_RULE_ID><![CDATA[144]]></AD_VAL_RULE_ID>
-<!--144 AD_CLIENT_ID-->
-<!--144-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--144 AD_ORG_ID-->
-<!--144-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--144 ISACTIVE-->
-<!--144-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--144 NAME-->
-<!--144-->              <NAME><![CDATA[C_Payment Not Reconciled]]></NAME>
-<!--144 TYPE-->
-<!--144-->              <TYPE><![CDATA[S]]></TYPE>
-<!--144 CODE-->
-<!--144-->              <CODE><![CDATA[C_Payment.IsReconciled='N']]></CODE>
-<!--144 AD_MODULE_ID-->
-<!--144-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--144**************--></AD_VAL_RULE>
+<!--144--><AD_VAL_RULE>
+<!--144-->  <AD_VAL_RULE_ID><![CDATA[144]]></AD_VAL_RULE_ID>
+<!--144-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--144-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--144-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--144-->  <NAME><![CDATA[C_Payment Not Reconciled]]></NAME>
+<!--144-->  <TYPE><![CDATA[S]]></TYPE>
+<!--144-->  <CODE><![CDATA[C_Payment.IsReconciled='N']]></CODE>
+<!--144-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--144--></AD_VAL_RULE>
 
-<!--145**************--><AD_VAL_RULE>
-<!--145 AD_VAL_RULE_ID-->
-<!--145-->              <AD_VAL_RULE_ID><![CDATA[145]]></AD_VAL_RULE_ID>
-<!--145 AD_CLIENT_ID-->
-<!--145-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--145 AD_ORG_ID-->
-<!--145-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--145 ISACTIVE-->
-<!--145-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--145 NAME-->
-<!--145-->              <NAME><![CDATA[C_Invoice of C_BPartner]]></NAME>
-<!--145 TYPE-->
-<!--145-->              <TYPE><![CDATA[S]]></TYPE>
-<!--145 CODE-->
-<!--145-->              <CODE><![CDATA[C_Invoice.C_BPartner_ID=@C_BPartner_ID@]]></CODE>
-<!--145 AD_MODULE_ID-->
-<!--145-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--145**************--></AD_VAL_RULE>
+<!--145--><AD_VAL_RULE>
+<!--145-->  <AD_VAL_RULE_ID><![CDATA[145]]></AD_VAL_RULE_ID>
+<!--145-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--145-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--145-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--145-->  <NAME><![CDATA[C_Invoice of C_BPartner]]></NAME>
+<!--145-->  <TYPE><![CDATA[S]]></TYPE>
+<!--145-->  <CODE><![CDATA[C_Invoice.C_BPartner_ID=@C_BPartner_ID@]]></CODE>
+<!--145-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--145--></AD_VAL_RULE>
 
-<!--146**************--><AD_VAL_RULE>
-<!--146 AD_VAL_RULE_ID-->
-<!--146-->              <AD_VAL_RULE_ID><![CDATA[146]]></AD_VAL_RULE_ID>
-<!--146 AD_CLIENT_ID-->
-<!--146-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--146 AD_ORG_ID-->
-<!--146-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--146 ISACTIVE-->
-<!--146-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--146 NAME-->
-<!--146-->              <NAME><![CDATA[C_Invoice Open]]></NAME>
-<!--146 TYPE-->
-<!--146-->              <TYPE><![CDATA[S]]></TYPE>
-<!--146 CODE-->
-<!--146-->              <CODE><![CDATA[C_Invoice.IsPaid<>'Y']]></CODE>
-<!--146 AD_MODULE_ID-->
-<!--146-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--146**************--></AD_VAL_RULE>
+<!--146--><AD_VAL_RULE>
+<!--146-->  <AD_VAL_RULE_ID><![CDATA[146]]></AD_VAL_RULE_ID>
+<!--146-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--146-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--146-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--146-->  <NAME><![CDATA[C_Invoice Open]]></NAME>
+<!--146-->  <TYPE><![CDATA[S]]></TYPE>
+<!--146-->  <CODE><![CDATA[C_Invoice.IsPaid<>'Y']]></CODE>
+<!--146-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--146--></AD_VAL_RULE>
 
-<!--147**************--><AD_VAL_RULE>
-<!--147 AD_VAL_RULE_ID-->
-<!--147-->              <AD_VAL_RULE_ID><![CDATA[147]]></AD_VAL_RULE_ID>
-<!--147 AD_CLIENT_ID-->
-<!--147-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--147 AD_ORG_ID-->
-<!--147-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--147 ISACTIVE-->
-<!--147-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--147 NAME-->
-<!--147-->              <NAME><![CDATA[C_Order of C_BPartner]]></NAME>
-<!--147 TYPE-->
-<!--147-->              <TYPE><![CDATA[S]]></TYPE>
-<!--147 CODE-->
-<!--147-->              <CODE><![CDATA[C_Order.C_BPartner_ID=@C_BPartner_ID@]]></CODE>
-<!--147 AD_MODULE_ID-->
-<!--147-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--147**************--></AD_VAL_RULE>
+<!--147--><AD_VAL_RULE>
+<!--147-->  <AD_VAL_RULE_ID><![CDATA[147]]></AD_VAL_RULE_ID>
+<!--147-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--147-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--147-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--147-->  <NAME><![CDATA[C_Order of C_BPartner]]></NAME>
+<!--147-->  <TYPE><![CDATA[S]]></TYPE>
+<!--147-->  <CODE><![CDATA[C_Order.C_BPartner_ID=@C_BPartner_ID@]]></CODE>
+<!--147-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--147--></AD_VAL_RULE>
 
-<!--148**************--><AD_VAL_RULE>
-<!--148 AD_VAL_RULE_ID-->
-<!--148-->              <AD_VAL_RULE_ID><![CDATA[148]]></AD_VAL_RULE_ID>
-<!--148 AD_CLIENT_ID-->
-<!--148-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--148 AD_ORG_ID-->
-<!--148-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--148 ISACTIVE-->
-<!--148-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--148 NAME-->
-<!--148-->              <NAME><![CDATA[AD_Org of Client]]></NAME>
-<!--148 TYPE-->
-<!--148-->              <TYPE><![CDATA[S]]></TYPE>
-<!--148 CODE-->
-<!--148-->              <CODE><![CDATA[(AD_Org.AD_Client_ID=@AD_Client_ID@ OR AD_Org.AD_Org_ID='0')]]></CODE>
-<!--148 AD_MODULE_ID-->
-<!--148-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--148**************--></AD_VAL_RULE>
+<!--148--><AD_VAL_RULE>
+<!--148-->  <AD_VAL_RULE_ID><![CDATA[148]]></AD_VAL_RULE_ID>
+<!--148-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--148-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--148-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--148-->  <NAME><![CDATA[AD_Org of Client]]></NAME>
+<!--148-->  <TYPE><![CDATA[S]]></TYPE>
+<!--148-->  <CODE><![CDATA[(AD_Org.AD_Client_ID=@AD_Client_ID@ OR AD_Org.AD_Org_ID='0')]]></CODE>
+<!--148-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--148--></AD_VAL_RULE>
 
-<!--149**************--><AD_VAL_RULE>
-<!--149 AD_VAL_RULE_ID-->
-<!--149-->              <AD_VAL_RULE_ID><![CDATA[149]]></AD_VAL_RULE_ID>
-<!--149 AD_CLIENT_ID-->
-<!--149-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--149 AD_ORG_ID-->
-<!--149-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--149 ISACTIVE-->
-<!--149-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--149 NAME-->
-<!--149-->              <NAME><![CDATA[C_DocType - Payments/Receipts]]></NAME>
-<!--149 TYPE-->
-<!--149-->              <TYPE><![CDATA[S]]></TYPE>
-<!--149 CODE-->
-<!--149-->              <CODE><![CDATA[C_DocType.DocBaseType=@DOCTYPE_SETTLEMENT@ AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
-<!--149 AD_MODULE_ID-->
-<!--149-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--149**************--></AD_VAL_RULE>
+<!--149--><AD_VAL_RULE>
+<!--149-->  <AD_VAL_RULE_ID><![CDATA[149]]></AD_VAL_RULE_ID>
+<!--149-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--149-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--149-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--149-->  <NAME><![CDATA[C_DocType - Payments/Receipts]]></NAME>
+<!--149-->  <TYPE><![CDATA[S]]></TYPE>
+<!--149-->  <CODE><![CDATA[C_DocType.DocBaseType=@DOCTYPE_SETTLEMENT@ AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--149-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--149--></AD_VAL_RULE>
 
-<!--150**************--><AD_VAL_RULE>
-<!--150 AD_VAL_RULE_ID-->
-<!--150-->              <AD_VAL_RULE_ID><![CDATA[150]]></AD_VAL_RULE_ID>
-<!--150 AD_CLIENT_ID-->
-<!--150-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--150 AD_ORG_ID-->
-<!--150-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--150 ISACTIVE-->
-<!--150-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--150 NAME-->
-<!--150-->              <NAME><![CDATA[AD_Tree Menu]]></NAME>
-<!--150 DESCRIPTION-->
-<!--150-->              <DESCRIPTION><![CDATA[Only menu items]]></DESCRIPTION>
-<!--150 TYPE-->
-<!--150-->              <TYPE><![CDATA[S]]></TYPE>
-<!--150 CODE-->
-<!--150-->              <CODE><![CDATA[AD_Tree.TreeType='MM']]></CODE>
-<!--150 AD_MODULE_ID-->
-<!--150-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--150**************--></AD_VAL_RULE>
+<!--150--><AD_VAL_RULE>
+<!--150-->  <AD_VAL_RULE_ID><![CDATA[150]]></AD_VAL_RULE_ID>
+<!--150-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--150-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--150-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--150-->  <NAME><![CDATA[AD_Tree Menu]]></NAME>
+<!--150-->  <DESCRIPTION><![CDATA[Only menu items]]></DESCRIPTION>
+<!--150-->  <TYPE><![CDATA[S]]></TYPE>
+<!--150-->  <CODE><![CDATA[AD_Tree.TreeType='MM']]></CODE>
+<!--150-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--150--></AD_VAL_RULE>
 
-<!--151**************--><AD_VAL_RULE>
-<!--151 AD_VAL_RULE_ID-->
-<!--151-->              <AD_VAL_RULE_ID><![CDATA[151]]></AD_VAL_RULE_ID>
-<!--151 AD_CLIENT_ID-->
-<!--151-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--151 AD_ORG_ID-->
-<!--151-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--151 ISACTIVE-->
-<!--151-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--151 NAME-->
-<!--151-->              <NAME><![CDATA[M_DiscountSchema only PriceList]]></NAME>
-<!--151 TYPE-->
-<!--151-->              <TYPE><![CDATA[S]]></TYPE>
-<!--151 CODE-->
-<!--151-->              <CODE><![CDATA[M_DiscountSchema.DiscountType='P']]></CODE>
-<!--151 AD_MODULE_ID-->
-<!--151-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--151**************--></AD_VAL_RULE>
+<!--151--><AD_VAL_RULE>
+<!--151-->  <AD_VAL_RULE_ID><![CDATA[151]]></AD_VAL_RULE_ID>
+<!--151-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--151-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--151-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--151-->  <NAME><![CDATA[M_DiscountSchema only PriceList]]></NAME>
+<!--151-->  <TYPE><![CDATA[S]]></TYPE>
+<!--151-->  <CODE><![CDATA[M_DiscountSchema.DiscountType='P']]></CODE>
+<!--151-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--151--></AD_VAL_RULE>
 
-<!--152**************--><AD_VAL_RULE>
-<!--152 AD_VAL_RULE_ID-->
-<!--152-->              <AD_VAL_RULE_ID><![CDATA[152]]></AD_VAL_RULE_ID>
-<!--152 AD_CLIENT_ID-->
-<!--152-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--152 AD_ORG_ID-->
-<!--152-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--152 ISACTIVE-->
-<!--152-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--152 NAME-->
-<!--152-->              <NAME><![CDATA[C_Payment not in BankStatement]]></NAME>
-<!--152 TYPE-->
-<!--152-->              <TYPE><![CDATA[S]]></TYPE>
-<!--152 CODE-->
-<!--152-->              <CODE><![CDATA[NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE l.C_Payment_ID=C_Payment.C_Payment_ID)]]></CODE>
-<!--152 AD_MODULE_ID-->
-<!--152-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--152**************--></AD_VAL_RULE>
+<!--152--><AD_VAL_RULE>
+<!--152-->  <AD_VAL_RULE_ID><![CDATA[152]]></AD_VAL_RULE_ID>
+<!--152-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--152-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--152-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--152-->  <NAME><![CDATA[C_Payment not in BankStatement]]></NAME>
+<!--152-->  <TYPE><![CDATA[S]]></TYPE>
+<!--152-->  <CODE><![CDATA[NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE l.C_Payment_ID=C_Payment.C_Payment_ID)]]></CODE>
+<!--152-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--152--></AD_VAL_RULE>
 
-<!--153**************--><AD_VAL_RULE>
-<!--153 AD_VAL_RULE_ID-->
-<!--153-->              <AD_VAL_RULE_ID><![CDATA[153]]></AD_VAL_RULE_ID>
-<!--153 AD_CLIENT_ID-->
-<!--153-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--153 AD_ORG_ID-->
-<!--153-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--153 ISACTIVE-->
-<!--153-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--153 NAME-->
-<!--153-->              <NAME><![CDATA[C_Region of Country]]></NAME>
-<!--153 TYPE-->
-<!--153-->              <TYPE><![CDATA[S]]></TYPE>
-<!--153 CODE-->
-<!--153-->              <CODE><![CDATA[C_Region.C_Country_ID=@C_Country_ID@]]></CODE>
-<!--153 AD_MODULE_ID-->
-<!--153-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--153**************--></AD_VAL_RULE>
+<!--153--><AD_VAL_RULE>
+<!--153-->  <AD_VAL_RULE_ID><![CDATA[153]]></AD_VAL_RULE_ID>
+<!--153-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--153-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--153-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--153-->  <NAME><![CDATA[C_Region of Country]]></NAME>
+<!--153-->  <TYPE><![CDATA[S]]></TYPE>
+<!--153-->  <CODE><![CDATA[C_Region.C_Country_ID=@C_Country_ID@]]></CODE>
+<!--153-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--153--></AD_VAL_RULE>
 
-<!--154**************--><AD_VAL_RULE>
-<!--154 AD_VAL_RULE_ID-->
-<!--154-->              <AD_VAL_RULE_ID><![CDATA[154]]></AD_VAL_RULE_ID>
-<!--154 AD_CLIENT_ID-->
-<!--154-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--154 AD_ORG_ID-->
-<!--154-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--154 ISACTIVE-->
-<!--154-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--154 NAME-->
-<!--154-->              <NAME><![CDATA[AD_PrintGraph of AD_PrintFormat_ID]]></NAME>
-<!--154 TYPE-->
-<!--154-->              <TYPE><![CDATA[S]]></TYPE>
-<!--154 CODE-->
-<!--154-->              <CODE><![CDATA[AD_PrintFormatItem.AD_PrintFormat_ID=@AD_PrintFormat_ID@]]></CODE>
-<!--154 AD_MODULE_ID-->
-<!--154-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--154**************--></AD_VAL_RULE>
+<!--154--><AD_VAL_RULE>
+<!--154-->  <AD_VAL_RULE_ID><![CDATA[154]]></AD_VAL_RULE_ID>
+<!--154-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--154-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--154-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--154-->  <NAME><![CDATA[AD_PrintGraph of AD_PrintFormat_ID]]></NAME>
+<!--154-->  <TYPE><![CDATA[S]]></TYPE>
+<!--154-->  <CODE><![CDATA[AD_PrintFormatItem.AD_PrintFormat_ID=@AD_PrintFormat_ID@]]></CODE>
+<!--154-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--154--></AD_VAL_RULE>
 
-<!--155**************--><AD_VAL_RULE>
-<!--155 AD_VAL_RULE_ID-->
-<!--155-->              <AD_VAL_RULE_ID><![CDATA[155]]></AD_VAL_RULE_ID>
-<!--155 AD_CLIENT_ID-->
-<!--155-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--155 AD_ORG_ID-->
-<!--155-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--155 ISACTIVE-->
-<!--155-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--155 NAME-->
-<!--155-->              <NAME><![CDATA[C_Region of To_Country]]></NAME>
-<!--155 TYPE-->
-<!--155-->              <TYPE><![CDATA[S]]></TYPE>
-<!--155 CODE-->
-<!--155-->              <CODE><![CDATA[C_Region.C_Country_ID=@To_Country_ID@]]></CODE>
-<!--155 AD_MODULE_ID-->
-<!--155-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--155**************--></AD_VAL_RULE>
+<!--155--><AD_VAL_RULE>
+<!--155-->  <AD_VAL_RULE_ID><![CDATA[155]]></AD_VAL_RULE_ID>
+<!--155-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--155-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--155-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--155-->  <NAME><![CDATA[C_Region of To_Country]]></NAME>
+<!--155-->  <TYPE><![CDATA[S]]></TYPE>
+<!--155-->  <CODE><![CDATA[C_Region.C_Country_ID=@To_Country_ID@]]></CODE>
+<!--155-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--155--></AD_VAL_RULE>
 
-<!--156**************--><AD_VAL_RULE>
-<!--156 AD_VAL_RULE_ID-->
-<!--156-->              <AD_VAL_RULE_ID><![CDATA[156]]></AD_VAL_RULE_ID>
-<!--156 AD_CLIENT_ID-->
-<!--156-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--156 AD_ORG_ID-->
-<!--156-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--156 ISACTIVE-->
-<!--156-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--156 NAME-->
-<!--156-->              <NAME><![CDATA[R_Request Processed]]></NAME>
-<!--156 DESCRIPTION-->
-<!--156-->              <DESCRIPTION><![CDATA[Processed Requests]]></DESCRIPTION>
-<!--156 TYPE-->
-<!--156-->              <TYPE><![CDATA[S]]></TYPE>
-<!--156 CODE-->
-<!--156-->              <CODE><![CDATA[R_Request.Processed='Y']]></CODE>
-<!--156 AD_MODULE_ID-->
-<!--156-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--156**************--></AD_VAL_RULE>
+<!--156--><AD_VAL_RULE>
+<!--156-->  <AD_VAL_RULE_ID><![CDATA[156]]></AD_VAL_RULE_ID>
+<!--156-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--156-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--156-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--156-->  <NAME><![CDATA[R_Request Processed]]></NAME>
+<!--156-->  <DESCRIPTION><![CDATA[Processed Requests]]></DESCRIPTION>
+<!--156-->  <TYPE><![CDATA[S]]></TYPE>
+<!--156-->  <CODE><![CDATA[R_Request.Processed='Y']]></CODE>
+<!--156-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--156--></AD_VAL_RULE>
 
-<!--157**************--><AD_VAL_RULE>
-<!--157 AD_VAL_RULE_ID-->
-<!--157-->              <AD_VAL_RULE_ID><![CDATA[157]]></AD_VAL_RULE_ID>
-<!--157 AD_CLIENT_ID-->
-<!--157-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--157 AD_ORG_ID-->
-<!--157-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--157 ISACTIVE-->
-<!--157-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--157 NAME-->
-<!--157-->              <NAME><![CDATA[PA_ReportLine of ReportLineSet]]></NAME>
-<!--157 TYPE-->
-<!--157-->              <TYPE><![CDATA[S]]></TYPE>
-<!--157 CODE-->
-<!--157-->              <CODE><![CDATA[PA_ReportLine.PA_ReportLineSet_ID=@PA_ReportLineSet_ID@]]></CODE>
-<!--157 AD_MODULE_ID-->
-<!--157-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--157**************--></AD_VAL_RULE>
+<!--157--><AD_VAL_RULE>
+<!--157-->  <AD_VAL_RULE_ID><![CDATA[157]]></AD_VAL_RULE_ID>
+<!--157-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--157-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--157-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--157-->  <NAME><![CDATA[PA_ReportLine of ReportLineSet]]></NAME>
+<!--157-->  <TYPE><![CDATA[S]]></TYPE>
+<!--157-->  <CODE><![CDATA[PA_ReportLine.PA_ReportLineSet_ID=@PA_ReportLineSet_ID@]]></CODE>
+<!--157-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--157--></AD_VAL_RULE>
 
-<!--158**************--><AD_VAL_RULE>
-<!--158 AD_VAL_RULE_ID-->
-<!--158-->              <AD_VAL_RULE_ID><![CDATA[158]]></AD_VAL_RULE_ID>
-<!--158 AD_CLIENT_ID-->
-<!--158-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--158 AD_ORG_ID-->
-<!--158-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--158 ISACTIVE-->
-<!--158-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--158 NAME-->
-<!--158-->              <NAME><![CDATA[AD_Role of Client]]></NAME>
-<!--158 TYPE-->
-<!--158-->              <TYPE><![CDATA[S]]></TYPE>
-<!--158 CODE-->
-<!--158-->              <CODE><![CDATA[AD_Role.AD_Client_ID=@#AD_Client_ID@]]></CODE>
-<!--158 AD_MODULE_ID-->
-<!--158-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--158**************--></AD_VAL_RULE>
+<!--158--><AD_VAL_RULE>
+<!--158-->  <AD_VAL_RULE_ID><![CDATA[158]]></AD_VAL_RULE_ID>
+<!--158-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--158-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--158-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--158-->  <NAME><![CDATA[AD_Role of Client]]></NAME>
+<!--158-->  <TYPE><![CDATA[S]]></TYPE>
+<!--158-->  <CODE><![CDATA[AD_Role.AD_Client_ID=@#AD_Client_ID@]]></CODE>
+<!--158-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--158--></AD_VAL_RULE>
 
-<!--159**************--><AD_VAL_RULE>
-<!--159 AD_VAL_RULE_ID-->
-<!--159-->              <AD_VAL_RULE_ID><![CDATA[159]]></AD_VAL_RULE_ID>
-<!--159 AD_CLIENT_ID-->
-<!--159-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--159 AD_ORG_ID-->
-<!--159-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--159 ISACTIVE-->
-<!--159-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--159 NAME-->
-<!--159-->              <NAME><![CDATA[AD_Tree Element Value]]></NAME>
-<!--159 DESCRIPTION-->
-<!--159-->              <DESCRIPTION><![CDATA[Only Element Value items]]></DESCRIPTION>
-<!--159 TYPE-->
-<!--159-->              <TYPE><![CDATA[S]]></TYPE>
-<!--159 CODE-->
-<!--159-->              <CODE><![CDATA[AD_Tree.TreeType='EV']]></CODE>
-<!--159 AD_MODULE_ID-->
-<!--159-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--159**************--></AD_VAL_RULE>
+<!--159--><AD_VAL_RULE>
+<!--159-->  <AD_VAL_RULE_ID><![CDATA[159]]></AD_VAL_RULE_ID>
+<!--159-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--159-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--159-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--159-->  <NAME><![CDATA[AD_Tree Element Value]]></NAME>
+<!--159-->  <DESCRIPTION><![CDATA[Only Element Value items]]></DESCRIPTION>
+<!--159-->  <TYPE><![CDATA[S]]></TYPE>
+<!--159-->  <CODE><![CDATA[AD_Tree.TreeType='EV']]></CODE>
+<!--159-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--159--></AD_VAL_RULE>
 
-<!--160**************--><AD_VAL_RULE>
-<!--160 AD_VAL_RULE_ID-->
-<!--160-->              <AD_VAL_RULE_ID><![CDATA[160]]></AD_VAL_RULE_ID>
-<!--160 AD_CLIENT_ID-->
-<!--160-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--160 AD_ORG_ID-->
-<!--160-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--160 ISACTIVE-->
-<!--160-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--160 NAME-->
-<!--160-->              <NAME><![CDATA[PA_ReportColumn of ReportColumnSet]]></NAME>
-<!--160 TYPE-->
-<!--160-->              <TYPE><![CDATA[S]]></TYPE>
-<!--160 CODE-->
-<!--160-->              <CODE><![CDATA[PA_ReportColumn.PA_ReportColumnSet_ID=@PA_ReportColumnSet_ID@]]></CODE>
-<!--160 AD_MODULE_ID-->
-<!--160-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--160**************--></AD_VAL_RULE>
+<!--160--><AD_VAL_RULE>
+<!--160-->  <AD_VAL_RULE_ID><![CDATA[160]]></AD_VAL_RULE_ID>
+<!--160-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--160-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--160-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--160-->  <NAME><![CDATA[PA_ReportColumn of ReportColumnSet]]></NAME>
+<!--160-->  <TYPE><![CDATA[S]]></TYPE>
+<!--160-->  <CODE><![CDATA[PA_ReportColumn.PA_ReportColumnSet_ID=@PA_ReportColumnSet_ID@]]></CODE>
+<!--160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--160--></AD_VAL_RULE>
 
-<!--161**************--><AD_VAL_RULE>
-<!--161 AD_VAL_RULE_ID-->
-<!--161-->              <AD_VAL_RULE_ID><![CDATA[161]]></AD_VAL_RULE_ID>
-<!--161 AD_CLIENT_ID-->
-<!--161-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--161 AD_ORG_ID-->
-<!--161-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--161 ISACTIVE-->
-<!--161-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--161 NAME-->
-<!--161-->              <NAME><![CDATA[All_Payment Rule - no Cash]]></NAME>
-<!--161 TYPE-->
-<!--161-->              <TYPE><![CDATA[S]]></TYPE>
-<!--161 CODE-->
-<!--161-->              <CODE><![CDATA[AD_Ref_List.Value <> 'B']]></CODE>
-<!--161 AD_MODULE_ID-->
-<!--161-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--161**************--></AD_VAL_RULE>
+<!--161--><AD_VAL_RULE>
+<!--161-->  <AD_VAL_RULE_ID><![CDATA[161]]></AD_VAL_RULE_ID>
+<!--161-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--161-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--161-->  <NAME><![CDATA[All_Payment Rule - no Cash]]></NAME>
+<!--161-->  <TYPE><![CDATA[S]]></TYPE>
+<!--161-->  <CODE><![CDATA[AD_Ref_List.Value <> 'B']]></CODE>
+<!--161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--161--></AD_VAL_RULE>
 
-<!--162**************--><AD_VAL_RULE>
-<!--162 AD_VAL_RULE_ID-->
-<!--162-->              <AD_VAL_RULE_ID><![CDATA[162]]></AD_VAL_RULE_ID>
-<!--162 AD_CLIENT_ID-->
-<!--162-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--162 AD_ORG_ID-->
-<!--162-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--162 ISACTIVE-->
-<!--162-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--162 NAME-->
-<!--162-->              <NAME><![CDATA[All_Payment Rule - Check/Transfer]]></NAME>
-<!--162 TYPE-->
-<!--162-->              <TYPE><![CDATA[S]]></TYPE>
-<!--162 CODE-->
-<!--162-->              <CODE><![CDATA[AD_Ref_List.Value IN ('S','T')]]></CODE>
-<!--162 AD_MODULE_ID-->
-<!--162-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--162**************--></AD_VAL_RULE>
+<!--162--><AD_VAL_RULE>
+<!--162-->  <AD_VAL_RULE_ID><![CDATA[162]]></AD_VAL_RULE_ID>
+<!--162-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--162-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--162-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--162-->  <NAME><![CDATA[All_Payment Rule - Check/Transfer]]></NAME>
+<!--162-->  <TYPE><![CDATA[S]]></TYPE>
+<!--162-->  <CODE><![CDATA[AD_Ref_List.Value IN ('S','T')]]></CODE>
+<!--162-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--162--></AD_VAL_RULE>
 
-<!--163**************--><AD_VAL_RULE>
-<!--163 AD_VAL_RULE_ID-->
-<!--163-->              <AD_VAL_RULE_ID><![CDATA[163]]></AD_VAL_RULE_ID>
-<!--163 AD_CLIENT_ID-->
-<!--163-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--163 AD_ORG_ID-->
-<!--163-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--163 ISACTIVE-->
-<!--163-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--163 NAME-->
-<!--163-->              <NAME><![CDATA[AD_Tab in Window]]></NAME>
-<!--163 TYPE-->
-<!--163-->              <TYPE><![CDATA[S]]></TYPE>
-<!--163 CODE-->
-<!--163-->              <CODE><![CDATA[AD_Tab.AD_Window_ID=@AD_Window_ID@]]></CODE>
-<!--163 AD_MODULE_ID-->
-<!--163-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--163**************--></AD_VAL_RULE>
+<!--163--><AD_VAL_RULE>
+<!--163-->  <AD_VAL_RULE_ID><![CDATA[163]]></AD_VAL_RULE_ID>
+<!--163-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--163-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--163-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--163-->  <NAME><![CDATA[AD_Tab in Window]]></NAME>
+<!--163-->  <TYPE><![CDATA[S]]></TYPE>
+<!--163-->  <CODE><![CDATA[AD_Tab.AD_Window_ID=@AD_Window_ID@]]></CODE>
+<!--163-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--163--></AD_VAL_RULE>
 
-<!--164**************--><AD_VAL_RULE>
-<!--164 AD_VAL_RULE_ID-->
-<!--164-->              <AD_VAL_RULE_ID><![CDATA[164]]></AD_VAL_RULE_ID>
-<!--164 AD_CLIENT_ID-->
-<!--164-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--164 AD_ORG_ID-->
-<!--164-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--164 ISACTIVE-->
-<!--164-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--164 NAME-->
-<!--164-->              <NAME><![CDATA[AD_User - Internal]]></NAME>
-<!--164 DESCRIPTION-->
-<!--164-->              <DESCRIPTION><![CDATA[Employees & Sales Reps]]></DESCRIPTION>
-<!--164 TYPE-->
-<!--164-->              <TYPE><![CDATA[S]]></TYPE>
-<!--164 CODE-->
-<!--164-->              <CODE><![CDATA[EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND (bp.IsEmployee='Y' OR bp.IsSalesRep='Y'))]]></CODE>
-<!--164 AD_MODULE_ID-->
-<!--164-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--164**************--></AD_VAL_RULE>
+<!--164--><AD_VAL_RULE>
+<!--164-->  <AD_VAL_RULE_ID><![CDATA[164]]></AD_VAL_RULE_ID>
+<!--164-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--164-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--164-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--164-->  <NAME><![CDATA[AD_User - Internal]]></NAME>
+<!--164-->  <DESCRIPTION><![CDATA[Employees & Sales Reps]]></DESCRIPTION>
+<!--164-->  <TYPE><![CDATA[S]]></TYPE>
+<!--164-->  <CODE><![CDATA[EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND (bp.IsEmployee='Y' OR bp.IsSalesRep='Y'))]]></CODE>
+<!--164-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--164--></AD_VAL_RULE>
 
-<!--165**************--><AD_VAL_RULE>
-<!--165 AD_VAL_RULE_ID-->
-<!--165-->              <AD_VAL_RULE_ID><![CDATA[165]]></AD_VAL_RULE_ID>
-<!--165 AD_CLIENT_ID-->
-<!--165-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--165 AD_ORG_ID-->
-<!--165-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--165 ISACTIVE-->
-<!--165-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--165 NAME-->
-<!--165-->              <NAME><![CDATA[C_ProjectPhase of Project]]></NAME>
-<!--165 TYPE-->
-<!--165-->              <TYPE><![CDATA[S]]></TYPE>
-<!--165 CODE-->
-<!--165-->              <CODE><![CDATA[C_ProjectPhase.C_Project_ID=@C_Project_ID@]]></CODE>
-<!--165 AD_MODULE_ID-->
-<!--165-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--165**************--></AD_VAL_RULE>
+<!--165--><AD_VAL_RULE>
+<!--165-->  <AD_VAL_RULE_ID><![CDATA[165]]></AD_VAL_RULE_ID>
+<!--165-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--165-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--165-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--165-->  <NAME><![CDATA[C_ProjectPhase of Project]]></NAME>
+<!--165-->  <TYPE><![CDATA[S]]></TYPE>
+<!--165-->  <CODE><![CDATA[C_ProjectPhase.C_Project_ID=@C_Project_ID@]]></CODE>
+<!--165-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--165--></AD_VAL_RULE>
 
-<!--166**************--><AD_VAL_RULE>
-<!--166 AD_VAL_RULE_ID-->
-<!--166-->              <AD_VAL_RULE_ID><![CDATA[166]]></AD_VAL_RULE_ID>
-<!--166 AD_CLIENT_ID-->
-<!--166-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--166 AD_ORG_ID-->
-<!--166-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--166 ISACTIVE-->
-<!--166-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--166 NAME-->
-<!--166-->              <NAME><![CDATA[C_ProjectTask of ProjectPhase]]></NAME>
-<!--166 TYPE-->
-<!--166-->              <TYPE><![CDATA[S]]></TYPE>
-<!--166 CODE-->
-<!--166-->              <CODE><![CDATA[C_ProjectTask.C_ProjectPhase_ID=@C_ProjectPhase_ID@]]></CODE>
-<!--166 AD_MODULE_ID-->
-<!--166-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--166**************--></AD_VAL_RULE>
+<!--166--><AD_VAL_RULE>
+<!--166-->  <AD_VAL_RULE_ID><![CDATA[166]]></AD_VAL_RULE_ID>
+<!--166-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--166-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--166-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--166-->  <NAME><![CDATA[C_ProjectTask of ProjectPhase]]></NAME>
+<!--166-->  <TYPE><![CDATA[S]]></TYPE>
+<!--166-->  <CODE><![CDATA[C_ProjectTask.C_ProjectPhase_ID=@C_ProjectPhase_ID@]]></CODE>
+<!--166-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--166--></AD_VAL_RULE>
 
-<!--167**************--><AD_VAL_RULE>
-<!--167 AD_VAL_RULE_ID-->
-<!--167-->              <AD_VAL_RULE_ID><![CDATA[167]]></AD_VAL_RULE_ID>
-<!--167 AD_CLIENT_ID-->
-<!--167-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--167 AD_ORG_ID-->
-<!--167-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--167 ISACTIVE-->
-<!--167-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--167 NAME-->
-<!--167-->              <NAME><![CDATA[C_BPartner Location - Ship To]]></NAME>
-<!--167 TYPE-->
-<!--167-->              <TYPE><![CDATA[S]]></TYPE>
-<!--167 CODE-->
-<!--167-->              <CODE><![CDATA[C_BPartner_Location.C_BPartner_ID=@C_BPartner_ID@ AND C_BPartner_Location.IsShipTo='Y' AND C_BPartner_Location.IsActive='Y']]></CODE>
-<!--167 AD_MODULE_ID-->
-<!--167-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--167**************--></AD_VAL_RULE>
+<!--167--><AD_VAL_RULE>
+<!--167-->  <AD_VAL_RULE_ID><![CDATA[167]]></AD_VAL_RULE_ID>
+<!--167-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--167-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--167-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--167-->  <NAME><![CDATA[C_BPartner Location - Ship To]]></NAME>
+<!--167-->  <TYPE><![CDATA[S]]></TYPE>
+<!--167-->  <CODE><![CDATA[C_BPartner_Location.C_BPartner_ID=@C_BPartner_ID@ AND C_BPartner_Location.IsShipTo='Y' AND C_BPartner_Location.IsActive='Y']]></CODE>
+<!--167-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--167--></AD_VAL_RULE>
 
-<!--168**************--><AD_VAL_RULE>
-<!--168 AD_VAL_RULE_ID-->
-<!--168-->              <AD_VAL_RULE_ID><![CDATA[168]]></AD_VAL_RULE_ID>
-<!--168 AD_CLIENT_ID-->
-<!--168-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--168 AD_ORG_ID-->
-<!--168-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--168 ISACTIVE-->
-<!--168-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--168 NAME-->
-<!--168-->              <NAME><![CDATA[AD_User C_BPartner User/Contacts Drop]]></NAME>
-<!--168 TYPE-->
-<!--168-->              <TYPE><![CDATA[S]]></TYPE>
-<!--168 CODE-->
-<!--168-->              <CODE><![CDATA[AD_User.C_BPartner_ID=@DropShip_BPartner_ID@]]></CODE>
-<!--168 AD_MODULE_ID-->
-<!--168-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--168**************--></AD_VAL_RULE>
+<!--168--><AD_VAL_RULE>
+<!--168-->  <AD_VAL_RULE_ID><![CDATA[168]]></AD_VAL_RULE_ID>
+<!--168-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--168-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--168-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--168-->  <NAME><![CDATA[AD_User C_BPartner User/Contacts Drop]]></NAME>
+<!--168-->  <TYPE><![CDATA[S]]></TYPE>
+<!--168-->  <CODE><![CDATA[AD_User.C_BPartner_ID=@DropShip_BPartner_ID@]]></CODE>
+<!--168-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--168--></AD_VAL_RULE>
 
-<!--169**************--><AD_VAL_RULE>
-<!--169 AD_VAL_RULE_ID-->
-<!--169-->              <AD_VAL_RULE_ID><![CDATA[169]]></AD_VAL_RULE_ID>
-<!--169 AD_CLIENT_ID-->
-<!--169-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--169 AD_ORG_ID-->
-<!--169-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--169 ISACTIVE-->
-<!--169-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--169 NAME-->
-<!--169-->              <NAME><![CDATA[K_Category Value]]></NAME>
-<!--169 TYPE-->
-<!--169-->              <TYPE><![CDATA[S]]></TYPE>
-<!--169 CODE-->
-<!--169-->              <CODE><![CDATA[K_Category_ID=@K_Category_ID@]]></CODE>
-<!--169 AD_MODULE_ID-->
-<!--169-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--169**************--></AD_VAL_RULE>
+<!--169--><AD_VAL_RULE>
+<!--169-->  <AD_VAL_RULE_ID><![CDATA[169]]></AD_VAL_RULE_ID>
+<!--169-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--169-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--169-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--169-->  <NAME><![CDATA[K_Category Value]]></NAME>
+<!--169-->  <TYPE><![CDATA[S]]></TYPE>
+<!--169-->  <CODE><![CDATA[K_Category_ID=@K_Category_ID@]]></CODE>
+<!--169-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--169--></AD_VAL_RULE>
 
-<!--170**************--><AD_VAL_RULE>
-<!--170 AD_VAL_RULE_ID-->
-<!--170-->              <AD_VAL_RULE_ID><![CDATA[170]]></AD_VAL_RULE_ID>
-<!--170 AD_CLIENT_ID-->
-<!--170-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--170 AD_ORG_ID-->
-<!--170-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--170 ISACTIVE-->
-<!--170-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--170 NAME-->
-<!--170-->              <NAME><![CDATA[AD_Org of Remote Client]]></NAME>
-<!--170 TYPE-->
-<!--170-->              <TYPE><![CDATA[S]]></TYPE>
-<!--170 CODE-->
-<!--170-->              <CODE><![CDATA[AD_Org.AD_Client_ID=@Remote_Client_ID@]]></CODE>
-<!--170 AD_MODULE_ID-->
-<!--170-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--170**************--></AD_VAL_RULE>
+<!--170--><AD_VAL_RULE>
+<!--170-->  <AD_VAL_RULE_ID><![CDATA[170]]></AD_VAL_RULE_ID>
+<!--170-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--170-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--170-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--170-->  <NAME><![CDATA[AD_Org of Remote Client]]></NAME>
+<!--170-->  <TYPE><![CDATA[S]]></TYPE>
+<!--170-->  <CODE><![CDATA[AD_Org.AD_Client_ID=@Remote_Client_ID@]]></CODE>
+<!--170-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--170--></AD_VAL_RULE>
 
-<!--171**************--><AD_VAL_RULE>
-<!--171 AD_VAL_RULE_ID-->
-<!--171-->              <AD_VAL_RULE_ID><![CDATA[171]]></AD_VAL_RULE_ID>
-<!--171 AD_CLIENT_ID-->
-<!--171-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--171 AD_ORG_ID-->
-<!--171-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--171 ISACTIVE-->
-<!--171-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--171 NAME-->
-<!--171-->              <NAME><![CDATA[C_Phase of Project Type]]></NAME>
-<!--171 TYPE-->
-<!--171-->              <TYPE><![CDATA[S]]></TYPE>
-<!--171 CODE-->
-<!--171-->              <CODE><![CDATA[C_Phase.C_ProjectType_ID=@C_ProjectType_ID@]]></CODE>
-<!--171 AD_MODULE_ID-->
-<!--171-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--171**************--></AD_VAL_RULE>
+<!--171--><AD_VAL_RULE>
+<!--171-->  <AD_VAL_RULE_ID><![CDATA[171]]></AD_VAL_RULE_ID>
+<!--171-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--171-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--171-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--171-->  <NAME><![CDATA[C_Phase of Project Type]]></NAME>
+<!--171-->  <TYPE><![CDATA[S]]></TYPE>
+<!--171-->  <CODE><![CDATA[C_Phase.C_ProjectType_ID=@C_ProjectType_ID@]]></CODE>
+<!--171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--171--></AD_VAL_RULE>
 
-<!--172**************--><AD_VAL_RULE>
-<!--172 AD_VAL_RULE_ID-->
-<!--172-->              <AD_VAL_RULE_ID><![CDATA[172]]></AD_VAL_RULE_ID>
-<!--172 AD_CLIENT_ID-->
-<!--172-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--172 AD_ORG_ID-->
-<!--172-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--172 ISACTIVE-->
-<!--172-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--172 NAME-->
-<!--172-->              <NAME><![CDATA[C_DocType Orders]]></NAME>
-<!--172 DESCRIPTION-->
-<!--172-->              <DESCRIPTION><![CDATA[Document Tpe for SO/PO]]></DESCRIPTION>
-<!--172 TYPE-->
-<!--172-->              <TYPE><![CDATA[S]]></TYPE>
-<!--172 CODE-->
-<!--172-->              <CODE><![CDATA[C_DocType.DocBaseType IN ('SOO', 'POO') AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
-<!--172 AD_MODULE_ID-->
-<!--172-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--172**************--></AD_VAL_RULE>
+<!--172--><AD_VAL_RULE>
+<!--172-->  <AD_VAL_RULE_ID><![CDATA[172]]></AD_VAL_RULE_ID>
+<!--172-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--172-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--172-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--172-->  <NAME><![CDATA[C_DocType Orders]]></NAME>
+<!--172-->  <DESCRIPTION><![CDATA[Document Tpe for SO/PO]]></DESCRIPTION>
+<!--172-->  <TYPE><![CDATA[S]]></TYPE>
+<!--172-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('SOO', 'POO') AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--172-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--172--></AD_VAL_RULE>
 
-<!--173**************--><AD_VAL_RULE>
-<!--173 AD_VAL_RULE_ID-->
-<!--173-->              <AD_VAL_RULE_ID><![CDATA[173]]></AD_VAL_RULE_ID>
-<!--173 AD_CLIENT_ID-->
-<!--173-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--173 AD_ORG_ID-->
-<!--173-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--173 ISACTIVE-->
-<!--173-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--173 NAME-->
-<!--173-->              <NAME><![CDATA[C_DocType Invoices and Credit Memos]]></NAME>
-<!--173 DESCRIPTION-->
-<!--173-->              <DESCRIPTION><![CDATA[Document Type AR/AP Invoice and Credit Memos]]></DESCRIPTION>
-<!--173 TYPE-->
-<!--173-->              <TYPE><![CDATA[S]]></TYPE>
-<!--173 CODE-->
-<!--173-->              <CODE><![CDATA[C_DocType.DocBaseType IN ('ARI', 'API','ARC','APC') AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
-<!--173 AD_MODULE_ID-->
-<!--173-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--173**************--></AD_VAL_RULE>
+<!--173--><AD_VAL_RULE>
+<!--173-->  <AD_VAL_RULE_ID><![CDATA[173]]></AD_VAL_RULE_ID>
+<!--173-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--173-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--173-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--173-->  <NAME><![CDATA[C_DocType Invoices and Credit Memos]]></NAME>
+<!--173-->  <DESCRIPTION><![CDATA[Document Type AR/AP Invoice and Credit Memos]]></DESCRIPTION>
+<!--173-->  <TYPE><![CDATA[S]]></TYPE>
+<!--173-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('ARI', 'API','ARC','APC') AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--173-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--173--></AD_VAL_RULE>
 
-<!--174**************--><AD_VAL_RULE>
-<!--174 AD_VAL_RULE_ID-->
-<!--174-->              <AD_VAL_RULE_ID><![CDATA[174]]></AD_VAL_RULE_ID>
-<!--174 AD_CLIENT_ID-->
-<!--174-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--174 AD_ORG_ID-->
-<!--174-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--174 ISACTIVE-->
-<!--174-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--174 NAME-->
-<!--174-->              <NAME><![CDATA[C_ProjectLine of Project]]></NAME>
-<!--174 TYPE-->
-<!--174-->              <TYPE><![CDATA[S]]></TYPE>
-<!--174 CODE-->
-<!--174-->              <CODE><![CDATA[C_ProjectLine.C_Project_ID=@C_Project_ID@]]></CODE>
-<!--174 AD_MODULE_ID-->
-<!--174-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--174**************--></AD_VAL_RULE>
+<!--174--><AD_VAL_RULE>
+<!--174-->  <AD_VAL_RULE_ID><![CDATA[174]]></AD_VAL_RULE_ID>
+<!--174-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--174-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--174-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--174-->  <NAME><![CDATA[C_ProjectLine of Project]]></NAME>
+<!--174-->  <TYPE><![CDATA[S]]></TYPE>
+<!--174-->  <CODE><![CDATA[C_ProjectLine.C_Project_ID=@C_Project_ID@]]></CODE>
+<!--174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--174--></AD_VAL_RULE>
 
-<!--175**************--><AD_VAL_RULE>
-<!--175 AD_VAL_RULE_ID-->
-<!--175-->              <AD_VAL_RULE_ID><![CDATA[175]]></AD_VAL_RULE_ID>
-<!--175 AD_CLIENT_ID-->
-<!--175-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--175 AD_ORG_ID-->
-<!--175-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--175 ISACTIVE-->
-<!--175-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--175 NAME-->
-<!--175-->              <NAME><![CDATA[C_ProjectLine of Project not Issued]]></NAME>
-<!--175 TYPE-->
-<!--175-->              <TYPE><![CDATA[S]]></TYPE>
-<!--175 CODE-->
-<!--175-->              <CODE><![CDATA[C_ProjectLine.C_Project_ID=@C_Project_ID@ AND C_ProjectLine.C_ProjectIssue_ID IS NULL]]></CODE>
-<!--175 AD_MODULE_ID-->
-<!--175-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--175**************--></AD_VAL_RULE>
+<!--175--><AD_VAL_RULE>
+<!--175-->  <AD_VAL_RULE_ID><![CDATA[175]]></AD_VAL_RULE_ID>
+<!--175-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--175-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--175-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--175-->  <NAME><![CDATA[C_ProjectLine of Project not Issued]]></NAME>
+<!--175-->  <TYPE><![CDATA[S]]></TYPE>
+<!--175-->  <CODE><![CDATA[C_ProjectLine.C_Project_ID=@C_Project_ID@ AND C_ProjectLine.C_ProjectIssue_ID IS NULL]]></CODE>
+<!--175-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--175--></AD_VAL_RULE>
 
-<!--176**************--><AD_VAL_RULE>
-<!--176 AD_VAL_RULE_ID-->
-<!--176-->              <AD_VAL_RULE_ID><![CDATA[176]]></AD_VAL_RULE_ID>
-<!--176 AD_CLIENT_ID-->
-<!--176-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--176 AD_ORG_ID-->
-<!--176-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--176 ISACTIVE-->
-<!--176-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--176 NAME-->
-<!--176-->              <NAME><![CDATA[C_Project of WorkOrder/Asset]]></NAME>
-<!--176 TYPE-->
-<!--176-->              <TYPE><![CDATA[S]]></TYPE>
-<!--176 CODE-->
-<!--176-->              <CODE><![CDATA[C_Project.ProjectCategory IN ('W','A')]]></CODE>
-<!--176 AD_MODULE_ID-->
-<!--176-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--176**************--></AD_VAL_RULE>
+<!--176--><AD_VAL_RULE>
+<!--176-->  <AD_VAL_RULE_ID><![CDATA[176]]></AD_VAL_RULE_ID>
+<!--176-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--176-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--176-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--176-->  <NAME><![CDATA[C_Project of WorkOrder/Asset]]></NAME>
+<!--176-->  <TYPE><![CDATA[S]]></TYPE>
+<!--176-->  <CODE><![CDATA[C_Project.ProjectCategory IN ('W','A')]]></CODE>
+<!--176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--176--></AD_VAL_RULE>
 
-<!--177**************--><AD_VAL_RULE>
-<!--177 AD_VAL_RULE_ID-->
-<!--177-->              <AD_VAL_RULE_ID><![CDATA[177]]></AD_VAL_RULE_ID>
-<!--177 AD_CLIENT_ID-->
-<!--177-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--177 AD_ORG_ID-->
-<!--177-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--177 ISACTIVE-->
-<!--177-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--177 NAME-->
-<!--177-->              <NAME><![CDATA[C_Project of active WorkOrder/Asset]]></NAME>
-<!--177 TYPE-->
-<!--177-->              <TYPE><![CDATA[S]]></TYPE>
-<!--177 CODE-->
-<!--177-->              <CODE><![CDATA[C_Project.ProjectCategory IN ('W','A') AND C_Project.Processed<>'Y']]></CODE>
-<!--177 AD_MODULE_ID-->
-<!--177-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--177**************--></AD_VAL_RULE>
+<!--177--><AD_VAL_RULE>
+<!--177-->  <AD_VAL_RULE_ID><![CDATA[177]]></AD_VAL_RULE_ID>
+<!--177-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--177-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--177-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--177-->  <NAME><![CDATA[C_Project of active WorkOrder/Asset]]></NAME>
+<!--177-->  <TYPE><![CDATA[S]]></TYPE>
+<!--177-->  <CODE><![CDATA[C_Project.ProjectCategory IN ('W','A') AND C_Project.Processed<>'Y']]></CODE>
+<!--177-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--177--></AD_VAL_RULE>
 
-<!--178**************--><AD_VAL_RULE>
-<!--178 AD_VAL_RULE_ID-->
-<!--178-->              <AD_VAL_RULE_ID><![CDATA[178]]></AD_VAL_RULE_ID>
-<!--178 AD_CLIENT_ID-->
-<!--178-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--178 AD_ORG_ID-->
-<!--178-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--178 ISACTIVE-->
-<!--178-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--178 NAME-->
-<!--178-->              <NAME><![CDATA[M_InOut Receipts of Project]]></NAME>
-<!--178 TYPE-->
-<!--178-->              <TYPE><![CDATA[S]]></TYPE>
-<!--178 CODE-->
-<!--178-->              <CODE><![CDATA[(M_InOut.C_Project_ID IS NULL OR M_InOut.C_Project_ID=@C_Project_ID@) AND M_InOut.Processed='Y' AND M_InOut.IsSOTrx='N']]></CODE>
-<!--178 AD_MODULE_ID-->
-<!--178-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--178**************--></AD_VAL_RULE>
+<!--178--><AD_VAL_RULE>
+<!--178-->  <AD_VAL_RULE_ID><![CDATA[178]]></AD_VAL_RULE_ID>
+<!--178-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--178-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--178-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--178-->  <NAME><![CDATA[M_InOut Receipts of Project]]></NAME>
+<!--178-->  <TYPE><![CDATA[S]]></TYPE>
+<!--178-->  <CODE><![CDATA[(M_InOut.C_Project_ID IS NULL OR M_InOut.C_Project_ID=@C_Project_ID@) AND M_InOut.Processed='Y' AND M_InOut.IsSOTrx='N']]></CODE>
+<!--178-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--178--></AD_VAL_RULE>
 
-<!--800000**************--><AD_VAL_RULE>
-<!--800000 AD_VAL_RULE_ID-->
-<!--800000-->              <AD_VAL_RULE_ID><![CDATA[800000]]></AD_VAL_RULE_ID>
-<!--800000 AD_CLIENT_ID-->
-<!--800000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800000 AD_ORG_ID-->
-<!--800000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800000 ISACTIVE-->
-<!--800000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800000 NAME-->
-<!--800000-->              <NAME><![CDATA[M_Product_UOM_ID]]></NAME>
-<!--800000 TYPE-->
-<!--800000-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800000 CODE-->
-<!--800000-->              <CODE><![CDATA[M_Product_UOM.M_Product_ID = @M_Product_ID@]]></CODE>
-<!--800000 AD_MODULE_ID-->
-<!--800000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800000**************--></AD_VAL_RULE>
+<!--800000--><AD_VAL_RULE>
+<!--800000-->  <AD_VAL_RULE_ID><![CDATA[800000]]></AD_VAL_RULE_ID>
+<!--800000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800000-->  <NAME><![CDATA[M_Product_UOM_ID]]></NAME>
+<!--800000-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800000-->  <CODE><![CDATA[M_Product_UOM.M_Product_ID = @M_Product_ID@]]></CODE>
+<!--800000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800000--></AD_VAL_RULE>
 
-<!--800001**************--><AD_VAL_RULE>
-<!--800001 AD_VAL_RULE_ID-->
-<!--800001-->              <AD_VAL_RULE_ID><![CDATA[800001]]></AD_VAL_RULE_ID>
-<!--800001 AD_CLIENT_ID-->
-<!--800001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800001 AD_ORG_ID-->
-<!--800001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800001 ISACTIVE-->
-<!--800001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800001 NAME-->
-<!--800001-->              <NAME><![CDATA[C_Project based on status and bpartner]]></NAME>
-<!--800001 TYPE-->
-<!--800001-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800001 CODE-->
-<!--800001-->              <CODE><![CDATA[C_Project.projectstatus in ('OP', 'OR') and (C_Project.c_bpartner_id=@C_BPartner_ID@ or '@IsSOTrx@'='N') or C_Project.c_project_id = @c_project_id@]]></CODE>
-<!--800001 AD_MODULE_ID-->
-<!--800001-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800001**************--></AD_VAL_RULE>
+<!--800001--><AD_VAL_RULE>
+<!--800001-->  <AD_VAL_RULE_ID><![CDATA[800001]]></AD_VAL_RULE_ID>
+<!--800001-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800001-->  <NAME><![CDATA[C_Project based on status and bpartner]]></NAME>
+<!--800001-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800001-->  <CODE><![CDATA[C_Project.projectstatus in ('OP', 'OR') and (C_Project.c_bpartner_id=@C_BPartner_ID@ or '@IsSOTrx@'='N') or C_Project.c_project_id = @c_project_id@]]></CODE>
+<!--800001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800001--></AD_VAL_RULE>
 
-<!--800003**************--><AD_VAL_RULE>
-<!--800003 AD_VAL_RULE_ID-->
-<!--800003-->              <AD_VAL_RULE_ID><![CDATA[800003]]></AD_VAL_RULE_ID>
-<!--800003 AD_CLIENT_ID-->
-<!--800003-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800003 AD_ORG_ID-->
-<!--800003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800003 ISACTIVE-->
-<!--800003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800003 NAME-->
-<!--800003-->              <NAME><![CDATA[M_WH_Period  to M_WH_Schedule]]></NAME>
-<!--800003 TYPE-->
-<!--800003-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800003 CODE-->
-<!--800003-->              <CODE><![CDATA[M_WH_Schedule_ID=@M_WH_Schedule_ID@]]></CODE>
-<!--800003 AD_MODULE_ID-->
-<!--800003-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800003**************--></AD_VAL_RULE>
+<!--800003--><AD_VAL_RULE>
+<!--800003-->  <AD_VAL_RULE_ID><![CDATA[800003]]></AD_VAL_RULE_ID>
+<!--800003-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800003-->  <NAME><![CDATA[M_WH_Period  to M_WH_Schedule]]></NAME>
+<!--800003-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800003-->  <CODE><![CDATA[M_WH_Schedule_ID=@M_WH_Schedule_ID@]]></CODE>
+<!--800003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800003--></AD_VAL_RULE>
 
-<!--800004**************--><AD_VAL_RULE>
-<!--800004 AD_VAL_RULE_ID-->
-<!--800004-->              <AD_VAL_RULE_ID><![CDATA[800004]]></AD_VAL_RULE_ID>
-<!--800004 AD_CLIENT_ID-->
-<!--800004-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800004 AD_ORG_ID-->
-<!--800004-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800004 ISACTIVE-->
-<!--800004-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800004 NAME-->
-<!--800004-->              <NAME><![CDATA[AD_Process isBackground]]></NAME>
-<!--800004 TYPE-->
-<!--800004-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800004 CODE-->
-<!--800004-->              <CODE><![CDATA[AD_Process.IsBackground='Y']]></CODE>
-<!--800004 AD_MODULE_ID-->
-<!--800004-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800004**************--></AD_VAL_RULE>
+<!--800004--><AD_VAL_RULE>
+<!--800004-->  <AD_VAL_RULE_ID><![CDATA[800004]]></AD_VAL_RULE_ID>
+<!--800004-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800004-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800004-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800004-->  <NAME><![CDATA[AD_Process isBackground]]></NAME>
+<!--800004-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800004-->  <CODE><![CDATA[AD_Process.IsBackground='Y']]></CODE>
+<!--800004-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800004--></AD_VAL_RULE>
 
-<!--800005**************--><AD_VAL_RULE>
-<!--800005 AD_VAL_RULE_ID-->
-<!--800005-->              <AD_VAL_RULE_ID><![CDATA[800005]]></AD_VAL_RULE_ID>
-<!--800005 AD_CLIENT_ID-->
-<!--800005-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800005 AD_ORG_ID-->
-<!--800005-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800005 ISACTIVE-->
-<!--800005-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800005 NAME-->
-<!--800005-->              <NAME><![CDATA[AD_Process report]]></NAME>
-<!--800005 TYPE-->
-<!--800005-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800005 CODE-->
-<!--800005-->              <CODE><![CDATA[AD_Process.entitytype = 'U' and isreport='Y']]></CODE>
-<!--800005 AD_MODULE_ID-->
-<!--800005-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800005**************--></AD_VAL_RULE>
+<!--800005--><AD_VAL_RULE>
+<!--800005-->  <AD_VAL_RULE_ID><![CDATA[800005]]></AD_VAL_RULE_ID>
+<!--800005-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800005-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800005-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800005-->  <NAME><![CDATA[AD_Process report]]></NAME>
+<!--800005-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800005-->  <CODE><![CDATA[AD_Process.entitytype = 'U' and isreport='Y']]></CODE>
+<!--800005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800005--></AD_VAL_RULE>
 
-<!--800006**************--><AD_VAL_RULE>
-<!--800006 AD_VAL_RULE_ID-->
-<!--800006-->              <AD_VAL_RULE_ID><![CDATA[800006]]></AD_VAL_RULE_ID>
-<!--800006 AD_CLIENT_ID-->
-<!--800006-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800006 AD_ORG_ID-->
-<!--800006-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800006 ISACTIVE-->
-<!--800006-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800006 NAME-->
-<!--800006-->              <NAME><![CDATA[MA_ProductionRun_WRPhase]]></NAME>
-<!--800006 TYPE-->
-<!--800006-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800006 CODE-->
-<!--800006-->              <CODE><![CDATA[MA_WRPhase.Closed = 'N'
+<!--800006--><AD_VAL_RULE>
+<!--800006-->  <AD_VAL_RULE_ID><![CDATA[800006]]></AD_VAL_RULE_ID>
+<!--800006-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800006-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800006-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800006-->  <NAME><![CDATA[MA_ProductionRun_WRPhase]]></NAME>
+<!--800006-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800006-->  <CODE><![CDATA[MA_WRPhase.Closed = 'N'
 
 AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
-<!--800006 AD_MODULE_ID-->
-<!--800006-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800006**************--></AD_VAL_RULE>
+<!--800006-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800006--></AD_VAL_RULE>
 
-<!--800007**************--><AD_VAL_RULE>
-<!--800007 AD_VAL_RULE_ID-->
-<!--800007-->              <AD_VAL_RULE_ID><![CDATA[800007]]></AD_VAL_RULE_ID>
-<!--800007 AD_CLIENT_ID-->
-<!--800007-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800007 AD_ORG_ID-->
-<!--800007-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800007 ISACTIVE-->
-<!--800007-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800007 NAME-->
-<!--800007-->              <NAME><![CDATA[MA_WEEmployee_Employee]]></NAME>
-<!--800007 TYPE-->
-<!--800007-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800007 CODE-->
-<!--800007-->              <CODE><![CDATA[C_BPartner.IsEmployee = 'Y' AND C_BPartner.IsWorker = 'Y']]></CODE>
-<!--800007 AD_MODULE_ID-->
-<!--800007-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800007**************--></AD_VAL_RULE>
+<!--800007--><AD_VAL_RULE>
+<!--800007-->  <AD_VAL_RULE_ID><![CDATA[800007]]></AD_VAL_RULE_ID>
+<!--800007-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800007-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800007-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800007-->  <NAME><![CDATA[MA_WEEmployee_Employee]]></NAME>
+<!--800007-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800007-->  <CODE><![CDATA[C_BPartner.IsEmployee = 'Y' AND C_BPartner.IsWorker = 'Y']]></CODE>
+<!--800007-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800007--></AD_VAL_RULE>
 
-<!--800008**************--><AD_VAL_RULE>
-<!--800008 AD_VAL_RULE_ID-->
-<!--800008-->              <AD_VAL_RULE_ID><![CDATA[800008]]></AD_VAL_RULE_ID>
-<!--800008 AD_CLIENT_ID-->
-<!--800008-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800008 AD_ORG_ID-->
-<!--800008-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800008 ISACTIVE-->
-<!--800008-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800008 NAME-->
-<!--800008-->              <NAME><![CDATA[MA_Sequence in process plan]]></NAME>
-<!--800008 TYPE-->
-<!--800008-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800008 CODE-->
-<!--800008-->              <CODE><![CDATA[MA_Sequence.MA_Processplan_Version_ID IN (SELECT MA_Processplan_Version_ID FROM MA_Processplan_Version WHERE MA_Processplan_Id=@MA_Processplan_ID@ AND datefrom <= TO_DATE(@Launchdate@) and dateto>TO_DATE(@Launchdate@))]]></CODE>
-<!--800008 AD_MODULE_ID-->
-<!--800008-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800008**************--></AD_VAL_RULE>
+<!--800008--><AD_VAL_RULE>
+<!--800008-->  <AD_VAL_RULE_ID><![CDATA[800008]]></AD_VAL_RULE_ID>
+<!--800008-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800008-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800008-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800008-->  <NAME><![CDATA[MA_Sequence in process plan]]></NAME>
+<!--800008-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800008-->  <CODE><![CDATA[MA_Sequence.MA_Processplan_Version_ID IN (SELECT MA_Processplan_Version_ID FROM MA_Processplan_Version WHERE MA_Processplan_Id=@MA_Processplan_ID@ AND datefrom <= TO_DATE(@Launchdate@) and dateto>TO_DATE(@Launchdate@))]]></CODE>
+<!--800008-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800008--></AD_VAL_RULE>
 
-<!--800009**************--><AD_VAL_RULE>
-<!--800009 AD_VAL_RULE_ID-->
-<!--800009-->              <AD_VAL_RULE_ID><![CDATA[800009]]></AD_VAL_RULE_ID>
-<!--800009 AD_CLIENT_ID-->
-<!--800009-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800009 AD_ORG_ID-->
-<!--800009-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800009 ISACTIVE-->
-<!--800009-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800009 NAME-->
-<!--800009-->              <NAME><![CDATA[M_Product Production]]></NAME>
-<!--800009 TYPE-->
-<!--800009-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800009 CODE-->
-<!--800009-->              <CODE><![CDATA[M_Product.Production = 'Y']]></CODE>
-<!--800009 AD_MODULE_ID-->
-<!--800009-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800009**************--></AD_VAL_RULE>
+<!--800009--><AD_VAL_RULE>
+<!--800009-->  <AD_VAL_RULE_ID><![CDATA[800009]]></AD_VAL_RULE_ID>
+<!--800009-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800009-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800009-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800009-->  <NAME><![CDATA[M_Product Production]]></NAME>
+<!--800009-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800009-->  <CODE><![CDATA[M_Product.Production = 'Y']]></CODE>
+<!--800009-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800009--></AD_VAL_RULE>
 
-<!--800010**************--><AD_VAL_RULE>
-<!--800010 AD_VAL_RULE_ID-->
-<!--800010-->              <AD_VAL_RULE_ID><![CDATA[800010]]></AD_VAL_RULE_ID>
-<!--800010 AD_CLIENT_ID-->
-<!--800010-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800010 AD_ORG_ID-->
-<!--800010-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800010 ISACTIVE-->
-<!--800010-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800010 NAME-->
-<!--800010-->              <NAME><![CDATA[C_Region of a Country From]]></NAME>
-<!--800010 TYPE-->
-<!--800010-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800010 CODE-->
-<!--800010-->              <CODE><![CDATA[C_Region.C_Country_ID=@From_Country_ID@]]></CODE>
-<!--800010 AD_MODULE_ID-->
-<!--800010-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800010**************--></AD_VAL_RULE>
+<!--800010--><AD_VAL_RULE>
+<!--800010-->  <AD_VAL_RULE_ID><![CDATA[800010]]></AD_VAL_RULE_ID>
+<!--800010-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800010-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800010-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800010-->  <NAME><![CDATA[C_Region of a Country From]]></NAME>
+<!--800010-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800010-->  <CODE><![CDATA[C_Region.C_Country_ID=@From_Country_ID@]]></CODE>
+<!--800010-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800010--></AD_VAL_RULE>
 
-<!--800011**************--><AD_VAL_RULE>
-<!--800011 AD_VAL_RULE_ID-->
-<!--800011-->              <AD_VAL_RULE_ID><![CDATA[800011]]></AD_VAL_RULE_ID>
-<!--800011 AD_CLIENT_ID-->
-<!--800011-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800011 AD_ORG_ID-->
-<!--800011-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800011 ISACTIVE-->
-<!--800011-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800011 NAME-->
-<!--800011-->              <NAME><![CDATA[MA_Scheduled_Maintenance MachineType]]></NAME>
-<!--800011 TYPE-->
-<!--800011-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800011 CODE-->
-<!--800011-->              <CODE><![CDATA[COALESCE(MA_Machine.MA_Machine_Type_ID,'-1') = COALESCE(@MA_Machine_Type_ID@, COALESCE(MA_Machine.MA_Machine_Type_ID,'-1'))]]></CODE>
-<!--800011 AD_MODULE_ID-->
-<!--800011-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800011**************--></AD_VAL_RULE>
+<!--800011--><AD_VAL_RULE>
+<!--800011-->  <AD_VAL_RULE_ID><![CDATA[800011]]></AD_VAL_RULE_ID>
+<!--800011-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800011-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800011-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800011-->  <NAME><![CDATA[MA_Scheduled_Maintenance MachineType]]></NAME>
+<!--800011-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800011-->  <CODE><![CDATA[COALESCE(MA_Machine.MA_Machine_Type_ID,'-1') = COALESCE(@MA_Machine_Type_ID@, COALESCE(MA_Machine.MA_Machine_Type_ID,'-1'))]]></CODE>
+<!--800011-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800011--></AD_VAL_RULE>
 
-<!--800012**************--><AD_VAL_RULE>
-<!--800012 AD_VAL_RULE_ID-->
-<!--800012-->              <AD_VAL_RULE_ID><![CDATA[800012]]></AD_VAL_RULE_ID>
-<!--800012 AD_CLIENT_ID-->
-<!--800012-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800012 AD_ORG_ID-->
-<!--800012-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800012 ISACTIVE-->
-<!--800012-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800012 NAME-->
-<!--800012-->              <NAME><![CDATA[C_Period_ID of selected year]]></NAME>
-<!--800012 TYPE-->
-<!--800012-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800012 CODE-->
-<!--800012-->              <CODE><![CDATA[C_Period.C_Year_ID IN (SELECT C_Budget.C_Year_ID FROM C_Budget WHERE C_Budget.C_Budget_ID = @C_Budget_ID@)]]></CODE>
-<!--800012 AD_MODULE_ID-->
-<!--800012-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800012**************--></AD_VAL_RULE>
+<!--800012--><AD_VAL_RULE>
+<!--800012-->  <AD_VAL_RULE_ID><![CDATA[800012]]></AD_VAL_RULE_ID>
+<!--800012-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800012-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800012-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800012-->  <NAME><![CDATA[C_Period_ID of selected year]]></NAME>
+<!--800012-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800012-->  <CODE><![CDATA[C_Period.C_Year_ID IN (SELECT C_Budget.C_Year_ID FROM C_Budget WHERE C_Budget.C_Budget_ID = @C_Budget_ID@)]]></CODE>
+<!--800012-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800012--></AD_VAL_RULE>
 
-<!--800013**************--><AD_VAL_RULE>
-<!--800013 AD_VAL_RULE_ID-->
-<!--800013-->              <AD_VAL_RULE_ID><![CDATA[800013]]></AD_VAL_RULE_ID>
-<!--800013 AD_CLIENT_ID-->
-<!--800013-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800013 AD_ORG_ID-->
-<!--800013-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800013 ISACTIVE-->
-<!--800013-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800013 NAME-->
-<!--800013-->              <NAME><![CDATA[C_Doctype - payment management]]></NAME>
-<!--800013 TYPE-->
-<!--800013-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800013 CODE-->
-<!--800013-->              <CODE><![CDATA[C_DocType.DocBaseType IN ('DPM') AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID,@#AD_Client_ID@) <> '-1']]></CODE>
-<!--800013 AD_MODULE_ID-->
-<!--800013-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800013**************--></AD_VAL_RULE>
+<!--800013--><AD_VAL_RULE>
+<!--800013-->  <AD_VAL_RULE_ID><![CDATA[800013]]></AD_VAL_RULE_ID>
+<!--800013-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800013-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800013-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800013-->  <NAME><![CDATA[C_Doctype - payment management]]></NAME>
+<!--800013-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800013-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('DPM') AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID,@#AD_Client_ID@) <> '-1']]></CODE>
+<!--800013-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800013--></AD_VAL_RULE>
 
-<!--800014**************--><AD_VAL_RULE>
-<!--800014 AD_VAL_RULE_ID-->
-<!--800014-->              <AD_VAL_RULE_ID><![CDATA[800014]]></AD_VAL_RULE_ID>
-<!--800014 AD_CLIENT_ID-->
-<!--800014-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800014 AD_ORG_ID-->
-<!--800014-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800014 ISACTIVE-->
-<!--800014-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800014 NAME-->
-<!--800014-->              <NAME><![CDATA[S_Expense product type]]></NAME>
-<!--800014 TYPE-->
-<!--800014-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800014 CODE-->
-<!--800014-->              <CODE><![CDATA[PRODUCTTYPE = (CASE WHEN @ISTIMEREPORT@ IS NULL THEN 'E' WHEN @ISTIMEREPORT@='Y' THEN 'S' ELSE 'E' END)]]></CODE>
-<!--800014 AD_MODULE_ID-->
-<!--800014-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800014**************--></AD_VAL_RULE>
+<!--800014--><AD_VAL_RULE>
+<!--800014-->  <AD_VAL_RULE_ID><![CDATA[800014]]></AD_VAL_RULE_ID>
+<!--800014-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800014-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800014-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800014-->  <NAME><![CDATA[S_Expense product type]]></NAME>
+<!--800014-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800014-->  <CODE><![CDATA[PRODUCTTYPE = (CASE WHEN @ISTIMEREPORT@ IS NULL THEN 'E' WHEN @ISTIMEREPORT@='Y' THEN 'S' ELSE 'E' END)]]></CODE>
+<!--800014-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800014--></AD_VAL_RULE>
 
-<!--800015**************--><AD_VAL_RULE>
-<!--800015 AD_VAL_RULE_ID-->
-<!--800015-->              <AD_VAL_RULE_ID><![CDATA[800015]]></AD_VAL_RULE_ID>
-<!--800015 AD_CLIENT_ID-->
-<!--800015-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800015 AD_ORG_ID-->
-<!--800015-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800015 ISACTIVE-->
-<!--800015-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800015 NAME-->
-<!--800015-->              <NAME><![CDATA[AD_Org forced]]></NAME>
-<!--800015 DESCRIPTION-->
-<!--800015-->              <DESCRIPTION><![CDATA[Filter by a defined Organization as an input AD_Org_Forced]]></DESCRIPTION>
-<!--800015 TYPE-->
-<!--800015-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800015 CODE-->
-<!--800015-->              <CODE><![CDATA[td0.AD_Org_ID = @AD_Org_Forced@]]></CODE>
-<!--800015 AD_MODULE_ID-->
-<!--800015-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800015**************--></AD_VAL_RULE>
+<!--800015--><AD_VAL_RULE>
+<!--800015-->  <AD_VAL_RULE_ID><![CDATA[800015]]></AD_VAL_RULE_ID>
+<!--800015-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800015-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800015-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800015-->  <NAME><![CDATA[AD_Org forced]]></NAME>
+<!--800015-->  <DESCRIPTION><![CDATA[Filter by a defined Organization as an input AD_Org_Forced]]></DESCRIPTION>
+<!--800015-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800015-->  <CODE><![CDATA[td0.AD_Org_ID = @AD_Org_Forced@]]></CODE>
+<!--800015-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800015--></AD_VAL_RULE>
 
-<!--800016**************--><AD_VAL_RULE>
-<!--800016 AD_VAL_RULE_ID-->
-<!--800016-->              <AD_VAL_RULE_ID><![CDATA[800016]]></AD_VAL_RULE_ID>
-<!--800016 AD_CLIENT_ID-->
-<!--800016-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800016 AD_ORG_ID-->
-<!--800016-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800016 ISACTIVE-->
-<!--800016-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800016 NAME-->
-<!--800016-->              <NAME><![CDATA[MA_Machine not included]]></NAME>
-<!--800016 DESCRIPTION-->
-<!--800016-->              <DESCRIPTION><![CDATA[Only lets choose machines not inlcuded on the table.]]></DESCRIPTION>
-<!--800016 TYPE-->
-<!--800016-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800016 CODE-->
-<!--800016-->              <CODE><![CDATA[NOT EXISTS (SELECT 1 FROM MA_MachineStation ms WHERE ms.MA_WorkStation_ID = @MA_WorkStation_ID@ AND ms.MA_Machine_ID = MA_Machine.MA_Machine_ID )]]></CODE>
-<!--800016 AD_MODULE_ID-->
-<!--800016-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800016**************--></AD_VAL_RULE>
+<!--800016--><AD_VAL_RULE>
+<!--800016-->  <AD_VAL_RULE_ID><![CDATA[800016]]></AD_VAL_RULE_ID>
+<!--800016-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800016-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800016-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800016-->  <NAME><![CDATA[MA_Machine not included]]></NAME>
+<!--800016-->  <DESCRIPTION><![CDATA[Only lets choose machines not inlcuded on the table.]]></DESCRIPTION>
+<!--800016-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800016-->  <CODE><![CDATA[NOT EXISTS (SELECT 1 FROM MA_MachineStation ms WHERE ms.MA_WorkStation_ID = @MA_WorkStation_ID@ AND ms.MA_Machine_ID = MA_Machine.MA_Machine_ID )]]></CODE>
+<!--800016-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800016--></AD_VAL_RULE>
 
-<!--800017**************--><AD_VAL_RULE>
-<!--800017 AD_VAL_RULE_ID-->
-<!--800017-->              <AD_VAL_RULE_ID><![CDATA[800017]]></AD_VAL_RULE_ID>
-<!--800017 AD_CLIENT_ID-->
-<!--800017-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800017 AD_ORG_ID-->
-<!--800017-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800017 ISACTIVE-->
-<!--800017-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800017 NAME-->
-<!--800017-->              <NAME><![CDATA[C_Uom not as product_uom]]></NAME>
-<!--800017 TYPE-->
-<!--800017-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800017 CODE-->
-<!--800017-->              <CODE><![CDATA[NOT EXISTS (SELECT 1 FROM M_Product_UOM pu WHERE pu.M_Product_ID = @M_Product_ID@ AND pu.C_UOM_ID = td0.C_UOM_ID AND pu.M_Product_UOM_ID <>@M_Product_UOM_ID@)]]></CODE>
-<!--800017 AD_MODULE_ID-->
-<!--800017-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800017**************--></AD_VAL_RULE>
+<!--800017--><AD_VAL_RULE>
+<!--800017-->  <AD_VAL_RULE_ID><![CDATA[800017]]></AD_VAL_RULE_ID>
+<!--800017-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800017-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800017-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800017-->  <NAME><![CDATA[C_Uom not as product_uom]]></NAME>
+<!--800017-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800017-->  <CODE><![CDATA[NOT EXISTS (SELECT 1 FROM M_Product_UOM pu WHERE pu.M_Product_ID = @M_Product_ID@ AND pu.C_UOM_ID = td0.C_UOM_ID AND pu.M_Product_UOM_ID <>@M_Product_UOM_ID@)]]></CODE>
+<!--800017-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800017--></AD_VAL_RULE>
 
-<!--800018**************--><AD_VAL_RULE>
-<!--800018 AD_VAL_RULE_ID-->
-<!--800018-->              <AD_VAL_RULE_ID><![CDATA[800018]]></AD_VAL_RULE_ID>
-<!--800018 AD_CLIENT_ID-->
-<!--800018-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800018 AD_ORG_ID-->
-<!--800018-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800018 ISACTIVE-->
-<!--800018-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800018 NAME-->
-<!--800018-->              <NAME><![CDATA[Project type service]]></NAME>
-<!--800018 TYPE-->
-<!--800018-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800018 CODE-->
-<!--800018-->              <CODE><![CDATA[C_ProjectType.ProjectCategory = 'S']]></CODE>
-<!--800018 AD_MODULE_ID-->
-<!--800018-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800018**************--></AD_VAL_RULE>
+<!--800018--><AD_VAL_RULE>
+<!--800018-->  <AD_VAL_RULE_ID><![CDATA[800018]]></AD_VAL_RULE_ID>
+<!--800018-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800018-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800018-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800018-->  <NAME><![CDATA[Project type service]]></NAME>
+<!--800018-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800018-->  <CODE><![CDATA[C_ProjectType.ProjectCategory = 'S']]></CODE>
+<!--800018-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800018--></AD_VAL_RULE>
 
-<!--800019**************--><AD_VAL_RULE>
-<!--800019 AD_VAL_RULE_ID-->
-<!--800019-->              <AD_VAL_RULE_ID><![CDATA[800019]]></AD_VAL_RULE_ID>
-<!--800019 AD_CLIENT_ID-->
-<!--800019-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800019 AD_ORG_ID-->
-<!--800019-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800019 ISACTIVE-->
-<!--800019-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800019 NAME-->
-<!--800019-->              <NAME><![CDATA[C_Region of Country To]]></NAME>
-<!--800019 TYPE-->
-<!--800019-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800019 CODE-->
-<!--800019-->              <CODE><![CDATA[C_Region.C_Country_ID=@To_Country_ID@]]></CODE>
-<!--800019 AD_MODULE_ID-->
-<!--800019-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800019**************--></AD_VAL_RULE>
+<!--800019--><AD_VAL_RULE>
+<!--800019-->  <AD_VAL_RULE_ID><![CDATA[800019]]></AD_VAL_RULE_ID>
+<!--800019-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800019-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800019-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800019-->  <NAME><![CDATA[C_Region of Country To]]></NAME>
+<!--800019-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800019-->  <CODE><![CDATA[C_Region.C_Country_ID=@To_Country_ID@]]></CODE>
+<!--800019-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800019--></AD_VAL_RULE>
 
-<!--800020**************--><AD_VAL_RULE>
-<!--800020 AD_VAL_RULE_ID-->
-<!--800020-->              <AD_VAL_RULE_ID><![CDATA[800020]]></AD_VAL_RULE_ID>
-<!--800020 AD_CLIENT_ID-->
-<!--800020-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800020 AD_ORG_ID-->
-<!--800020-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800020 ISACTIVE-->
-<!--800020-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800020 NAME-->
-<!--800020-->              <NAME><![CDATA[AD_User Alert]]></NAME>
-<!--800020 DESCRIPTION-->
-<!--800020-->              <DESCRIPTION><![CDATA[Restrict users to role in alerts]]></DESCRIPTION>
-<!--800020 TYPE-->
-<!--800020-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800020 CODE-->
-<!--800020-->              <CODE><![CDATA[AD_User.AD_User_ID in (select AD_User_ID from AD_User_Roles where @AD_Role_Id@=AD_Role_ID)]]></CODE>
-<!--800020 AD_MODULE_ID-->
-<!--800020-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800020**************--></AD_VAL_RULE>
+<!--800020--><AD_VAL_RULE>
+<!--800020-->  <AD_VAL_RULE_ID><![CDATA[800020]]></AD_VAL_RULE_ID>
+<!--800020-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800020-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800020-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800020-->  <NAME><![CDATA[AD_User Alert]]></NAME>
+<!--800020-->  <DESCRIPTION><![CDATA[Restrict users to role in alerts]]></DESCRIPTION>
+<!--800020-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800020-->  <CODE><![CDATA[AD_User.AD_User_ID in (select AD_User_ID from AD_User_Roles where @AD_Role_Id@=AD_Role_ID)]]></CODE>
+<!--800020-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800020--></AD_VAL_RULE>
 
-<!--800021**************--><AD_VAL_RULE>
-<!--800021 AD_VAL_RULE_ID-->
-<!--800021-->              <AD_VAL_RULE_ID><![CDATA[800021]]></AD_VAL_RULE_ID>
-<!--800021 AD_CLIENT_ID-->
-<!--800021-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800021 AD_ORG_ID-->
-<!--800021-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800021 ISACTIVE-->
-<!--800021-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800021 NAME-->
-<!--800021-->              <NAME><![CDATA[AD_Role_of_User]]></NAME>
-<!--800021 DESCRIPTION-->
-<!--800021-->              <DESCRIPTION><![CDATA[Filter User's Role]]></DESCRIPTION>
-<!--800021 TYPE-->
-<!--800021-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800021 CODE-->
-<!--800021-->              <CODE><![CDATA[EXISTS ( SELECT 1
+<!--800021--><AD_VAL_RULE>
+<!--800021-->  <AD_VAL_RULE_ID><![CDATA[800021]]></AD_VAL_RULE_ID>
+<!--800021-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800021-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800021-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800021-->  <NAME><![CDATA[AD_Role_of_User]]></NAME>
+<!--800021-->  <DESCRIPTION><![CDATA[Filter User's Role]]></DESCRIPTION>
+<!--800021-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800021-->  <CODE><![CDATA[EXISTS ( SELECT 1
         FROM  AD_USER_ROLES A_U_R 
         WHERE A_U_R.AD_ROLE_ID = AD_Role.AD_Role_ID
         AND A_U_R.ISACTIVE = 'Y' 
         AND A_U_R.AD_USER_ID = @AD_User_ID@)]]></CODE>
-<!--800021 AD_MODULE_ID-->
-<!--800021-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800021**************--></AD_VAL_RULE>
+<!--800021-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800021--></AD_VAL_RULE>
 
-<!--800022**************--><AD_VAL_RULE>
-<!--800022 AD_VAL_RULE_ID-->
-<!--800022-->              <AD_VAL_RULE_ID><![CDATA[800022]]></AD_VAL_RULE_ID>
-<!--800022 AD_CLIENT_ID-->
-<!--800022-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800022 AD_ORG_ID-->
-<!--800022-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800022 ISACTIVE-->
-<!--800022-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800022 NAME-->
-<!--800022-->              <NAME><![CDATA[AD_Client of Role]]></NAME>
-<!--800022 DESCRIPTION-->
-<!--800022-->              <DESCRIPTION><![CDATA[Filter Role's Clients]]></DESCRIPTION>
-<!--800022 TYPE-->
-<!--800022-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800022 CODE-->
-<!--800022-->              <CODE><![CDATA[AD_CLIENT.AD_CLIENT_ID IN (SELECT CLIENTLIST FROM AD_ROLE WHERE AD_ROLE_ID = @Default_AD_Role_ID@)]]></CODE>
-<!--800022 AD_MODULE_ID-->
-<!--800022-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800022**************--></AD_VAL_RULE>
+<!--800022--><AD_VAL_RULE>
+<!--800022-->  <AD_VAL_RULE_ID><![CDATA[800022]]></AD_VAL_RULE_ID>
+<!--800022-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800022-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800022-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800022-->  <NAME><![CDATA[AD_Client of Role]]></NAME>
+<!--800022-->  <DESCRIPTION><![CDATA[Filter Role's Clients]]></DESCRIPTION>
+<!--800022-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800022-->  <CODE><![CDATA[AD_CLIENT.AD_CLIENT_ID IN (SELECT CLIENTLIST FROM AD_ROLE WHERE AD_ROLE_ID = @Default_AD_Role_ID@)]]></CODE>
+<!--800022-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800022--></AD_VAL_RULE>
 
-<!--800023**************--><AD_VAL_RULE>
-<!--800023 AD_VAL_RULE_ID-->
-<!--800023-->              <AD_VAL_RULE_ID><![CDATA[800023]]></AD_VAL_RULE_ID>
-<!--800023 AD_CLIENT_ID-->
-<!--800023-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800023 AD_ORG_ID-->
-<!--800023-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800023 ISACTIVE-->
-<!--800023-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800023 NAME-->
-<!--800023-->              <NAME><![CDATA[AD_Org of a Role]]></NAME>
-<!--800023 DESCRIPTION-->
-<!--800023-->              <DESCRIPTION><![CDATA[Filter Organization by Role]]></DESCRIPTION>
-<!--800023 TYPE-->
-<!--800023-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800023 CODE-->
-<!--800023-->              <CODE><![CDATA[EXISTS (SELECT 1 FROM AD_ROLE_ORGACCESS A_R_O, ad_role r
+<!--800023--><AD_VAL_RULE>
+<!--800023-->  <AD_VAL_RULE_ID><![CDATA[800023]]></AD_VAL_RULE_ID>
+<!--800023-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800023-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800023-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800023-->  <NAME><![CDATA[AD_Org of a Role]]></NAME>
+<!--800023-->  <DESCRIPTION><![CDATA[Filter Organization by Role]]></DESCRIPTION>
+<!--800023-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800023-->  <CODE><![CDATA[EXISTS (SELECT 1 FROM AD_ROLE_ORGACCESS A_R_O, ad_role r
         WHERE A_R_O.AD_ORG_ID = AD_ORG.AD_Org_ID 
         AND A_R_O.ISACTIVE = 'Y' 
         AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
@@ -1830,438 +1061,256 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
         AND R.ISACTIVE = 'Y' 
         AND (LPAD(TO_CHAR(R.USERLEVEL), 1, '1')='S' OR AD_ORG.AD_ORG_ID <> '0') 
         AND A_R_O.AD_ROLE_ID = @Default_AD_Role_ID@)]]></CODE>
-<!--800023 AD_MODULE_ID-->
-<!--800023-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800023**************--></AD_VAL_RULE>
+<!--800023-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800023--></AD_VAL_RULE>
 
-<!--800024**************--><AD_VAL_RULE>
-<!--800024 AD_VAL_RULE_ID-->
-<!--800024-->              <AD_VAL_RULE_ID><![CDATA[800024]]></AD_VAL_RULE_ID>
-<!--800024 AD_CLIENT_ID-->
-<!--800024-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800024 AD_ORG_ID-->
-<!--800024-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800024 ISACTIVE-->
-<!--800024-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800024 NAME-->
-<!--800024-->              <NAME><![CDATA[M_Warehouse of Role]]></NAME>
-<!--800024 DESCRIPTION-->
-<!--800024-->              <DESCRIPTION><![CDATA[Filter Warehouse filter by Role]]></DESCRIPTION>
-<!--800024 TYPE-->
-<!--800024-->              <TYPE><![CDATA[S]]></TYPE>
-<!--800024 CODE-->
-<!--800024-->              <CODE><![CDATA[M_Warehouse.AD_Client_ID = @Default_AD_Client_ID@]]></CODE>
-<!--800024 AD_MODULE_ID-->
-<!--800024-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800024**************--></AD_VAL_RULE>
+<!--800024--><AD_VAL_RULE>
+<!--800024-->  <AD_VAL_RULE_ID><![CDATA[800024]]></AD_VAL_RULE_ID>
+<!--800024-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800024-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800024-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800024-->  <NAME><![CDATA[M_Warehouse of Role]]></NAME>
+<!--800024-->  <DESCRIPTION><![CDATA[Filter Warehouse filter by Role]]></DESCRIPTION>
+<!--800024-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800024-->  <CODE><![CDATA[M_Warehouse.AD_Client_ID = @Default_AD_Client_ID@]]></CODE>
+<!--800024-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800024--></AD_VAL_RULE>
 
-<!--1000100000**************--><AD_VAL_RULE>
-<!--1000100000 AD_VAL_RULE_ID-->
-<!--1000100000-->              <AD_VAL_RULE_ID><![CDATA[1000100000]]></AD_VAL_RULE_ID>
-<!--1000100000 AD_CLIENT_ID-->
-<!--1000100000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1000100000 AD_ORG_ID-->
-<!--1000100000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1000100000 ISACTIVE-->
-<!--1000100000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1000100000 NAME-->
-<!--1000100000-->              <NAME><![CDATA[C_Tax - No parent tax]]></NAME>
-<!--1000100000 TYPE-->
-<!--1000100000-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1000100000 CODE-->
-<!--1000100000-->              <CODE><![CDATA[C_Tax.Parent_Tax_ID IS NULL]]></CODE>
-<!--1000100000 AD_MODULE_ID-->
-<!--1000100000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1000100000**************--></AD_VAL_RULE>
+<!--1000100000--><AD_VAL_RULE>
+<!--1000100000-->  <AD_VAL_RULE_ID><![CDATA[1000100000]]></AD_VAL_RULE_ID>
+<!--1000100000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000100000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000100000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000100000-->  <NAME><![CDATA[C_Tax - No parent tax]]></NAME>
+<!--1000100000-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1000100000-->  <CODE><![CDATA[C_Tax.Parent_Tax_ID IS NULL]]></CODE>
+<!--1000100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000100000--></AD_VAL_RULE>
 
-<!--1000200000**************--><AD_VAL_RULE>
-<!--1000200000 AD_VAL_RULE_ID-->
-<!--1000200000-->              <AD_VAL_RULE_ID><![CDATA[1000200000]]></AD_VAL_RULE_ID>
-<!--1000200000 AD_CLIENT_ID-->
-<!--1000200000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1000200000 AD_ORG_ID-->
-<!--1000200000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1000200000 ISACTIVE-->
-<!--1000200000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1000200000 NAME-->
-<!--1000200000-->              <NAME><![CDATA[Transaction types for planning method]]></NAME>
-<!--1000200000 TYPE-->
-<!--1000200000-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1000200000 CODE-->
-<!--1000200000-->              <CODE><![CDATA[AD_Ref_List.Value IN ('MF', 'PO', 'SF', 'SO', 'WR')]]></CODE>
-<!--1000200000 AD_MODULE_ID-->
-<!--1000200000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1000200000**************--></AD_VAL_RULE>
+<!--1000200000--><AD_VAL_RULE>
+<!--1000200000-->  <AD_VAL_RULE_ID><![CDATA[1000200000]]></AD_VAL_RULE_ID>
+<!--1000200000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000200000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000200000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000200000-->  <NAME><![CDATA[Transaction types for planning method]]></NAME>
+<!--1000200000-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1000200000-->  <CODE><![CDATA[AD_Ref_List.Value IN ('MF', 'PO', 'SF', 'SO', 'WR')]]></CODE>
+<!--1000200000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000200000--></AD_VAL_RULE>
 
-<!--1000200001**************--><AD_VAL_RULE>
-<!--1000200001 AD_VAL_RULE_ID-->
-<!--1000200001-->              <AD_VAL_RULE_ID><![CDATA[1000200001]]></AD_VAL_RULE_ID>
-<!--1000200001 AD_CLIENT_ID-->
-<!--1000200001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1000200001 AD_ORG_ID-->
-<!--1000200001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1000200001 ISACTIVE-->
-<!--1000200001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1000200001 NAME-->
-<!--1000200001-->              <NAME><![CDATA[Not discarded toolsets in Work Effort]]></NAME>
-<!--1000200001 DESCRIPTION-->
-<!--1000200001-->              <DESCRIPTION><![CDATA[Validation to filter the toolset by their type and status]]></DESCRIPTION>
-<!--1000200001 TYPE-->
-<!--1000200001-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1000200001 CODE-->
-<!--1000200001-->              <CODE><![CDATA[MA_Toolset.Discarded = 'N'
+<!--1000200001--><AD_VAL_RULE>
+<!--1000200001-->  <AD_VAL_RULE_ID><![CDATA[1000200001]]></AD_VAL_RULE_ID>
+<!--1000200001-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000200001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000200001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000200001-->  <NAME><![CDATA[Not discarded toolsets in Work Effort]]></NAME>
+<!--1000200001-->  <DESCRIPTION><![CDATA[Validation to filter the toolset by their type and status]]></DESCRIPTION>
+<!--1000200001-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1000200001-->  <CODE><![CDATA[MA_Toolset.Discarded = 'N'
 AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetProcess, MA_WRPhase, M_ProductionPlan WHERE M_ProductionPlan.M_ProductionPlan_ID = @M_ProductionPlan_ID@ AND M_ProductionPlan.MA_WRPhase_ID = MA_WRPhase.MA_WRPhase_ID AND MA_WRPhase.MA_Process_ID =  MA_ToolsetProcess.MA_Process_ID)]]></CODE>
-<!--1000200001 AD_MODULE_ID-->
-<!--1000200001-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1000200001**************--></AD_VAL_RULE>
+<!--1000200001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000200001--></AD_VAL_RULE>
 
-<!--1000200002**************--><AD_VAL_RULE>
-<!--1000200002 AD_VAL_RULE_ID-->
-<!--1000200002-->              <AD_VAL_RULE_ID><![CDATA[1000200002]]></AD_VAL_RULE_ID>
-<!--1000200002 AD_CLIENT_ID-->
-<!--1000200002-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1000200002 AD_ORG_ID-->
-<!--1000200002-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1000200002 ISACTIVE-->
-<!--1000200002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1000200002 NAME-->
-<!--1000200002-->              <NAME><![CDATA[Output Format: not html]]></NAME>
-<!--1000200002 TYPE-->
-<!--1000200002-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1000200002 CODE-->
-<!--1000200002-->              <CODE><![CDATA[AD_Ref_List.value NOT IN ('html')]]></CODE>
-<!--1000200002 AD_MODULE_ID-->
-<!--1000200002-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1000200002**************--></AD_VAL_RULE>
+<!--1000200002--><AD_VAL_RULE>
+<!--1000200002-->  <AD_VAL_RULE_ID><![CDATA[1000200002]]></AD_VAL_RULE_ID>
+<!--1000200002-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000200002-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000200002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000200002-->  <NAME><![CDATA[Output Format: not html]]></NAME>
+<!--1000200002-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1000200002-->  <CODE><![CDATA[AD_Ref_List.value NOT IN ('html')]]></CODE>
+<!--1000200002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000200002--></AD_VAL_RULE>
 
-<!--1000200003**************--><AD_VAL_RULE>
-<!--1000200003 AD_VAL_RULE_ID-->
-<!--1000200003-->              <AD_VAL_RULE_ID><![CDATA[1000200003]]></AD_VAL_RULE_ID>
-<!--1000200003 AD_CLIENT_ID-->
-<!--1000200003-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1000200003 AD_ORG_ID-->
-<!--1000200003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1000200003 ISACTIVE-->
-<!--1000200003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1000200003 NAME-->
-<!--1000200003-->              <NAME><![CDATA[Invoice Rules for POS Sales orders]]></NAME>
-<!--1000200003 DESCRIPTION-->
-<!--1000200003-->              <DESCRIPTION><![CDATA[Filters the possible Invoice Rules whein is selected the POS Sales order document.]]></DESCRIPTION>
-<!--1000200003 TYPE-->
-<!--1000200003-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1000200003 CODE-->
-<!--1000200003-->              <CODE><![CDATA[(AD_Ref_List.value IN ('I', 'D', 'O') OR @OrderType@<>'WR')]]></CODE>
-<!--1000200003 AD_MODULE_ID-->
-<!--1000200003-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1000200003**************--></AD_VAL_RULE>
+<!--1000200003--><AD_VAL_RULE>
+<!--1000200003-->  <AD_VAL_RULE_ID><![CDATA[1000200003]]></AD_VAL_RULE_ID>
+<!--1000200003-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000200003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000200003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000200003-->  <NAME><![CDATA[Invoice Rules for POS Sales orders]]></NAME>
+<!--1000200003-->  <DESCRIPTION><![CDATA[Filters the possible Invoice Rules whein is selected the POS Sales order document.]]></DESCRIPTION>
+<!--1000200003-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1000200003-->  <CODE><![CDATA[(AD_Ref_List.value IN ('I', 'D', 'O') OR @OrderType@<>'WR')]]></CODE>
+<!--1000200003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000200003--></AD_VAL_RULE>
 
-<!--1000600000**************--><AD_VAL_RULE>
-<!--1000600000 AD_VAL_RULE_ID-->
-<!--1000600000-->              <AD_VAL_RULE_ID><![CDATA[1000600000]]></AD_VAL_RULE_ID>
-<!--1000600000 AD_CLIENT_ID-->
-<!--1000600000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1000600000 AD_ORG_ID-->
-<!--1000600000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1000600000 ISACTIVE-->
-<!--1000600000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1000600000 NAME-->
-<!--1000600000-->              <NAME><![CDATA[Current acctschema]]></NAME>
-<!--1000600000 DESCRIPTION-->
-<!--1000600000-->              <DESCRIPTION><![CDATA[For current acctschema]]></DESCRIPTION>
-<!--1000600000 TYPE-->
-<!--1000600000-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1000600000 CODE-->
-<!--1000600000-->              <CODE><![CDATA[EXISTS (SELECT 1 FROM C_ACCTSCHEMA_ELEMENT WHERE C_ACCTSCHEMA_ELEMENT.ELEMENTTYPE='AC' AND C_ACCTSCHEMA_ELEMENT.C_ELEMENT_ID=C_ELEMENTVALUE.C_ELEMENT_ID AND C_ACCTSCHEMA_ELEMENT.C_Acctschema_ID=@C_Acctschema_ID@)]]></CODE>
-<!--1000600000 AD_MODULE_ID-->
-<!--1000600000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1000600000**************--></AD_VAL_RULE>
+<!--1000600000--><AD_VAL_RULE>
+<!--1000600000-->  <AD_VAL_RULE_ID><![CDATA[1000600000]]></AD_VAL_RULE_ID>
+<!--1000600000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000600000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000600000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000600000-->  <NAME><![CDATA[Current acctschema]]></NAME>
+<!--1000600000-->  <DESCRIPTION><![CDATA[For current acctschema]]></DESCRIPTION>
+<!--1000600000-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1000600000-->  <CODE><![CDATA[EXISTS (SELECT 1 FROM C_ACCTSCHEMA_ELEMENT WHERE C_ACCTSCHEMA_ELEMENT.ELEMENTTYPE='AC' AND C_ACCTSCHEMA_ELEMENT.C_ELEMENT_ID=C_ELEMENTVALUE.C_ELEMENT_ID AND C_ACCTSCHEMA_ELEMENT.C_Acctschema_ID=@C_Acctschema_ID@)]]></CODE>
+<!--1000600000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000600000--></AD_VAL_RULE>
 
-<!--1001100000**************--><AD_VAL_RULE>
-<!--1001100000 AD_VAL_RULE_ID-->
-<!--1001100000-->              <AD_VAL_RULE_ID><![CDATA[1001100000]]></AD_VAL_RULE_ID>
-<!--1001100000 AD_CLIENT_ID-->
-<!--1001100000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1001100000 AD_ORG_ID-->
-<!--1001100000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1001100000 ISACTIVE-->
-<!--1001100000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1001100000 NAME-->
-<!--1001100000-->              <NAME><![CDATA[AD_ImpFormat combo validation]]></NAME>
-<!--1001100000 DESCRIPTION-->
-<!--1001100000-->              <DESCRIPTION><![CDATA[Restricts copying lines of a File Format to itself]]></DESCRIPTION>
-<!--1001100000 TYPE-->
-<!--1001100000-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1001100000 CODE-->
-<!--1001100000-->              <CODE><![CDATA[AD_ImpFormat.AD_ImpFormat_ID<>@AD_ImpFormat_ID@]]></CODE>
-<!--1001100000 AD_MODULE_ID-->
-<!--1001100000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1001100000**************--></AD_VAL_RULE>
+<!--1001100000--><AD_VAL_RULE>
+<!--1001100000-->  <AD_VAL_RULE_ID><![CDATA[1001100000]]></AD_VAL_RULE_ID>
+<!--1001100000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1001100000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1001100000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1001100000-->  <NAME><![CDATA[AD_ImpFormat combo validation]]></NAME>
+<!--1001100000-->  <DESCRIPTION><![CDATA[Restricts copying lines of a File Format to itself]]></DESCRIPTION>
+<!--1001100000-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1001100000-->  <CODE><![CDATA[AD_ImpFormat.AD_ImpFormat_ID<>@AD_ImpFormat_ID@]]></CODE>
+<!--1001100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1001100000--></AD_VAL_RULE>
 
-<!--1002100000**************--><AD_VAL_RULE>
-<!--1002100000 AD_VAL_RULE_ID-->
-<!--1002100000-->              <AD_VAL_RULE_ID><![CDATA[1002100000]]></AD_VAL_RULE_ID>
-<!--1002100000 AD_CLIENT_ID-->
-<!--1002100000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1002100000 AD_ORG_ID-->
-<!--1002100000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1002100000 ISACTIVE-->
-<!--1002100000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1002100000 NAME-->
-<!--1002100000-->              <NAME><![CDATA[C_TAX - C_TAXREGISTER_TYPE_LINES]]></NAME>
-<!--1002100000 TYPE-->
-<!--1002100000-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1002100000 CODE-->
-<!--1002100000-->              <CODE><![CDATA[C_TAX.SOPOTYPE<>(SELECT CASE WHEN ISSOTRX='Y' THEN 'P' ELSE 'S' END FROM C_TAXREGISTER_TYPE WHERE C_TAXREGISTER_TYPE_ID=@C_TAXREGISTER_TYPE_ID@)]]></CODE>
-<!--1002100000 AD_MODULE_ID-->
-<!--1002100000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1002100000**************--></AD_VAL_RULE>
+<!--1002100000--><AD_VAL_RULE>
+<!--1002100000-->  <AD_VAL_RULE_ID><![CDATA[1002100000]]></AD_VAL_RULE_ID>
+<!--1002100000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1002100000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1002100000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1002100000-->  <NAME><![CDATA[C_TAX - C_TAXREGISTER_TYPE_LINES]]></NAME>
+<!--1002100000-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1002100000-->  <CODE><![CDATA[C_TAX.SOPOTYPE<>(SELECT CASE WHEN ISSOTRX='Y' THEN 'P' ELSE 'S' END FROM C_TAXREGISTER_TYPE WHERE C_TAXREGISTER_TYPE_ID=@C_TAXREGISTER_TYPE_ID@)]]></CODE>
+<!--1002100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100000--></AD_VAL_RULE>
 
-<!--1002100001**************--><AD_VAL_RULE>
-<!--1002100001 AD_VAL_RULE_ID-->
-<!--1002100001-->              <AD_VAL_RULE_ID><![CDATA[1002100001]]></AD_VAL_RULE_ID>
-<!--1002100001 AD_CLIENT_ID-->
-<!--1002100001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1002100001 AD_ORG_ID-->
-<!--1002100001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1002100001 ISACTIVE-->
-<!--1002100001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1002100001 NAME-->
-<!--1002100001-->              <NAME><![CDATA[DocBaseType - Invoices]]></NAME>
-<!--1002100001 TYPE-->
-<!--1002100001-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1002100001 CODE-->
-<!--1002100001-->              <CODE><![CDATA[C_DOCTYPE.DOCBASETYPE IN ('ARI', 'ARC', 'API', 'APC') AND C_DOCTYPE.ISSOTRX = (SELECT ISSOTRX FROM C_TAXREGISTER_TYPE WHERE C_TAXREGISTER_TYPE_ID=@C_TAXREGISTER_TYPE_ID@)]]></CODE>
-<!--1002100001 AD_MODULE_ID-->
-<!--1002100001-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1002100001**************--></AD_VAL_RULE>
+<!--1002100001--><AD_VAL_RULE>
+<!--1002100001-->  <AD_VAL_RULE_ID><![CDATA[1002100001]]></AD_VAL_RULE_ID>
+<!--1002100001-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1002100001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1002100001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1002100001-->  <NAME><![CDATA[DocBaseType - Invoices]]></NAME>
+<!--1002100001-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1002100001-->  <CODE><![CDATA[C_DOCTYPE.DOCBASETYPE IN ('ARI', 'ARC', 'API', 'APC') AND C_DOCTYPE.ISSOTRX = (SELECT ISSOTRX FROM C_TAXREGISTER_TYPE WHERE C_TAXREGISTER_TYPE_ID=@C_TAXREGISTER_TYPE_ID@)]]></CODE>
+<!--1002100001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100001--></AD_VAL_RULE>
 
-<!--1004400000**************--><AD_VAL_RULE>
-<!--1004400000 AD_VAL_RULE_ID-->
-<!--1004400000-->              <AD_VAL_RULE_ID><![CDATA[1004400000]]></AD_VAL_RULE_ID>
-<!--1004400000 AD_CLIENT_ID-->
-<!--1004400000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1004400000 AD_ORG_ID-->
-<!--1004400000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1004400000 ISACTIVE-->
-<!--1004400000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1004400000 NAME-->
-<!--1004400000-->              <NAME><![CDATA[C_Currency of PriceList]]></NAME>
-<!--1004400000 DESCRIPTION-->
-<!--1004400000-->              <DESCRIPTION><![CDATA[Sets the currency of the pricelist]]></DESCRIPTION>
-<!--1004400000 TYPE-->
-<!--1004400000-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1004400000 CODE-->
-<!--1004400000-->              <CODE><![CDATA[C_Currency.C_Currency_ID IN (SELECT C_Currency_ID FROM M_Pricelist WHERE M_Pricelist_ID = @M_Pricelist_ID@)]]></CODE>
-<!--1004400000 AD_MODULE_ID-->
-<!--1004400000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1004400000**************--></AD_VAL_RULE>
+<!--1004400000--><AD_VAL_RULE>
+<!--1004400000-->  <AD_VAL_RULE_ID><![CDATA[1004400000]]></AD_VAL_RULE_ID>
+<!--1004400000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1004400000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1004400000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1004400000-->  <NAME><![CDATA[C_Currency of PriceList]]></NAME>
+<!--1004400000-->  <DESCRIPTION><![CDATA[Sets the currency of the pricelist]]></DESCRIPTION>
+<!--1004400000-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1004400000-->  <CODE><![CDATA[C_Currency.C_Currency_ID IN (SELECT C_Currency_ID FROM M_Pricelist WHERE M_Pricelist_ID = @M_Pricelist_ID@)]]></CODE>
+<!--1004400000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1004400000--></AD_VAL_RULE>
 
-<!--1004400001**************--><AD_VAL_RULE>
-<!--1004400001 AD_VAL_RULE_ID-->
-<!--1004400001-->              <AD_VAL_RULE_ID><![CDATA[1004400001]]></AD_VAL_RULE_ID>
-<!--1004400001 AD_CLIENT_ID-->
-<!--1004400001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1004400001 AD_ORG_ID-->
-<!--1004400001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1004400001 ISACTIVE-->
-<!--1004400001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1004400001 NAME-->
-<!--1004400001-->              <NAME><![CDATA[Purchase Pricelist]]></NAME>
-<!--1004400001 DESCRIPTION-->
-<!--1004400001-->              <DESCRIPTION><![CDATA[Purchase Pricelist]]></DESCRIPTION>
-<!--1004400001 TYPE-->
-<!--1004400001-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1004400001 CODE-->
-<!--1004400001-->              <CODE><![CDATA[M_Pricelist.IsSOPricelist='N']]></CODE>
-<!--1004400001 AD_MODULE_ID-->
-<!--1004400001-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1004400001**************--></AD_VAL_RULE>
+<!--1004400001--><AD_VAL_RULE>
+<!--1004400001-->  <AD_VAL_RULE_ID><![CDATA[1004400001]]></AD_VAL_RULE_ID>
+<!--1004400001-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1004400001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1004400001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1004400001-->  <NAME><![CDATA[Purchase Pricelist]]></NAME>
+<!--1004400001-->  <DESCRIPTION><![CDATA[Purchase Pricelist]]></DESCRIPTION>
+<!--1004400001-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1004400001-->  <CODE><![CDATA[M_Pricelist.IsSOPricelist='N']]></CODE>
+<!--1004400001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1004400001--></AD_VAL_RULE>
 
-<!--1005500000**************--><AD_VAL_RULE>
-<!--1005500000 AD_VAL_RULE_ID-->
-<!--1005500000-->              <AD_VAL_RULE_ID><![CDATA[1005500000]]></AD_VAL_RULE_ID>
-<!--1005500000 AD_CLIENT_ID-->
-<!--1005500000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005500000 AD_ORG_ID-->
-<!--1005500000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005500000 ISACTIVE-->
-<!--1005500000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005500000 NAME-->
-<!--1005500000-->              <NAME><![CDATA[C_ELEMENTVALUE SUBACCOUNTS]]></NAME>
-<!--1005500000 TYPE-->
-<!--1005500000-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1005500000 CODE-->
-<!--1005500000-->              <CODE><![CDATA[C_ELEMENTVALUE.ELEMENTLEVEL='S']]></CODE>
-<!--1005500000 AD_MODULE_ID-->
-<!--1005500000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1005500000**************--></AD_VAL_RULE>
+<!--1005500000--><AD_VAL_RULE>
+<!--1005500000-->  <AD_VAL_RULE_ID><![CDATA[1005500000]]></AD_VAL_RULE_ID>
+<!--1005500000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005500000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005500000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005500000-->  <NAME><![CDATA[C_ELEMENTVALUE SUBACCOUNTS]]></NAME>
+<!--1005500000-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1005500000-->  <CODE><![CDATA[C_ELEMENTVALUE.ELEMENTLEVEL='S']]></CODE>
+<!--1005500000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1005500000--></AD_VAL_RULE>
 
-<!--1007400000**************--><AD_VAL_RULE>
-<!--1007400000 AD_VAL_RULE_ID-->
-<!--1007400000-->              <AD_VAL_RULE_ID><![CDATA[1007400000]]></AD_VAL_RULE_ID>
-<!--1007400000 AD_CLIENT_ID-->
-<!--1007400000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1007400000 AD_ORG_ID-->
-<!--1007400000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1007400000 ISACTIVE-->
-<!--1007400000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1007400000 NAME-->
-<!--1007400000-->              <NAME><![CDATA[C_AcctSchema_Table DocBaseType]]></NAME>
-<!--1007400000 DESCRIPTION-->
-<!--1007400000-->              <DESCRIPTION><![CDATA[Doc base type of the selected document]]></DESCRIPTION>
-<!--1007400000 TYPE-->
-<!--1007400000-->              <TYPE><![CDATA[S]]></TYPE>
-<!--1007400000 CODE-->
-<!--1007400000-->              <CODE><![CDATA[Value IN (SELECT DOCBASETYPE FROM C_DOCTYPE, C_ACCTSCHEMA_TABLE WHERE C_DOCTYPE.AD_TABLE_ID = C_ACCTSCHEMA_TABLE.AD_TABLE_ID AND C_ACCTSCHEMA_TABLE.C_ACCTSCHEMA_TABLE_ID = @C_Acctschema_Table_ID@)]]></CODE>
-<!--1007400000 AD_MODULE_ID-->
-<!--1007400000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1007400000**************--></AD_VAL_RULE>
+<!--1007400000--><AD_VAL_RULE>
+<!--1007400000-->  <AD_VAL_RULE_ID><![CDATA[1007400000]]></AD_VAL_RULE_ID>
+<!--1007400000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1007400000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1007400000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1007400000-->  <NAME><![CDATA[C_AcctSchema_Table DocBaseType]]></NAME>
+<!--1007400000-->  <DESCRIPTION><![CDATA[Doc base type of the selected document]]></DESCRIPTION>
+<!--1007400000-->  <TYPE><![CDATA[S]]></TYPE>
+<!--1007400000-->  <CODE><![CDATA[Value IN (SELECT DOCBASETYPE FROM C_DOCTYPE, C_ACCTSCHEMA_TABLE WHERE C_DOCTYPE.AD_TABLE_ID = C_ACCTSCHEMA_TABLE.AD_TABLE_ID AND C_ACCTSCHEMA_TABLE.C_ACCTSCHEMA_TABLE_ID = @C_Acctschema_Table_ID@)]]></CODE>
+<!--1007400000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1007400000--></AD_VAL_RULE>
 
-<!--324A9767D9B94A8A8154DEB3ACA6E063**************--><AD_VAL_RULE>
-<!--324A9767D9B94A8A8154DEB3ACA6E063 AD_VAL_RULE_ID-->
-<!--324A9767D9B94A8A8154DEB3ACA6E063-->              <AD_VAL_RULE_ID><![CDATA[324A9767D9B94A8A8154DEB3ACA6E063]]></AD_VAL_RULE_ID>
-<!--324A9767D9B94A8A8154DEB3ACA6E063 AD_CLIENT_ID-->
-<!--324A9767D9B94A8A8154DEB3ACA6E063-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--324A9767D9B94A8A8154DEB3ACA6E063 AD_ORG_ID-->
-<!--324A9767D9B94A8A8154DEB3ACA6E063-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--324A9767D9B94A8A8154DEB3ACA6E063 ISACTIVE-->
-<!--324A9767D9B94A8A8154DEB3ACA6E063-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--324A9767D9B94A8A8154DEB3ACA6E063 NAME-->
-<!--324A9767D9B94A8A8154DEB3ACA6E063-->              <NAME><![CDATA[Business Partner Withholding]]></NAME>
-<!--324A9767D9B94A8A8154DEB3ACA6E063 DESCRIPTION-->
-<!--324A9767D9B94A8A8154DEB3ACA6E063-->              <DESCRIPTION><![CDATA[Show the Withholdings which belong to the Business Partner]]></DESCRIPTION>
-<!--324A9767D9B94A8A8154DEB3ACA6E063 TYPE-->
-<!--324A9767D9B94A8A8154DEB3ACA6E063-->              <TYPE><![CDATA[S]]></TYPE>
-<!--324A9767D9B94A8A8154DEB3ACA6E063 CODE-->
-<!--324A9767D9B94A8A8154DEB3ACA6E063-->              <CODE><![CDATA[EXISTS (SELECT 1 
+<!--324A9767D9B94A8A8154DEB3ACA6E063--><AD_VAL_RULE>
+<!--324A9767D9B94A8A8154DEB3ACA6E063-->  <AD_VAL_RULE_ID><![CDATA[324A9767D9B94A8A8154DEB3ACA6E063]]></AD_VAL_RULE_ID>
+<!--324A9767D9B94A8A8154DEB3ACA6E063-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--324A9767D9B94A8A8154DEB3ACA6E063-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--324A9767D9B94A8A8154DEB3ACA6E063-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--324A9767D9B94A8A8154DEB3ACA6E063-->  <NAME><![CDATA[Business Partner Withholding]]></NAME>
+<!--324A9767D9B94A8A8154DEB3ACA6E063-->  <DESCRIPTION><![CDATA[Show the Withholdings which belong to the Business Partner]]></DESCRIPTION>
+<!--324A9767D9B94A8A8154DEB3ACA6E063-->  <TYPE><![CDATA[S]]></TYPE>
+<!--324A9767D9B94A8A8154DEB3ACA6E063-->  <CODE><![CDATA[EXISTS (SELECT 1 
               FROM C_BP_Withholding w , C_BPartner b 
               WHERE w.C_BPartner_ID=b.C_BPartner_ID
               AND w.C_Withholding_ID=C_Withholding.C_Withholding_ID  
               AND W.C_BPartner_ID=@C_BPartner_ID@)]]></CODE>
-<!--324A9767D9B94A8A8154DEB3ACA6E063 AD_MODULE_ID-->
-<!--324A9767D9B94A8A8154DEB3ACA6E063-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--324A9767D9B94A8A8154DEB3ACA6E063**************--></AD_VAL_RULE>
+<!--324A9767D9B94A8A8154DEB3ACA6E063-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--324A9767D9B94A8A8154DEB3ACA6E063--></AD_VAL_RULE>
 
-<!--412A6B4D1F2E4A6B930262AE30F07775**************--><AD_VAL_RULE>
-<!--412A6B4D1F2E4A6B930262AE30F07775 AD_VAL_RULE_ID-->
-<!--412A6B4D1F2E4A6B930262AE30F07775-->              <AD_VAL_RULE_ID><![CDATA[412A6B4D1F2E4A6B930262AE30F07775]]></AD_VAL_RULE_ID>
-<!--412A6B4D1F2E4A6B930262AE30F07775 AD_CLIENT_ID-->
-<!--412A6B4D1F2E4A6B930262AE30F07775-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--412A6B4D1F2E4A6B930262AE30F07775 AD_ORG_ID-->
-<!--412A6B4D1F2E4A6B930262AE30F07775-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--412A6B4D1F2E4A6B930262AE30F07775 ISACTIVE-->
-<!--412A6B4D1F2E4A6B930262AE30F07775-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--412A6B4D1F2E4A6B930262AE30F07775 NAME-->
-<!--412A6B4D1F2E4A6B930262AE30F07775-->              <NAME><![CDATA[AD_Module_Dependecy_ID Avoid dependency to itsef]]></NAME>
-<!--412A6B4D1F2E4A6B930262AE30F07775 DESCRIPTION-->
-<!--412A6B4D1F2E4A6B930262AE30F07775-->              <DESCRIPTION><![CDATA[AD_Module_Dependecy_ID Avoid dependency to itsef]]></DESCRIPTION>
-<!--412A6B4D1F2E4A6B930262AE30F07775 TYPE-->
-<!--412A6B4D1F2E4A6B930262AE30F07775-->              <TYPE><![CDATA[S]]></TYPE>
-<!--412A6B4D1F2E4A6B930262AE30F07775 CODE-->
-<!--412A6B4D1F2E4A6B930262AE30F07775-->              <CODE><![CDATA[AD_Module_ID<>@AD_Module_ID@]]></CODE>
-<!--412A6B4D1F2E4A6B930262AE30F07775 AD_MODULE_ID-->
-<!--412A6B4D1F2E4A6B930262AE30F07775-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--412A6B4D1F2E4A6B930262AE30F07775**************--></AD_VAL_RULE>
+<!--412A6B4D1F2E4A6B930262AE30F07775--><AD_VAL_RULE>
+<!--412A6B4D1F2E4A6B930262AE30F07775-->  <AD_VAL_RULE_ID><![CDATA[412A6B4D1F2E4A6B930262AE30F07775]]></AD_VAL_RULE_ID>
+<!--412A6B4D1F2E4A6B930262AE30F07775-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--412A6B4D1F2E4A6B930262AE30F07775-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--412A6B4D1F2E4A6B930262AE30F07775-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--412A6B4D1F2E4A6B930262AE30F07775-->  <NAME><![CDATA[AD_Module_Dependecy_ID Avoid dependency to itsef]]></NAME>
+<!--412A6B4D1F2E4A6B930262AE30F07775-->  <DESCRIPTION><![CDATA[AD_Module_Dependecy_ID Avoid dependency to itsef]]></DESCRIPTION>
+<!--412A6B4D1F2E4A6B930262AE30F07775-->  <TYPE><![CDATA[S]]></TYPE>
+<!--412A6B4D1F2E4A6B930262AE30F07775-->  <CODE><![CDATA[AD_Module_ID<>@AD_Module_ID@]]></CODE>
+<!--412A6B4D1F2E4A6B930262AE30F07775-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--412A6B4D1F2E4A6B930262AE30F07775--></AD_VAL_RULE>
 
-<!--4A2C613871134B76899BA0464F3CBF76**************--><AD_VAL_RULE>
-<!--4A2C613871134B76899BA0464F3CBF76 AD_VAL_RULE_ID-->
-<!--4A2C613871134B76899BA0464F3CBF76-->              <AD_VAL_RULE_ID><![CDATA[4A2C613871134B76899BA0464F3CBF76]]></AD_VAL_RULE_ID>
-<!--4A2C613871134B76899BA0464F3CBF76 AD_CLIENT_ID-->
-<!--4A2C613871134B76899BA0464F3CBF76-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--4A2C613871134B76899BA0464F3CBF76 AD_ORG_ID-->
-<!--4A2C613871134B76899BA0464F3CBF76-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--4A2C613871134B76899BA0464F3CBF76 ISACTIVE-->
-<!--4A2C613871134B76899BA0464F3CBF76-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--4A2C613871134B76899BA0464F3CBF76 NAME-->
-<!--4A2C613871134B76899BA0464F3CBF76-->              <NAME><![CDATA[AD_OrgType_BU_LE]]></NAME>
-<!--4A2C613871134B76899BA0464F3CBF76 DESCRIPTION-->
-<!--4A2C613871134B76899BA0464F3CBF76-->              <DESCRIPTION><![CDATA[Only Business Units or Legal Entities are displayed]]></DESCRIPTION>
-<!--4A2C613871134B76899BA0464F3CBF76 TYPE-->
-<!--4A2C613871134B76899BA0464F3CBF76-->              <TYPE><![CDATA[S]]></TYPE>
-<!--4A2C613871134B76899BA0464F3CBF76 CODE-->
-<!--4A2C613871134B76899BA0464F3CBF76-->              <CODE><![CDATA[exists (select 1 from ad_orgtype where ad_orgtype.ad_orgtype_id = ad_org.ad_orgtype_id and (islegalentity='Y' or isbusinessunit='Y')) AND IsReady='Y']]></CODE>
-<!--4A2C613871134B76899BA0464F3CBF76 AD_MODULE_ID-->
-<!--4A2C613871134B76899BA0464F3CBF76-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--4A2C613871134B76899BA0464F3CBF76**************--></AD_VAL_RULE>
+<!--4A2C613871134B76899BA0464F3CBF76--><AD_VAL_RULE>
+<!--4A2C613871134B76899BA0464F3CBF76-->  <AD_VAL_RULE_ID><![CDATA[4A2C613871134B76899BA0464F3CBF76]]></AD_VAL_RULE_ID>
+<!--4A2C613871134B76899BA0464F3CBF76-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--4A2C613871134B76899BA0464F3CBF76-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--4A2C613871134B76899BA0464F3CBF76-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--4A2C613871134B76899BA0464F3CBF76-->  <NAME><![CDATA[AD_OrgType_BU_LE]]></NAME>
+<!--4A2C613871134B76899BA0464F3CBF76-->  <DESCRIPTION><![CDATA[Only Business Units or Legal Entities are displayed]]></DESCRIPTION>
+<!--4A2C613871134B76899BA0464F3CBF76-->  <TYPE><![CDATA[S]]></TYPE>
+<!--4A2C613871134B76899BA0464F3CBF76-->  <CODE><![CDATA[exists (select 1 from ad_orgtype where ad_orgtype.ad_orgtype_id = ad_org.ad_orgtype_id and (islegalentity='Y' or isbusinessunit='Y')) AND IsReady='Y']]></CODE>
+<!--4A2C613871134B76899BA0464F3CBF76-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--4A2C613871134B76899BA0464F3CBF76--></AD_VAL_RULE>
 
-<!--53AE60A473D2460D8663D7A1BC5BA732**************--><AD_VAL_RULE>
-<!--53AE60A473D2460D8663D7A1BC5BA732 AD_VAL_RULE_ID-->
-<!--53AE60A473D2460D8663D7A1BC5BA732-->              <AD_VAL_RULE_ID><![CDATA[53AE60A473D2460D8663D7A1BC5BA732]]></AD_VAL_RULE_ID>
-<!--53AE60A473D2460D8663D7A1BC5BA732 AD_CLIENT_ID-->
-<!--53AE60A473D2460D8663D7A1BC5BA732-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--53AE60A473D2460D8663D7A1BC5BA732 AD_ORG_ID-->
-<!--53AE60A473D2460D8663D7A1BC5BA732-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--53AE60A473D2460D8663D7A1BC5BA732 ISACTIVE-->
-<!--53AE60A473D2460D8663D7A1BC5BA732-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--53AE60A473D2460D8663D7A1BC5BA732 NAME-->
-<!--53AE60A473D2460D8663D7A1BC5BA732-->              <NAME><![CDATA[AD_Org show child organizations]]></NAME>
-<!--53AE60A473D2460D8663D7A1BC5BA732 DESCRIPTION-->
-<!--53AE60A473D2460D8663D7A1BC5BA732-->              <DESCRIPTION><![CDATA[It only shows the child organizations of the organization's header]]></DESCRIPTION>
-<!--53AE60A473D2460D8663D7A1BC5BA732 TYPE-->
-<!--53AE60A473D2460D8663D7A1BC5BA732-->              <TYPE><![CDATA[S]]></TYPE>
-<!--53AE60A473D2460D8663D7A1BC5BA732 CODE-->
-<!--53AE60A473D2460D8663D7A1BC5BA732-->              <CODE><![CDATA[AD_ISORGINCLUDED(ad_org.ad_org_id, @AD_ORG_ID@, ad_org.ad_client_id)<>-1 AND IsReady='Y']]></CODE>
-<!--53AE60A473D2460D8663D7A1BC5BA732 AD_MODULE_ID-->
-<!--53AE60A473D2460D8663D7A1BC5BA732-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--53AE60A473D2460D8663D7A1BC5BA732**************--></AD_VAL_RULE>
+<!--53AE60A473D2460D8663D7A1BC5BA732--><AD_VAL_RULE>
+<!--53AE60A473D2460D8663D7A1BC5BA732-->  <AD_VAL_RULE_ID><![CDATA[53AE60A473D2460D8663D7A1BC5BA732]]></AD_VAL_RULE_ID>
+<!--53AE60A473D2460D8663D7A1BC5BA732-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--53AE60A473D2460D8663D7A1BC5BA732-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--53AE60A473D2460D8663D7A1BC5BA732-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--53AE60A473D2460D8663D7A1BC5BA732-->  <NAME><![CDATA[AD_Org show child organizations]]></NAME>
+<!--53AE60A473D2460D8663D7A1BC5BA732-->  <DESCRIPTION><![CDATA[It only shows the child organizations of the organization's header]]></DESCRIPTION>
+<!--53AE60A473D2460D8663D7A1BC5BA732-->  <TYPE><![CDATA[S]]></TYPE>
+<!--53AE60A473D2460D8663D7A1BC5BA732-->  <CODE><![CDATA[AD_ISORGINCLUDED(ad_org.ad_org_id, @AD_ORG_ID@, ad_org.ad_client_id)<>-1 AND IsReady='Y']]></CODE>
+<!--53AE60A473D2460D8663D7A1BC5BA732-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--53AE60A473D2460D8663D7A1BC5BA732--></AD_VAL_RULE>
 
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD**************--><AD_VAL_RULE>
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD AD_VAL_RULE_ID-->
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->              <AD_VAL_RULE_ID><![CDATA[78CBED13BC3F4BF989A90CA75BA8DFCD]]></AD_VAL_RULE_ID>
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD AD_CLIENT_ID-->
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD AD_ORG_ID-->
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD ISACTIVE-->
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD NAME-->
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->              <NAME><![CDATA[AD_Package_ID IsInDevelopment]]></NAME>
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD DESCRIPTION-->
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->              <DESCRIPTION><![CDATA[AD_Package_ID IsInDevelopment]]></DESCRIPTION>
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD TYPE-->
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->              <TYPE><![CDATA[S]]></TYPE>
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD CODE-->
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->              <CODE><![CDATA[ad_module_id in (select ad_module_id from ad_module where IsInDevelopment = 'Y')]]></CODE>
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD AD_MODULE_ID-->
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--78CBED13BC3F4BF989A90CA75BA8DFCD**************--></AD_VAL_RULE>
+<!--78CBED13BC3F4BF989A90CA75BA8DFCD--><AD_VAL_RULE>
+<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->  <AD_VAL_RULE_ID><![CDATA[78CBED13BC3F4BF989A90CA75BA8DFCD]]></AD_VAL_RULE_ID>
+<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->  <NAME><![CDATA[AD_Package_ID IsInDevelopment]]></NAME>
+<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->  <DESCRIPTION><![CDATA[AD_Package_ID IsInDevelopment]]></DESCRIPTION>
+<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->  <TYPE><![CDATA[S]]></TYPE>
+<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->  <CODE><![CDATA[ad_module_id in (select ad_module_id from ad_module where IsInDevelopment = 'Y')]]></CODE>
+<!--78CBED13BC3F4BF989A90CA75BA8DFCD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--78CBED13BC3F4BF989A90CA75BA8DFCD--></AD_VAL_RULE>
 
-<!--80418A74E20E4D2590CF848E90D7CD6D**************--><AD_VAL_RULE>
-<!--80418A74E20E4D2590CF848E90D7CD6D AD_VAL_RULE_ID-->
-<!--80418A74E20E4D2590CF848E90D7CD6D-->              <AD_VAL_RULE_ID><![CDATA[80418A74E20E4D2590CF848E90D7CD6D]]></AD_VAL_RULE_ID>
-<!--80418A74E20E4D2590CF848E90D7CD6D AD_CLIENT_ID-->
-<!--80418A74E20E4D2590CF848E90D7CD6D-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--80418A74E20E4D2590CF848E90D7CD6D AD_ORG_ID-->
-<!--80418A74E20E4D2590CF848E90D7CD6D-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--80418A74E20E4D2590CF848E90D7CD6D ISACTIVE-->
-<!--80418A74E20E4D2590CF848E90D7CD6D-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--80418A74E20E4D2590CF848E90D7CD6D NAME-->
-<!--80418A74E20E4D2590CF848E90D7CD6D-->              <NAME><![CDATA[AD_Org any table by parent organization]]></NAME>
-<!--80418A74E20E4D2590CF848E90D7CD6D DESCRIPTION-->
-<!--80418A74E20E4D2590CF848E90D7CD6D-->              <DESCRIPTION><![CDATA[Filter a drop down to show only records of the organization or of parent organizations, based on the organization of the record that it is being edited.]]></DESCRIPTION>
-<!--80418A74E20E4D2590CF848E90D7CD6D TYPE-->
-<!--80418A74E20E4D2590CF848E90D7CD6D-->              <TYPE><![CDATA[S]]></TYPE>
-<!--80418A74E20E4D2590CF848E90D7CD6D CODE-->
-<!--80418A74E20E4D2590CF848E90D7CD6D-->              <CODE><![CDATA[AD_ISORGINCLUDED(@AD_Org_ID@, td0.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
-<!--80418A74E20E4D2590CF848E90D7CD6D AD_MODULE_ID-->
-<!--80418A74E20E4D2590CF848E90D7CD6D-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--80418A74E20E4D2590CF848E90D7CD6D**************--></AD_VAL_RULE>
+<!--80418A74E20E4D2590CF848E90D7CD6D--><AD_VAL_RULE>
+<!--80418A74E20E4D2590CF848E90D7CD6D-->  <AD_VAL_RULE_ID><![CDATA[80418A74E20E4D2590CF848E90D7CD6D]]></AD_VAL_RULE_ID>
+<!--80418A74E20E4D2590CF848E90D7CD6D-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--80418A74E20E4D2590CF848E90D7CD6D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--80418A74E20E4D2590CF848E90D7CD6D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--80418A74E20E4D2590CF848E90D7CD6D-->  <NAME><![CDATA[AD_Org any table by parent organization]]></NAME>
+<!--80418A74E20E4D2590CF848E90D7CD6D-->  <DESCRIPTION><![CDATA[Filter a drop down to show only records of the organization or of parent organizations, based on the organization of the record that it is being edited.]]></DESCRIPTION>
+<!--80418A74E20E4D2590CF848E90D7CD6D-->  <TYPE><![CDATA[S]]></TYPE>
+<!--80418A74E20E4D2590CF848E90D7CD6D-->  <CODE><![CDATA[AD_ISORGINCLUDED(@AD_Org_ID@, td0.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--80418A74E20E4D2590CF848E90D7CD6D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--80418A74E20E4D2590CF848E90D7CD6D--></AD_VAL_RULE>
 
-<!--8286A51A2C2C494798EABA6D27CA534D**************--><AD_VAL_RULE>
-<!--8286A51A2C2C494798EABA6D27CA534D AD_VAL_RULE_ID-->
-<!--8286A51A2C2C494798EABA6D27CA534D-->              <AD_VAL_RULE_ID><![CDATA[8286A51A2C2C494798EABA6D27CA534D]]></AD_VAL_RULE_ID>
-<!--8286A51A2C2C494798EABA6D27CA534D AD_CLIENT_ID-->
-<!--8286A51A2C2C494798EABA6D27CA534D-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--8286A51A2C2C494798EABA6D27CA534D AD_ORG_ID-->
-<!--8286A51A2C2C494798EABA6D27CA534D-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--8286A51A2C2C494798EABA6D27CA534D ISACTIVE-->
-<!--8286A51A2C2C494798EABA6D27CA534D-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--8286A51A2C2C494798EABA6D27CA534D NAME-->
-<!--8286A51A2C2C494798EABA6D27CA534D-->              <NAME><![CDATA[AD_DataSet_Table access level]]></NAME>
-<!--8286A51A2C2C494798EABA6D27CA534D TYPE-->
-<!--8286A51A2C2C494798EABA6D27CA534D-->              <TYPE><![CDATA[S]]></TYPE>
-<!--8286A51A2C2C494798EABA6D27CA534D CODE-->
-<!--8286A51A2C2C494798EABA6D27CA534D-->              <CODE><![CDATA[((ad_table.accesslevel in ('3','1') and exists(select 1 from ad_dataset
+<!--8286A51A2C2C494798EABA6D27CA534D--><AD_VAL_RULE>
+<!--8286A51A2C2C494798EABA6D27CA534D-->  <AD_VAL_RULE_ID><![CDATA[8286A51A2C2C494798EABA6D27CA534D]]></AD_VAL_RULE_ID>
+<!--8286A51A2C2C494798EABA6D27CA534D-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--8286A51A2C2C494798EABA6D27CA534D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--8286A51A2C2C494798EABA6D27CA534D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--8286A51A2C2C494798EABA6D27CA534D-->  <NAME><![CDATA[AD_DataSet_Table access level]]></NAME>
+<!--8286A51A2C2C494798EABA6D27CA534D-->  <TYPE><![CDATA[S]]></TYPE>
+<!--8286A51A2C2C494798EABA6D27CA534D-->  <CODE><![CDATA[((ad_table.accesslevel in ('3','1') and exists(select 1 from ad_dataset
                                             where ad_dataset_id = @AD_DATASET_ID@
                                             and ad_dataset.accesslevel = '1')) OR
               (ad_table.accesslevel in ('4','6') and exists(select 1 from ad_dataset
@@ -2274,132 +1323,78 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
                                             where ad_dataset_id = @AD_DATASET_ID@
                                             and ad_dataset.accesslevel = '3'))                                           
               )]]></CODE>
-<!--8286A51A2C2C494798EABA6D27CA534D AD_MODULE_ID-->
-<!--8286A51A2C2C494798EABA6D27CA534D-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--8286A51A2C2C494798EABA6D27CA534D**************--></AD_VAL_RULE>
+<!--8286A51A2C2C494798EABA6D27CA534D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--8286A51A2C2C494798EABA6D27CA534D--></AD_VAL_RULE>
 
-<!--BE75963CE93E446995A41137C11E2CF3**************--><AD_VAL_RULE>
-<!--BE75963CE93E446995A41137C11E2CF3 AD_VAL_RULE_ID-->
-<!--BE75963CE93E446995A41137C11E2CF3-->              <AD_VAL_RULE_ID><![CDATA[BE75963CE93E446995A41137C11E2CF3]]></AD_VAL_RULE_ID>
-<!--BE75963CE93E446995A41137C11E2CF3 AD_CLIENT_ID-->
-<!--BE75963CE93E446995A41137C11E2CF3-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--BE75963CE93E446995A41137C11E2CF3 AD_ORG_ID-->
-<!--BE75963CE93E446995A41137C11E2CF3-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--BE75963CE93E446995A41137C11E2CF3 ISACTIVE-->
-<!--BE75963CE93E446995A41137C11E2CF3-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--BE75963CE93E446995A41137C11E2CF3 NAME-->
-<!--BE75963CE93E446995A41137C11E2CF3-->              <NAME><![CDATA[AD_Org IsPeriodControlAllowed]]></NAME>
-<!--BE75963CE93E446995A41137C11E2CF3 DESCRIPTION-->
-<!--BE75963CE93E446995A41137C11E2CF3-->              <DESCRIPTION><![CDATA[Display the organizations which are allowed to open/close period control]]></DESCRIPTION>
-<!--BE75963CE93E446995A41137C11E2CF3 TYPE-->
-<!--BE75963CE93E446995A41137C11E2CF3-->              <TYPE><![CDATA[S]]></TYPE>
-<!--BE75963CE93E446995A41137C11E2CF3 CODE-->
-<!--BE75963CE93E446995A41137C11E2CF3-->              <CODE><![CDATA[ISPERIODCONTROLALLOWED='Y' AND EXISTS (SELECT 1 FROM AD_ORGTYPE WHERE AD_ORGTYPE_ID=AD_ORG.AD_ORGTYPE_ID AND (ISLEGALENTITY='Y' OR ISBUSINESSUNIT='Y')) AND IsReady='Y']]></CODE>
-<!--BE75963CE93E446995A41137C11E2CF3 AD_MODULE_ID-->
-<!--BE75963CE93E446995A41137C11E2CF3-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--BE75963CE93E446995A41137C11E2CF3**************--></AD_VAL_RULE>
+<!--BE75963CE93E446995A41137C11E2CF3--><AD_VAL_RULE>
+<!--BE75963CE93E446995A41137C11E2CF3-->  <AD_VAL_RULE_ID><![CDATA[BE75963CE93E446995A41137C11E2CF3]]></AD_VAL_RULE_ID>
+<!--BE75963CE93E446995A41137C11E2CF3-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--BE75963CE93E446995A41137C11E2CF3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--BE75963CE93E446995A41137C11E2CF3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--BE75963CE93E446995A41137C11E2CF3-->  <NAME><![CDATA[AD_Org IsPeriodControlAllowed]]></NAME>
+<!--BE75963CE93E446995A41137C11E2CF3-->  <DESCRIPTION><![CDATA[Display the organizations which are allowed to open/close period control]]></DESCRIPTION>
+<!--BE75963CE93E446995A41137C11E2CF3-->  <TYPE><![CDATA[S]]></TYPE>
+<!--BE75963CE93E446995A41137C11E2CF3-->  <CODE><![CDATA[ISPERIODCONTROLALLOWED='Y' AND EXISTS (SELECT 1 FROM AD_ORGTYPE WHERE AD_ORGTYPE_ID=AD_ORG.AD_ORGTYPE_ID AND (ISLEGALENTITY='Y' OR ISBUSINESSUNIT='Y')) AND IsReady='Y']]></CODE>
+<!--BE75963CE93E446995A41137C11E2CF3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--BE75963CE93E446995A41137C11E2CF3--></AD_VAL_RULE>
 
-<!--C45CFD74FF5145B0A356E9233D49996F**************--><AD_VAL_RULE>
-<!--C45CFD74FF5145B0A356E9233D49996F AD_VAL_RULE_ID-->
-<!--C45CFD74FF5145B0A356E9233D49996F-->              <AD_VAL_RULE_ID><![CDATA[C45CFD74FF5145B0A356E9233D49996F]]></AD_VAL_RULE_ID>
-<!--C45CFD74FF5145B0A356E9233D49996F AD_CLIENT_ID-->
-<!--C45CFD74FF5145B0A356E9233D49996F-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C45CFD74FF5145B0A356E9233D49996F AD_ORG_ID-->
-<!--C45CFD74FF5145B0A356E9233D49996F-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C45CFD74FF5145B0A356E9233D49996F ISACTIVE-->
-<!--C45CFD74FF5145B0A356E9233D49996F-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C45CFD74FF5145B0A356E9233D49996F NAME-->
-<!--C45CFD74FF5145B0A356E9233D49996F-->              <NAME><![CDATA[Ad_Module_ID IsInDevelopment]]></NAME>
-<!--C45CFD74FF5145B0A356E9233D49996F DESCRIPTION-->
-<!--C45CFD74FF5145B0A356E9233D49996F-->              <DESCRIPTION><![CDATA[AD_Module_ID IsInDevelopment]]></DESCRIPTION>
-<!--C45CFD74FF5145B0A356E9233D49996F TYPE-->
-<!--C45CFD74FF5145B0A356E9233D49996F-->              <TYPE><![CDATA[S]]></TYPE>
-<!--C45CFD74FF5145B0A356E9233D49996F CODE-->
-<!--C45CFD74FF5145B0A356E9233D49996F-->              <CODE><![CDATA[IsInDevelopment = 'Y']]></CODE>
-<!--C45CFD74FF5145B0A356E9233D49996F AD_MODULE_ID-->
-<!--C45CFD74FF5145B0A356E9233D49996F-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--C45CFD74FF5145B0A356E9233D49996F**************--></AD_VAL_RULE>
+<!--C45CFD74FF5145B0A356E9233D49996F--><AD_VAL_RULE>
+<!--C45CFD74FF5145B0A356E9233D49996F-->  <AD_VAL_RULE_ID><![CDATA[C45CFD74FF5145B0A356E9233D49996F]]></AD_VAL_RULE_ID>
+<!--C45CFD74FF5145B0A356E9233D49996F-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--C45CFD74FF5145B0A356E9233D49996F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--C45CFD74FF5145B0A356E9233D49996F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--C45CFD74FF5145B0A356E9233D49996F-->  <NAME><![CDATA[Ad_Module_ID IsInDevelopment]]></NAME>
+<!--C45CFD74FF5145B0A356E9233D49996F-->  <DESCRIPTION><![CDATA[AD_Module_ID IsInDevelopment]]></DESCRIPTION>
+<!--C45CFD74FF5145B0A356E9233D49996F-->  <TYPE><![CDATA[S]]></TYPE>
+<!--C45CFD74FF5145B0A356E9233D49996F-->  <CODE><![CDATA[IsInDevelopment = 'Y']]></CODE>
+<!--C45CFD74FF5145B0A356E9233D49996F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--C45CFD74FF5145B0A356E9233D49996F--></AD_VAL_RULE>
 
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177**************--><AD_VAL_RULE>
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177 AD_VAL_RULE_ID-->
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->              <AD_VAL_RULE_ID><![CDATA[C9A72C5855CB4E29AFEB5DC17A5A9177]]></AD_VAL_RULE_ID>
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177 AD_CLIENT_ID-->
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177 AD_ORG_ID-->
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177 ISACTIVE-->
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177 NAME-->
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->              <NAME><![CDATA[C_Calendar and C_Year of an organization]]></NAME>
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177 DESCRIPTION-->
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->              <DESCRIPTION><![CDATA[It ensures the calendar combobox shows always the calendar of the selected organization]]></DESCRIPTION>
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177 TYPE-->
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->              <TYPE><![CDATA[S]]></TYPE>
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177 CODE-->
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->              <CODE><![CDATA[C_CALENDAR_ID IN (SELECT C_CALENDAR_ID FROM AD_ORG WHERE AD_ORG_ID=@AD_ORG_ID@)]]></CODE>
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177 AD_MODULE_ID-->
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177**************--></AD_VAL_RULE>
+<!--C9A72C5855CB4E29AFEB5DC17A5A9177--><AD_VAL_RULE>
+<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <AD_VAL_RULE_ID><![CDATA[C9A72C5855CB4E29AFEB5DC17A5A9177]]></AD_VAL_RULE_ID>
+<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <NAME><![CDATA[C_Calendar and C_Year of an organization]]></NAME>
+<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <DESCRIPTION><![CDATA[It ensures the calendar combobox shows always the calendar of the selected organization]]></DESCRIPTION>
+<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <TYPE><![CDATA[S]]></TYPE>
+<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <CODE><![CDATA[C_CALENDAR_ID IN (SELECT C_CALENDAR_ID FROM AD_ORG WHERE AD_ORG_ID=@AD_ORG_ID@)]]></CODE>
+<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--C9A72C5855CB4E29AFEB5DC17A5A9177--></AD_VAL_RULE>
 
-<!--CA6741A18A214FE9A50FDFC398662235**************--><AD_VAL_RULE>
-<!--CA6741A18A214FE9A50FDFC398662235 AD_VAL_RULE_ID-->
-<!--CA6741A18A214FE9A50FDFC398662235-->              <AD_VAL_RULE_ID><![CDATA[CA6741A18A214FE9A50FDFC398662235]]></AD_VAL_RULE_ID>
-<!--CA6741A18A214FE9A50FDFC398662235 AD_CLIENT_ID-->
-<!--CA6741A18A214FE9A50FDFC398662235-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--CA6741A18A214FE9A50FDFC398662235 AD_ORG_ID-->
-<!--CA6741A18A214FE9A50FDFC398662235-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--CA6741A18A214FE9A50FDFC398662235 ISACTIVE-->
-<!--CA6741A18A214FE9A50FDFC398662235-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--CA6741A18A214FE9A50FDFC398662235 NAME-->
-<!--CA6741A18A214FE9A50FDFC398662235-->              <NAME><![CDATA[Allowed PeriodActions]]></NAME>
-<!--CA6741A18A214FE9A50FDFC398662235 DESCRIPTION-->
-<!--CA6741A18A214FE9A50FDFC398662235-->              <DESCRIPTION><![CDATA[Display only the allowed PeriodActions]]></DESCRIPTION>
-<!--CA6741A18A214FE9A50FDFC398662235 TYPE-->
-<!--CA6741A18A214FE9A50FDFC398662235-->              <TYPE><![CDATA[S]]></TYPE>
-<!--CA6741A18A214FE9A50FDFC398662235 CODE-->
-<!--CA6741A18A214FE9A50FDFC398662235-->              <CODE><![CDATA[Value<>'N']]></CODE>
-<!--CA6741A18A214FE9A50FDFC398662235 AD_MODULE_ID-->
-<!--CA6741A18A214FE9A50FDFC398662235-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--CA6741A18A214FE9A50FDFC398662235**************--></AD_VAL_RULE>
+<!--CA6741A18A214FE9A50FDFC398662235--><AD_VAL_RULE>
+<!--CA6741A18A214FE9A50FDFC398662235-->  <AD_VAL_RULE_ID><![CDATA[CA6741A18A214FE9A50FDFC398662235]]></AD_VAL_RULE_ID>
+<!--CA6741A18A214FE9A50FDFC398662235-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--CA6741A18A214FE9A50FDFC398662235-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--CA6741A18A214FE9A50FDFC398662235-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--CA6741A18A214FE9A50FDFC398662235-->  <NAME><![CDATA[Allowed PeriodActions]]></NAME>
+<!--CA6741A18A214FE9A50FDFC398662235-->  <DESCRIPTION><![CDATA[Display only the allowed PeriodActions]]></DESCRIPTION>
+<!--CA6741A18A214FE9A50FDFC398662235-->  <TYPE><![CDATA[S]]></TYPE>
+<!--CA6741A18A214FE9A50FDFC398662235-->  <CODE><![CDATA[Value<>'N']]></CODE>
+<!--CA6741A18A214FE9A50FDFC398662235-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--CA6741A18A214FE9A50FDFC398662235--></AD_VAL_RULE>
 
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E**************--><AD_VAL_RULE>
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E AD_VAL_RULE_ID-->
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->              <AD_VAL_RULE_ID><![CDATA[CB5E64F7BDBA4A51AEEBC48E317A6F0E]]></AD_VAL_RULE_ID>
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E AD_CLIENT_ID-->
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E AD_ORG_ID-->
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E ISACTIVE-->
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E NAME-->
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->              <NAME><![CDATA[AD_DataSet access level]]></NAME>
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E TYPE-->
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->              <TYPE><![CDATA[S]]></TYPE>
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E CODE-->
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->              <CODE><![CDATA[value<>'7']]></CODE>
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E AD_MODULE_ID-->
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E**************--></AD_VAL_RULE>
+<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E--><AD_VAL_RULE>
+<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->  <AD_VAL_RULE_ID><![CDATA[CB5E64F7BDBA4A51AEEBC48E317A6F0E]]></AD_VAL_RULE_ID>
+<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->  <NAME><![CDATA[AD_DataSet access level]]></NAME>
+<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->  <TYPE><![CDATA[S]]></TYPE>
+<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->  <CODE><![CDATA[value<>'7']]></CODE>
+<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--CB5E64F7BDBA4A51AEEBC48E317A6F0E--></AD_VAL_RULE>
 
-<!--FDC45D1AE2404B8384D14DB6DED90DCF**************--><AD_VAL_RULE>
-<!--FDC45D1AE2404B8384D14DB6DED90DCF AD_VAL_RULE_ID-->
-<!--FDC45D1AE2404B8384D14DB6DED90DCF-->              <AD_VAL_RULE_ID><![CDATA[FDC45D1AE2404B8384D14DB6DED90DCF]]></AD_VAL_RULE_ID>
-<!--FDC45D1AE2404B8384D14DB6DED90DCF AD_CLIENT_ID-->
-<!--FDC45D1AE2404B8384D14DB6DED90DCF-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--FDC45D1AE2404B8384D14DB6DED90DCF AD_ORG_ID-->
-<!--FDC45D1AE2404B8384D14DB6DED90DCF-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--FDC45D1AE2404B8384D14DB6DED90DCF ISACTIVE-->
-<!--FDC45D1AE2404B8384D14DB6DED90DCF-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--FDC45D1AE2404B8384D14DB6DED90DCF NAME-->
-<!--FDC45D1AE2404B8384D14DB6DED90DCF-->              <NAME><![CDATA[AD_Org is transactions allowed]]></NAME>
-<!--FDC45D1AE2404B8384D14DB6DED90DCF DESCRIPTION-->
-<!--FDC45D1AE2404B8384D14DB6DED90DCF-->              <DESCRIPTION><![CDATA[Display the ready organizations where transactions are allowed]]></DESCRIPTION>
-<!--FDC45D1AE2404B8384D14DB6DED90DCF TYPE-->
-<!--FDC45D1AE2404B8384D14DB6DED90DCF-->              <TYPE><![CDATA[S]]></TYPE>
-<!--FDC45D1AE2404B8384D14DB6DED90DCF CODE-->
-<!--FDC45D1AE2404B8384D14DB6DED90DCF-->              <CODE><![CDATA[EXISTS (SELECT 1 FROM ad_orgtype WHERE ad_orgtype.ad_orgtype_id=ad_org.ad_orgtype_id AND IsTransactionsAllowed='Y') and IsReady='Y']]></CODE>
-<!--FDC45D1AE2404B8384D14DB6DED90DCF AD_MODULE_ID-->
-<!--FDC45D1AE2404B8384D14DB6DED90DCF-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--FDC45D1AE2404B8384D14DB6DED90DCF**************--></AD_VAL_RULE>
+<!--FDC45D1AE2404B8384D14DB6DED90DCF--><AD_VAL_RULE>
+<!--FDC45D1AE2404B8384D14DB6DED90DCF-->  <AD_VAL_RULE_ID><![CDATA[FDC45D1AE2404B8384D14DB6DED90DCF]]></AD_VAL_RULE_ID>
+<!--FDC45D1AE2404B8384D14DB6DED90DCF-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--FDC45D1AE2404B8384D14DB6DED90DCF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--FDC45D1AE2404B8384D14DB6DED90DCF-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--FDC45D1AE2404B8384D14DB6DED90DCF-->  <NAME><![CDATA[AD_Org is transactions allowed]]></NAME>
+<!--FDC45D1AE2404B8384D14DB6DED90DCF-->  <DESCRIPTION><![CDATA[Display the ready organizations where transactions are allowed]]></DESCRIPTION>
+<!--FDC45D1AE2404B8384D14DB6DED90DCF-->  <TYPE><![CDATA[S]]></TYPE>
+<!--FDC45D1AE2404B8384D14DB6DED90DCF-->  <CODE><![CDATA[EXISTS (SELECT 1 FROM ad_orgtype WHERE ad_orgtype.ad_orgtype_id=ad_org.ad_orgtype_id AND IsTransactionsAllowed='Y') and IsReady='Y']]></CODE>
+<!--FDC45D1AE2404B8384D14DB6DED90DCF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--FDC45D1AE2404B8384D14DB6DED90DCF--></AD_VAL_RULE>
 
 </data>

@@ -1,28 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--0**************--><AD_ROLE>
-<!--0 AD_ROLE_ID-->
-<!--0-->              <AD_ROLE_ID><![CDATA[0]]></AD_ROLE_ID>
-<!--0 AD_CLIENT_ID-->
-<!--0-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--0 AD_ORG_ID-->
-<!--0-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--0 ISACTIVE-->
-<!--0-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--0 NAME-->
-<!--0-->              <NAME><![CDATA[System Administrator]]></NAME>
-<!--0 DESCRIPTION-->
-<!--0-->              <DESCRIPTION><![CDATA[System Administrator Role]]></DESCRIPTION>
-<!--0 USERLEVEL-->
-<!--0-->              <USERLEVEL><![CDATA[S]]></USERLEVEL>
-<!--0 CLIENTLIST-->
-<!--0-->              <CLIENTLIST><![CDATA[0]]></CLIENTLIST>
-<!--0 ORGLIST-->
-<!--0-->              <ORGLIST><![CDATA[0]]></ORGLIST>
-<!--0 AMTAPPROVAL-->
-<!--0-->              <AMTAPPROVAL><![CDATA[0]]></AMTAPPROVAL>
-<!--0 ISMANUAL-->
-<!--0-->              <ISMANUAL><![CDATA[N]]></ISMANUAL>
-<!--0**************--></AD_ROLE>
+<!--0--><AD_ROLE>
+<!--0-->  <AD_ROLE_ID><![CDATA[0]]></AD_ROLE_ID>
+<!--0-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0-->  <NAME><![CDATA[System Administrator]]></NAME>
+<!--0-->  <DESCRIPTION><![CDATA[System Administrator Role]]></DESCRIPTION>
+<!--0-->  <USERLEVEL><![CDATA[S]]></USERLEVEL>
+<!--0-->  <CLIENTLIST><![CDATA[0]]></CLIENTLIST>
+<!--0-->  <ORGLIST><![CDATA[0]]></ORGLIST>
+<!--0-->  <AMTAPPROVAL><![CDATA[0]]></AMTAPPROVAL>
+<!--0-->  <ISMANUAL><![CDATA[N]]></ISMANUAL>
+<!--0--></AD_ROLE>
 
 </data>
