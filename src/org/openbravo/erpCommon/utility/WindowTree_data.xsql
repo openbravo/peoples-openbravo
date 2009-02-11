@@ -307,7 +307,7 @@
         WHERE AD_Client_ID IN ('2') 
         AND AD_Client_id = '0'
         AND TreeType = ?
-        AND IsActive = 'Y') 
+        AND IsActive = 'Y') f
         ORDER BY SEQNO
       </Sql>
         <Parameter name="adClientId" optional="true" type="replace" after="AD_Client_ID IN (" text="'1'"/>
