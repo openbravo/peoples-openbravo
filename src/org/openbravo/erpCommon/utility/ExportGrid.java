@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2007 Openbravo SL
+ * All portions are Copyright (C) 2007-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,6 +83,7 @@ public class ExportGrid extends HttpSecureAppServlet {
       }
       printPagePopUpDownload(os, fileName);
     } catch (JRException e) {
+      e.printStackTrace();
       throw new ServletException(e.getMessage());
     } catch (IOException ioe) {
       try {
@@ -130,7 +131,8 @@ public class ExportGrid extends HttpSecureAppServlet {
         vars.setSessionValue(strTabId + "|newOrder", "1");
         String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "",
             new Vector<String>(), new Vector<String>(), 0, 0);
-        // if (log4j.isDebugEnabled()) log4j.debug("SQL: " + strSQL);
+        if (log4j.isDebugEnabled())
+          log4j.debug("SQL: " + strSQL);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
         data = execquery.select();
       } catch (Exception e) {
@@ -149,7 +151,13 @@ public class ExportGrid extends HttpSecureAppServlet {
         if (log4j.isDebugEnabled())
           log4j.debug("Add column: " + columnname + " width: " + headers[i].getField("width")
               + " reference: " + headers[i].getField("adReferenceId"));
-        totalWidth += Integer.valueOf(headers[i].getField("width"));
+        int intColumnWidth = Integer.valueOf(headers[i].getField("width"));
+        if (headers[i].getField("name").length() * 5 > intColumnWidth) {
+          intColumnWidth = headers[i].getField("name").length() * 5;
+          if (log4j.isDebugEnabled())
+            log4j.debug("            New width: " + intColumnWidth);
+        }
+        totalWidth += intColumnWidth;
         Class<?> fieldClass = String.class;
         if (headers[i].getField("adReferenceId").equals("11"))
           fieldClass = Double.class;
@@ -158,12 +166,13 @@ public class ExportGrid extends HttpSecureAppServlet {
             || headers[i].getField("adReferenceId").equals("800008")
             || headers[i].getField("adReferenceId").equals("800019"))
           fieldClass = java.math.BigDecimal.class;
-
-        columns.add(new GridColumnVO(headers[i].getField("name"), columnname, Integer
-            .valueOf(headers[i].getField("width")), fieldClass));
+        columns.add(new GridColumnVO(headers[i].getField("name"), columnname, intColumnWidth,
+            fieldClass));
       }
     }
     String strTitle = ExportGridData.getTitle(this, strTabId, vars.getLanguage());
+    if (log4j.isDebugEnabled())
+      log4j.debug("GridReport, totalwidth: " + totalWidth + " title: " + strTitle);
     GridReportVO gridReportVO = new GridReportVO("plantilla.jrxml", data, strTitle, columns,
         strReplaceWithFull, totalWidth, vars.getJavaDateFormat());
     return gridReportVO;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2007 Openbravo SL 
+ * All portions are Copyright (C) 2007-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,7 +39,10 @@ import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
+import org.apache.log4j.Logger;
+
 public class GridBO {
+  public static Logger log4j = Logger.getLogger("org.openbravo.erpCommon.utility.GridBO");
 
   public static void createHTMLReport(InputStream reportFile, GridReportVO gridReportVO,
       String path, String fileName) throws JRException, IOException {
@@ -58,8 +61,14 @@ public class GridBO {
   private static JasperDesign createJasperDesign(InputStream reportFile, GridReportVO gridReportVO)
       throws JRException {
     JasperDesign jasperDesign = JRXmlLoader.load(reportFile);
+    if (log4j.isDebugEnabled())
+      log4j.debug("Create JasperDesign");
     ReportDesignBO designBO = new ReportDesignBO(jasperDesign, gridReportVO);
     designBO.define();
+    if (log4j.isDebugEnabled())
+      log4j.debug("JasperDesign created, pageWidth: " + jasperDesign.getPageWidth()
+          + " left margin: " + jasperDesign.getLeftMargin() + " right margin: "
+          + jasperDesign.getRightMargin());
     return jasperDesign;
   }
 

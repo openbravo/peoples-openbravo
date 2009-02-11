@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2007 Openbravo SL 
+ * All portions are Copyright (C) 2007-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,10 @@ import net.sf.jasperreports.engine.design.JRDesignStaticText;
 import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
 
+import org.apache.log4j.Logger;
+
 public class ReportDesignBO {
+  public static Logger log4j = Logger.getLogger("org.openbravo.erpCommon.utility.GridBO");
   private int px = 0;
 
   private int pageWidth = 0;
@@ -44,7 +47,10 @@ public class ReportDesignBO {
     super();
     this.jasperDesign = jasperDesign;
     this.gridReportVO = gridReportVO;
-    this.jasperDesign.setPageWidth(gridReportVO.getTotalWidth());
+    if (gridReportVO.getTotalWidth() + jasperDesign.getLeftMargin() + jasperDesign.getRightMargin() > jasperDesign
+        .getPageWidth())
+      this.jasperDesign.setPageWidth(gridReportVO.getTotalWidth() + jasperDesign.getLeftMargin()
+          + jasperDesign.getRightMargin());
     this.pageWidth = jasperDesign.getPageWidth() - jasperDesign.getLeftMargin()
         - jasperDesign.getRightMargin();
   }
@@ -52,15 +58,12 @@ public class ReportDesignBO {
   private void addField(GridColumnVO columnVO) throws JRException {
     addFieldHeader(columnVO);
     addFieldValue(columnVO);
-    px += calcPorc(columnVO.getWidth());
+    px += columnVO.getWidth();
   }
 
   private void addFieldHeader(GridColumnVO columnVO) {
     JRDesignBand bHeader = (JRDesignBand) jasperDesign.getColumnHeader();
     JRDesignStaticText text = new JRDesignStaticText();
-    int w = columnVO.getWidth();
-    if (columnVO.getTitle().length() * 15 > w)
-      columnVO.setWidth(columnVO.getTitle().length() * 15);
     text.setText(columnVO.getTitle());
     text.setWidth(columnVO.getWidth());
     text.setHeight(bHeader.getHeight());
@@ -72,6 +75,9 @@ public class ReportDesignBO {
     text.setBold(gridReportVO.getHeaderBandStyle().isBold());
     text.setItalic(gridReportVO.getHeaderBandStyle().isItalic());
     text.setUnderline(gridReportVO.getHeaderBandStyle().isUnderline());
+    if (log4j.isDebugEnabled())
+      log4j.debug("Field Header, field: " + columnVO.getTitle() + " Width: " + columnVO.getWidth()
+          + " X: " + px);
     bHeader.addElement(text);
   }
 
@@ -90,7 +96,7 @@ public class ReportDesignBO {
     expression.addChunk(chunk);
     expression.setValueClass(columnVO.getFieldClass());
     JRDesignTextField textField = new JRDesignTextField();
-    textField.setWidth(calcPorc(columnVO.getWidth()));
+    textField.setWidth(columnVO.getWidth());
     textField.setHeight(bDetalle.getHeight());
     textField.setX(px);
     textField.setExpression(expression);
@@ -107,15 +113,9 @@ public class ReportDesignBO {
     bDetalle.addElement(textField);
   }
 
-  private int calcPorc(int width) {
-    if (gridReportVO.getPagination()) {
-      return width;
-    } else {
-      return width * pageWidth / gridReportVO.getTotalWidth();
-    }
-  }
-
   public void define() throws JRException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Define JasperDesign, pageWidth: " + this.pageWidth);
     defineTitle(gridReportVO.getTitle());
     defineLineWidth();
     Iterator<?> it = gridReportVO.getColumns().iterator();
