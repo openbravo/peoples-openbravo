@@ -13,7 +13,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2008 Openbravo SL
+* All portions are Copyright (C) 2008-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/      
@@ -26,13 +26,14 @@
   cur_org_le RECORD;
   
 BEGIN
-  -- Get Legal Entities
+  -- Get Legal Entities with accounting
   FOR cur_org_le IN
   (
    SELECT ad_org.ad_org_id
    FROM ad_org, ad_orgtype
    WHERE IsLegalEntity='Y'
    AND IsReady='Y'
+   AND IsAcctLegalEntity='Y'
    AND ad_org.ad_orgtype_id= ad_orgtype.ad_orgtype_id
   )
   
@@ -61,7 +62,7 @@ BEGIN
                   AND AD_Org.IsReady='Y'
                   );
 
-      SELECT COUNT(c_acctschema_id)
+      SELECT COUNT(c_acctschema_id)+v_countschemas
       INTO v_countschemas
       FROM ad_org_acctschema
       WHERE ad_org_acctschema.ad_org_id = v_parent_id;

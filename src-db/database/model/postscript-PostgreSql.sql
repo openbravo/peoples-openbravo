@@ -262,8 +262,8 @@ END;   $BODY$
   LANGUAGE 'plpgsql' VOLATILE
 /-- END
 
-CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOCUMENTS(p_header_table character varying, p_lines_table character varying, p_document_id character varying, p_header_column_id character varying, p_lines_column_id character varying)
-   RETURNS numeric AS
+CREATE OR REPLACE FUNCTION AD_GET_DOC_LE_BU(p_header_table character varying, p_document_id character varying, p_header_column_id character varying)
+ RETURNS varchar AS
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -277,23 +277,17 @@ $BODY$ DECLARE
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2008 Openbravo SL
+* All portions are Copyright (C) 2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
    v_org_header_id ad_org.ad_org_id%TYPE;
    v_isbusinessunit ad_orgtype.isbusinessunit%TYPE;
    v_islegalentity ad_orgtype.islegalentity%TYPE;
-   v_is_included NUMERIC:=0;
-   v_dyn_cur VARCHAR(2000);
- 
-   TYPE_Ref REFCURSOR;
-   cur_doc_lines TYPE_REF%TYPE;
- 
-   v_line_org VARCHAR(32);
-   v_org_line_id VARCHAR(32);
+   
  BEGIN
  
+   -- Gets the organization and the organization type of the document's header
    EXECUTE 
      'SELECT ad_org.ad_org_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity 
      FROM '||p_header_table||', ad_org, ad_orgtype
@@ -315,6 +309,49 @@ $BODY$ DECLARE
      AND ad_org.isready='Y'
      AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id and hh.ad_client_id=ad_tree.ad_client_id);     
    END LOOP;
+   
+   RETURN v_org_header_id;
+   
+END;   $BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+/-- END
+	 
+CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOCUMENTS(p_header_table character varying, p_lines_table character varying, p_document_id character varying, p_header_column_id character varying, p_lines_column_id character varying)
+   RETURNS numeric AS
+$BODY$ DECLARE
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2008-2009 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+   v_org_header_id ad_org.ad_org_id%TYPE;
+   v_isbusinessunit ad_orgtype.isbusinessunit%TYPE;
+   v_islegalentity ad_orgtype.islegalentity%TYPE;
+   v_is_included NUMERIC:=0;
+   v_dyn_cur VARCHAR(2000);
+ 
+   TYPE_Ref REFCURSOR;
+   cur_doc_lines TYPE_REF%TYPE;
+ 
+   v_line_org VARCHAR(32);
+   v_org_line_id VARCHAR(32);
+ BEGIN
+ 
+   -- Gets the Business Unit or Legal Entity of the document
+   SELECT AD_GET_DOC_LE_BU(p_header_table, p_document_id, p_header_column_id)
+   INTO v_org_header_id
+   FROM DUAL;
  
    v_dyn_cur:='SELECT DISTINCT('||p_lines_table||'.ad_org_id) AS v_line_org 
 	FROM '||p_header_table||', '||p_lines_table||'  
@@ -379,7 +416,7 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOC_PAYMENTS(p_header_table IN character v
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2008 Openbravo SL
+* All portions are Copyright (C) 2008-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -396,28 +433,10 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOC_PAYMENTS(p_header_table IN character v
    v_org_payment_line_id VARCHAR(32);
  BEGIN
  
-   -- Gets the organization and the organization type of the document's header
-   EXECUTE
-     'SELECT ad_org.ad_org_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity 
-     FROM '||p_header_table||', ad_org, ad_orgtype
-     WHERE '||p_header_table||'.'||p_header_column_id||'='||''''||p_document_id||''''||'
-     AND ad_org.ad_orgtype_id = ad_orgtype.ad_orgtype_id
-     AND '||p_header_table||'.ad_org_id=ad_org.ad_org_id ' 
-     INTO v_org_header_id, v_isbusinessunit, v_islegalentity;
- 
-   -- Gets recursively the organization parent until finding a Business Unit or a Legal Entity
-   WHILE (v_isbusinessunit='N' AND v_islegalentity='N') LOOP
-     SELECT hh.parent_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity
-     INTO v_org_header_id, v_isbusinessunit, v_islegalentity
-     FROM ad_org, ad_orgtype, ad_treenode pp, ad_treenode hh
-     WHERE pp.node_id = hh.parent_id
-     AND hh.ad_tree_id = pp.ad_tree_id
-     AND pp.node_id=ad_org.ad_org_id
-     AND hh.node_id=v_org_header_id
-     AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
-     AND ad_org.isready='Y'
-     AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
-   END LOOP;
+   -- Gets the Business Unit or Legal Entity of the document
+   SELECT AD_GET_DOC_LE_BU(p_header_table, p_document_id, p_header_column_id)
+   INTO v_org_header_id
+   FROM DUAL;
  
    v_dyn_cur:='SELECT DISTINCT(C_DEBT_PAYMENT.ad_org_id) AS v_line_org_payment
     FROM '||p_header_table||', '||p_lines_table||', C_DEBT_PAYMENT

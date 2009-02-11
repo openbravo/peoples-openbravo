@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -140,6 +140,9 @@ cWithHoldId varchar2(32);
     v_available_period NUMBER:=0;
     v_is_ready AD_Org.IsReady%TYPE;
     v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
+    v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
+    v_org_bule_id AD_Org.AD_Org_ID%TYPE;
+    v_docbasetype C_DocType.DocBaseType%TYPE;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -760,21 +763,30 @@ cWithHoldId varchar2(32);
             RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
           END IF;
 
-          -- Check the period control is opened
-          SELECT COUNT(C_Period_ID)
-          INTO v_available_period
-          FROM C_Period
-          WHERE v_DateAcct BETWEEN STARTDATE AND ENDDATE
-          AND EXISTS (SELECT 1
-                      FROM C_PeriodControl
-                      WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID
-                      AND DocBaseType=(SELECT DocBaseType FROM C_DocType WHERE C_DocType_ID=v_DocTypeTarget_ID)
-                      AND AD_Org_ID=AD_ORG_GETCALENDAROWNER (v_AD_Org_ID)
-                      AND PeriodStatus='O'
-                      );
-
-          IF (v_available_period<>1) THEN
-            RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+          -- Check the period control is opened (only if it is legal entity with accounting)
+          -- Gets the BU or LE of the document
+          SELECT AD_GET_DOC_LE_BU('C_INVOICE', v_Record_ID, 'C_INVOICE_ID')
+          INTO v_org_bule_id
+          FROM DUAL;
+          
+          SELECT AD_OrgType.IsAcctLegalEntity
+          INTO v_isacctle
+          FROM AD_OrgType, AD_Org
+          WHERE AD_Org.AD_OrgType_ID = AD_OrgType.AD_OrgType_ID
+          AND AD_Org.AD_Org_ID=v_org_bule_id;
+          
+          IF (v_isacctle='Y') THEN
+          	SELECT DocBaseType
+      		INTO v_docbasetype
+      		FROM C_DocType WHERE C_DocType_ID=v_DocTypeTarget_ID;
+      		
+            SELECT C_CHK_OPEN_PERIOD(v_AD_Org_ID, v_DateAcct, NULL, v_docbasetype) 
+            INTO v_available_period
+            FROM DUAL;
+            
+            IF (v_available_period<>1) THEN
+              RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+            END IF;
           END IF;
 
           SELECT COUNT(*)

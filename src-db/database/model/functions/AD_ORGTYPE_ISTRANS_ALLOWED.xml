@@ -81,14 +81,14 @@ BEGIN
       v_node_id:=v_parent_id;
     END LOOP; 
     
-    IF (v_le_count = 0) THEN
-     RETURN -1;
+    IF (v_le_count <> 1) THEN
+     RETURN v_le_count;
     END IF;
        
   END LOOP;
   
   
-  RETURN 0;
+  RETURN v_le_count;
 END AD_ORGTYPE_ISTRANS_ALLOWED
 ]]></body>
     </function>

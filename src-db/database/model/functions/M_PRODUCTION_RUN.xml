@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -41,6 +41,8 @@
   v_available_period NUMBER:=0;
   v_is_ready AD_Org.IsReady%TYPE;
   v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
+  v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
+  v_org_bule_id AD_Org.AD_Org_ID%TYPE;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -155,7 +157,7 @@
       * Create Lines
       */
       IF(NOT FINISH_PROCESS) THEN
-        /**************************************************************************
+        /***************************************************************************/
         -- Check the header belongs to a organization where transactions are posible and ready to use
         SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
         INTO v_is_ready, v_is_tr_allow
@@ -170,8 +172,7 @@
           RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
         END IF;
         
-	* Check the lines belong to the same business unit or legal entity as the header
-        */     
+	    -- Check the lines belong to the same business unit or legal entity as the header    
         SELECT AD_ORG_CHK_DOCUMENTS('M_PRODUCTION', 'M_PRODUCTIONPLAN', v_Record_ID, 'M_PRODUCTION_ID', 'M_PRODUCTION_ID') INTO v_is_included FROM dual;
         IF (v_is_included=-1) THEN
           RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
@@ -184,24 +185,31 @@
           IF (v_is_included=-1) THEN
             RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
           END IF;
-        END LOOP;
+        END LOOP;        
         
-        -- Check the period control is opened    
-        SELECT COUNT(C_Period_ID)
-        INTO v_available_period
-        FROM C_Period
-        WHERE v_MovementDate BETWEEN STARTDATE AND ENDDATE
-        AND EXISTS (SELECT 1
-                    FROM C_PeriodControl
-                    WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
-                    AND DocBaseType='MMP'
-                    AND AD_Org_ID=AD_ORG_GETCALENDAROWNER (v_Org_ID)
-                    AND PeriodStatus='O'
-                    );
+        -- Check the period control is opened (only if it is legal entity with accounting)
+        -- Gets the BU or LE of the document
+        SELECT AD_GET_DOC_LE_BU('M_PRODUCTION', v_Record_ID, 'M_PRODUCTION_ID')
+        INTO v_org_bule_id
+        FROM DUAL;
         
-        IF (v_available_period<>1) THEN
-          RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+        SELECT AD_OrgType.IsAcctLegalEntity
+        INTO v_isacctle
+        FROM AD_OrgType, AD_Org
+        WHERE AD_Org.AD_OrgType_ID = AD_OrgType.AD_OrgType_ID
+        AND AD_Org.AD_Org_ID=v_org_bule_id;
+        
+        IF (v_isacctle='Y') THEN
+          SELECT C_CHK_OPEN_PERIOD(v_Org_ID, v_MovementDate, 'MMP', NULL) 
+          INTO v_available_period
+          FROM DUAL;
+          
+          IF (v_available_period<>1) THEN
+            RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+          END IF;
         END IF;
+        
+        
         
         IF(v_IsCreated<>'Y') THEN
           -- For every Production Plan

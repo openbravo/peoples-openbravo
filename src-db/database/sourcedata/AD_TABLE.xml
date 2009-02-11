@@ -18366,7 +18366,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--21E98AE4A7D94935A32D17B6EFC81AAC DESCRIPTION-->
 <!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <DESCRIPTION><![CDATA[Defines an organization type which will be available into the system]]></DESCRIPTION>
 <!--21E98AE4A7D94935A32D17B6EFC81AAC HELP-->
-<!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <HELP><![CDATA[An organization can be a Legal Entity, a Business Unit or neither of both.
+<!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <HELP><![CDATA[An organization can be a Legal Entity (with and without accounting), a Business Unit or neither of both.
 You can also select if transactions are allowed or not for this organization type.]]></HELP>
 <!--21E98AE4A7D94935A32D17B6EFC81AAC TABLENAME-->
 <!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <TABLENAME><![CDATA[AD_OrgType]]></TABLENAME>

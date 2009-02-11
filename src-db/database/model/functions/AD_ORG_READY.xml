@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2008 Openbravo SL
+* All portions are Copyright (C) 2008-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -26,7 +26,7 @@
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
   v_IsRecursive AD_Org.IsActive%TYPE:='N';
-  
+  v_IsAcctLE AD_ORGTYPE.IsAcctLegalEntity%TYPE:='N';
 
   v_num NUMBER; 
   TYPE RECORD IS REF CURSOR;
@@ -78,18 +78,30 @@ BEGIN
     
     v_ResultStr:='Checking LE';
     SELECT AD_ORGTYPE_ISTRANS_ALLOWED() INTO v_num FROM DUAL;
-    IF (v_num = -1) THEN
+    IF (v_num <> 1) THEN
       ROLLBACK;
       v_Result:=0;
-      RAISE_APPLICATION_ERROR(-20540, 'Every organization where transactions are possible must belong (at least) to a legal entity organization.');
+      RAISE_APPLICATION_ERROR(-20540, 'Every organization where transactions are possible must have one and only one ancestor (including itself) that is a legal entity');
     END IF;
     
+    v_ResultStr:='Checking BU';
+    SELECT AD_ORGTYPE_ISLE_ISBU() INTO v_num FROM DUAL;
+    IF (v_num > 1) THEN
+      ROLLBACK;
+      v_Result:=0;
+      RAISE_APPLICATION_ERROR(-20541, 'Each organization can have one and only one ancestor (including itself) that is a business unit');
+    ELSIF (v_num = -1) THEN
+      ROLLBACK;
+      v_Result:=0;
+      RAISE_APPLICATION_ERROR(-20546, 'A business unit must have one and only one ancestor that is a legal entity');
+    END IF;
+      
     v_ResultStr:='Checking Schemas';
     SELECT AD_ORG_CHK_SCHEMAS() INTO v_num FROM DUAL;
     IF (v_num = -1) THEN
       ROLLBACK;
       v_Result:=0;
-      RAISE_APPLICATION_ERROR(-20542, 'Every legal entity must have itself or an ancestor at least an accounting schema attached to it');
+      RAISE_APPLICATION_ERROR(-20542, 'Every legal entity with accounting must have itself or an ancestor at least an accounting schema attached to it');
     END IF;
     
     v_ResultStr:='Checking Calendar';
@@ -97,7 +109,7 @@ BEGIN
     IF (v_num = -3) THEN
       ROLLBACK;
       v_Result:=0;
-      RAISE_APPLICATION_ERROR(-20537, 'Every legal entity must have itself or an ancestor at least a calendar attached to it');
+      RAISE_APPLICATION_ERROR(-20537, 'Every legal entity with accounting must have itself or an ancestor at least a calendar attached to it');
     ELSIF (v_num = -2) THEN
       ROLLBACK;
       v_Result:=0;

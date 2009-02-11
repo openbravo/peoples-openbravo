@@ -52,6 +52,8 @@
     v_available_period NUMBER:=0;
     v_is_ready AD_Org.IsReady%TYPE;
     v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
+    v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
+    v_org_bule_id AD_Org.AD_Org_ID%TYPE;
     END_PROCESS BOOLEAN:=false;
   BEGIN
     --  Update AD_PInstance
@@ -135,22 +137,28 @@
         RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
       END IF;
       
-      -- Check the period control is opened    
-      SELECT COUNT(C_Period_ID)
-      INTO v_available_period
-      FROM C_Period
-      WHERE v_MoveDate BETWEEN STARTDATE AND ENDDATE
-      AND EXISTS (SELECT 1
-                  FROM C_PeriodControl
-                  WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
-                  AND DocBaseType='MMM'
-                  AND AD_Org_ID=AD_ORG_GETCALENDAROWNER (v_Org_ID)
-                  AND PeriodStatus='O'
-                  );
+      -- Check the period control is opened (only if it is legal entity with accounting)
+      -- Gets the BU or LE of the document
+      SELECT AD_GET_DOC_LE_BU('M_MOVEMENT', v_Record_ID, 'M_MOVEMENT_ID')
+      INTO v_org_bule_id
+      FROM DUAL;
       
-      IF (v_available_period<>1) THEN
-        RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+      SELECT AD_OrgType.IsAcctLegalEntity
+      INTO v_isacctle
+      FROM AD_OrgType, AD_Org
+      WHERE AD_Org.AD_OrgType_ID = AD_OrgType.AD_OrgType_ID
+      AND AD_Org.AD_Org_ID=v_org_bule_id;
+      
+      IF (v_isacctle='Y') THEN
+        SELECT C_CHK_OPEN_PERIOD(v_Org_ID, v_MoveDate, 'MMM', NULL) 
+        INTO v_available_period
+        FROM DUAL;
+        
+        IF (v_available_period<>1) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+        END IF;
       END IF;
+          
       
       v_ResultStr:='LockingMovement';
       UPDATE M_Movement  SET Processing='Y'  WHERE M_Movement_ID=v_Record_ID;
