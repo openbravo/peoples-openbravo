@@ -296,23 +296,23 @@
         SELECT NODE_ID, ID, NAME 
         FROM (
          SELECT AD_Client_ID as Node_ID, AD_Tree_ID AS ID, NAME, 1 AS SEQNO
-        FROM AD_Tree 
-        WHERE AD_Client_ID IN ('1')  
+        FROM AD_Tree t1
+        WHERE t1.AD_Client_ID IN ('1')  
         AND AD_Client_ID != '0'
         AND TreeType = ? 
         AND IsActive = 'Y'
       UNION
        SELECT AD_Client_ID as Node_ID, AD_Tree_ID AS ID, NAME, 2 AS SEQNO
-        FROM AD_Tree 
-        WHERE AD_Client_ID IN ('2') 
+        FROM AD_Tree t2
+        WHERE t2.AD_Client_ID IN ('2') 
         AND AD_Client_id = '0'
         AND TreeType = ?
         AND IsActive = 'Y') f
         ORDER BY SEQNO
       </Sql>
-        <Parameter name="adClientId" optional="true" type="replace" after="AD_Client_ID IN (" text="'1'"/>
+        <Parameter name="adClientId" optional="true" type="replace" after="t1.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="treetype"/>
-        <Parameter name="adClientId" optional="true" type="replace" after="AD_Client_id IN (" text="'2'"/>
+        <Parameter name="adClientId" optional="true" type="replace" after="t2.AD_Client_ID IN (" text="'2'"/>
         <Parameter name="treetype"/>
    </SqlMethod>
    <SqlMethod name="TreeName" type="preparedStatement" return="multiple">
