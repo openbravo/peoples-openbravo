@@ -704,7 +704,7 @@ public class ImportOrder extends ImportProcess {
             cdebtpayment.paymentrule = arrayPayment[k];
             cdebtpayment.amount = arrayAmount[k];
             cdebtpayment.ispaid = "N";
-            cdebtpayment.dateplanned = data[i].dateordered;
+            cdebtpayment.dateplanned = data[i].dateordered.equals("") ? DateTimeData.today(conn) : data[i].dateordered;
             cdebtpayment.ismanual = "N";
             cdebtpayment.isvalid = "Y";
             cdebtpayment.changesettlementcancel = "N";

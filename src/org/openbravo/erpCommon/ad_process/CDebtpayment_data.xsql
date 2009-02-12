@@ -51,7 +51,7 @@
     <Sql>
       <![CDATA[
         INSERT INTO C_DEBT_PAYMENT (C_DEBT_PAYMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, C_BPARTNER_ID, C_CURRENCY_ID, PAYMENTRULE, ISPAID, AMOUNT, DATEPLANNED, ISMANUAL, ISVALID, CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, GENERATE_PROCESSED, GLITEMAMT, ISDIRECTPOSTING, STATUS, STATUS_INITIAL, C_ORDER_ID) 
-        VALUES ( ?, ?, ?, 'Y', TO_DATE(now()), ?, TO_DATE(now()), ?, ?, ?, ?, ?, ?, TO_DATE(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES ( ?, ?, ?, 'Y', TO_DATE(now()), ?, TO_DATE(now()), ?, ?, ?, ?, ?, TO_NUMBER(?), TO_DATE(?), ?, ?, ?, ?, ?, TO_NUMBER(?), ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="cDebtPaymentId"/>
