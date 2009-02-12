@@ -361,6 +361,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     String strDescription = Utility.messageBD(this, "RequisitionToOrderCreate", vars.getLanguage());
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_forms/RequisitionToOrderCreate").createXmlDocument();
+    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
