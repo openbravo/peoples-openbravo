@@ -59,7 +59,10 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_result NUMBER(1):=1;
-  v_Message VARCHAR2(4000):='';
+  v_logMessageLength NUMBER:= 2000;
+  v_logLines NUMBER:=0;
+  v_isWholeLog BOOLEAN := true;
+  v_Message VARCHAR2(2000):='';
   result_String VARCHAR2(2000):='';
   v_ResultLinesStr VARCHAR2(2000):='';
   -- Parameter
@@ -550,7 +553,12 @@
             v_order_delivered_count := v_order_delivered_count +1;
             result_String := '@OrderDocumentno@ ' || cur_order.DocumentNo || ' @InoutDocumentno@ ' || v_DocumentNo || ': @ShipmentSuccess@.' ;
           END IF;
-          v_Message:=v_Message || result_String || '<br><br>';          
+          IF (LENGTH(v_Message || result_String || '<br><br>') <= v_logMessageLength + 3 ) THEN
+		v_Message:=v_Message || result_String || '<br><br>';          
+		v_logLines := v_logLines + 1;
+	  ELSE
+		v_isWholeLog := false;
+	  END IF;
           result_String := '';
           v_resultlinesstr := '';
           IF(NOT Next_Order) THEN
@@ -711,6 +719,10 @@
       --<<FINISH_PROCESS>>
       IF(p_PInstance_ID IS NOT NULL) THEN
         --  Update AD_PInstance
+      IF (v_isWholeLog <> true) THEN
+	v_Message := 'First ' || v_logLines || ' result(s):' || '<br>' || v_Message;
+      END IF;
+	
         DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
         AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_result, v_Message) ;
       ELSE
