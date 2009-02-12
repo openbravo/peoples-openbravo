@@ -776,12 +776,22 @@ RETURNS DATE AS '
 DECLARE 
   p_transformation VARCHAR;
 BEGIN
-IF UPPER($2) = ''MM'' THEN
+IF UPPER($2) = ''CC'' THEN
+  p_transformation := ''century'';
+ELSIF UPPER($2) = ''YY'' THEN
+  p_transformation := ''year'';
+ELSIF UPPER($2) = ''MM'' THEN
   p_transformation := ''month'';
-ELSIF UPPER($2) = ''DD'' THEN
-  p_transformation := ''day'';
 ELSIF UPPER($2) = ''Q'' THEN
   p_transformation := ''quarter'';
+ELSIF UPPER($2) = ''DAY'' THEN
+  p_transformation := ''week'';
+ELSIF UPPER($2) = ''DD'' THEN
+  p_transformation := ''day'';
+ELSIF UPPER($2) = ''HH'' THEN
+  p_transformation := ''hour'';
+ELSIF UPPER($2) = ''MI'' THEN
+  p_transformation := ''minute'';
 ELSE 
   p_transformation := $2;
 END IF;
@@ -799,10 +809,22 @@ RETURNS DATE AS '
 DECLARE 
   p_transformation VARCHAR;
 BEGIN
-IF UPPER($2) = ''MM'' THEN
+IF UPPER($2) = ''CC'' THEN
+  p_transformation := ''century'';
+ELSIF UPPER($2) = ''YY'' THEN
+  p_transformation := ''year'';
+ELSIF UPPER($2) = ''MM'' THEN
   p_transformation := ''month'';
+ELSIF UPPER($2) = ''Q'' THEN
+  p_transformation := ''quarter'';
+ELSIF UPPER($2) = ''DAY'' THEN
+  p_transformation := ''week'';
 ELSIF UPPER($2) = ''DD'' THEN
   p_transformation := ''day'';
+ELSIF UPPER($2) = ''HH'' THEN
+  p_transformation := ''hour'';
+ELSIF UPPER($2) = ''MI'' THEN
+  p_transformation := ''minute'';
 ELSE 
   p_transformation := $2;
 END IF;
