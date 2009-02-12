@@ -272,7 +272,7 @@ table7.C_BPARTNER_ID, TO_CHAR(table8.address1) AS address1, to_char(table8.addre
 					<graphicElement stretchType="NoStretch"/>
 					<imageExpression class="java.lang.String"><![CDATA[$P{BASE_WEB}+"/images/CompanyLogo_big.png"]]></imageExpression>
 				</image>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="-1"
 						y="202"
@@ -369,9 +369,9 @@ table7.C_BPARTNER_ID, TO_CHAR(table8.address1) AS address1, to_char(table8.addre
 					<subreportParameter  name="USER_CLIENT">
 						<subreportParameterExpression><![CDATA[$P{USER_CLIENT}]]></subreportParameterExpression>
 					</subreportParameter>
-                    <subreportParameter  name="NUMBERFORMAT">
-                        <subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
-                    </subreportParameter>
+					<subreportParameter  name="NUMBERFORMAT">
+						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter  name="USER_ORG">
 						<subreportParameterExpression><![CDATA[$P{USER_ORG}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -453,7 +453,7 @@ table7.C_BPARTNER_ID, TO_CHAR(table8.address1) AS address1, to_char(table8.addre
 					</textElement>
 				<text><![CDATA[Generated on]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
 						y="17"
