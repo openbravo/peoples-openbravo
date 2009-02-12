@@ -113,3 +113,9 @@ authentication.class=
 
 # External Pentaho Services
 pentahoServer=
+
+##############
+# Validation #
+##############
+
+validate.model=true
