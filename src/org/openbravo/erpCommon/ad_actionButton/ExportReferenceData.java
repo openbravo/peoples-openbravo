@@ -86,8 +86,9 @@ public class ExportReferenceData extends HttpSecureAppServlet {
         return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
       ExportReferenceDataData[] module = ExportReferenceDataData.selectModule(this,
           data[0].adModuleId);
+
       final String xml = DataExportService.getInstance().exportDataSetToXML(myDataset,
-          data[0].adModuleId);
+          data[0].adModuleId, new java.util.HashMap<String, Object>());
       File myFolder = new File(vars.getSessionValue("#sourcePath") + "/modules/"
           + module[0].javapackage + "/referencedata/standard");
       File myFile = new File(vars.getSessionValue("#sourcePath") + "/modules/"

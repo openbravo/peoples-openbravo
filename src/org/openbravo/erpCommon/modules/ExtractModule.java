@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -116,7 +117,8 @@ public class ExtractModule {
 
     for (final DataSet ds : dss) {
       try {
-        final String xml = DataExportService.getInstance().exportDataSetToXML(ds, moduleId);
+        final String xml = DataExportService.getInstance().exportDataSetToXML(ds, moduleId,
+            new HashMap<String, Object>());
         if (xml != null) {
           final String fileName = ds.getName() + ".xml";
           final FileWriter fw = new FileWriter(new File(stdDir, fileName));

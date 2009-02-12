@@ -20,6 +20,7 @@
 package org.openbravo.service.db;
 
 import java.io.File;
+import java.io.FileReader;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
@@ -46,19 +47,22 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
       }
       log.info("Importing from file " + importFile.getAbsolutePath());
 
-      String xml = DbUtility.readFile(importFile);
       final ClientImportProcessor importProcessor = new ClientImportProcessor();
       importProcessor.setNewName(null);
-      final ImportResult ir = DataImportService.getInstance().importClientData(xml,
-          importProcessor, false);
-      xml = null; // set to null to make debugging faster
-      if (ir.hasErrorOccured()) {
-        if (ir.getException() != null) {
-          throw new OBException(ir.getException());
+      try {
+        final ImportResult ir = DataImportService.getInstance().importClientData(importProcessor,
+            false, new FileReader(importFile));
+
+        if (ir.hasErrorOccured()) {
+          if (ir.getException() != null) {
+            throw new OBException(ir.getException());
+          }
+          if (ir.getErrorMessages() != null) {
+            throw new OBException(ir.getErrorMessages());
+          }
         }
-        if (ir.getErrorMessages() != null) {
-          throw new OBException(ir.getErrorMessages());
-        }
+      } catch (Exception e) {
+        throw new OBException("Exception while importing from file " + importFile);
       }
     }
     OBDal.getInstance().commitAndClose();

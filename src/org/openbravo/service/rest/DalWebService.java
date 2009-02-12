@@ -19,6 +19,7 @@
 
 package org.openbravo.service.rest;
 
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,11 +85,11 @@ public class DalWebService implements WebService {
     final String segment = WebServiceUtil.getInstance().getFirstSegment(path);
     final String[] segments = WebServiceUtil.getInstance().getSegments(path);
 
-    Document doc;
+    String xml;
     if (segment == null || segment.length() == 0) {
-      doc = ModelXMLConverter.getInstance().getEntitiesAsXML();
+      xml = XMLUtil.getInstance().toString(ModelXMLConverter.getInstance().getEntitiesAsXML());
     } else if (segment.equals("schema")) {
-      doc = ModelXMLConverter.getInstance().getSchema();
+      xml = XMLUtil.getInstance().toString(ModelXMLConverter.getInstance().getSchema());
     } else {
       final String entityName = segment;
 
@@ -149,19 +150,21 @@ public class DalWebService implements WebService {
         if (countOperation) {
           response.setContentType("text/xml");
           response.setCharacterEncoding("utf-8");
-          final String xml = WebServiceUtil.getInstance().createResultXML("" + obq.count());
+          final String xmlResult = WebServiceUtil.getInstance().createResultXML("" + obq.count());
           final Writer w = response.getWriter();
-          w.write(xml);
+          w.write(xmlResult);
           w.close();
           return;
         } else {
+          final StringWriter sw = new StringWriter();
           final EntityXMLConverter exc = EntityXMLConverter.newInstance();
           exc.setOptionEmbedChildren(true);
           exc.setOptionIncludeChildren(true);
           exc.setOptionIncludeReferenced(false);
           exc.setOptionExportClientOrganizationReferences(true);
+          exc.setOutput(sw);
           exc.process(obq.list());
-          doc = exc.getDocument();
+          xml = sw.toString();
         }
       } else {
         final BaseOBObject result = OBDal.getInstance().get(entityName, id);
@@ -169,13 +172,15 @@ public class DalWebService implements WebService {
           throw new ResourceNotFoundException("No resource found for entity " + entityName
               + " using id " + id);
         }
+        final StringWriter sw = new StringWriter();
         final EntityXMLConverter exc = EntityXMLConverter.newInstance();
         exc.setOptionEmbedChildren(true);
         exc.setOptionIncludeChildren(true);
         exc.setOptionIncludeReferenced(false);
         exc.setOptionExportClientOrganizationReferences(true);
+        exc.setOutput(sw);
         exc.process(result);
-        doc = exc.getDocument();
+        xml = sw.toString();
       }
     }
     if (request.getParameter("template") != null) {
@@ -185,21 +190,20 @@ public class DalWebService implements WebService {
         throw new OBException(
             "The templates expect an url to end with dal/, the current url ends with just dal (without the /)");
       }
-      final Document newDoc = WebServiceUtil.getInstance().applyTemplate(doc,
+      final String templatedXml = WebServiceUtil.getInstance().applyTemplate(xml,
           this.getClass().getResourceAsStream(request.getParameter("template")), url);
       response.setContentType("text/html");
       response.setCharacterEncoding("utf-8");
-      final String xml = XMLUtil.getInstance().toString(newDoc);
+      final Writer w = response.getWriter();
+      w.write(templatedXml);
+      w.close();
+    } else {
+      response.setContentType("text/xml");
+      response.setCharacterEncoding("utf-8");
       final Writer w = response.getWriter();
       w.write(xml);
       w.close();
     }
-    response.setContentType("text/xml");
-    response.setCharacterEncoding("utf-8");
-    final String xml = XMLUtil.getInstance().toString(doc);
-    final Writer w = response.getWriter();
-    w.write(xml);
-    w.close();
   }
 
   /**

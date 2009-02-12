@@ -125,7 +125,7 @@ public class EntityResolver implements OBNotSingleton {
     // note id can be null if someone did not care to add it in a manual
     // xml file
     if (id != null) {
-      result = data.get(entityName + id);
+      result = data.get(getKey(entityName, id));
       if (result != null) {
         return result;
       }
@@ -135,7 +135,7 @@ public class EntityResolver implements OBNotSingleton {
 
     if (result != null) {
       // found, cache it for future use
-      data.put(entityName + id, result);
+      data.put(getKey(entityName, id), result);
     } else {
       if (referenced && !isOptionCreateReferencedIfNotFound()) {
         throw new EntityNotFoundException("Entity " + entityName + " with id " + id + " not found");
@@ -160,7 +160,7 @@ public class EntityResolver implements OBNotSingleton {
         result.setNewOBObject(true);
 
         // keep it here so it can be found later
-        data.put(entityName + id, result);
+        data.put(getKey(entityName, id), result);
       }
 
       // TODO: add warning if the entity is created in a different
@@ -482,4 +482,33 @@ public class EntityResolver implements OBNotSingleton {
     return organizationZero;
   }
 
+  /**
+   * Replace an object in the cache with another one. The new one is then found when using the id of
+   * the old one. The id of the previous one can be local to the xml.
+   * 
+   * @param prevObject
+   *          the object current in the data cache
+   * @param newObject
+   *          the new object which can then be found under the old object
+   */
+  public void exchangeObjects(BaseOBObject prevObject, BaseOBObject newObject) {
+    if (!(prevObject.getId() instanceof String)) {
+      // these are never refered to anyway
+      return;
+    }
+    final String id = (String) prevObject.getId();
+    if (id == null) {
+      // no one will refer to these ones
+      return;
+    }
+    Check.isTrue(prevObject.getEntityName().compareTo(newObject.getEntityName()) == 0,
+        "Entity names are different for objects " + prevObject + " and " + newObject);
+
+    data.put(getKey(prevObject.getEntityName(), id), newObject);
+  }
+
+  // convenience to prevent using id and entityName in the wrong order
+  protected String getKey(String entityName, String id) {
+    return entityName + id;
+  }
 }

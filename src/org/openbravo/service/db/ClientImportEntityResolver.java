@@ -70,7 +70,7 @@ public class ClientImportEntityResolver extends EntityResolver {
     }
 
     if (id != null) {
-      result = getData().get(entityName + id);
+      result = getData().get(getKey(entityName, id));
       if (result != null) {
         return result;
       }
@@ -85,7 +85,7 @@ public class ClientImportEntityResolver extends EntityResolver {
 
     if (result != null) {
       // found, cache it for future use
-      getData().put(entityName + id, result);
+      getData().put(getKey(entityName, id), result);
     } else {
 
       // not found create a new one
@@ -102,7 +102,7 @@ public class ClientImportEntityResolver extends EntityResolver {
         }
 
         // keep it here so it can be found later
-        getData().put(entityName + id, result);
+        getData().put(getKey(entityName, id), result);
       }
     }
     return result;

@@ -19,6 +19,8 @@
 
 package org.openbravo.service.db;
 
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -97,23 +99,7 @@ public class DataExportService implements OBSingleton {
    * @return the XML string containing the data of the dataset
    */
   public String exportDataSetToXML(DataSet dataSet) {
-    return exportDataSetToXML(dataSet, null);
-  }
-
-  /**
-   * Export the data of a specific dataSet to XML. If the dataset is empty then a null value is
-   * returned.
-   * 
-   * @param dataSet
-   *          the dataset to export
-   * @param moduleId
-   *          is used as a parameter in where clauses of the DataSetTable and is used to set the
-   *          module id in the AD_REF_DATA_LOADED table
-   * @return the XML string containing the data of the dataset
-   */
-  public String exportDataSetToXML(DataSet dataSet, String moduleId) {
-    return exportDataSetToXML(dataSet, moduleId, new HashMap<String, Object>(), true, true, null,
-        true);
+    return exportDataSetToXML(dataSet, null, new HashMap<String, Object>());
   }
 
   /**
@@ -124,11 +110,12 @@ public class DataExportService implements OBSingleton {
    * @param parameters
    *          the parameters used in the queries, the client id should be passed in this map with
    *          the parameter name ClientID (note is case sensitive)
-   * @return the xml string, the resulting xml from the export, can be null if nothing is exported
+   * @param out
+   *          the xml is written to this writer
    * @see CLIENT_DATA_SET_NAME
    * @see CLIENT_ID_PARAMETER_NAME
    */
-  public String exportClientToXML(Map<String, Object> parameters, boolean exportAuditInfo) {
+  public void exportClientToXML(Map<String, Object> parameters, boolean exportAuditInfo, Writer out) {
     DataSet dataSet = null;
     try {
       OBContext.getOBContext().setInAdministratorMode(true);
@@ -144,7 +131,36 @@ public class DataExportService implements OBSingleton {
           parameters.get(CLIENT_ID_PARAMETER_NAME));
 
       // the export part may not be run as superuser
-      return exportDataSetToXML(dataSet, null, parameters, false, false, client, exportAuditInfo);
+      log.debug("Exporting dataset " + dataSet.getName());
+      final EntityXMLConverter exc = EntityXMLConverter.newInstance();
+      exc.setOptionExportClientOrganizationReferences(true);
+      exc.setOptionMinimizeXMLSize(true);
+      exc.setOptionIncludeChildren(false);
+      exc.setOptionIncludeReferenced(true);
+      exc.setOptionExportTransientInfo(false);
+      exc.setOptionExportAuditInfo(exportAuditInfo);
+      exc.setAddSystemAttributes(false);
+      exc.setOutput(out);
+      exc.setClient(client);
+
+      final List<DataSetTable> dts = dataSet.getDataSetTableList();
+      Collections.sort(dts, new DatasetTableComparator());
+
+      final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
+      System.err.println("Total dts " + dts.size());
+      int i = 0;
+      for (final DataSetTable dt : dts) {
+        System.err.println(i++ + " Reading " + dt.getEntityName() + "...");
+        final List<BaseOBObject> list = DataSetService.getInstance().getExportableObjects(dt, null,
+            parameters);
+        toExport.addAll(list);
+        System.err.println("Read total " + list.size() + " records ");
+      }
+
+      if (toExport.size() > 0) {
+        exc.process(toExport);
+      }
+
     } finally {
       OBContext.getOBContext().restorePreviousAdminMode();
     }
@@ -159,52 +175,36 @@ public class DataExportService implements OBSingleton {
    * @param moduleId
    *          is used as a parameter in where clauses of the DataSetTable and is used to set the
    *          module id in the AD_REF_DATA_LOADED table
-   * @param exportClientOrganizationReferences
-   *          also export the properties which reference a client or organization
-   * @param parameters
-   *          parameters used in the wherequeries of {@link DataSetTable}
-   * @param exportTransientInfo
-   *          export transient properties
-   * @param addSystemAttributes
-   *          add Openbravo version and export time to the root tag
    * @return the XML string containing the data of the dataset
    */
-  public String exportDataSetToXML(DataSet dataSet, String moduleId,
-      Map<String, Object> parameters, boolean exportTransientInfo, boolean addSystemAttributes,
-      Client client, boolean exportAuditInfo) {
+  public String exportDataSetToXML(DataSet dataSet, String moduleId, Map<String, Object> parameters) {
+
     log.debug("Exporting dataset " + dataSet.getName());
 
     final EntityXMLConverter exc = EntityXMLConverter.newInstance();
     exc.setOptionIncludeReferenced(true);
-    exc.setOptionExportTransientInfo(exportTransientInfo);
-    exc.setOptionExportAuditInfo(exportAuditInfo);
-    exc.setAddSystemAttributes(addSystemAttributes);
-    if (client != null) {
-      exc.setClient(client);
-      exc.setOptionExportClientOrganizationReferences(true);
-    }
+    exc.setOptionExportTransientInfo(true);
+    exc.setOptionExportAuditInfo(true);
+    exc.setAddSystemAttributes(true);
+    final StringWriter out = new StringWriter();
+    exc.setOutput(out);
 
     final List<DataSetTable> dts = dataSet.getDataSetTableList();
     Collections.sort(dts, new DatasetTableComparator());
 
     final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
-    // System.err.println("Total dts " + dts.size());
     for (final DataSetTable dt : dts) {
       final Boolean isbo = dt.isBusinessObject();
       exc.setOptionIncludeChildren(isbo != null && isbo.booleanValue());
-      // System.err.println(i++ + " Reading " + dt.getTable().getName() + "...");
       final List<BaseOBObject> list = DataSetService.getInstance().getExportableObjects(dt,
           moduleId, parameters);
       toExport.addAll(list);
-      // System.err.println("Read total " + list.size() + " records ");
     }
 
     if (toExport.size() > 0) {
       exc.process(toExport);
-      return exc.getProcessResult();
-    } else {
-      return null;
     }
+    return out.toString();
   }
 
   // sort the datatable by id

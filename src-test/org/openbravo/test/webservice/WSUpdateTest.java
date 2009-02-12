@@ -62,18 +62,18 @@ public class WSUpdateTest extends BaseWSTest {
     cityId = city.getId();
   }
 
-  public void _testReadUpdateCity() throws Exception {
+  public void testReadUpdateCity() throws Exception {
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
     System.err.println(System.currentTimeMillis());
     String newCity;
-    if (city.indexOf("<locode>") != -1) { // test already run
-      final int index1 = city.indexOf("<locode>");
-      final int index2 = city.indexOf("</locode>");
-      newCity = city.substring(0, index1) + "<locode>"
+    if (city.indexOf("<coordinates>") != -1) { // test already run
+      final int index1 = city.indexOf("<coordinates>");
+      final int index2 = city.indexOf("</coordinates>");
+      newCity = city.substring(0, index1) + "<coordinates>"
           + ("" + System.currentTimeMillis()).substring(5) + city.substring(index2);
     } else {
-      newCity = city.replaceAll("<locode/>", "<locode>"
-          + ("" + System.currentTimeMillis()).substring(5) + "</locode>");
+      newCity = city.replaceAll("<coordinates/>", "<coordinates>"
+          + ("" + System.currentTimeMillis()).substring(5) + "</coordinates>");
     }
     final String content = doContentRequest("/ws/dal/City/" + cityId, newCity, 200, "<updated>",
         "POST");
@@ -89,7 +89,7 @@ public class WSUpdateTest extends BaseWSTest {
         "POST");
   }
 
-  public void _testReadAddDeleteCity() throws Exception {
+  public void testReadAddDeleteCity() throws Exception {
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
     String newCity = city.replaceAll("</name>", (System.currentTimeMillis() + "").substring(6)
         + "</name>");
@@ -138,6 +138,9 @@ public class WSUpdateTest extends BaseWSTest {
     // delete it
     doDirectDeleteRequest("/ws/dal/City/" + id, 200);
 
+    // sleep 1 seconds, so that the city is deleted
+    Thread.sleep(1000);
+
     // it should not be there!
     try {
       doTestGetRequest("/ws/dal/City/" + id, "<error>", 404);
@@ -148,7 +151,7 @@ public class WSUpdateTest extends BaseWSTest {
     }
   }
 
-  public void _testReadAddCityWrongMethodError() throws Exception {
+  public void testReadAddCityWrongMethodError() throws Exception {
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
     String newCity = city.replaceAll("</name>", (System.currentTimeMillis() + "").substring(6)
         + "</name>");
@@ -156,8 +159,7 @@ public class WSUpdateTest extends BaseWSTest {
     final int index = newCity.indexOf("<id>");
     newCity = newCity.substring(0, index) + "<id>test" + newCity.substring(index + "<id>".length());
     try {
-      doContentRequest("/ws/dal/City", newCity, 500, "<inserted>", "PUT");
-      fail();
+      doContentRequest("/ws/dal/City", newCity, 500, "", "PUT");
     } catch (final Exception e) {
       assertTrue(e.getMessage().indexOf("500") != -1);
     }

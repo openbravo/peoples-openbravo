@@ -48,16 +48,14 @@ public class ExportReferenceDataTask extends ReferenceDataTask {
       final Map<String, Object> parameters = new HashMap<String, Object>();
       parameters.put(DataExportService.CLIENT_ID_PARAMETER_NAME, client.getId());
 
-      log.info("Exporting client " + client.getName());
-      final String xml = DataExportService.getInstance().exportClientToXML(parameters, false);
-
       final File exportFile = new File(exportDir, getExportFileName(client.getName()));
       if (exportFile.exists()) {
         exportFile.delete();
       }
       try {
         final FileWriter fw = new FileWriter(exportFile);
-        fw.write(xml);
+        log.info("Exporting client " + client.getName());
+        DataExportService.getInstance().exportClientToXML(parameters, false, fw);
         fw.close();
       } catch (final IOException e) {
         throw new OBException(e);

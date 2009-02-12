@@ -20,6 +20,7 @@
 package org.openbravo.service.db;
 
 import java.io.File;
+import java.io.FileReader;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
@@ -50,11 +51,10 @@ public class ImportClientProcess implements org.openbravo.scheduling.Process {
           && importAuditInfoStr.equalsIgnoreCase("Y");
       log.debug("Importing file using name " + newName);
 
-      final String xml = DbUtility.readFile(getImportFile());
       final ClientImportProcessor importProcessor = new ClientImportProcessor();
       importProcessor.setNewName((newName != null ? newName.trim() : newName));
-      final ImportResult ir = DataImportService.getInstance().importClientData(xml,
-          importProcessor, importAuditInfo);
+      final ImportResult ir = DataImportService.getInstance().importClientData(importProcessor,
+          importAuditInfo, new FileReader(getImportFile()));
       if (ir.hasErrorOccured()) {
         final StringBuilder sb = new StringBuilder();
         if (ir.getException() != null) {

@@ -32,7 +32,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
@@ -44,9 +43,11 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * Converts a XML string to an objectgraph with objects. During the XML parse phase this converter
- * will match XML tags with new or existing (in the database) business objects. The matching logic
- * is implemented in the {@link EntityResolver}.
+ * Converts a XML string to an objectgraph with objects using Dom4j. This XMLEntityConverter can be
+ * used for smaller xml strings (less than 100mb). This XMLEntityConverter can handle OneToMany
+ * relations, this in contrast to the {@link StaxXMLEntityConverter}. During the XML parse phase
+ * this converter will match XML tags with new or existing (in the database) business objects. The
+ * matching logic is implemented in the {@link EntityResolver}.
  * <p/>
  * The XMLEntityConverter keeps track of which objects are new, which exist but do not need to be
  * updated or which objects exist but need to be updated.
@@ -60,63 +61,13 @@ import org.openbravo.model.common.enterprise.Organization;
  * @author mtaal
  */
 
-public class XMLEntityConverter implements OBNotSingleton {
+public class XMLEntityConverter extends BaseXMLEntityConverter {
   // This class should translate the
 
   private static final Logger log = Logger.getLogger(EntityXMLConverter.class);
 
   public static XMLEntityConverter newInstance() {
     return OBProvider.getInstance().get(XMLEntityConverter.class);
-  }
-
-  private EntityResolver entityResolver;
-
-  private EntityXMLProcessor importProcessor;
-
-  // keeps track which instances are part of the xml because they were
-  // referenced
-  private Set<BaseOBObject> referenced = new HashSet<BaseOBObject>();
-
-  // keeps track which instances changed during the import and need to
-  // be updated
-  private List<BaseOBObject> toUpdate = new ArrayList<BaseOBObject>();
-  private Set<BaseOBObject> checkUpdate = new HashSet<BaseOBObject>();
-
-  // keeps track which instances need to be inserted
-  private List<BaseOBObject> toInsert = new ArrayList<BaseOBObject>();
-  private Set<BaseOBObject> checkInsert = new HashSet<BaseOBObject>();
-
-  // the client and organization for which the import is done
-  private Client client;
-  private Organization organization;
-
-  // some error and log messages
-  private StringBuilder errorMessages = new StringBuilder();
-  private StringBuilder logMessages = new StringBuilder();
-  private StringBuilder warningMessages = new StringBuilder();
-
-  // signals that this is an overall client data import
-  // in this case the client/organization property is updated through the
-  // xml, note that this assumes that the client/organization of the object
-  // are present in xml! Also if this option is set then the client and
-  // organization in this object are null
-  private boolean optionClientImport = false;
-
-  private boolean optionImportAuditInfo = false;
-
-  // process stops at 20 errors
-  private int noOfErrors = 0;
-
-  protected void clear() {
-    toUpdate.clear();
-    checkUpdate.clear();
-    toInsert.clear();
-    checkInsert.clear();
-    errorMessages = new StringBuilder();
-    logMessages = new StringBuilder();
-    noOfErrors = 0;
-    referenced.clear();
-    entityResolver.clear();
   }
 
   /**
@@ -131,7 +82,8 @@ public class XMLEntityConverter implements OBNotSingleton {
   public List<BaseOBObject> process(String xml) {
     try {
       final Document doc = DocumentHelper.parseText(xml);
-      return process(doc);
+      final List<BaseOBObject> result = process(doc);
+      return result;
     } catch (final Exception e) {
       throw new EntityXMLException(e);
     }
@@ -175,6 +127,7 @@ public class XMLEntityConverter implements OBNotSingleton {
         checkDuplicates.add(bob);
       }
     }
+    repairReferences();
     return result;
   }
 
@@ -267,6 +220,25 @@ public class XMLEntityConverter implements OBNotSingleton {
               updated = true;
             }
           }
+        } else if (p.isOneToMany()) {
+          // resolve the content of the list
+          final List<BaseOBObject> newValues = new ArrayList<BaseOBObject>();
+          for (final Object o : childElement.elements()) {
+            final Element listElement = (Element) o;
+            newValues.add(processEntityElement(listElement.getName(), listElement, true));
+          }
+          // get the currentvalue and compare
+          final List<BaseOBObject> currentValues = (List<BaseOBObject>) currentValue;
+
+          if (!newValues.equals(currentValues)) {
+            if (!preventRealUpdate) {
+              // TODO: is this efficient? Or will it even work
+              // with hibernate first removing all?
+              currentValues.clear();
+              currentValues.addAll(newValues);
+              updated = true;
+            }
+          }
         } else {
           Check.isTrue(!p.isOneToMany(), "One to many property not allowed here");
           // never update the org or client through xml!
@@ -306,110 +278,12 @@ public class XMLEntityConverter implements OBNotSingleton {
       }
 
       // do the unique constraint matching here
-      // if there is a matching object in the db then that one should be
-      // used from now on this check can not be done earlier because
+      // this check can not be done earlier because
       // earlier no properties are set for a new object
-      if (bob.isNewOBObject() && entity.getUniqueConstraints().size() > 0) {
-        final BaseOBObject otherUniqueObject = entityResolver.findUniqueConstrainedObject(bob);
-        if (otherUniqueObject != null) {
-          // now copy the imported values from the bob to
-          // otherUniqueObject
-          for (final Property p : entity.getProperties()) {
-            if (p.isOneToMany()) {
-              // these are done below
-              continue;
-            }
-            final boolean isNotImportableProperty = p.isTransient(bob) || p.isAuditInfo()
-                || p.isInactive() || p.isId();
-            if (isNotImportableProperty) {
-              continue;
-            }
-            // do not change the client or organization of an
-            // existing object
-            if (p.isClientOrOrganization()) {
-              continue;
-            }
-            otherUniqueObject.set(p.getName(), bob.get(p.getName()));
-          }
-          // and replace the bob, because the object from the db
-          // should be used
-          bob = otherUniqueObject;
-        }
-      }
+      bob = replaceByUniqueObject(bob);
 
-      // the onetomany properties are imported here because
-      // they interfere with uniqueConstraint checking and using
-      // another unique object. The entities imported as children nl.
-      // can refer to the parent in which the unique object in the db
-      // should already be resolved. This is done above.
-      for (final Element element : oneToManyElements) {
-        final Property p = entity.getProperty(element.getName());
-        final Object currentValue = bob.get(p.getName());
-
-        // resolve the content of the list
-        final List<BaseOBObject> newValues = new ArrayList<BaseOBObject>();
-        for (final Object o : element.elements()) {
-          final Element listElement = (Element) o;
-          newValues.add(processEntityElement(listElement.getName(), listElement, true));
-        }
-        // get the currentvalue and compare
-        final List<BaseOBObject> currentValues = (List<BaseOBObject>) currentValue;
-
-        if (!newValues.equals(currentValues)) {
-          if (!preventRealUpdate) {
-            // TODO: is this efficient? Or will it even work
-            // with hibernate first removing all?
-            currentValues.clear();
-            currentValues.addAll(newValues);
-            updated = true;
-          }
-        }
-
-      }
-      final String originalId = getEntityResolver().getOriginalId(bob);
-      String originalIdStr = "";
-      if (originalId != null) {
-        originalIdStr = ", with import id: " + originalId;
-      }
-
-      if (!writable && updated) {
-        if (bob.isNewOBObject()) {
-          warn("Not allowed to create entity: " + bob.getEntityName() + " (import id: " + id + ") "
-              + " because it is not writable");
-          return bob;
-        } else {
-          warn("Not updating entity: " + bob.getIdentifier() + " because it is not writable");
-          return bob;
-        }
-      } else if (preventRealUpdate) {
-        Check.isTrue(!writable || hasReferenceAttribute && !bob.isNewOBObject(),
-            "This case may only occur for referenced objects which are not new");
-        // if the object is referenced then it can not be updated
-        if (hasReferenceAttribute && !bob.isNewOBObject()) {
-          log.debug("Entity " + bob + " (" + bob.getEntity().getTableName() + ") "
-              + " has not been updated because it already exists and "
-              + "it is imported as a reference from another object");
-        }
-      } else if (bob.isNewOBObject()) {
-        if (!checkInsert.contains(bob)) {
-          warnDifferentClientOrg(bob, "Creating");
-          log("Inserted entity " + bob.getIdentifier() + originalIdStr);
-          toInsert.add(bob);
-          checkInsert.add(bob);
-        }
-      } else if (updated && !checkUpdate.contains(bob)) {
-        Check.isFalse(bob.isNewOBObject(), "May only be here for not-new objects");
-        // never update an object which was exported as referenced
-        Check.isFalse(hasReferenceAttribute, "Referenced objects may not be updated");
-
-        // warn in case of different organization/client
-        warnDifferentClientOrg(bob, "Updating");
-
-        log("Updated entity " + bob.getIdentifier() + originalIdStr);
-
-        toUpdate.add(bob);
-        checkUpdate.add(bob);
-      }
+      // add to the correct list on the basis of different characteristics
+      addToInsertOrUpdateLists(id, bob, writable, updated, hasReferenceAttribute, preventRealUpdate);
 
       // do a check that in case of a client/organization import that the
       // client and organization are indeed set
@@ -423,218 +297,5 @@ public class XMLEntityConverter implements OBNotSingleton {
       error("Exception when parsing entity " + entityName + " (" + id + "):" + e.getMessage());
       return null;
     }
-  }
-
-  private Object replaceValue(BaseOBObject owner, Property property, Object newValue) {
-    if (importProcessor == null) {
-      return newValue;
-    } else {
-      return importProcessor.replaceValue(owner, property, newValue);
-    }
-  }
-
-  protected void checkClientOrganizationSet(BaseOBObject bob) {
-    if (bob.getEntity().isClientEnabled()) {
-      final ClientEnabled ce = (ClientEnabled) bob;
-      if (ce.getClient() == null) {
-        error("The client of entity " + bob.getIdentifier()
-            + " is not set. For a client data import the client needs"
-            + " to be set. Check that the xml was created "
-            + "with client/organization property export to true");
-      }
-    }
-    if (bob.getEntity().isOrganizationEnabled()) {
-      final OrganizationEnabled oe = (OrganizationEnabled) bob;
-      if (oe.getOrganization() == null) {
-        error("The organization of entity " + bob.getIdentifier()
-            + " is not set. For a client data import the organization needs"
-            + " to be set. Check that the xml was created "
-            + "with client/organization property export to true");
-      }
-    }
-  }
-
-  protected void warnDifferentClientOrg(BaseOBObject bob, String prefix) {
-
-    // don't need to check as the object retains his client/organization
-    if (isOptionClientImport()) {
-      return;
-    }
-
-    if (bob.getEntity().isClientEnabled()) {
-      final ClientEnabled ce = (ClientEnabled) bob;
-      if (!ce.getClient().getId().equals(getClient().getId())) {
-        warn(prefix + " entity " + bob.getIdentifier()
-            + " eventhough it does not belong to the target client " + getClient().getIdentifier()
-            + " but to client " + ce.getClient().getIdentifier());
-      }
-    }
-    if (bob.getEntity().isOrganizationEnabled()) {
-      final OrganizationEnabled oe = (OrganizationEnabled) bob;
-      if (!oe.getOrganization().getId().equals(getOrganization().getId())) {
-        warn(prefix + " entity " + bob.getIdentifier()
-            + " eventhough it does not belong to the target organization "
-            + getOrganization().getIdentifier() + " but to organization "
-            + oe.getOrganization().getIdentifier());
-      }
-    }
-  }
-
-  protected void warn(String msg) {
-    if (warningMessages.length() > 0) {
-      warningMessages.append("\n");
-    }
-    warningMessages.append(msg);
-  }
-
-  protected void log(String msg) {
-    if (logMessages.length() > 0) {
-      logMessages.append("\n");
-    }
-    logMessages.append(msg);
-  }
-
-  protected void error(String msg) {
-    if (errorMessages.length() > 0) {
-      errorMessages.append("\n");
-    }
-    errorMessages.append(msg);
-    if (noOfErrors++ > 20) {
-      throw new EntityXMLException("Too many errors, exiting import, error messages:\n"
-          + errorMessages);
-    }
-  }
-
-  protected BaseOBObject resolve(String entityName, String id, boolean reference) {
-    return entityResolver.resolve(entityName, id, reference);
-  }
-
-  public Client getClient() {
-    return client;
-  }
-
-  public void setClient(Client client) {
-    this.client = client;
-  }
-
-  public Organization getOrganization() {
-    return organization;
-  }
-
-  public void setOrganization(Organization organization) {
-    this.organization = organization;
-  }
-
-  /**
-   * Returns the objects which exist in the database and will be updated.
-   * 
-   * @return list of objects which will be updated in the database.
-   */
-  public List<BaseOBObject> getToUpdate() {
-    return toUpdate;
-  }
-
-  /**
-   * Returns the list of objects which should be inserted in the database
-   * 
-   * @return the list of new BaseOBObjects which should be inserted in the database
-   */
-  public List<BaseOBObject> getToInsert() {
-    return toInsert;
-  }
-
-  /**
-   * The error messages logged during the import process. If no error message exist then null is
-   * returned. If error messages exist then the user of this class should not update the database
-   * and do a rollback.
-   * 
-   * @return the logged error messages, null if no error messages are present
-   */
-  public String getErrorMessages() {
-    if (errorMessages.length() == 0) {
-      return null;
-    }
-    return errorMessages.toString();
-  }
-
-  /**
-   * The warning messages logged during the import process. Warning messages are non-failing
-   * messages. The database can be updated if there are warning messages. If no warning message
-   * exist then null is returned.
-   * 
-   * @return the logged warning messages, null if no warning messages are present
-   */
-  public String getWarningMessages() {
-    if (warningMessages.length() == 0) {
-      return null;
-    }
-    return warningMessages.toString();
-  }
-
-  /**
-   * The standard log messages logged during the import process. If no log message exist then null
-   * is returned.
-   * 
-   * @return the logged messages, null if no messages are present
-   */
-  public String getLogMessages() {
-    if (logMessages.length() == 0) {
-      return null;
-    }
-    return logMessages.toString();
-  }
-
-  /**
-   * @return the EntityResolver used by this Converter.
-   */
-  public EntityResolver getEntityResolver() {
-
-    if (entityResolver == null) {
-      entityResolver = EntityResolver.getInstance();
-    }
-    return entityResolver;
-  }
-
-  /**
-   * Determines if this a client import. A client import differs from a standard import because it
-   * is assumed that all Client/Organization level information is present in the xml and only System
-   * objects should be retrieved from the database.
-   * 
-   * @return the value of the client import option (default is false)
-   */
-  public boolean isOptionClientImport() {
-    return optionClientImport;
-  }
-
-  /**
-   * Determines if this a client import. A client import differs from a standard import because it
-   * is assumed that all Client/Organization level information is present in the xml and only System
-   * objects should be retrieved from the database.
-   * 
-   * @param optionClientImport
-   *          sets the value of the client import option (default is false)
-   */
-  public void setOptionClientImport(boolean optionClientImport) {
-    this.optionClientImport = optionClientImport;
-  }
-
-  public EntityXMLProcessor getImportProcessor() {
-    return importProcessor;
-  }
-
-  public void setImportProcessor(EntityXMLProcessor importProcessor) {
-    this.importProcessor = importProcessor;
-  }
-
-  public void setEntityResolver(EntityResolver entityResolver) {
-    this.entityResolver = entityResolver;
-  }
-
-  public boolean isOptionImportAuditInfo() {
-    return optionImportAuditInfo;
-  }
-
-  public void setOptionImportAuditInfo(boolean optionImportAuditInfo) {
-    this.optionImportAuditInfo = optionImportAuditInfo;
   }
 }

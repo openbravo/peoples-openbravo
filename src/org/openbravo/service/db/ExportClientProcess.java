@@ -91,18 +91,15 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
       final Map<String, Object> params = new HashMap<String, Object>();
       params.put(DataExportService.CLIENT_ID_PARAMETER_NAME, clientId);
       log.debug("Reading data from database into in-mem xml string");
-      final String xml = DataExportService.getInstance().exportClientToXML(params, exportAuditInfo);
-      log.debug("Done reading data into in-mem xml string");
-
-      final Client client = OBDal.getInstance().get(Client.class, clientId);
 
       final File exportFile = new File(getExportDir(), CLIENT_DATA_FILE_NAME);
-
+      final FileWriter fw = new FileWriter(exportFile);
       // write the xml to a file in WEB-INF
       log.debug("Writing export file " + exportFile.getAbsolutePath());
-      final FileWriter fw = new FileWriter(exportFile);
-      fw.write(xml);
+      DataExportService.getInstance().exportClientToXML(params, exportAuditInfo, fw);
       fw.close();
+
+      final Client client = OBDal.getInstance().get(Client.class, clientId);
 
       final OBError msg = new OBError();
       msg.setType("Success");

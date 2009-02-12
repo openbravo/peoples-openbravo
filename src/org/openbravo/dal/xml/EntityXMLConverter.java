@@ -19,6 +19,8 @@
 
 package org.openbravo.dal.xml;
 
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -26,9 +28,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
+
 import org.apache.log4j.Logger;
-import org.dom4j.Document;
-import org.dom4j.Element;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
@@ -41,6 +47,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Converts one or more business objects to a XML presentation. There are several options which
@@ -60,10 +68,13 @@ public class EntityXMLConverter implements OBNotSingleton {
     return OBProvider.getInstance().get(EntityXMLConverter.class);
   }
 
-  // controls if the many-to-one references objects are also included
+  // controls if many-toreferences objects are also exported
   private boolean optionIncludeReferenced = false;
 
   // controls if the children (mostly one-to-many) are also included
+  // If the dataset is complete
+  // (i.e. it contains all records of a set of records which refer to eachother)
+  // then children are also always exported anyway
   private boolean optionIncludeChildren = false;
 
   // if children are exported then they can be embedded in the parent's
@@ -76,7 +87,11 @@ public class EntityXMLConverter implements OBNotSingleton {
   // should audit info also be exported
   private boolean optionExportAuditInfo = true;
 
-  // controls if the client and organization property are exported to
+  // minimize output size, if set to true then the
+  // output will probably be less readable
+  private boolean optionMinimizeXMLSize = false;
+
+  // controls if the client and organization property are exported also
   private boolean optionExportClientOrganizationReferences = false;
 
   // only export references which belong to this client
@@ -87,32 +102,39 @@ public class EntityXMLConverter implements OBNotSingleton {
   // to compare previous output results with new output results
   private boolean addSystemAttributes = true;
 
-  // keeps track of which objects still have to be exported
+  // keeps track of which objects are to be exported
   // and which ones have been considered already
-  private List<BaseOBObject> toHandle = new ArrayList<BaseOBObject>();
-  private Set<BaseOBObject> consideredForHandling = new HashSet<BaseOBObject>();
+  private List<BaseOBObject> toProcess = new ArrayList<BaseOBObject>();
+  private Set<BaseOBObject> allToProcessObjects = new HashSet<BaseOBObject>();
 
-  // the to-be-exported objects passed in explicitly, these will never get a
-  // referenced attribute
-  private Set<BaseOBObject> originalExportContent = new HashSet<BaseOBObject>();
-
-  // keeps track which of the objects was added to the export list
-  // because it was referenced. In this case an attribute is added
-  // to the root element
-  private Set<BaseOBObject> referenced = new HashSet<BaseOBObject>();
-
-  private Document document = null;
+  private TransformerHandler xmlHandler;
+  private Writer output;
 
   /**
    * Clear internal data structures, after this call this converter can be used for a new set of
    * objects which need to be exported to a xml representation.
    */
   public void clear() {
-    document = null;
-    referenced.clear();
-    toHandle.clear();
-    consideredForHandling.clear();
-    originalExportContent.clear();
+    xmlHandler = null;
+    output = null;
+    toProcess.clear();
+    allToProcessObjects.clear();
+  }
+
+  // initialize the sax handlers
+  private void initializeSax() throws Exception {
+    final StreamResult streamResult = new StreamResult(output);
+    final SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+
+    xmlHandler = tf.newTransformerHandler();
+
+    // do some form of pretty printing...
+    final Transformer serializer = xmlHandler.getTransformer();
+    serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+    serializer.setOutputProperty(OutputKeys.VERSION, "1.0");
+    serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+    serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+    xmlHandler.setResult(streamResult);
   }
 
   /**
@@ -136,22 +158,11 @@ public class EntityXMLConverter implements OBNotSingleton {
    * @return the resulting xml string
    */
   public String toXML(Collection<BaseOBObject> bobs) {
+    final StringWriter sw = new StringWriter();
+    setOutput(sw);
     clear();
     process(bobs);
-    return XMLUtil.getInstance().toString(getDocument());
-  }
-
-  protected void createDocument() {
-    if (getDocument() != null) {
-      return;
-    }
-    setDocument(XMLUtil.getInstance().createDomDocument());
-
-    // because a list of objects is exported a root tag is placed
-    // around them
-    final Element rootElement = XMLUtil.getInstance().addRootElement(getDocument(),
-        XMLConstants.OB_ROOT_ELEMENT);
-    addSystemAttributes(rootElement);
+    return sw.toString();
   }
 
   /**
@@ -163,14 +174,12 @@ public class EntityXMLConverter implements OBNotSingleton {
    *          the business object to convert to xml (dom4j)
    */
   public void process(BaseOBObject bob) {
-    createDocument();
     // set the export list
-    getToHandle().add(bob);
-    getConsideredForHandling().add(bob);
-    originalExportContent.add(bob);
+    getToProcess().add(bob);
+    getAllToProcessObjects().add(bob);
 
     // and do it
-    export(getDocument().getRootElement());
+    export();
   }
 
   /**
@@ -182,52 +191,67 @@ public class EntityXMLConverter implements OBNotSingleton {
    *          the business object to convert to xml (dom4j)
    */
   public void process(Collection<BaseOBObject> bobs) {
-    createDocument();
     // set the export list
-    getToHandle().addAll(bobs);
-    getConsideredForHandling().addAll(bobs);
-    originalExportContent.addAll(bobs);
+    getToProcess().addAll(bobs);
+    getAllToProcessObjects().addAll(bobs);
 
     // and do it
-    export(getDocument().getRootElement());
+    export();
   }
 
-  /**
-   * @return the xml String created by formatting the internal dom4j Document
-   */
-  public String getProcessResult() {
-    return XMLUtil.getInstance().toString(getDocument());
-  }
+  protected void export() {
+    try {
+      initializeSax();
+      xmlHandler.startDocument();
 
-  protected void export(Element rootElement) {
-    while (getToHandle().size() > 0) {
-      final BaseOBObject bob = getToHandle().iterator().next();
-      export(bob, rootElement);
-      exported(bob);
+      final AttributesImpl rootAttrs = new AttributesImpl();
+      xmlHandler.startElement("http://www.openbravo.com", XMLConstants.OB_ROOT_ELEMENT, "ob:"
+          + XMLConstants.OB_ROOT_ELEMENT, rootAttrs);
+
+      boolean firstRound = true;
+      while (toProcess.size() > 0) {
+        final List<BaseOBObject> localToProcess = getToProcess();
+        // reset the toProcess so that new objects are added to a new list
+        replaceToProcess();
+        for (BaseOBObject bob : localToProcess) {
+          export(bob, !firstRound);
+        }
+        firstRound = false;
+      }
+      // reset mem
+      replaceToProcess();
+      getAllToProcessObjects().clear();
+      xmlHandler.endElement("http://www.openbravo.com", XMLConstants.OB_ROOT_ELEMENT, "ob:"
+          + XMLConstants.OB_ROOT_ELEMENT);
+      xmlHandler.endDocument();
+    } catch (Exception e) {
+      throw new EntityXMLException(e);
     }
-    getConsideredForHandling().clear();
   }
 
-  protected void export(BaseOBObject obObject, Element rootElement) {
+  protected void export(BaseOBObject obObject, boolean isAddedBecauseReferenced)
+      throws SAXException {
     final String entityName = DalUtil.getEntityName(obObject);
-    final Element currentElement = rootElement.addElement(entityName);
 
+    final AttributesImpl entityAttrs = new AttributesImpl();
     // set the id and identifier attributes
     final Object id = DalUtil.getId(obObject);
     if (id != null) {
-      currentElement.addAttribute(XMLConstants.ID_ATTRIBUTE, id.toString());
+      entityAttrs.addAttribute("", "", XMLConstants.ID_ATTRIBUTE, "CDATA", id.toString());
     }
-    currentElement.addAttribute(XMLConstants.IDENTIFIER_ATTRIBUTE, IdentifierProvider.getInstance()
-        .getIdentifier(obObject));
+    if (!isOptionMinimizeXMLSize()) {
+      entityAttrs.addAttribute("", "", XMLConstants.IDENTIFIER_ATTRIBUTE, "CDATA",
+          IdentifierProvider.getInstance().getIdentifier(obObject));
+    }
 
     // if this object has been added as a referenced object
     // set the reference attribute so that we at import can treat this
     // one differently
-    final boolean isCurrentEntityReferenced = getReferenced().contains(obObject)
-        && !originalExportContent.contains(obObject);
-    if (isCurrentEntityReferenced) {
-      currentElement.addAttribute(XMLConstants.REFERENCE_ATTRIBUTE, "true");
+    if (isAddedBecauseReferenced) {
+      entityAttrs.addAttribute("", "", XMLConstants.REFERENCE_ATTRIBUTE, "CDATA", "true");
     }
+
+    xmlHandler.startElement("", "", entityName, entityAttrs);
 
     // depending on the security only a limited set of
     // properties is exported
@@ -245,7 +269,7 @@ public class EntityXMLConverter implements OBNotSingleton {
       }
 
       // onetomany is always a child currently
-      if (p.isOneToMany() && (!isOptionIncludeChildren() || isCurrentEntityReferenced)) {
+      if (p.isOneToMany() && (!isOptionIncludeChildren() || isAddedBecauseReferenced)) {
         continue;
       }
 
@@ -262,18 +286,17 @@ public class EntityXMLConverter implements OBNotSingleton {
       }
 
       // set the tag
-      final Element currentPropertyElement = currentElement.addElement(p.getName());
+      final AttributesImpl propertyAttrs = new AttributesImpl();
 
       // add transient attribute
       if (p.isTransient(obObject)) {
-        currentPropertyElement.addAttribute(XMLConstants.TRANSIENT_ATTRIBUTE, "true");
+        propertyAttrs.addAttribute("", "", XMLConstants.TRANSIENT_ATTRIBUTE, "CDATA", "true");
       }
-
       if (p.isAuditInfo()) {
-        currentPropertyElement.addAttribute(XMLConstants.TRANSIENT_ATTRIBUTE, "true");
+        propertyAttrs.addAttribute("", "", XMLConstants.TRANSIENT_ATTRIBUTE, "CDATA", "true");
       }
       if (p.isInactive()) {
-        currentPropertyElement.addAttribute(XMLConstants.INACTIVE_ATTRIBUTE, "true");
+        propertyAttrs.addAttribute("", "", XMLConstants.INACTIVE_ATTRIBUTE, "CDATA", "true");
       }
 
       // get the value
@@ -281,40 +304,65 @@ public class EntityXMLConverter implements OBNotSingleton {
 
       // will result in an empty tag if null
       if (value == null) {
+        xmlHandler.startElement("", "", p.getName(), propertyAttrs);
+        xmlHandler.endElement("", "", p.getName());
         continue;
       }
 
       if (p.isCompositeId()) {
         log.warn("Entity " + obObject.getEntity()
             + " has compositeid, this is not yet supported in the webservice");
+        xmlHandler.startElement("", "", p.getName(), propertyAttrs);
+        xmlHandler.endElement("", "", p.getName());
         continue;
       }
 
       // make a difference between a primitive and a reference
       if (p.isPrimitive()) {
-        currentPropertyElement.addText(XMLTypeConverter.getInstance().toXML(value));
+        final String txt = XMLTypeConverter.getInstance().toXML(value);
+        xmlHandler.startElement("", "", p.getName(), propertyAttrs);
+        xmlHandler.characters(txt.toCharArray(), 0, txt.length());
+        xmlHandler.endElement("", "", p.getName());
       } else if (p.isOneToMany()) {
+        xmlHandler.startElement("", "", p.getName(), propertyAttrs);
+
         // get all the children and export each child
         final Collection<?> c = (Collection<?>) value;
         for (final Object o : c) {
           // embed in the parent
           if (isOptionEmbedChildren()) {
-            export((BaseOBObject) o, currentPropertyElement);
+            export((BaseOBObject) o, true);
           } else {
             // add the child as a tag, the child entityname is
             // used as the tagname
             final BaseOBObject child = (BaseOBObject) o;
-            final Element refElement = currentPropertyElement.addElement(DalUtil
-                .getEntityName(child));
-            refElement.addAttribute(XMLConstants.ID_ATTRIBUTE, DalUtil.getId(child).toString());
-            refElement.addAttribute(XMLConstants.IDENTIFIER_ATTRIBUTE, IdentifierProvider
-                .getInstance().getIdentifier(child));
+
+            // add attributes
+            final AttributesImpl childAttrs = new AttributesImpl();
+            childAttrs.addAttribute("", "", XMLConstants.TRANSIENT_ATTRIBUTE, "CDATA", "true");
+            childAttrs.addAttribute("", "", XMLConstants.ID_ATTRIBUTE, "CDATA", DalUtil
+                .getId(child).toString());
+            if (!isOptionMinimizeXMLSize()) {
+              childAttrs.addAttribute("", "", XMLConstants.IDENTIFIER_ATTRIBUTE, "CDATA",
+                  IdentifierProvider.getInstance().getIdentifier(child));
+            }
+            // and write the element
+            final String childEntityName = DalUtil.getEntityName(child);
+            xmlHandler.startElement("", "", childEntityName, childAttrs);
+            xmlHandler.endElement("", "", childEntityName);
             addToExportList((BaseOBObject) o);
           }
         }
+
+        xmlHandler.endElement("", "", p.getName());
       } else if (!p.isOneToMany()) {
         // add reference attributes
-        addReferenceAttributes(currentPropertyElement, (BaseOBObject) value);
+        addReferenceAttributes(propertyAttrs, (BaseOBObject) value);
+
+        // and write the element
+        xmlHandler.startElement("", "", p.getName(), propertyAttrs);
+        xmlHandler.endElement("", "", p.getName());
+
         // and also export the object itself if required
         // but do not add auditinfo references
         if (isOptionIncludeReferenced() && !p.isAuditInfo() && !p.isClientOrOrganization()) {
@@ -322,19 +370,23 @@ public class EntityXMLConverter implements OBNotSingleton {
         }
       }
     }
+    xmlHandler.endElement("", "", entityName);
   }
 
-  private void addReferenceAttributes(Element currentElement, BaseOBObject referedObject) {
+  private void addReferenceAttributes(AttributesImpl attrs, BaseOBObject referedObject) {
     if (referedObject == null) {
       return;
     }
     // final Element refElement =
     // currentElement.addElement(REFERENCE_ELEMENT_NAME);
-    currentElement.addAttribute(XMLConstants.ID_ATTRIBUTE, DalUtil.getId(referedObject).toString());
-    currentElement.addAttribute(XMLConstants.ENTITYNAME_ATTRIBUTE, DalUtil
-        .getEntityName(referedObject));
-    currentElement.addAttribute(XMLConstants.IDENTIFIER_ATTRIBUTE, IdentifierProvider.getInstance()
-        .getIdentifier(referedObject));
+    attrs.addAttribute("", "", XMLConstants.ID_ATTRIBUTE, "CDATA", DalUtil.getId(referedObject)
+        .toString());
+    if (!isOptionMinimizeXMLSize()) {
+      attrs.addAttribute("", "", XMLConstants.ENTITYNAME_ATTRIBUTE, "CDATA", DalUtil
+          .getEntityName(referedObject));
+      attrs.addAttribute("", "", XMLConstants.IDENTIFIER_ATTRIBUTE, "CDATA", IdentifierProvider
+          .getInstance().getIdentifier(referedObject));
+    }
   }
 
   protected void addToExportList(BaseOBObject bob) {
@@ -345,18 +397,11 @@ public class EntityXMLConverter implements OBNotSingleton {
     }
 
     // was already exported
-    if (getConsideredForHandling().contains(bob)) {
+    if (getAllToProcessObjects().contains(bob)) {
       return;
     }
-    getToHandle().add(bob);
-    consideredForHandling.add(bob);
-    getReferenced().add(bob);
-  }
-
-  protected void exported(BaseOBObject bob) {
-    Check.isTrue(getToHandle().contains(bob),
-        "Exported business object not part of toExport list, it has not yet been removed from it!");
-    getToHandle().remove(bob);
+    getToProcess().add(bob);
+    allToProcessObjects.add(bob);
   }
 
   /**
@@ -428,19 +473,19 @@ public class EntityXMLConverter implements OBNotSingleton {
     this.optionEmbedChildren = optionEmbedChildren;
   }
 
-  private List<BaseOBObject> getToHandle() {
-    return toHandle;
+  private List<BaseOBObject> getToProcess() {
+    return toProcess;
   }
 
-  private Set<BaseOBObject> getReferenced() {
-    return referenced;
+  private void replaceToProcess() {
+    toProcess = new ArrayList<BaseOBObject>();
   }
 
-  private Set<BaseOBObject> getConsideredForHandling() {
-    return consideredForHandling;
+  private Set<BaseOBObject> getAllToProcessObjects() {
+    return allToProcessObjects;
   }
 
-  protected void addSystemAttributes(Element element) {
+  protected void addSystemAttributes(AttributesImpl systemAttrs) {
     if (!isAddSystemAttributes()) {
       return;
     }
@@ -451,10 +496,13 @@ public class EntityXMLConverter implements OBNotSingleton {
           SystemInformation.class).list();
       Check.isTrue(sis.size() > 0, "There should be at least one SystemInfo record but there are "
           + sis.size());
-      element.addAttribute(XMLConstants.DATE_TIME_ATTRIBUTE, "" + new Date());
-      element
-          .addAttribute(XMLConstants.OB_VERSION_ATTRIBUTE, sis.get(0).getOpenbravoVersion() + "");
-      element.addAttribute(XMLConstants.OB_REVISION_ATTRIBUTE, sis.get(0).getCodeRevision() + "");
+      systemAttrs.addAttribute("", "", XMLConstants.DATE_TIME_ATTRIBUTE, "CDATA", "" + new Date());
+      systemAttrs.addAttribute("", "", XMLConstants.OB_VERSION_ATTRIBUTE, "CDATA", sis.get(0)
+          .getOpenbravoVersion()
+          + "");
+      systemAttrs.addAttribute("", "", XMLConstants.OB_REVISION_ATTRIBUTE, "CDATA", sis.get(0)
+          .getCodeRevision()
+          + "");
     } finally {
       OBContext.getOBContext().setInAdministratorMode(adminMode);
     }
@@ -473,27 +521,6 @@ public class EntityXMLConverter implements OBNotSingleton {
    */
   public void setAddSystemAttributes(boolean addSystemAttributes) {
     this.addSystemAttributes = addSystemAttributes;
-  }
-
-  /**
-   * Returns the Dom4j Document which contains the xml. Subsequence calls to
-   * {@link #process(BaseOBObject)} or {@link #process(Collection)} will add content to this
-   * document.
-   * 
-   * @return the Dom4j Document containing the xml
-   */
-  public Document getDocument() {
-    return document;
-  }
-
-  /**
-   * Makes it possible to add exported business objects to an existing Dom4j document.
-   * 
-   * @param document
-   *          the Dom4j document to which the business objects are added
-   */
-  public void setDocument(Document document) {
-    this.document = document;
   }
 
   /**
@@ -542,5 +569,21 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   public void setOptionExportAuditInfo(boolean optionExportAuditInfo) {
     this.optionExportAuditInfo = optionExportAuditInfo;
+  }
+
+  public boolean isOptionMinimizeXMLSize() {
+    return optionMinimizeXMLSize;
+  }
+
+  public void setOptionMinimizeXMLSize(boolean optionMinimizeXMLSize) {
+    this.optionMinimizeXMLSize = optionMinimizeXMLSize;
+  }
+
+  public Writer getOutput() {
+    return output;
+  }
+
+  public void setOutput(Writer output) {
+    this.output = output;
   }
 }

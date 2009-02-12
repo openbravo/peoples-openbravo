@@ -30,7 +30,6 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.DataSetColumn;
 import org.openbravo.model.ad.utility.DataSetTable;
@@ -80,9 +79,7 @@ public class DatasetServiceTest extends BaseTest {
     parameters.put("ClientID", "0");
 
     for (final DataSet ds : dss) {
-      final String xml = DataExportService.getInstance().exportDataSetToXML(ds, "0", parameters,
-          true, true, OBDal.getInstance().get(Client.class, "0"), true);
-      System.err.println("DataSet " + ds.getName() + " exported " + xml.length() + " characters");
+      final String xml = DataExportService.getInstance().exportDataSetToXML(ds, "0", parameters);
     }
     setErrorOccured(false);
   }

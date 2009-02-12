@@ -19,6 +19,7 @@
 
 package org.openbravo.service.db;
 
+import java.io.Reader;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +41,7 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLProcessor;
+import org.openbravo.dal.xml.StaxXMLEntityConverter;
 import org.openbravo.dal.xml.XMLEntityConverter;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
@@ -126,23 +128,107 @@ public class DataImportService implements OBSingleton {
    * @param importProcessor
    *          the importProcessor is called after the xml has been parsed and before the new/updated
    *          objects are persisted in the database, is allowed to be null
+   * @param reader
+   *          the xml stream
    * 
    * @return ImportResult which contains the updated/inserted objects and log and error messages
    * 
    * @see #importDataFromXML(Client, Organization, String)
    */
-  public ImportResult importClientData(String xml, EntityXMLProcessor importProcessor,
-      boolean importAuditInfo) {
+  public ImportResult importClientData(EntityXMLProcessor importProcessor, boolean importAuditInfo,
+      Reader reader) {
     try {
-      final Document doc = DocumentHelper.parseText(xml);
-      final ImportResult ir = importDataFromXML(null, null, doc, true, null, importProcessor, true,
-          importAuditInfo);
 
-      // do a special thing to update the clientlist and orglist columns
-      // in the ad_role table with the newly created id's
-      // this is done through a stored procedure
-      SessionHandler.getInstance().getSession().createSQLQuery(
-          "UPDATE AD_ROLE_ORGACCESS SET AD_ROLE_ID='0' where AD_ROLE_ID='0'").executeUpdate();
+      final ImportResult ir = new ImportResult();
+
+      boolean rolledBack = false;
+      try {
+        // disable the triggers to prevent unexpected extra db actions
+        // during import
+        TriggerHandler.getInstance().disable();
+
+        final StaxXMLEntityConverter xec = StaxXMLEntityConverter.newInstance();
+        xec.setOptionClientImport(true);
+        xec.setOptionImportAuditInfo(importAuditInfo);
+        xec.getEntityResolver().setOptionCreateReferencedIfNotFound(true);
+        xec.setEntityResolver(ClientImportEntityResolver.getInstance());
+        xec.setImportProcessor(importProcessor);
+        xec.process(reader);
+
+        ir.setLogMessages(xec.getLogMessages());
+        ir.setErrorMessages(xec.getErrorMessages());
+        ir.setWarningMessages(xec.getWarningMessages());
+
+        if (ir.hasErrorOccured()) {
+          OBDal.getInstance().rollbackAndClose();
+          rolledBack = true;
+          return ir;
+        }
+
+        if (importProcessor != null) {
+          try {
+            importProcessor.process(xec.getToInsert(), xec.getToUpdate());
+          } catch (final Exception e) {
+            // note on purpose caught and set in ImportResult
+            e.printStackTrace(System.err);
+            ir.setException(e);
+            ir.setErrorMessages(e.getMessage());
+            OBDal.getInstance().rollbackAndClose();
+            rolledBack = true;
+            return ir;
+          }
+        }
+
+        // now save and update
+        // do inserts and updates in opposite order, this is important
+        // so that the objects on which other depend are inserted first
+        final List<BaseOBObject> toInsert = xec.getToInsert();
+        int done = 0;
+        final Set<BaseOBObject> inserted = new HashSet<BaseOBObject>();
+        for (int i = toInsert.size() - 1; i > -1; i--) {
+          final BaseOBObject ins = toInsert.get(i);
+          // for (final BaseOBObject ins : toInsert) {
+          insertObjectGraph(ins, inserted);
+          ir.getInsertedObjects().add(ins);
+          done++;
+        }
+        Check.isTrue(done == toInsert.size(),
+            "Not all objects have been inserted, check for loop: " + done + "/" + toInsert.size());
+
+        // flush to set the ids in the objects
+        OBDal.getInstance().flush();
+
+        // do the updates the other way around also
+        done = 0;
+        final List<BaseOBObject> toUpdate = xec.getToUpdate();
+        for (int i = toUpdate.size() - 1; i > -1; i--) {
+          final BaseOBObject upd = toUpdate.get(i);
+          OBDal.getInstance().save(upd);
+          ir.getUpdatedObjects().add(upd);
+          done++;
+        }
+        Check.isTrue(done == toUpdate.size(),
+            "Not all objects have been inserted, check for loop: " + done + "/" + toUpdate.size());
+
+        // flush to set the ids in the objects
+        OBDal.getInstance().flush();
+
+      } catch (final Throwable t) {
+        t.printStackTrace(System.err);
+        ir.setException(t);
+      } finally {
+        if (rolledBack) {
+          TriggerHandler.getInstance().clear();
+        } else if (TriggerHandler.getInstance().isDisabled()) {
+          TriggerHandler.getInstance().enable();
+
+          // do a special thing to update the clientlist and orglist columns
+          // in the ad_role table with the newly created id's
+          // this is done through a stored procedure
+          SessionHandler.getInstance().getSession().createSQLQuery(
+              "UPDATE AD_ROLE_ORGACCESS SET AD_ROLE_ID='0' where AD_ROLE_ID='0'").executeUpdate();
+        }
+      }
 
       return ir;
     } catch (final Exception e) {

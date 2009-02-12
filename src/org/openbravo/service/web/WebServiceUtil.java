@@ -20,17 +20,17 @@
 package org.openbravo.service.web;
 
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.List;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.DocumentResult;
-import org.dom4j.io.DocumentSource;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
@@ -205,22 +205,23 @@ public class WebServiceUtil implements OBSingleton {
    * Applies an XSLT template on the XML in the sourceDocument. The resulting Dom4j Document is
    * returned.
    * 
-   * @param sourceDocument
+   * @param xml
    *          the source xml
    * @param template
    *          the XSLT template
    * @return the resulting XML
    */
-  public Document applyTemplate(Document sourceDocument, InputStream template, String url) {
+  public String applyTemplate(String xml, InputStream template, String url) {
     try {
       final TransformerFactory factory = TransformerFactory.newInstance();
       final Transformer transformer = factory.newTransformer(new StreamSource(template));
-      final DocumentSource source = new DocumentSource(sourceDocument);
-      final DocumentResult result = new DocumentResult();
+      final StreamSource request = new StreamSource(xml);
+      final StringWriter sw = new StringWriter();
+      final StreamResult response = new StreamResult(sw);
       transformer.setParameter("url", url);
-      transformer.transform(source, result);
+      transformer.transform(request, response);
 
-      return result.getDocument();
+      return sw.toString();
     } catch (final Exception e) {
       throw new OBException(e);
     }

@@ -19,6 +19,7 @@
 
 package org.openbravo.test.xml;
 
+import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,10 +51,9 @@ public class ClientExportTest extends XMLBaseTest {
     DataExportService des = DataExportService.getInstance();
     final Map<String, Object> params = new HashMap<String, Object>();
     params.put(DataExportService.CLIENT_ID_PARAMETER_NAME, "1000000");
-    final String xml = DataExportService.getInstance().exportClientToXML(params, false);
-    // final FileWriter fw = new FileWriter("/home/mtaal/mytmp/raltec.xml");
-    // fw.write(xml);
-    // fw.close();
+    final FileWriter fw = new FileWriter("/home/mtaal/mytmp/bb.xml");
+    DataExportService.getInstance().exportClientToXML(params, false, fw);
+    fw.close();
     setErrorOccured(false);
   }
 
