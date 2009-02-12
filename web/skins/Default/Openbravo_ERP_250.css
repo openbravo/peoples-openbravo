@@ -6233,7 +6233,6 @@ a.Main_NavBar_RightButton:active .Main_NavBar_RightButton_Icon_help {
   border-left: 1px solid Black;
   border-right: 1px solid Black;
   margin-left: 7px;
-  overflow-y: hidden;
   height: 17px;
 }
 
@@ -6251,7 +6250,6 @@ a.Main_NavBar_RightButton:active .Main_NavBar_RightButton_Icon_help {
   background-image: url(Main/Tabs/inlayFill.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 16px */
   margin-left: 0px;
   padding-left: 2px;
-  overflow-y: hidden;
   height: 17px;
   width: 100%;
 }
