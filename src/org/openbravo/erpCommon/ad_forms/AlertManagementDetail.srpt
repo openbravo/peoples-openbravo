@@ -37,7 +37,7 @@
            <td class="DataGrid_Body_Cell" style="white-space: normal; overflow: visible !important;">
              <textarea class="dojoValidateValid TextArea_Small_height" rows="2" style="width:98%" id="fieldNotes" name="strNotesxx"> </textarea>
            </td>
-           <td class="DataGrid_Body_Cell" style="white-space: normal; overflow: visible !important;"><span class="LabelText"><a class="LabelLink_noicon" href="#" id="fieldRecordId" onclick="submitCommandChangingName(xx, '../yy', 'zz'); return false;">xxrecordID</a></span></td>
+           <td class="DataGrid_Body_Cell" style="white-space: normal; overflow: visible !important;"><span class="LabelText"><a class="LabelLink_noicon" href="#" id="fieldRecordId" onclick="submitCommandChangingName('xx', '../yy', 'zz'); return false;">xxrecordID</a></span></td>
          </tr>                
       </div>
     </div>
