@@ -25,16 +25,16 @@
 <script language="JavaScript" type="text/javascript">
 function responseReturn(bolData){
     if (bolData){
-      submitCommandForm('DEFAULT', false, null, null, "frameButton");
+      submitCommandForm('DEFAULT', false, null, null, null);
     }else {
-      openServletNewWindow('FIND', false, 'ReportCashFlow_FS.html', 'ReportCashFlow', null, false, '700', '1000', true);
+      openServletNewWindow('FIND', false, 'ReportCashFlow_F0.html', 'ReportCashFlow', null, false, '700', '1000', true);
             //submitCommandForm('DEFAULT', false);
     }
 }
 </script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="responseReturn(xx);" id="paramBol">
-<form id="form" method="post" action="ReportCashFlow_FS.html" name="frameOcultoButton">
+<form id="form" method="post" action="ReportCashFlow_F0.html" name="hiddenFrame">
   <input type="hidden" name="Command" value="DEFAULT">
   <input type="hidden" name="inpadOrgId" value="" id="paramOrg">
   <input type="hidden" name="inpPeriodId" value="" id="paramPeriod">
