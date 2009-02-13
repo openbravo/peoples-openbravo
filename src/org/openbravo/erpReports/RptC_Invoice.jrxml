@@ -199,13 +199,15 @@
 	<queryString><![CDATA[SELECT C_INVOICE.C_INVOICE_ID, C_BPARTNER.NAME, C_BPARTNER.TAXID AS CIF, AD_USER.NAME AS CONTACT_NAME, C_LOCATION.ADDRESS1, 
        C_LOCATION.POSTAL, C_LOCATION.CITY, C_REGION.NAME AS REGION,C_COUNTRY.NAME AS COUNTRY,C_BPARTNER_LOCATION.PHONE AS PHONE, C_BPARTNER_LOCATION.FAX AS FAX,
        C_INVOICE.DATEINVOICED, C_INVOICE.DOCUMENTNO, C_BPARTNER.VALUE AS CODE_BPARTNER, 
-       AD_CLIENT.DESCRIPTION AS ENTITY, C_Location_Description(AD_ORGINFO.C_LOCATION_ID) AS LOCATION, C_CURRENCY.ISO_CODE AS CURRENCY_CODE,C_CURRENCY.CURSYMBOL AS SYMBOL
+       AD_CLIENT.DESCRIPTION AS ENTITY, C_Location_Description(AD_ORGINFO.C_LOCATION_ID) AS LOCATION, C_CURRENCY.ISO_CODE AS CURRENCY_CODE,C_CURRENCY.CURSYMBOL AS SYMBOL,
+       C_PAYMENTTERM.NAME AS PAYTERM
   FROM C_INVOICE LEFT JOIN C_BPARTNER ON C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
                  LEFT JOIN AD_USER ON C_INVOICE.AD_USER_ID = AD_USER.AD_USER_ID
                  LEFT JOIN C_BPARTNER_LOCATION ON C_INVOICE.C_BPARTNER_LOCATION_ID = C_BPARTNER_LOCATION.C_BPARTNER_LOCATION_ID
                  LEFT JOIN C_LOCATION ON C_BPARTNER_LOCATION.C_LOCATION_ID = C_LOCATION.C_LOCATION_ID
                  LEFT JOIN C_REGION ON C_LOCATION.C_REGION_ID = C_REGION.C_REGION_ID
                  LEFT JOIN C_COUNTRY ON C_LOCATION.C_COUNTRY_ID=C_COUNTRY.C_COUNTRY_ID
+                 LEFT JOIN C_PAYMENTTERM ON C_INVOICE.C_PAYMENTTERM_ID=C_PAYMENTTERM.C_PAYMENTTERM_ID
 		 LEFT JOIN C_CURRENCY ON C_INVOICE.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID,
         AD_ORGINFO, AD_CLIENT
   WHERE C_INVOICE.ad_org_id = AD_ORGINFO.ad_org_id
@@ -230,6 +232,7 @@
 	<field name="LOCATION" class="java.lang.String"/>
 	<field name="CURRENCY_CODE" class="java.lang.String"/>
 	<field name="SYMBOL" class="java.lang.String"/>
+	<field name="PAYTERM" class="java.lang.String"/>
 
 	<variable name="TOTAL_LINENETAMT" class="java.math.BigDecimal" resetType="Group" resetGroup="C_INVOICE_ID" calculation="Nothing">
 	</variable>
@@ -425,7 +428,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA["Total ("+$F{SYMBOL}+"): "]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="C_INVOICE_ID"  hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="C_INVOICE_ID"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Gray"
 						x="400"
@@ -680,22 +683,6 @@
 				<staticText>
 					<reportElement
 						style="default"
-						x="332"
-						y="27"
-						width="89"
-						height="18"
-						forecolor="#000000"
-						key="staticText-14"
-						positionType="FixRelativeToBottom"/>
-					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<text><![CDATA[90 days]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="default"
 						x="1"
 						y="55"
 						width="79"
@@ -768,6 +755,19 @@
 						key="line-38"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="332"
+						y="27"
+						width="89"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PAYTERM}]]></textFieldExpression>
+				</textField>
 			</band>
 		</pageFooter>
 		<summary>
