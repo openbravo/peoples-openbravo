@@ -41,12 +41,4 @@
 <SECTION id="sectionDetail"/>
 </structure>
 
-<structure name="structureClient">
-<FIELD id="fieldClaveCliente" attribute="value" boolean="selected" withId="paramSystem">adClientId</FIELD>
-<FIELD id="fieldClaveCliente">name</FIELD>
-<SECTION id="sectionClient"/>
-</structure>
-
-
-
 </REPORT>

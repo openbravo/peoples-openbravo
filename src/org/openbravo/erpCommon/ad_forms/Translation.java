@@ -39,7 +39,6 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.ad_combos.ClientComboData;
 import org.openbravo.erpCommon.ad_combos.LanguageComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -111,7 +110,8 @@ public class Translation extends HttpSecureAppServlet {
     } else if (vars.commandIn("EXPORT")) {
 
       final String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
-      final String strClient = vars.getRequestGlobalVariable("client", "translation.client");
+      // import/export translation is currently always on system level
+      final String strClient = "0";
       if (log4j.isDebugEnabled())
         log4j.debug("Lang " + strLang + " Client " + strClient);
 
@@ -125,7 +125,8 @@ public class Translation extends HttpSecureAppServlet {
 
     } else {
       final String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
-      final String strClient = vars.getRequestGlobalVariable("client", "translation.client");
+      // import/export translation is currently always on system level
+      final String strClient = "0";
       if (log4j.isDebugEnabled())
         log4j.debug("Lang " + strLang + " Client " + strClient);
 
@@ -202,7 +203,7 @@ public class Translation extends HttpSecureAppServlet {
 
       exportContibutors(directory, AD_Language);
     } catch (final Exception e) {
-      log4j.error(e.toString());
+      log4j.error(e);
       myMessage.setType("Error");
       myMessage.setMessage(Utility.messageBD(this, "Error", vars.getLanguage()));
       return myMessage;
@@ -687,10 +688,7 @@ public class Translation extends HttpSecureAppServlet {
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("paramSelLanguage", vars.getSessionValue("translation.lang"));
-      xmlDocument.setParameter("paramSystem", vars.getSessionValue("translation.client"));
       xmlDocument.setData("structure1", LanguageComboData.select(this));
-
-      xmlDocument.setData("structureClient", ClientComboData.selectAllClients(this));
 
       out.println(xmlDocument.print());
       out.close();
