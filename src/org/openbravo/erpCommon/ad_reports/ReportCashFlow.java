@@ -64,8 +64,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
           "ReportCashFlow|accountingReport", "");
       String strOrg = vars.getGlobalVariable("inpadOrgId", "ReportCashFlow|orgId", "0");
       String strPeriod = vars.getGlobalVariable("inpPeriodId", "ReportCashFlow|period", "");
-      printPageFrame1(response, vars, strcAcctSchemaId, strAccountingReportId, strOrg, strPeriod,
-          process);
+      printPage(response, vars, strcAcctSchemaId, strAccountingReportId, strOrg, strPeriod, process);
     } else if (vars.commandIn("DEPURAR")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "ReportCashFlow|cAcctSchemaId");
@@ -88,11 +87,11 @@ public class ReportCashFlow extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars,
-      String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod,
-      String strProcessId) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId,
+      String strAccountingReportId, String strOrg, String strPeriod, String strProcessId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
-      log4j.debug("Output: printPage ReportCashFlow_F1");
+      log4j.debug("Output: printPage ReportCashFlow");
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "";
@@ -104,7 +103,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
       strHelp = data[0].help;
     }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportCashFlow_F1").createXmlDocument();
+        "org/openbravo/erpCommon/ad_reports/ReportCashFlow").createXmlDocument();
 
     String strArray = arrayEntry(vars, strcAcctSchemaId);
 
@@ -161,10 +160,10 @@ public class ReportCashFlow extends HttpSecureAppServlet {
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportCashFlow_F1.html",
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportCashFlow.html",
           classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportCashFlow_F1.html",
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportCashFlow.html",
           strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
@@ -242,9 +241,9 @@ public class ReportCashFlow extends HttpSecureAppServlet {
       String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod,
       String process) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
-      log4j.debug("Output: ReportCashFlow_F0");
+      log4j.debug("Output: ReportCashFlowReload");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportCashFlow_F0").createXmlDocument();
+        "org/openbravo/erpCommon/ad_reports/ReportCashFlowReload").createXmlDocument();
     String strPeriodFrom = "";
     String strPeriodTo = "";
     String strYear = DateTimeData.sysdateYear(this);

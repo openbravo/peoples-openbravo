@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 <REPORT>
-	<template file="ReportCashFlow_F0.html"/>
+	<template file="ReportCashFlowReload.html"/>
 	<PARAMETER id="paramLanguage" name="language"/>
 	<PARAMETER id="paramBol" name="bol" attribute="onload" replace="xx"/>
 	<PARAMETER id="paramOrg" name="org" attribute="value"/>

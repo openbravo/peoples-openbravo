@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 <REPORT>
-	<template file="ReportCashFlow_F1.html"/>
+	<template file="ReportCashFlow.html"/>
   
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
