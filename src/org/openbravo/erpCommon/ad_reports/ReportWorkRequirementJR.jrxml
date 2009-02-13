@@ -200,10 +200,10 @@
 		<defaultValueExpression ><![CDATA["en_US"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USER_CLIENT" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["(1000000)"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA["('1000000')"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USER_ORG" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["(0)"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA["('0')"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="REPORT_TITLE" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["Pending Work Requirement"]]></defaultValueExpression>
@@ -222,7 +222,7 @@
        wrp.DONEQUANTITY AS quantity, wrp.QUANTITY AS needqty, wrpp.M_PRODUCT_ID AS productid, 
        AD_COLUMN_IDENTIFIER('M_Product', pd.M_Product_ID, 'es_ES') AS product, 
        SUM(T.QTYONHAND) AS stock, (wrp.QUANTITY - wrp.DONEQUANTITY) * wrpp.MOVEMENTQTY AS needed, 
-       'Bordes' AS negative, '123' AS inprocess, wrp.MA_WRPHASE_ID AS WRPID
+       'Bordes' AS negative, 123 AS inprocess, wrp.MA_WRPHASE_ID AS WRPID
 FROM MA_WorkRequirement wr, MA_WRPhase wrp, MA_WRPhaseProduct wrpp, MA_Process ps, MA_ProcessPlan pp, M_Product pd, M_STORAGE_DETAIL T
 WHERE wr.MA_WORKREQUIREMENT_ID = wrp.MA_WORKREQUIREMENT_ID
 AND wr.MA_PROCESSPLAN_ID = pp.MA_PROCESSPLAN_ID
@@ -236,7 +236,7 @@ GROUP BY wr.MA_WorkRequirement_ID, wrp.MA_WRPHASE_ID, wr.DOCUMENTNO, pp.MA_Proce
          ps.MA_Process_ID, wrp.DONEQUANTITY, wrp.QUANTITY, pd.M_PRODUCT_ID, wrpp.MOVEMENTQTY, wrp.SeqNo, wrpp.M_PRODUCT_ID
 ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></queryString>
 
-	<field name="WRID" class="java.math.BigDecimal"/>
+	<field name="WRID" class="java.lang.String"/>
 	<field name="WRNAME" class="java.lang.String"/>
 	<field name="PROCESSPLAN" class="java.lang.String"/>
 	<field name="STARTDATE" class="java.util.Date"/>
@@ -246,12 +246,13 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 	<field name="PROCESS" class="java.lang.String"/>
 	<field name="QUANTITY" class="java.math.BigDecimal"/>
 	<field name="NEEDQTY" class="java.math.BigDecimal"/>
-	<field name="PRODUCTID" class="java.math.BigDecimal"/>
+	<field name="PRODUCTID" class="java.lang.String"/>
 	<field name="PRODUCT" class="java.lang.String"/>
 	<field name="STOCK" class="java.math.BigDecimal"/>
 	<field name="NEEDED" class="java.math.BigDecimal"/>
+	<field name="NEGATIVE" class="java.lang.String"/>
 	<field name="INPROCESS" class="java.math.BigDecimal"/>
-	<field name="WRPID" class="java.math.BigDecimal"/>
+	<field name="WRPID" class="java.lang.String"/>
 
 	<variable name="DetailFieldTotal" class="java.lang.String" resetType="Report" calculation="Nothing">
 	</variable>
