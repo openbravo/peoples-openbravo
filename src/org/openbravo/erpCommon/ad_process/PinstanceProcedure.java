@@ -1,122 +1,65 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
 package org.openbravo.erpCommon.ad_process;
 
-import java.sql.CallableStatement;
-import java.sql.SQLException;
-import java.util.Vector;
-
-import javax.servlet.ServletException;
-
 import org.apache.log4j.Logger;
-import org.openbravo.data.UtilSql;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.database.RDBMSIndependent;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.exception.NoConnectionAvailableException;
-import org.openbravo.exception.PoolNotFoundException;
-import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
-import org.openbravo.scheduling.ProcessLogger;
 
-public class PinstanceProcedure implements Process {
+/**
+ * A pInstance procedure process.
+ * 
+ * @author awolski
+ * 
+ */
+public class PinstanceProcedure extends ProcedureProcess {
 
   static Logger log = Logger.getLogger(PinstanceProcedure.class);
 
-  private ConnectionProvider connection;
-  private ProcessLogger logger;
-
-  public void execute(ProcessBundle bundle) throws Exception {
-
-    logger = bundle.getLogger();
-    connection = bundle.getConnection();
-
-    final String pinstanceId = bundle.getPinstanceId();
-    final String sql = "CALL " + bundle.getImpl() + "(?)";
-
-    CallableStatement st = null;
-    if (connection.getRDBMS().equalsIgnoreCase("ORACLE")) {
-      int iParameter = 0;
-      try {
-        st = connection.getCallableStatement(sql);
-        iParameter++;
-        UtilSql.setValue(st, iParameter, 12, null, pinstanceId);
-        st.execute();
-
-      } catch (final SQLException e) {
-        log("SQL error in query: " + sql + "Exception: ", e);
-        throw new Exception("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
-
-      } catch (final Exception e) {
-        log("Exception in query: " + sql + "Exception: ", e);
-        throw new Exception("@CODE=@" + e.getMessage());
-
-      } finally {
-        log(pinstanceId, connection, bundle.getContext());
-        try {
-          connection.releasePreparedStatement(st);
-
-        } catch (final Exception ignore) {
-          ignore.printStackTrace();
-        }
-      }
-
-    } else {
-      final Vector<String> parametersData = new Vector<String>();
-      final Vector<String> parametersTypes = new Vector<String>();
-      parametersData.addElement(pinstanceId);
-      parametersTypes.addElement("in");
-
-      try {
-        RDBMSIndependent.getCallableResult(null, connection, sql, parametersData, parametersTypes,
-            0);
-
-      } catch (final SQLException e) {
-        log("SQL error in query: " + sql + "Exception: ", e);
-        throw new Exception("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
-
-      } catch (final NoConnectionAvailableException e) {
-        log("Connection error in query: " + sql + "Exception: ", e);
-        throw new Exception("@CODE=NoConnectionAvailable");
-
-      } catch (final PoolNotFoundException e) {
-        log("Pool error in query: " + sql + "Exception: ", e);
-        throw new Exception("@CODE=NoConnectionAvailable");
-
-      } catch (final Exception e) {
-        log("Exception in query: " + sql + "Exception: ", e);
-        throw new Exception("@CODE=@" + e.getMessage());
-      }
-      log(pinstanceId, connection, bundle.getContext());
-    }
-
-  }
+  private String pinstanceId;
 
   /**
-   * @param msg
-   * @param e
+   * Initilize the sql and parameters for the procedure.
    */
-  private void log(String msg, Exception e) {
-    log.error(msg, e);
-    logger.log(msg + e.getMessage());
+  @Override
+  protected void init(final ProcessBundle bundle) {
+    String sql = "CALL " + bundle.getImpl() + "(?)";
+    pinstanceId = bundle.getPinstanceId();
+
+    setSQL(sql);
+    setParams(new String[] { pinstanceId }, new String[] { "in" });
   }
 
-  /**
-   * @param conn
-   * @param pinstanceId
-   * @throws ServletException
-   */
-  private void log(String pinstanceId, ConnectionProvider conn, ProcessContext obContext) {
+  @Override
+  protected void log(String message, ProcessContext context) {
     OBError msg;
     try {
-      final PInstanceProcessData[] data = PInstanceProcessData.select(conn, pinstanceId);
-      msg = Utility.getProcessInstanceMessage(conn, obContext.toVars(), data);
+      final PInstanceProcessData[] data = PInstanceProcessData.select(connection, pinstanceId);
+      msg = Utility.getProcessInstanceMessage(connection, context.toVars(), data);
       logger.log(msg.getType() + " " + msg.getTitle() + " " + msg.getMessage());
 
     } catch (final Exception e) {
       e.printStackTrace();
-      msg = Utility.translateError(conn, obContext.toVars(), obContext.getLanguage(), e
+      msg = Utility.translateError(connection, context.toVars(), context.getLanguage(), e
           .getMessage());
       logger.log(msg.getType() + " " + msg.getTitle() + " " + msg.getMessage());
     }

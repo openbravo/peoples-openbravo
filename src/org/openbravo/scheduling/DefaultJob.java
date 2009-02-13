@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,14 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+/**
+ * Openbravo implementation of the Quartz Job interface to enable Openbravo processes to be
+ * scheduled through the Quartz Scheduler. DefaultJob simply removes the {@link Process} and
+ * {@link ProcessBundle} objects from the JobExecutionContext and executes them.
+ * 
+ * @author awolski
+ * 
+ */
 public class DefaultJob implements Job {
 
   static Logger log = Logger.getLogger(DefaultJob.class);
