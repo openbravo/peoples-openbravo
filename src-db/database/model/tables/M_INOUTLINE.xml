@@ -100,7 +100,7 @@
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_MINOUTLINE">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_INOUT" name="MINOUT_MINOUTLINE" onDelete="cascade">
+      <foreign-key foreignTable="M_INOUT" name="MINOUT_MINOUTLINE">
         <reference local="M_INOUT_ID" foreign="M_INOUT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_MINOUTLINE">
