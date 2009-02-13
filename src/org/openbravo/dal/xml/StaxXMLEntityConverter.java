@@ -261,7 +261,8 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
           log.debug("Primitive property with value " + newValue);
 
           // only update if changed
-          if ((currentValue == null && newValue != null)
+          if ((currentValue != null && newValue == null)
+              || (currentValue == null && newValue != null)
               || (currentValue != null && newValue != null && !currentValue.equals(newValue))) {
             log.debug("Value changed setting it");
             if (!preventRealUpdate) {

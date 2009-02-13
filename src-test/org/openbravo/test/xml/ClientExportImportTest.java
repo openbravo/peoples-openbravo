@@ -135,8 +135,7 @@ public class ClientExportImportTest extends XMLBaseTest {
   }
 
   public void testImportBB() {
-    doImport("Accounting_Test.xml");
-    doImport("BigBazaar.xml");
+    doImport("bb.xml");
   }
 
   public void _testImportAccountingTest() {
@@ -152,9 +151,7 @@ public class ClientExportImportTest extends XMLBaseTest {
       // final URL url = this.getClass().getResource("testdata/" + fileName);
       // final File f = new File(new URI(url.toString()));
 
-      final File f = new File(
-          "/home/mtaal/mydata/dev/workspaces/obtrunk/openbravo/referencedata/sampledata/"
-              + fileName);
+      final File f = new File(fileName); // "/home/mtaal/mytmp/" +
 
       final ImportResult ir = DataImportService.getInstance().importClientData(importProcessor,
           false, new FileReader(f));
@@ -162,19 +159,9 @@ public class ClientExportImportTest extends XMLBaseTest {
         ir.getException().printStackTrace(System.err);
         throw new OBException(ir.getException());
       }
-      if (ir.getErrorMessages() != null) {
+      if (ir.getErrorMessages() != null && ir.getErrorMessages().trim().length() > 0) {
+        System.err.println(ir.getErrorMessages());
         fail(ir.getErrorMessages());
-      }
-      // none should be updated!
-      assertEquals(0, ir.getUpdatedObjects().size());
-
-      // and never insert anything in client 0
-      for (final BaseOBObject bob : ir.getInsertedObjects()) {
-        if (bob instanceof ClientEnabled) {
-          final ClientEnabled ce = (ClientEnabled) bob;
-          assertNotNull(ce.getClient());
-          assertTrue(!ce.getClient().getId().equals("0"));
-        }
       }
 
       System.err.println(ir.getWarningMessages());
@@ -182,7 +169,7 @@ public class ClientExportImportTest extends XMLBaseTest {
       e.printStackTrace(System.err);
       throw new OBException(e);
     }
-    setErrorOccured(true);
+    setErrorOccured(false);
   }
 
 }

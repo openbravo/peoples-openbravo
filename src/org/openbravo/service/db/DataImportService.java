@@ -36,6 +36,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.util.Check;
+import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.core.TriggerHandler;
@@ -179,6 +180,21 @@ public class DataImportService implements OBSingleton {
           }
         }
 
+        // validate the objects
+        for (BaseOBObject bob : xec.getToInsert()) {
+          validateObject(bob, ir);
+        }
+        for (BaseOBObject bob : xec.getToUpdate()) {
+          validateObject(bob, ir);
+        }
+
+        if (ir.hasErrorOccured()) {
+          System.err.println(ir.getErrorMessages());
+          OBDal.getInstance().rollbackAndClose();
+          rolledBack = true;
+          return ir;
+        }
+
         // now save and update
         // do inserts and updates in opposite order, this is important
         // so that the objects on which other depend are inserted first
@@ -235,6 +251,38 @@ public class DataImportService implements OBSingleton {
       throw new OBException(e);
     }
 
+  }
+
+  private void validateObject(BaseOBObject bob, ImportResult ir) {
+    int i = 0;
+    final StringBuilder msgs = new StringBuilder();
+    for (Property p : bob.getEntity().getProperties()) {
+      if (p.isOneToMany() || p.isAuditInfo() || p.isClientOrOrganization()) {
+        continue;
+      }
+      final Object value = bob.get(p.getName());
+      try {
+        p.checkIsValidValue(value);
+      } catch (ValidationException ve) {
+        i++;
+        // stop at 100 errors
+        if (i > 100) {
+          break;
+        }
+        if (msgs.length() > 0) {
+          msgs.append("\n");
+        }
+        msgs.append("Object " + bob + " table/column: " + p.getEntity().getTableName() + "."
+            + p.getColumnName() + " " + ve.getMessage());
+      }
+    }
+    if (msgs.length() > 0) {
+      if (ir.getErrorMessages() == null) {
+        ir.setErrorMessages(msgs.toString());
+      } else {
+        ir.setErrorMessages(ir.getErrorMessages() + msgs);
+      }
+    }
   }
 
   private ImportResult importDataFromXML(Client client, Organization organization, Document doc,

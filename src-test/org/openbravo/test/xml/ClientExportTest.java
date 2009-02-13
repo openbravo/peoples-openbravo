@@ -51,7 +51,7 @@ public class ClientExportTest extends XMLBaseTest {
     DataExportService des = DataExportService.getInstance();
     final Map<String, Object> params = new HashMap<String, Object>();
     params.put(DataExportService.CLIENT_ID_PARAMETER_NAME, "1000000");
-    final FileWriter fw = new FileWriter("/home/mtaal/mytmp/bb.xml");
+    final FileWriter fw = new FileWriter("/tmp/bb.xml");
     DataExportService.getInstance().exportClientToXML(params, false, fw);
     fw.close();
     setErrorOccured(false);
