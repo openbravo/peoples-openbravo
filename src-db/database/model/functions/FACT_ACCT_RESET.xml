@@ -222,9 +222,10 @@
             END LOOP;
         v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='''  || Cur_Clients.AD_Client_ID
         || ''' AND (Posted=''Y'' OR Processing<>''N'' OR Processing IS NULL) AND NOT EXISTS (SELECT 1 FROM FACT_ACCT WHERE AD_TABLE_ID =''' || Cur_Tables.AD_Table_ID ||
-        ''' AND RECORD_ID = ' || Cur_Tables.TableName || '_ID AND AD_CLIENT_ID =''' || Cur_Clients.AD_Client_ID || ''' )';
+        ''' AND RECORD_ID = ' || Cur_Tables.TableName || '_ID AND AD_CLIENT_ID =''' || Cur_Clients.AD_Client_ID || ''') AND (' 
+        || Cur_Tables.TableName || '_ID = ''' || v_Record_ID || ''' OR ''' || UPPER(v_Record_ID) ||''' = ''NULL'')';
             -- DBMS_OUTPUT.PUT_LINE('  executing: ' || v_Cmd);
-            EXECUTE IMMEDIATE v_Cmd;
+            EXECUTE IMMEDIATE v_Cmd; 
             v_rowcount:=SQL%ROWCOUNT;
             v_Updated:=v_Updated + v_rowcount;
             DBMS_OUTPUT.PUT_LINE('  updated=' || v_rowcount) ;
