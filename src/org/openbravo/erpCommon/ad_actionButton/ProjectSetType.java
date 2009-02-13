@@ -195,7 +195,6 @@ public class ProjectSetType extends HttpSecureAppServlet {
         releaseCommitConnection(conn);
         myMessage.setType("Success");
         myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-        myMessage.setMessage(Utility.messageBD(this, "ProcessOK", vars.getLanguage()));
       } catch (Exception e) {
         try {
           releaseRollbackConnection(conn);
