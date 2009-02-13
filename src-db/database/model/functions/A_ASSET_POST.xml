@@ -347,13 +347,13 @@
                 INTO v_AMOUNT, v_PERCENTAGE
                 FROM A_AMORTIZATIONLINE
                 WHERE A_ASSET_ID=v_Record_ID;
-                --              v_AMOUNT := v_AMORTIZATIONVALUEAMT - v_AMOUNT;
+                v_AMOUNT := v_AMORTIZATIONVALUEAMT - v_AMOUNT;
                 v_PERCENTAGE:=100 - v_PERCENTAGE;
                 finish:=true;
+              ELSE v_AMOUNT:=v_AMORTIZATIONVALUEAMT*v_PERCENTAGE/100;
               end if;
-              v_AMOUNT:=v_AMORTIZATIONVALUEAMT*v_PERCENTAGE/100;
               IF(v_AMOUNT>0) THEN
-                Ad_Sequence_Next('A_Amortizationline', '1000000', v_AMORTIZATIONLINE) ;
+                Ad_Sequence_Next('A_Amortizationline', '1000000', v_AMORTIZATIONLINE);
                 INSERT
                 INTO A_AMORTIZATIONLINE
                   (
@@ -362,7 +362,9 @@
                     AMORTIZATION_PERCENTAGE, AMORTIZATIONAMT, C_CURRENCY_ID, ISACTIVE, LINE
                   )
                   VALUES
-                  (v_NEW_AMORTIZATION, v_AMORTIZATIONLINE, v_Record_ID, v_AD_CLIENT_ID, v_AD_ORG_ID, now(), v_CREATEDBY, now(), v_CREATEDBY, ROUND(v_PERCENTAGE,v_Currency_Pre), ROUND(v_AMOUNT,v_Currency_Pre), v_C_CURRENCY_ID, 'Y', v_LINE) ;
+                  (v_NEW_AMORTIZATION, v_AMORTIZATIONLINE, v_Record_ID, v_AD_CLIENT_ID, 
+                   v_AD_ORG_ID, now(), v_CREATEDBY, now(), v_CREATEDBY, 
+                   ROUND(v_PERCENTAGE,v_Currency_Pre), ROUND(v_AMOUNT,v_Currency_Pre), v_C_CURRENCY_ID, 'Y', v_LINE) ;
                  v_Inserted := v_Inserted +1;
                 v_BEGINING_DATE:=TO_DATE(ADD_MONTHS(LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')), 1) );
                 v_TotalAmt:=v_TotalAmt + v_Amount;
