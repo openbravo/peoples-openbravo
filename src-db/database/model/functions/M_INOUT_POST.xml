@@ -55,7 +55,6 @@
   v_DateAcct DATE;
   v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
   v_org_bule_id AD_Org.AD_Org_ID%TYPE;
-  v_docbasetype C_DocType.DocBaseType%TYPE;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -215,12 +214,8 @@
     WHERE AD_Org.AD_OrgType_ID = AD_OrgType.AD_OrgType_ID
     AND AD_Org.AD_Org_ID=v_org_bule_id;
     
-    IF (v_isacctle='Y') THEN
-      SELECT DocBaseType
-      INTO v_docbasetype
-      FROM C_DocType WHERE C_DocType_ID=v_DocType_ID;
-    
-      SELECT C_CHK_OPEN_PERIOD(v_AD_Org_ID, v_DateAcct, NULL, v_docbasetype) 
+    IF (v_isacctle='Y') THEN    
+      SELECT C_CHK_OPEN_PERIOD(v_AD_Org_ID, v_DateAcct, NULL, v_DocType_ID) 
       INTO v_available_period
       FROM DUAL;
       
