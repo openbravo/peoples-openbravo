@@ -42,8 +42,8 @@
   v_Multiplier            NUMBER;
   v_Outsourced            CHAR(1);
   v_OutsourcingCost       NUMBER;
-  v_CostCenter_Version    NUMBER;
-  v_ProcessPlan_Version   NUMBER;
+  v_CostCenter_Version    varchar2(32);
+  v_ProcessPlan_Version   varchar2(32);
   v_SequenceCost          NUMBER;
   v_SequenceCost_Tmp      NUMBER;
   v_ProducedKg            NUMBER;
@@ -167,9 +167,11 @@ BEGIN --BODY
 
     -- Purchased raw material
     IF (v_No_Cost) THEN
-      SELECT COALESCE(C_CURRENCY_CONVERT(MAX(bl.Price), bl.C_CURRENCY_ID, p_Currency, p_Calcdate, bl.ad_client_id, bl.ad_org_id),M_GET_PRODUCT_PRICE_DATE(MAX(p.AD_CLIENT_ID), MAX(p.M_PRODUCT_ID), p_CalcDate)) INTO v_Cost
-      FROM M_Product p LEFT JOIN C_BudgetLine bl ON p.M_Product_ID = bl.M_Product_ID
-                                                    AND bl.C_Budget_ID = p_Budget_ID
+      SELECT COALESCE(MAX(bl.price),M_GET_PRODUCT_PRICE_DATE(MAX(p.AD_CLIENT_ID), MAX(p.M_PRODUCT_ID), p_Calcdate)) INTO v_Cost
+      FROM M_Product p LEFT JOIN (SELECT C_CURRENCY_CONVERT(C_BudgetLine.Price, C_BudgetLine.C_CURRENCY_ID, p_Currency, p_Calcdate, C_BudgetLine.ad_client_id, C_BudgetLine.ad_org_id) as price,
+                                   C_BudgetLine.M_Product_ID
+                                  FROM C_BudgetLine
+                                  WHERE C_BudgetLine.C_Budget_ID = NULL) bl ON p.M_Product_ID = bl.M_Product_ID
       WHERE p.M_Product_ID = Cur_UsedProducts.M_Product_ID
       AND p.ispurchased = 'Y';
       v_SequenceCost_Tmp := COALESCE(v_SequenceCost_Tmp, 0) + Cur_UsedProducts.quantityfactor*v_Cost;
