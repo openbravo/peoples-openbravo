@@ -45,7 +45,7 @@ BEGIN
                 FROM C_PeriodControl
                 WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID
                 AND DocBaseType=(SELECT DocBaseType FROM C_DocType WHERE C_DocType_ID=p_doctype_id)
-                AND AD_Org_ID=AD_ORG_GETCALENDAROWNER(p_orgid)
+                AND AD_Org_ID=AD_ORG_GETPERIODCONTROLALLOW(p_orgid)
                 AND PeriodStatus='O'
                 );
   ELSIF (p_doctype IS NOT NULL) THEN
@@ -57,7 +57,7 @@ BEGIN
                 FROM C_PeriodControl
                 WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID
                 AND DocBaseType=p_doctype
-                AND AD_Org_ID=AD_ORG_GETCALENDAROWNER(p_orgid)
+                AND AD_Org_ID=AD_ORG_GETPERIODCONTROLALLOW(p_orgid)
                 AND PeriodStatus='O'
                 );
   ELSE 

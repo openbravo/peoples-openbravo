@@ -36,12 +36,16 @@ BEGIN
 
     FOR CUR_DocType IN
       (SELECT Value , a.AD_Org_ID AS Organization
-       FROM AD_Ref_List , (SELECT AD_Org_ID 
-                           FROM AD_Org 
-                           WHERE C_Calendar_ID = (SELECT C_Calendar_ID
-                                                  FROM C_Year
-                                                  WHERE C_Year.C_Year_ID=:new.C_Year_ID
-                                                  )
+       FROM AD_Ref_List , (SELECT o.AD_Org_ID 
+                           FROM AD_Org o
+                           WHERE o.ISREADY='Y'
+                           AND o.ISPERIODCONTROLALLOWED='Y'
+                           and exists (SELECT 1
+                                                  FROM C_Year, c_calendar, ad_org
+                                                  WHERE C_Year.c_calendar_id = c_calendar.c_calendar_id
+                                                  and c_calendar.c_calendar_id = ad_org.c_calendar_id
+                                                  and C_Year.C_Year_ID=:new.C_Year_ID
+                                                  and ad_org.ad_org_id = ad_org_getcalendarowner(o.AD_ORG_ID))
                           ) a
        WHERE AD_Reference_ID='183'
        ORDER BY 1)

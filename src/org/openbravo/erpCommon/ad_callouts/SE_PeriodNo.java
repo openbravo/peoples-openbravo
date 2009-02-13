@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,10 +42,13 @@ public class SE_PeriodNo extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
+      String strOrgId = vars.getStringParameter("inpadOrgId");
+      String strCalendarId = vars.getStringParameter("inpcCalendarId");
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
       String strYearId = vars.getStringParameter("inpcYearId");
       String strWindowId = vars.getStringParameter("inpwindowId");
       try {
-        printPage(response, vars, strYearId, strWindowId);
+        printPage(response, vars, strYearId, strWindowId, strOrgId, strCalendarId, strChanged);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -54,7 +57,8 @@ public class SE_PeriodNo extends HttpSecureAppServlet {
   }
 
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strYearId,
-      String strWindowId) throws IOException, ServletException {
+      String strWindowId, String strOrgId, String strCalendarId, String strChanged)
+      throws IOException, ServletException {
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
@@ -63,8 +67,9 @@ public class SE_PeriodNo extends HttpSecureAppServlet {
     resultado.append("var calloutName='SE_PeriodNo';\n\n");
     resultado.append("var respuesta = new Array(");
 
-    SEPeriodNoData[] tdv = null;
-    if (!strYearId.equals("")) {
+    if (strChanged.equals("inpcYearId") && !strYearId.equals("")) {
+      SEPeriodNoData[] tdv = null;
+      // Update the Periods
       try {
         tdv = SEPeriodNoData.getPeriodNo(this, strYearId);
       } catch (Exception ex) {
@@ -76,7 +81,7 @@ public class SE_PeriodNo extends HttpSecureAppServlet {
         resultado.append("new Array(");
         for (int i = 0; i < tdv.length; i++) {
           resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + tdv[i].getField("PeriodNo") + "\")");
+              + tdv[i].getField("Name") + "\")");
           if (i < tdv.length - 1)
             resultado.append(",\n");
         }
@@ -84,7 +89,72 @@ public class SE_PeriodNo extends HttpSecureAppServlet {
       } else
         resultado.append("null");
       resultado.append("\n)");
+    } else if (!strOrgId.equals("")) {
+      SEPeriodNoData[] tdv = null;
+      // Update the Calendar
+      try {
+        tdv = SEPeriodNoData.getCalendar(this, strOrgId);
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+      resultado.append("new Array(\"inpcCalendarId\", ");
+      if (tdv != null && tdv.length > 0) {
+        resultado.append("new Array(");
+        for (int i = 0; i < tdv.length; i++) {
+          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+              + tdv[i].getField("Name") + "\")");
+          if (i < tdv.length - 1)
+            resultado.append(",\n");
+        }
+        resultado.append("\n)");
+      } else
+        resultado.append("null");
+      resultado.append("\n),");
 
+      // Update the years
+      try {
+        tdv = SEPeriodNoData.getYears(this, strOrgId);
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+
+      String strLastYear = "";
+      resultado.append("new Array(\"inpcYearId\", ");
+      if (tdv != null && tdv.length > 0) {
+        resultado.append("new Array(");
+        for (int i = 0; i < tdv.length; i++) {
+          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+              + tdv[i].getField("Name") + "\", \"" + (i == 0 ? "true" : "false") + "\")");
+          if (i == 0)
+            strLastYear = tdv[i].getField("id");
+          if (i < tdv.length - 1)
+            resultado.append(",\n");
+        }
+        resultado.append("\n)");
+      } else
+        resultado.append("null");
+      resultado.append("\n),");
+
+      // Update the Periods
+      try {
+        tdv = SEPeriodNoData.getPeriodNo(this, strLastYear);
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+
+      resultado.append("new Array(\"inpperiodno\", ");
+      if (tdv != null && tdv.length > 0) {
+        resultado.append("new Array(");
+        for (int i = 0; i < tdv.length; i++) {
+          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+              + tdv[i].getField("Name") + "\")");
+          if (i < tdv.length - 1)
+            resultado.append(",\n");
+        }
+        resultado.append("\n)");
+      } else
+        resultado.append("null");
+      resultado.append("\n)");
     }
 
     resultado.append(");");

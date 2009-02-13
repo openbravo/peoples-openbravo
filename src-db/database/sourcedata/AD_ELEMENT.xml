@@ -23913,10 +23913,10 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--58D373789BE1DD15E040007F01013726-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--58D373789BE1DD15E040007F01013726-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--58D373789BE1DD15E040007F01013726-->  <COLUMNNAME><![CDATA[IsRecursive]]></COLUMNNAME>
-<!--58D373789BE1DD15E040007F01013726-->  <NAME><![CDATA[Open also child organizations]]></NAME>
-<!--58D373789BE1DD15E040007F01013726-->  <PRINTNAME><![CDATA[Open also child organizations]]></PRINTNAME>
-<!--58D373789BE1DD15E040007F01013726-->  <DESCRIPTION><![CDATA[If it is selected, the process will also open the documents of all of the organizations that depend on the selected organization.]]></DESCRIPTION>
-<!--58D373789BE1DD15E040007F01013726-->  <HELP><![CDATA[If it is selected, the process will also open the documents of all of the organizations that depend on the selected organization.]]></HELP>
+<!--58D373789BE1DD15E040007F01013726-->  <NAME><![CDATA[Cascade]]></NAME>
+<!--58D373789BE1DD15E040007F01013726-->  <PRINTNAME><![CDATA[Cascade]]></PRINTNAME>
+<!--58D373789BE1DD15E040007F01013726-->  <DESCRIPTION><![CDATA[If it is selected, the process will also open or close the documents of all of the organizations that depend on the selected organization.]]></DESCRIPTION>
+<!--58D373789BE1DD15E040007F01013726-->  <HELP><![CDATA[If it is selected, the process will also open or close the documents of all of the organizations that depend on the selected organization.]]></HELP>
 <!--58D373789BE1DD15E040007F01013726-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--58D373789BE1DD15E040007F01013726--></AD_ELEMENT>
 

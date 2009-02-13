@@ -828,8 +828,7 @@ The Conversion Rates tab is used to define conversion rates to be used when conv
 <!--155-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--155-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--155-->  <NAME><![CDATA[Organization]]></NAME>
-<!--155-->  <DESCRIPTION><![CDATA[Define Organizations
-Maintain Organizationt Accounting Dimension Tree]]></DESCRIPTION>
+<!--155-->  <DESCRIPTION><![CDATA[Define Organizations<BR>Maintain Organizationt Accounting Dimension Tree]]></DESCRIPTION>
 <!--155-->  <HELP><![CDATA[The Organization Tab is used to define an Organization.  Each Organization has a Key and Name and optionally a Description.  When adding a new organization, you must re-login to be able to access the new organization.
 Please note that you will not be able to create new entities in this window if you have not default set for all mandatory values!]]></HELP>
 <!--155-->  <TABLENAME><![CDATA[AD_Org]]></TABLENAME>

@@ -102,14 +102,14 @@ BEGIN
       )
       ;
          
-    -- Create PeriodControl for the calendar
-    IF (:new.C_Calendar_ID IS NOT NULL) THEN
+    -- Create PeriodControl for the organization
+    IF (:new.IsPeriodControlAllowed = 'Y') THEN
       FOR CUR_PeriodControl IN
       (SELECT Value, a.C_Period_ID as Period
        FROM AD_Ref_List , (select c_period_id
                           from c_period, c_year
                           where c_year.c_year_id= c_period.c_year_id
-                          and c_year.c_calendar_id=:new.C_Calendar_ID) a
+                          and c_year.c_calendar_id = COALESCE(:new.C_Calendar_ID,(SELECT C_CALENDAR_ID FROM AD_ORG WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(:new.AD_ORG_ID)))) a
        WHERE AD_Reference_ID='183'
        ORDER BY 1)
       LOOP
@@ -145,53 +145,7 @@ BEGIN
     FROM AD_TREENODE
     WHERE AD_CLIENT_ID=:old.AD_Client_ID
       AND AD_Tree_ID=v_xTree_ID
-      AND Node_ID=:old.AD_Org_ID;
-      
-  ELSIF(UPDATING) THEN
-         
-   IF (COALESCE(:old.C_Calendar_ID, 'XX') <> COALESCE(:new.C_Calendar_ID, 'XX')) THEN
-    -- Delete previous associated period control
-    IF (:old.C_Calendar_ID IS NOT NULL) THEN
-      DELETE FROM C_PeriodControl
-      WHERE ad_org_id=:old.AD_Org_ID
-      AND EXISTS (SELECT 1 FROM c_period, c_year
-                  WHERE c_period.c_year_id = c_year.c_year_id
-                  AND c_calendar_id = :old.C_Calendar_ID
-                  AND c_period.c_period_id = C_PeriodControl.c_period_id);
-    END IF;
-
-    IF (:new.C_Calendar_ID IS NOT NULL) THEN      
-      -- Insert new period control
-      FOR CUR_PeriodControl IN
-      (SELECT Value, a.C_Period_ID as Period
-       FROM AD_Ref_List, (select c_period_id
-                          from c_period, c_year
-                          where c_year.c_year_id= c_period.c_year_id
-                          and c_year.c_calendar_id=:new.C_Calendar_ID) a
-       WHERE AD_Reference_ID='183'
-       ORDER BY 1)
-      LOOP
-        INSERT
-        INTO C_PeriodControl
-          (
-            C_PeriodControl_ID, AD_Client_ID, AD_Org_ID,
-            IsActive, Created, CreatedBy,
-            Updated, UpdatedBy, C_Period_ID,
-            DocBaseType, PeriodStatus, PeriodAction,
-            Processing
-          )
-          VALUES
-          (
-            get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID,
-             'Y', now(),  '0',
-            now(), '0', CUR_PeriodControl.Period,
-            CUR_PeriodControl.Value, 'N', 'N',
-            NULL
-          )
-          ;
-      END LOOP;   
-    END IF;
-   END IF;
+      AND Node_ID=:old.AD_Org_ID;     
   END IF;
   -- Deleting
 EXCEPTION
