@@ -293,7 +293,7 @@ function processingModeCode(target, display) {
   string += "<div class=\"" + target + "_Status_Processing_Container\" id=\"Processing_Container\"";
   if (display==false) string += " style=\"display: none\"";
   string += ">\n";
-  string += "  <div class=\"" + target + "_Status_Processing_Elements_Container\">\n";
+  string += "  <div class=\"" + target + "_Status_Processing_Elements_Container\" id=\"Processing_Container_Logo\">\n";
   string += "    <div class=\"" + target + "_Status_Processing_logo\">\n";
   string += "      <div class=\"" + target + "_Status_Processing_logo_dimension\"></div>";
   string += "    </div>\n";
@@ -303,7 +303,10 @@ function processingModeCode(target, display) {
   return string;
 }
 
-function setProcessingMode(target, value) {
+function setProcessingMode(target, value, logo) {
+  if (logo != false) {
+    logo = true;
+  }
   if (target=='popup') {
     var popup_code = document.getElementsByTagName('BODY')[0].innerHTML;
     isKeyboardLocked=value;
@@ -312,6 +315,7 @@ function setProcessingMode(target, value) {
     } else {
       document.getElementsByTagName('BODY')[0].innerHTML = processingModeCode('Popup', value) + popup_code;
     }
+    document.getElementById('Processing_Container_Logo').style.display = (logo?"":"none");
   } else {
     var frame_menu = top.frames['frameMenu'];
     var frame_window = top.frames['appFrame'];
@@ -323,6 +327,7 @@ function setProcessingMode(target, value) {
     } else {
       frame_window.document.getElementsByTagName('BODY')[0].innerHTML = processingModeCode('Main', value) + window_code;
     }
+    frame_window.document.getElementById('Processing_Container_Logo').style.display = (logo?"":"none");
     if (frame_menu.document.getElementById('Processing_Container')) {
       frame_menu.document.getElementById('Processing_Container').style.display = (value?"":"none");
     } else {
