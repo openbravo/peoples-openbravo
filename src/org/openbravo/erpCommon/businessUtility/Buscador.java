@@ -331,6 +331,7 @@ public class Buscador extends HttpSecureAppServlet {
     strHtml.append("  return true;\n");
     strHtml.append("}\n");
     strHtml.append("function onloadFunctions() {\n");
+    strHtml.append("  enableLocalShortcuts();\n");
     strHtml.append(strCombo);
     strHtml.append("  return true;\n");
     strHtml.append("}\n");
@@ -749,19 +750,20 @@ public class Buscador extends HttpSecureAppServlet {
       // strHtml.append("</td></tr></table>\n");
       strHtml.append("</td></tr>\n");
     }
-    vecKeys.addElement("new keyArrayItem(\"B\", \"aceptar()\", null, \"ctrlKey\")");
-    vecKeys.addElement("new keyArrayItem(\"ESCAPE\", \"window.close()\", null, null)");
+    //vecKeys.addElement("new keyArrayItem(\"B\", \"aceptar()\", null, \"ctrlKey\")");
+    //vecKeys.addElement("new keyArrayItem(\"ESCAPE\", \"window.close()\", null, null)");
+    script.append("\nfunction enableLocalShortcuts() {\n");
     if (vecKeys.size() > 0) {
-      script.append("var keyArray = new Array();\n");
-      script.append("function enableLocalShortcuts() {\n");
-      script.append("\n");
+      //script.append("var keyArray = new Array();\n");
       for (int i = 0; i < vecKeys.size(); i++) {
-        script.append("keyArray[").append(i).append("] = ").append(vecKeys.elementAt(i).toString())
+        script.append("  keyArray[keyArray.length] = ").append(vecKeys.elementAt(i).toString())
             .append(";\n");
       }
-      script.append("enableShortcuts();\n");
-      script.append("}\n");
+      //script.append("enableShortcuts();\n");
+    } else {
+      script.append("\n");
     }
+    script.append("}\n");
     StringBuffer scrScr = new StringBuffer();
     if (scriptKeyboard) {
       scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append(
@@ -814,8 +816,8 @@ public class Buscador extends HttpSecureAppServlet {
 
   public String location(BuscadorData efd) {
     StringBuffer html = new StringBuffer();
-    html.append("<td class=\"FieldButton_bg\"><a href=\"#\"");
-    html.append("<a href=\"#\"");
+    html.append("<td class=\"FieldButton_bg\">");
+    html.append("<a href=\"#\" class=\"FieldButtonLink\" ");
     html.append("onClick=\"").append(locationCommands(efd)).append("return false;\" ");
     html
         .append(
@@ -900,7 +902,8 @@ public class Buscador extends HttpSecureAppServlet {
       html.append("<input type=\"hidden\" name=\"inpParam").append(
           FormatUtilities.replace(efd.columnname)).append("_CURR\">\n");
     }
-    html.append("<td class=\"FieldButton_bg\"><a href=\"#\"");
+    html.append("<td class=\"FieldButton_bg\">");
+    html.append("<a href=\"#\" class=\"FieldButtonLink\" ");
     html.append("onClick=\"").append(searchsCommand(efd, true, tabId, windowId, strIsSOTrx))
         .append("return false;\" ");
     html
@@ -935,7 +938,8 @@ public class Buscador extends HttpSecureAppServlet {
 
   public String locator(BuscadorData efd, String windowId) {
     StringBuffer html = new StringBuffer();
-    html.append("<td class=\"FieldButton_bg\"><a href=\"#\"");
+    html.append("<td class=\"FieldButton_bg\">");
+    html.append("<a href=\"#\"  class=\"FieldButtonLink\" ");
     html.append("onClick=\"").append(locatorCommands(efd, true, windowId)).append(
         "return false;\" ");
     html
