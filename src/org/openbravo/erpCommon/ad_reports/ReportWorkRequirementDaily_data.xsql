@@ -29,12 +29,12 @@
     <Sql>
     <![CDATA[
       SELECT wr.MA_WorkRequirement_ID AS wrid, wr.STARTDATE AS startdate, wr.ENDDATE AS enddate, 
-      wrp.MA_WRPhase_ID AS wrpid, wrp.DONEQUANTITY AS quantity, 
+      wrp.MA_WRPhase_ID AS wrpid, COALESCE(wr.CONVERSIONRATE,1)*wrp.DONEQUANTITY AS quantity, 
       AD_COLUMN_IDENTIFIER('MA_WRPHASE', to_char(wrp.MA_WRPhase_ID),?) AS WRPNAME,
       AD_COLUMN_IDENTIFIER('MA_PROCESSPLAN', to_char(ppv.MA_PROCESSPLAN_ID),?) AS PROCESSPLAN,
       AD_COLUMN_IDENTIFIER('MA_PROCESS', to_char(wrp.MA_PROCESS_ID), ?) AS PROCESS,
       AD_COLUMN_IDENTIFIER('M_PRODUCT', to_char(wrpp.M_PRODUCT_ID), ?) AS PRODUCT,
-      COALESCE(wr.SECONDARYQTY*s.MULTIPLIER,wrp.QUANTITY) AS needqty, 
+      COALESCE(wr.CONVERSIONRATE,1)*(wrp.QUANTITY-wrp.DONEQUANTITY) AS needqty, 
       wrpp.M_PRODUCT_ID AS productid, 
       wrpp.MOVEMENTQTY AS needed, wrp.SeqNO, 'Bordes' AS negative,
         '123' AS inprocess, s.description AS description,'product' AS prodproduct,'' AS name, wr.DocumentNo as docno,
