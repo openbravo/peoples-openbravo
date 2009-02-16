@@ -25,8 +25,11 @@
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
+  v_User VARCHAR2(32);
   v_IsRecursive AD_Org.IsActive%TYPE:='N';
   v_IsAcctLE AD_ORGTYPE.IsAcctLegalEntity%TYPE:='N';
+  v_isperiodcontrol AD_Org.IsPeriodControlAllowed%TYPE;
+  v_calendar_id AD_Org.C_Calendar_ID%TYPE;
 
   v_num NUMBER; 
   TYPE RECORD IS REF CURSOR;
@@ -48,6 +51,7 @@ BEGIN
       )
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
+      v_User:=Cur_Parameter.AD_User_ID;
       IF(Cur_Parameter.ParameterName='Cascade') THEN
         v_IsRecursive:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  Cascade=' || v_IsRecursive) ;
@@ -118,6 +122,42 @@ BEGIN
       ROLLBACK;
       v_Result:=0;
       RAISE_APPLICATION_ERROR(-20539, 'The calendar associated to a legal entity must be unique. So, an organization that is a legal entity must have assigned itself or any ancestor the same calendar');
+    END IF;
+    
+    -- Create PeriodControl for the organization
+    SELECT IsPeriodControlAllowed, C_Calendar_ID
+    INTO v_isperiodcontrol, v_calendar_id
+    FROM AD_Org
+    WHERE AD_Org_ID=v_Record_ID;
+    IF ( v_isperiodcontrol = 'Y') THEN
+      FOR CUR_PeriodControl IN
+      (SELECT Value, a.C_Period_ID as Period
+       FROM AD_Ref_List , (select c_period_id
+                          from c_period, c_year
+                          where c_year.c_year_id= c_period.c_year_id
+                          and c_year.c_calendar_id = COALESCE(v_calendar_id,(SELECT C_CALENDAR_ID FROM AD_ORG WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(v_Record_ID)))) a
+       WHERE AD_Reference_ID='183'
+       ORDER BY 1)
+      LOOP
+        INSERT
+        INTO C_PeriodControl
+          (
+            C_PeriodControl_ID, AD_Client_ID, AD_Org_ID,
+            IsActive, Created, CreatedBy,
+            Updated, UpdatedBy, C_Period_ID,
+            DocBaseType, PeriodStatus, PeriodAction,
+            Processing
+          )
+          VALUES
+          (
+            get_uuid(), v_User, v_Record_ID,
+             'Y', now(),  '0',
+            now(), '0', CUR_PeriodControl.Period,
+            CUR_PeriodControl.Value, 'N', 'N',
+            NULL
+          )
+          ;
+      END LOOP;
     END IF;
     
     IF(p_PInstance_ID IS NOT NULL) THEN

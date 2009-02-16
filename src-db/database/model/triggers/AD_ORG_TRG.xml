@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -101,38 +101,6 @@ BEGIN
          '?'
       )
       ;
-         
-    -- Create PeriodControl for the organization
-    IF (:new.IsPeriodControlAllowed = 'Y') THEN
-      FOR CUR_PeriodControl IN
-      (SELECT Value, a.C_Period_ID as Period
-       FROM AD_Ref_List , (select c_period_id
-                          from c_period, c_year
-                          where c_year.c_year_id= c_period.c_year_id
-                          and c_year.c_calendar_id = COALESCE(:new.C_Calendar_ID,(SELECT C_CALENDAR_ID FROM AD_ORG WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(:new.AD_ORG_ID)))) a
-       WHERE AD_Reference_ID='183'
-       ORDER BY 1)
-      LOOP
-        INSERT
-        INTO C_PeriodControl
-          (
-            C_PeriodControl_ID, AD_Client_ID, AD_Org_ID,
-            IsActive, Created, CreatedBy,
-            Updated, UpdatedBy, C_Period_ID,
-            DocBaseType, PeriodStatus, PeriodAction,
-            Processing
-          )
-          VALUES
-          (
-            get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID,
-             'Y', now(),  '0',
-            now(), '0', CUR_PeriodControl.Period,
-            CUR_PeriodControl.Value, 'N', 'N',
-            NULL
-          )
-          ;
-      END LOOP;
-    END IF;
         
   ELSIF(DELETING) THEN
     --  Delete TreeNode --
