@@ -25,7 +25,7 @@
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
-  v_User VARCHAR2(32);
+  v_Client_ID VARCHAR2(32);
   v_IsRecursive AD_Org.IsActive%TYPE:='N';
   v_IsAcctLE AD_ORGTYPE.IsAcctLegalEntity%TYPE:='N';
   v_isperiodcontrol AD_Org.IsPeriodControlAllowed%TYPE;
@@ -51,7 +51,6 @@ BEGIN
       )
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
-      v_User:=Cur_Parameter.AD_User_ID;
       IF(Cur_Parameter.ParameterName='Cascade') THEN
         v_IsRecursive:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  Cascade=' || v_IsRecursive) ;
@@ -125,10 +124,11 @@ BEGIN
     END IF;
     
     -- Create PeriodControl for the organization
-    SELECT IsPeriodControlAllowed, C_Calendar_ID
-    INTO v_isperiodcontrol, v_calendar_id
+    SELECT IsPeriodControlAllowed, C_Calendar_ID, AD_Client_ID
+    INTO v_isperiodcontrol, v_calendar_id, v_Client_ID
     FROM AD_Org
     WHERE AD_Org_ID=v_Record_ID;
+    
     IF ( v_isperiodcontrol = 'Y') THEN
       FOR CUR_PeriodControl IN
       (SELECT Value, a.C_Period_ID as Period
@@ -150,7 +150,7 @@ BEGIN
           )
           VALUES
           (
-            get_uuid(), v_User, v_Record_ID,
+            get_uuid(), v_Client_ID, v_Record_ID,
              'Y', now(),  '0',
             now(), '0', CUR_PeriodControl.Period,
             CUR_PeriodControl.Value, 'N', 'N',
