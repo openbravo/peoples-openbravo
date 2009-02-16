@@ -427,7 +427,10 @@ public class Translation extends HttpSecureAppServlet {
 
       if (!exportReferenceData) {
         String strParentTable = null;
-        final TranslationData[] parentTable = TranslationData.parentTable(this, trlTable);
+        String tempTrlTableName = trlTable;
+        if (!tempTrlTableName.toLowerCase().endsWith("_trl"))
+          tempTrlTableName = tempTrlTableName + "_Trl";
+        final TranslationData[] parentTable = TranslationData.parentTable(this, tempTrlTableName);
         if (parentTable.length > 0) {
           strParentTable = parentTable[0].tablename;
         }
@@ -471,30 +474,28 @@ public class Translation extends HttpSecureAppServlet {
 
       // Create xml file
 
-      if (!exportReferenceData) { // when not exporting rd create always
-        // the xml file
-        factory = DocumentBuilderFactory.newInstance();
-        builder = factory.newDocumentBuilder();
-        document = builder.newDocument();
-        // Root
-        root = document.createElement(XML_TAG);
-        root.setAttribute(XML_ATTRIBUTE_LANGUAGE, AD_Language);
-        root.setAttribute(XML_ATTRIBUTE_TABLE, table);
-        root.setAttribute(XML_ATTRIBUTE_BASE_LANGUAGE, moduleLanguage);
-        root.setAttribute(XML_ATTRIBUTE_VERSION, TranslationData.version(this));
-        document.appendChild(root);
-        String directory = "";
+      String directory = "";
+      factory = DocumentBuilderFactory.newInstance();
+      builder = factory.newDocumentBuilder();
+      document = builder.newDocument();
+      // Root
+      root = document.createElement(XML_TAG);
+      root.setAttribute(XML_ATTRIBUTE_LANGUAGE, AD_Language);
+      root.setAttribute(XML_ATTRIBUTE_TABLE, table);
+      root.setAttribute(XML_ATTRIBUTE_BASE_LANGUAGE, moduleLanguage);
+      root.setAttribute(XML_ATTRIBUTE_VERSION, TranslationData.version(this));
+      document.appendChild(root);
 
-        if (moduleId.equals("0"))
-          directory = rootDirectory + AD_Language + "/";
-        else
-          directory = rootDirectory + AD_Language + "/" + javaPackage + "/";
+      if (moduleId.equals("0"))
+        directory = rootDirectory + AD_Language + "/";
+      else
+        directory = rootDirectory + AD_Language + "/" + javaPackage + "/";
+      if (!new File(directory).exists())
         (new File(directory)).mkdir();
 
-        final String fileName = directory + trlTable + "_" + AD_Language + ".xml";
-        log4j.info("exportTrl - " + fileName);
-        out = new File(fileName);
-      }
+      String fileName = directory + trlTable + "_" + AD_Language + ".xml";
+      log4j.info("exportTrl - " + fileName);
+      out = new File(fileName);
 
       while (rs.next()) {
         if (!hasRows && !exportReferenceData) { // Create file only in
@@ -512,15 +513,15 @@ public class Translation extends HttpSecureAppServlet {
           root.setAttribute(XML_ATTRIBUTE_BASE_LANGUAGE, moduleLanguage);
           root.setAttribute(XML_ATTRIBUTE_VERSION, TranslationData.version(this));
           document.appendChild(root);
-          String directory = "";
 
           if (moduleId.equals("0"))
             directory = rootDirectory + AD_Language + "/";
           else
             directory = rootDirectory + AD_Language + "/" + javaPackage + "/";
-          (new File(directory)).mkdir();
+          if (!new File(directory).exists())
+            (new File(directory)).mkdir();
 
-          final String fileName = directory + trlTable + "_" + AD_Language + ".xml";
+          fileName = directory + trlTable + "_" + AD_Language + ".xml";
           log4j.info("exportTrl - " + fileName);
           out = new File(fileName);
         }
