@@ -167,4 +167,15 @@
     <Parameter name="cTaxId"/>
     <Parameter name="mAttributesetinstanceId"/>
   </SqlMethod>
+  <SqlMethod name="selectPrecisions" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      SELECT C_Currency.StdPrecision, C_Currency.PricePrecision 
+      FROM C_Order, M_PriceList, C_Currency 
+      WHERE C_Order.M_PriceList_ID = M_PriceList.M_PriceList_ID
+      AND M_PriceList.C_Currency_ID = C_Currency.C_Currency_ID
+      AND C_Order.C_Order_ID = ?
+    </Sql>
+    <Parameter name="cOrderId"/>
+  </SqlMethod>
 </SqlClass>
