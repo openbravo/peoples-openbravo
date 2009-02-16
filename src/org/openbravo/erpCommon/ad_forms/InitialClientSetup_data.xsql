@@ -534,11 +534,11 @@
         SELECT c_elementvalue_id
         FROM c_ElementValue
         WHERE value = ?
-        and ad_client_ID = ?
+        and c_element_ID = ?
       ]]>
     </Sql>
     <Parameter name="value"/>
-    <Parameter name="client"/>
+    <Parameter name="element"/>
   </SqlMethod>
   <SqlMethod name="insertOperands" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

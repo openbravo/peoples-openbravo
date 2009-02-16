@@ -740,11 +740,11 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       log4j.debug("InitialClientSetup - save - NATURAL ACCOUNT ADDED");
     if (log4j.isDebugEnabled())
       log4j.debug("InitialClientSetup - save - m_info last: " + m_info.toString());
-    return updateOperands(conn, vars, AD_Client_ID, data);
+    return updateOperands(conn, vars, AD_Client_ID, data, C_Element_ID);
   }// save
 
   public boolean updateOperands(Connection conn, VariablesSecureApp vars, String AD_Client_ID,
-      AccountingValueData[] data) throws ServletException {
+      AccountingValueData[] data, String C_Element_ID) throws ServletException {
     boolean OK = true;
     for (int i = 0; i < data.length; i++) {
       String[][] strOperand = operandProcess(data[i].operands);
@@ -752,9 +752,9 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       for (int j = 0; strOperand != null && j < strOperand.length; j++) {
         String C_ElementValue_Operand_ID = SequenceIdData.getUUID();
         String strAccount = InitialClientSetupData.selectAccount(conn, this, strOperand[j][0],
-            AD_Client_ID);
+            C_Element_ID);
         String strElementValue = InitialClientSetupData.selectAccount(conn, this,
-            data[i].accountValue, AD_Client_ID);
+            data[i].accountValue, C_Element_ID);
         if (strAccount != null && !strAccount.equals("")) {
           InitialClientSetupData.insertOperands(conn, this, C_ElementValue_Operand_ID,
               (strOperand[j][1].equals("+") ? "1" : "-1"), strElementValue, strAccount, strSeqNo,
@@ -1473,7 +1473,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   * 
+   *
    * @param modules
    * @return
    */
