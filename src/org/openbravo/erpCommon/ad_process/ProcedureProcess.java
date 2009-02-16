@@ -101,15 +101,15 @@ public abstract class ProcedureProcess extends DalBaseProcess {
 
     CallableStatement st = null;
     if (connection.getRDBMS().equalsIgnoreCase("ORACLE")) {
-      int iParameter = 0;
       try {
         st = connection.getCallableStatement(sql);
 
         if (params != null) {
-          for (int i = 0; i < params.length; ++i) {
+          for (int i = 0; i < params.length; i++) {
             String type = types[i];
             String value = params[i];
 
+            int iParameter = i + 1;
             UtilSql.setValue(st, iParameter, 12, null, value);
           }
         }
