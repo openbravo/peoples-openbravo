@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -184,7 +184,7 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
       CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars
-          .getClient(), vars.getOrg(), vars.getUser(), strAccount, strAmount, "0");
+          .getClient(), vars.getOrg(), vars.getUser(), strAccount, strAmount, null);
     } else {
       CreateCashFlowStatementData[] writeOff = CreateCashFlowStatementData.selectPaymentWriteOff(
           this, strPaymentId, data[0].cSettlementCancelId);
@@ -211,7 +211,7 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
           if (log4j.isDebugEnabled())
             log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
           CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
-              vars.getClient(), vars.getOrg(), vars.getUser(), strOrderAccount, strAmount, "0");
+              vars.getClient(), vars.getOrg(), vars.getUser(), strOrderAccount, strAmount, null);
         } else {
           if (log4j.isDebugEnabled())
             log4j.debug("CreateCashFlowStatement - POSTED INVOICE");
@@ -236,7 +236,7 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
         if (log4j.isDebugEnabled())
           log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
         CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
-            vars.getClient(), vars.getOrg(), vars.getUser(), strOrderAccount, strAmount, "0");
+            vars.getClient(), vars.getOrg(), vars.getUser(), strOrderAccount, strAmount, null);
       } else if (!(data[0].cSettlementGenerateId).equals("")) {
         if (log4j.isDebugEnabled())
           log4j.debug("CreateCashFlowStatement - SETTLEMENT_GENERATE");
@@ -278,7 +278,7 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
             if (log4j.isDebugEnabled())
               log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
             CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
-                vars.getClient(), vars.getOrg(), vars.getUser(), strPaymentAccount, strAmount, "0");
+                vars.getClient(), vars.getOrg(), vars.getUser(), strPaymentAccount, strAmount, null);
           } else {
             String strTotal = CreateCashFlowStatementData.selectSumGeneratedPayments(this,
                 data[0].cSettlementGenerateId);
