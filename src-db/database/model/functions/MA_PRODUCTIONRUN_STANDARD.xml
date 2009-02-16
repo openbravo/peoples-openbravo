@@ -175,7 +175,7 @@
             );
         END LOOP;
         --Insert Products
-        v_Line:=-10;
+        v_Line:=0;
         v_ResultStr:='ProdRunProduct P+ Processing';
         FOR Cur_WRPProduct IN
           (SELECT wrpp.*, COALESCE(po.M_Locator_ID, p.M_Locator_ID) AS M_Locator_ID, p.name as pname
