@@ -4843,7 +4843,7 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--539-->  <TABLENAME><![CDATA[A_Asset]]></TABLENAME>
 <!--539-->  <CLASSNAME><![CDATA[Asset]]></CLASSNAME>
 <!--539-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--539-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--539-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--539-->  <AD_WINDOW_ID><![CDATA[800027]]></AD_WINDOW_ID>
 <!--539-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--539-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
