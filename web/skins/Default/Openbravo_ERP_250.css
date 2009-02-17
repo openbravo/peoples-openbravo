@@ -8286,6 +8286,25 @@ a.Popup_Client_Help_LabelLink_focus {
   outline: none;
 }
 
+.HelpItems {
+    margin-top: 5px;
+}
+
+.HelpItems h3 {
+	display: inline;
+    font-size: 1.1em;
+}
+
+.HelpItems span {
+	display: block;
+    padding: 3px 0 0 10px;
+}
+
+.HelpItems ul {
+	margin: 0;
+    padding: 0 0 0 20px;
+}
+
 /*
  ****************
  * RelatedInfo

@@ -372,7 +372,22 @@ Each time that is pressed the Create button is opened a popup to create a unique
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <NAME><![CDATA[Module Management]]></NAME>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <DESCRIPTION><![CDATA[Mangament for installed modules]]></DESCRIPTION>
-<!--25C886DA08E947F29AAC1D30D8B753A1-->  <HELP><![CDATA[This form allows to browse the currently installed modules as well it permits to check for updates for these modules and to search for new ones to install in the instance.]]></HELP>
+<!--25C886DA08E947F29AAC1D30D8B753A1-->  <HELP><![CDATA[This form allows a user to browse currently installed modules, check for updates of installed modules, and to search for new modules to install.
+                      <div class="HelpItems">
+                        <h3><A name="installed">Installed Modules</A></h3>
+                        <span>Displays currently installed modules and their details. From here, find updates to installed modules and rebuild the system after installing/uninstalling a module.</span>
+                        <h3><A name="add">Add Modules</A></h3>
+                        <span>Search for a specific module, or browse all available modules in the Central Repository. You may also browse for modules from the file system. Install a module using the Install Now button.</span>
+                        <h3><A name="history">Installation History</A></h3>
+                        <span>Displays a history of module installations/uninstallations and errors that may have occurred whilst executing these processes.</span>
+                        <h3><A name="system-rebuild">System Rebuild</A></h3>
+                        <span>After a module is installed/uninstalled, the application context needs to be restarted in order for the changes to appear in the system. You may: </span>
+                          <ul>
+                            <li><b><a name="restart">Restart server:</a></b> The application server will be restarted and you will automatically be redirected to the login screen.</li>
+                            <li><b><a name="reload">Reload context:</a></b> The Openbravo context will be reloaded and you will be redirected to the login screen. <i>Note: </i>There is a know issue with the application server leaking 30MB of memory each time the context is reloaded.</li>
+                            <li><b><a name="nothing">Do nothing:</a></b> A manual restart is required in order for the modules changes to take effect.</li>
+                          </ul>
+                      </div>]]></HELP>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.ModuleManagement]]></CLASSNAME>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
