@@ -61,7 +61,7 @@ var isUserClick = false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '13229';
+  var number = '13300';
   return number;
 }
 
@@ -3972,6 +3972,11 @@ function auto_complete_number(obj, isFloatAllowed, isNegativeAllowed, evt) {
 //Deprecated in 2.50, use autoCompleteDate instead
 function auto_complete_date(field, fmt) {
   autoCompleteDate(field, fmt);
+}
+
+//Deprecated in 2.50, use autoCompleteTime instead
+function auto_complete_time(field, fmt) {
+  autoCompleteTime(field, fmt);
 }
 
 /**

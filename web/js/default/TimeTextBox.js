@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,7 +58,7 @@ isValidTime = function(/*String*/str_datetime) {
 	return (new Date (0, 0, 0, RegExp.$1, RegExp.$2, RegExp.$3));
 }
 
-function auto_complete_time(field, fmt) {
+function autoCompleteTime(field, fmt) {
   if (getCaretPosition(field).start != field.value.length) return; //If we are inserting in a position different from the last one, we don't autocomplete
   if (fmt == null || fmt == "") fmt = field.getAttribute("displayformat");
   var strDate = field.value;
