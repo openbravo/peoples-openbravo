@@ -25,8 +25,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       SELECT P.RESULT, REPLACE(REPLACE(P.ERRORMSG, CHR(10), CHR(92) || CHR(92) || 'n'), CHR(13), CHR(92) || CHR(92) || 'n') AS ERRORMSG, 
-      REPLACE(REPLACE(L.P_MSG, CHR(10), CHR(92) || CHR(92) || 'n'), CHR(13), CHR(92) || CHR(92) || 'n') AS P_MSG 
-      FROM AD_PINSTANCE P left join AD_PINSTANCE_LOG L on P.AD_PINSTANCE_ID = L.AD_PINSTANCE_ID 
+      '' AS P_MSG 
+      FROM AD_PINSTANCE P
       WHERE P.AD_PINSTANCE_ID = ?
     </Sql>
     <Parameter name="adPinstanceId"/>
@@ -35,8 +35,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       SELECT P.RESULT, REPLACE(REPLACE(P.ERRORMSG, CHR(10), CHR(92) || CHR(92) || 'n'), CHR(13), CHR(92) || CHR(92) || 'n') AS ERRORMSG, 
-      REPLACE(REPLACE(L.P_MSG, CHR(10), CHR(92) || CHR(92) || 'n'), CHR(13), CHR(92) || CHR(92) || 'n') AS P_MSG 
-      FROM AD_PINSTANCE P left join AD_PINSTANCE_LOG L on P.AD_PINSTANCE_ID = L.AD_PINSTANCE_ID 
+      '' AS P_MSG 
+      FROM AD_PINSTANCE P 
       WHERE P.AD_PINSTANCE_ID = ?
     </Sql>
     <Parameter name="adPinstanceId"/>

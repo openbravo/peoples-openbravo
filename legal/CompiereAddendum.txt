@@ -288,7 +288,6 @@ name and the original Compiere name is reported in brackets:
   AD_ORG
   AD_ORGINFO
   AD_PINSTANCE
-  AD_PINSTANCE_LOG
   AD_PINSTANCE_PARA
   AD_PREFERENCE
   AD_PROCESS
