@@ -37,7 +37,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FILENAME" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false">
+      <column name="FILENAME" primaryKey="false" required="false" type="VARCHAR" size="500" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -58,6 +58,10 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADTEXTINTERFACES">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="AD_TEXTINTERF_FILENAME_TEXT" unique="false">
+        <index-column name="FILENAME"/>
+        <index-column name="TEXT"/>
+      </index>
       <check name="AD_TEXTINTERFACES_IN_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
