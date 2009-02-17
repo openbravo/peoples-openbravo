@@ -49,6 +49,7 @@
     v_DocType_ID VARCHAR2(32);
     v_DocTypeTarget_ID VARCHAR2(32);
     v_DocSubTypeSO VARCHAR(60) ;
+    v_DocSubTypeSOTarget VARCHAR(60) ;
     v_IsBinding CHAR(1):='Y';
     --
     ToDeliver NUMBER;
@@ -175,7 +176,11 @@
         RAISE_APPLICATION_ERROR(-20000, '@WaitingPayment@') ;
       END IF;
     END IF;--FINISH_PROCESS
-    IF (v_DocSubTypeSO='PR' AND v_invoicerule <> 'I') THEN
+    SELECT DocSubTypeSO
+    INTO v_DocSubTypeSOTarget
+    FROM C_DOCTYPE
+    WHERE C_DocType_ID=v_DocTypetarget_ID;
+    IF (v_DocSubTypeSOTarget='PR' AND v_invoicerule <> 'I') THEN
       RAISE_APPLICATION_ERROR(-20000, '@PrepayMustImmediate@');
     END IF;
     IF(NOT FINISH_PROCESS) THEN
