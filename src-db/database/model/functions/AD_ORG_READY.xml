@@ -34,6 +34,7 @@
   v_num NUMBER; 
   TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
+  CUR_PeriodControl RECORD;
 BEGIN
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
   v_ResultStr:='PInstanceNotFound';
