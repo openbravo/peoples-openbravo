@@ -276,7 +276,8 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
           .append(SALTO_LINEA);
       m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "StartingOrg", vars.getLanguage()))
           .append(SALTO_LINEA);
-      if (!createOrg(request, vars, strOrganization, strOrgType, strParentOrg, strOrgUser, strcLocationId)) {
+      if (!createOrg(request, vars, strOrganization, strOrgType, strParentOrg, strOrgUser,
+          strcLocationId)) {
         releaseRollbackConnection(conn);
         m_info.append(SALTO_LINEA).append(
             Utility.messageBD(this, "createOrgFailed", vars.getLanguage())).append(SALTO_LINEA);
@@ -407,8 +408,9 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       return true;
   }
 
-  public boolean createOrg(HttpServletRequest request, VariablesSecureApp vars, String orgName, String strOrgType,
-      String strParentOrg, String userOrg, String strcLocationId) throws ServletException {
+  public boolean createOrg(HttpServletRequest request, VariablesSecureApp vars, String orgName,
+      String strOrgType, String strParentOrg, String userOrg, String strcLocationId)
+      throws ServletException {
 
     Connection conn = null;
     try {
@@ -486,15 +488,15 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
         log4j.debug("InitialOrgSetup - createOrg - m_info: " + m_info.toString());
       releaseCommitConnection(conn);
       conn = this.getTransactionConnection();
+      OBContext.getOBContext().addWritableOrganization(AD_Org_ID);
       vars
           .setSessionValue("#USER_ORG", vars.getSessionValue("#USER_ORG") + ", '" + AD_Org_ID + "'");
       vars.setSessionValue("#ORG_CLIENT", vars.getSessionValue("#ORG_CLIENT") + ", '" + AD_Org_ID
           + "'");
-      vars.setSessionValue("#AccessibleOrgTree", vars.getSessionValue("#AccessibleOrgTree") + ", '"
-              + AD_Org_ID + "'");
-      vars.setSessionObject("#CompleteOrgTree", new OrgTree(((OrgTree)vars.getSessionObject("#CompleteOrgTree")).toString() + ", '"
-              + AD_Org_ID + "'"));
-      OBContext.getOBContext().addWritableOrganization(AD_Org_ID);
+      OrgTree tree = new OrgTree(this, AD_Client_ID);
+      vars.setSessionObject("#CompleteOrgTree", tree);
+      OrgTree accessibleTree = tree.getAccessibleTree(this, vars.getRole());
+      vars.setSessionValue("#AccessibleOrgTree", accessibleTree.toString());
       // * Create User-Role
 
       // OrgUser - User
@@ -522,8 +524,8 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     return true;
   }
 
-  public boolean save(Connection conn, VariablesSecureApp vars, String AD_Client_ID,
-      String AD_Org_ID, String C_Element_ID, AccountingValueData[] data) throws ServletException {
+  public boolean save(Connection conn, VariablesSecureApp vars, String C_Element_ID,
+      AccountingValueData[] data) throws ServletException {
     final String strAccountTree = InitialOrgSetupData.selectTree(this, AD_Client_ID);
     for (int i = 0; i < data.length; i++) {
       if (log4j.isDebugEnabled())
@@ -604,10 +606,10 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       log4j.debug("InitialOrgSetup - save - NATURAL ACCOUNT ADDED");
     if (log4j.isDebugEnabled())
       log4j.debug("InitialOrgSetup - save - m_info last: " + m_info.toString());
-    return updateOperands(conn, vars, AD_Client_ID, data, C_Element_ID);
+    return updateOperands(conn, vars, data, C_Element_ID);
   }// save
 
-  public boolean updateOperands(Connection conn, VariablesSecureApp vars, String AD_Client_ID,
+  public boolean updateOperands(Connection conn, VariablesSecureApp vars,
       AccountingValueData[] data, String C_Element_ID) throws ServletException {
     boolean OK = true;
     for (int i = 0; i < data.length; i++) {
@@ -796,7 +798,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
       // Create Account Values
       data = parseData(avData);
-      final boolean errMsg = save(conn, vars, AD_Client_ID, AD_Org_ID, C_Element_ID, data);
+      final boolean errMsg = save(conn, vars, C_Element_ID, data);
       if (!errMsg) {
         releaseRollbackConnection(conn);
         final String err = "InitialOrgSetup - createAccounting - Acct Element Values NOT inserted";
@@ -1023,7 +1025,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the error. "" if there is no error
-   *
+   * 
    * @param vars
    * @param strOrganization
    * @param strClient
@@ -1114,7 +1116,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   *
+   * 
    * @param modules
    * @return
    */
