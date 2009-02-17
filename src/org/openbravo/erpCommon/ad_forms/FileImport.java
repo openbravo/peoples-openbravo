@@ -138,7 +138,7 @@ public class FileImport extends HttpSecureAppServlet {
     StringBuffer strFields = new StringBuffer("");
     StringBuffer strValues = new StringBuffer("");
     FileImportData[] data = null;
-    // int constant = 0;
+    int constant = 0;
     OBError myMessage = null;
     int i = 0;
 
@@ -160,8 +160,8 @@ public class FileImport extends HttpSecureAppServlet {
         // generate the updated row information and update the basic row already created.
         int jj = 0;
         for (int j = 0; j < data.length; j++) {
-          if ((data2[i].getField(String.valueOf(j)) == null || data2[i].getField(String.valueOf(j))
-              .equals(""))
+          if ((data2[i].getField(String.valueOf(j - constant)) == null || data2[i].getField(
+              String.valueOf(j - constant)).equals(""))
               && data[j].constantvalue.equals(""))
             continue;
           if (jj > 0)
@@ -171,15 +171,15 @@ public class FileImport extends HttpSecureAppServlet {
           strValues.append("'");
           if ((data[j].datatype.equals("C")) && (!data[j].constantvalue.equals(""))) {
             strValues.append(data[j].constantvalue);
-            // constant = constant + 1;
+            constant = constant + 1;
           } else
-            strValues.append(parseField(data2[i].getField(String.valueOf(j)), data[j].fieldlength,
-                data[j].datatype, data[j].dataformat, data[j].decimalpoint));
+            strValues.append(parseField(data2[i].getField(String.valueOf(j - constant)),
+                data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint));
           strValues.append("'");
           strFields.append(strValues);
           strValues.delete(0, strValues.length());
         }
-        // constant = 0;
+        constant = 0;
         if (log4j.isDebugEnabled())
           log4j.debug("##########iteration - " + (i + 1) + " - strFields = " + strFields);
         try {
