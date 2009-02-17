@@ -103,7 +103,8 @@ public class Property {
     setColumnName(fromColumn.getColumnName());
     setNameOfColumn(fromColumn.getName());
     setDefaultValue(fromColumn.getDefaultValue());
-    setMandatory(overrideMandatoryCustom(fromColumn));
+    // setMandatory(overrideMandatoryCustom(fromColumn));
+    setMandatory(false);
     setMinValue(fromColumn.getValueMin());
     setMaxValue(fromColumn.getValueMax());
     setUuid(fromColumn.getReference().getName().equals("ID")
