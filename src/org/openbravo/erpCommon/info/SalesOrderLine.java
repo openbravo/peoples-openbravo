@@ -134,10 +134,7 @@ public class SalesOrderLine extends HttpSecureAppServlet {
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
-      String strSOTrx = vars.getStringParameter("inpisSOTrx");
-      if (strSOTrx.equals("")) {
-        strSOTrx = vars.getSessionValue("SalesOrderLine.isSOTrx");
-      }
+      String strSOTrx = vars.getGlobalVariable("inpisSOTrx", "SalesOrderLine.isSOTrx", "");
       if (vars.getStringParameter("newFilter").equals("1")) {
         removePageSessionVariables(vars);
       }
