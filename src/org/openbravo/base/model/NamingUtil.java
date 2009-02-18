@@ -245,6 +245,15 @@ public class NamingUtil {
 
   private static String camelCaseIt(String mappingName, String separator) {
     String localMappingName = mappingName;
+    // strip _ at the end
+    while (localMappingName.endsWith(separator)) {
+      localMappingName = localMappingName.substring(0, localMappingName.length() - 1);
+    }
+    // strip _ at the beginning
+    while (localMappingName.startsWith(separator)) {
+      localMappingName = localMappingName.substring(1);
+    }
+
     // "CamelCasing"
     int pos = localMappingName.indexOf(separator);
     while (pos != -1) {
