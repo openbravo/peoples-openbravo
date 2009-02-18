@@ -266,20 +266,6 @@ public class NamingUtil {
     return localMappingName;
   }
 
-  private static String camelCaseItStripUnderscores(String mappingName) {
-    String localMappingName = mappingName;
-    // "CamelCasing"
-    int pos = localMappingName.indexOf("_");
-    while (pos != -1) {
-      final String leftPart = localMappingName.substring(0, pos);
-      final String camelLetter = String.valueOf(localMappingName.charAt(pos + 1)).toUpperCase();
-      final String rightPart = localMappingName.substring(pos + 2);
-      localMappingName = leftPart + camelLetter + rightPart;
-      pos = localMappingName.indexOf("_");
-    }
-    return localMappingName;
-  }
-
   private static String lowerCaseFirst(String value) {
     if (value.length() > 1) {
       return value.substring(0, 1).toLowerCase() + value.substring(1);
