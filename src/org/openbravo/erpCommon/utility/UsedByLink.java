@@ -94,9 +94,10 @@ public class UsedByLink extends HttpSecureAppServlet {
     UsedByLinkData[] data = null;
 
     if (vars.getLanguage().equals("en_US"))
-      data = UsedByLinkData.select(this, vars.getClient(), vars.getLanguage(), keyColumn);
+      data = UsedByLinkData.select(this, vars.getClient(), vars.getLanguage(), keyColumn, tableId);
     else
-      data = UsedByLinkData.selectLanguage(this, vars.getClient(), vars.getLanguage(), keyColumn);
+      data = UsedByLinkData.selectLanguage(this, vars.getClient(), vars.getLanguage(), keyColumn,
+          tableId);
 
     if (data != null && data.length > 0) {
       final Vector<Object> vecTotal = new Vector<Object>();

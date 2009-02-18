@@ -33,21 +33,30 @@
         TB.NAME AS TABNAME, W.NAME AS WINDOWNAME, '' AS HASTREE, '' AS ID, '' AS WHERECLAUSE, 0 AS TOTAL 
         FROM AD_TAB TB, AD_WINDOW W, AD_TABLE T, AD_COLUMN C, AD_FIELD F, AD_MENU M,  
         (SELECT AD_COLUMN_ID FROM AD_COLUMN 
-        WHERE UPPER(COLUMNNAME) = UPPER(?) 
-        AND (ISPARENT='Y' OR AD_REFERENCE_ID IN ('19', '35'))
-        UNION SELECT AD_COLUMN.AD_COLUMN_ID FROM AD_COLUMN, AD_ELEMENT 
-        WHERE AD_COLUMN.AD_ELEMENT_ID = AD_ELEMENT.AD_ELEMENT_ID 
-        AND UPPER(REPLACE(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'), 
-        'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID')) = UPPER(?) 
-        AND AD_REFERENCE_ID IN ('30', '31')
-        UNION SELECT C.AD_COLUMN_ID FROM AD_COLUMN C, AD_REF_TABLE R 
-        WHERE C.AD_REFERENCE_ID = '18' 
-        AND C.AD_REFERENCE_VALUE_ID = R.AD_REFERENCE_ID
-        AND EXISTS(SELECT 1 FROM AD_COLUMN WHERE UPPER(COLUMNNAME) = UPPER(?) 
-        AND AD_COLUMN_ID = R.AD_KEY) 
-        UNION SELECT AD_COLUMN_ID FROM AD_COLUMN 
-        WHERE AD_REFERENCE_ID = '21' 
-        AND UPPER(?) = 'C_LOCATION_ID' 
+          WHERE UPPER(COLUMNNAME) = UPPER(?) 
+            AND (ISPARENT='Y' OR AD_REFERENCE_ID IN ('19', '35'))
+        UNION 
+          SELECT AD_COLUMN.AD_COLUMN_ID FROM AD_COLUMN, AD_ELEMENT 
+           WHERE AD_COLUMN.AD_ELEMENT_ID = AD_ELEMENT.AD_ELEMENT_ID 
+             AND UPPER(REPLACE(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID')) = UPPER(?) 
+             AND AD_REFERENCE_ID IN ('30', '31')
+             AND AD_REFERENCE_VALUE_ID IS NULL
+        UNION
+          SELECT C.AD_COLUMN_ID
+            FROM AD_COLUMN C, AD_REF_SEARCH S
+           WHERE C.AD_REFERENCE_ID = '30'
+             AND S.AD_TABLE_ID = ?
+             AND C.AD_REFERENCE_VALUE_ID = S.AD_REFERENCE_ID
+        UNION 
+           SELECT C.AD_COLUMN_ID FROM AD_COLUMN C, AD_REF_TABLE R 
+            WHERE C.AD_REFERENCE_ID = '18' 
+              AND C.AD_REFERENCE_VALUE_ID = R.AD_REFERENCE_ID
+              AND EXISTS(SELECT 1 FROM AD_COLUMN WHERE UPPER(COLUMNNAME) = UPPER(?) 
+              AND AD_COLUMN_ID = R.AD_KEY) 
+        UNION 
+            SELECT AD_COLUMN_ID FROM AD_COLUMN 
+             WHERE AD_REFERENCE_ID = '21' 
+               AND UPPER(?) = 'C_LOCATION_ID' 
         ) A
         WHERE W.AD_WINDOW_ID = TB.AD_WINDOW_ID 
         AND TB.AD_TABLE_ID = T.AD_TABLE_ID 
@@ -66,6 +75,7 @@
     <Parameter name="adLanguage"/>
     <Parameter name="columnname"/>
     <Parameter name="columnname"/>
+    <Parameter name="adTableId"/>
     <Parameter name="columnname"/>
     <Parameter name="columnname"/>
     <!--Parameter name="adClientId"/>
@@ -83,22 +93,32 @@
         T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID, 0 AS TOTAL, 
         (case when Wt.NAME IS NULL then W.NAME else  Wt.NAME end) AS WINDOWNAME, 
         (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end) AS TABNAME 
-        FROM  (SELECT AD_COLUMN_ID FROM AD_COLUMN 
-        WHERE UPPER(COLUMNNAME) = UPPER(?) 
-        AND (ISPARENT='Y' OR AD_REFERENCE_ID IN ('19', '35'))
-        UNION SELECT AD_COLUMN.AD_COLUMN_ID FROM AD_COLUMN, AD_ELEMENT 
-        WHERE AD_COLUMN.AD_ELEMENT_ID = AD_ELEMENT.AD_ELEMENT_ID 
-        AND UPPER(REPLACE(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'), 
-        'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID')) = UPPER(?) 
-        AND AD_REFERENCE_ID IN ('30', '31')
-        UNION SELECT C.AD_COLUMN_ID FROM AD_COLUMN C, AD_REF_TABLE R 
-        WHERE C.AD_REFERENCE_ID = '18' 
-        AND C.AD_REFERENCE_VALUE_ID = R.AD_REFERENCE_ID
-        AND EXISTS(SELECT 1 FROM AD_COLUMN WHERE UPPER(COLUMNNAME) = UPPER(?) 
-        AND AD_COLUMN_ID = R.AD_KEY) 
-        UNION SELECT AD_COLUMN_ID FROM AD_COLUMN 
-        WHERE AD_REFERENCE_ID = '21' 
-        AND UPPER(?) = 'C_LOCATION_ID' 
+        FROM  (
+          SELECT AD_COLUMN_ID FROM AD_COLUMN 
+           WHERE UPPER(COLUMNNAME) = UPPER(?) 
+             AND (ISPARENT='Y' OR AD_REFERENCE_ID IN ('19', '35'))
+        UNION 
+          SELECT AD_COLUMN.AD_COLUMN_ID FROM AD_COLUMN, AD_ELEMENT 
+           WHERE AD_COLUMN.AD_ELEMENT_ID = AD_ELEMENT.AD_ELEMENT_ID 
+             AND UPPER(REPLACE(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'),'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID')) = UPPER(?) 
+             AND AD_REFERENCE_ID IN ('30', '31')
+             AND AD_REFERENCE_VALUE_ID IS NULL
+        UNION
+          SELECT C.AD_COLUMN_ID
+            FROM AD_COLUMN C, AD_REF_SEARCH S
+           WHERE C.AD_REFERENCE_ID = '30'
+             AND S.AD_TABLE_ID = ?
+             AND C.AD_REFERENCE_VALUE_ID = S.AD_REFERENCE_ID
+        UNION 
+           SELECT C.AD_COLUMN_ID FROM AD_COLUMN C, AD_REF_TABLE R 
+            WHERE C.AD_REFERENCE_ID = '18' 
+              AND C.AD_REFERENCE_VALUE_ID = R.AD_REFERENCE_ID
+              AND EXISTS(SELECT 1 FROM AD_COLUMN WHERE UPPER(COLUMNNAME) = UPPER(?) 
+              AND AD_COLUMN_ID = R.AD_KEY) 
+        UNION 
+          SELECT AD_COLUMN_ID FROM AD_COLUMN 
+           WHERE AD_REFERENCE_ID = '21' 
+             AND UPPER(?) = 'C_LOCATION_ID' 
         ) A, AD_TABLE T, AD_COLUMN C, AD_MENU M, 
         AD_WINDOW W left join  AD_WINDOW_TRL Wt on W.AD_WINDOW_ID = Wt.AD_WINDOW_ID 
                                                 AND Wt.AD_LANGUAGE  = ?,
@@ -125,6 +145,7 @@
     <Parameter name="adLanguage"/>
     <Parameter name="columnname"/>
     <Parameter name="columnname"/>
+    <Parameter name="adTableId"/>
     <Parameter name="columnname"/>
     <Parameter name="columnname"/>
     <Parameter name="adLanguage"/>
