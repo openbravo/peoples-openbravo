@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -95,7 +95,8 @@ function submitXmlHttpRequestUrl(callbackFunction, url, debug) {
   return true;
 }
 
-function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, debug) {
+// extraParams is added unencoded to the POST-data, so caller has to do encoding if needed
+function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, extraParams) {
   if (!xmlreq) xmlreq = getXMLHttpRequest();
   if (formObject==null) formObject = document.forms[0];
   if (debug==null) debug=false;
@@ -113,6 +114,8 @@ function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, deb
       if (text!=null && text!="" && text!="=") sendText += "&" + text;
     }
   }
+  sendText += extraParams;
+
   if (debug)
     if (!debugXmlHttpRequest(Command)) return false;
   //xmlreq.open("GET", Action + "?" + sendText);
@@ -129,6 +132,10 @@ function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, deb
   xmlreq.send(sendText);
 
   return true;
+}
+
+function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, debug) {
+	submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, null);
 }
 
 function lockField(inputField) {

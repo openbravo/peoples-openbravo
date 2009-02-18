@@ -92,7 +92,7 @@
       
       function updateData() {
         //var frm = document.frmTotalPedido;
-        return submitXmlHttpRequest(callback, null, 'ALERT', "VerticalMenu.html", false);
+        return submitXmlHttpRequestWithParams(callback, null, 'ALERT', "VerticalMenu.html", false, "&ignoreForSessionTimeout=1");
       }
       
       function updateAlert()
