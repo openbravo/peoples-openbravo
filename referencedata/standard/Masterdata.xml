@@ -14596,14 +14596,14 @@ Usually, company's internal identifiers for various records (products, customers
   </ADLanguage>
   <ADLanguage id="164" identifier="Hebrew (Israel)" reference="true">
     <id>164</id>
-    <language>iw_IL</language>
+    <language>he_IL</language>
     <active>true</active>
     <creationDate transient="true">2009-02-12T18:09:28.955Z</creationDate>
     <createdBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
     <updated transient="true">2009-02-12T18:09:28.955Z</updated>
     <updatedBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
     <name>Hebrew (Israel)</name>
-    <iSOLanguageCode>iw</iSOLanguageCode>
+    <iSOLanguageCode>he</iSOLanguageCode>
     <iSOCountryCode>IL</iSOCountryCode>
     <baseLanguage inactive="true">false</baseLanguage>
     <systemLanguage>false</systemLanguage>
