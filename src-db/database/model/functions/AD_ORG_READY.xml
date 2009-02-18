@@ -35,6 +35,7 @@
   TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
   CUR_PeriodControl RECORD;
+  Cur_Org RECORD;
 BEGIN
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
   v_ResultStr:='PInstanceNotFound';
@@ -125,39 +126,88 @@ BEGIN
     END IF;
     
     -- Create PeriodControl for the organization
-    SELECT IsPeriodControlAllowed, C_Calendar_ID, AD_Client_ID
-    INTO v_isperiodcontrol, v_calendar_id, v_Client_ID
-    FROM AD_Org
-    WHERE AD_Org_ID=v_Record_ID;
+    IF (v_IsRecursive='N') THEN
+      SELECT IsPeriodControlAllowed, C_Calendar_ID, AD_Client_ID
+      INTO v_isperiodcontrol, v_calendar_id, v_Client_ID
+      FROM AD_Org
+      WHERE AD_Org_ID=v_Record_ID;
+      
+      IF ( v_isperiodcontrol = 'Y') THEN
+        FOR CUR_PeriodControl IN
+        (SELECT Value, a.C_Period_ID as Period
+         FROM AD_Ref_List , (select c_period_id
+                            from c_period, c_year
+                            where c_year.c_year_id= c_period.c_year_id
+                            and c_year.c_calendar_id = COALESCE(v_calendar_id,(SELECT C_CALENDAR_ID FROM AD_ORG WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(v_Record_ID)))) a
+         WHERE AD_Reference_ID='183'
+         ORDER BY 1)
+        LOOP
+          INSERT
+          INTO C_PeriodControl
+            (
+              C_PeriodControl_ID, AD_Client_ID, AD_Org_ID,
+              IsActive, Created, CreatedBy,
+              Updated, UpdatedBy, C_Period_ID,
+              DocBaseType, PeriodStatus, PeriodAction,
+              Processing
+            )
+            VALUES
+            (
+              get_uuid(), v_Client_ID, v_Record_ID,
+               'Y', now(),  '0',
+              now(), '0', CUR_PeriodControl.Period,
+              CUR_PeriodControl.Value, 'N', 'N',
+              NULL
+            )
+            ;
+        END LOOP;
+    END IF;
+      
+    ELSIF (v_IsRecursive='Y') THEN
+      SELECT AD_Client_ID
+      INTO v_Client_ID
+      FROM AD_Org 
+      WHERE AD_Org_ID=v_Record_ID;
     
-    IF ( v_isperiodcontrol = 'Y') THEN
-      FOR CUR_PeriodControl IN
-      (SELECT Value, a.C_Period_ID as Period
-       FROM AD_Ref_List , (select c_period_id
-                          from c_period, c_year
-                          where c_year.c_year_id= c_period.c_year_id
-                          and c_year.c_calendar_id = COALESCE(v_calendar_id,(SELECT C_CALENDAR_ID FROM AD_ORG WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(v_Record_ID)))) a
-       WHERE AD_Reference_ID='183'
-       ORDER BY 1)
+      FOR Cur_Org IN
+        (SELECT AD_Org_ID
+        FROM AD_Org A
+        WHERE AD_ISORGINCLUDED(AD_Org_ID, v_Record_ID, v_Client_ID)<>-1
+        AND IsPeriodControlallowed='Y'
+        AND NOT EXISTS (SELECT 1 
+                      FROM C_PeriodControl 
+                      WHERE C_PeriodControl.AD_Org_ID=A.AD_Org_ID)
+        
+        )
       LOOP
-        INSERT
-        INTO C_PeriodControl
-          (
-            C_PeriodControl_ID, AD_Client_ID, AD_Org_ID,
-            IsActive, Created, CreatedBy,
-            Updated, UpdatedBy, C_Period_ID,
-            DocBaseType, PeriodStatus, PeriodAction,
-            Processing
-          )
-          VALUES
-          (
-            get_uuid(), v_Client_ID, v_Record_ID,
-             'Y', now(),  '0',
-            now(), '0', CUR_PeriodControl.Period,
-            CUR_PeriodControl.Value, 'N', 'N',
-            NULL
-          )
-          ;
+        FOR CUR_PeriodControl IN
+          (SELECT Value, a.C_Period_ID as Period
+           FROM AD_Ref_List , (select c_period_id
+                              from c_period, c_year
+                              where c_year.c_year_id= c_period.c_year_id
+                              and c_year.c_calendar_id = (SELECT C_CALENDAR_ID FROM AD_ORG WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(Cur_Org.AD_Org_ID))) a
+           WHERE AD_Reference_ID='183'
+           ORDER BY 1)
+          LOOP
+            INSERT
+            INTO C_PeriodControl
+              (
+                C_PeriodControl_ID, AD_Client_ID, AD_Org_ID,
+                IsActive, Created, CreatedBy,
+                Updated, UpdatedBy, C_Period_ID,
+                DocBaseType, PeriodStatus, PeriodAction,
+                Processing
+              )
+              VALUES
+              (
+                get_uuid(), v_Client_ID, Cur_Org.AD_Org_ID,
+                 'Y', now(),  '0',
+                now(), '0', CUR_PeriodControl.Period,
+                CUR_PeriodControl.Value, 'N', 'N',
+                NULL
+              )
+              ;
+          END LOOP;       
       END LOOP;
     END IF;
     
