@@ -1173,6 +1173,8 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         m_info.append(err);
         return false;
       }
+      InitialOrgSetupData.insertOrgAcctSchema(conn, this, AD_Client_ID, "0", vars.getUser(),
+          C_AcctSchema_ID);
       releaseCommitConnection(conn);
     } catch (Exception ex) {
       try {
