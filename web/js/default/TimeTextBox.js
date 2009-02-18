@@ -43,19 +43,83 @@ isMissingTimeTextBox= function(/*String*/ id){
 }
 
 isValidTime = function(/*String*/str_datetime) {
-	if (str_datetime.length == 0) return true;
+  if (str_datetime.length == 0) return true;
 // datetime parsing and formatting routimes. modify them if you wish other datetime format
 //function str2dt (str_datetime) {
-	var re_date = /^(\d+)\:(\d+)\:(\d+)$/;
-	if (!re_date.exec(str_datetime)) {
-		re_date = /^(\d+)\:(\d+)$/;
-		if (!re_date.exec(str_datetime)) 
-			return false;
+
+  var hourBlock = new Array();
+  hourBlock[1] = getHourBlock(str_datetime, 1);
+  hourBlock[2] = getHourBlock(str_datetime, 2);
+  hourBlock[3] = getHourBlock(str_datetime, 3);
+  if (!hourBlock[2]) {
+    hourBlock[2] = 0;
   }
-//  if (RegExp.$1 < 0 || RegExp.$1 > 23) return false;
-//  if (RegExp.$2 < 0 || RegExp.$2 > 59) return false;
-//  if (RegExp.$3 < 0 || RegExp.$3 > 59) return false;
-	return (new Date (0, 0, 0, RegExp.$1, RegExp.$2, RegExp.$3));
+  if (!hourBlock[3]) {
+    hourBlock[3] = 0;
+  }
+
+//  if (hourBlock[1] < 0 || hourBlock[1] > 23) return false;
+//  if (hourBlock[2] < 0 || hourBlock[2] > 59) return false;
+//  if (hourBlock[3] < 0 || hourBlock[3] > 59) return false;
+  return (new Date (0, 0, 0, hourBlock[1], hourBlock[2], hourBlock[3]));
+}
+
+expandHour = function(/*String*/ id) {
+  var str_hourFormat = document.getElementById(id).getAttribute("displayformat");
+  var str_datetime = document.getElementById(id).value;
+  if (str_datetime == null || str_datetime == '' || str_datetime == 'null') {
+    return false;
+  }
+  var hourSeparator = str_hourFormat.replace(/%/g,"").replace(/H/g,"").replace(/M/g,"").replace(/S/g,"").replace(/I/g,"").replace(/k/g,"").replace(/l/g,"").substr(0,1);
+
+  var hourBlock = new Array();
+  hourBlock[1] = getHourBlock(str_datetime, 1);
+  hourBlock[2] = getHourBlock(str_datetime, 2);
+  hourBlock[3] = getHourBlock(str_datetime, 3);
+  if (str_datetime.indexOf(hourSeparator) == -1) {
+    hourBlock[1] = str_datetime;
+  }
+  if (!hourBlock[1]) {
+    hourBlock[1] = '0';
+  }
+  if (!hourBlock[2]) {
+    hourBlock[2] = '0';
+  }
+  if (!hourBlock[3]) {
+    hourBlock[3] = '0';
+  }
+
+  if (hourBlock[1].length == 1) {
+    hourBlock[1] = '0' + hourBlock[1].toString();
+  }
+  if (hourBlock[2].length == 1) {
+    hourBlock[2] = '0' + hourBlock[2].toString();
+  }
+  if (hourBlock[3].length == 1) {
+    hourBlock[3] = '0' + hourBlock[3].toString();
+  }
+  var normalizedHour = hourBlock[1].toString() + hourSeparator + hourBlock[2].toString() + hourSeparator + hourBlock[3].toString();
+  document.getElementById(id).value = normalizedHour;
+}
+
+getHourBlock = function(/*String*/ str_datetime, block){
+  // datetime parsing and formatting routimes. modify them if you wish other datetime format 
+  //function str2dt (str_datetime) { 
+  var re_date = /^(\d+)\:(\d+)\:(\d+)$/;
+  if (!re_date.exec(str_datetime)) {
+    re_date = /^(\d+)\:(\d+)$/;
+    if (!re_date.exec(str_datetime)) {
+      return false;
+    }
+  }
+  var hourBlock = new Array();
+  hourBlock[1] = RegExp.$1;
+  hourBlock[2] = RegExp.$2;
+  hourBlock[3] = RegExp.$3;
+  if (block == 1 || block == '1') return hourBlock[1];
+  else if (block == 2 || block == '2') return hourBlock[2];
+  else if (block == 3 || block == '3') return hourBlock[3];
+  else hourBlock;
 }
 
 function autoCompleteTime(field, fmt) {
