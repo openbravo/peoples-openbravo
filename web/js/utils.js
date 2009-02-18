@@ -3099,17 +3099,29 @@ function changeToEditingMode(special) {
       var elementToCheck = focusedWindowElement;
       isContextMenuOpened = true;
       checkContextMenu(elementToCheck);
-    } else if (!isTabPressed && focusedWindowElement.tagName.toUpperCase().indexOf("SELECT")!=-1 && focusedWindowElement && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false) { // Keypress on ComboBox
-      setWindowEditing(true);
-    } else if (!isTabPressed && focusedWindowElement.tagName.toUpperCase().indexOf("SELECT")==-1 && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false && pressedKeyCode!='33' && pressedKeyCode!='34'
-     && pressedKeyCode!='35' && pressedKeyCode!='36' && pressedKeyCode!='37' && pressedKeyCode!='38' && pressedKeyCode!='39' && pressedKeyCode!='40') {
-      setWindowEditing(true);
-//  } else if (isCtrlPressed && pressedKeyCode=='86' && isKeyboardLocked==false) { // Ctrl + V
-//    setWindowEditing(true);
-    } else if (isCtrlPressed && isAltPressed && isKeyboardLocked==false) { // AltGr
-      checkFieldChange()
+    } else if (special == 'onkeydown') { //Special case for Supr and Del keys on IE7 (they can not be catched using onkeypress)
+        setTimeout('checkIE7DelSuprKeys();',100);
+    } else if (special == 'onkeypress') {
+      if (!isTabPressed && focusedWindowElement.tagName.toUpperCase().indexOf("SELECT")!=-1 && focusedWindowElement && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false) { // Keypress on ComboBox
+        setWindowEditing(true);
+      } else if (!isTabPressed && focusedWindowElement.tagName.toUpperCase().indexOf("SELECT")==-1 && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false && pressedKeyCode!='33' && pressedKeyCode!='34'
+       && pressedKeyCode!='35' && pressedKeyCode!='36' && pressedKeyCode!='37' && pressedKeyCode!='38' && pressedKeyCode!='39' && pressedKeyCode!='40') {
+        setWindowEditing(true);
+  //  } else if (isCtrlPressed && pressedKeyCode=='86' && isKeyboardLocked==false) { // Ctrl + V
+  //    setWindowEditing(true);
+      } else if (isCtrlPressed && isAltPressed && isKeyboardLocked==false) { // AltGr
+        checkFieldChange();
+      }
     }
   } catch (e) { }
+}
+
+function checkIE7DelSuprKeys() {
+  if (focusedWindowElement.tagName.toUpperCase().indexOf("SELECT") == -1 && navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
+    if (pressedKeyCode=='46' || pressedKeyCode=='8') {
+      setWindowEditing(true);
+    }
+  }
 }
 
 function checkContextMenu(elementToCheck) {
