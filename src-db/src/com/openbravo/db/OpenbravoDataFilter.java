@@ -33,7 +33,6 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
     removeTable("AD_ID_TRANSLATION");
     removeTable("AD_NOTE");
     removeTable("AD_PINSTANCE");
-    removeTable("AD_PINSTANCE_LOG");
     removeTable("AD_PINSTANCE_PARA");
     removeTable("AD_REPLICATION");
     removeTable("AD_REPLICATION_LOG");
