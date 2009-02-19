@@ -58,7 +58,7 @@ BEGIN
          SELECT 1
            FROM AD_EXCEPTIONS 
            WHERE TYPE='TABLE'
-           AND UPPER(NAME1)=UPPER(:new.Tablename));
+           AND UPPER(NAME1)=UPPER(:new.Tablename)) AA;
         
        IF v_Aux = 0 THEN
          RAISE_APPLICATION_ERROR(-20536, 'Names must start with its module''s DB prefix') ;
