@@ -572,11 +572,11 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       throws IOException, ServletException {
     String pinstance = SequenceIdData.getUUID();
 
-    PInstanceProcessData.insertPInstance(this, pinstance, "104", strcOrderId, "N", vars.getUser(),
+    PInstanceProcessData.insertPInstance(conn, this, pinstance, "104", strcOrderId, "N", vars.getUser(),
         vars.getClient(), vars.getOrg());
     RequisitionToOrderData.cOrderPost0(conn, this, pinstance);
 
-    PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
+    PInstanceProcessData[] pinstanceData = PInstanceProcessData.selectConnection(conn, this, pinstance);
     OBError myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
     return myMessage;
   }
