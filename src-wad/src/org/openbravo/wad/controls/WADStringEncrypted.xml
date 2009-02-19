@@ -31,6 +31,7 @@
   <PARAMETER id="xx" name="required" attribute="required"/>
   <PARAMETER id="xx" name="requiredClass" attribute="class" replace="xx"/>
   <PARAMETER id="xx" name="callout" attribute="onchange" replace="xx();"/>
+  <PARAMETER id="xx" name="hasButton2" attribute="tabindex" replace="zz"/>
   <PARAMETER id="fieldButton" name="button"/>
   <PARAMETER id="fieldButton" name="buttonClass" attribute="class"/>
   <PARAMETER id="fieldHasButton" name="hasButton" attribute="class"/>

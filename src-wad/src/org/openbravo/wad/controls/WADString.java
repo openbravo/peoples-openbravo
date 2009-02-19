@@ -82,6 +82,8 @@ public class WADString extends WADControl {
           "org/openbravo/wad/controls/WADStringEncrypted", discard).createXmlDocument();
       xmlDocument
           .setParameter("hasButton", (textButton.equals("") ? "TextButton_ContentCell" : ""));
+      xmlDocument
+          .setParameter("hasButton2", (buttonClass.equals("") ? "0" : "1"));
       xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
       xmlDocument.setParameter("button", textButton);
       isDisabled = true;
@@ -137,6 +139,8 @@ public class WADString extends WADControl {
           "org/openbravo/wad/controls/WADStringEncrypted", discard).createXmlDocument();
       xmlDocument
           .setParameter("hasButton", (textButton.equals("") ? "TextButton_ContentCell" : ""));
+      xmlDocument
+          .setParameter("hasButton2", (buttonClass.equals("") ? "0" : "1"));
       xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
       xmlDocument.setParameter("button", textButton);
       isDisabled = true;
