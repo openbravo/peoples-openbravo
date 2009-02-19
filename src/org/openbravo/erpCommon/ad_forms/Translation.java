@@ -493,7 +493,7 @@ public class Translation extends HttpSecureAppServlet {
       if (!new File(directory).exists())
         (new File(directory)).mkdir();
 
-      String fileName = directory + trlTable + "_" + AD_Language + ".xml";
+      String fileName = directory + trlTable + "_TRL" + "_" + AD_Language + ".xml";
       log4j.info("exportTrl - " + fileName);
       out = new File(fileName);
 
@@ -521,7 +521,7 @@ public class Translation extends HttpSecureAppServlet {
           if (!new File(directory).exists())
             (new File(directory)).mkdir();
 
-          fileName = directory + trlTable + "_" + AD_Language + ".xml";
+          fileName = directory + trlTable + "_TRL" + "_" + AD_Language + ".xml";
           log4j.info("exportTrl - " + fileName);
           out = new File(fileName);
         }
