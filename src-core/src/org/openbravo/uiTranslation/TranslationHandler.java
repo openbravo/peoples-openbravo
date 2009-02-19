@@ -134,11 +134,7 @@ public class TranslationHandler {
     HashMap<String, String> labelMap = new HashMap<String, String>();
     try {
       if (conn != null) {
-        if (language.equals("en_US")) {
-          fieldLabels = FieldLabelsData.selectModuleFieldLabels(conn, tabId);
-        } else {
-          fieldLabels = FieldLabelsData.select(conn, tabId, language);
-        }
+        fieldLabels = FieldLabelsData.select(conn, tabId, language);
         for (int i = 0; i < fieldLabels.length; i++) {
           FieldLabelsData label = fieldLabels[i];
           if (label.fieldtrlName != null && !label.fieldtrlName.equals("")) {

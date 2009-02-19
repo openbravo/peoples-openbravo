@@ -62,174 +62,127 @@ public class FieldLabelsData implements FieldProvider {
     return select(connectionProvider, ad_tab_id, language, 0, 0);
   }
 
-  public static FieldLabelsData[] select(ConnectionProvider connectionProvider, String ad_tab_id,
-      String language, String keyValue, String keyName, int numberRegisters)
-      throws ServletException {
-    boolean existsKey = false;
-    String strSql = "";
-    strSql = strSql
-
-        + " select "
-        + "     colum.ad_column_id as AD_COLUMN_ID "
-        + "       , colum.name as COL_NAME "
-        + "       , colum.columnname as COL_COLUMNNAME "
-        + "       , (case when w.isSoTrx='N' then elemnt.po_name else elemnt.name end ) as ELEMENT_NAME "
-        + "       , (case when w.isSoTrx='N' then elemnt.po_printname else elemnt.printname end ) as ELEMENT_PRINTNAME "
-        + "       , field.name as FIELD_NAME "
-        + "       , fieldTrl.name as FIELDTRL_NAME "
-        + "       , (case when w.isSoTrx='N' then elmtTrl.po_name else elemnt.name end ) as ELMTTRL_NAME "
-        + "       , (case when w.isSoTrx='N' then elmtTrl.po_printname else elemnt.printname end ) as ELMTTRL_PRINTNAME "
-        + " from "
-        + "       ad_column colum "
-        + "       , ad_field field  "
-        + "       , ad_field_trl fieldTrl"
-        + "       , ad_element elemnt "
-        + "       , AD_ELEMENT_TRL elmtTrl "
-        + "       , ad_window w "
-        + "       , ad_tab tab "
-        + " where "
-        + "     colum.ad_table_id = tab.ad_table_id "
-        + "     and tab.ad_tab_id = ? "
-        + "     and w.ad_window_id = tab.ad_window_id "
-        + "     and field.ad_tab_id = tab.ad_tab_id "
-        + "     and colum.ad_column_id = field.ad_column_id "
-        + "     and colum.ad_element_id = elemnt.ad_element_id "
-        + "     and ((field.ad_field_id = fieldTrl.ad_field_id AND fieldTrl.ad_language = ?) or fieldTrl.ad_field_trl_id is null) "
-        + "     and ((elemnt.ad_element_id = elmtTrl.ad_element_id AND elmtTrl.ad_language = ?) or elmtTrl.ad_element_trl_id is null) "
-        + "     and elemnt.isactive = 'Y' " + "     and fieldTrl.isactive = 'Y' " + " UNION "
-        + "  select " + "   colum.ad_column_id as AD_COLUMN_ID " + "   , colum.name as COL_NAME "
-        + "   , colum.columnname as COL_COLUMNNAME " + "   , elemnt.name as ELEMENT_NAME "
-        + "   , elemnt.printname as ELEMENT_PRINTNAME " + "   , elemnt.name as FIELD_NAME "
-        + "   , elmtTrl.name as FIELDTRL_NAME " + "   , elmtTrl.name as ELMTTRL_NAME "
-        + "   , elmtTrl.printname as ELMTTRL_PRINTNAME " + " from " + "   ad_column colum "
-        + "   , ad_element elemnt " + "   , ad_element_trl elmtTrl " + " where "
-        + "  colum.ad_table_id = (select tab.ad_table_id from ad_tab tab where tab.ad_tab_id = ?) "
-        + "  and ((elemnt.ad_element_id = elmtTrl.ad_element_id AND elmtTrl.ad_language = ?) "
-        + "  or elmtTrl.ad_element_trl_id is null) "
-        + "  and colum.ad_element_id = elemnt.ad_element_id " + "  and colum.ad_column_id not in ("
-        + "    select field.ad_column_id from ad_column colum "
-        + "      , ad_field field where field.ad_tab_id = ? "
-        + "      and colum.ad_column_id = field.ad_column_id)";
-
-    ResultSet result;
-    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
-    PreparedStatement st = null;
-
-    int iParameter = 0;
-    try {
-      st = connectionProvider.getPreparedStatement(strSql);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, language);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, language);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, language);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-
-      result = st.executeQuery();
-      long countRecord = 0;
-      long initRecord = 0;
-      boolean searchComplete = false;
-      while (result.next() && !searchComplete) {
-        countRecord++;
-        FieldLabelsData objectFieldLabelsData = new FieldLabelsData();
-        objectFieldLabelsData.adColumnId = UtilSql.getValue(result, "AD_COLUMN_ID");
-        objectFieldLabelsData.colName = UtilSql.getValue(result, "COL_NAME");
-        objectFieldLabelsData.colColumnname = UtilSql.getValue(result, "COL_COLUMNNAME");
-        objectFieldLabelsData.elementName = UtilSql.getValue(result, "ELEMENT_NAME");
-        objectFieldLabelsData.elementPrintname = UtilSql.getValue(result, "ELEMENT_PRINTNAME");
-        objectFieldLabelsData.fieldName = UtilSql.getValue(result, "FIELD_NAME");
-        objectFieldLabelsData.fieldtrlName = UtilSql.getValue(result, "FIELDTRL_NAME");
-        objectFieldLabelsData.elmttrlName = UtilSql.getValue(result, "ELMTTRL_NAME");
-        objectFieldLabelsData.elmttrlPrintname = UtilSql.getValue(result, "ELMTTRL_PRINTNAME");
-        objectFieldLabelsData.InitRecordNumber = Long.toString(initRecord);
-        if (!existsKey)
-          existsKey = (objectFieldLabelsData.getField(keyName).equalsIgnoreCase(keyValue));
-        vector.addElement(objectFieldLabelsData);
-        if (countRecord == numberRegisters) {
-          if (existsKey)
-            searchComplete = true;
-          else {
-            countRecord = 0;
-            initRecord += numberRegisters;
-            vector.clear();
-          }
-        }
-      }
-      result.close();
-    } catch (SQLException e) {
-      log4j.error("SQL error in query: " + strSql + "Exception:" + e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
-    } catch (Exception ex) {
-      log4j.error("Exception in query: " + strSql + "Exception:" + ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        connectionProvider.releasePreparedStatement(st);
-      } catch (Exception ignore) {
-        ignore.printStackTrace();
-      }
-    }
-    if (existsKey) {
-      FieldLabelsData objectFieldLabelsData[] = new FieldLabelsData[vector.size()];
-      vector.copyInto(objectFieldLabelsData);
-      return (objectFieldLabelsData);
-    }
-    return (new FieldLabelsData[0]);
-  }
+  /*
+   * public static FieldLabelsData[] selectOld(ConnectionProvider connectionProvider, String
+   * ad_tab_id, String language, String keyValue, String keyName, int numberRegisters) throws
+   * ServletException { boolean existsKey = false; String strSql = ""; strSql = strSql
+   * 
+   * + " select " + "     colum.ad_column_id as AD_COLUMN_ID " + "       , colum.name as COL_NAME "
+   * + "       , colum.columnname as COL_COLUMNNAME " +
+   * "       , (case when w.isSoTrx='N' then elemnt.po_name else elemnt.name end ) as ELEMENT_NAME "
+   * +
+   * "       , (case when w.isSoTrx='N' then elemnt.po_printname else elemnt.printname end ) as ELEMENT_PRINTNAME "
+   * + "       , field.name as FIELD_NAME " + "       , fieldTrl.name as FIELDTRL_NAME " +
+   * "       , (case when w.isSoTrx='N' then elmtTrl.po_name else elemnt.name end ) as ELMTTRL_NAME "
+   * +
+   * "       , (case when w.isSoTrx='N' then elmtTrl.po_printname else elemnt.printname end ) as ELMTTRL_PRINTNAME "
+   * + " from " + "       ad_column colum " + "       , ad_field field  " +
+   * "       , ad_field_trl fieldTrl" + "       , ad_element elemnt " +
+   * "       , AD_ELEMENT_TRL elmtTrl " + "       , ad_window w " + "       , ad_tab tab " +
+   * " where " + "     colum.ad_table_id = tab.ad_table_id " + "     and tab.ad_tab_id = ? " +
+   * "     and w.ad_window_id = tab.ad_window_id " + "     and field.ad_tab_id = tab.ad_tab_id " +
+   * "     and colum.ad_column_id = field.ad_column_id " +
+   * "     and colum.ad_element_id = elemnt.ad_element_id " +
+   * "     and ((field.ad_field_id = fieldTrl.ad_field_id AND fieldTrl.ad_language = ?) or fieldTrl.ad_field_trl_id is null) "
+   * +
+   * "     and ((elemnt.ad_element_id = elmtTrl.ad_element_id AND elmtTrl.ad_language = ?) or elmtTrl.ad_element_trl_id is null) "
+   * + "     and elemnt.isactive = 'Y' " + "     and fieldTrl.isactive = 'Y' " + " UNION " +
+   * "  select " + "   colum.ad_column_id as AD_COLUMN_ID " + "   , colum.name as COL_NAME " +
+   * "   , colum.columnname as COL_COLUMNNAME " + "   , elemnt.name as ELEMENT_NAME " +
+   * "   , elemnt.printname as ELEMENT_PRINTNAME " + "   , elemnt.name as FIELD_NAME " +
+   * "   , elmtTrl.name as FIELDTRL_NAME " + "   , elmtTrl.name as ELMTTRL_NAME " +
+   * "   , elmtTrl.printname as ELMTTRL_PRINTNAME " + " from " + "   ad_column colum " +
+   * "   , ad_element elemnt " + "   , ad_element_trl elmtTrl " + " where " +
+   * "  colum.ad_table_id = (select tab.ad_table_id from ad_tab tab where tab.ad_tab_id = ?) " +
+   * "  and ((elemnt.ad_element_id = elmtTrl.ad_element_id AND elmtTrl.ad_language = ?) " +
+   * "  or elmtTrl.ad_element_trl_id is null) " +
+   * "  and colum.ad_element_id = elemnt.ad_element_id " + "  and colum.ad_column_id not in (" +
+   * "    select field.ad_column_id from ad_column colum " +
+   * "      , ad_field field where field.ad_tab_id = ? " +
+   * "      and colum.ad_column_id = field.ad_column_id)";
+   * 
+   * ResultSet result; Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
+   * PreparedStatement st = null;
+   * 
+   * int iParameter = 0; try { st = connectionProvider.getPreparedStatement(strSql); iParameter++;
+   * UtilSql.setValue(st, iParameter, 12, null, ad_tab_id); iParameter++; UtilSql.setValue(st,
+   * iParameter, 12, null, language); iParameter++; UtilSql.setValue(st, iParameter, 12, null,
+   * language); iParameter++; UtilSql.setValue(st, iParameter, 12, null, ad_tab_id); iParameter++;
+   * UtilSql.setValue(st, iParameter, 12, null, language); iParameter++; UtilSql.setValue(st,
+   * iParameter, 12, null, ad_tab_id);
+   * 
+   * result = st.executeQuery(); long countRecord = 0; long initRecord = 0; boolean searchComplete =
+   * false; while (result.next() && !searchComplete) { countRecord++; FieldLabelsData
+   * objectFieldLabelsData = new FieldLabelsData(); objectFieldLabelsData.adColumnId =
+   * UtilSql.getValue(result, "AD_COLUMN_ID"); objectFieldLabelsData.colName =
+   * UtilSql.getValue(result, "COL_NAME"); objectFieldLabelsData.colColumnname =
+   * UtilSql.getValue(result, "COL_COLUMNNAME"); objectFieldLabelsData.elementName =
+   * UtilSql.getValue(result, "ELEMENT_NAME"); objectFieldLabelsData.elementPrintname =
+   * UtilSql.getValue(result, "ELEMENT_PRINTNAME"); objectFieldLabelsData.fieldName =
+   * UtilSql.getValue(result, "FIELD_NAME"); objectFieldLabelsData.fieldtrlName =
+   * UtilSql.getValue(result, "FIELDTRL_NAME"); objectFieldLabelsData.elmttrlName =
+   * UtilSql.getValue(result, "ELMTTRL_NAME"); objectFieldLabelsData.elmttrlPrintname =
+   * UtilSql.getValue(result, "ELMTTRL_PRINTNAME"); objectFieldLabelsData.InitRecordNumber =
+   * Long.toString(initRecord); if (!existsKey) existsKey =
+   * (objectFieldLabelsData.getField(keyName).equalsIgnoreCase(keyValue));
+   * vector.addElement(objectFieldLabelsData); if (countRecord == numberRegisters) { if (existsKey)
+   * searchComplete = true; else { countRecord = 0; initRecord += numberRegisters; vector.clear(); }
+   * } } result.close(); } catch (SQLException e) { log4j.error("SQL error in query: " + strSql +
+   * "Exception:" + e); throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) +
+   * "@" + e.getMessage()); } catch (Exception ex) { log4j.error("Exception in query: " + strSql +
+   * "Exception:" + ex); throw new ServletException("@CODE=@" + ex.getMessage()); } finally { try {
+   * connectionProvider.releasePreparedStatement(st); } catch (Exception ignore) {
+   * ignore.printStackTrace(); } } if (existsKey) { FieldLabelsData objectFieldLabelsData[] = new
+   * FieldLabelsData[vector.size()]; vector.copyInto(objectFieldLabelsData); return
+   * (objectFieldLabelsData); } return (new FieldLabelsData[0]); }
+   */
 
   public static FieldLabelsData[] select(ConnectionProvider connectionProvider, String ad_tab_id,
       String language, int firstRegister, int numberRegisters) throws ServletException {
     String strSql = "";
     strSql = strSql
 
-        + " select "
-        + "     colum.ad_column_id as AD_COLUMN_ID "
-        + "       , colum.name as COL_NAME "
-        + "       , colum.columnname as COL_COLUMNNAME "
-        + "       , (case when w.isSoTrx='N' then elemnt.po_name else elemnt.name end ) as ELEMENT_NAME "
-        + "       , (case when w.isSoTrx='N' then elemnt.po_printname else elemnt.printname end ) as ELEMENT_PRINTNAME "
-        + "       , field.name as FIELD_NAME "
-        + "       , fieldTrl.name as FIELDTRL_NAME "
-        + "       , (case when w.isSoTrx='N' then elmtTrl.po_name else elemnt.name end ) as ELMTTRL_NAME "
-        + "       , (case when w.isSoTrx='N' then elmtTrl.po_printname else elemnt.printname end ) as ELMTTRL_PRINTNAME "
-        + " from "
-        + "       ad_column colum "
-        + "       , ad_field field  "
-        + "       , ad_field_trl fieldTrl"
-        + "       , ad_element elemnt "
-        + "       , AD_ELEMENT_TRL elmtTrl "
-        + "       , ad_window w "
-        + "       , ad_tab tab "
-        + " where "
-        + "     colum.ad_table_id = tab.ad_table_id "
-        + "     and tab.ad_tab_id = ? "
-        + "     and w.ad_window_id = tab.ad_window_id "
-        + "     and field.ad_tab_id = tab.ad_tab_id "
-        + "     and colum.ad_column_id = field.ad_column_id "
-        + "     and colum.ad_element_id = elemnt.ad_element_id "
-        + "     and ((field.ad_field_id = fieldTrl.ad_field_id AND fieldTrl.ad_language = ?) or fieldTrl.ad_field_trl_id is null) "
-        + "     and ((elemnt.ad_element_id = elmtTrl.ad_element_id AND elmtTrl.ad_language = ?) or elmtTrl.ad_element_trl_id is null) "
-        + "     and elemnt.isactive = 'Y' " + "     and fieldTrl.isactive = 'Y' " + " UNION "
-        + "  select " + "   colum.ad_column_id as AD_COLUMN_ID " + "   , colum.name as COL_NAME "
-        + "   , colum.columnname as COL_COLUMNNAME " + "   , elemnt.name as ELEMENT_NAME "
-        + "   , elemnt.printname as ELEMENT_PRINTNAME " + "   , elemnt.name as FIELD_NAME "
-        + "   , elmtTrl.name as FIELDTRL_NAME " + "   , elmtTrl.name as ELMTTRL_NAME "
-        + "   , elmtTrl.printname as ELMTTRL_PRINTNAME " + " from " + "   ad_column colum "
-        + "   , ad_element elemnt " + "   , ad_element_trl elmtTrl " + " where "
-        + "  colum.ad_table_id = (select tab.ad_table_id from ad_tab tab where tab.ad_tab_id = ?) "
-        + "  and ((elemnt.ad_element_id = elmtTrl.ad_element_id AND elmtTrl.ad_language = ?) "
-        + "  or elmtTrl.ad_element_trl_id is null) "
-        + "  and colum.ad_element_id = elemnt.ad_element_id " + "  and colum.ad_column_id not in ("
-        + "    select field.ad_column_id from ad_column colum "
-        + "      , ad_field field where field.ad_tab_id = ? "
-        + "      and colum.ad_column_id = field.ad_column_id)";
+        + "    select       "
+        + "    colum.ad_column_id as AD_COLUMN_ID "
+        + "    , colum.name as COL_NAME "
+        + "    , colum.columnname as COL_COLUMNNAME "
+        + "    , (case when w.isSoTrx='N' then elemnt.po_name else elemnt.name end ) as ELEMENT_NAME "
+        + "    , (case when w.isSoTrx='N' then elemnt.po_printname else elemnt.printname end ) as ELEMENT_PRINTNAME "
+        + "    , field.name as FIELD_NAME         "
+        + "    , fieldTrl.name as FIELDTRL_NAME     "
+        + "    , (case when w.isSoTrx='N' then elmtTrl.po_name else elemnt.name end ) as ELMTTRL_NAME "
+        + "    , (case when w.isSoTrx='N' then elmtTrl.po_printname else elemnt.printname end ) as ELMTTRL_PRINTNAME "
+        + "    from         "
+        + "    ad_column colum  "
+        + "    , ad_field field   "
+        + "        left outer join ad_field_trl fieldTrl on field.ad_field_id = fieldtrl.ad_field_id and fieldtrl.ad_language = ? "
+        + "    , ad_element elemnt         " + "        left outer join AD_ELEMENT_TRL elmtTrl "
+        + "        on elemnt.ad_element_id = elmttrl.ad_element_id and elmttrl.ad_language = ? "
+        + "    , ad_window w         " + "    , ad_tab tab   " + "    , ad_module modu "
+        + "    where       " + "    colum.ad_table_id = tab.ad_table_id "
+        + "    and tab.ad_tab_id = ? " + "    and elemnt.ad_module_id = modu.ad_module_id "
+        + "    and w.ad_window_id = tab.ad_window_id       "
+        + "    and field.ad_tab_id = tab.ad_tab_id       "
+        + "    and colum.ad_column_id = field.ad_column_id "
+        + "    and colum.ad_element_id = elemnt.ad_element_id "
+        + "    and elemnt.isactive = 'Y'       " + "    and field.isactive = 'Y' " + "    UNION   "
+        + "    select    " + "    colum.ad_column_id as AD_COLUMN_ID "
+        + "    , colum.name as COL_NAME " + "    , colum.columnname as COL_COLUMNNAME "
+        + "    , elemnt.name as ELEMENT_NAME          "
+        + "    , elemnt.printname as ELEMENT_PRINTNAME  "
+        + "    , elemnt.printname as FIELD_NAME  " + "    , elmttrl.name as FIELDTRL_NAME     "
+        + "    , elmttrl.name as ELMTTRL_NAME        "
+        + "    , elmttrl.printname as ELMTTRL_PRINTNAME " + "    from               "
+        + "    ad_column colum      " + "    , ad_module modu " + "    , ad_element elemnt "
+        + "        left outer join AD_ELEMENT_TRL elmtTrl "
+        + "        on elemnt.ad_element_id = elmttrl.ad_element_id and elmttrl.ad_language = ? "
+        + "    where               " + "    colum.ad_table_id = ( "
+        + "      select tab.ad_table_id from ad_tab tab where tab.ad_tab_id = ?) "
+        + "    and elemnt.ad_module_id = modu.ad_module_id "
+        + "    and colum.ad_element_id = elemnt.ad_element_id "
+        + "    and colum.ad_column_id not in (    " + "      select field.ad_column_id  "
+        + "      from ad_column colum , ad_field field " + "      where field.ad_tab_id = ?  "
+        + "        and colum.ad_column_id = field.ad_column_id) ";
 
     ResultSet result;
     Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
@@ -239,8 +192,6 @@ public class FieldLabelsData implements FieldProvider {
     try {
       st = connectionProvider.getPreparedStatement(strSql);
       iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-      iParameter++;
       UtilSql.setValue(st, iParameter, 12, null, language);
       iParameter++;
       UtilSql.setValue(st, iParameter, 12, null, language);
@@ -248,6 +199,8 @@ public class FieldLabelsData implements FieldProvider {
       UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
       iParameter++;
       UtilSql.setValue(st, iParameter, 12, null, language);
+      iParameter++;
+      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
       iParameter++;
       UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
 
@@ -297,227 +250,143 @@ public class FieldLabelsData implements FieldProvider {
     return (objectFieldLabelsData);
   }
 
-  public static FieldLabelsData[] selectModuleFieldLabels(ConnectionProvider connectionProvider,
-      String ad_tab_id) throws ServletException {
-    return selectModuleFieldLabels(connectionProvider, ad_tab_id, 0, 0);
-  }
+  /*
+   * public static FieldLabelsData[] selectModuleFieldLabelsOld(ConnectionProvider
+   * connectionProvider, String ad_tab_id) throws ServletException { return
+   * selectModuleFieldLabelsOld(connectionProvider, ad_tab_id, 0, 0); }
+   */
 
-  public static FieldLabelsData[] selectModuleFieldLabels(ConnectionProvider connectionProvider,
-      String ad_tab_id, String keyValue, String keyName, int numberRegisters)
-      throws ServletException {
-    boolean existsKey = false;
-    String strSql = "";
-    strSql = strSql
-        + "      select "
-        + "		colum.ad_column_id as AD_COLUMN_ID "
-        + "		, colum.name as COL_NAME "
-        + "		, colum.columnname as COL_COLUMNNAME "
-        + "		, (case when w.isSoTrx='N' then elemnt.po_name else elemnt.name end ) as ELEMENT_NAME "
-        + "		, (case when w.isSoTrx='N' then elemnt.po_printname else elemnt.printname end ) as ELEMENT_PRINTNAME "
-        + "		, field.name as FIELD_NAME "
-        + "	from "
-        + "		ad_column colum"
-        + "		, ad_field field  "
-        + "		, ad_element elemnt "
-        + "             , ad_window w "
-        + "             , ad_tab tab "
-        + "	where "
-        + "		colum.ad_table_id = (select tab.ad_table_id from ad_tab tab where tab.ad_tab_id = ?) "
-        + "             and tab.ad_tab_id = ? "
-        + "             and w.ad_window_id = tab.ad_window_id "
-        + "             and field.ad_tab_id = tab.ad_tab_id "
-        + "		and colum.ad_column_id = field.ad_column_id"
-        + "		and colum.ad_element_id = elemnt.ad_element_id "
-        + "		and elemnt.isactive = 'Y'"
-        + "     UNION "
-        + "	select "
-        + "             colum.ad_column_id as AD_COLUMN_ID "
-        + "             , colum.name as COL_NAME "
-        + "		, colum.columnname as COL_COLUMNNAME "
-        + "		, elemnt.name as ELEMENT_NAME "
-        + "		, elemnt.printname as ELEMENT_PRINTNAME "
-        + "		, elemnt.printname as FIELD_NAME "
-        + "	from "
-        + "		ad_column colum"
-        + "	        , ad_element elemnt"
-        + "	where "
-        + "             colum.ad_table_id = (select tab.ad_table_id from ad_tab tab where tab.ad_tab_id = ?) "
-        + "	        and colum.ad_element_id = elemnt.ad_element_id "
-        + "	        and colum.ad_column_id not in (" + "   select "
-        + "                             field.ad_column_id " + "                     from "
-        + "                             ad_column colum"
-        + "                             , ad_field field" + "			where "
-        + "                             field.ad_tab_id = ?"
-        + "				and colum.ad_column_id = field.ad_column_id)";
+  /*
+   * public static FieldLabelsData[] selectModuleFieldLabelsOld(ConnectionProvider
+   * connectionProvider, String ad_tab_id, String keyValue, String keyName, int numberRegisters)
+   * throws ServletException { boolean existsKey = false; String strSql = ""; strSql = strSql +
+   * "    select       " + "    colum.ad_column_id as AD_COLUMN_ID " + "    , modu.ad_language " +
+   * "    , colum.name as COL_NAME " + "    , colum.columnname as COL_COLUMNNAME " +
+   * "    , (case when w.isSoTrx='N' then elemnt.po_name else elemnt.name end ) as ELEMENT_NAME " +
+   * "    , (case when w.isSoTrx='N' then elemnt.po_printname else elemnt.printname end ) as ELEMENT_PRINTNAME "
+   * + "    , field.name as FIELD_NAME         " + "    , fieldTrl.name as FIELDTRL_NAME     " +
+   * "    , (case when w.isSoTrx='N' then elmtTrl.po_name else elemnt.name end ) as ELMTTRL_NAME " +
+   * "    , (case when w.isSoTrx='N' then elmtTrl.po_printname else elemnt.printname end ) as ELMTTRL_PRINTNAME "
+   * + "    from         " + "    ad_column colum  " + "    , ad_field field   " +
+   * "        left outer join ad_field_trl fieldTrl on field.ad_field_id = fieldtrl.ad_field_id and fieldtrl.ad_language = ? "
+   * + "    , ad_element elemnt         " + "        left outer join AD_ELEMENT_TRL elmtTrl " +
+   * "        on elemnt.ad_element_id = elmttrl.ad_element_id and elmttrl.ad_language = ? " +
+   * "    , ad_window w         " + "    , ad_tab tab   " + "    , ad_module modu " +
+   * "    where       " + "    colum.ad_table_id = tab.ad_table_id " + "    and tab.ad_tab_id = ? "
+   * + "    and elemnt.ad_module_id = modu.ad_module_id " +
+   * "    and w.ad_window_id = tab.ad_window_id       " +
+   * "    and field.ad_tab_id = tab.ad_tab_id       " +
+   * "    and colum.ad_column_id = field.ad_column_id " +
+   * "    and colum.ad_element_id = elemnt.ad_element_id " + "    and elemnt.isactive = 'Y'       "
+   * + "    and field.isactive = 'Y' " + "    UNION   " + "    select    " +
+   * "    colum.ad_column_id as AD_COLUMN_ID " + "    , modu.ad_language " +
+   * "    , colum.name as COL_NAME " + "    , colum.columnname as COL_COLUMNNAME " +
+   * "    , elemnt.name as ELEMENT_NAME          " + "    , elemnt.printname as ELEMENT_PRINTNAME  "
+   * + "    , elemnt.printname as FIELD_NAME  " + "    , elmttrl.name as FIELDTRL_NAME     " +
+   * "    , elmttrl.name as ELMTTRL_NAME        " + "    , elmttrl.printname as ELMTTRL_PRINTNAME "
+   * + "    from               " + "    ad_column colum      " + "    , ad_module modu " +
+   * "    , ad_element elemnt " + "        left outer join AD_ELEMENT_TRL elmtTrl " +
+   * "        on elemnt.ad_element_id = elmttrl.ad_element_id and elmttrl.ad_language = ? " +
+   * "    where               " + "    colum.ad_table_id = ( " +
+   * "      select tab.ad_table_id from ad_tab tab where tab.ad_tab_id = ?) " +
+   * "    and elemnt.ad_module_id = modu.ad_module_id " +
+   * "    and colum.ad_element_id = elemnt.ad_element_id " +
+   * "    and colum.ad_column_id not in (    " + "      select field.ad_column_id  " +
+   * "      from ad_column colum , ad_field field " + "      where field.ad_tab_id = ?  " +
+   * "        and colum.ad_column_id = field.ad_column_id) ";
+   * 
+   * ResultSet result; Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
+   * PreparedStatement st = null;
+   * 
+   * int iParameter = 0; try { st = connectionProvider.getPreparedStatement(strSql); iParameter++;
+   * UtilSql.setValue(st, iParameter, 12, null, ad_tab_id); iParameter++; UtilSql.setValue(st,
+   * iParameter, 12, null, ad_tab_id); iParameter++; UtilSql.setValue(st, iParameter, 12, null,
+   * ad_tab_id); iParameter++; UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
+   * 
+   * result = st.executeQuery(); long countRecord = 0; long initRecord = 0; boolean searchComplete =
+   * false; while (result.next() && !searchComplete) { countRecord++; FieldLabelsData
+   * objectFieldLabelsData = new FieldLabelsData(); objectFieldLabelsData.adColumnId =
+   * UtilSql.getValue(result, "AD_COLUMN_ID"); objectFieldLabelsData.colName =
+   * UtilSql.getValue(result, "COL_NAME"); objectFieldLabelsData.colColumnname =
+   * UtilSql.getValue(result, "COL_COLUMNNAME"); objectFieldLabelsData.elementName =
+   * UtilSql.getValue(result, "ELEMENT_NAME"); objectFieldLabelsData.elementPrintname =
+   * UtilSql.getValue(result, "ELEMENT_PRINTNAME"); objectFieldLabelsData.fieldName =
+   * UtilSql.getValue(result, "FIELD_NAME"); objectFieldLabelsData.InitRecordNumber =
+   * Long.toString(initRecord); if (!existsKey) existsKey =
+   * (objectFieldLabelsData.getField(keyName).equalsIgnoreCase(keyValue));
+   * vector.addElement(objectFieldLabelsData); if (countRecord == numberRegisters) { if (existsKey)
+   * searchComplete = true; else { countRecord = 0; initRecord += numberRegisters; vector.clear(); }
+   * } } result.close(); } catch (SQLException e) { log4j.error("SQL error in query: " + strSql +
+   * "Exception:" + e); throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) +
+   * "@" + e.getMessage()); } catch (Exception ex) { log4j.error("Exception in query: " + strSql +
+   * "Exception:" + ex); throw new ServletException("@CODE=@" + ex.getMessage()); } finally { try {
+   * connectionProvider.releasePreparedStatement(st); } catch (Exception ignore) {
+   * ignore.printStackTrace(); } } if (existsKey) { FieldLabelsData objectFieldLabelsData[] = new
+   * FieldLabelsData[vector.size()]; vector.copyInto(objectFieldLabelsData); return
+   * (objectFieldLabelsData); } return (new FieldLabelsData[0]); }
+   */
 
-    ResultSet result;
-    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
-    PreparedStatement st = null;
-
-    int iParameter = 0;
-    try {
-      st = connectionProvider.getPreparedStatement(strSql);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-
-      result = st.executeQuery();
-      long countRecord = 0;
-      long initRecord = 0;
-      boolean searchComplete = false;
-      while (result.next() && !searchComplete) {
-        countRecord++;
-        FieldLabelsData objectFieldLabelsData = new FieldLabelsData();
-        objectFieldLabelsData.adColumnId = UtilSql.getValue(result, "AD_COLUMN_ID");
-        objectFieldLabelsData.colName = UtilSql.getValue(result, "COL_NAME");
-        objectFieldLabelsData.colColumnname = UtilSql.getValue(result, "COL_COLUMNNAME");
-        objectFieldLabelsData.elementName = UtilSql.getValue(result, "ELEMENT_NAME");
-        objectFieldLabelsData.elementPrintname = UtilSql.getValue(result, "ELEMENT_PRINTNAME");
-        objectFieldLabelsData.fieldName = UtilSql.getValue(result, "FIELD_NAME");
-        objectFieldLabelsData.InitRecordNumber = Long.toString(initRecord);
-        if (!existsKey)
-          existsKey = (objectFieldLabelsData.getField(keyName).equalsIgnoreCase(keyValue));
-        vector.addElement(objectFieldLabelsData);
-        if (countRecord == numberRegisters) {
-          if (existsKey)
-            searchComplete = true;
-          else {
-            countRecord = 0;
-            initRecord += numberRegisters;
-            vector.clear();
-          }
-        }
-      }
-      result.close();
-    } catch (SQLException e) {
-      log4j.error("SQL error in query: " + strSql + "Exception:" + e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
-    } catch (Exception ex) {
-      log4j.error("Exception in query: " + strSql + "Exception:" + ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        connectionProvider.releasePreparedStatement(st);
-      } catch (Exception ignore) {
-        ignore.printStackTrace();
-      }
-    }
-    if (existsKey) {
-      FieldLabelsData objectFieldLabelsData[] = new FieldLabelsData[vector.size()];
-      vector.copyInto(objectFieldLabelsData);
-      return (objectFieldLabelsData);
-    }
-    return (new FieldLabelsData[0]);
-  }
-
-  public static FieldLabelsData[] selectModuleFieldLabels(ConnectionProvider connectionProvider,
-      String ad_tab_id, int firstRegister, int numberRegisters) throws ServletException {
-    String strSql = "";
-    strSql = strSql
-        + "      select "
-        + "             colum.ad_column_id as AD_COLUMN_ID "
-        + "             , colum.name as COL_NAME "
-        + "             , colum.columnname as COL_COLUMNNAME "
-        + "             , (case when w.isSoTrx='N' then elemnt.po_name else elemnt.name end ) as ELEMENT_NAME "
-        + "             , (case when w.isSoTrx='N' then elemnt.po_printname else elemnt.printname end ) as ELEMENT_PRINTNAME "
-        + "             , field.name as FIELD_NAME "
-        + "     from "
-        + "             ad_column colum"
-        + "             , ad_field field  "
-        + "             , ad_element elemnt "
-        + "             , ad_window w "
-        + "             , ad_tab tab "
-        + "     where "
-        + "             colum.ad_table_id = (select tab.ad_table_id from ad_tab tab where tab.ad_tab_id = ?) "
-        + "             and tab.ad_tab_id = ? "
-        + "             and w.ad_window_id = tab.ad_window_id "
-        + "             and field.ad_tab_id = tab.ad_tab_id "
-        + "             and colum.ad_column_id = field.ad_column_id"
-        + "             and colum.ad_element_id = elemnt.ad_element_id "
-        + "             and elemnt.isactive = 'Y'"
-        + "     UNION "
-        + "     select "
-        + "             colum.ad_column_id as AD_COLUMN_ID "
-        + "             , colum.name as COL_NAME "
-        + "             , colum.columnname as COL_COLUMNNAME "
-        + "             , elemnt.name as ELEMENT_NAME "
-        + "             , elemnt.printname as ELEMENT_PRINTNAME "
-        + "             , elemnt.printname as FIELD_NAME "
-        + "     from "
-        + "             ad_column colum"
-        + "             , ad_element elemnt"
-        + "     where "
-        + "             colum.ad_table_id = (select tab.ad_table_id from ad_tab tab where tab.ad_tab_id = ?) "
-        + "             and colum.ad_element_id = elemnt.ad_element_id "
-        + "             and colum.ad_column_id not in (" + "   select "
-        + "                             field.ad_column_id " + "                     from "
-        + "                             ad_column colum"
-        + "                             , ad_field field" + "                   where "
-        + "                             field.ad_tab_id = ?"
-        + "                             and colum.ad_column_id = field.ad_column_id)";
-
-    ResultSet result;
-    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
-    PreparedStatement st = null;
-
-    int iParameter = 0;
-    try {
-      st = connectionProvider.getPreparedStatement(strSql);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-
-      result = st.executeQuery();
-      long countRecord = 0;
-      long countRecordSkip = 1;
-      boolean continueResult = true;
-      while (countRecordSkip < firstRegister && continueResult) {
-        continueResult = result.next();
-        countRecordSkip++;
-      }
-      while (continueResult && result.next()) {
-        countRecord++;
-        FieldLabelsData objectFieldLabelsData = new FieldLabelsData();
-        objectFieldLabelsData.adColumnId = UtilSql.getValue(result, "AD_COLUMN_ID");
-        objectFieldLabelsData.colName = UtilSql.getValue(result, "COL_NAME");
-        objectFieldLabelsData.colColumnname = UtilSql.getValue(result, "COL_COLUMNNAME");
-        objectFieldLabelsData.elementName = UtilSql.getValue(result, "ELEMENT_NAME");
-        objectFieldLabelsData.elementPrintname = UtilSql.getValue(result, "ELEMENT_PRINTNAME");
-        objectFieldLabelsData.fieldName = UtilSql.getValue(result, "FIELD_NAME");
-        objectFieldLabelsData.InitRecordNumber = Integer.toString(firstRegister);
-        vector.addElement(objectFieldLabelsData);
-        if (countRecord >= numberRegisters && numberRegisters != 0) {
-          continueResult = false;
-        }
-      }
-      result.close();
-    } catch (SQLException e) {
-      log4j.error("SQL error in query: " + strSql + "Exception:" + e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
-    } catch (Exception ex) {
-      log4j.error("Exception in query: " + strSql + "Exception:" + ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        connectionProvider.releasePreparedStatement(st);
-      } catch (Exception ignore) {
-        ignore.printStackTrace();
-      }
-    }
-    FieldLabelsData objectFieldLabelsData[] = new FieldLabelsData[vector.size()];
-    vector.copyInto(objectFieldLabelsData);
-    return (objectFieldLabelsData);
-  }
+  /*
+   * public static FieldLabelsData[] selectModuleFieldLabelsOld(ConnectionProvider
+   * connectionProvider, String ad_tab_id, int firstRegister, int numberRegisters) throws
+   * ServletException { String strSql = ""; strSql = strSql + "      select " +
+   * "             colum.ad_column_id as AD_COLUMN_ID " + "             , colum.name as COL_NAME " +
+   * "             , colum.columnname as COL_COLUMNNAME " +
+   * "             , (case when w.isSoTrx='N' then elemnt.po_name else elemnt.name end ) as ELEMENT_NAME "
+   * +
+   * "             , (case when w.isSoTrx='N' then elemnt.po_printname else elemnt.printname end ) as ELEMENT_PRINTNAME "
+   * + "             , field.name as FIELD_NAME " + "     from " + "             ad_column colum" +
+   * "             , ad_field field  " + "             , ad_element elemnt " +
+   * "             , ad_window w " + "             , ad_tab tab " + "     where " +
+   * "             colum.ad_table_id = (select tab.ad_table_id from ad_tab tab where tab.ad_tab_id = ?) "
+   * + "             and tab.ad_tab_id = ? " + "             and w.ad_window_id = tab.ad_window_id "
+   * + "             and field.ad_tab_id = tab.ad_tab_id " +
+   * "             and colum.ad_column_id = field.ad_column_id" +
+   * "             and colum.ad_element_id = elemnt.ad_element_id " +
+   * "             and elemnt.isactive = 'Y'" + "     UNION " + "     select " +
+   * "             colum.ad_column_id as AD_COLUMN_ID " + "             , colum.name as COL_NAME " +
+   * "             , colum.columnname as COL_COLUMNNAME " +
+   * "             , elemnt.name as ELEMENT_NAME " +
+   * "             , elemnt.printname as ELEMENT_PRINTNAME " +
+   * "             , elemnt.printname as FIELD_NAME " + "     from " +
+   * "             ad_column colum" + "             , ad_element elemnt" + "     where " +
+   * "             colum.ad_table_id = (select tab.ad_table_id from ad_tab tab where tab.ad_tab_id = ?) "
+   * + "             and colum.ad_element_id = elemnt.ad_element_id " +
+   * "             and colum.ad_column_id not in (" + "   select " +
+   * "                             field.ad_column_id " + "                     from " +
+   * "                             ad_column colum" +
+   * "                             , ad_field field" + "                   where " +
+   * "                             field.ad_tab_id = ?" +
+   * "                             and colum.ad_column_id = field.ad_column_id)";
+   * 
+   * ResultSet result; Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
+   * PreparedStatement st = null;
+   * 
+   * int iParameter = 0; try { st = connectionProvider.getPreparedStatement(strSql); iParameter++;
+   * UtilSql.setValue(st, iParameter, 12, null, ad_tab_id); iParameter++; UtilSql.setValue(st,
+   * iParameter, 12, null, ad_tab_id); iParameter++; UtilSql.setValue(st, iParameter, 12, null,
+   * ad_tab_id); iParameter++; UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
+   * 
+   * result = st.executeQuery(); long countRecord = 0; long countRecordSkip = 1; boolean
+   * continueResult = true; while (countRecordSkip < firstRegister && continueResult) {
+   * continueResult = result.next(); countRecordSkip++; } while (continueResult && result.next()) {
+   * countRecord++; FieldLabelsData objectFieldLabelsData = new FieldLabelsData();
+   * objectFieldLabelsData.adColumnId = UtilSql.getValue(result, "AD_COLUMN_ID");
+   * objectFieldLabelsData.colName = UtilSql.getValue(result, "COL_NAME");
+   * objectFieldLabelsData.colColumnname = UtilSql.getValue(result, "COL_COLUMNNAME");
+   * objectFieldLabelsData.elementName = UtilSql.getValue(result, "ELEMENT_NAME");
+   * objectFieldLabelsData.elementPrintname = UtilSql.getValue(result, "ELEMENT_PRINTNAME");
+   * objectFieldLabelsData.fieldName = UtilSql.getValue(result, "FIELD_NAME");
+   * objectFieldLabelsData.InitRecordNumber = Integer.toString(firstRegister);
+   * vector.addElement(objectFieldLabelsData); if (countRecord >= numberRegisters && numberRegisters
+   * != 0) { continueResult = false; } } result.close(); } catch (SQLException e) {
+   * log4j.error("SQL error in query: " + strSql + "Exception:" + e); throw new
+   * ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage()); } catch
+   * (Exception ex) { log4j.error("Exception in query: " + strSql + "Exception:" + ex); throw new
+   * ServletException("@CODE=@" + ex.getMessage()); } finally { try {
+   * connectionProvider.releasePreparedStatement(st); } catch (Exception ignore) {
+   * ignore.printStackTrace(); } } FieldLabelsData objectFieldLabelsData[] = new
+   * FieldLabelsData[vector.size()]; vector.copyInto(objectFieldLabelsData); return
+   * (objectFieldLabelsData); }
+   */
 }

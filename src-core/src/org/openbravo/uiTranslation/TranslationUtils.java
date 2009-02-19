@@ -82,7 +82,7 @@ public class TranslationUtils {
     FieldGroupLabelsData[] fieldGroupLabels;
     try {
       if (lang.equals("") || lang.equals(moduleLang) || moduleLang.equals("")) {
-        fieldLabels = FieldLabelsData.selectModuleFieldLabels(con, tabId);
+        fieldLabels = FieldLabelsData.select(con, tabId, lang);
         fieldGroupLabels = FieldGroupLabelsData.select(con, tabId);
         populateFieldLabels(fieldLabels);
         if (fieldGroupLabels.length > 0) {
