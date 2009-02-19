@@ -67,9 +67,14 @@ BEGIN
   RETURN;
  ELSIF (INSERTING) THEN
   -- For all AcctSchema create ...
-  FOR Cur_Defaults IN (SELECT  *
-             FROM  M_Product_Category_Acct d
-        WHERE  d.M_Product_Category_ID=:new.M_Product_Category_ID) LOOP
+  FOR Cur_Defaults IN (
+	SELECT  d.*
+	FROM  M_Product_Category_Acct d, ad_Org_AcctSchema a
+	WHERE  d.M_Product_Category_ID=:new.M_Product_Category_ID
+	AND d.C_AcctSchema_ID = a.C_AcctSchema_ID
+	AND (AD_IsOrgIncluded(a.AD_Org_ID, :new.AD_ORG_ID, :new.AD_Client_ID)<>-1
+	OR AD_IsOrgIncluded(:new.AD_ORG_ID, a.AD_Org_ID, :new.AD_Client_ID)<>-1)
+  ) LOOP
          --  Account
          INSERT INTO M_Product_Acct
              (M_Product_Acct_ID, M_Product_ID, C_AcctSchema_ID,

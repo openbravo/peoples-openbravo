@@ -120,9 +120,13 @@
                     FROM C_BPARTNER P,
                          C_BP_GROUP_ACCT A
                    WHERE A.C_BP_GROUP_ID = P.C_BP_GROUP_ID
-                     AND P.ISCUSTOMER = 'Y'
                      AND P.C_BP_Group_ID = v_C_BP_Group_ID
-					 AND (A.C_AcctSchema_ID = v_C_AcctSchema_ID OR v_C_AcctSchema_ID IS NULL)) LOOP
+		     AND (A.C_AcctSchema_ID = v_C_AcctSchema_ID OR v_C_AcctSchema_ID IS NULL)
+	             AND EXISTS (SELECT 1 FROM AD_Org_AcctSchema oa
+			WHERE a.C_AcctSchema_ID = oa.C_AcctSchema3_ID
+			AND (AD_IsOrgIncluded(oa.AD_Org_ID, P.AD_Org_ID, P.AD_Client_ID)<>-1
+			OR AD_IsOrgIncluded(P.AD_Org_ID, oa.AD_Org_ID, P.AD_Client_ID)<>-1))
+		) LOOP
      INSERT INTO C_BP_Customer_Acct
            (C_BP_Customer_Acct_ID, C_BPartner_ID, C_AcctSchema_ID, AD_Client_ID,
             AD_Org_ID, IsActive, Created, CreatedBy,
@@ -144,9 +148,13 @@
                     FROM C_BPARTNER P,
                          C_BP_GROUP_ACCT A
                    WHERE A.C_BP_GROUP_ID = P.C_BP_GROUP_ID
-                     AND P.ISVENDOR = 'Y'
                      AND P.C_BP_Group_ID = v_C_BP_Group_ID
-					 AND (A.C_AcctSchema_ID = v_C_AcctSchema_ID OR v_C_AcctSchema_ID IS NULL)) LOOP
+		     AND (A.C_AcctSchema_ID = v_C_AcctSchema_ID OR v_C_AcctSchema_ID IS NULL)
+	             AND EXISTS (SELECT 1 FROM AD_Org_AcctSchema oa
+			WHERE a.C_AcctSchema_ID = oa.C_AcctSchema3_ID
+			AND (AD_IsOrgIncluded(oa.AD_Org_ID, P.AD_Org_ID, P.AD_Client_ID)<>-1 
+			OR AD_IsOrgIncluded(P.AD_Org_ID, oa.AD_Org_ID, P.AD_Client_ID)<>-1))	
+		) LOOP
      INSERT INTO C_BP_Vendor_Acct
            (C_BP_Vendor_Acct_ID, C_BPartner_ID, C_AcctSchema_ID, AD_Client_ID,
             AD_Org_ID, IsActive, Created, CreatedBy,

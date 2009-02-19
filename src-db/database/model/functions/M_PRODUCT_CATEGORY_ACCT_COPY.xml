@@ -102,6 +102,10 @@
       FROM M_Product_Category_Acct
       WHERE M_Product_Category_ID=v_M_Product_Category_ID
 	  AND (M_Product_Category_Acct.C_ACCTSCHEMA_ID = v_C_Acctschema_ID OR v_C_Acctschema_ID IS NULL)
+          AND EXISTS (SELECT 1 FROM AD_Org_AcctSchema oa
+	     WHERE M_Product_Category_Acct.C_AcctSchema_ID = oa.C_AcctSchema_ID
+	    AND (AD_IsOrgIncluded(oa.AD_Org_ID, M_Product_Category_Acct.AD_Org_ID, M_Product_Category_Acct.AD_Client_ID)<>-1
+	    OR AD_IsOrgIncluded(M_Product_Category_Acct.AD_Org_ID, oa.AD_Org_ID, M_Product_Category_Acct.AD_Client_ID)<>-1))	
       )
     LOOP
       -- Update existing Products

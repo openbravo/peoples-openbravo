@@ -47,9 +47,14 @@ BEGIN
 
     --  Default Accounts for all AcctSchema
  IF (INSERTING) THEN
-     FOR Cur_Defaults IN (SELECT  *
-                            FROM  C_BP_Group_Acct d1
-                           WHERE  d1.C_BP_Group_ID=:new.C_BP_Group_ID) LOOP
+     FOR Cur_Defaults IN (
+		SELECT  d1.*
+		FROM  C_BP_Group_Acct d1, ad_Org_AcctSchema a
+		WHERE  d1.C_BP_Group_ID=:new.C_BP_Group_ID
+		AND d1.C_AcctSchema_ID = a.C_AcctSchema_ID
+		AND (AD_IsOrgIncluded(a.AD_Org_ID, :new.AD_Org_ID, :new.AD_Client_ID)<>-1
+		OR AD_IsOrgIncluded(:new.AD_Org_ID, a.AD_Org_ID, :new.AD_Client_ID)<>-1)
+			) LOOP
          --  Customer
    Ad_Sequence_Next('C_BP_Customer_Acct', Cur_Defaults.C_AcctSchema_ID, v_BP_Acct_ID);
    INSERT INTO C_BP_Customer_Acct
@@ -72,10 +77,13 @@ BEGIN
              :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
              Cur_Defaults.V_Liability_Acct, Cur_Defaults.V_Liability_Services_Acct, Cur_Defaults.V_Prepayment_Acct, Cur_Defaults.Status);
   END LOOP;
-  FOR Cur_Defaults2 IN (SELECT * FROM C_AcctSchema_Default d2
-                WHERE EXISTS (SELECT * FROM AD_ClientInfo c2
-                   WHERE d2.C_AcctSchema_ID IN (c2.C_AcctSchema1_ID, c2.C_AcctSchema2_ID, c2.C_AcctSchema3_ID)
-           AND AD_Client_ID=:new.AD_Client_ID)) LOOP
+  FOR Cur_Defaults2 IN (
+			SELECT d2.* FROM C_AcctSchema_Default d2
+			WHERE EXISTS (SELECT 1 FROM AD_Org_AcctSchema oa
+				WHERE d2.C_AcctSchema_ID = oa.C_AcctSchema_ID
+				AND (AD_IsOrgIncluded(oa.AD_Org_ID, :new.AD_Org_ID, :new.AD_Client_ID)<>-1
+				OR AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Client_ID)<>-1))			
+			) LOOP
    --  Employee
          INSERT INTO C_BP_Employee_Acct
              (C_BP_Employee_Acct_ID, C_BPartner_ID, C_AcctSchema_ID,
