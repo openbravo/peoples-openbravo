@@ -886,12 +886,14 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     <LISTS_TMP id="sectionDetailParamsPrevious">    String str<LIST_TMP id="paramNamePrevious">dd</LIST_TMP> = <LIST_TMP id="paramCodePrevious">dd</LIST_TMP>;
     vars.setSessionValue(windowId + "|<LIST_TMP id="fieldNameParamPrevious">Almacen</LIST_TMP>", str<LIST_TMP id="paramNamePrevious">dd</LIST_TMP>);
     </LISTS_TMP>
-   
+    
+    if (dataField==null) {
       if (boolNew || data==null || data.length==0) {
         refreshSessionNew(vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
         data = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.set(<PARAMETER_TMP id="parent">strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP><PARAMETER_DEFAULT_TMP id="defaultValues">defaults</PARAMETER_DEFAULT_TMP>);
         <LISTS_TMP id="sectionDetailDocuments">     data[0].<LIST_TMP id="fieldNameDoc">dd</LIST_TMP> = "&#60;" + <LIST_TMP id="fieldValueDoc">dd</LIST_TMP> + "&#62;";</LISTS_TMP>
       }
+     }
       
     <PARAMETER_TMP id="parent">String currentPOrg=<PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectOrg(this, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARAMETER_TMP>
     String currentOrg = (boolNew?"":(dataField!=null?dataField.getField("adOrgId"):data[0].getField("adOrgId")));
@@ -963,7 +965,18 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     }
     </FIELDS_TMP>
     
+     if (dataField==null) {
       xmlDocument.setData("structure1",data);
+      
+    } else {
+      
+        FieldProvider[] dataAux = new FieldProvider[1];
+        dataAux[0] = dataField;
+        
+        xmlDocument.setData("structure1",dataAux);
+      
+    }
+    
       <PARAMETER_TMP id="hasOrgKey">xmlDocument.setParameter("paramCurrentOrgId",data[0].getField("adOrgId"));</PARAMETER_TMP>
    
 <PARAMATER_TMP id="fieldControlsJavaCode"></PARAMATER_TMP>
