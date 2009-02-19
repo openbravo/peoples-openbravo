@@ -183,7 +183,7 @@ function validate(action, form, value) {
             <tr>
               <td class="TitleCell"></td>
               <td class="Dimension_ContentCell" colspan="2">
-                <select name="inpNotShown" multiple="" id="reportNotShown" class="Dimension_LeftSelect_width Dimension_LeftSelect_height" onchange="logChanges(this);" style="height: 300px;">
+                <select name="inpNotShown" multiple="" id="reportNotShown" class="Dimension_LeftSelect_width Dimension_LeftSelect_height" onkeypress="changeToEditingMode('onkeypress');" onchange="changeToEditingMode('onchange', this); logChanges(this);" style="height: 300px;">
                   <option id="paramNotShown" value="1">Prueba</option>
                 </select>
               </td>

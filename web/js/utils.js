@@ -61,7 +61,7 @@ var isUserClick = false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '13376';
+  var number = '13433';
   return number;
 }
 
@@ -3077,7 +3077,6 @@ function setPageLoading(status) {
 */
 function logChanges(field) {
   if(!isUserChanges) return;
-  changeToEditingMode();
   if (field==null || !field) return false;
   return setChangedField(field, field.form);
 }
@@ -3085,7 +3084,7 @@ function logChanges(field) {
 /**
 * Used on the onKeyDown event for isEditing status.
 */
-function changeToEditingMode(special) {
+function changeToEditingMode(special, field) {
   try {
     isContextMenuOpened = false;
     if (special == 'force') {
@@ -3111,6 +3110,10 @@ function changeToEditingMode(special) {
   //    setWindowEditing(true);
       } else if (isCtrlPressed && isAltPressed && isKeyboardLocked==false) { // AltGr
         checkFieldChange();
+      }
+    } else if (special == 'onchange') {
+      if (!isTabPressed && focusedWindowElement.tagName.toUpperCase().indexOf("SELECT")!=-1 && focusedWindowElement == field && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false) { // Select item of combo by using mouse
+        setWindowEditing(true);
       }
     }
   } catch (e) { }
