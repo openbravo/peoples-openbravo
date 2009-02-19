@@ -7,6 +7,9 @@
       <parameter name="p_client_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
+      <parameter name="p_acctschema_id" type="VARCHAR" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere Public
   * License 1.1 ("License"); You may not use this file except in
@@ -42,6 +45,7 @@
     Cur_Parameter RECORD;
     --
     v_AD_Client_ID VARCHAR2(32);
+    v_C_AcctSchema_ID VARCHAR2(32);
     --
     Cur_Acct RECORD;
     --
@@ -75,6 +79,9 @@
       IF(Cur_Parameter.ParameterName='AD_Client_ID') THEN
         v_AD_Client_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  AD_Client_ID=' || v_AD_Client_ID) ;
+      ELSIF(Cur_Parameter.ParameterName='C_AcctSchema_ID') THEN
+        v_C_AcctSchema_ID:=Cur_Parameter.P_String;
+        DBMS_OUTPUT.PUT_LINE('  C_ACCTSCHEMA_ID=' || v_C_AcctSchema_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
       END IF;
@@ -84,12 +91,16 @@
     IF(p_Client_ID IS NOT NULL) THEN
       v_AD_Client_ID:=p_Client_ID;
       DBMS_OUTPUT.PUT_LINE('  AD_Client_ID=' || v_AD_Client_ID) ;
+    ELSIF(p_AcctSchema_ID IS NOT NULL) THEN
+      v_C_AcctSchema_ID:=p_AcctSchema_ID;
+      DBMS_OUTPUT.PUT_LINE('  C_ACCTSCHEMA_ID=' || v_C_AcctSchema_ID) ;
     END IF;
     /**
     * For all Accounting Schema
     */
     FOR Cur_Acct IN
-      (SELECT * FROM C_AcctSchema_Default WHERE AD_Client_ID=v_AD_Client_ID)
+      (SELECT * FROM C_AcctSchema_Default WHERE AD_Client_ID=v_AD_Client_ID
+      AND (C_AcctSchema_ID = v_C_AcctSchema_ID OR v_C_AcctSchema_ID IS NULL))
     LOOP
       -- Update existing Product Category
       UPDATE M_Product_Category_Acct
