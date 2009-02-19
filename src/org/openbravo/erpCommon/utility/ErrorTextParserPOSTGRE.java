@@ -145,6 +145,12 @@ public class ErrorTextParserPOSTGRE extends ErrorTextParser {
                 }
               }
               // END Search message by constraint search condition
+            } else {
+              // it is a constraint but has no entry with the constraint name in AD_MESSAGE.value
+              myError = new OBError();
+              myError.setType("Error");
+              myError.setMessage(getMessage());
+              return myError;
             }
           }
           // END Specific parse for CONSTRAINT DB objects
