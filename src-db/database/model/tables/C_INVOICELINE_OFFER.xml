@@ -59,7 +59,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CINVOICELINEOFFER">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICELINE" name="CINVOICELINE_CINVOICELINEOFFER">
+      <foreign-key foreignTable="C_INVOICELINE" name="CINVOICELINE_CINVOICELINEOFFER" onDelete="cascade">
         <reference local="C_INVOICELINE_ID" foreign="C_INVOICELINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_OFFER" name="MOFFER_CINVOICELINEOFFER">
