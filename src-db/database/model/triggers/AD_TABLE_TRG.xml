@@ -15,37 +15,55 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2008 Openbravo SL
+* All portions are Copyright (C) 2008-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_Aux NUMBER;
   cuerrentModuleID  VARCHAR2(32);
+  v_check BOOLEAN;
     
 BEGIN
     
-    IF AD_isTriggerEnabled()='N' THEN RETURN;
+  IF AD_isTriggerEnabled()='N' THEN 
+    RETURN;
+  END IF;
+
+  IF (INSERTING) THEN
+    v_check := true;
+  END IF;
+  
+  IF (UPDATING) THEN
+    v_check := (:new.tableName != :old.tableName) or (:new.Name != :old.Name);
+  END IF;
+  
+  IF v_check THEN
+    SELECT M.AD_MODULE_ID
+      INTO cuerrentModuleID
+      FROM AD_MODULE M, AD_PACKAGE P
+     WHERE M.AD_MODULE_ID = P.AD_MODULE_ID
+       AND P.AD_PACKAGE_ID = :new.AD_Package_ID;
+    
+    
+    IF (cuerrentModuleID!='0') THEN
+     SELECT COUNT(*)
+       INTO v_Aux
+       FROM (
+        SELECT 1      
+          FROM AD_MODULE_DBPREFIX P
+        WHERE P.AD_MODULE_ID = cuerrentModuleID
+          AND instr(upper(:new.TableName), upper(name)||'_') = 1
+          AND instr(upper(:new.Name), upper(name)||'_') = 1
+        UNION
+         SELECT 1
+           FROM AD_EXCEPTIONS 
+           WHERE TYPE='TABLE'
+           AND UPPER(NAME1)=UPPER(:new.Tablename));
+        
+       IF v_Aux = 0 THEN
+         RAISE_APPLICATION_ERROR(-20536, 'Names must start with its module''s DB prefix') ;
+       END IF;
     END IF;
-
-
-  SELECT M.AD_MODULE_ID
-    INTO cuerrentModuleID
-    FROM AD_MODULE M, AD_PACKAGE P
-   WHERE M.AD_MODULE_ID = P.AD_MODULE_ID
-     AND P.AD_PACKAGE_ID = :new.AD_Package_ID;
-  
-  
-  IF (cuerrentModuleID!='0') THEN
-    SELECT COUNT(*)
-      INTO v_Aux
-      FROM AD_MODULE_DBPREFIX P
-    WHERE P.AD_MODULE_ID = cuerrentModuleID
-      AND instr(upper(:new.TableName), upper(name)||'_') = 1
-      AND instr(upper(:new.Name), upper(name)||'_') = 1;
-      
-     IF v_Aux = 0 THEN
-       RAISE_APPLICATION_ERROR(-20536, 'Names must start with its module''s DB prefix') ;
-     END IF;
   END IF;
 END AD_TABLE_TRG
 ]]></body>
