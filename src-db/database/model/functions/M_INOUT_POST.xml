@@ -61,6 +61,7 @@
     --
     Cur_InOut RECORD;
     Cur_InOutLine RECORD;
+    Cur_Order RECORD;
     --
     v_Result NUMBER:=1;
     v_AD_Org_ID VARCHAR2(32);
@@ -84,6 +85,7 @@
     v_QtyAux NUMBER;
     v_Count NUMBER:=0;
     v_Line VARCHAR2(10) ;
+    v_OrderID_old VARCHAR2(32);
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -420,6 +422,41 @@
                   ;
               END LOOP;
             END;
+          ELSE
+            v_ResultStr:='Check delivery rule for sales orders';
+            v_Message:='';
+            v_orderid_old:='0';
+            FOR Cur_Order IN 
+              (SELECT c_order.deliveryrule, m_inoutline.line, c_order.c_order_id,
+                      c_order.documentno, c_orderline.line as orderline
+               FROM M_InOutLine, C_Orderline, C_Order
+               WHERE M_Inoutline.c_orderline_id = c_orderline.c_orderline_id
+                 AND c_orderline.c_order_id = c_order.c_order_id
+                 AND m_inoutline.m_inout_id = cur_inout.m_inout_id
+                 AND ((c_order.deliveryrule = 'O'
+                      AND EXISTS (SELECT 1 FROM C_OrderLine ol
+                                  WHERE ol.C_Order_ID = C_order.c_order_id
+                                    and ol.qtyordered > ol.qtydelivered ))
+                      OR (c_order.deliveryrule = 'L' 
+                          AND c_orderline.qtyordered > c_orderline.qtydelivered))
+               ORDER BY c_order.c_order_id, c_orderline.line) LOOP
+              --Order lines not completely delivered with delivery rule O or L
+              IF (v_orderid_old <> cur_order.c_order_id OR cur_order.deliveryrule <> 'O' ) THEN
+                v_Message := COALESCE(v_Message,'') || '@Shipment@' || ' ' || cur_inout.documentno;
+                v_Message := v_Message || ' ' || '@line@' || ' ' || cur_order.line || ': ';
+                v_Message := v_Message || '@SalesOrderDocumentno@' || cur_order.documentno;
+                IF (cur_order.deliveryrule = 'O') THEN
+                  v_Message := v_Message || ' ' || '@notCompleteDeliveryRuleOrder@' || '<br>';
+                ELSE
+                  v_Message := v_Message || ' ' || '@line@' || ' ' || cur_order.orderline;
+                  v_Message := v_Message || ' ' || '@notCompleteDeliveryRuleLine@' || '<br>';
+                END IF;
+              END IF;
+              v_orderid_old := cur_order.c_order_id;
+            END LOOP;
+            IF (v_Message IS NOT NULL) THEN
+              RAISE_APPLICATION_ERROR(-20000, v_message);
+            END IF;
           END IF;
           -- Close Shipment
           v_ResultStr:='CloseShipment';
