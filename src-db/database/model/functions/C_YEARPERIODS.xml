@@ -91,7 +91,7 @@
     BEGIN
     SELECT TO_NUMBER(v_Year_Str) INTO v_year_num FROM DUAL;
      -- Postgres hack
-     IF (v_year_num IS NULL) THEN
+     IF (v_year_num IS NULL OR v_year_num<=0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@NotValidNumber@');
     END IF;
     EXCEPTION

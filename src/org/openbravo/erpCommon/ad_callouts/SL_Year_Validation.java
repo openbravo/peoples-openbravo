@@ -68,9 +68,12 @@ public class SL_Year_Validation extends HttpSecureAppServlet {
     resultado.append("var respuesta = new Array(");
 
     String msg = "";
-
+    int year;
     try {
-      Integer.parseInt(strYear);
+      year = Integer.parseInt(strYear);
+      if (year <= 0) {
+        msg = Utility.messageBD(this, "NotValidNumber", vars.getLanguage());
+      }
     } catch (NumberFormatException e) {
       msg = Utility.messageBD(this, "NotValidNumber", vars.getLanguage());
     }
