@@ -764,7 +764,7 @@ cWithHoldId varchar2(32);
 
           -- Check the period control is opened (only if it is legal entity with accounting)
           -- Gets the BU or LE of the document
-          SELECT AD_GET_DOC_LE_BU('C_INVOICE', v_Record_ID, 'C_INVOICE_ID')
+          SELECT AD_GET_DOC_LE_BU('C_INVOICE', v_Record_ID, 'C_INVOICE_ID', 'LE')
           INTO v_org_bule_id
           FROM DUAL;
           

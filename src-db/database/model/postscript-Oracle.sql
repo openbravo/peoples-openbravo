@@ -524,7 +524,7 @@ AS
 END DBA_AfterImport;
 /-- END
 
-CREATE OR REPLACE FUNCTION AD_GET_DOC_LE_BU(p_header_table IN VARCHAR2, p_document_id IN VARCHAR2, p_header_column_id IN VARCHAR2)
+CREATE OR REPLACE FUNCTION AD_GET_DOC_LE_BU(p_header_table IN VARCHAR2, p_document_id IN VARCHAR2, p_header_column_id IN VARCHAR2, p_type IN VARCHAR2)
  RETURN VARCHAR
  AS
 /*************************************************************************
@@ -559,18 +559,49 @@ CREATE OR REPLACE FUNCTION AD_GET_DOC_LE_BU(p_header_table IN VARCHAR2, p_docume
      INTO v_org_header_id, v_isbusinessunit, v_islegalentity; 
  
    -- Gets recursively the organization parent until finding a Business Unit or a Legal Entity
-   WHILE (v_isbusinessunit='N' AND v_islegalentity='N') LOOP
-     SELECT hh.parent_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity
-     INTO v_org_header_id, v_isbusinessunit, v_islegalentity
-     FROM ad_org, ad_orgtype, ad_treenode pp, ad_treenode hh
-     WHERE pp.node_id = hh.parent_id
-     AND hh.ad_tree_id = pp.ad_tree_id
-     AND pp.node_id=ad_org.ad_org_id
-     AND hh.node_id=v_org_header_id
-     AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
-     AND ad_org.isready='Y'
-     AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
-   END LOOP;
+   IF (p_type IS NULL) THEN
+	   WHILE (v_isbusinessunit='N' AND v_islegalentity='N') LOOP
+	     SELECT hh.parent_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity
+	     INTO v_org_header_id, v_isbusinessunit, v_islegalentity
+	     FROM ad_org, ad_orgtype, ad_treenode pp, ad_treenode hh
+	     WHERE pp.node_id = hh.parent_id
+	     AND hh.ad_tree_id = pp.ad_tree_id
+	     AND pp.node_id=ad_org.ad_org_id
+	     AND hh.node_id=v_org_header_id
+	     AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
+	     AND ad_org.isready='Y'
+	     AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
+	   END LOOP;
+   -- Gets recursively the organization parent until finding a Legal Entity
+   ELSIF (p_type='LE') THEN
+	   WHILE (v_islegalentity='N') LOOP
+         SELECT hh.parent_id, ad_orgtype.islegalentity
+         INTO v_org_header_id, v_islegalentity
+         FROM ad_org, ad_orgtype, ad_treenode pp, ad_treenode hh
+         WHERE pp.node_id = hh.parent_id
+         AND hh.ad_tree_id = pp.ad_tree_id
+         AND pp.node_id=ad_org.ad_org_id
+         AND hh.node_id=v_org_header_id
+         AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
+         AND ad_org.isready='Y'
+         AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
+       END LOOP;
+   -- Gets recursively the organization parent until finding a Business Unit
+   ELSIF (p_type='BU') THEN
+       WHILE (v_isbusinessunit='N' AND v_org_header_id<>'0') LOOP
+         SELECT hh.parent_id, ad_orgtype.isbusinessunit
+         INTO v_org_header_id, v_isbusinessunit
+         FROM ad_org, ad_orgtype, ad_treenode pp, ad_treenode hh
+         WHERE pp.node_id = hh.parent_id
+         AND hh.ad_tree_id = pp.ad_tree_id
+         AND pp.node_id=ad_org.ad_org_id
+         AND hh.node_id=v_org_header_id
+         AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
+         AND ad_org.isready='Y'
+         AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
+       END LOOP;
+       RETURN NULL;
+   END IF;
    
    RETURN v_org_header_id;
    
@@ -609,7 +640,7 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOCUMENTS(p_header_table IN VARCHAR2, p_li
  BEGIN  
 	 
    -- Gets the Business Unit or Legal Entity of the document
-   SELECT AD_GET_DOC_LE_BU(p_header_table, p_document_id, p_header_column_id)
+   SELECT AD_GET_DOC_LE_BU(p_header_table, p_document_id, p_header_column_id, NULL)
    INTO v_org_header_id
    FROM DUAL;
  
@@ -691,7 +722,7 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOC_PAYMENTS(p_header_table IN VARCHAR2, p
  BEGIN
  
    -- Gets the Business Unit or Legal Entity of the document
-   SELECT AD_GET_DOC_LE_BU(p_header_table, p_document_id, p_header_column_id)
+   SELECT AD_GET_DOC_LE_BU(p_header_table, p_document_id, p_header_column_id, NULL)
    INTO v_org_header_id
    FROM DUAL;
  

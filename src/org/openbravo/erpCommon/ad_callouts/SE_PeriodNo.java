@@ -103,6 +103,7 @@ public class SE_PeriodNo extends HttpSecureAppServlet {
         for (int i = 0; i < tdv.length; i++) {
           resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
               + tdv[i].getField("Name") + "\")");
+          strCalendarId = tdv[i].getField("id");
           if (i < tdv.length - 1)
             resultado.append(",\n");
         }
@@ -113,7 +114,7 @@ public class SE_PeriodNo extends HttpSecureAppServlet {
 
       // Update the years
       try {
-        tdv = SEPeriodNoData.getYears(this, strOrgId);
+        tdv = SEPeriodNoData.getYears(this, strCalendarId);
       } catch (Exception ex) {
         throw new ServletException(ex);
       }

@@ -39,7 +39,7 @@
         SELECT AD_Org.C_Calendar_ID AS ID, C_Calendar.Name
         FROM AD_Org, C_Calendar
         WHERE AD_Org.C_Calendar_ID = C_Calendar.C_Calendar_ID
-        AND AD_Org.AD_Org_ID=?
+        AND AD_Org.AD_Org_ID=AD_ORG_GETCALENDAROWNER(?)
       ]]>
     </Sql>
     <Parameter name="AdOrgId"/>
@@ -52,7 +52,7 @@
         SELECT C_Year.C_Year_ID AS ID, C_Year.Year as Name
         FROM C_Year, AD_Org
         WHERE AD_Org.C_Calendar_ID=C_Year.C_Calendar_ID
-        AND AD_Org.AD_Org_ID=?
+        AND AD_Org.C_Calendar_ID=?
         ORDER BY Name DESC
       ]]>
     </Sql>

@@ -238,7 +238,7 @@
       WHERE C_BankStatement_ID=v_Record_ID;
       
       -- Gets the BU or LE of the document
-      SELECT AD_GET_DOC_LE_BU('C_BANKSTATEMENT', v_Record_ID, 'C_BANKSTATEMENT_ID')
+      SELECT AD_GET_DOC_LE_BU('C_BANKSTATEMENT', v_Record_ID, 'C_BANKSTATEMENT_ID', 'LE')
       INTO v_org_bule_id
       FROM DUAL;
       
