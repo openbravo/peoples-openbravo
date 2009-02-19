@@ -699,7 +699,7 @@ Allows the translation of any field of the application. After the edition, the w
 <!--139-->  <TABLENAME><![CDATA[C_Calendar]]></TABLENAME>
 <!--139-->  <CLASSNAME><![CDATA[Calendar]]></CLASSNAME>
 <!--139-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--139-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--139-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--139-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
 <!--139-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--139-->  <ISDELETEABLE><![CDATA[N]]></ISDELETEABLE>
@@ -789,7 +789,7 @@ The Conversion Rates tab is used to define conversion rates to be used when conv
 <!--145-->  <TABLENAME><![CDATA[C_Period]]></TABLENAME>
 <!--145-->  <CLASSNAME><![CDATA[Period]]></CLASSNAME>
 <!--145-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--145-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--145-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--145-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
 <!--145-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--145-->  <ISDELETEABLE><![CDATA[N]]></ISDELETEABLE>
@@ -948,7 +948,7 @@ The User Assignment Tab displays Users who have been defined for this Role.]]></
 <!--164-->  <TABLENAME><![CDATA[C_Region]]></TABLENAME>
 <!--164-->  <CLASSNAME><![CDATA[Region]]></CLASSNAME>
 <!--164-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--164-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--164-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--164-->  <AD_WINDOW_ID><![CDATA[122]]></AD_WINDOW_ID>
 <!--164-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--164-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
@@ -1036,7 +1036,7 @@ The User Assignment Tab displays Users who have been defined for this Role.]]></
 <!--177-->  <TABLENAME><![CDATA[C_Year]]></TABLENAME>
 <!--177-->  <CLASSNAME><![CDATA[Year]]></CLASSNAME>
 <!--177-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--177-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--177-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--177-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
 <!--177-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--177-->  <ISDELETEABLE><![CDATA[N]]></ISDELETEABLE>
@@ -1735,7 +1735,7 @@ The Pricing Tab displays the List, Standard and Limit prices for each price list
 <!--252-->  <TABLENAME><![CDATA[C_TaxCategory]]></TABLENAME>
 <!--252-->  <CLASSNAME><![CDATA[TaxCategory]]></CLASSNAME>
 <!--252-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--252-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--252-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--252-->  <AD_WINDOW_ID><![CDATA[138]]></AD_WINDOW_ID>
 <!--252-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--252-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
@@ -1890,7 +1890,7 @@ The Pricing Tab displays the List, Standard and Limit prices for each price list
 <!--261-->  <TABLENAME><![CDATA[C_Tax]]></TABLENAME>
 <!--261-->  <CLASSNAME><![CDATA[TaxRate]]></CLASSNAME>
 <!--261-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--261-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--261-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--261-->  <AD_WINDOW_ID><![CDATA[137]]></AD_WINDOW_ID>
 <!--261-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--261-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
@@ -1912,7 +1912,7 @@ The Pricing Tab displays the List, Standard and Limit prices for each price list
 <!--265-->  <TABLENAME><![CDATA[C_AcctSchema]]></TABLENAME>
 <!--265-->  <CLASSNAME><![CDATA[AcctSchema]]></CLASSNAME>
 <!--265-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--265-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--265-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--265-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--265-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--265-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
@@ -1934,7 +1934,7 @@ The Pricing Tab displays the List, Standard and Limit prices for each price list
 <!--266-->  <TABLENAME><![CDATA[C_AcctSchema_GL]]></TABLENAME>
 <!--266-->  <CLASSNAME><![CDATA[AcctSchemaGL]]></CLASSNAME>
 <!--266-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--266-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--266-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--266-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--266-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--266-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
@@ -2090,7 +2090,7 @@ Please note that you will not be able to create new entities in this window if y
 <!--279-->  <TABLENAME><![CDATA[C_AcctSchema_Element]]></TABLENAME>
 <!--279-->  <CLASSNAME><![CDATA[AcctSchemaElement]]></CLASSNAME>
 <!--279-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--279-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--279-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--279-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--279-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--279-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
@@ -2599,7 +2599,7 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--315-->  <TABLENAME><![CDATA[C_AcctSchema_Default]]></TABLENAME>
 <!--315-->  <CLASSNAME><![CDATA[AcctSchemaDefault]]></CLASSNAME>
 <!--315-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--315-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--315-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--315-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--315-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--315-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
@@ -3067,7 +3067,7 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--348-->  <TABLENAME><![CDATA[C_TaxCategory_Trl]]></TABLENAME>
 <!--348-->  <CLASSNAME><![CDATA[TaxCategoryTrl]]></CLASSNAME>
 <!--348-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--348-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--348-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--348-->  <AD_WINDOW_ID><![CDATA[138]]></AD_WINDOW_ID>
 <!--348-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--348-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
@@ -3621,7 +3621,7 @@ Available Quantity:
 <!--399-->  <TABLENAME><![CDATA[C_Tax_Acct]]></TABLENAME>
 <!--399-->  <CLASSNAME><![CDATA[TaxRateAccounts]]></CLASSNAME>
 <!--399-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--399-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--399-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--399-->  <AD_WINDOW_ID><![CDATA[137]]></AD_WINDOW_ID>
 <!--399-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--399-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
@@ -4887,7 +4887,7 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--546-->  <TABLENAME><![CDATA[C_Tax_Trl]]></TABLENAME>
 <!--546-->  <CLASSNAME><![CDATA[TaxTrl]]></CLASSNAME>
 <!--546-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--546-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--546-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--546-->  <AD_WINDOW_ID><![CDATA[137]]></AD_WINDOW_ID>
 <!--546-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--546-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
@@ -6227,7 +6227,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800027-->  <TABLENAME><![CDATA[C_AcctSchema_Table]]></TABLENAME>
 <!--800027-->  <CLASSNAME><![CDATA[AcctSchemaTable]]></CLASSNAME>
 <!--800027-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800027-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--800027-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800027-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--800027-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--800027-->  <ISDELETEABLE><![CDATA[N]]></ISDELETEABLE>
@@ -7886,7 +7886,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800150-->  <TABLENAME><![CDATA[C_Tax_Zone]]></TABLENAME>
 <!--800150-->  <CLASSNAME><![CDATA[TaxZone]]></CLASSNAME>
 <!--800150-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800150-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--800150-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800150-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--800150-->  <ISDELETEABLE><![CDATA[N]]></ISDELETEABLE>
 <!--800150-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -8422,7 +8422,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800178-->  <TABLENAME><![CDATA[AD_AccountingRpt_Element]]></TABLENAME>
 <!--800178-->  <CLASSNAME><![CDATA[AccountingRptElement]]></CLASSNAME>
 <!--800178-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800178-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--800178-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800178-->  <AD_WINDOW_ID><![CDATA[800081]]></AD_WINDOW_ID>
 <!--800178-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--800178-->  <ISDELETEABLE><![CDATA[N]]></ISDELETEABLE>
