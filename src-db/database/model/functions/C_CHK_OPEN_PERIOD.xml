@@ -30,7 +30,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 /*************************************************************************
-* Returns 1 if the period is opened for the selected organization, date and doctype
+* Returns 1 if the period is opened for the selected organization, DATE and doctype
 ************************************************************************/
   v_available_period NUMBER:=0;
 BEGIN
@@ -65,7 +65,6 @@ BEGIN
   END IF;
    
   RETURN v_available_period;
-
 END C_CHK_OPEN_PERIOD
 ]]></body>
     </function>

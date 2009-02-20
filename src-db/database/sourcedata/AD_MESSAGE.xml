@@ -60317,9 +60317,9 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1000200008-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1000200008-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000200008-->  <VALUE><![CDATA[notCompleteDeliveryRuleOrder]]></VALUE>
-<!--1000200008-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000200008-->  <MSGTEXT><![CDATA[not completely delivered (Delivery rule: Complete Order)]]></MSGTEXT>
 <!--1000200008-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--1000200008-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000200008--></AD_MESSAGE>
 
 <!--1000200009--><AD_MESSAGE>
