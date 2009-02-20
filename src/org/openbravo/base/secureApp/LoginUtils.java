@@ -106,7 +106,7 @@ public class LoginUtils {
       }
       attr = null;
       PreferencesData[] prefs = PreferencesData.select(conn, Utility.getContext(conn, vars,
-          "#User_Client", "LoginHandler"), Utility.getContext(conn, vars, "#User_Org",
+          "#User_Client", "LoginHandler"), Utility.getContext(conn, vars, "#AccessibleOrgTree",
           "LoginHandler"), strUserAuth);
 
       if (prefs != null && prefs.length > 0) {
