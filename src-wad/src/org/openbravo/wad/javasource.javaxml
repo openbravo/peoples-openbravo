@@ -66,20 +66,27 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     Boolean saveRequest = (Boolean) request.getAttribute("autosave");
     
     if(saveRequest != null &amp;&amp; saveRequest){
+      String currentOrg = vars.getStringParameter("inpadOrgId");
+      String currentClient = vars.getStringParameter("inpadClientId");
+      boolean editableTab = (!org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId)
+                            &amp;&amp; (currentOrg.equals("") || Utility.isElementInList(Utility.getContext(this, vars,"#User_Org", windowId, accesslevel), currentOrg)) 
+                            &amp;&amp; (currentClient.equals("") || Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),currentClient)));
+    
         OBError myError = new OBError();
         String commandType = request.getParameter("inpCommandType");
         String str<KEY_TMP id="keyData">Almacen</KEY_TMP> = request.getParameter("inp<KEY_TMP id="keyData">Almacen</KEY_TMP>");
         <PARAMETER_TMP id="parent"> String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
-        int total = 0;
-        
-        if(commandType.equalsIgnoreCase("EDIT") &amp;&amp; !str<KEY_TMP id="keyData">Almacen</KEY_TMP>.equals(""))
-            total = saveRecord(vars, myError, 'U'<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-        else
-            total = saveRecord(vars, myError, 'I'<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-        
-        if (!myError.isEmpty() &amp;&amp; total == 0)     
-          throw new OBException(myError.getMessage());
-        
+        if (editableTab) {
+          int total = 0;
+          
+          if(commandType.equalsIgnoreCase("EDIT") &amp;&amp; !str<KEY_TMP id="keyData">Almacen</KEY_TMP>.equals(""))
+              total = saveRecord(vars, myError, 'U'<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+          else
+              total = saveRecord(vars, myError, 'I'<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+          
+          if (!myError.isEmpty() &amp;&amp; total == 0)     
+            throw new OBException(myError.getMessage());
+        }
         vars.setSessionValue(request.getParameter("mappingName") +"|hash", vars.getPostDataHash());
         
         return;
