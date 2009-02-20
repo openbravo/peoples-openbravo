@@ -77,6 +77,7 @@ public class Sqlc extends DefaultHandler {
   boolean writeTxtFiles = false;
   StringBuffer buffer;
   static ArrayList<String> includeDirectories;
+  static int errorNum;
 
   static Logger log4j = Logger.getLogger(Sqlc.class); // log4j
 
@@ -89,6 +90,7 @@ public class Sqlc extends DefaultHandler {
     stcElement = new Stack<String>();
     first = true;
     sqlcPackage = null;
+
   }
 
   public static void main(String argv[]) throws Exception {
@@ -98,6 +100,7 @@ public class Sqlc extends DefaultHandler {
     boolean boolFilter;
     String strFilter;
     DirFilter dirFilter = null;
+    errorNum = 0;
 
     if (argv.length < 1) {
       log4j
@@ -165,6 +168,12 @@ public class Sqlc extends DefaultHandler {
         (includeDirectories == null), "", 0);
 
     sqlc.closeConnection();
+
+    if (errorNum > 0) {
+      log4j.error(errorNum + " errors found!");
+      System.exit(1); // exit with error
+    }
+
   }
 
   /**
@@ -476,8 +485,8 @@ public class Sqlc extends DefaultHandler {
 
   @Override
   public void endElement(java.lang.String uri, java.lang.String name, java.lang.String qName) { // throws
-                                                                                                // SAXException
-                                                                                                // {
+    // SAXException
+    // {
     readBuffer();
     if (log4j.isDebugEnabled())
       log4j.debug("Configuration: call to endElement: " + name);
@@ -626,10 +635,12 @@ public class Sqlc extends DefaultHandler {
       // rsmd = preparedStatement.getMetaData ();
     } catch (final SQLException e) {
       error = true;
+      errorNum++;
       log4j.error("SQL error in query: " + sql.strSQL + "Exception:" + e);
       e.printStackTrace();
     } catch (final Exception e) {
       error = true;
+      errorNum++;
       log4j.error("Error in query. Exception:" + e);
       e.printStackTrace();
     }

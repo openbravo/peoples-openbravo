@@ -134,11 +134,11 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="sqlc" depends="copy.srcClient">
-    <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}">
+    <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql . '${build.sqlc}'/src" />
       <classpath refid="project.class.path" />
     </java>
-    <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}">
+    <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${build.sqlc}'/src */src" />
       <classpath refid="project.class.path" />
     </java>
@@ -310,7 +310,7 @@ build.war: build a war file in the lib directory.
 
   <!-- FIXME: These tasks is only for development and testing purposes, remove it afterwards-->
   <target name="sqlcmod" depends="copy.srcClient">
-    <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}">
+    <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${build.sqlc}'/src */src" />
       <classpath refid="project.class.path" />
     </java>
