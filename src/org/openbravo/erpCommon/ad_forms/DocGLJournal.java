@@ -50,6 +50,13 @@ public class DocGLJournal extends AcctServer {
 
   public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
       throws ServletException {
+    AcctSchema docAcctSchema = new AcctSchema(conn, DocGLJournalData.selectAcctSchema(conn,
+        AD_Client_ID, Id));
+    ArrayList<Object> list = new ArrayList<Object>();
+    list.add(docAcctSchema);
+    AcctSchema[] retValue = new AcctSchema[list.size()];
+    list.toArray(retValue);
+    this.m_as = retValue;
     setObjectFieldProvider(DocGLJournalData.select(conn, AD_Client_ID, Id));
   }
 

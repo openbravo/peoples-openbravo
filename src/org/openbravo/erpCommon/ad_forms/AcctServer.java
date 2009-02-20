@@ -249,7 +249,7 @@ public abstract class AcctServer {
     if (log4j.isDebugEnabled())
       log4j.debug("AcctServer - LOADING ARRAY: " + m_AD_Client_ID);
     m_as = AcctSchema.getAcctSchemaArray(connectionProvider, m_AD_Client_ID, m_AD_Org_ID);
-  } //  
+  } //
 
   public void setBatchSize(String newbatchSize) {
     batchSize = newbatchSize;
@@ -481,7 +481,8 @@ public abstract class AcctServer {
     // Create Fact per AcctSchema
     // if (log4j.isDebugEnabled()) log4j.debug("POSTLOADING ARRAY: " +
     // AD_Client_ID);
-    m_as = AcctSchema.getAcctSchemaArray(conn, AD_Client_ID, AD_Org_ID);
+    if (!DocumentType.equals(DOCTYPE_GLJournal))
+      m_as = AcctSchema.getAcctSchemaArray(conn, AD_Client_ID, AD_Org_ID);
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Post - Antes de new Fact - C_CURRENCY_ID = "
     // + C_Currency_ID);
