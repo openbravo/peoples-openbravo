@@ -165,9 +165,7 @@
       <filter-name>
         <FIELD_TMP id="fieldFilterMName">codigo</FIELD_TMP>
       </filter-name>
-      <url-pattern>
-        <FIELD_TMP id="fieldFilterMClassName">codigo</FIELD_TMP>
-      </url-pattern>
+      <url-pattern><FIELD_TMP id="fieldFilterMClassName">codigo</FIELD_TMP></url-pattern>
     </filter-mapping>
   </FIELDS_TMP>
 
@@ -176,9 +174,7 @@
       <servlet-name>
         <FIELD_TMP id="fieldName2">codigo</FIELD_TMP>
       </servlet-name>
-      <url-pattern>
-        <FIELD_TMP id="fieldClassName2">codigo</FIELD_TMP>
-      </url-pattern>
+      <url-pattern><FIELD_TMP id="fieldClassName2">codigo</FIELD_TMP></url-pattern>
     </servlet-mapping>
   </FIELDS_TMP>
 
