@@ -50,7 +50,7 @@ BEGIN
     v_SQL:='coalesce ((SELECT NAME FROM AD_REF_LIST_V ';
     v_SQL:=v_SQL || 'WHERE AD_Language=L.AD_LANGUAGE ';
     v_SQL:=v_SQL || 'AND Value=' || p_TableRef||'.'|| p_ColumnName || ' ';
-    v_SQL:=v_SQL || 'AND AD_Reference_ID=' || p_Reference_Value_ID || '), '''')';
+    v_SQL:=v_SQL || 'AND AD_Reference_ID=''' || p_Reference_Value_ID || '''), '''')';
   ELSIF p_Reference_ID='18' THEN -- TABLE
     SELECT ad_table.tablename,
       c1.columnname as keyName,
