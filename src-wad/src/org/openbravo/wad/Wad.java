@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -809,11 +810,16 @@ public class Wad extends DefaultHandler {
         final int totalParameters = vecTotalParameters.size();
         strWhere.append(" AND " + WadUtility.buildSQL(tabsData.whereclause, vecTotalParameters));
         if (totalParameters < vecTotalParameters.size()) {
+          ArrayList<String> usedParameters = new ArrayList<String>();
           for (int h = totalParameters; h < vecTotalParameters.size(); h++) {
             String strParam = (String) vecTotalParameters.elementAt(h);
             vecParameters.addElement(strParam);
-            strParam = strParam.substring(17, strParam.lastIndexOf("\""));
-            whereClauseParams += ", Utility.getContext(this, vars, \"" + strParam + "\", windowId)";
+            if (!usedParameters.contains(strParam)) {
+              usedParameters.add(strParam);
+              strParam = strParam.substring(17, strParam.lastIndexOf("\""));
+              whereClauseParams += ", Utility.getContext(this, vars, \"" + strParam
+                  + "\", windowId)";
+            }
           }
         }
       }
@@ -859,10 +865,15 @@ public class Wad extends DefaultHandler {
         WadUtility.buildSQL(parentwhereclause, vecParametersParent);
         parentwhereclause = "";
         if (vecParametersParent.size() > 0) {
+          ArrayList<String> usedParameters = new ArrayList<String>();
           for (int h = 0; h < vecParametersParent.size(); h++) {
             String strParam = (String) vecParametersParent.elementAt(h);
             strParam = strParam.substring(17, strParam.lastIndexOf("\""));
-            parentwhereclause += ", Utility.getContext(this, vars, \"" + strParam + "\", windowId)";
+            if (!usedParameters.contains(strParam)) {
+              usedParameters.add(strParam);
+              parentwhereclause += ", Utility.getContext(this, vars, \"" + strParam
+                  + "\", windowId)";
+            }
           }
         }
         grandfatherTabIndex = parentTabId(allTabs, allTabs[parentTabIndex].tabid);
