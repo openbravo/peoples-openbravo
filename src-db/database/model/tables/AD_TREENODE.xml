@@ -52,7 +52,7 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADTREENODE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADTREENODE">
+      <foreign-key foreignTable="AD_ORG" name="ADORG_ADTREENODE" onDelete="cascade">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TREE" name="ADTREE_ADTREENODE" onDelete="cascade">
