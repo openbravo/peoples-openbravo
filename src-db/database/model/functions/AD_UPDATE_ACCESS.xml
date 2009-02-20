@@ -64,23 +64,6 @@ BEGIN
                      WHERE AD_PROCESS_ID = AD_PROCESS.AD_PROCESS_ID
                        AND AD_ROLE_ID    = AD_ROLE.AD_ROLE_ID);
 
---AD_ROLE_ORGACCESS
-  INSERT INTO AD_Role_OrgAccess
-    (
-       AD_Role_OrgAccess_ID, AD_Role_ID, AD_Client_ID, AD_Org_ID,
-      IsActive, Created, CreatedBy,
-      Updated, UpdatedBy
-    )
-  SELECT get_uuid(), AD_ROLE.AD_ROLE_ID, AD_ORG.AD_CLIENT_ID, AD_ORG.AD_ORG_ID,
-    'Y', now(), '0',
-    now(), '0'
-  FROM AD_ROLE, AD_ORG
-  WHERE AD_ROLE.ISMANUAL = 'N'
-    AND AD_ROLE.AD_CLIENT_ID = AD_ORG.AD_CLIENT_ID
-    AND NOT EXISTS (SELECT 1 FROM AD_ROLE_ORGACCESS
-                    WHERE AD_ROLE_ID = AD_ROLE.AD_ROLE_ID
-                      AND AD_ORG_ID = AD_ORG.AD_ORG_ID);
-      
  --Add org 0 to role 0                
  INSERT INTO AD_Role_OrgAccess
     (
