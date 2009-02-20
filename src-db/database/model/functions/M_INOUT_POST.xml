@@ -454,7 +454,7 @@
               END IF;
               v_orderid_old := cur_order.c_order_id;
             END LOOP;
-            IF (v_Message IS NOT NULL) THEN
+            IF (v_Message IS NOT NULL AND v_Message <> '') THEN
               RAISE_APPLICATION_ERROR(-20000, v_message);
             END IF;
           END IF;
