@@ -182,10 +182,10 @@
 		<defaultValueExpression ><![CDATA["en_US"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USER_CLIENT" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["('1000000')"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA["'0','1000000'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USER_ORG" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["('0')"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA["'1000000','1000001'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Title" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["REPORT TITLE"]]></defaultValueExpression>
@@ -196,25 +196,37 @@
 		<defaultValueExpression ><![CDATA[$P{BASE_DESIGN}+"/org/openbravo/erpCommon/ad_reports/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="DateTo" isForPrompting="false" class="java.util.Date">
-		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("22-12-2222")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="ShowPartner" isForPrompting="false" class="java.lang.Boolean">
-		<defaultValueExpression ><![CDATA[new Boolean(false)]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA[new Boolean(true)]]></defaultValueExpression>
 	</parameter>
-	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
+	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat">
+		<defaultValueExpression ><![CDATA[new DecimalFormat("###,##0.00", new DecimalFormatSymbols())
+]]></defaultValueExpression>
+	</parameter>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
+	<parameter name="InitialYearDate" isForPrompting="false" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2006")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DateFrom" isForPrompting="false" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("01-07-2006")]]></defaultValueExpression>
+	</parameter>
 	<queryString><![CDATA[SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, DATEACCT, FACT_ACCT.ACCTDESCRIPTION AS NAME,
-  AMTACCTDR,  AMTACCTCR AS AMTACCTCR, FACT_ACCT_GROUP_ID, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID,
-  FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID, 0 AS TOTALDR,
-  0 AS TOTALCR, 0 AS TOTALACCTDR, 0 AS TOTALACCTCR, 0 AS TOTALACCTSUB, (AMTACCTDR-AMTACCTCR) AS TOTAL, 0 AS SALDO,
-  '' AS PADRE
-FROM FACT_ACCT LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-WHERE FACT_ACCT.ACCOUNT_ID IN (
- SELECT c_elementvalue_id as name
-    FROM C_ELEMENTVALUE
-    WHERE c_elementvalue.ELEMENTLEVEL = 'S'
-    )
-ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryString>
+        AMTACCTDR, AMTACCTCR, FACT_ACCT_GROUP_ID, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID,
+        FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID, 0 AS TOTALDR,
+        0 AS TOTALCR, (AMTACCTDR-AMTACCTCR) AS TOTAL, 0 AS SALDO, '' AS PADRE, 0 AS TOTALACCTDR, 0 AS TOTALACCTCR, 0 AS TOTALACCTSUB
+      FROM FACT_ACCT LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+      WHERE FACT_ACCT.ACCOUNT_ID IN (
+          SELECT c_elementvalue_id as name
+          FROM C_ELEMENTVALUE
+          WHERE c_elementvalue.ELEMENTLEVEL = 'S'
+        )
+        AND FACT_ACCT.AD_ORG_ID IN ($P!{USER_ORG})
+        AND FACT_ACCT.AD_CLIENT_ID IN ($P!{USER_CLIENT})
+        AND DATEACCT >= $P{DateFrom}
+        AND DATEACCT < $P{DateTo}
+      ORDER BY VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryString>
 
 	<field name="value" class="java.lang.String"/>
 	<field name="partner" class="java.lang.String"/>
@@ -231,9 +243,9 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 	<field name="c_bpartner_id" class="java.lang.String"/>
 	<field name="totaldr" class="java.lang.Integer"/>
 	<field name="totalcr" class="java.lang.Integer"/>
-	<field name="totalacctdr" class="java.lang.Integer"/>
-	<field name="totalacctcr" class="java.lang.Integer"/>
-	<field name="totalacctsub" class="java.lang.Integer"/>
+	<field name="totalacctdr" class="java.math.BigDecimal"/>
+	<field name="totalacctcr" class="java.math.BigDecimal"/>
+	<field name="totalacctsub" class="java.math.BigDecimal"/>
 	<field name="total" class="java.math.BigDecimal"/>
 	<field name="saldo" class="java.lang.Integer"/>
 	<field name="padre" class="java.lang.String"/>
@@ -241,16 +253,25 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 	<variable name="DetailFieldTotal" class="java.lang.String" resetType="Report" calculation="Nothing">
 	</variable>
 	<variable name="totalDebit" class="java.math.BigDecimal" resetType="Group" resetGroup="AccountGroup" calculation="Sum">
-		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
+		<variableExpression><![CDATA[$F{amtacctdr}.add($V{PreviousDebit})]]></variableExpression>
 	</variable>
 	<variable name="totalCredit" class="java.math.BigDecimal" resetType="Group" resetGroup="AccountGroup" calculation="Sum">
-		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
+		<variableExpression><![CDATA[$F{amtacctcr}.add($V{PreviousCredit})]]></variableExpression>
 	</variable>
 	<variable name="totalTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="AccountGroup" calculation="Sum">
-		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+		<variableExpression><![CDATA[$F{total}.add($F{totalacctsub})]]></variableExpression>
 	</variable>
 	<variable name="auxPartnerGroup" class="java.lang.String" resetType="None" calculation="Nothing">
 		<variableExpression><![CDATA[$P{ShowPartner}.booleanValue()?$F{c_bpartner_id}:"-1"]]></variableExpression>
+	</variable>
+	<variable name="PreviousBalance" class="java.math.BigDecimal" resetType="Report" calculation="Nothing">
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="PreviousDebit" class="java.math.BigDecimal" resetType="Group" resetGroup="AccountGroup" calculation="Nothing">
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="PreviousCredit" class="java.math.BigDecimal" resetType="Group" resetGroup="AccountGroup" calculation="Nothing">
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
 	</variable>
 
 		<group  name="PartnerGroup" >
@@ -283,17 +304,6 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 						stretchType="RelativeToBandHeight"/>
 					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="535"
-						y="0"
-						width="0"
-						height="25"
-						forecolor="#555555"
-						key="line-3"
-						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
-				</line>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="GroupHeader_DarkGray"
@@ -311,14 +321,14 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="20"  isSplitAllowed="true" >
+			<band height="32"  isSplitAllowed="true" >
 				<printWhenExpression><![CDATA[$P{ShowPartner}]]></printWhenExpression>
 				<line direction="TopDown">
 					<reportElement
 						x="0"
 						y="0"
 						width="0"
-						height="14"
+						height="16"
 						forecolor="#555555"
 						key="line-32"
 						stretchType="RelativeToBandHeight"/>
@@ -326,19 +336,8 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 				</line>
 				<line direction="TopDown">
 					<reportElement
-						x="535"
-						y="1"
-						width="0"
-						height="14"
-						forecolor="#555555"
-						key="line-33"
-						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
 						x="0"
-						y="14"
+						y="15"
 						width="535"
 						height="0"
 						forecolor="#555555"
@@ -355,9 +354,9 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 				<line direction="TopDown">
 					<reportElement
 						x="535"
-						y="1"
+						y="0"
 						width="0"
-						height="58"
+						height="60"
 						forecolor="#555555"
 						key="line-6"
 						stretchType="RelativeToBandHeight"/>
@@ -396,7 +395,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 						x="10"
 						y="1"
 						width="0"
-						height="58"
+						height="59"
 						forecolor="#555555"
 						key="line-4"
 						stretchType="RelativeToBandHeight"/>
@@ -407,7 +406,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 						x="0"
 						y="0"
 						width="0"
-						height="59"
+						height="60"
 						forecolor="#555555"
 						key="line-8"
 						stretchType="RelativeToBandHeight">
@@ -488,9 +487,9 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 				<line direction="TopDown">
 					<reportElement
 						x="17"
-						y="28"
+						y="27"
 						width="0"
-						height="32"
+						height="33"
 						forecolor="#555555"
 						key="line-37"
 						stretchType="RelativeToBandHeight"/>
@@ -515,8 +514,8 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 						style="Report_Footer"
 						x="0"
 						y="43"
-						width="525"
-						height="16"
+						width="535"
+						height="14"
 						key="subreport-1"/>
 					<subreportParameter  name="AcctID">
 						<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
@@ -539,29 +538,41 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<subreportParameter  name="LOCALE">
 						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter  name="InitialYearDate">
+						<subreportParameterExpression><![CDATA[$P{InitialYearDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_CLIENT">
+						<subreportParameterExpression><![CDATA[$P{USER_CLIENT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_ORG">
+						<subreportParameterExpression><![CDATA[$P{USER_ORG}]]></subreportParameterExpression>
+					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<returnValue subreportVariable="PreviousBalance" toVariable="PreviousBalance"/>
+					<returnValue subreportVariable="PreviousDebit" toVariable="PreviousDebit"/>
+					<returnValue subreportVariable="PreviousCredit" toVariable="PreviousCredit"/>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ReportData}]]></subreportExpression>
 				</subreport>
 				<line direction="TopDown">
 					<reportElement
-						x="19"
+						x="17"
 						y="59"
-						width="516"
+						width="517"
 						height="0"
 						forecolor="#555555"
-						key="line-36"/>
+						key="line-42"/>
 					<graphicElement stretchType="NoStretch" pen="2Point"/>
 				</line>
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="52"  isSplitAllowed="true" >
+			<band height="55"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
 						x="0"
 						y="0"
 						width="0"
-						height="52"
+						height="55"
 						forecolor="#555555"
 						key="line-28"
 						stretchType="RelativeToBandHeight">
@@ -574,7 +585,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 						x="10"
 						y="0"
 						width="0"
-						height="45"
+						height="46"
 						forecolor="#555555"
 						key="line-29"
 						stretchType="RelativeToBandHeight"/>
@@ -585,7 +596,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 						x="535"
 						y="0"
 						width="0"
-						height="47"
+						height="37"
 						forecolor="#555555"
 						key="line-30"
 						stretchType="RelativeToBandHeight"/>
@@ -594,7 +605,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 				<line direction="TopDown">
 					<reportElement
 						x="17"
-						y="36"
+						y="37"
 						width="518"
 						height="0"
 						forecolor="#555555"
@@ -614,9 +625,9 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 				<frame>					<reportElement
 						style="Total_Gray"
 						mode="Opaque"
-						x="19"
-						y="3"
-						width="515"
+						x="18"
+						y="2"
+						width="517"
 						height="16"
 						key="frame-2"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -631,7 +642,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalDebit}!=BigDecimal.ZERO)?$V{totalDebit}.toString():new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{totalacctdr}).toString()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -644,7 +655,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalCredit}!=BigDecimal.ZERO)?$V{totalCredit}.toString():new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{totalacctcr}).toString()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -657,7 +668,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalTotal}!=BigDecimal.ZERO)?$V{totalTotal}.toString():new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{totalacctsub}).toString()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -676,9 +687,9 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 				<subreport  isUsingCache="true">
 					<reportElement
 						style="Report_Footer"
-						x="1"
-						y="19"
-						width="525"
+						x="0"
+						y="20"
+						width="534"
 						height="16"
 						key="subreport-2"/>
 					<subreportParameter  name="AcctID">
@@ -702,6 +713,15 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<subreportParameter  name="NUMBERFORMAT">
 						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter  name="InitialYearDate">
+						<subreportParameterExpression><![CDATA[$P{InitialYearDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_CLIENT">
+						<subreportParameterExpression><![CDATA[$P{USER_CLIENT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_ORG">
+						<subreportParameterExpression><![CDATA[$P{USER_ORG}]]></subreportParameterExpression>
+					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ReportData}]]></subreportExpression>
 				</subreport>
@@ -710,7 +730,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 						x="17"
 						y="0"
 						width="0"
-						height="36"
+						height="38"
 						forecolor="#555555"
 						key="line-38"
 						stretchType="RelativeToBandHeight"/>
@@ -720,7 +740,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<reportElement
 						x="10"
 						y="46"
-						width="524"
+						width="525"
 						height="0"
 						forecolor="#555555"
 						key="line-39"/>
@@ -728,15 +748,23 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 				</line>
 				<line direction="TopDown">
 					<reportElement
-						x="535"
-						y="48"
-						width="1"
-						height="4"
+						x="18"
+						y="19"
+						width="517"
+						height="0"
 						forecolor="#555555"
-						key="line-40"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[$P{ShowPartner}]]></printWhenExpression>
-						</reportElement>
+						key="line-41"/>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="535"
+						y="38"
+						width="0"
+						height="9"
+						forecolor="#555555"
+						key="line-43"
+						stretchType="RelativeToBandHeight"/>
 					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 			</band>
@@ -846,73 +874,17 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 				</line>
 				<frame>					<reportElement
 						style="Detail_Line"
-						x="19"
+						x="18"
 						y="0"
-						width="515"
+						width="517"
 						height="16"
 						key="frame-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-				</frame>				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="109"
-						y="-1"
-						width="56"
-						height="16"
-						key="textField-9"
-						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{amtacctdr}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($F{amtacctdr}).toString():new String(" ")]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="165"
-						y="-1"
-						width="56"
-						height="16"
-						key="textField-10"
-						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{amtacctcr}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($F{amtacctcr}).toString():new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="221"
-						y="-1"
-						width="76"
-						height="16"
-						key="textField-11"
-						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalTotal}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($V{totalTotal}).toString():new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="18"
-						y="-1"
-						width="91"
-						height="16"
-						key="textField-12"
-						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="9"/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{dateacct}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="297"
-						y="-1"
-						width="228"
+						x="282"
+						y="0"
+						width="230"
 						height="16"
 						key="textField-13"
 						stretchType="RelativeToBandHeight"/>
@@ -922,7 +894,63 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 				</textField>
-			</band>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="93"
+						y="0"
+						width="56"
+						height="16"
+						key="textField-14"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{amtacctdr}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($F{amtacctdr}).toString():new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="149"
+						y="0"
+						width="56"
+						height="16"
+						key="textField-15"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{amtacctcr}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($F{amtacctcr}).toString():new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Band" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="205"
+						y="0"
+						width="74"
+						height="16"
+						key="textField-16"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{totalacctsub}).toString()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="2"
+						y="0"
+						width="91"
+						height="16"
+						key="textField-17"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{dateacct}]]></textFieldExpression>
+				</textField>
+				</frame>			</band>
 		</detail>
 		<columnFooter>
 			<band height="16"  isSplitAllowed="true" >
@@ -963,7 +991,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="1"
+						y="2"
 						width="535"
 						height="0"
 						forecolor="#000000"
@@ -1001,7 +1029,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 				<staticText>
 					<reportElement
 						style="Report_Footer"
-						x="0"
+						x="1"
 						y="4"
 						width="140"
 						height="16"

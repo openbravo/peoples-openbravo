@@ -57,9 +57,6 @@
   <PARAMETER id="param2" name="param2" default="2"/>
 
   <structure name="structure1">
-    <FIELD id="fieldTotalacctdr" format="euroInform" attribute="value">totalacctdr</FIELD>
-    <FIELD id="fieldTotalacctcr" format="euroInform" attribute="value">totalacctcr</FIELD>
-    <FIELD id="fieldTotalacctsub" format="euroInform" attribute="value">totalacctsub</FIELD>
     <FIELD id="fieldRownum1">rownum</FIELD>
     <FUNCTION id="funcEvenOddRow1xx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
     <FIELD id="fieldValue">value</FIELD>
@@ -68,24 +65,30 @@
     <FIELD id="fieldDescription">description</FIELD>
     <FIELD id="fieldAmtacctdr" format="euroInform">amtacctdr</FIELD>
     <FIELD id="fieldAmtacctcr" format="euroInform">amtacctcr</FIELD>
+    <FIELD id="fieldPreviousDebit" format="euroInform">totalacctdr</FIELD>
+    <FIELD id="fieldPreviousCredit" format="euroInform">totalacctcr</FIELD>
+    <FIELD id="fieldPreviousTotal" format="euroInform">totalacctsub</FIELD>
+    <!-- Accumulates totalacctsub column values: in first record the previous amount is available in totalacctsub column -->
+    <FUNCTION id="fieldTotalacctsubSum" name="SUM" format="euroInform" attribute="value">totalacctsub</FUNCTION>
+    <!-- Accumulates Total column values: will show partial sum of shown lines -->
+    <FUNCTION id="functionSumLine" name="SUM" attribute="value" format="euroInform">total</FUNCTION>
+    <FUNCTION id="functionSumLine2" name="ADD" arg1="functionSumLine" arg2="fieldTotalacctsubSum" format="euroInform"/>
+    <!-- Accumulates Debit and Credit columns values: will show partial sum of shown lines -->
+    <FUNCTION id="fieldTotalDebit" name="SUM" format="euroInform" attribute="value">amtacctdr</FUNCTION>
+    <FUNCTION id="fieldTotalCredit" name="SUM" format="euroInform" attribute="value">amtacctcr</FUNCTION>
     <FIELD id="fieldTotal" format="euroInform">total</FIELD>
     <FIELD id="fieldSaldo" format="euroInform">saldo</FIELD>
     <FIELD id="fieldId" attribute="onclick" replace="xx">factAcctGroupId</FIELD>
-    <FUNCTION id="functionSumLine" name="SUM" attribute="value" format="euroInform">total</FUNCTION>
-    <FUNCTION id="functionSumLine2" name="ADD" arg1="functionSumLine" arg2="fieldSaldo" format="euroInform"/>
 
-	<FUNCTION id="fieldTotalDebit" name="SUM" format="euroInform" attribute="value">amtacctdr</FUNCTION>
-	<FUNCTION id="fieldTotalCredit" name="SUM" format="euroInform" attribute="value">amtacctcr</FUNCTION>
     <FUNCTION id="fieldSubTotalBalance" name="SUM" attribute="value" format="euroInform">total</FUNCTION>
 	<FUNCTION id="fieldTotalBalance" name="ADD" arg1="fieldSubTotalBalance" arg2="fieldSaldo" attribute="value" format="euroInform"/>
-	 
-	 
+
+
 	<!-- Functions sum with the previous amount showed in report. 0 by default-->
 	<FUNCTION id="fieldTotalacctdrSum" name="SUM" format="euroInform" attribute="value">totalacctdr</FUNCTION>
 	<FUNCTION id="fieldTotalacctcrSum" name="SUM" format="euroInform" attribute="value">totalacctcr</FUNCTION>
-	<FUNCTION id="fieldTotalacctsubSum" name="SUM" format="euroInform" attribute="value">totalacctsub</FUNCTION>
-	 
-	<!-- Function adding the total and the total previously-->
+
+	<!-- Function adding the partial amounts and the previous amounts -->
 	<FUNCTION id="fieldTotalDrAdded" name="ADD" arg1="fieldTotalDebit" arg2="fieldTotalacctdrSum" format="euroInform"/>
 	<FUNCTION id="fieldTotalCrAdded" name="ADD" arg1="fieldTotalCredit" arg2="fieldTotalacctcrSum" format="euroInform"/>
 	<FUNCTION id="fieldTotalSubAdded" name="SUBTRACT" arg1="fieldTotalDrAdded" arg2="fieldTotalCrAdded" format="euroInform"/>
@@ -133,18 +136,18 @@
     <FIELD id="fieldTotal2">total</FIELD>
     <FIELD id="fieldSaldo2" attribute="value">saldo</FIELD>
     <FIELD id="fieldId2" attribute="onclick" replace="xx">factAcctGroupId</FIELD>
+    <FUNCTION id="fieldTotalacctsubSum2" name="SUM" format="euroInform" attribute="value">totalacctsub</FUNCTION>
     <FUNCTION id="functionSumLine21" name="SUM" attribute="value">total</FUNCTION>
-    <FUNCTION id="functionSumLine22" name="ADD" arg1="functionSumLine21" arg2="fieldSaldo2" format="euroInform"/>
+    <FUNCTION id="functionSumLine22" name="ADD" arg1="functionSumLine21" arg2="fieldTotalacctsubSum2" format="euroInform"/>
 
 	<FUNCTION id="fieldTotalDebit2" name="SUM" format="euroInform" attribute="value">amtacctdr</FUNCTION>
 	<FUNCTION id="fieldTotalCredit2" name="SUM" format="euroInform" attribute="value">amtacctcr</FUNCTION>
 	<FUNCTION id="fieldTotalBalance2" name="SUM" format="euroInform" attribute="value">total</FUNCTION>
-	 
+
 	<!-- Functions sum with the previous amount showed in report. 0 by default-->
 	<FUNCTION id="fieldTotalacctdrSum2" name="SUM" format="euroInform" attribute="value">totalacctdr</FUNCTION>
 	<FUNCTION id="fieldTotalacctcrSum2" name="SUM" format="euroInform" attribute="value">totalacctcr</FUNCTION>
-	<FUNCTION id="fieldTotalacctsubSum2" name="SUM" format="euroInform" attribute="value">totalacctsub</FUNCTION>
-	 
+
 	<!-- Function adding the total and the total previously-->
 	<FUNCTION id="fieldTotalDrAdded2" name="ADD" arg1="fieldTotalDebit2" arg2="fieldTotalacctdrSum2" format="euroInform"/>
 	<FUNCTION id="fieldTotalCrAdded2" name="ADD" arg1="fieldTotalCredit2" arg2="fieldTotalacctcrSum2" format="euroInform"/>
