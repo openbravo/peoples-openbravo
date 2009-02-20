@@ -338,8 +338,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           bdError(request, response, "AccessTableNoView", vars1.getLanguage());
       }
     } catch (final ServletException ex) {
-      log4j.error("Error captured: " + ex);
-      final OBError myError = Utility.translateError(this, null, variables.getLanguage(), ex
+      log4j.error("Error captured: " + ex, ex);
+      final VariablesSecureApp vars1 = new VariablesSecureApp(request, false);
+      final OBError myError = Utility.translateError(this, vars1, variables.getLanguage(), ex
           .getMessage());
       if (strAjax != null && !strAjax.equals(""))
         bdErrorAjax(response, myError.getType(), myError.getTitle(), myError.getMessage());
