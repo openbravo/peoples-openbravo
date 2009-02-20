@@ -33,7 +33,16 @@ BEGIN
   IF(INSERTING) THEN
      FOR Cur_Defaults IN (SELECT *
                         FROM A_Asset_Group_Acct d1
-                        WHERE d1.A_Asset_Group_ID=:new.A_Asset_Group_ID) LOOP  
+                        WHERE d1.A_Asset_Group_ID=:new.A_Asset_Group_ID
+                        AND EXISTS
+			      (
+			      SELECT 1 
+			      FROM AD_Org_AcctSchema
+			      WHERE (AD_IsOrgIncluded(AD_Org_ID, :new.AD_ORG_ID, :new.AD_Client_ID)<>-1 OR AD_IsOrgIncluded(:new.AD_ORG_ID, AD_Org_ID, :new.AD_Client_ID)<>-1)
+			      AND IsActive = 'Y'
+			      AND AD_Org_AcctSchema.C_AcctSchema_ID = d1.C_AcctSchema_ID
+			      )
+			) LOOP   
 
       Ad_Sequence_Next('A_Asset_Acct', Cur_Defaults.AD_Client_ID, v_Acct_ID) ;
       INSERT
