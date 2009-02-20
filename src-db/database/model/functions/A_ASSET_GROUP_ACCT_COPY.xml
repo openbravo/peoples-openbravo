@@ -83,18 +83,27 @@
       INSERT
       INTO A_Asset_Acct
         (
-          A_ASSET_ID, C_ACCTSCHEMA_ID, AD_CLIENT_ID, AD_ORG_ID,
+          A_ASSET_ACCT_ID, A_ASSET_ID, C_ACCTSCHEMA_ID, AD_CLIENT_ID, AD_ORG_ID,
           ISACTIVE, CREATED, CREATEDBY, UPDATED,
           UPDATEDBY, A_DEPRECIATION_ACCT, A_ACCUMDEPRECIATION_ACCT, A_DISPOSAL_LOSS,
           A_DISPOSAL_GAIN
         )
-      SELECT a.A_ASSET_ID, Cur_Acct.C_ACCTSCHEMA_ID, a.AD_CLIENT_ID, a.AD_ORG_ID, 'Y', now(), '0', now(), '0', Cur_Acct.A_DEPRECIATION_ACCT, Cur_Acct.A_ACCUMDEPRECIATION_ACCT, Cur_Acct.A_DISPOSAL_LOSS, Cur_Acct.A_DISPOSAL_GAIN
+      SELECT GET_UUID(), a.A_ASSET_ID, Cur_Acct.C_ACCTSCHEMA_ID, a.AD_CLIENT_ID, a.AD_ORG_ID, 'Y', now(), '0', now(), '0', Cur_Acct.A_DEPRECIATION_ACCT, Cur_Acct.A_ACCUMDEPRECIATION_ACCT, Cur_Acct.A_DISPOSAL_LOSS, Cur_Acct.A_DISPOSAL_GAIN
       FROM A_Asset a
-      WHERE a.A_Asset_Group_ID=Cur_Acct.A_Asset_Group_ID  AND NOT EXISTS
-        (SELECT 1
-        FROM a_Asset_Acct aa
-        WHERE aa.A_Asset_ID=a.A_Asset_Id  AND aa.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
-        )
+      WHERE a.A_Asset_Group_ID=Cur_Acct.A_Asset_Group_ID  
+      AND NOT EXISTS
+		(SELECT 1
+		FROM a_Asset_Acct aa
+		WHERE aa.A_Asset_ID=a.A_Asset_Id  AND aa.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
+		)
+      AND EXISTS
+	      (
+	      SELECT 1 
+	      FROM AD_Org_AcctSchema
+	      WHERE (AD_IsOrgIncluded(AD_Org_ID, a.AD_ORG_ID, a.AD_Client_ID)<>-1 OR AD_IsOrgIncluded(a.AD_ORG_ID, AD_Org_ID, a.AD_Client_ID)<>-1)
+	      AND IsActive = 'Y'
+	      AND AD_Org_AcctSchema.C_AcctSchema_ID = Cur_Acct.C_AcctSchema_ID
+	      )
         ;
       rowcount:=SQL%ROWCOUNT;
       v_Created:=rowcount;
