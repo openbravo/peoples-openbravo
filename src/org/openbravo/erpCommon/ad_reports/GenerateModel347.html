@@ -24,7 +24,7 @@
     <title>Generate Invoices manual</title>
     <link rel="shortcut icon" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
-     
+
     <script language="JavaScript" type="text/javascript" id="paramDirectory">
       var baseDirectory = "../../../../../web/";
       </script>
@@ -47,9 +47,9 @@
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-<script type="text/javascript"> 
+<script type="text/javascript">
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
-</script> 
+</script>
 <script language="JavaScript" type="text/javascript">
 function validate()
 {
@@ -57,7 +57,7 @@ function validate()
 			setWindowElementFocus(document.forms[0].inpDateFrom);
 			showJSMessage(7);
 			return false;
-	} 
+	}
 	if (document.forms[0].inpReportType=="Sustitutive"){
 		if (document.forms[0].inpComplementar==null || document.forms[0].inpComplementar==""){
 			setWindowElementFocus(document.forms[0].inpComplementar);
@@ -69,6 +69,17 @@ function validate()
 }
 <!--SCRIPT language="JavaScript" type="text/javascript">
 function onloadFunctions() {
+}
+</script>
+<script language="JavaScript" type="text/javascript">
+function displayLogic() {
+  if (inputValue(document.frmMain.inpType) == 'ES') {
+    displayLogicElement('labelID', true);
+	displayLogicElement('textID', true);
+  }else{
+      displayLogicElement('labelID', false);
+      displayLogicElement('textID', false);
+  }
 }
 </script>
 	<script language="JavaScript" type="text/javascript">
@@ -83,11 +94,12 @@ function onloadFunctions() {
 		setTabTableParentElement();
 		enableShortcuts('edition');
 		setBrowserAutoComplete(false);
-		
+
 		resizeArea();
 		updateMenuIcon('buttonMenu');
 
 		setWindowElementFocus('firstElement');
+		displayLogic();
 	}
 
 	function onResizeDo(){
@@ -279,6 +291,17 @@ function onloadFunctions() {
                       </tr>
                     </table>
                   </td>
+                  <td class="ContentCell"> </td>
+                </tr>
+                <tr>
+                  <td class="TitleCell"><span class="LabelText">Type</span></td>
+                  <td class="Combo_ContentCell" colspan="2"> <select  name="inpType" id="inpType" class="Combo Combo_TwoCells_width" onchange="displayLogic(); return true;">
+                      <option value="ES">AEAT</option>
+                      <option value="NA">Hac.Navarra</option>
+                    </select></td>
+                  <td class="TitleCell" id="labelID"><span class="LabelText">Id</span></td>
+                  <td class="TextBox_ContentCell" id="textID"> <input dojoType="openbravo:RealNumberTextbox" class="TextBox_OneCell_width" id="paramID" type="text" size="13" maxlength="13" name="inpID" value=""></input><script>djConfig.searchIds.push("paramComplementar");</script>
+                  <td class="ContentCell"> </td>
                   <td class="ContentCell"> </td>
                 </tr>
                 <tr>

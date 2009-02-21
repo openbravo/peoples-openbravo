@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -56,7 +56,10 @@ public class GenerateModel347 extends HttpSecureAppServlet {
       String strType = vars.getStringParameter("inpReportType");
       String strOrg = vars.getStringParameter("inpOrg", "0");
       String strComplementar = vars.getStringParameter("inpComplementar");
-      printPageGenerate(response, vars, strDateFrom, strDateTo, strType, strComplementar, strOrg);
+      String strHac = vars.getStringParameter("inpType", "ES");
+      String strID = vars.getStringParameter("inpID", "");
+      printPageGenerate(response, vars, strDateFrom, strDateTo, strType, strComplementar, strOrg,
+          strHac, strID);
     } else
       pageError(response);
   }
@@ -121,13 +124,19 @@ public class GenerateModel347 extends HttpSecureAppServlet {
   }
 
   void printPageGenerate(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strType, String strComplementar, String strOrg) throws IOException,
-      ServletException {
+      String strDateTo, String strType, String strComplementar, String strOrg, String strHac,
+      String strID) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pageFind");
-    GenerateModel347Data[] data = GenerateModel347Data.select(this, strType, strComplementar,
-        strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), Tree.getMembers(this, TreeData
-            .getTreeOrg(this, vars.getClient()), strOrg));
+    GenerateModel347Data[] data = new GenerateModel347Data[0];
+    if (strHac.equals("ES"))
+      data = GenerateModel347Data.selectAEAT(this, strDateFrom.substring(strDateFrom.length() - 4),
+          strID, strType, strComplementar, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,
+              "1"), Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+    else if (strHac.equals("NA"))
+      data = GenerateModel347Data.select(this, strType, strComplementar, strDateFrom, DateTimeData
+          .nDaysAfter(this, strDateTo, "1"), Tree.getMembers(this, TreeData.getTreeOrg(this, vars
+          .getClient()), strOrg));
     if (data.length > 0) {
       response.setContentType("application/rtf");
       response.setHeader("Content-Disposition", "attachment; filename=MODEL347.DAT");
@@ -140,20 +149,32 @@ public class GenerateModel347 extends HttpSecureAppServlet {
           + data[0].nombreDeclarante + data[0].soporte + data[0].persona + data[0].numeroJustif
           + data[0].tipoDeclaracion + data[0].tipoDeclaracion2 + data[0].numeroDec
           + data[0].numeroPersonas + data[0].importe + data[0].totalInmuebles
-          + data[0].importeTotalInmuebles + data[0].blancos;
+          + data[0].importeTotalInmuebles + data[0].blancos + data[0].nifRepresentanteLegal
+          + data[0].masBlancos;
       strBuf = strBuf.append(strCabecera);
 
-      GenerateModel347Data[] dataLines = GenerateModel347Data.selectType2(this, strDateFrom,
-          DateTimeData.nDaysAfter(this, strDateTo, "1"), Tree.getMembers(this, TreeData.getTreeOrg(
-              this, vars.getClient()), strOrg));
+      GenerateModel347Data[] dataLines = new GenerateModel347Data[0];
+      if (strHac.equals("ES"))
+        dataLines = GenerateModel347Data.selectAEATType2(this, strDateFrom.substring(strDateFrom
+            .length() - 4), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), Tree
+            .getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+      else if (strHac.equals("NA"))
+        dataLines = GenerateModel347Data.selectNavarraType2(this, strDateFrom, DateTimeData
+            .nDaysAfter(this, strDateTo, "1"), Tree.getMembers(this, TreeData.getTreeOrg(this, vars
+            .getClient()), strOrg));
 
       for (int i = 0; i < dataLines.length; i++) {
         strLinea = dataLines[i].constant1 + dataLines[i].model + dataLines[i].ejercicio
             + dataLines[i].nifDeclarante + dataLines[i].nifDeclarado
             + dataLines[i].nifRepresentante + dataLines[i].nombreSocial
             + dataLines[i].tipoDeclaracion + dataLines[i].codigoProvincia + dataLines[i].codigoPais
-            + dataLines[i].claveCodigo + dataLines[i].importe + dataLines[i].operacionSeguro
-            + dataLines[i].arrendamiento + dataLines[i].blancos;
+            + dataLines[i].espacio + dataLines[i].claveCodigo + dataLines[i].importe
+            + dataLines[i].operacionSeguro + dataLines[i].arrendamiento;
+        if (strHac.equals("ES"))
+          strLinea = strLinea + dataLines[i].importesMetalicoEInmuebles + dataLines[i].blancos
+              + dataLines[i].nifRepresentanteLegal + dataLines[i].masBlancos;
+        else if (strHac.equals("NA"))
+          strLinea = strLinea + dataLines[i].blancos;
         strBuf = strBuf.append("\r\n").append(strLinea);
       }
       out.print(strBuf.toString());
