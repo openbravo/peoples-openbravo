@@ -642,7 +642,7 @@
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{totalacctdr}).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{totalacctdr}!=null)?$P{NUMBERFORMAT}.format($F{totalacctdr}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -655,7 +655,7 @@
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{totalacctcr}).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{totalacctcr}!=null)?$P{NUMBERFORMAT}.format($F{totalacctcr}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -668,7 +668,7 @@
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{totalacctsub}).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{totalacctsub}!=null)?$P{NUMBERFORMAT}.format($F{totalacctsub}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -906,7 +906,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{amtacctdr}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($F{amtacctdr}).toString():new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{amtacctdr}!=BigDecimal.ZERO && $F{amtacctdr}!=null)?$P{NUMBERFORMAT}.format($F{amtacctdr}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -920,7 +920,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{amtacctcr}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($F{amtacctcr}).toString():new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{amtacctcr}!=BigDecimal.ZERO && $F{amtacctcr}!=null)?$P{NUMBERFORMAT}.format($F{amtacctcr}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Band" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -934,7 +934,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{totalacctsub}).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{totalacctsub}!=null)?$P{NUMBERFORMAT}.format($F{totalacctsub}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

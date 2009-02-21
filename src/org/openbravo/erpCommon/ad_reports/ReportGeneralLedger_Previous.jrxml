@@ -269,7 +269,7 @@ where fact_acct.account_id = $P{AcctID}
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{totaldr}).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{totaldr}!=null)?$P{NUMBERFORMAT}.format($F{totaldr}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -283,7 +283,7 @@ where fact_acct.account_id = $P{AcctID}
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{totalcr}).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{totalcr}!=null)?$P{NUMBERFORMAT}.format($F{totalcr}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -297,7 +297,7 @@ where fact_acct.account_id = $P{AcctID}
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{total}).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{total}!=null)?$P{NUMBERFORMAT}.format($F{total}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
