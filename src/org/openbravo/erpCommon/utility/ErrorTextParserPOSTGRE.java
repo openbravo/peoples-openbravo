@@ -114,8 +114,9 @@ public class ErrorTextParserPOSTGRE extends ErrorTextParser {
      */
 
     if (myMessage.matches(".*@.+@.*")) {
-      // split of constant prefix 'ERROR: '
-      if (myMessage.length() > 7) {
+      // if the message is a directly from postgres generated one, it has an 'ERROR :' prefix
+      // if it is passed via an AD_PINSTACE result, then the 'ERROR: ' has already been stripped
+      if ((myMessage.length() > 7) && (myMessage.startsWith("ERROR: "))) {
         myMessage = myMessage.substring(7);
       }
       String translatedMsg = Utility.parseTranslation(getConnection(), getVars(), getLanguage(),
