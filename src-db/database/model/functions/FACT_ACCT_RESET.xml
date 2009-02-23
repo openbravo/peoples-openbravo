@@ -53,6 +53,9 @@
     v_Deleted NUMBER(10):=0;
     v_Cmd VARCHAR2(2000):='';
     v_rowcount NUMBER;
+
+    v_factAcctCounter NUMBER:= 0;
+    c_commitInterval NUMBER:= 1000;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -219,6 +222,12 @@
               v_rowcount:=SQL%ROWCOUNT;
               v_Deleted:=v_Deleted + v_rowcount;
               DBMS_OUTPUT.PUT_LINE('  deleted=' || v_rowcount) ;
+
+              v_factAcctCounter := v_factAcctCounter +1;
+              if (mod(v_factAcctCounter, c_commitInterval) = 0) then
+                COMMIT;
+              end if;
+
             END LOOP;
         v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='''  || Cur_Clients.AD_Client_ID
         || ''' AND (Posted=''Y'' OR Processing<>''N'' OR Processing IS NULL) AND NOT EXISTS (SELECT 1 FROM FACT_ACCT WHERE AD_TABLE_ID =''' || Cur_Tables.AD_Table_ID ||
