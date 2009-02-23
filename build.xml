@@ -464,23 +464,9 @@ compare.database.structure: refer to compare.database.structure target of databa
 		-->
   </target>
 
-  <target name="eclipse.install.source" depends="init,code.rev">
-    <antcall target="database.lib" />
-    <antcall target="create.database" />
-    <antcall target="wad.lib" />
-    <antcall target="trl.lib" />
-    <eclipse.incrementalBuild project="OpenbravoCore" kind="full" />
-
-    <antcall target="eclipse.compile.complete" />
-    <echo message="applying modules" />
-    <taskdef name="applyModule" classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" />
-    <antcall target="import.sample.data" />
-
-    <antcall target="validate.database" />
-    <antcall target="validate.modules" />
+  <target name="eclipse.install.source">
+    <antcall target="install.source" />
+    <eclipse.refreshLocal resource="openbravo" depth="infinite" />
   </target>
 
   <target name="create.database" depends="init,code.rev, core.lib">
