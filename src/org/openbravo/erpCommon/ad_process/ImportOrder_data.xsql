@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
  ******************************************************************************
 -->
 
@@ -33,7 +33,8 @@
 				C_DocType_ID, DocTypeName, C_PaymentTerm_ID, PaymentTermValue, C_Order_ID, DocumentNo, Description,
 				M_Product_ID, ProductValue, UPC, SKU, C_Tax_ID, TaxIndicator, TaxAmt, C_OrderLine_ID, LineDescription,
 				C_UOM_ID, QtyOrdered, PriceActual, C_Campaign_ID, DateOrdered, DatePromised, Order_ReferenceNo,
-				BPartnerUPC, BillTo_UPC, C_BPartner_Location_UPC, Vendor_UPC, Perform_Post, Paymentrule1, Paymentamount1, Paymentrule2, Paymentamount2
+				BPartnerUPC, BillTo_UPC, C_BPartner_Location_UPC, Vendor_UPC, Perform_Post, Paymentrule1, Paymentamount1, Paymentrule2, Paymentamount2,
+				'' AS c_debt_payment_id
 				FROM I_Order
 				WHERE I_IsImported='N'
 				AND AD_Client_ID = ?
@@ -1312,6 +1313,53 @@
 		<Parameter name="c_doctype_id"/>
 		<Parameter name="documentno"/>
 		<Parameter name="dateordered"/>
+	</SqlMethod>
+	<SqlMethod name="selectPaymentInserted" type="preparedStatement" return="multiple">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql>
+			<![CDATA[
+				SELECT c_debt_payment_id 
+				FROM c_debt_payment
+				WHERE ad_client_id = ?
+				AND ad_org_id = ?
+				AND createdby = ?
+				AND updatedby = ?
+				AND c_bpartner_id = ?
+				AND c_currency_id = ?
+				AND paymentrule = ?
+				AND amount = TO_NUMBER(?)
+				AND ispaid = ?
+				AND ismanual = ?
+				AND isvalid = ?
+				AND changesettlementcancel = ?
+				AND cancel_processed = ?
+				AND generate_processed = ?
+				AND glitemamt = TO_NUMBER(?)
+				AND isdirectposting = ?
+				AND status = ?
+				AND status_initial = ?
+				AND c_order_id = ?
+			]]>
+		</Sql>
+		<Parameter name="ad_client_id"/>
+		<Parameter name="ad_org_id"/>
+		<Parameter name="createdby"/>
+		<Parameter name="updatedby"/>
+		<Parameter name="c_bpartner_id"/>
+		<Parameter name="c_currency_id"/>
+		<Parameter name="paymentrule"/>
+		<Parameter name="amount"/>
+		<Parameter name="ispaid"/>
+		<Parameter name="ismanual"/>
+		<Parameter name="isvalid"/>
+		<Parameter name="changesettlementcancel"/>
+		<Parameter name="cancel_processed"/>
+		<Parameter name="generate_processed"/>
+		<Parameter name="glitemamt"/>
+		<Parameter name="isdirectposting"/>
+		<Parameter name="status"/>
+		<Parameter name="status_initial"/>
+		<Parameter name="c_order_id"/>
 	</SqlMethod>
 	<SqlMethod name="updateNotImported" type="preparedStatement" connection="true" return="rowCount">
 		<SqlMethodComment></SqlMethodComment>
