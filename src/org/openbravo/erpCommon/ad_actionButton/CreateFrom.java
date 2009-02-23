@@ -1347,8 +1347,10 @@ public class CreateFrom extends HttpSecureAppServlet {
           strDateplanned = vars.getStringParameter("inpplanneddate" + strDebtPaymentId.trim());
           strChargeamt = vars.getStringParameter("inpcost" + strDebtPaymentId.trim());
           strProposedAmt = vars.getStringParameter("inpproposed" + strDebtPaymentId.trim());
+          String strAmount = CreateFromBankData.selectPaymentAmount(this, strDebtPaymentId.trim());
           if (strProposedAmt != null && !strProposedAmt.equals("")
-              && new BigDecimal(strProposedAmt).signum() != 0) {
+              && new BigDecimal(strProposedAmt).signum() != 0
+              && new BigDecimal(strProposedAmt).compareTo(new BigDecimal(strAmount)) != 0) {
             final String strSettlement = SequenceIdData.getUUID();
             CreateFromBankData.insertSettlement(conn, this, strSettlement, vars.getUser(),
                 strStatementDate, strDebtPaymentId);
