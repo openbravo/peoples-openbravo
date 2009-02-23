@@ -143,6 +143,9 @@ public class ApplyModule {
             strPath = obDir + "/modules/" + ds[i].javapackage + "/referencedata/standard";
 
           final File myDir = new File(strPath);
+          if (!myDir.exists()) {
+            continue;
+          }
           final File[] myFiles = myDir.listFiles();
           final ArrayList<File> myTargetFiles = new ArrayList<File>();
           for (int j = 0; j < myFiles.length; j++) {
