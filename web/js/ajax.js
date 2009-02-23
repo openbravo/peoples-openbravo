@@ -114,7 +114,9 @@ function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, A
       if (text!=null && text!="" && text!="=") sendText += "&" + text;
     }
   }
-  sendText += extraParams;
+  if (extraParams != null && extraParams != "" && extraParams != "null") {
+    sendText += extraParams;
+  }
 
   if (debug)
     if (!debugXmlHttpRequest(Command)) return false;
@@ -135,7 +137,7 @@ function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, A
 }
 
 function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, debug) {
-	submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, null);
+  submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, null);
 }
 
 function lockField(inputField) {
