@@ -144,62 +144,70 @@ public class ErrorTextParserPOSTGRE extends ErrorTextParser {
         getConnection(), objectName);
 
     // BEGIN Specific parse for CONSTRAINT DB objects
-    if (constraintData != null && constraintData.length > 0) {
-      // BEGIN Search message by constraint name
-      FieldProvider fldMessage = Utility.locateMessage(getConnection(),
-          constraintData[0].constraintName, getLanguage());
+
+    // find constraint name only uses heuristic for constraint name
+    // so if no constraint can be found for the name => return original message
+    if (constraintData == null || constraintData.length == 0) {
+      OBError originalError = new OBError();
+      originalError.setType("Error");
+      originalError.setMessage(getMessage());
+      return originalError;
+    }
+
+    // BEGIN Search message by constraint name
+    FieldProvider fldMessage = Utility.locateMessage(getConnection(),
+        constraintData[0].constraintName, getLanguage());
+    if (fldMessage != null) {
+      myError = new OBError();
+      myError.setType((fldMessage.getField("msgtype").equals("E") ? "Error" : "Warning"));
+      myError.setMessage(fldMessage.getField("msgtext"));
+      return myError;
+    }
+    // END Search message by constraint name
+    if (constraintData[0].constraintType.equalsIgnoreCase("C")
+        && !constraintData[0].searchCondition.equals("")) {
+      // BEGIN Search message by constraint search
+      // condition
+      fldMessage = Utility.locateMessage(getConnection(), constraintData[0].searchCondition,
+          getLanguage());
       if (fldMessage != null) {
         myError = new OBError();
         myError.setType((fldMessage.getField("msgtype").equals("E") ? "Error" : "Warning"));
         myError.setMessage(fldMessage.getField("msgtext"));
         return myError;
-      }
-      // END Search message by constraint name
-      if (constraintData[0].constraintType.equalsIgnoreCase("C")
-          && !constraintData[0].searchCondition.equals("")) {
-        // BEGIN Search message by constraint search
-        // condition
-        fldMessage = Utility.locateMessage(getConnection(), constraintData[0].searchCondition,
-            getLanguage());
-        if (fldMessage != null) {
+      } else if (!constraintData[0].searchCondition.trim().equals("")) {
+        String searchCond = constraintData[0].searchCondition.trim().toUpperCase();
+        if (searchCond.endsWith(" IS NOT NULL")) {
+          String columnName = searchCond.substring(0, searchCond.lastIndexOf(" IS NOT NULL"))
+              .trim();
+          columnName = Utility.messageBD(getConnection(), columnName, getLanguage());
+          String tableName = Utility.messageBD(getConnection(), constraintData[0].tableName,
+              getLanguage());
           myError = new OBError();
-          myError.setType((fldMessage.getField("msgtype").equals("E") ? "Error" : "Warning"));
-          myError.setMessage(fldMessage.getField("msgtext"));
+          myError.setType("Error");
+          myError.setMessage(Utility.messageBD(getConnection(), "NotNullError", getLanguage())
+              + ": " + tableName + " - " + columnName);
           return myError;
-        } else if (!constraintData[0].searchCondition.trim().equals("")) {
-          String searchCond = constraintData[0].searchCondition.trim().toUpperCase();
-          if (searchCond.endsWith(" IS NOT NULL")) {
-            String columnName = searchCond.substring(0, searchCond.lastIndexOf(" IS NOT NULL"))
-                .trim();
-            columnName = Utility.messageBD(getConnection(), columnName, getLanguage());
-            String tableName = Utility.messageBD(getConnection(), constraintData[0].tableName,
-                getLanguage());
-            myError = new OBError();
-            myError.setType("Error");
-            myError.setMessage(Utility.messageBD(getConnection(), "NotNullError", getLanguage())
-                + ": " + tableName + " - " + columnName);
-            return myError;
-          } else if (searchCond.endsWith(" IN ('Y','N')") || searchCond.endsWith(" IN ('Y', 'N')")
-              || searchCond.endsWith(" IN ('N','Y')") || searchCond.endsWith(" IN ('N', 'Y')")) {
-            String columnName = searchCond.substring(0, searchCond.lastIndexOf(" IN (")).trim();
-            columnName = Utility.messageBD(getConnection(), columnName, getLanguage());
-            String tableName = Utility.messageBD(getConnection(), constraintData[0].tableName,
-                getLanguage());
-            myError = new OBError();
-            myError.setType("Error");
-            myError.setMessage(Utility.messageBD(getConnection(), "NotYNError", getLanguage())
-                + ": " + tableName + " - " + columnName);
-            return myError;
-          }
+        } else if (searchCond.endsWith(" IN ('Y','N')") || searchCond.endsWith(" IN ('Y', 'N')")
+            || searchCond.endsWith(" IN ('N','Y')") || searchCond.endsWith(" IN ('N', 'Y')")) {
+          String columnName = searchCond.substring(0, searchCond.lastIndexOf(" IN (")).trim();
+          columnName = Utility.messageBD(getConnection(), columnName, getLanguage());
+          String tableName = Utility.messageBD(getConnection(), constraintData[0].tableName,
+              getLanguage());
+          myError = new OBError();
+          myError.setType("Error");
+          myError.setMessage(Utility.messageBD(getConnection(), "NotYNError", getLanguage()) + ": "
+              + tableName + " - " + columnName);
+          return myError;
         }
-        // END Search message by constraint search condition
-      } else {
-        // it is a constraint but has no entry with the constraint name in AD_MESSAGE.value
-        myError = new OBError();
-        myError.setType("Error");
-        myError.setMessage(getMessage());
-        return myError;
       }
+      // END Search message by constraint search condition
+    } else {
+      // it is a constraint but has no entry with the constraint name in AD_MESSAGE.value
+      myError = new OBError();
+      myError.setType("Error");
+      myError.setMessage(getMessage());
+      return myError;
     }
     // END Specific parse for CONSTRAINT DB objects
 
