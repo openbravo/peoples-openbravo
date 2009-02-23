@@ -186,6 +186,9 @@ public class SalesOrderLine extends HttpSecureAppServlet {
       log4j.debug("Output: Frame 1 of sale-order-lines seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/info/SalesOrderLine").createXmlDocument();
+
+    String strSOTrx = vars.getSessionValue("SalesOrderLine.isSOTrx");
+
     if (strBPartner.equals("") && strProduct.equals("") && strDocumentNo.equals("")
         && strDateFrom.equals("") && strDateTo.equals("") && strCal1.equals("")
         && strCal2.equals("")) {
@@ -211,6 +214,9 @@ public class SalesOrderLine extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+
+    xmlDocument.setParameter("isSOTrxCompra", strSOTrx);
+    xmlDocument.setParameter("isSOTrxVenta", strSOTrx);
 
     xmlDocument.setParameter("grid", "20");
     xmlDocument.setParameter("grid_Offset", "");

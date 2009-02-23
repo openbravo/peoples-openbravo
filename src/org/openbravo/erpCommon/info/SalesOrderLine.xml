@@ -39,6 +39,11 @@
 	<PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
 	<PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
 
+    <PARAMETER id="paramCheckVenta" name="checkVenta" default="Y"/>
+    <PARAMETER id="paramCheckCompra" name="checkCompra" default="N"/>
+    <PARAMETER id="fieldisSOTrxCompra" name="isSOTrxCompra" boolean="selected" withId="paramCheckCompra"/>
+    <PARAMETER id="fieldisSOTrxVenta" name="isSOTrxVenta" boolean="selected" withId="paramCheckVenta"/>
+
 	<PARAMETER id="grid" name="grid" attribute="numrows" />
 	<PARAMETER id="grid" name="grid_Offset" attribute="offset" />
 	<PARAMETER id="grid" name="grid_SortCols" attribute="sortcols" />
