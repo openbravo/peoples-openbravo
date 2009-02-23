@@ -12105,19 +12105,6 @@ The values of the actual Product Attributes]]></HELP>
 <!--2063-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2063--></AD_ELEMENT>
 
-<!--2064--><AD_ELEMENT>
-<!--2064-->  <AD_ELEMENT_ID><![CDATA[2064]]></AD_ELEMENT_ID>
-<!--2064-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2064-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2064-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2064-->  <COLUMNNAME><![CDATA[Log_ID]]></COLUMNNAME>
-<!--2064-->  <NAME><![CDATA[Log]]></NAME>
-<!--2064-->  <PRINTNAME><![CDATA[Log]]></PRINTNAME>
-<!--2064-->  <DESCRIPTION><![CDATA[Log identifier]]></DESCRIPTION>
-<!--2064-->  <HELP><![CDATA[Log identifier]]></HELP>
-<!--2064-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2064--></AD_ELEMENT>
-
 <!--2065--><AD_ELEMENT>
 <!--2065-->  <AD_ELEMENT_ID><![CDATA[2065]]></AD_ELEMENT_ID>
 <!--2065-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -12143,32 +12130,6 @@ The values of the actual Product Attributes]]></HELP>
 <!--2066-->  <HELP><![CDATA[Old data overwritten in the field]]></HELP>
 <!--2066-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2066--></AD_ELEMENT>
-
-<!--2067--><AD_ELEMENT>
-<!--2067-->  <AD_ELEMENT_ID><![CDATA[2067]]></AD_ELEMENT_ID>
-<!--2067-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2067-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2067-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2067-->  <COLUMNNAME><![CDATA[P_ID]]></COLUMNNAME>
-<!--2067-->  <NAME><![CDATA[Process ID]]></NAME>
-<!--2067-->  <PRINTNAME><![CDATA[P ID]]></PRINTNAME>
-<!--2067-->  <DESCRIPTION><![CDATA[Process ID]]></DESCRIPTION>
-<!--2067-->  <HELP><![CDATA[Process ID]]></HELP>
-<!--2067-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2067--></AD_ELEMENT>
-
-<!--2068--><AD_ELEMENT>
-<!--2068-->  <AD_ELEMENT_ID><![CDATA[2068]]></AD_ELEMENT_ID>
-<!--2068-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2068-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2068-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2068-->  <COLUMNNAME><![CDATA[P_Msg]]></COLUMNNAME>
-<!--2068-->  <NAME><![CDATA[Process Message]]></NAME>
-<!--2068-->  <PRINTNAME><![CDATA[P Msg]]></PRINTNAME>
-<!--2068-->  <DESCRIPTION><![CDATA[Process Message]]></DESCRIPTION>
-<!--2068-->  <HELP><![CDATA[Process Message]]></HELP>
-<!--2068-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2068--></AD_ELEMENT>
 
 <!--2070--><AD_ELEMENT>
 <!--2070-->  <AD_ELEMENT_ID><![CDATA[2070]]></AD_ELEMENT_ID>
