@@ -102,9 +102,15 @@ public class Property {
     setParent(fromColumn.isParent());
     setColumnName(fromColumn.getColumnName());
     setNameOfColumn(fromColumn.getName());
+
     setDefaultValue(fromColumn.getDefaultValue());
+
+    // setMandatory to false on purpose because there are many cases whereby it is set to
+    // true while the underlying db column allows null, this because the mandatory value
+    // is used in the ui
     // setMandatory(overrideMandatoryCustom(fromColumn));
     setMandatory(false);
+
     setMinValue(fromColumn.getValueMin());
     setMaxValue(fromColumn.getValueMax());
     setUuid(fromColumn.getReference().getName().equals("ID")
@@ -321,6 +327,12 @@ public class Property {
       if (defaultValue.toLowerCase().equals("sysdate")) {
         return " new java.util.Date()";
       }
+
+      // ignore all other Date defaults for now
+      if (getPrimitiveType() != null && Date.class.isAssignableFrom(getPrimitiveType())) {
+        return null;
+      }
+
       if (getPrimitiveType() == BigDecimal.class) {
         return " new java.math.BigDecimal(" + defaultValue + ")";
       }
