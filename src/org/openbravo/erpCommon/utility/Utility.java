@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -2159,6 +2160,22 @@ public class Utility {
     } catch (Exception e) {
       log4j.error(e.getMessage());
       return "";
+    }
+  }
+
+  /**
+   * Determine if a String can be parsed into a BigDecimal.
+   * 
+   * @param str
+   *          a String
+   * @return true if the string can be parsed
+   */
+  public static boolean isBigDecimal(String str) {
+    try {
+      new BigDecimal(str.trim());
+      return true;
+    } catch (Exception e) {
+      return false;
     }
   }
 

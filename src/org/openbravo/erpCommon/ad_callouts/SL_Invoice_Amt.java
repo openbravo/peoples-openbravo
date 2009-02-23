@@ -95,12 +95,12 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
 
     BigDecimal qtyInvoice, priceActual, LineNetAmt, priceLimit, priceStd;
 
-    qtyInvoice = (strQtyInvoice.equals("") ? ZERO : new BigDecimal(strQtyInvoice));
-    priceStd = (strPriceStd.equals("") ? ZERO : new BigDecimal(strPriceStd));
-    priceActual = (strPriceActual.equals("") ? ZERO : (new BigDecimal(strPriceActual))).setScale(
-        PricePrecision, BigDecimal.ROUND_HALF_UP);
-    priceLimit = (strPriceLimit.equals("") ? ZERO : (new BigDecimal(strPriceLimit))).setScale(
-        PricePrecision, BigDecimal.ROUND_HALF_UP);
+    qtyInvoice = (!Utility.isBigDecimal(strQtyInvoice) ? ZERO : new BigDecimal(strQtyInvoice));
+    priceStd = (!Utility.isBigDecimal(strPriceStd) ? ZERO : new BigDecimal(strPriceStd));
+    priceActual = (!Utility.isBigDecimal(strPriceActual) ? ZERO : (new BigDecimal(strPriceActual)))
+        .setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+    priceLimit = (!Utility.isBigDecimal(strPriceLimit) ? ZERO : (new BigDecimal(strPriceLimit)))
+        .setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
 
     StringBuffer resultado = new StringBuffer();
 
@@ -115,8 +115,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
       priceStd = new BigDecimal(SLOrderProductData.getOffersStdPriceInvoice(this,
-          dataInvoice[0].cBpartnerId, strPriceActual.replace("\"", ""), strProduct,
-          dataInvoice[0].dateinvoiced, strQtyInvoice, dataInvoice[0].mPricelistId,
+          dataInvoice[0].cBpartnerId, priceActual.toString(), strProduct,
+          dataInvoice[0].dateinvoiced, qtyInvoice.toString(), dataInvoice[0].mPricelistId,
           dataInvoice[0].id));
       resultado.append("new Array(\"inppricestd\", \"" + priceStd.toString() + "\"),");
     }
@@ -126,10 +126,10 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     if (strChanged.equals("inpqtyinvoiced")) {
       if (log4j.isDebugEnabled())
         log4j.debug("strPriceList: " + strPriceList.replace("\"", "") + " product:" + strProduct
-            + " qty:" + strQtyInvoice);
+            + " qty:" + qtyInvoice.toString());
       priceActual = new BigDecimal(SLOrderProductData.getOffersPriceInvoice(this,
           dataInvoice[0].dateinvoiced, dataInvoice[0].cBpartnerId, strProduct, priceStd.toString(),
-          strQtyInvoice, dataInvoice[0].mPricelistId, dataInvoice[0].id));
+          qtyInvoice.toString(), dataInvoice[0].mPricelistId, dataInvoice[0].id));
       if (priceActual.scale() > PricePrecision)
         priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
     }
