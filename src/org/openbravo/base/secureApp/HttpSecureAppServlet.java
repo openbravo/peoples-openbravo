@@ -825,6 +825,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         "org/openbravo/base/secureApp/PopUp_Download").createXmlDocument();
     xmlDocument.setParameter("href", href);
     os.println(xmlDocument.print());
+    os.close();
   }
 
   public void printPageClosePopUpAndRefresh(HttpServletResponse response, VariablesSecureApp vars)
@@ -1037,7 +1038,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         reportId = UUID.randomUUID();
         saveReport(variables, jasperPrint, exportParameters, strFileName + "-" + (reportId) + "."
             + strOutputType);
-        printPagePopUpDownload(os, strFileName + "-" + (reportId) + "." + strOutputType);
+        response.setHeader("Content-disposition", "inline" + "; filename=" + strFileName + "-"
+            + (reportId) + "." + strOutputType);
+        printPagePopUpDownload(response.getOutputStream(), strFileName + "-" + (reportId) + "."
+            + strOutputType);
       } else {
         throw new ServletException("Output format no supported");
       }
