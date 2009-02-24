@@ -50,7 +50,7 @@
 				PaymentRule, InvoiceRule, DeliveryRule, FreightcostRule, DeliveryviaRule, PriorityRule, IsDiscountPrinted,
 				Processing)
 				VALUES (?, ?, ?, 'Y', TO_DATE(now()), ?, TO_DATE(now()), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-				COALESCE(TO_DATE(?),TO_DATE(now())), COALESCE(TO_DATE(?),TO_DATE(now())), COALESCE(TO_DATE(?),TO_DATE(now())), ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				TO_DATE(?), TO_DATE(?), TO_DATE(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>

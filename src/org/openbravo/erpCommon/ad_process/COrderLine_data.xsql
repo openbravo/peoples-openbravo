@@ -50,7 +50,7 @@
                 (?, ?, ?, 'Y', now(), ?, now(), ?, 
                  TO_NUMBER(?), ?, TO_NUMBER(?), TO_NUMBER(?), ?, 
                  COALESCE(TO_NUMBER(?), 0), ?, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 
-                 TO_NUMBER(?), ?, COALESCE(TO_DATE(?), now()), ?, ?, ?, ?, ?)
+                 TO_NUMBER(?), ?, TO_DATE(?), ?, ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>

@@ -1303,7 +1303,9 @@
         AND C_ORDER.AD_ORG_ID = ?
         AND C_ORDER.C_DOCTYPETARGET_ID = ?
         AND C_ORDER.DOCUMENTNO = ?
+        AND C_ORDER.PROCESSED = 'N'
         AND TO_CHAR(C_ORDER.DATEORDERED, 'DD-MM-YYYY') = TO_CHAR(TO_DATE(?, 'DD-MM-YYYY HH24:MI:SS'), 'DD-MM-YYYY')
+        AND C_ORDER.C_BPARTNER_ID = ?
         AND C_ORDERLINE.C_ORDER_ID = C_ORDER.C_ORDER_ID
         GROUP BY C_ORDER.C_ORDER_ID, C_ORDER.C_BPARTNER_ID, C_ORDER.BILLTO_ID, C_ORDER.C_BPARTNER_LOCATION_ID, C_ORDER.DOCUMENTNO, C_ORDER.M_PRICELIST_ID, C_ORDER.C_CURRENCY_ID
 			]]>
@@ -1313,6 +1315,7 @@
 		<Parameter name="c_doctype_id"/>
 		<Parameter name="documentno"/>
 		<Parameter name="dateordered"/>
+        <Parameter name="cbpartner"/>
 	</SqlMethod>
 	<SqlMethod name="selectPaymentInserted" type="preparedStatement" return="multiple">
 		<SqlMethodComment></SqlMethodComment>
