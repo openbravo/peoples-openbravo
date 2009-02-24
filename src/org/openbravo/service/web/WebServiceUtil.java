@@ -31,6 +31,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.DocumentSource;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
@@ -215,11 +216,11 @@ public class WebServiceUtil implements OBSingleton {
     try {
       final TransformerFactory factory = TransformerFactory.newInstance();
       final Transformer transformer = factory.newTransformer(new StreamSource(template));
-      final StreamSource request = new StreamSource(xml);
+      final DocumentSource source = new DocumentSource(DocumentHelper.parseText(xml));
       final StringWriter sw = new StringWriter();
       final StreamResult response = new StreamResult(sw);
       transformer.setParameter("url", url);
-      transformer.transform(request, response);
+      transformer.transform(source, response);
 
       return sw.toString();
     } catch (final Exception e) {
