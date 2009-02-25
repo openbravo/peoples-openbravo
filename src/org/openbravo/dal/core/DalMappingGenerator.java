@@ -174,9 +174,13 @@ public class DalMappingGenerator implements OBSingleton {
 
     sb.append(" column=\"" + p.getColumnName() + "\"");
 
-    if (p.isMandatory()) {
-      sb.append(" not-null=\"true\"");
-    }
+    // disabled for now as sometimes database values are null
+    // while they are required in the application dictionary
+    // this has to do with the way that mandatory is used for
+    // field definitions.
+    // if (p.isMandatory()) {
+    // sb.append(" not-null=\"true\"");
+    // }
 
     if (!p.isUpdatable() || p.isInactive()) {
       sb.append(" update=\"false\"");
@@ -204,9 +208,13 @@ public class DalMappingGenerator implements OBSingleton {
       sb.append(TAB2 + "<many-to-one name=\"" + p.getName() + "\" column=\"" + p.getColumnName()
           + "\""); // cascade=\
       // "save-update\"
-      if (p.isMandatory()) {
-        sb.append(" not-null=\"true\"");
-      }
+      // disabled for now as sometimes database values are null
+      // while they are required in the application dictionary
+      // this has to do with the way that mandatory is used for
+      // field definitions
+      // if (p.isMandatory()) {
+      // sb.append(" not-null=\"true\"");
+      // }
     }
     // sb.append(" cascade=\"save-update\"");
 
