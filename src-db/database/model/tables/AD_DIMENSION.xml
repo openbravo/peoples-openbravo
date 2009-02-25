@@ -67,7 +67,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADDIMENSION">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADDIMENSION">
+      <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADDIMENSION" onDelete="cascade">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
     </table>

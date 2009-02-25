@@ -58,7 +58,7 @@
       <foreign-key foreignTable="AD_USER" name="AD_USER_PREFERENCE">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_PREFERENCE">
+      <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_PREFERENCE" onDelete="cascade">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
       <unique name="AD_PREFERENCE_ATTRIBUTE">

@@ -110,7 +110,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CDOCTYPE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_CDOCTYPE">
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_CDOCTYPE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_C_DOCTYPE">

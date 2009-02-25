@@ -56,7 +56,7 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADCOLUMNACCESS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADCOLUMNACCESS">
+      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADCOLUMNACCESS" onDelete="cascade">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADCOLUMNACCESS">
@@ -65,7 +65,7 @@
       <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADCOLUMNACCESS">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADCOLUMNACCESS">
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADCOLUMNACCESS" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <unique name="ADCOLUMNACCESS_ADROLEID_ADC_UN">

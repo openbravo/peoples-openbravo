@@ -63,7 +63,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CFILE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_CFILE">
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_CFILE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
     </table>
