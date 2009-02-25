@@ -64,13 +64,13 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADNOTE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MESSAGE" name="ADMESSAGE_ADNOTE">
+      <foreign-key foreignTable="AD_MESSAGE" name="ADMESSAGE_ADNOTE" onDelete="cascade">
         <reference local="AD_MESSAGE_ID" foreign="AD_MESSAGE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADNOTE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADNOTE">
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADNOTE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="ADUSER_ADNOTE">

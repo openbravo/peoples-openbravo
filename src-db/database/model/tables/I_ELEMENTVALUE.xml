@@ -132,7 +132,7 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_IELEMENTVALUE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_IELEMENTVALUE">
+      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_IELEMENTVALUE" onDelete="cascade">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_IELEMENTVALUE">

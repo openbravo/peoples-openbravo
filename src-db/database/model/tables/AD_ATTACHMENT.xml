@@ -66,7 +66,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADATTACHMENT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADATTACHMENT">
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADATTACHMENT" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <index name="AD_ATTACHMENT_RECORD" unique="false">

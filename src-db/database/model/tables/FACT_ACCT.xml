@@ -201,7 +201,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORGTRX_FACT_ACCT">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_FACTACCT">
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_FACTACCT" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_BUSPARTNER_FACT_ACCT">

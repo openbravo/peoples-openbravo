@@ -59,7 +59,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADIMPFORMAT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADIMPFORMAT">
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADIMPFORMAT" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <unique name="AD_IMPFORMAT_NAME">

@@ -62,7 +62,7 @@
       <foreign-key foreignTable="AD_ROLE" name="ADROLE_ARDECORDACCESS">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADRECORDACCESS">
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADRECORDACCESS" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <unique name="ADRECORDACCESS_ADROLEID_ADT_UN">
