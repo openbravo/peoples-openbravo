@@ -27,6 +27,11 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.expression.Evaluator;
+import org.openbravo.base.model.BaseOBObjectDef;
+import org.openbravo.base.model.Column;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.Module;
+import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.validation.PropertyValidator;
 import org.openbravo.base.validation.ValidationException;
@@ -109,7 +114,8 @@ public class Property {
     // true while the underlying db column allows null, this because the mandatory value
     // is used in the ui
     // setMandatory(overrideMandatoryCustom(fromColumn));
-    setMandatory(false);
+    // setMandatory(false);
+    setMandatory(fromColumn.isMandatory());
 
     setMinValue(fromColumn.getValueMin());
     setMaxValue(fromColumn.getValueMax());
