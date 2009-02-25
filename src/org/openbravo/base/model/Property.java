@@ -115,7 +115,7 @@ public class Property {
     // is used in the ui
     // setMandatory(overrideMandatoryCustom(fromColumn));
     // setMandatory(false);
-    setMandatory(fromColumn.isMandatory());
+    setMandatory(false);
 
     setMinValue(fromColumn.getValueMin());
     setMaxValue(fromColumn.getValueMax());
