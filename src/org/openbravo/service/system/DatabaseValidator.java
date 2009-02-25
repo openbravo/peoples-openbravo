@@ -286,30 +286,29 @@ public class DatabaseValidator implements SystemValidator {
 
     final Property property = getProperty(dbTable.getName(), dbColumn.getName());
 
-    if (property != null && !property.isMandatory() && dbColumn.isRequired()) {
-      result.addError(
-          SystemValidationResult.SystemValidationType.NOT_NULL_IN_DB_NOT_MANDATORY_IN_AD, "Column "
-              + dbTable.getName() + "." + dbColumn.getName()
-              + " is required (not-null) but in the Application Dictonary"
-              + " it is set as non-mandatory");
-
-      final Property p = getProperty(dbTable.getName(), dbColumn.getName());
-      updateSql
-          .append("update ad_column set ismandatory='Y' where ad_column_id in (select c.ad_column_id from ad_column c, ad_table t "
-              + "where c.ad_table_id=t.ad_table_id and t.tablename='"
-              + p.getEntity().getTableName() + "' and c.columnname='" + p.getColumnName() + "');\n");
-
-    }
+    // disabled because mandatory is always false
+    // if (property != null && !property.isMandatory() && dbColumn.isRequired()) {
+    // result.addError(
+    // SystemValidationResult.SystemValidationType.NOT_NULL_IN_DB_NOT_MANDATORY_IN_AD, "Column "
+    // + dbTable.getName() + "." + dbColumn.getName()
+    // + " is required (not-null) but in the Application Dictonary"
+    // + " it is set as non-mandatory");
+    //
+    // final Property p = getProperty(dbTable.getName(), dbColumn.getName());
+    // updateSql
+    // .append("update ad_column set ismandatory='Y' where ad_column_id in (select c.ad_column_id from ad_column c, ad_table t "
+    // + "where c.ad_table_id=t.ad_table_id and t.tablename='"
+    // + p.getEntity().getTableName() + "' and c.columnname='" + p.getColumnName() + "');\n");
+    //
+    // }
 
     // disabled this check, will be done in 2.60
-    if (false) {
-      if (property != null && property.isMandatory() && !dbColumn.isRequired()) {
-        result.addError(SystemValidationType.MANDATORY_IN_AD_NULLABLE_IN_DB, "Column "
-            + dbTable.getName() + "." + dbColumn.getName()
-            + " is not-required (null-allowed) but in the Application Dictonary"
-            + " it is set as mandatory");
-      }
-    }
+    // if (property != null && property.isMandatory() && !dbColumn.isRequired()) {
+    // result.addError(SystemValidationType.MANDATORY_IN_AD_NULLABLE_IN_DB, "Column "
+    // + dbTable.getName() + "." + dbColumn.getName()
+    // + " is not-required (null-allowed) but in the Application Dictonary"
+    // + " it is set as mandatory");
+    // }
 
     // check the default value
     if (property != null && property.getActualDefaultValue() != null) {
