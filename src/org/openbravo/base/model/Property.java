@@ -27,11 +27,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.expression.Evaluator;
-import org.openbravo.base.model.BaseOBObjectDef;
-import org.openbravo.base.model.Column;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.Module;
-import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.validation.PropertyValidator;
 import org.openbravo.base.validation.ValidationException;
@@ -110,12 +105,11 @@ public class Property {
 
     setDefaultValue(fromColumn.getDefaultValue());
 
-    // setMandatory to false on purpose because there are many cases whereby it is set to
+    // use of the mandatory is restricted because there are many cases whereby it is set to
     // true while the underlying db column allows null, this because the mandatory value
     // is used in the ui
     // setMandatory(overrideMandatoryCustom(fromColumn));
-    // setMandatory(false);
-    setMandatory(false);
+    setMandatory(fromColumn.isMandatory());
 
     setMinValue(fromColumn.getValueMin());
     setMaxValue(fromColumn.getValueMax());
@@ -144,30 +138,30 @@ public class Property {
   // This because it is not possible to define in a field if a field should
   // be mandatory. So these columns are hidden on windows/tabs where they
   // should not be entered.
-  private boolean overrideMandatoryCustom(Column c) {
-    final boolean columnMandatory = c.isMandatory();
-    if (c.getTable().getTableName().equalsIgnoreCase("AD_User")
-        && c.getColumnName().equalsIgnoreCase("username")) {
-      return false;
-    }
-    if (!c.getTable().getTableName().equalsIgnoreCase("M_ProductionPlan")
-        && !c.getTable().getTableName().equalsIgnoreCase("M_Production")) {
-      return columnMandatory;
-    }
-    if (c.getColumnName().equalsIgnoreCase("endtime")) {
-      return false;
-    } else if (c.getColumnName().equalsIgnoreCase("ma_costcenteruse")) {
-      return false;
-    } else if (c.getColumnName().equalsIgnoreCase("MA_Wrphase_ID")) {
-      return false;
-    } else if (c.getColumnName().equalsIgnoreCase("neededquantity")) {
-      return false;
-    } else if (c.getColumnName().equalsIgnoreCase("rejectedquantity")) {
-      return false;
-    } else {
-      return columnMandatory;
-    }
-  }
+  // private boolean overrideMandatoryCustom(Column c) {
+  // final boolean columnMandatory = c.isMandatory();
+  // if (c.getTable().getTableName().equalsIgnoreCase("AD_User")
+  // && c.getColumnName().equalsIgnoreCase("username")) {
+  // return false;
+  // }
+  // if (!c.getTable().getTableName().equalsIgnoreCase("M_ProductionPlan")
+  // && !c.getTable().getTableName().equalsIgnoreCase("M_Production")) {
+  // return columnMandatory;
+  // }
+  // if (c.getColumnName().equalsIgnoreCase("endtime")) {
+  // return false;
+  // } else if (c.getColumnName().equalsIgnoreCase("ma_costcenteruse")) {
+  // return false;
+  // } else if (c.getColumnName().equalsIgnoreCase("MA_Wrphase_ID")) {
+  // return false;
+  // } else if (c.getColumnName().equalsIgnoreCase("neededquantity")) {
+  // return false;
+  // } else if (c.getColumnName().equalsIgnoreCase("rejectedquantity")) {
+  // return false;
+  // } else {
+  // return columnMandatory;
+  // }
+  // }
 
   /**
    * Initializes the name of the property. This is done separately from the
@@ -623,11 +617,13 @@ public class Property {
     // this assumes ofcourse that all ids are generated
     // also client and organization may be nullified as they are set
     // automatically
-    if (value == null && isMandatory() && !isId() && !isClientOrOrganization()) {
-      final ValidationException ve = new ValidationException();
-      ve.addMessage(this, "Property " + this + " is mandatory, null values are not allowed.");
-      throw ve;
-    }
+
+    // disabled because isMandatory should not be used right now
+    // if (value == null && isMandatory() && !isId() && !isClientOrOrganization()) {
+    // final ValidationException ve = new ValidationException();
+    // ve.addMessage(this, "Property " + this + " is mandatory, null values are not allowed.");
+    // throw ve;
+    // }
 
     if (value == null) {
       return;
