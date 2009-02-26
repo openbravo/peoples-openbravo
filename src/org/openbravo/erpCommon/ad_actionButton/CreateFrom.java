@@ -85,20 +85,6 @@ public class CreateFrom extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("doPost - inpisreceipt = " + strIsreceipt);
 
-      vars.removeSessionValue("CreateFrom|key");
-      vars.removeSessionValue("CreateFrom|processId");
-      vars.removeSessionValue("CreateFrom|path");
-      vars.removeSessionValue("CreateFrom|windowId");
-      vars.removeSessionValue("CreateFrom|tabName");
-      vars.removeSessionValue("CreateFrom|dateInvoiced");
-      vars.removeSessionValue("CreateFrom|bpartnerLocation");
-      vars.removeSessionValue("CreateFrom|pricelist");
-      vars.removeSessionValue("CreateFrom|bpartner");
-      vars.removeSessionValue("CreateFrom|statementDate");
-      vars.removeSessionValue("CreateFrom|bankAccount");
-      vars.removeSessionValue("CreateFrom|adOrgId");
-      vars.removeSessionValue("CreateFrom|isreceipt");
-
       // 26-06-07
       vars.setSessionValue("CreateFrom|default", "1");
 
@@ -140,7 +126,6 @@ public class CreateFrom extends HttpSecureAppServlet {
         log4j.debug("doPost - inpisreceipt = " + strIsreceipt);
 
       vars.removeSessionValue("CreateFrom" + strType + "|key");
-      vars.removeSessionValue("CreateFrom|tableId");
       vars.removeSessionValue("CreateFrom" + strType + "|processId");
       vars.removeSessionValue("CreateFrom" + strType + "|path");
       vars.removeSessionValue("CreateFrom" + strType + "|windowId");
@@ -195,6 +180,19 @@ public class CreateFrom extends HttpSecureAppServlet {
       final String strTabId = vars.getGlobalVariable("inpTabId", "CreateFrom|tabId");
       vars.setMessage(strTabId, myMessage);
       printPageClosePopUp(response, vars);
+      vars.removeSessionValue("CreateFrom|key");
+      vars.removeSessionValue("CreateFrom|processId");
+      vars.removeSessionValue("CreateFrom|path");
+      vars.removeSessionValue("CreateFrom|windowId");
+      vars.removeSessionValue("CreateFrom|tabName");
+      vars.removeSessionValue("CreateFrom|dateInvoiced");
+      vars.removeSessionValue("CreateFrom|bpartnerLocation");
+      vars.removeSessionValue("CreateFrom|pricelist");
+      vars.removeSessionValue("CreateFrom|bpartner");
+      vars.removeSessionValue("CreateFrom|statementDate");
+      vars.removeSessionValue("CreateFrom|bankAccount");
+      vars.removeSessionValue("CreateFrom|adOrgId");
+      vars.removeSessionValue("CreateFrom|isreceipt");
       // response.sendRedirect(strPath);
     } else
       pageErrorPopUp(response);
