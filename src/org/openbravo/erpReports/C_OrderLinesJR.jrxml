@@ -55,25 +55,32 @@
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<queryString><![CDATA[SELECT 1 AS ISBOM, C_ORDERLINE.LINE, COALESCE(M_PRODUCT.NAME, C_ORDERLINE.DESCRIPTION) AS PRODUCT_NAME, C_ORDERLINE.QTYORDERED AS QUANTITY,
-        TO_CHAR(C_UOM.UOMSYMBOL) AS UOM,  C_ORDERLINE.PRICEACTUAL, TO_NUMBER(NULL) AS BASE, C_ORDERLINE.LINENETAMT, TO_NUMBER(NULL) AS TAXLINE
+        TO_CHAR(C_UOM.UOMSYMBOL) AS UOM,  C_ORDERLINE.PRICEACTUAL, TO_NUMBER(NULL) AS BASE, C_ORDERLINE.LINENETAMT, TO_NUMBER(NULL) AS TAXLINE,   C_CURRENCY.CURSYMBOL as CURRENCY
         FROM C_ORDERLINE left join M_PRODUCT on C_ORDERLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID 
-                         left join C_UOM on C_ORDERLINE.C_UOM_ID = C_UOM.C_UOM_ID
+                         left join C_UOM on C_ORDERLINE.C_UOM_ID = C_UOM.C_UOM_ID,
+                         C_ORDER, C_CURRENCY 
         WHERE C_ORDERLINE.C_ORDER_ID = $P{C_ORDER_ID}
+              AND C_ORDERLINE.C_ORDER_ID=C_ORDER.C_ORDER_ID
+              AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID
         UNION
         SELECT 2 AS ISBOM, C_ORDERLINE.LINE, M_PRODUCT.NAME AS PRODUCT_NAME, C_ORDERLINE.QTYORDERED*M_PRODUCT_BOM.BOMQTY AS QUANTITY,
-        TO_CHAR(C_UOM.UOMSYMBOL) AS UOM, TO_NUMBER(NULL) AS PRICEACTUAL, TO_NUMBER(NULL) AS BASE, TO_NUMBER(NULL) AS LINENETAMT, TO_NUMBER(NULL) AS TAXLINE
-        FROM M_PRODUCT_BOM, M_PRODUCT, C_ORDERLINE, C_UOM
+        TO_CHAR(C_UOM.UOMSYMBOL) AS UOM, TO_NUMBER(NULL) AS PRICEACTUAL, TO_NUMBER(NULL) AS BASE, TO_NUMBER(NULL) AS LINENETAMT, TO_NUMBER(NULL) AS TAXLINE, C_CURRENCY.CURSYMBOL as CURRENCY
+        FROM M_PRODUCT_BOM, M_PRODUCT, C_ORDERLINE, C_UOM,  C_ORDER, C_CURRENCY
         WHERE  C_ORDERLINE.M_PRODUCT_ID = M_PRODUCT_BOM.M_PRODUCT_ID
-        AND M_PRODUCT_BOM.M_PRODUCTBOM_ID = M_PRODUCT.M_PRODUCT_ID
-        AND M_PRODUCT.C_UOM_ID = C_UOM.C_UOM_ID
-        AND C_ORDERLINE.C_ORDER_ID = $P{C_ORDER_ID}
+            AND M_PRODUCT_BOM.M_PRODUCTBOM_ID = M_PRODUCT.M_PRODUCT_ID
+            AND M_PRODUCT.C_UOM_ID = C_UOM.C_UOM_ID
+            AND C_ORDERLINE.C_ORDER_ID = $P{C_ORDER_ID}
+            AND C_ORDERLINE.C_ORDER_ID=C_ORDER.C_ORDER_ID
+            AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID
         UNION
-        SELECT 3 AS ISBOM, TO_NUMBER(null) AS LINE, C_TAX.NAME AS PRODUCT_NAME, TO_NUMBER(NULL) AS QUANTITY, TO_CHAR(NULL) AS UOM, TO_NUMBER(NULL) AS PRICEACTUAL, C_ORDERTAX.TAXBASEAMT AS BASE, C_ORDERTAX.TAXAMT AS LINENETAMT, C_ORDERTAX.LINE AS TAXLINE
-        FROM C_ORDER, C_ORDERTAX, C_TAX
+        SELECT 3 AS ISBOM, TO_NUMBER(null) AS LINE, C_TAX.NAME AS PRODUCT_NAME, TO_NUMBER(NULL) AS QUANTITY, TO_CHAR(NULL) AS UOM, TO_NUMBER(NULL) AS PRICEACTUAL,
+        C_ORDERTAX.TAXBASEAMT AS BASE, C_ORDERTAX.TAXAMT AS LINENETAMT, C_ORDERTAX.LINE AS TAXLINE, C_CURRENCY.CURSYMBOL as CURRENCY
+        FROM C_ORDER, C_ORDERTAX, C_TAX, C_CURRENCY
         WHERE C_ORDER.C_ORDER_ID = C_ORDERTAX.C_ORDER_ID
-        AND C_TAX.C_TAX_ID = C_ORDERTAX.C_TAX_ID
-        AND C_ORDERTAX.TAXAMT <> 0
-        AND C_ORDER.C_ORDER_ID = $P{C_ORDER_ID}
+            AND C_TAX.C_TAX_ID = C_ORDERTAX.C_TAX_ID
+            AND C_ORDERTAX.TAXAMT <> 0
+            AND C_ORDER.C_ORDER_ID = $P{C_ORDER_ID}
+            AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID
         ORDER BY LINE,ISBOM, TAXLINE]]></queryString>
 
 	<field name="ISBOM" class="java.math.BigDecimal"/>
@@ -85,6 +92,7 @@
 	<field name="BASE" class="java.math.BigDecimal"/>
 	<field name="LINENETAMT" class="java.math.BigDecimal"/>
 	<field name="TAXLINE" class="java.math.BigDecimal"/>
+	<field name="CURRENCY" class="java.lang.String"/>
 
 	<variable name="SUM_LINENETAMT" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
 		<variableExpression><![CDATA[$F{LINENETAMT}]]></variableExpression>
@@ -253,7 +261,7 @@
 					<reportElement
 						x="270"
 						y="0"
-						width="60"
+						width="43"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
@@ -281,15 +289,41 @@
 					<reportElement
 						x="400"
 						y="0"
-						width="70"
+						width="49"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{LINENETAMT}!=null)?$P{NUMBERFORMAT}.format($F{LINENETAMT}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="454"
+						y="0"
+						width="16"
+						height="16"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CURRENCY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="314"
+						y="0"
+						width="16"
+						height="16"
+						key="textField-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CURRENCY}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
@@ -308,7 +342,7 @@
 					<reportElement
 						x="400"
 						y="1"
-						width="70"
+						width="49"
 						height="16"
 						key="textField-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -330,6 +364,19 @@
 					</textElement>
 				<text><![CDATA[Total:]]></text>
 				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="454"
+						y="2"
+						width="16"
+						height="16"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CURRENCY}]]></textFieldExpression>
+				</textField>
 			</band>
 		</columnFooter>
 		<pageFooter>
