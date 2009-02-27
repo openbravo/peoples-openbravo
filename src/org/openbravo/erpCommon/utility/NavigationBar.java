@@ -31,6 +31,7 @@ public class NavigationBar {
   String breadcrumb = "";
   String window_type = "";
   boolean hideBack = false;
+  boolean validateChangesOnRefresh = true;
 
   public NavigationBar(ConnectionProvider _conn, String _language, String _action,
       String _windowName, String _windowType, String _baseDirection, String _breadcrumb) {
@@ -54,6 +55,13 @@ public class NavigationBar {
     this.breadcrumb = _breadcrumb;
     this.window_type = _windowType;
     this.hideBack = _hideBack;
+  }
+
+  public NavigationBar(ConnectionProvider _conn, String _language, String _action,
+      String _windowName, String _windowType, String _baseDirection, String _breadcrumb,
+      boolean hideBack, boolean _validateChangesOnRefresh) {
+    this(_conn, _language, _action, _windowName, _windowType, _baseDirection, _breadcrumb, hideBack);
+    this.validateChangesOnRefresh = _validateChangesOnRefresh;
   }
 
   @Override
@@ -84,8 +92,8 @@ public class NavigationBar {
         .append(
             "    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onClick=\"submitCommandForm('DEFAULT', false, null, '")
         .append(servlet_action);
-    toolbar
-        .append("', '_self', null, true);return false;\" border=\"0\" onmouseover=\"window.status='");
+    toolbar.append("', '_self', null, ").append(validateChangesOnRefresh ? "true" : "false")
+        .append(");return false;\" border=\"0\" onmouseover=\"window.status='");
     auxText = Utility.messageBD(conn, "Refresh", language);
     toolbar
         .append(auxText)
