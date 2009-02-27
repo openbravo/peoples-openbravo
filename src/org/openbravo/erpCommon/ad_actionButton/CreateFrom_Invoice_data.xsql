@@ -28,7 +28,7 @@
     <Sql>
       <![CDATA[
         SELECT o.C_ORDER_ID as ID, Ad_Column_Identifier(to_char('C_Order'), to_char(o.c_order_id), to_char(?)) AS NAME, o.DocumentNo AS NAMEORDER,
-        o.DocumentNo AS NAMESHIPMENT,
+        '' AS NAMESHIPMENT,
         l.QtyOrdered-SUM(COALESCE(m.Qty,0)) AS QTY, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,p.NAME AS RELATION_NAME, 
         l.C_OrderLine_ID,l.Line, l.ad_org_id, '' as STDPRECISION, 
         '' as M_InOutLine_ID, '' AS PriceActual, '' AS PriceList, '' AS PriceLimit, '' AS Description, '' as PriceStd,
