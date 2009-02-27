@@ -62,6 +62,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   static String moduleName = "";
   static String moduleLang = "";
   static String moduleID = "";
+  static boolean translateModule = true;
   static final String[] tokens = { "-", ":" };
 
   static Logger log4j = Logger.getLogger(Translate.class);
@@ -236,6 +237,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
               && (moduleDirectories.get(level).equals("*") || moduleDirectories.get(level).equals(
                   fileItem.getName()))) {
             log4j.info("Start parsing module: " + parent.replace("/", ""));
+            translateModule = true;
             try {
               if (TranslateData.isInDevelopmentModulePack(pool, parent.replace("/", "")))
                 listDir(fileItem, boolFilter, dirFilter, relativePath, true, parent + "/"
@@ -285,6 +287,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    *          The relative path.
    */
   private static void parseFile(File fileParsing, String relativePath, String parent, String module) {
+    if (!translateModule)
+      return;
     final String strFileName = fileParsing.getName();
     if (log4j.isDebugEnabled())
       log4j.debug("Parsing of " + strFileName);
@@ -324,14 +328,14 @@ public class Translate extends DefaultHandler implements LexicalHandler {
 
     actualFile = relativePath + "/" + strFileName;
 
-    count++;
-
     log4j.debug("File: " + fileParsing);
 
     try {
       FileInputStream fis = new FileInputStream(fileParsing);
       InputStreamReader reader = new InputStreamReader(fis, "UTF-8");
       parser.parse(new InputSource(reader));
+      if (translateModule)
+        count++;
     } catch (final IOException e) {
       log4j.error("file: " + actualFile);
       e.printStackTrace();
@@ -349,6 +353,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    *          Attributes of the element.
    */
   private void parseAttributes(Attributes amap) {
+    if (!translateModule)
+      return;
     String type = "";
     String value = "";
     for (int i = 0; i < amap.getLength(); i++) {
@@ -416,9 +422,11 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    */
   @Override
   public void startElement(String uri, String name, String qName, Attributes amap) {// (String name,
-                                                                                    // AttributeList
-                                                                                    // amap) throws
+    // AttributeList
+    // amap) throws
     // SAXException {
+    if (!translateModule)
+      return;
     if (log4j.isDebugEnabled())
       log4j.info("Configuration: startElement is called: element name=" + qName + " actualtag"
           + actualTag + " trlTxt" + translationText);
@@ -472,6 +480,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     // throws
     // SAXException
     // {
+    if (!translateModule)
+      return;
     if (log4j.isDebugEnabled())
       log4j.debug("Configuration: endElement is called: " + qName);
 
@@ -517,6 +527,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    *          content.
    */
   private void translate(String ini, boolean isPartial) {
+    if (!translateModule)
+      return;
     ini = replace(replace(ini.trim(), "\r", ""), "\n", " ");
     ini = ini.trim();
     ini = delSp(ini);
@@ -543,8 +555,15 @@ public class Translate extends DefaultHandler implements LexicalHandler {
       resultado = tokenize(ini, 0, translated);
       try {
         aux = translated.elementAt(0).equals("Y");
-        if (moduleLang == null || moduleLang.equals(""))
-          log4j.error("Module has not defined language");
+        if (moduleLang == null || moduleLang.equals("")) {
+          log4j
+              .error("Module is not set as translateable or has not defined language, but has translateable elements");
+          log4j
+              .error("No translations will be inserted. Set the module as 'is translation requiered' and select a language");
+          log4j.error("then execute translation again.");
+          translateModule = false;
+          return;
+        }
         if (!aux && TranslateData.existsExpresion(pool, ini, actualFile, moduleLang) == 0) {
 
           if (!TranslateData.isInDevelopmentModule(pool, moduleID))
