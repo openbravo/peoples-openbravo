@@ -56,7 +56,6 @@
         FROM M_REQUISITIONLINE, M_REQUISITION, C_BPARTNER
         WHERE M_REQUISITIONLINE.M_REQUISITION_ID = M_REQUISITION.M_REQUISITION_ID
           AND COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID,M_REQUISITION.C_BPARTNER_ID) = C_BPARTNER.C_BPARTNER_ID
-          AND C_BPARTNER.PO_PAYMENTTERM_ID IS NOT NULL
           AND M_REQUISITION.ISACTIVE = 'Y'
           AND M_REQUISITIONLINE.ISACTIVE = 'Y'
           AND M_REQUISITION.DOCSTATUS = 'CO'
@@ -315,19 +314,6 @@
       ]]>
     </Sql>
     <Parameter name="mPricelistId"/>
-  </SqlMethod>
-  <SqlMethod name="selectPaymentTerm" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        select c_paymentterm_id 
-        from c_paymentterm 
-        where isactive='Y' 
-        AND isdefault='Y' 
-        AND AD_Client_ID IN ('1') 
-      ]]>
-    </Sql>
-    <Parameter name="clientlist" optional="true" type="replace" after="AND AD_Client_ID IN (" text="'1'"/>
   </SqlMethod>
   <SqlMethod name="unlock" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
