@@ -20051,8 +20051,14 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
     var scrollerStyle = this.scrollerDiv.style;
     scrollerStyle.top         = headerHeight;
     scrollerStyle.height      = visibleHeight + "px";
-    this.heightDiv.style.height = parseInt(visibleHeight *
-      this.metaData.getTotalRows()/this.metaData.getPageSize()) + "px" ;
+    var totalHeight = parseInt(visibleHeight * this.metaData.getTotalRows()/this.metaData.getPageSize());
+    this.heightDiv.style.height = totalHeight + "px" ;
+    var scrollerStyle = this.scrollerDiv.style;
+    if (totalHeight > visibleHeight) {
+      scrollerStyle.borderRight = this.liveGrid.options.scrollerBorderRight;
+    } else {
+      scrollerStyle.borderRight = "0 px";
+    }
   },
 
 /**
@@ -20062,7 +20068,7 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
     var table = this.liveGrid.table;
     this.scrollerDiv  = document.createElement("div");
     var scrollerStyle = this.scrollerDiv.style;
-    scrollerStyle.borderRight = this.liveGrid.options.scrollerBorderRight;
+    //scrollerStyle.borderRight = this.liveGrid.options.scrollerBorderRight;  <- Moved to updateHeight()
     scrollerStyle.position    = "relative";
     scrollerStyle.left        = this.isIE ? "-6px" : "-3px";
     scrollerStyle.width       = "19px";
