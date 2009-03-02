@@ -1667,10 +1667,12 @@ function addListOrderBy(sourceList, destinationList, withPrefix, selectAll) {
   if (sourceList==null || destinationList==null) return false;
   if (selectAll==null) selectAll=false;
   if (withPrefix==null) withPrefix=false;
-  for (var j=sourceList.length-1;j>=0;j--) {
-    if (selectAll || sourceList.options[j].selected==true) {
-      var text = sourceList.options[j].text;
-      var value = sourceList.options[j].value;
+  var sourceListLength = sourceList.length;
+  var i = 0;
+  for (var j=0;j<sourceListLength;j++) {
+    if (selectAll || sourceList.options[i].selected==true) {
+      var text = sourceList.options[i].text;
+      var value = sourceList.options[i].value;
       if (withPrefix) {
         if (value.indexOf("-")!=-1) value = value.substring(1);
         if (text.indexOf("/\\")!=-1 || text.indexOf("\\/")!=-1) text = text.substring(2);
@@ -1678,7 +1680,9 @@ function addListOrderBy(sourceList, destinationList, withPrefix, selectAll) {
         text = "/\\" + text;
       }
       destinationList.options[destinationList.length] = new Option(text, value);
-      sourceList.options[j]=null;
+      sourceList.options[i]=null;
+    } else {
+      i = i + 1;
     }
   }
   return true;
@@ -1694,10 +1698,16 @@ function addListOrderBy(sourceList, destinationList, withPrefix, selectAll) {
 function addList(sourceList, destinationList, selectAll) {
   if (sourceList==null || destinationList==null) return false;
   if (selectAll==null) selectAll=false;
-  for (var j=sourceList.length-1;j>=0;j--) {
-    if (selectAll || sourceList.options[j].selected==true) {
-      destinationList.options[destinationList.length] = new Option(sourceList.options[j].text, sourceList.options[j].value);
-      sourceList.options[j]=null;
+  var sourceListLength = sourceList.length;
+  var i = 0;
+  for (var j=0;j<sourceListLength;j++) {
+    if (selectAll || sourceList.options[i].selected==true) {
+      var text = sourceList.options[i].text;
+      var value = sourceList.options[i].value;
+      destinationList.options[destinationList.length] = new Option(text, value);
+      sourceList.options[i]=null;
+    } else {
+      i = i + 1;
     }
   }
   return true;
