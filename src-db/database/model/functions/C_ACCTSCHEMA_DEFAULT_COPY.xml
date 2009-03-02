@@ -171,8 +171,7 @@
         NotInvoicedRevenue_Acct=Cur_Acct.NotInvoicedRevenue_Acct,
         NotInvoicedReceivables_Acct=Cur_Acct.NotInvoicedReceivables_Acct,
         Updated=now(),
-        UpdatedBy='0',
-        Status=Cur_Acct.Status
+        UpdatedBy='0'
       WHERE C_BP_Group_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
         (SELECT *
@@ -192,7 +191,7 @@
           V_Liability_Services_Acct, V_PrePayment_Acct, PayDiscount_Exp_Acct, PayDiscount_Rev_Acct,
           WriteOff_Acct, UnRealizedGain_Acct, UnRealizedLoss_Acct, RealizedGain_Acct,
           RealizedLoss_Acct, NotInvoicedReceipts_Acct, UnEarnedRevenue_Acct, NotInvoicedRevenue_Acct,
-          NotInvoicedReceivables_Acct, Status
+          NotInvoicedReceivables_Acct
         )
       SELECT get_uuid(), x.C_BP_Group_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
@@ -200,8 +199,7 @@
         Cur_Acct.C_Receivable_Acct, Cur_Acct.C_PrePayment_Acct, Cur_Acct.V_Liability_Acct, Cur_Acct.V_Liability_Services_Acct,
         Cur_Acct.V_PrePayment_Acct, Cur_Acct.PayDiscount_Exp_Acct, Cur_Acct.PayDiscount_Rev_Acct, Cur_Acct.WriteOff_Acct,
         Cur_Acct.UnRealizedGain_Acct, Cur_Acct.UnRealizedLoss_Acct, Cur_Acct.RealizedGain_Acct, Cur_Acct.RealizedLoss_Acct,
-        Cur_Acct.NotInvoicedReceipts_Acct, Cur_Acct.UnEarnedRevenue_Acct, Cur_Acct.NotInvoicedRevenue_Acct, Cur_Acct.NotInvoicedReceivables_Acct,
-        Cur_Acct.Status
+        Cur_Acct.NotInvoicedReceipts_Acct, Cur_Acct.UnEarnedRevenue_Acct, Cur_Acct.NotInvoicedRevenue_Acct, Cur_Acct.NotInvoicedReceivables_Acct
       FROM C_BP_Group x
       WHERE AD_Client_ID=Cur_Acct.AD_Client_ID
         AND NOT EXISTS
