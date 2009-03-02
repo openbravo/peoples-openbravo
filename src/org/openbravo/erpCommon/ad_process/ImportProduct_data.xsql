@@ -664,14 +664,14 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      INSERT INTO M_Product_PO (M_Product_ID,C_BPartner_ID, 
+      INSERT INTO M_Product_PO (M_Product_PO_ID,M_Product_ID,C_BPartner_ID, 
       AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
       IsCurrentVendor,C_UOM_ID,C_Currency_ID,UPC,
       PriceList, PricePO,RoyaltyAmt,PriceEffective,
       VendorProductNo,VendorCategory,Manufacturer,
       Discontinued,DiscontinuedBy,Order_Min,Order_Pack,
       CostPerOrder,DeliveryTime_Promised) 
-      SELECT ?,?, 
+      SELECT GET_UUID(),?,?, 
       AD_Client_ID,AD_Org_ID,'Y',now(),CreatedBy,now(),UpdatedBy,
       'Y',C_UOM_ID,C_Currency_ID,UPC,
       PriceList,PricePO,RoyaltyAmt,PriceEffective,

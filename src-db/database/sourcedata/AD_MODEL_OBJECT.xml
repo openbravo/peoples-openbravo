@@ -1483,7 +1483,7 @@
 <!--800742-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800742-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800742-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportTrialBalanceDetail]]></CLASSNAME>
-<!--800742-->  <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!--800742-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--800742-->  <AD_PROCESS_ID><![CDATA[800039]]></AD_PROCESS_ID>
 <!--800742-->  <OBJECT_TYPE><![CDATA[S]]></OBJECT_TYPE>
 <!--800742--></AD_MODEL_OBJECT>
@@ -2515,7 +2515,7 @@
 <!--801013-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--801013-->  <ACTION><![CDATA[R]]></ACTION>
 <!--801013-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportGeneralLedgerJournalDetail]]></CLASSNAME>
-<!--801013-->  <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!--801013-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--801013-->  <AD_PROCESS_ID><![CDATA[800000]]></AD_PROCESS_ID>
 <!--801013-->  <OBJECT_TYPE><![CDATA[S]]></OBJECT_TYPE>
 <!--801013--></AD_MODEL_OBJECT>
