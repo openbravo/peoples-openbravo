@@ -291,7 +291,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT CONSTANT1, MODEL, EJERCICIO, NIF_DECLARANTE, NOMBRE_DECLARANTE, SOPORTE, PERSONA, NUMERO_JUSTIF, TIPO_DECLARACION, TIPO_DECLARACION2, NUMERO_DEC, LPAD(TO_CHAR(COUNT(DISTINCT C_BPARTNER_ID)), 9, '0') AS NUMERO_PERSONAS, LPAD(REPLACE(TO_CHAR(SUM(to_number(IMPORTE)), 'FM000000000000.00'), '.', ''), 15, '0') AS IMPORTE, TOTAL_INMUEBLES, IMPORTE_TOTAL_INMUEBLES, BLANCOS, NIF_REPRESENTANTE_LEGAL, MAS_BLANCOS, '' AS NIF_DECLARADO, '' AS NIF_REPRESENTANTE, '' AS NOMBRE_SOCIAL, '' AS CODIGO_PROVINCIA, '' AS CODIGO_PAIS, '' AS CLAVE_CODIGO, '' AS OPERACION_SEGURO, '' AS ARRENDAMIENTO
+      SELECT CONSTANT1, MODEL, EJERCICIO, NIF_DECLARANTE, NOMBRE_DECLARANTE, SOPORTE, PERSONA, NUMERO_JUSTIF, TIPO_DECLARACION, TIPO_DECLARACION2, NUMERO_DEC, LPAD(TO_CHAR(TO_NUMBER(COUNT(DISTINCT C_BPARTNER_ID))), 9, '0') AS NUMERO_PERSONAS, LPAD(REPLACE(TO_CHAR(TO_NUMBER(SUM(to_number(IMPORTE))), 'FM000000000000.00'), '.', ''), 15, '0') AS IMPORTE, TOTAL_INMUEBLES, IMPORTE_TOTAL_INMUEBLES, BLANCOS, NIF_REPRESENTANTE_LEGAL, MAS_BLANCOS, '' AS NIF_DECLARADO, '' AS NIF_REPRESENTANTE, '' AS NOMBRE_SOCIAL, '' AS CODIGO_PROVINCIA, '' AS CODIGO_PAIS, '' AS CLAVE_CODIGO, '' AS OPERACION_SEGURO, '' AS ARRENDAMIENTO
       FROM (SELECT C_INVOICE.C_BPARTNER_ID, to_char('1') AS CONSTANT1, to_char('347') AS MODEL, TO_NUMBER(TO_CHAR(?)) AS EJERCICIO,
       COALESCE(LPAD(replace(translate((SELECT MAX(TAXID) FROM AD_ORGINFO),'.-_/'||CHR(92),' '),' ',''), 9, '0'), '00000000A') AS NIF_DECLARANTE,
       COALESCE(TO_CHAR(RPAD(UPPER(AD_CLIENT.DESCRIPTION), 40, ' ')), '                                        ') AS NOMBRE_DECLARANTE,
@@ -301,7 +301,7 @@
       (CASE (to_char(?)) WHEN 'New' THEN ' ' WHEN 'Sustitutive' THEN ' ' WHEN 'Complementary' THEN 'C' END) AS TIPO_DECLARACION,
       (CASE (to_char(?)) WHEN 'New' THEN ' ' WHEN 'Sustitutive' THEN 'S' WHEN 'Complementary' THEN ' ' END) AS TIPO_DECLARACION2,
       LPAD(TO_CHAR(CASE (to_char(?)) WHEN 'Sustitutive' THEN ? ELSE '0' END), 13, '0') AS NUMERO_DEC,
-      CASE WHEN SUM(C_INVOICE.GRANDTOTAL) IS NULL THEN '  ' ELSE TO_CHAR(
+      CASE WHEN SUM(C_INVOICE.GRANDTOTAL) IS NULL THEN '  ' ELSE TO_CHAR(TO_NUMBER(
       ROUND(SUM(C_INVOICE.TOTALLINES+(SELECT SUM(IT.TAXAMT)
                                                      FROM C_INVOICETAX IT
                                                     WHERE IT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
@@ -332,7 +332,7 @@
                                                                      AND UPPER(CT.NAME) NOT LIKE '%I%R%P%F%'
                                                                      AND UPPER(CT.NAME) NOT LIKE '%RETEN%'
                                                                      AND (R.C_REGION_ID IS NULL
-                                                                          OR R.NAME NOT IN ('BALEARES', 'CEUTA', 'MELILLA', 'TENERIFE', 'LAS PALMAS'))))), 2)) END AS IMPORTE,
+                                                                          OR R.NAME NOT IN ('BALEARES', 'CEUTA', 'MELILLA', 'TENERIFE', 'LAS PALMAS'))))), 2))) END AS IMPORTE,
       LPAD('0', 9, '0') AS TOTAL_INMUEBLES, LPAD('0', 15, '0') AS IMPORTE_TOTAL_INMUEBLES,
       LPAD(' ', 207, ' ') AS BLANCOS,
       LPAD(' ', 8, ' ') || 'A' AS NIF_REPRESENTANTE_LEGAL,
@@ -429,12 +429,12 @@
       COALESCE(LPAD(replace(translate((SELECT MAX(TAXID) FROM AD_ORGINFO),'.-_/'||CHR(92),' '),' ',''), 9, '0'), '         ') AS NIF_DECLARANTE,
       COALESCE(LPAD((CASE BP.TAXID WHEN NULL THEN '0' ELSE replace(translate(BP.TAXID,'.-_/'||CHR(92),' '),' ','') END), 9, '0'), '         ') AS NIF_DECLARADO,
       COALESCE(LPAD(' ', 9, ' '), '         ') AS NIF_REPRESENTANTE,
-      COALESCE(TO_CHAR(RPAD(UPPER((CASE BP.NAME2 WHEN NULL THEN BP.NAME ELSE BP.NAME2 END)), 40, ' ')), '                                        ') AS NOMBRE_SOCIAL,
+      COALESCE(TO_CHAR(RPAD(UPPER((CASE WHEN BP.NAME2 IS NULL THEN BP.NAME WHEN BP.NAME2='' THEN BP.NAME ELSE BP.NAME2 END)), 40, ' ')), '                                        ') AS NOMBRE_SOCIAL,
       'D' AS TIPO_DECLARACION,
       COALESCE(SUBSTR(L.POSTAL,1,2), '  ') AS CODIGO_PROVINCIA,
       '  ' AS CODIGO_PAIS, ' ' AS ESPACIO,
       (CASE I.ISSOTRX WHEN 'Y' THEN 'B' ELSE 'A' END) AS CLAVE_CODIGO,
-      COALESCE(LPAD(REPLACE(TO_CHAR(ROUND(SUM(I.TOTALLINES+(SELECT SUM(IT.TAXAMT)
+      COALESCE(LPAD(REPLACE(TO_CHAR(TO_NUMBER(ROUND(SUM(I.TOTALLINES+(SELECT SUM(IT.TAXAMT)
                                                      FROM C_INVOICETAX IT
                                                     WHERE IT.C_INVOICE_ID = I.C_INVOICE_ID
                                                       AND EXISTS (SELECT 1
@@ -464,7 +464,7 @@
                                                                      AND UPPER(CT.NAME) NOT LIKE '%I%R%P%F%'
                                                                      AND UPPER(CT.NAME) NOT LIKE '%RETEN%'
                                                                      AND (R.C_REGION_ID IS NULL
-                                                                          OR R.NAME NOT IN ('BALEARES', 'CEUTA', 'MELILLA', 'TENERIFE', 'LAS PALMAS'))))), 2), 'FM000000000000.00'), '.', ''), 15, '0'), '000000000000000') AS IMPORTE,
+                                                                          OR R.NAME NOT IN ('BALEARES', 'CEUTA', 'MELILLA', 'TENERIFE', 'LAS PALMAS'))))), 2)), 'FM000000000000.00'), '.', ''), 15, '0'), '000000000000000') AS IMPORTE,
       ' ' AS OPERACION_SEGURO,
       ' ' AS ARRENDAMIENTO,
       LPAD('0', 30, '0') AS IMPORTES_METALICO_E_INMUEBLES,
