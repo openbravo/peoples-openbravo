@@ -3070,11 +3070,10 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
     scrollerStyle.height      = visibleHeight + "px";
     var totalHeight = parseInt(visibleHeight * this.metaData.getTotalRows()/this.metaData.getPageSize());
     this.heightDiv.style.height = totalHeight + "px" ;
-    var scrollerStyle = this.scrollerDiv.style;
     if (totalHeight > visibleHeight) {
       scrollerStyle.borderRight = this.liveGrid.options.scrollerBorderRight;
     } else {
-      scrollerStyle.borderRight = "0 px";
+      scrollerStyle.borderRight = "0px";
     }
   },
 
