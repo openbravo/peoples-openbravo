@@ -192,27 +192,28 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     ReportGeneralLedgerJournalData[] data = null;
     String strPosition = "0";
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedgerJournal", false,
-        "", "", "imprimir();return false;", false, "ad_reports", strReplaceWith, false, true);
+        "", "", "", false, "ad_reports", strReplaceWith, false, true);
     if (vars.commandIn("DEFAULT", "FIND")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening);
       String strTreeOrg = ReportGeneralLedgerJournalData.treeOrg(this, vars.getClient());
       String strOrgFamily = getFamily(strTreeOrg, strOrg);
       if (strRecord.equals("")) {
-        data = ReportGeneralLedgerJournalData
-            .select(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument, strcAcctSchemaId,
-                strOrgFamily, strCheck, initRecordNumber, intRecordRange);
+        data = ReportGeneralLedgerJournalData.select(this, Utility.getContext(this, vars,
+            "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
+            "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(
+            this, strDateTo, "1"), strDocument, strcAcctSchemaId, strOrgFamily, strCheck,
+            initRecordNumber, intRecordRange);
         if (data != null && data.length > 0)
           strPosition = ReportGeneralLedgerJournalData.selectCount(this, Utility.getContext(this,
               vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(this,
-              strDateTo, "1"), strDocument, strcAcctSchemaId, strOrgFamily, strCheck,
+              "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(
+              this, strDateTo, "1"), strDocument, strcAcctSchemaId, strOrgFamily, strCheck,
               data[0].dateacct, data[0].identifier);
       } else {
         data = ReportGeneralLedgerJournalData.selectDirect(this, Utility.getContext(this, vars,
-            "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportGeneralLedger"), strTable, strRecord, initRecordNumber, intRecordRange);
+            "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
+            "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord, initRecordNumber,
+            intRecordRange);
         if (data != null && data.length > 0)
           strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this, Utility.getContext(
               this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
@@ -221,8 +222,9 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       }
     } else if (vars.commandIn("DIRECT")) {
       data = ReportGeneralLedgerJournalData.selectDirect(this, Utility.getContext(this, vars,
-          "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportGeneralLedger"), strTable, strRecord, initRecordNumber, intRecordRange);
+          "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
+          "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord, initRecordNumber,
+          intRecordRange);
       if (data != null && data.length > 0)
         strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this, Utility.getContext(
             this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
@@ -230,8 +232,9 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
             data[0].identifier);
     } else if (vars.commandIn("DIRECT2")) {
       data = ReportGeneralLedgerJournalData.selectDirect2(this, Utility.getContext(this, vars,
-          "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportGeneralLedger"), strFactAcctGroupId, initRecordNumber, intRecordRange);
+          "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
+          "#AccessibleOrgTree", "ReportGeneralLedger"), strFactAcctGroupId, initRecordNumber,
+          intRecordRange);
       if (data != null && data.length > 0)
         strPosition = ReportGeneralLedgerJournalData.selectCountDirect2(this, Utility.getContext(
             this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
@@ -355,13 +358,13 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     if (strRecord.equals("")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening);
       data = ReportGeneralLedgerJournalData.select(this, Utility.getContext(this, vars,
-          "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-          strDocument, strcAcctSchemaId, strOrgFamily, strCheck);
+          "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
+          "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(this,
+          strDateTo, "1"), strDocument, strcAcctSchemaId, strOrgFamily, strCheck);
     } else
       data = ReportGeneralLedgerJournalData.selectDirect(this, Utility.getContext(this, vars,
-          "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportGeneralLedger"), strTable, strRecord);
+          "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
+          "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord);
 
     String strSubtitle = Utility.messageBD(this, "CompanyName", vars.getLanguage()) + ": "
         + ReportGeneralLedgerData.selectCompany(this, vars.getClient());
