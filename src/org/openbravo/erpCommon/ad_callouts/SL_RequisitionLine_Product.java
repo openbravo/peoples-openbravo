@@ -168,10 +168,10 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       } else
         resultado.append("null");
       resultado.append("),\n");
+      // To set the cursor focus in the amount field
+      resultado.append("new Array(\"CURSOR_FIELD\", \"inpqty\"),\n");
     }
 
-    // To set the cursor focus in the amount field
-    resultado.append("new Array(\"CURSOR_FIELD\", \"inpqty\"),\n");
     if (!strMessage.equals(""))
       resultado.append("new Array('MESSAGE', \""
           + FormatUtilities.replaceJS(Utility.messageBD(this, strMessage, vars.getLanguage()))
