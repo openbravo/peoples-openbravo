@@ -134,7 +134,8 @@ public class CreateFile extends HttpSecureAppServlet {
     String strContract = CreateFileData.selectParam(this, strKey, "CONTRACT");
     if (strCuaderno == null)
       strCuaderno = "";
-
+    if(strContract == null || strContract.equals("")) advisePopUp(request, response, "Error", Utility.messageBD(this, "Error", vars.getLanguage()),
+            Utility.messageBD(this, "RemittanceTypeContractError", vars.getLanguage()));
     if (strCuaderno.equals("58"))
       printPageFind58(response, vars, strKey, strContract);
     else if (strCuaderno.equals("19"))
