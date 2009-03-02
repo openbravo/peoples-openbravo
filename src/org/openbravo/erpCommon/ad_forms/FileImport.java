@@ -321,7 +321,9 @@ public class FileImport extends HttpSecureAppServlet {
   }
 
   /**
-   * 
+   * Prints the intermediate output of the .csv import - a manually generated table. The number of
+   * rows displayed (loaded) is limited to THRESHOLD. Large .csv files can cause out of memory
+   * exceptions, so we limit what can be loaded in the intermediate step here.
    * 
    * @param vars
    * @param data2
