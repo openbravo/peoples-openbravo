@@ -12,6 +12,7 @@ srcAD
 srcClient
 temp
 WebContent
+.ant-targets-build.xml
 
 config/Openbravo.properties
 config/log4j.lcf
