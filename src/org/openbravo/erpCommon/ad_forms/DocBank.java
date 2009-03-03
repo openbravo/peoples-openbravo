@@ -209,6 +209,7 @@ public class DocBank extends AcctServer {
       DocLine_Bank lineAux = new DocLine_Bank(DocumentType, Record_ID, null);
       lineAux.m_DateAcct = line.m_DateAcct;
       lineAux.m_C_Project_ID = line.m_C_Project_ID;
+      lineAux.m_TrxLine_ID = line.m_TrxLine_ID;
       fact.createLine(lineAux, getAccount(AcctServer.ACCTTYPE_BankAsset, as, conn),
           line.m_C_Currency_ID, line.m_StmtAmt, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
           conn);
