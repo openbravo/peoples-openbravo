@@ -29,6 +29,5 @@ lib/runtime/openbravo-trl.jar
 lib/*.war
 
 *.bak
-*.orig
 *.swp
 Thumbs.db
