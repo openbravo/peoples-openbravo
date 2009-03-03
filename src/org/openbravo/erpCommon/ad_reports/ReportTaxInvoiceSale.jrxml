@@ -262,7 +262,7 @@
 						style="Detail_Header"
 						x="100"
 						y="28"
-						width="80"
+						width="70"
 						height="16"
 						key="element-90">
 							<printWhenExpression><![CDATA[new Boolean($P{DETAIL}.equals("Y"))]]></printWhenExpression>
@@ -276,9 +276,9 @@
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="180"
+						x="170"
 						y="28"
-						width="200"
+						width="170"
 						height="16"
 						key="element-90">
 							<printWhenExpression><![CDATA[new Boolean($P{DETAIL}.equals("Y"))]]></printWhenExpression>
@@ -292,9 +292,9 @@
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="380"
+						x="340"
 						y="28"
-						width="60"
+						width="90"
 						height="16"
 						key="element-90"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -306,9 +306,9 @@
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="440"
+						x="430"
 						y="28"
-						width="80"
+						width="90"
 						height="16"
 						key="element-90"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -372,7 +372,7 @@
 						style="Total_Field"
 						x="100"
 						y="1"
-						width="280"
+						width="240"
 						height="16"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -384,9 +384,9 @@
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Field"
-						x="380"
+						x="340"
 						y="1"
-						width="60"
+						width="90"
 						height="16"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -398,9 +398,9 @@
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Field"
-						x="440"
+						x="430"
 						y="1"
-						width="80"
+						width="90"
 						height="16"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -496,7 +496,7 @@
 						style="Detail_Line"
 						x="100"
 						y="0"
-						width="80"
+						width="70"
 						height="14"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#666666" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -508,9 +508,9 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Detail_Line"
-						x="180"
+						x="170"
 						y="0"
-						width="200"
+						width="170"
 						height="14"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#666666" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -522,9 +522,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Detail_Line"
-						x="380"
+						x="340"
 						y="0"
-						width="60"
+						width="90"
 						height="14"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#666666" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -536,9 +536,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Detail_Line"
-						x="440"
+						x="430"
 						y="0"
-						width="80"
+						width="90"
 						height="14"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#666666" leftPadding="2" rightBorder="Thin" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
