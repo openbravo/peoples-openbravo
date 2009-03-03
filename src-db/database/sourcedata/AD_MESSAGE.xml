@@ -7983,7 +7983,7 @@
 <!--800133-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800133-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800133-->  <VALUE><![CDATA[GoingToDeleteClient]]></VALUE>
-<!--800133-->  <MSGTEXT><![CDATA[You are going to delete a Client. Do you want to procede?]]></MSGTEXT>
+<!--800133-->  <MSGTEXT><![CDATA[You are going to delete a Client. Do you want to proceed?]]></MSGTEXT>
 <!--800133-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--800133-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800133--></AD_MESSAGE>
