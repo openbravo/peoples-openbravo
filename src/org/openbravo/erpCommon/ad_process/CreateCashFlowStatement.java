@@ -53,7 +53,7 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    String process = CreateCashFlowStatementData.processId(this, "CreateCashFlowStatement");
+    String process = CreateCashFlowStatementData.processId(this, "GenerateCashFlowStatement");
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars, process);
     } else if (vars.commandIn("FIND")) {

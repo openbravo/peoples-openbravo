@@ -5334,6 +5334,7 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800207-->  <VALUE><![CDATA[GenerateCashFlowStatement]]></VALUE>
 <!--800207-->  <NAME><![CDATA[Generate Cash Flow Statement]]></NAME>
 <!--800207-->  <DESCRIPTION><![CDATA[Generate Cash Flow Statement]]></DESCRIPTION>
+<!--800207-->  <HELP><![CDATA[Generate Cash Flow Statement]]></HELP>
 <!--800207-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800207-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800207-->  <ISREPORT><![CDATA[N]]></ISREPORT>
