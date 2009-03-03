@@ -248,8 +248,7 @@ public class OBDal implements OBSingleton {
    */
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(Class<T> clz) {
     checkReadAccess(clz);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>();
-    obCriteria.setCriteria(SessionHandler.getInstance().getSession().createCriteria(clz));
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(clz.getName());
     obCriteria.setEntity(ModelProvider.getInstance().getEntity(clz));
     return obCriteria;
   }
@@ -263,8 +262,7 @@ public class OBDal implements OBSingleton {
    */
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(String entityName) {
     checkReadAccess(entityName);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>();
-    obCriteria.setCriteria(SessionHandler.getInstance().getSession().createCriteria(entityName));
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(entityName);
     obCriteria.setEntity(ModelProvider.getInstance().getEntity(entityName));
     return obCriteria;
   }

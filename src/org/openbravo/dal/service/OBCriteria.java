@@ -26,24 +26,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
-import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
-import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.ResultTransformer;
+import org.hibernate.engine.SessionImplementor;
+import org.hibernate.impl.CriteriaImpl;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
@@ -61,10 +57,11 @@ import org.openbravo.model.common.enterprise.Organization;
  * @author mtaal
  */
 
-public class OBCriteria<E extends BaseOBObject> implements Criteria {
+public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
+  private static final long serialVersionUID = 1L;
+
   private static final Logger log = Logger.getLogger(OBCriteria.class);
 
-  private Criteria criteria;
   private Entity entity;
 
   private boolean filterOnReadableClients = true;
@@ -73,7 +70,13 @@ public class OBCriteria<E extends BaseOBObject> implements Criteria {
   private List<OrderBy> orderBys = new ArrayList<OrderBy>();
 
   // package visible
-  OBCriteria() {
+
+  public OBCriteria(String entityOrClassName) {
+    super(entityOrClassName, (SessionImplementor) SessionHandler.getInstance().getSession());
+  }
+
+  public OBCriteria(String entityOrClassName, String alias) {
+    super(entityOrClassName, alias, (SessionImplementor) SessionHandler.getInstance().getSession());
   }
 
   /**
@@ -82,7 +85,7 @@ public class OBCriteria<E extends BaseOBObject> implements Criteria {
   @SuppressWarnings("unchecked")
   public List<E> list() throws HibernateException {
     initialize();
-    return criteria.list();
+    return super.list();
   }
 
   /**
@@ -93,10 +96,9 @@ public class OBCriteria<E extends BaseOBObject> implements Criteria {
    */
   public int count() {
     initialize();
-    final Criteria c = getCriteria();
-    c.setProjection(Projections.rowCount());
-    log.debug("Counting using criteria " + c.toString());
-    return ((Number) c.uniqueResult()).intValue();
+    setProjection(Projections.rowCount());
+    log.debug("Counting using criteria " + toString());
+    return ((Number) uniqueResult()).intValue();
   }
 
   /**
@@ -104,7 +106,7 @@ public class OBCriteria<E extends BaseOBObject> implements Criteria {
    */
   public ScrollableResults scroll() throws HibernateException {
     initialize();
-    return criteria.scroll();
+    return super.scroll();
   }
 
   /**
@@ -112,7 +114,7 @@ public class OBCriteria<E extends BaseOBObject> implements Criteria {
    */
   public ScrollableResults scroll(ScrollMode scrollMode) throws HibernateException {
     initialize();
-    return criteria.scroll(scrollMode);
+    return super.scroll(scrollMode);
   }
 
   /**
@@ -120,32 +122,29 @@ public class OBCriteria<E extends BaseOBObject> implements Criteria {
    */
   public Object uniqueResult() throws HibernateException {
     initialize();
-    return criteria.uniqueResult();
+    return super.uniqueResult();
   }
 
   void initialize() {
     final OBContext obContext = OBContext.getOBContext();
-    final Criteria c = getCriteria();
     final Entity e = getEntity();
 
     OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
 
     if (isFilterOnReadableOrganization() && e.isOrganizationPartOfKey()) {
-      getCriteria().add(
-          Restrictions.in("id." + PROPERTY_ORGANIZATION + ".id", obContext
-              .getReadableOrganizations()));
+      add(Restrictions.in("id." + PROPERTY_ORGANIZATION + ".id", obContext
+          .getReadableOrganizations()));
 
     } else if (isFilterOnReadableOrganization() && e.isOrganizationEnabled()) {
-      getCriteria().add(
-          Restrictions.in(PROPERTY_ORGANIZATION + ".id", obContext.getReadableOrganizations()));
+      add(Restrictions.in(PROPERTY_ORGANIZATION + ".id", obContext.getReadableOrganizations()));
     }
 
     if (isFilterOnReadableClients() && getEntity().isClientEnabled()) {
-      c.add(Restrictions.in(PROPERTY_CLIENT + ".id", obContext.getReadableClients()));
+      add(Restrictions.in(PROPERTY_CLIENT + ".id", obContext.getReadableClients()));
     }
 
     if (isFilterOnActive() && e.isActiveEnabled()) {
-      c.add(Restrictions.eq(Organization.PROPERTY_ACTIVE, true));
+      add(Restrictions.eq(Organization.PROPERTY_ACTIVE, true));
     }
 
     // add the order by and create a join if necessary
@@ -155,14 +154,14 @@ public class OBCriteria<E extends BaseOBObject> implements Criteria {
       if (orderOn.indexOf(".") != -1) {
         final String orderJoin = orderOn.substring(0, orderOn.lastIndexOf("."));
         final String alias = "order_ob_" + j;
-        c.createCriteria(orderJoin, alias, CriteriaSpecification.LEFT_JOIN);
+        createCriteria(orderJoin, alias, CriteriaSpecification.LEFT_JOIN);
         orderOn = alias + "." + orderOn.substring(orderOn.lastIndexOf(".") + 1);
       }
 
       if (ob.isAscending()) {
-        c.addOrder(Order.asc(orderOn));
+        addOrder(Order.asc(orderOn));
       } else {
-        c.addOrder(Order.desc(orderOn));
+        addOrder(Order.desc(orderOn));
       }
     }
   }
@@ -177,17 +176,6 @@ public class OBCriteria<E extends BaseOBObject> implements Criteria {
    */
   public void addOrderBy(String orderOn, boolean ascending) {
     orderBys.add(new OrderBy(orderOn, ascending));
-  }
-
-  /**
-   * @return the internal Hibernate Criteria object used
-   */
-  public Criteria getCriteria() {
-    return criteria;
-  }
-
-  void setCriteria(Criteria criteria) {
-    this.criteria = criteria;
   }
 
   /**
@@ -290,170 +278,5 @@ public class OBCriteria<E extends BaseOBObject> implements Criteria {
     public String toString() {
       return getOrderOn() + (isAscending() ? " asc " : " desc ");
     }
-  }
-
-  // +++++++++++++++ Methods coming from the Criteria interface +++++++++++++
-
-  /**
-   * @see Criteria#add(Criterion)
-   */
-  public Criteria add(Criterion criterion) {
-    return criteria.add(criterion);
-  }
-
-  /**
-   * @see Criteria#addOrder(Order)
-   */
-  public Criteria addOrder(Order order) {
-    return criteria.addOrder(order);
-  }
-
-  /**
-   * @see Criteria#createAlias(String, String, int)
-   */
-  public Criteria createAlias(String associationPath, String alias, int joinType)
-      throws HibernateException {
-    return criteria.createAlias(associationPath, alias, joinType);
-  }
-
-  /**
-   * @see Criteria#createAlias(String, String)
-   */
-  public Criteria createAlias(String associationPath, String alias) throws HibernateException {
-    return criteria.createAlias(associationPath, alias);
-  }
-
-  /**
-   * @see Criteria#createCriteria(String, int)
-   */
-  public Criteria createCriteria(String associationPath, int joinType) throws HibernateException {
-    return criteria.createCriteria(associationPath, joinType);
-  }
-
-  /**
-   * @see Criteria#createCriteria(String, String, int)
-   */
-  public Criteria createCriteria(String associationPath, String alias, int joinType)
-      throws HibernateException {
-    return criteria.createCriteria(associationPath, alias, joinType);
-  }
-
-  /**
-   * @see Criteria#createCriteria(String, String)
-   */
-  public Criteria createCriteria(String associationPath, String alias) throws HibernateException {
-    return criteria.createCriteria(associationPath, alias);
-  }
-
-  /**
-   * @see Criteria#createCriteria(String)
-   */
-  public Criteria createCriteria(String associationPath) throws HibernateException {
-    return criteria.createCriteria(associationPath);
-  }
-
-  /**
-   * @see Criteria#getAlias()
-   */
-  public String getAlias() {
-    return criteria.getAlias();
-  }
-
-  /**
-   * @see Criteria#setCacheable(boolean)
-   */
-  public Criteria setCacheable(boolean cacheable) {
-    return criteria.setCacheable(cacheable);
-  }
-
-  /**
-   * @see Criteria#setCacheMode(CacheMode)
-   */
-  public Criteria setCacheMode(CacheMode cacheMode) {
-    return criteria.setCacheMode(cacheMode);
-  }
-
-  /**
-   * @see Criteria#setCacheRegion(String)
-   */
-  public Criteria setCacheRegion(String cacheRegion) {
-    return criteria.setCacheRegion(cacheRegion);
-  }
-
-  /**
-   * @see Criteria#setComment(String)
-   */
-  public Criteria setComment(String comment) {
-    return criteria.setComment(comment);
-  }
-
-  /**
-   * @see Criteria#setFetchMode(String, FetchMode)
-   */
-  public Criteria setFetchMode(String associationPath, FetchMode mode) throws HibernateException {
-    return criteria.setFetchMode(associationPath, mode);
-  }
-
-  /**
-   * @see Criteria#setFetchSize(int)
-   */
-  public Criteria setFetchSize(int fetchSize) {
-    return criteria.setFetchSize(fetchSize);
-  }
-
-  /**
-   * @see Criteria#setFirstResult(int)
-   */
-  public Criteria setFirstResult(int firstResult) {
-    return criteria.setFirstResult(firstResult);
-  }
-
-  /**
-   * @see Criteria#setFlushMode(FlushMode)
-   */
-  public Criteria setFlushMode(FlushMode flushMode) {
-    return criteria.setFlushMode(flushMode);
-  }
-
-  /**
-   * @see Criteria#setLockMode(LockMode)
-   */
-  public Criteria setLockMode(LockMode lockMode) {
-    return criteria.setLockMode(lockMode);
-  }
-
-  /**
-   * @see Criteria#setLockMode(String, LockMode)
-   */
-  public Criteria setLockMode(String alias, LockMode lockMode) {
-    return criteria.setLockMode(alias, lockMode);
-  }
-
-  /**
-   * @see Criteria#setMaxResults(int)
-   */
-  public Criteria setMaxResults(int maxResults) {
-    return criteria.setMaxResults(maxResults);
-  }
-
-  /**
-   * @see Criteria#setProjection(Projection)
-   */
-  public Criteria setProjection(Projection projection) {
-    return criteria.setProjection(projection);
-  }
-
-  /**
-   * @see Criteria#setResultTransformer(ResultTransformer)
-   */
-  public Criteria setResultTransformer(ResultTransformer resultTransformer) {
-    return criteria.setResultTransformer(resultTransformer);
-  }
-
-  /**
-   * @see Criteria#setTimeout(int)
-   */
-  public Criteria setTimeout(int timeout) {
-    return criteria.setTimeout(timeout);
   }
 }
