@@ -258,9 +258,9 @@ public class ToolBar {
         "ExportCsv", language), getButtonScript("GRIDCSV")));
     buttons.put("GRIDPDF", new ToolBar_Button(base_direction, "ExportPDF", Utility.messageBD(conn,
         "ExportPDF", language), getButtonScript("GRIDPDF")));
+    buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn,
+        "Print", language), getButtonScript("PRINT")));
     if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
-      buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn,
-          "Print", language), getButtonScript("PRINT")));
       buttons.put("EMAIL", new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn,
           "Email", language), getButtonScript("EMAIL")));
     }
