@@ -344,7 +344,7 @@
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Unit]]></text>
+				<text><![CDATA[UOM]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
