@@ -648,10 +648,10 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     strResult[0][1] = "+";
     while (st.hasMoreTokens()) {
       if (i % 2 != 1) {
-        strResult[no][0] = st.nextToken();
+        strResult[no][0] = st.nextToken().trim();
         no++;
       } else
-        strResult[no][1] = st.nextToken();
+        strResult[no][1] = st.nextToken().trim();
       i++;
     }
     // strResult = filterArray(strResult);

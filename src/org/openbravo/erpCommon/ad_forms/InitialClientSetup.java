@@ -78,6 +78,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   String AD_Tree_Org_ID = "", AD_Tree_BPartner_ID = "", AD_Tree_Project_ID = "",
       AD_Tree_SalesRegion_ID = "", AD_Tree_Product_ID = "", AD_Tree_Account_ID = "";
   static StringBuffer m_info = new StringBuffer();
+  static StringBuffer m_infoOperands = new StringBuffer();
   private final String CompiereSys = "N"; // Should NOT be changed
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -256,7 +257,8 @@ public class InitialClientSetup extends HttpSecureAppServlet {
           .append(SALTO_LINEA);
       m_info.append(SALTO_LINEA).append(
           Utility.messageBD(this, "StartingClient", vars.getLanguage())).append(SALTO_LINEA);
-      if (!createClient(vars, strClient, strClientUser)) {
+      conn = this.getTransactionConnection();
+      if (!createClient(conn, vars, strClient, strClientUser)) {
         releaseRollbackConnection(conn);
         m_info.append(SALTO_LINEA).append(
             Utility.messageBD(this, "CreateClientFailed", vars.getLanguage())).append(SALTO_LINEA);
@@ -293,12 +295,14 @@ public class InitialClientSetup extends HttpSecureAppServlet {
           m_info.append(SALTO_LINEA).append(
               Utility.messageBD(this, "StartingAccounting", vars.getLanguage()))
               .append(SALTO_LINEA);
-          if (!createAccounting(vars, strCurrency, InitialClientSetupData.currency(this,
+          conn = this.getTransactionConnection();
+          if (!createAccounting(conn, vars, strCurrency, InitialClientSetupData.currency(this,
               strCurrency), bProduct, bBPartner, bProject, bCampaign, bSalesRegion, avData)) {
             releaseRollbackConnection(conn);
             m_info.append(SALTO_LINEA).append(
                 Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(
                 SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(m_infoOperands).append(SALTO_LINEA);
             strSummary.append(SALTO_LINEA).append(
                 Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(
                 SALTO_LINEA);
@@ -307,6 +311,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
           }
         } catch (Exception err) {
           log4j.warn(err);
+          m_info.append(m_infoOperands).append(SALTO_LINEA);
           m_info.append(SALTO_LINEA).append(
               Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(
               SALTO_LINEA);
@@ -368,8 +373,9 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         m_info.append(SALTO_LINEA).append(
             Utility.messageBD(this, "StartingReferenceData", vars.getLanguage())).append(
             SALTO_LINEA);
-        String strReferenceData = createReferenceData(vars, AD_Client_ID, strModules, strCurrency,
-            bProduct, bBPartner, bProject, bCampaign, bSalesRegion, bCreateAccounting);
+        conn = this.getTransactionConnection();
+        String strReferenceData = createReferenceData(conn, vars, AD_Client_ID, strModules,
+            strCurrency, bProduct, bBPartner, bProject, bCampaign, bSalesRegion, bCreateAccounting);
         if (strReferenceData != null && !strReferenceData.equals("")) {
           releaseRollbackConnection(conn);
           m_info.append(SALTO_LINEA).append(
@@ -423,8 +429,8 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       return true;
   }
 
-  public boolean createClient(VariablesSecureApp vars, String m_ClientName, String userClient)
-      throws ServletException {
+  public boolean createClient(Connection conn, VariablesSecureApp vars, String m_ClientName,
+      String userClient) throws ServletException {
 
     if (log4j.isDebugEnabled())
       log4j.debug("InitialClientSetup - createClient");
@@ -432,9 +438,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     if (clientName.equals(""))
       clientName = "newClient";
 
-    Connection conn = null;
     try {
-      conn = this.getTransactionConnection();
       // info header
       m_info.append(SALTO_LINEA);
       // Standard columns
@@ -556,10 +560,6 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       conn = this.getTransactionConnection();
       if (log4j.isDebugEnabled())
         log4j.debug("InitialClientSetup - createClient - CLIENT INFO CREATED");
-
-      // Infoxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-      releaseCommitConnection(conn);
-      conn = this.getTransactionConnection();
       if (log4j.isDebugEnabled())
         log4j.debug("InitialClientSetup - createClient - m_info: " + m_info.toString());
 
@@ -756,13 +756,15 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         String strElementValue = InitialClientSetupData.selectAccount(conn, this,
             data[i].accountValue, C_Element_ID);
         if (strAccount != null && !strAccount.equals("")) {
+          log4j.info("Operand - Value = " + strOperand[j][0]);
           InitialClientSetupData.insertOperands(conn, this, C_ElementValue_Operand_ID,
               (strOperand[j][1].equals("+") ? "1" : "-1"), strElementValue, strAccount, strSeqNo,
               AD_Client_ID, vars.getUser());
           strSeqNo = nextSeqNo(strSeqNo);
         } else {
-          if (log4j.isDebugEnabled())
-            log4j.error("Operand not inserted - Value = " + strOperand[j][0]);
+          m_infoOperands.append("Operand not inserted: Account = ").append(data[i].accountValue)
+              .append(" - Operand = ").append(strOperand[j][0]);
+          log4j.error("Operand not inserted - Value = " + strOperand[j][0]);
           OK = false;
         }
       }
@@ -782,10 +784,10 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     strResult[0][1] = "+";
     while (st.hasMoreTokens()) {
       if (i % 2 != 1) {
-        strResult[no][0] = st.nextToken();
+        strResult[no][0] = st.nextToken().trim();
         no++;
       } else
-        strResult[no][1] = st.nextToken();
+        strResult[no][1] = st.nextToken().trim();
       i++;
     }
     // strResult = filterArray(strResult);
@@ -894,16 +896,16 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     return "";
   } // getC_ElementValue_ID
 
-  public boolean createAccounting(VariablesSecureApp vars, String newC_Currency_ID, String curName,
-      boolean hasProduct, boolean hasBPartner, boolean hasProject, boolean hasMCampaign,
-      boolean hasSRegion, FieldProvider[] avData) throws ServletException {
+  public boolean createAccounting(Connection conn, VariablesSecureApp vars,
+      String newC_Currency_ID, String curName, boolean hasProduct, boolean hasBPartner,
+      boolean hasProject, boolean hasMCampaign, boolean hasSRegion, FieldProvider[] avData)
+      throws ServletException {
     //
     C_Currency_ID = newC_Currency_ID;
     m_hasProject = hasProject;
     m_hasMCampaign = hasMCampaign;
     m_hasSRegion = hasSRegion;
 
-    Connection conn = null;
     String name = null;
     String C_Year_ID = null;
     String C_Element_ID = null;
@@ -912,7 +914,6 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     String CostingMethod = null;
     AccountingValueData[] data = null;
     try {
-      conn = this.getTransactionConnection();
 
       // Standard variables
       m_info.append(SALTO_LINEA);
@@ -967,7 +968,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       boolean errMsg = save(conn, vars, AD_Client_ID, C_Element_ID, data);
       if (!errMsg) {
         releaseRollbackConnection(conn);
-        String err = "InitialClientSetup - createAccounting - Acct Element Values NOT inserted";
+        String err = "InitialClientSetup - createAccounting - Acct Element Values or operands NOT inserted";
         log4j.warn(err);
         m_info.append(err).append(SALTO_LINEA);
         return false;
@@ -1414,10 +1415,10 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     return C_DocType_ID;
   } // createDocType
 
-  public String createReferenceData(VariablesSecureApp vars, String strClient, String strModules,
-      String strCurrency, boolean hasProduct, boolean hasBPartner, boolean hasProject,
-      boolean hasMCampaign, boolean hasSRegion, boolean bCreateAccounting) throws ServletException,
-      IOException {
+  public String createReferenceData(Connection conn, VariablesSecureApp vars, String strClient,
+      String strModules, String strCurrency, boolean hasProduct, boolean hasBPartner,
+      boolean hasProject, boolean hasMCampaign, boolean hasSRegion, boolean bCreateAccounting)
+      throws ServletException, IOException {
     if (strModules != null && !strModules.equals("")) {
       InitialClientSetupData[] data = InitialClientSetupData.selectModules(this, strModules);
       data = orderModuleByDependency(data);
@@ -1428,9 +1429,9 @@ public class InitialClientSetup extends HttpSecureAppServlet {
             String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules" + data[i].path;
             FileInputStream in = new FileInputStream(strPath);
             AccountingValueData av = new AccountingValueData(vars, in, true, "C");
-            createAccounting(vars, strCurrency, InitialClientSetupData.currency(this, strCurrency),
-                hasProduct, hasBPartner, hasProject, hasMCampaign, hasSRegion, av
-                    .getFieldProvider());
+            createAccounting(conn, vars, strCurrency, InitialClientSetupData.currency(this,
+                strCurrency), hasProduct, hasBPartner, hasProject, hasMCampaign, hasSRegion, av
+                .getFieldProvider());
           }
           String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules/" + data[i].javapackage
               + "/referencedata/standard";
@@ -1475,7 +1476,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   *
+   * 
    * @param modules
    * @return
    */
