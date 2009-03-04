@@ -56,7 +56,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    String process = CreateAccountingReportData.processId(this, "CreateAccountingReport");
+    String process = CreateAccountingReportData.processId(this, "UserDefinedAccountingReport");
     // TODO: Remove it if we are not using it
     /*
      * String strTabId = vars.getGlobalVariable("inpTabId", "CreateAccountingReport|tabId"); String
