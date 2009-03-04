@@ -29,22 +29,25 @@
 		vAlign="Middle"
 		fontName="Bitstream Vera Sans"
 		fontSize="10"
-	/>
+	>
+	</style>
 	<style 
 		name="Report_Title"
 		isDefault="false"
-		leftPadding="5"
 		fontName="Bitstream Vera Sans"
 		fontSize="18"
-	/>
+	>
+					<box leftPadding="5"></box>
+	</style>
 	<style 
 		name="Report_Subtitle"
 		isDefault="false"
 		forecolor="#555555"
-		leftPadding="5"
 		fontName="Bitstream Vera Sans"
 		fontSize="14"
-	/>
+	>
+					<box leftPadding="5"></box>
+	</style>
 	<style 
 		name="Total_Field"
 		isDefault="false"
@@ -52,8 +55,9 @@
 		forecolor="#000000"
 		backcolor="#CCCCCC"
 		vAlign="Middle"
-		leftPadding="5"
-	/>
+	>
+					<box leftPadding="5"></box>
+	</style>
 	<style 
 		name="Detail_Header"
 		isDefault="false"
@@ -61,12 +65,11 @@
 		forecolor="#FFFFFF"
 		backcolor="#555555"
 		vAlign="Middle"
-		leftBorder="1Point"
-		leftBorderColor="#FFFFFF"
-		leftPadding="5"
-		rightBorder="1Point"
-		rightBorderColor="#FFFFFF"
-	/>
+	>
+					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+	</style>
 	<style 
 		name="GroupHeader_DarkGray"
 		isDefault="false"
@@ -74,16 +77,18 @@
 		forecolor="#FFFFFF"
 		backcolor="#555555"
 		vAlign="Middle"
-		leftPadding="5"
 		fontName="Bitstream Vera Sans"
 		fontSize="14"
-	/>
+	>
+					<box leftPadding="5"></box>
+	</style>
 	<style 
 		name="GroupHeader_Gray"
 		isDefault="false"
 		mode="Opaque"
 		backcolor="#999999"
-	/>
+	>
+	</style>
 	<style 
 		name="Detail_Line"
 		isDefault="false"
@@ -96,7 +101,8 @@
 				isDefault="false"
 				mode="Opaque"
 				backcolor="#CCCCCC"
-			/>
+			>
+			</style>
 		</conditionalStyle>
 	</style>
 	<style 
@@ -105,7 +111,8 @@
 		mode="Opaque"
 		forecolor="#000000"
 		backcolor="#CCCCCC"
-	/>
+	>
+	</style>
 
 	<parameter name="ATTACH" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String"/>
@@ -195,7 +202,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-2"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -206,7 +215,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-3"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -216,7 +227,12 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="535"
 						height="23"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="12"/>
 					</textElement>
@@ -235,7 +251,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-32"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -246,7 +264,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-33"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -256,7 +276,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						height="0"
 						forecolor="#555555"
 						key="line-34"/>
-					<graphicElement stretchType="NoStretch" pen="2Point"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 			</band>
 			</groupFooter>
@@ -274,7 +296,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-4"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -285,7 +309,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-6"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -296,7 +322,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-8"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -306,7 +334,12 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="525"
 						height="23"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="12"/>
 					</textElement>
@@ -320,7 +353,12 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="81"
 						height="16"
 						key="element-90"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -334,7 +372,12 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="98"
 						height="16"
 						key="element-90"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -348,7 +391,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="87"
 						height="16"
 						key="element-90"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Right">
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
@@ -362,7 +409,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="87"
 						height="16"
 						key="element-90"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
@@ -376,7 +427,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="87"
 						height="16"
 						key="element-90"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Right">
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
@@ -390,7 +445,12 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="37"
 						height="16"
 						key="element-90"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -404,7 +464,12 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="81"
 						height="16"
 						key="element-90"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -418,7 +483,12 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="198"
 						height="16"
 						key="element-90"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -432,7 +502,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="99"
 						height="16"
 						key="staticText-4"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
@@ -445,7 +519,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="87"
 						height="16"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -458,7 +536,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="70"
 						height="16"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -471,7 +553,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="70"
 						height="16"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="11"/>
 					</textElement>
@@ -485,7 +571,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="11"/>
 					</textElement>
@@ -504,7 +594,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-28"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -515,7 +607,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-29"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -526,7 +620,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-30"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -536,7 +632,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						height="0"
 						forecolor="#555555"
 						key="line-31"/>
-					<graphicElement stretchType="NoStretch" pen="2Point"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -569,7 +667,12 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="535"
 						height="20"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -582,7 +685,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="535"
 						height="0"
 						key="line-1"/>
-					<graphicElement stretchType="NoStretch" pen="2Point"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 			</band>
 		</pageHeader>
@@ -601,7 +706,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-16"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -612,7 +719,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-17"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -623,7 +732,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#555555"
 						key="line-18"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
+					<graphicElement stretchType="RelativeToBandHeight">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -634,7 +745,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						height="17"
 						key="textField-2"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#000000" leftPadding="2" rightBorder="1Point" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10"/>
 					</textElement>
@@ -649,7 +764,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						height="17"
 						key="textField-4"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="1Point" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10"/>
 					</textElement>
@@ -664,7 +783,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						height="17"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="1Point" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -679,7 +802,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						height="17"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="1Point" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -694,7 +821,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						height="17"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="1Point" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -715,7 +846,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="95"
 						height="19"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Helvetica" size="10"/>
 					</textElement>
@@ -730,7 +865,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Helvetica" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
@@ -744,7 +883,9 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						height="0"
 						forecolor="#000000"
 						key="line"/>
-					<graphicElement stretchType="NoStretch" pen="2Point"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+</graphicElement>
 				</line>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -753,7 +894,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="69"
 						height="19"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="10"/>
 					</textElement>
@@ -766,7 +911,11 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						width="78"
 						height="19"
 						key="staticText-1"/>
-					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5" topPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>

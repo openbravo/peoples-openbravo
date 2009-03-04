@@ -29,22 +29,25 @@
 		vAlign="Middle"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
-	/>
+	>
+	</style>
 	<style 
 		name="Report_Title"
 		isDefault="false"
-		leftPadding="5"
 		fontName="Bitstream Vera Sans"
 		fontSize="18"
-	/>
+	>
+					<box leftPadding="5"></box>
+	</style>
 	<style 
 		name="Report_Subtitle"
 		isDefault="false"
 		forecolor="#555555"
-		leftPadding="5"
 		fontName="Bitstream Vera Sans"
 		fontSize="14"
-	/>
+	>
+					<box leftPadding="5"></box>
+	</style>
 	<style 
 		name="Report_Data_Label"
 		isDefault="false"
@@ -52,14 +55,16 @@
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="true"
-	/>
+	>
+	</style>
 	<style 
 		name="Report_Data_Field"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="false"
-	/>
+	>
+	</style>
 	<style 
 		name="Total_Field"
 		isDefault="false"
@@ -67,11 +72,12 @@
 		forecolor="#000000"
 		backcolor="#CCCCCC"
 		vAlign="Middle"
-		leftPadding="5"
 		fontName="Bitstream Vera Sans"
 		fontSize="9"
 		isBold="true"
-	/>
+	>
+					<box leftPadding="5"></box>
+	</style>
 	<style 
 		name="Detail_Header"
 		isDefault="false"
@@ -79,12 +85,11 @@
 		forecolor="#FFFFFF"
 		backcolor="#5D5D5D"
 		vAlign="Middle"
-		leftBorder="1Point"
-		leftBorderColor="#FFFFFF"
-		leftPadding="1"
-		rightBorder="1Point"
-		rightBorderColor="#FFFFFF"
-	/>
+	>
+					<box leftPadding="1">					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+	</style>
 	<style 
 		name="Detail_Line"
 		isDefault="false"
@@ -100,7 +105,8 @@
 				isDefault="false"
 				mode="Opaque"
 				backcolor="#CCCCCC"
-			/>
+			>
+			</style>
 		</conditionalStyle>
 	</style>
 	<style 
@@ -125,7 +131,8 @@
 				fontName="Bitstream Vera Sans"
 				fontSize="8"
 				isBold="false"
-			/>
+			>
+			</style>
 		</conditionalStyle>
 			<conditionalStyle>
 				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==1)&&($V{NIVEL1_COUNT}.intValue()%2==0))]]></conditionExpression>
@@ -138,7 +145,8 @@
 					fontName="Bitstream Vera Sans"
 					fontSize="8"
 					isBold="false"
-				/>
+				>
+				</style>
 			</conditionalStyle>
 	</style>
 	<style 
@@ -163,7 +171,8 @@
 				fontName="Bitstream Vera Sans"
 				fontSize="8"
 				isBold="false"
-			/>
+			>
+			</style>
 		</conditionalStyle>
 			<conditionalStyle>
 				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==2)&&($V{NIVEL1_COUNT}.intValue()%2==1))]]></conditionExpression>
@@ -176,7 +185,8 @@
 					fontName="Bitstream Vera Sans"
 					fontSize="8"
 					isBold="false"
-				/>
+				>
+				</style>
 			</conditionalStyle>
 	</style>
 	<style 
@@ -201,7 +211,8 @@
 				fontName="Bitstream Vera Sans"
 				fontSize="8"
 				isBold="false"
-			/>
+			>
+			</style>
 		</conditionalStyle>
 			<conditionalStyle>
 				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==3)&&($V{NIVEL2_COUNT}.intValue()%2==1))]]></conditionExpression>
@@ -214,7 +225,8 @@
 					fontName="Bitstream Vera Sans"
 					fontSize="8"
 					isBold="false"
-				/>
+				>
+				</style>
 			</conditionalStyle>
 	</style>
 	<style 
@@ -238,7 +250,8 @@
 				fontName="Bitstream Vera Sans"
 				fontSize="8"
 				isBold="false"
-			/>
+			>
+			</style>
 		</conditionalStyle>
 			<conditionalStyle>
 				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==4)&&($V{NIVEL3_COUNT}.intValue()%2==1))]]></conditionExpression>
@@ -251,7 +264,8 @@
 					fontName="Bitstream Vera Sans"
 					fontSize="8"
 					isBold="false"
-				/>
+				>
+				</style>
 			</conditionalStyle>
 	</style>
 	<style 
@@ -276,7 +290,8 @@
 				fontName="Bitstream Vera Sans"
 				fontSize="8"
 				isBold="false"
-			/>
+			>
+			</style>
 		</conditionalStyle>
 			<conditionalStyle>
 				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==5)&&($V{NIVEL4_COUNT}.intValue()%2==1))]]></conditionExpression>
@@ -289,7 +304,8 @@
 					fontName="Bitstream Vera Sans"
 					fontSize="8"
 					isBold="false"
-				/>
+				>
+				</style>
 			</conditionalStyle>
 	</style>
 	<style 
@@ -314,7 +330,8 @@
 				fontName="Bitstream Vera Sans"
 				fontSize="8"
 				isBold="false"
-			/>
+			>
+			</style>
 		</conditionalStyle>
 			<conditionalStyle>
 				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==6)&&($V{LEVEL5_COUNT}.intValue()%2==1))]]></conditionExpression>
@@ -327,7 +344,8 @@
 					fontName="Bitstream Vera Sans"
 					fontSize="8"
 					isBold="false"
-				/>
+				>
+				</style>
 			</conditionalStyle>
 	</style>
 	<style 
@@ -352,7 +370,8 @@
 				fontName="Bitstream Vera Sans"
 				fontSize="8"
 				isBold="false"
-			/>
+			>
+			</style>
 		</conditionalStyle>
 			<conditionalStyle>
 				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==7)&&($V{LEVEL6_COUNT}.intValue()%2==1))]]></conditionExpression>
@@ -365,7 +384,8 @@
 					fontName="Bitstream Vera Sans"
 					fontSize="8"
 					isBold="false"
-				/>
+				>
+				</style>
 			</conditionalStyle>
 	</style>
 	<style 
@@ -390,7 +410,8 @@
 				fontName="Bitstream Vera Sans"
 				fontSize="8"
 				isBold="false"
-			/>
+			>
+			</style>
 		</conditionalStyle>
 			<conditionalStyle>
 				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==8)&&($V{LEVEL7_COUNT}.intValue()%2==1))]]></conditionExpression>
@@ -403,7 +424,8 @@
 					fontName="Bitstream Vera Sans"
 					fontSize="8"
 					isBold="false"
-				/>
+				>
+				</style>
 			</conditionalStyle>
 	</style>
 	<style 
@@ -428,7 +450,8 @@
 				fontName="Bitstream Vera Sans"
 				fontSize="8"
 				isBold="false"
-			/>
+			>
+			</style>
 		</conditionalStyle>
 			<conditionalStyle>
 				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==9)&&($V{LEVEL8_COUNT}.intValue()%2==1))]]></conditionExpression>
@@ -441,7 +464,8 @@
 					fontName="Bitstream Vera Sans"
 					fontSize="8"
 					isBold="false"
-				/>
+				>
+				</style>
 			</conditionalStyle>
 	</style>
 	<style 
@@ -466,7 +490,8 @@
 				fontName="Bitstream Vera Sans"
 				fontSize="8"
 				isBold="false"
-			/>
+			>
+			</style>
 		</conditionalStyle>
 			<conditionalStyle>
 				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==10)&&($V{LEVEL9_COUNT}.intValue()%2==1))]]></conditionExpression>
@@ -479,7 +504,8 @@
 					fontName="Bitstream Vera Sans"
 					fontSize="8"
 					isBold="false"
-				/>
+				>
+				</style>
 			</conditionalStyle>
 	</style>
 	<style 
@@ -488,13 +514,15 @@
 		vAlign="Middle"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
-	/>
+	>
+	</style>
 	<style 
 		name="Detail_Border"
 		isDefault="false"
 		forecolor="#8A8A8A"
-		pen="Thin"
-	/>
+	>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+	</style>
 
 	<parameter name="USER_ORG" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["0,1000000"]]></defaultValueExpression>
@@ -863,7 +891,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						width="75"
 						height="16"
 						key="textField-21"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font isBold="false"/>
 					</textElement>
@@ -877,7 +910,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						width="78"
 						height="16"
 						key="staticText-8"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font/>
 					</textElement>
@@ -894,7 +931,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						key="textField-23">
 							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=2)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -910,7 +952,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						key="textField-22">
 							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=1)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -927,7 +974,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						key="textField-24">
 							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=3)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -944,7 +996,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						key="textField-25">
 							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=4)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -961,7 +1018,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						key="textField-26">
 							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=5)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -975,7 +1037,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						width="180"
 						height="16"
 						key="textField-204"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font isBold="false"/>
 					</textElement>
@@ -1007,7 +1074,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -1022,7 +1093,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-155"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#555555" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#555555"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1037,7 +1112,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-154"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1052,7 +1131,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-153"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1067,7 +1150,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1082,7 +1169,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-152"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1099,7 +1190,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=1)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1127,7 +1222,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-2"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1142,7 +1241,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -1157,7 +1260,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1174,7 +1281,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=2)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1189,7 +1300,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-156"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1204,7 +1319,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-157"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1219,7 +1338,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-158"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1234,7 +1357,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-159"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1262,7 +1389,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-3"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1277,7 +1408,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-8"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1292,7 +1427,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -1307,7 +1446,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1324,7 +1467,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=3)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1339,7 +1486,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-160"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1354,7 +1505,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-161"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1369,7 +1524,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-162"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1384,7 +1543,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-163"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1412,7 +1575,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-4"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1427,7 +1594,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-9"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1442,7 +1613,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-6"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1457,7 +1632,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -1472,7 +1651,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1489,7 +1672,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=4)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1504,7 +1691,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-164"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1519,7 +1710,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-165"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1534,7 +1729,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-166"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1549,7 +1748,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-167"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1577,7 +1780,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-5"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1592,7 +1799,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-10"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1607,7 +1818,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-7"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1622,7 +1837,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-11"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1637,7 +1856,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -1652,7 +1875,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1669,7 +1896,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1684,7 +1915,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-168"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1699,7 +1934,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-169"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1714,7 +1953,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-170"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1729,7 +1972,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-171"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1757,7 +2004,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-70"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1772,7 +2023,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-72"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1787,7 +2042,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-71"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1802,7 +2061,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-73"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1817,7 +2080,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-74"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1832,7 +2099,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-66"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -1847,7 +2118,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-69"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1864,7 +2139,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1879,7 +2158,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-172"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1894,7 +2177,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-173"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1909,7 +2196,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-174"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1924,7 +2215,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-175"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1952,7 +2247,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-79"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1967,7 +2266,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-81"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1982,7 +2285,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-80"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -1997,7 +2304,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-82"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2012,7 +2323,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-83"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2027,7 +2342,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-84"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2042,7 +2361,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-75"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -2057,7 +2380,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-176"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2074,7 +2401,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2089,7 +2420,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-179"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2104,7 +2439,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-180"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2119,7 +2458,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-181"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2134,7 +2477,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-182"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2162,7 +2509,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-89"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2177,7 +2528,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-91"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2192,7 +2547,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-90"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2207,7 +2566,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-92"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2222,7 +2585,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-93"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2237,7 +2604,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-94"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2252,7 +2623,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-95"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2267,7 +2642,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-85"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -2282,7 +2661,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-183"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2297,7 +2680,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-186"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2312,7 +2699,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-187"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2327,7 +2718,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-188"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2342,7 +2737,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-189"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2359,7 +2758,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2387,7 +2790,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-100"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2402,7 +2809,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-102"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2417,7 +2828,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-101"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2432,7 +2847,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-103"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2447,7 +2866,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-104"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2462,7 +2885,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-105"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2477,7 +2904,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-106"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2492,7 +2923,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-107"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2507,7 +2942,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-96"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -2522,7 +2961,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-190"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2537,7 +2980,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-191"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2552,7 +2999,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-192"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2567,7 +3018,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-193"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2582,7 +3037,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-194"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2599,7 +3058,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2627,7 +3090,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-112"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2642,7 +3109,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-114"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2657,7 +3128,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-113"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2672,7 +3147,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-115"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2687,7 +3166,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-116"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2702,7 +3185,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-117"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2717,7 +3204,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-118"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2732,7 +3223,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-119"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2747,7 +3242,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-120"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement rotation="Left">
 						<font/>
 					</textElement>
@@ -2762,7 +3261,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-108"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -2777,7 +3280,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-197"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2792,7 +3299,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-198"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2807,7 +3318,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-199"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2822,7 +3337,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-200"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2837,7 +3356,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="18"
 						key="textField-201"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#666666"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2854,7 +3377,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
 						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2883,7 +3410,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						backcolor="#5D5D5D"
 						key="frame-1"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Detail_Header"
@@ -2893,7 +3424,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="textField-61"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -2908,7 +3444,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="textField-62"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -2923,7 +3464,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="textField-63"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -2938,7 +3484,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="textField-64"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -2953,7 +3504,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="textField-65"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -2969,7 +3525,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="staticText-9"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" rightBorder="Thin" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -2985,7 +3546,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="staticText-10"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" rightBorder="Thin" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Right">
 						<font pdfFontName="Helvetica-Bold"/>
 					</textElement>
@@ -3001,7 +3567,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="staticText-11"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" rightBorder="Thin" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -3017,7 +3588,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="staticText-12"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" rightBorder="Thin" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -3033,7 +3609,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="staticText-13"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" rightBorder="Thin" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -3049,7 +3630,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="staticText-14"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="Thin" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -3064,7 +3650,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="textField-205"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -3079,7 +3670,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="textField-206"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -3094,7 +3690,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="textField-207"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -3109,7 +3710,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="textField-208"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -3124,7 +3730,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="textField-209"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" leftPadding="1" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement rotation="None">
 						<font/>
 					</textElement>
@@ -3139,7 +3750,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						height="19"
 						key="textField-210"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="1">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Center" rotation="None">
 						<font/>
 					</textElement>
@@ -3153,7 +3769,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						width="483"
 						height="26"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -3167,7 +3788,12 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						width="483"
 						height="18"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5">					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -3181,7 +3807,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						width="114"
 						height="16"
 						key="staticText-5"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -3195,7 +3825,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						width="369"
 						height="16"
 						key="textField-17"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font/>
 					</textElement>
@@ -3247,7 +3881,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						width="78"
 						height="16"
 						key="staticText-7"/>
-					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5" topPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -3261,7 +3899,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						width="90"
 						height="16"
 						key="textField-18"/>
-					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box leftPadding="5" topPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="10"/>
 					</textElement>
@@ -3275,7 +3917,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						width="95"
 						height="16"
 						key="textField-19"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Helvetica" size="10"/>
 					</textElement>
@@ -3291,7 +3937,11 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="textField-20"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Helvetica" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
