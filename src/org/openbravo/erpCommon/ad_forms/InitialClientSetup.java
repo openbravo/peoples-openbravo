@@ -1438,7 +1438,9 @@ public class InitialClientSetup extends HttpSecureAppServlet {
           File myDir = new File(strPath);
           File[] myFiles = myDir.listFiles();
           ArrayList<File> myTargetFiles = new ArrayList<File>();
-          for (int j = 0; j < myFiles.length; j++) {
+          if (myFiles == null)
+            return "";
+          for (int j = 0; myFiles != null && j < myFiles.length; j++) {
             if (myFiles[j].getName().endsWith(".xml"))
               myTargetFiles.add(myFiles[j]);
           }
