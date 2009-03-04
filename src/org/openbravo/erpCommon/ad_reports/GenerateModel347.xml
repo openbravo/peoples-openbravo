@@ -49,4 +49,8 @@
   <SUBREPORT id="reportAD_ORGID" name="reportAD_ORGID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramAD_ORGID"/>
   </SUBREPORT>
+  <SUBREPORT id="reportMProductId_IN" name="reportMProductId_IN" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramVacio"/>
+  </SUBREPORT>
+
 </REPORT>
