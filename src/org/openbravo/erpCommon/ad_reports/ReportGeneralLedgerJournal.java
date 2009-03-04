@@ -192,7 +192,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     ReportGeneralLedgerJournalData[] data = null;
     String strPosition = "0";
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedgerJournal", false,
-        "", "", "", false, "ad_reports", strReplaceWith, false, true);
+        "", "", "imprimir();return false;", false, "ad_reports", strReplaceWith, false, true);
+    toolbar.setEmail(false);
     if (vars.commandIn("DEFAULT", "FIND")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening);
       String strTreeOrg = ReportGeneralLedgerJournalData.treeOrg(this, vars.getClient());

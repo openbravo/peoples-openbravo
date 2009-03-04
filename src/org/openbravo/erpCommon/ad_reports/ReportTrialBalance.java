@@ -219,7 +219,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     }
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTrialBalance", false, "", "",
-        "", false, "ad_reports", strReplaceWith, false, true);
+        "imprimir();return false;", false, "ad_reports", strReplaceWith, false, true);
+    toolbar.setEmail(false);
     toolbar.prepareSimpleToolBarTemplate();
 
     xmlDocument.setParameter("toolbar", toolbar.toString());
