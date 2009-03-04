@@ -261,6 +261,12 @@ public class XmlDocument implements XmlComponentValue {
               + hasParameterValue.get("language").strValue);
           handler.setLanguage(hasParameterValue.get("language").strValue
               .replace("defaultLang=", "").replace("\"", ""));
+        } else if (hasParameterValue.get("paramLanguage") != null
+            && hasParameterValue.get("paramLanguage").strValue != null) {
+          log4jXmlDocument.debug("print(strBlank) - language: "
+              + hasParameterValue.get("paramLanguage").strValue);
+          handler.setLanguage(hasParameterValue.get("paramLanguage").strValue.replace(
+              "defaultLang=", "").replace("\"", ""));
         }
         log4jXmlDocument.debug("before running generateTranslations.");
         handler.generateTranslations();

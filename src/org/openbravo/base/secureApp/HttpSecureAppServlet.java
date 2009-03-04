@@ -967,7 +967,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     try {
 
       final JasperReport jasperReport = Utility.getTranslatedJasperReport(this, strReportName,
-          strLanguage);
+          strLanguage, strBaseDesign);
       if (designParameters == null)
         designParameters = new HashMap<String, Object>();
 
@@ -1038,7 +1038,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         reportId = UUID.randomUUID();
         saveReport(variables, jasperPrint, exportParameters, strFileName + "-" + (reportId) + "."
             + strOutputType);
-        response.setHeader("Content-disposition", "inline" + "; filename=" + strFileName + "-"
+        response.setHeader("Content-disposition", "attachment" + "; filename=" + strFileName + "-"
             + (reportId) + "." + strOutputType);
         printPagePopUpDownload(response.getOutputStream(), strFileName + "-" + (reportId) + "."
             + strOutputType);

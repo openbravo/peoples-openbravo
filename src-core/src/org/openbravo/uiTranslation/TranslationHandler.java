@@ -29,6 +29,7 @@ public class TranslationHandler {
   private String language = "";
   private String tabId = "";
   private String fileName = "";
+  private String baseDesignPath = "";
   private String reportString = "";
   private String documentTypeId = "";
 
@@ -109,8 +110,9 @@ public class TranslationHandler {
     }
   }
 
-  public void prepareFile(String reportName, String lang, File file) {
-    setFileName(reportName);
+  public void prepareFile(String reportName, String lang, File file, String baseDesignPath1) {
+    setFileName(reportName.replaceAll("//", "/"));
+    setBaseDesignPath(baseDesignPath1);
     setLanguage(lang);
     generateTranslations();
     createInputStream(file);
@@ -195,7 +197,8 @@ public class TranslationHandler {
     } else if (tabId != null && !tabId.equals("")) {
       setTabLabels();
     } else if (fileName != null && !fileName.equals("")) {
-      formLabels = TranslationUtils.processFormLabels(conn, fileName, language);
+      String textFileName = fileName.replace(baseDesignPath, "");
+      formLabels = TranslationUtils.processFormLabels(conn, textFileName, language);
     }
   }
 
@@ -229,6 +232,11 @@ public class TranslationHandler {
       WindowLabel label = labels[labelCount];
       xmlDocument.setLabel(label.getOriginalLabel(), label.getTranslatedLabel());
     }
+  }
+
+  private void setBaseDesignPath(String baseDesignPath1) {
+    if (baseDesignPath1 != null)
+      this.baseDesignPath = baseDesignPath1.replaceAll("//", "/");
   }
 
 }

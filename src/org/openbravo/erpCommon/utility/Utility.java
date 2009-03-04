@@ -2116,7 +2116,7 @@ public class Utility {
   }
 
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
-      String language) throws JRException {
+      String language, String baseDesignPath) throws JRException {
 
     log4j.debug("translate report: " + reportName + " for language: " + language);
 
@@ -2125,7 +2125,7 @@ public class Utility {
     InputStream reportInputStream = null;
     if (reportFile.exists()) {
       TranslationHandler handler = new TranslationHandler(conn);
-      handler.prepareFile(reportName, language, reportFile);
+      handler.prepareFile(reportName, language, reportFile, baseDesignPath);
       reportInputStream = handler.getInputStream();
     }
     JasperDesign jasperDesign;
