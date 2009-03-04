@@ -4657,10 +4657,10 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800169-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800169-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800169-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800169-->  <VALUE><![CDATA[TaxReport]]></VALUE>
-<!--800169-->  <NAME><![CDATA[Tax Report]]></NAME>
-<!--800169-->  <DESCRIPTION><![CDATA[Tax Report]]></DESCRIPTION>
-<!--800169-->  <HELP><![CDATA[Tax Report]]></HELP>
+<!--800169-->  <VALUE><![CDATA[CreateTaxReport]]></VALUE>
+<!--800169-->  <NAME><![CDATA[Create Tax Report]]></NAME>
+<!--800169-->  <DESCRIPTION><![CDATA[Create Tax Report]]></DESCRIPTION>
+<!--800169-->  <HELP><![CDATA[Create Tax Report]]></HELP>
 <!--800169-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800169-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800169-->  <ISREPORT><![CDATA[N]]></ISREPORT>
