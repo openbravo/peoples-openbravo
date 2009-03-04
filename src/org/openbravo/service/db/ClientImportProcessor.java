@@ -89,14 +89,18 @@ public class ClientImportProcessor implements EntityXMLProcessor {
       client.setDescription(newName);
     } else if (bob instanceof Role) {
       final Role role = (Role) bob;
-      role.setName(replace(role.getName(), originalName));
+      if (role.getName().indexOf(originalName) == -1) {
+        role.setName(role.getName() + "_" + getNewName());
+      } else {
+        role.setName(replace(role.getName(), originalName));
+      }
     } else if (bob instanceof User) {
       final User user = (User) bob;
       if (user.getUsername() == null) {
         return;
       }
       if (user.getUsername().indexOf(originalName) == -1) {
-        user.setUsername(user.getUsername() + " " + getNewName());
+        user.setUsername(user.getUsername() + "_" + getNewName());
       } else {
         user.setUsername(replace(user.getUsername(), originalName));
       }
@@ -105,7 +109,11 @@ public class ClientImportProcessor implements EntityXMLProcessor {
       org.setName(replace(org.getName(), originalName));
     } else if (bob instanceof Warehouse) {
       final Warehouse wh = (Warehouse) bob;
-      wh.setName(replace(wh.getName(), originalName));
+      if (wh.getName().indexOf(originalName) == -1) {
+        wh.setName(wh.getName() + "_" + getNewName());
+      } else {
+        wh.setName(replace(wh.getName(), originalName));
+      }
       // } else if (bob instanceof GLCategory) {
       // final GLCategory glCategory = (GLCategory) bob;
       // glCategory.setName(replace(glCategory.getName(), originalName));
