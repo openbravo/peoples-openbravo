@@ -31,7 +31,6 @@ import java.util.Locale;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -57,6 +56,7 @@ public class ReportManager {
   private ConnectionProvider _connectionProvider;
   private String _strBaseDesignPath;
   private String _strDefaultDesignPath;
+  private String language;
   private String _strBaseWeb; // BASE WEB!!!!!!
   private ClassInfoData _classInfo;
   private String _prefix;
@@ -87,7 +87,7 @@ public class ReportManager {
       throws ReportingException {
 
     setTargetDirectory(report);
-    final String language = variables.getLanguage();
+    language = variables.getLanguage();
     final String baseDesignPath = _prefix + "/" + _strBaseDesignPath + "/" + _strDefaultDesignPath;
     final Locale locale = new Locale(language.substring(0, 2), language.substring(3, 5));
 
@@ -120,13 +120,14 @@ public class ReportManager {
           parameterName = parameter.getName();
           subreportList.add(parameterName);
           subReportName = Replace.replace(parameterName, "SUBREP_", "") + ".jrxml";
-          JasperReport jasperReportLines = createSubReport(templateLocation, subReportName);
+          JasperReport jasperReportLines = createSubReport(templateLocation, subReportName,
+              baseDesignPath);
           designParameters.put(parameterName, jasperReportLines);
         }
       }
 
       JasperReport jasperReport = Utility.getTranslatedJasperReport(_connectionProvider,
-          templateFile, language);
+          templateFile, language, baseDesignPath);
 
       if (log4j.isDebugEnabled())
         log4j.debug("creating the format factory: " + variables.getJavaDateFormat());
@@ -206,15 +207,14 @@ public class ReportManager {
     return jasperPrint;
   }
 
-  private JasperReport createSubReport(String templateLocation, String subReportFileName) {
+  private JasperReport createSubReport(String templateLocation, String subReportFileName,
+      String baseDesignPath) {
     JasperReport jasperReportLines = null;
-    JasperDesign jasperDesignLines;
     try {
-      jasperDesignLines = JRXmlLoader.load(templateLocation + subReportFileName);
-      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+      jasperReportLines = Utility.getTranslatedJasperReport(_connectionProvider, templateLocation
+          + subReportFileName, language, baseDesignPath);
     } catch (final JRException e1) {
       log4j.error(e1.getMessage());
-      // TODO Auto-generated catch block
       e1.printStackTrace();
     }
     return jasperReportLines;

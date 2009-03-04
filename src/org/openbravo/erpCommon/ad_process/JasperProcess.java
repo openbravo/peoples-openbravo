@@ -84,7 +84,7 @@ public class JasperProcess implements Process {
     ServletOutputStream os = null;
     try {
       JasperReport jasperReport = Utility.getTranslatedJasperReport(connection, strReportName,
-          strLanguage);
+          strLanguage, strBaseDesign);
 
       if (designParameters == null)
         designParameters = new HashMap<String, Object>();
