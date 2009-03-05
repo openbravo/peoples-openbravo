@@ -3063,6 +3063,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--289-->  <ISREADONLY><![CDATA[Y]]></ISREADONLY>
 <!--289-->  <AD_COLUMN_ID><![CDATA[3668]]></AD_COLUMN_ID>
 <!--289-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--289-->  <WHERECLAUSE><![CDATA[M_TRANSACTION.M_Product_ID = @M_PRODUCT_ID@]]></WHERECLAUSE>
 <!--289-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--289-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--289-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
