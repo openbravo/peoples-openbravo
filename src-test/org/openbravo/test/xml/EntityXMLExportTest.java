@@ -22,7 +22,6 @@ package org.openbravo.test.xml;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.criterion.Expression;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -33,6 +32,8 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 
 /**
  * Tests export of entities to xml
+ * 
+ * TEST NEEDS TO BE REWORKED AS TEST DATA HAS CHANGED
  * 
  * @author mtaal
  */
