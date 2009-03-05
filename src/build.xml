@@ -668,7 +668,7 @@ build.war: build a war file in the lib directory.
     </axis-wsdl2java>
   </target>
 
-  <target name="update.build.timestamp">
+  <target name="update.build.timestamp" unless="timestamp">
     <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" delimiter="/">
       <classpath>
         <fileset dir="${base.lib}">
