@@ -142,6 +142,13 @@ compare.database.structure: refer to compare.database.structure target of databa
     </or>
   </condition>
 
+  <condition property="timestamp">
+    <or>
+      <equals arg1="no" arg2="${execute.update.build.timestamp}" />
+      <equals arg1="false" arg2="${execute.update.build.timestamp}" />
+    </or>
+  </condition>
+
   <condition property="jakarta.base" value="${env.CATALINA_BASE}" else="${jakarta.home}">
     <and>
       <isset property="env.CATALINA_BASE" />
