@@ -406,7 +406,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("amtFrom", strAmtFrom);
     xmlDocument.setParameter("amtTo", strAmtTo);
     xmlDocument.setParameter("adOrgId", strOrg);
-    xmlDocument.setParameter("InitialYearDate", strYearInitialDate);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
     xmlDocument.setParameter("paramAll0", strAll.equals("") ? "0" : "1");
     xmlDocument.setParameter("paramHide0", strHide.equals("") ? "0" : "1");
