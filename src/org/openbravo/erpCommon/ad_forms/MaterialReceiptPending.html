@@ -57,7 +57,38 @@ function validate(action) {
 			if (radioValue(frm.inpOrder)==null) {
 			showJSMessage(1);
 			return false;
-			} 
+      } else if (frm.inpOrder.checked) {
+        if (document.getElementsByName("inpmLocatorId"+frm.inpOrder.value)[0].value==null ||
+            document.getElementsByName("inpmLocatorId"+frm.inpOrder.value)[0].value=="") {
+          setWindowElementFocus(document.getElementsByName("inpmLocatorId_D"+frm.inpOrder.value)[0]);
+          showJSMessage(1);
+          return false;
+        }
+        if (document.getElementsByName("inpQtyordered"+frm.inpOrder.value)[0].value==null ||
+            document.getElementsByName("inpQtyordered"+frm.inpOrder.value)[0].value=="") {
+          setWindowElementFocus(document.getElementsByName("inpQtyordered"+frm.inpOrder.value)[0]);
+          showJSMessage(1);
+          return false;
+        }
+      } else {
+        var total = frm.inpOrder.length;
+        for (var i=0; i<total;i++){
+          if (frm.inpOrder[i].checked) {
+            if (document.getElementsByName("inpmLocatorId"+frm.inpOrder[i].value)[0].value==null ||
+                document.getElementsByName("inpmLocatorId"+frm.inpOrder[i].value)[0].value=="") {
+              setWindowElementFocus(document.getElementsByName("inpmLocatorId_D"+frm.inpOrder[i].value)[0]);
+              showJSMessage(1);
+              return false;
+            }
+            if (document.getElementsByName("inpQtyordered"+frm.inpOrder[i].value)[0].value==null ||
+                document.getElementsByName("inpQtyordered"+frm.inpOrder[i].value)[0].value=="") {
+              setWindowElementFocus(document.getElementsByName("inpQtyordered"+frm.inpOrder[i].value)[0]);
+              showJSMessage(1);
+              return false;
+            }
+          }
+        }
+      }
 	} else if (action=="FIND") {
 			if (frm.inpadOrgId.value==null || frm.inpadOrgId.value=="") {
 			setWindowElementFocus(frm.inpadOrgId);
