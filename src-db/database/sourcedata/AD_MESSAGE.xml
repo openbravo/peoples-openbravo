@@ -8687,7 +8687,7 @@
 <!--800199-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800199-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800199-->  <VALUE><![CDATA[AD_USER_UN_USERNAME]]></VALUE>
-<!--800199-->  <MSGTEXT><![CDATA[Already exists a user with the same  User name . Input a different one]]></MSGTEXT>
+<!--800199-->  <MSGTEXT><![CDATA[A user with the same name already exists. Enter a different name for this user]]></MSGTEXT>
 <!--800199-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800199-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800199--></AD_MESSAGE>
