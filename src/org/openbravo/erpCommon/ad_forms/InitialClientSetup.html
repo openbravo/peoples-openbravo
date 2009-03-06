@@ -6,15 +6,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
@@ -45,10 +45,11 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/genericTree.js" type="text/javascript"></script>
-<script type="text/javascript"> 
+<script language="JavaScript" src="../web/js/appStatus.js" type="text/javascript"></script>
+<script type="text/javascript">
       //all dojo.require above this line
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
-</script> 
+</script>
 <script language="JavaScript" type="text/javascript">
 function validate(action) {
 	var frm = document.frmMain;
@@ -73,7 +74,7 @@ function onloadFunctions() {
 		setTabTableParentElement();
 		enableShortcuts('edition');
 		setBrowserAutoComplete(false);
-		
+
 		try {
 		  onloadFunctions();
 		} catch (e) {}
@@ -86,9 +87,9 @@ function onloadFunctions() {
 	function onResizeDo(){
 		resizeArea();
 	}
-	
+
 	function myReadOnlyLogic() {
-	    var frm = document.frmMain; 
+	    var frm = document.frmMain;
 	    if (frm.inpCreateAccounting.checked==true){
 	      frm.inpBPartner.readOnly=false;
 	      frm.inpProduct.readOnly=false;
@@ -101,7 +102,7 @@ function onloadFunctions() {
 	      frm.inpCampaign.disabled=false;
 	      frm.inpSalesRegion.disabled=false;
 	      frm.inpFile.disabled=false;
-	                                           
+
 	    } else {
 	      frm.inpBPartner.checked=false;
 	      frm.inpProduct.checked=false;
@@ -126,7 +127,7 @@ function onloadFunctions() {
 	</script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-  <form name="frmMain" method="post" action="InitialClientSetup.html" enctype="multipart/form-data" id="form"> 
+  <form name="frmMain" method="post" action="InitialClientSetup.html" enctype="multipart/form-data" id="form">
   <input type="hidden" name="Command"></input>
   <input type="hidden" name="inpLastFieldChanged" value="">
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
@@ -265,7 +266,7 @@ function onloadFunctions() {
                     </table>
                   </td>
                 </tr>
- 
+
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Client</span></td>
                   <td class="TextBox_ContentCell" colspan="2">
@@ -303,7 +304,7 @@ function onloadFunctions() {
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Include accounting</span></td>
                   <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" checked name="inpCreateAccounting" id="fieldCreateAccounting" value="-1" onclick="myReadOnlyLogic();return true;"></input></span></td>
-                </tr>  
+                </tr>
 
                 <tr id="Accounting_tr">
                   <td class="TitleCell"><span class="LabelText">Accounting File</span></td>
@@ -330,7 +331,7 @@ function onloadFunctions() {
                     </table>
                   </td>
                 </tr>
-                
+
                 <tr id="selEliminar">
                   <td></td>
                   <td colspan="4">
@@ -339,7 +340,7 @@ function onloadFunctions() {
                           <span class="PlainText_normal" style="color: transparent; _color: #E8E8E8;">....</span>
                           <span class="LabelText">
                             <a class="LabelLink_noicon" href="#" onclick="return false;">All</a>
-                
+
                           </span>
                           <span class="PlainText_normal" style="color: transparent; _color: #E8E8E8;">....</span>
                           <span class="LabelText">
@@ -347,17 +348,17 @@ function onloadFunctions() {
                           </span>
                       </div>
                       <div style="float: right; margin: 0 20 0 0; white-space: nowrap;">
-                          
-                      </div> 
+
+                      </div>
                     <table width="100%" border="0" cellpadding="0" cellspacing="0">
-                
+
                         <tr><td style="height: 5px; _height: 0px;"></td></tr>
                        <tr>
                         <td colspan="4">
                           <div style="height: 0px; width: 0px;">
                             <input type="text" class="DataGrid_Table_Dummy_Input"></input>
                           </div>
-                          <div class="TextArea_FourCells_width Tree_Container_Small" onclick="return false;"> 
+                          <div class="TextArea_FourCells_width Tree_Container_Small" onclick="return false;">
                             <div style="padding: 5 5 5 5;">
                             </div>
                           </div>
@@ -366,7 +367,7 @@ function onloadFunctions() {
                     </table>
                   </td>
                 </tr>
-                
+
                 <tr>
 	                <td></td>
 	                <PARAMETER_TMP id="moduleTree"/>
@@ -375,7 +376,7 @@ function onloadFunctions() {
                   <td></td>
                   <PARAMETER_TMP id="moduleTreeDescription"/>
                 <tr/>
-                
+
                 <tr id="Accounting_Dimensions_tr">
                   <td colspan="6">
                     <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
