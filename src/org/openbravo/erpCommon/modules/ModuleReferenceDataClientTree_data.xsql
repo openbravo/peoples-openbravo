@@ -48,16 +48,11 @@
                      '' as updatedescription,
                      '' as position
            FROM AD_Module M, AD_DATASET
-          WHERE NOT EXISTS (SELECT 1
-                              FROM AD_Module_Dependency
-                             WHERE AD_Dependent_Module_ID = M.AD_Module_ID
-                               AND IsIncluded = 'Y')
+          WHERE M.TYPE = 'M'
             AND M.ISACTIVE = 'Y'
             AND 1=1
             AND M.HASREFERENCEDATA = 'Y'
-            AND EXISTS (SELECT 1 FROM AD_DATASET
-                        WHERE AD_DATASET.AD_MODULE_ID = M.AD_MODULE_ID
-                        AND EXPORTALLOWED = 'Y')
+            AND EXPORTALLOWED = 'Y'
             AND M.ad_module_id = AD_DATASET.ad_module_id
             AND AD_DATASET.ACCESSLEVEL IN ('3','6')
           ORDER BY M.SeqNo
