@@ -198,6 +198,11 @@ public class TranslationHandler {
       setTabLabels();
     } else if (fileName != null && !fileName.equals("")) {
       String textFileName = fileName.replace(baseDesignPath, "");
+      if (textFileName.contains("?")) {
+        String suffix = textFileName.substring(textFileName.lastIndexOf("."));
+        String prefix = textFileName.substring(0, textFileName.indexOf("?"));
+        textFileName = prefix + suffix;
+      }
       formLabels = TranslationUtils.processFormLabels(conn, textFileName, language);
     }
   }
