@@ -13,6 +13,7 @@ package org.openbravo.xmlEngine;
 
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -49,6 +50,7 @@ public class XmlVectorValue extends Vector<Object> {
       if (textMap != null) {
         if (xmlComponentValue.print() != null && !xmlComponentValue.print().startsWith("<")
             && !xmlComponentValue.print().equals("")) {
+          boolean isTranslated = false;
           result = xmlComponentValue.print();
           log4jXmlVectorValue.debug("printStringBuffer(HashMap<String, String> textMap) - result: "
               + result);
@@ -58,6 +60,61 @@ public class XmlVectorValue extends Vector<Object> {
             log4jXmlVectorValue.debug("printStringBuffer() appending xmlComponentValue: "
                 + xmlComponentValue.print() + ", translation: " + translation);
             result = translation;
+            isTranslated = true;
+          }
+          if (!isTranslated) {
+            if (DataValue.class.isInstance(xmlComponentValue)) {
+              DataValue dataValue = (DataValue) xmlComponentValue;
+              if (dataValue.dataTemplate != null) {
+                DataTemplate dataTemplate = dataValue.dataTemplate;
+                if (dataTemplate.vecSectionTemplate != null) {
+                  Vector<Object> vecSectionTemplate = dataTemplate.vecSectionTemplate;
+                  for (Iterator iterator = vecSectionTemplate.iterator(); iterator.hasNext();) {
+                    SectionTemplate sectionTemplate = (SectionTemplate) iterator.next();
+                    if (sectionTemplate.vecHeadTemplate != null) {
+                      XmlVectorTemplate xmlTemplate = sectionTemplate.vecHeadTemplate;
+                      for (Iterator iterator2 = xmlTemplate.iterator(); iterator2.hasNext();) {
+                        Object componentTemplate = (Object) iterator2.next();
+                        if (CharacterComponent.class.isInstance(componentTemplate)) {
+                          CharacterComponent charComponent = (CharacterComponent) componentTemplate;
+                          if (charComponent.character != null && !charComponent.equals("")) {
+                            String original = charComponent.character;
+                            String trl = textMap.get(original);
+                            if (trl != null && !trl.equals(""))
+                              charComponent.character = trl;
+                          }
+                          componentTemplate = charComponent;
+                        }
+                      }
+                      sectionTemplate.vecHeadTemplate = xmlTemplate;
+                    }
+
+                    if (sectionTemplate.vecFootTemplate != null) {
+                      XmlVectorTemplate xmlFootTemplate = sectionTemplate.vecFootTemplate;
+                      for (Iterator iterator2 = xmlFootTemplate.iterator(); iterator2.hasNext();) {
+                        Object componentTemplate = (Object) iterator2.next();
+                        if (CharacterComponent.class.isInstance(componentTemplate)) {
+                          CharacterComponent charComponent = (CharacterComponent) componentTemplate;
+                          if (charComponent.character != null && !charComponent.equals("")) {
+                            String original = charComponent.character;
+                            String trl = textMap.get(original);
+                            if (trl != null && !trl.equals(""))
+                              charComponent.character = trl;
+                          }
+                          componentTemplate = charComponent;
+                        }
+                      }
+                      sectionTemplate.vecFootTemplate = xmlFootTemplate;
+                    }
+                  }
+                  dataTemplate.vecSectionTemplate = vecSectionTemplate;
+                }
+                dataValue.dataTemplate = dataTemplate;
+              }
+              dataValue.printGenerated();
+              xmlComponentValue = dataValue;
+            }
+            result = xmlComponentValue.print();
           }
         }
       }
