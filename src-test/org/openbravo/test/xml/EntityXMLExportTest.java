@@ -22,6 +22,7 @@ package org.openbravo.test.xml;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
