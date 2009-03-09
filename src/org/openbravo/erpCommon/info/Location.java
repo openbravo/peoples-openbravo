@@ -161,8 +161,16 @@ public class Location extends HttpSecureAppServlet {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Location_F1")
           .createXmlDocument();
       xmlDocument.setParameter("Command", "NEW");
-      data = LocationSearchData.set(Utility.getDefault(this, vars, "C_Country_ID", "", strWindow,
-          ""));
+      // data = LocationSearchData.set(Utility.getDefault(this, vars, "C_Country_ID", "",
+      // strWindow,""));
+
+      // Set default country
+      String strDefaultCountry = LocationSearchData.selectDefaultCountry(this, vars.getOrg(),
+          Utility.getContext(this, vars, "#User_Client", strWindow));
+      if (strDefaultCountry.equals("")) {
+        strDefaultCountry = "106";
+      }
+      data = LocationSearchData.set(strDefaultCountry);
     } else {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Location_F1")
           .createXmlDocument();
