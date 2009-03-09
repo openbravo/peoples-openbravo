@@ -1043,6 +1043,11 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       boolean hasProject, boolean hasMCampaign, boolean hasSRegion, String strCreateAccounting)
       throws ServletException, IOException {
     if (strModules != null && !strModules.equals("")) {
+      // Remove ( ) characters from the In string as it causes a failure
+      if (strModules.charAt(0) == '(')
+        strModules = strModules.substring(1, strModules.length());
+      if (strModules.charAt(strModules.length() - 1) == ')')
+        strModules = strModules.substring(0, strModules.length() - 1);
       InitialOrgSetupData[] data = InitialOrgSetupData.selectModules(this, strModules);
       data = orderModuleByDependency(data);
       if (data != null && data.length != 0) {
@@ -1052,9 +1057,16 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             final String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules" + data[i].path;
             final FileInputStream in = new FileInputStream(strPath);
             final AccountingValueData av = new AccountingValueData(vars, in, true, "C");
-            createAccounting(vars, strOrganization, C_Currency_ID, InitialOrgSetupData.currency(
-                this, C_Currency_ID), hasProduct, hasBPartner, hasProject, hasMCampaign,
-                hasSRegion, av.getFieldProvider());
+            m_info.append(SALTO_LINEA).append(
+                Utility.messageBD(this, "StartingAccounting", vars.getLanguage())).append(
+                SALTO_LINEA);
+            if (!createAccounting(vars, strOrganization, C_Currency_ID, InitialOrgSetupData
+                .currency(this, C_Currency_ID), hasProduct, hasBPartner, hasProject, hasMCampaign,
+                hasSRegion, av.getFieldProvider())) {
+              m_info.append(SALTO_LINEA).append(
+                  Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(
+                  SALTO_LINEA);
+            }
           }
           final String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules/"
               + data[i].javapackage + "/referencedata/standard";
@@ -1107,13 +1119,12 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
                 Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
                 SALTO_LINEA);
           }
-          return "";
         }
+        return "";
       } else
         return "WrongModules";
     } else
       return "NoModules";
-    return "";
   }
 
   /**

@@ -1415,11 +1415,33 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     return C_DocType_ID;
   } // createDocType
 
+  /**
+   * Returns the error. "" if there is no error
+   * 
+   * @param conn
+   * @param vars
+   * @param strClient
+   * @param strModules
+   * @param strCurrency
+   * @param hasProduct
+   * @param hasBPartner
+   * @param hasProject
+   * @param hasMCampaign
+   * @param hasSRegion
+   * @param bCreateAccounting
+   * @return
+   */
+
   public String createReferenceData(Connection conn, VariablesSecureApp vars, String strClient,
       String strModules, String strCurrency, boolean hasProduct, boolean hasBPartner,
       boolean hasProject, boolean hasMCampaign, boolean hasSRegion, boolean bCreateAccounting)
-      throws ServletException, IOException {
+      throws ServletException, IOException, SQLException, NoConnectionAvailableException {
     if (strModules != null && !strModules.equals("")) {
+      // Remove ( ) characters from the In string as it causes a failure
+      if (strModules.charAt(0) == '(')
+        strModules = strModules.substring(1, strModules.length());
+      if (strModules.charAt(strModules.length() - 1) == ')')
+        strModules = strModules.substring(0, strModules.length() - 1);
       InitialClientSetupData[] data = InitialClientSetupData.selectModules(this, strModules);
       data = orderModuleByDependency(data);
       if (data != null && data.length != 0) {
@@ -1429,9 +1451,18 @@ public class InitialClientSetup extends HttpSecureAppServlet {
             String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules" + data[i].path;
             FileInputStream in = new FileInputStream(strPath);
             AccountingValueData av = new AccountingValueData(vars, in, true, "C");
-            createAccounting(conn, vars, strCurrency, InitialClientSetupData.currency(this,
+            m_info.append(SALTO_LINEA).append(
+                Utility.messageBD(this, "StartingAccounting", vars.getLanguage())).append(
+                SALTO_LINEA);
+            if (!createAccounting(conn, vars, strCurrency, InitialClientSetupData.currency(this,
                 strCurrency), hasProduct, hasBPartner, hasProject, hasMCampaign, hasSRegion, av
-                .getFieldProvider());
+                .getFieldProvider())) {
+              releaseRollbackConnection(conn);
+              conn = this.getTransactionConnection();
+              m_info.append(SALTO_LINEA).append(
+                  Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(
+                  SALTO_LINEA);
+            }
           }
           String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules/" + data[i].javapackage
               + "/referencedata/standard";
@@ -1452,6 +1483,23 @@ public class InitialClientSetup extends HttpSecureAppServlet {
                 Client.class, strClient), (Organization) OBDal.getInstance().get(
                 Organization.class, "'0'"), strXml, (Module) OBDal.getInstance().get(Module.class,
                 data[i].adModuleId));
+            m_info.append(SALTO_LINEA).append("File: ").append(myFiles[j].getName()).append(":")
+                .append(SALTO_LINEA);
+            if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
+                && !myResult.getLogMessages().equals("null")) {
+              m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
+              m_info.append(SALTO_LINEA).append(myResult.getLogMessages()).append(SALTO_LINEA);
+            }
+            if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
+                && !myResult.getWarningMessages().equals("null")) {
+              m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
+              m_info.append(SALTO_LINEA).append(myResult.getWarningMessages()).append(SALTO_LINEA);
+            }
+            if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
+                && !myResult.getErrorMessages().equals("null")) {
+              m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
+              m_info.append(SALTO_LINEA).append(myResult.getErrorMessages()).append(SALTO_LINEA);
+            }
             if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals(""))
               strError = strError.append(myResult.getErrorMessages());
           }
@@ -1467,13 +1515,12 @@ public class InitialClientSetup extends HttpSecureAppServlet {
                 Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
                 SALTO_LINEA);
           }
-          return "";
         }
+        return "";
       } else
         return "WrongModules";
     } else
       return "NoModules";
-    return strError;
   }
 
   /**
