@@ -60,14 +60,14 @@ public class LoginHandler extends HttpBaseServlet {
           // login failed, no roles specified
           // remove authenticated user
           req.getSession(true).setAttribute("#Authenticated_user", null);
-          goToRetry(res, vars);
+          goToRetry(res, vars, e.getMessage());
           return;
         }
 
         goToTarget(res, vars);
 
       } else {
-        goToRetry(res, vars);
+        goToRetry(res, vars, null);
       }
     }
   }
@@ -82,7 +82,8 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
-  private void goToRetry(HttpServletResponse response, VariablesSecureApp vars) throws IOException {
+  private void goToRetry(HttpServletResponse response, VariablesSecureApp vars, String message)
+      throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
 
@@ -90,8 +91,12 @@ public class LoginHandler extends HttpBaseServlet {
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("messageType", "Error");
     xmlDocument.setParameter("messageTitle", "Identification failure. Try again.");
-    xmlDocument.setParameter("messageMessage", "Please enter your username and password. "
-        + "<br>You must also ensure that your browser accepts cookies.<br>Press back to return.");
+    xmlDocument
+        .setParameter(
+            "messageMessage",
+            (message != null && !message.equals("")) ? message
+                : "Please enter your username and password. "
+                    + "<br>You must also ensure that your browser accepts cookies.<br>Press back to return.");
 
     response.setContentType("text/html");
     final PrintWriter out = response.getWriter();
