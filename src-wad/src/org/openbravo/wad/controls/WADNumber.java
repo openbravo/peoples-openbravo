@@ -21,6 +21,7 @@ package org.openbravo.wad.controls;
 import java.util.Properties;
 
 import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.wad.WadUtility;
 
 public class WADNumber extends WADControl {
   private WADControl button;
@@ -171,6 +172,18 @@ public class WADNumber extends WADControl {
         "org/openbravo/wad/controls/WADNumberXML", discard).createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
+    if (WadUtility.isDecimalNumber(getData("AD_Reference_ID")))
+      xmlDocument.setParameter("columnFormat", "euroEdition");
+    else if (WadUtility.isQtyNumber(getData("AD_Reference_ID")))
+      xmlDocument.setParameter("columnFormat", "qtyEdition");
+    else if (WadUtility.isPriceNumber(getData("AD_Reference_ID")))
+      xmlDocument.setParameter("columnFormat", "priceEdition");
+    else if (WadUtility.isIntegerNumber(getData("AD_Reference_ID")))
+      xmlDocument.setParameter("columnFormat", "integerEdition");
+    else if (WadUtility.isGeneralNumber(getData("AD_Reference_ID")))
+      xmlDocument.setParameter("columnFormat", "generalQtyEdition");
+    else
+      xmlDocument.setParameter("columnFormat", "qtyEdition");
     return replaceHTML(xmlDocument.print());
   }
 
