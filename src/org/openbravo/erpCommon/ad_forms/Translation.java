@@ -381,7 +381,7 @@ public class Translation extends HttpSecureAppServlet {
     Statement st = null;
     try {
       String trlTable = table;
-      if (trl)
+      if (trl && !table.endsWith("_TRL"))
         trlTable = table + "_TRL";
       final TranslationData[] trlColumns = getTrlColumns(table);
       final String keyColumn = table + "_ID";
@@ -493,7 +493,7 @@ public class Translation extends HttpSecureAppServlet {
       if (!new File(directory).exists())
         (new File(directory)).mkdir();
 
-      String fileName = directory + trlTable + "_TRL" + "_" + AD_Language + ".xml";
+      String fileName = directory + trlTable + "_" + AD_Language + ".xml";
       log4j.info("exportTrl - " + fileName);
       out = new File(fileName);
 
@@ -521,7 +521,7 @@ public class Translation extends HttpSecureAppServlet {
           if (!new File(directory).exists())
             (new File(directory)).mkdir();
 
-          fileName = directory + trlTable + "_TRL" + "_" + AD_Language + ".xml";
+          fileName = directory + trlTable + "_" + AD_Language + ".xml";
           log4j.info("exportTrl - " + fileName);
           out = new File(fileName);
         }
