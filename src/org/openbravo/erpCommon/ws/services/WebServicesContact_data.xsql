@@ -25,7 +25,7 @@
 	    <Sql>
 	      <![CDATA[
 	        SELECT AD_USER_ID, AD_CLIENT_ID, C_BPARTNER_ID,
-			       FIRSTNAME, LASTNAME, EMAILUSER, PHONE, PHONE2, FAX
+			       FIRSTNAME, LASTNAME, EMAIL, PHONE, PHONE2, FAX
 			  FROM AD_USER 
 			 WHERE AD_CLIENT_ID = ?
 			   AND C_BPARTNER_ID = ?
@@ -42,7 +42,7 @@
 	        UPDATE AD_USER SET 
 	               FIRSTNAME = ?,
 	               LASTNAME = ?,
-	               EMAILUSER = ?,
+	               EMAIL = ?,
 	               PHONE = ?,
 	               PHONE2 = ?,
 	               FAX = ?            
@@ -52,7 +52,7 @@
       ]]></Sql>      
       <Parameter name="firstName"/>
       <Parameter name="lastName"/>
-      <Parameter name="emailUser"/>
+      <Parameter name="email"/>
       <Parameter name="phone"/>
       <Parameter name="phone2"/>
       <Parameter name="fax"/>
