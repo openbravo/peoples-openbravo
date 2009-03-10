@@ -56,7 +56,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    String process = ReportCashFlowData.processId(this, "ReportCashFlow");
+    String process = ReportCashFlowData.processId(this, "CashFlowStatement");
     if (vars.commandIn("DEFAULT")) {
       String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
           "ReportCashFlow|cAcctSchemaId", "");
