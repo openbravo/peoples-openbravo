@@ -40,6 +40,10 @@
         FROM AD_MODULE M
        WHERE (M.STATUS = 'I' OR STATUS = 'P')
          AND M.HASREFERENCEDATA = 'Y'
+         AND EXISTS (SELECT 1 
+                       FROM AD_DATASET
+                       WHERE AD_MODULE_ID = M.AD_MODULE_ID
+                       AND ACCESSLEVEL IN ('4','6'))
     ]]></Sql>
   </SqlMethod>
   
