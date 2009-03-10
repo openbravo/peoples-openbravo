@@ -85,7 +85,7 @@ public class AccessLevelChecker {
   public static final AccessLevelChecker CLIENT_ORGANIZATION = new AccessLevelChecker() {
     @Override
     public void checkAccessLevel(String entity, String clientId, String orgId) {
-      // failOnZeroClient(entity, clientId);
+      failOnZeroClient(entity, clientId);
     }
   };
 

@@ -93,4 +93,19 @@
       <Parameter name="cCountryId"/>
       <Parameter name="cRegionId"/>
    </SqlMethod>
+   
+   <SqlMethod name="selectDefaultCountry" type="preparedStatement" return="String">
+   <SqlMethodComment>Select Organization</SqlMethodComment>
+   <Sql><![CDATA[
+    SELECT MIN(l.C_COUNTRY_ID) FROM AD_ORG o
+                left join AD_ORGINFO oinf on oinf.AD_ORG_ID = o.AD_ORG_ID
+                left join C_LOCATION l on oinf.C_LOCATION_ID = l.C_LOCATION_ID
+    WHERE
+     ? IN (o.AD_ORG_ID, '0')
+    AND o.ISACTIVE = 'Y'                     
+    AND o.AD_Client_ID IN ('1')
+    ]]></Sql>
+   <Parameter name="adOrgId"/>   
+   <Parameter name="adUserClient"  type="replace" optional="true"  after="o.AD_Client_ID IN (" text="'1'"/>
+   </SqlMethod>   
 </SqlClass>

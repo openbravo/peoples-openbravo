@@ -248,10 +248,7 @@ public class DatabaseValidator implements SystemValidator {
 
     final String moduleId = (getValidateModule() == null ? null : getValidateModule().getId());
     for (Column column : adTable.getADColumnList()) {
-      final boolean checkColumn = moduleId == null
-          || (adTable.getDataPackage().getModule() != null && adTable.getDataPackage().getModule()
-              .getId().equals(moduleId))
-          || (column.getModule() != null && column.getModule().getId().equals(moduleId));
+      final boolean checkColumn = moduleId == null || (column.getModule().getId().equals(moduleId));
       if (!checkColumn) {
         continue;
       }

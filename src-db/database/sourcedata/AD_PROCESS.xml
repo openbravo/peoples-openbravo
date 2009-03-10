@@ -5315,6 +5315,7 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800206-->  <VALUE><![CDATA[CashFlowStatement]]></VALUE>
 <!--800206-->  <NAME><![CDATA[Cash Flow Statement]]></NAME>
 <!--800206-->  <DESCRIPTION><![CDATA[Cash Flow Statement]]></DESCRIPTION>
+<!--800206-->  <HELP><![CDATA[Cash Flow Statement]]></HELP>
 <!--800206-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800206-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800206-->  <ISREPORT><![CDATA[Y]]></ISREPORT>

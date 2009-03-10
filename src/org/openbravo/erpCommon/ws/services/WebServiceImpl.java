@@ -238,7 +238,7 @@ public class WebServiceImpl implements WebService {
         customerContact.setLastName(data[0].lastname);
         customerContact.setPhone(data[0].phone);
         customerContact.setPhone2(data[0].phone2);
-        customerContact.setEmail(data[0].emailuser);
+        customerContact.setEmail(data[0].email);
         customerContact.setFax(data[0].fax);
       }
     } catch (Exception e) {
