@@ -25,7 +25,7 @@
    <Number name="euroInform"
        decimal="," grouping="." formatOutput="#,##0.00" formatInternal="#0.00" />
    <Number name="euroRelation"
-       decimal="." grouping="," formatOutput="#,##0.##" formatInternal="#0.00" />
+       decimal="." grouping="," formatOutput="#,##0.00" formatInternal="#0.00" />
    <Number name="euroEdition"
        decimal="." grouping="," formatOutput="#0.00" formatInternal="#0.00" />
    <Number name="euroExcel"
@@ -33,7 +33,7 @@
    <Number name="priceInform"
        decimal="," grouping="." formatOutput="#,##0.##" formatInternal="#0.00" />
    <Number name="priceRelation"
-       decimal="." grouping="," formatOutput="#,##0.##" formatInternal="#0.00" />
+       decimal="." grouping="," formatOutput="#,##0.00" formatInternal="#0.00" />
    <Number name="priceEdition"
        decimal="." grouping="," formatOutput="#0.00" formatInternal="#0.00" />
    <Number name="integerInform"
