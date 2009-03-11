@@ -948,7 +948,7 @@ The User Assignment Tab displays Users who have been defined for this Role.]]></
 <!--164-->  <TABLENAME><![CDATA[C_Region]]></TABLENAME>
 <!--164-->  <CLASSNAME><![CDATA[Region]]></CLASSNAME>
 <!--164-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--164-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--164-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
 <!--164-->  <AD_WINDOW_ID><![CDATA[122]]></AD_WINDOW_ID>
 <!--164-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--164-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
@@ -1487,7 +1487,7 @@ The Product Details allows you to display and maintain all products for a select
 <!--217-->  <TABLENAME><![CDATA[C_DocType]]></TABLENAME>
 <!--217-->  <CLASSNAME><![CDATA[DocumentType]]></CLASSNAME>
 <!--217-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--217-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--217-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--217-->  <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
 <!--217-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--217-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
