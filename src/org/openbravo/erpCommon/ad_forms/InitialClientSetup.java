@@ -1481,7 +1481,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
             String strXml = Utility.fileToString(myFiles[j].getPath());
             ImportResult myResult = myData.importDataFromXML((Client) OBDal.getInstance().get(
                 Client.class, strClient), (Organization) OBDal.getInstance().get(
-                Organization.class, "'0'"), strXml, (Module) OBDal.getInstance().get(Module.class,
+                Organization.class, "0"), strXml, (Module) OBDal.getInstance().get(Module.class,
                 data[i].adModuleId));
             m_info.append(SALTO_LINEA).append("File: ").append(myFiles[j].getName()).append(":")
                 .append(SALTO_LINEA);
