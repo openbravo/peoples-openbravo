@@ -80,7 +80,7 @@ BEGIN
       WHERE parent_id = p_Run_ProductionLine_ID
       ) LOOP
       IF v_qty > 0 THEN
-        SELECT (DEPQTY/PROQTY)*v_qty, (DEPQTY/PROQTY)*v_qty INTO v_qty_new, v_neededqty_new
+        SELECT ROUND(((DEPQTY/PROQTY)*v_qty)+0.0005,3), ROUND(((DEPQTY/PROQTY)*v_qty)+0.0005,3) INTO v_qty_new, v_neededqty_new
         FROM MA_PROCESSPLAN_TOTALIZED
         WHERE PRODUCED = v_Product
           AND DEPENDANTPRODUCT = Cur_Childs.M_PRODUCT_ID;
