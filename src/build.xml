@@ -74,7 +74,6 @@ build.war: build a war file in the lib directory.
 
   <property name="base.translate.structure" value="org/openbravo/erpWindows" />
   <property name="client.web.xml" value="${base.client.src}/web.xml" />
-  <property name="package" value="" />
   <property name="extension" value="html" />
   <property name="src" value="." />
   <property name="tr" value="yes" />
@@ -582,7 +581,7 @@ build.war: build a war file in the lib directory.
 
   <target name="compile.translate.modules">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}'/Openbravo.properties ${extension} ${base.modules} '${package}' '*/src'" />
+      <arg line="'${base.config}'/Openbravo.properties ${extension} ${base.modules} '*/src'" />
       <classpath refid="project.class.path" />
     </java>
   </target>
@@ -597,7 +596,7 @@ build.war: build a war file in the lib directory.
 
   <target name="compile.translate">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}'/Openbravo.properties ${extension} ${basedir} ${package}" />
+      <arg line="'${base.config}'/Openbravo.properties ${extension} ${basedir}" />
       <classpath refid="project.class.path" />
     </java>
   </target>
