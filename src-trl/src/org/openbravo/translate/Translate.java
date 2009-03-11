@@ -129,18 +129,16 @@ public class Translate extends DefaultHandler implements LexicalHandler {
 
     if (argv.length < 3) {
       log4j
-          .error("Usage: java Translate Openbravo.properties fileTermination sourceDir relativePath");
+          .error("Usage: java Translate Openbravo.properties fileTermination sourceDir");
       return;
     }
 
     final Translate translate = new Translate(argv[0], argv[1]);
 
     dirIni = argv[2].replace("\\", "/");
-    if (argv.length > 3)
-      relativePath = argv[3];
 
-    if (argv.length > 4) {
-      moduleDirectories = getDirectories(argv[4]);
+    if (argv.length > 3) {
+      moduleDirectories = getDirectories(argv[3]);
       log4j.info("Translation for modules");
     }
     boolFilter = true;
@@ -150,7 +148,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
 
     final File path = new File(dirIni, relativePath);
     if (!path.exists()) {
-      log4j.error("Can´t find directory: " + dirIni);
+      log4j.error("Can't find directory: " + dirIni);
       translate.destroy();
       return;
     }
