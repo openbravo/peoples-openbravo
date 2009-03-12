@@ -251,7 +251,7 @@ public class DataGrid extends HttpSecureAppServlet {
       numberFormatDecimal = new DecimalFormat(format, dfs);
     }
     // values used for formatting Quantities (read from Format.xml file)
-    format = vars.getSessionValue("#FormatOutput|qytRelation");
+    format = vars.getSessionValue("#FormatOutput|qtyRelation");
     decimal = vars.getSessionValue("#DecimalSeparator|qtyRelation");
     group = vars.getSessionValue("#GroupSeparator|qtyRelation");
     DecimalFormat numberFormatQuantity = null;
