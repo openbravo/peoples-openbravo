@@ -315,7 +315,7 @@
 	AND c.ISMANUAL = 'Y'
 	AND c.ISPAID = 'N';
 	IF v_Aux>0 THEN
-	   RAISE '@ManualDebtpayment@'||' "'||v_column_identifier||'" '||'@CanNotBeSplit@';
+	   RAISE_APPLICATION_ERROR(-20000, '@ManualDebtpayment@'||' "'||v_column_identifier||'" '||'@CanNotBeSplit@') ;
 	   END IF;
     END IF;--FINISH_PROCESS
 
