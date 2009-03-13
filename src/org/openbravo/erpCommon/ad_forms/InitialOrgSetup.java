@@ -1074,7 +1074,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
           File[] myFiles = myDir.listFiles();
           final ArrayList<File> myTargetFiles = new ArrayList<File>();
           if (myFiles == null)
-            return "";
+            continue;
           for (int j = 0; j < myFiles.length; j++) {
             if (myFiles[j].getName().endsWith(".xml"))
               myTargetFiles.add(myFiles[j]);
