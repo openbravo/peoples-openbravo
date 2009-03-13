@@ -367,6 +367,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       }
     } catch (final Exception e) {
       log4j.error("Error captured: " + e);
+      e.printStackTrace();
       if (strPopUp != null && !strPopUp.equals(""))
         bdErrorGeneralPopUp(request, response, "Error", e.toString());
       else
