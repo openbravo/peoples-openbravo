@@ -32,7 +32,12 @@ public class Version {
     for (int i = 0; i < minorVers; i++) {
       if (version1[i].equals(version2[i]))
         continue;
-      return new Integer(version1[i]).compareTo(new Integer(version2[i]));
+      try {
+        return new Integer(version1[i]).compareTo(new Integer(version2[i]));
+      } catch (NumberFormatException e) {
+        //Not possible to compare
+        return -1;
+      }
     }
     return 0;
   }
