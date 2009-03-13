@@ -1470,7 +1470,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
           File[] myFiles = myDir.listFiles();
           ArrayList<File> myTargetFiles = new ArrayList<File>();
           if (myFiles == null)
-            return "";
+            continue;
           for (int j = 0; myFiles != null && j < myFiles.length; j++) {
             if (myFiles[j].getName().endsWith(".xml"))
               myTargetFiles.add(myFiles[j]);
@@ -1516,11 +1516,11 @@ public class InitialClientSetup extends HttpSecureAppServlet {
                 SALTO_LINEA);
           }
         }
-        return "";
       } else
         return "WrongModules";
     } else
       return "NoModules";
+    return "";
   }
 
   /**
