@@ -142,7 +142,7 @@ class DataValue implements XmlComponentValue {
         query();
         return execute();
       } else {
-        if (dataArray != null) { // if there is array set the actual
+        if (dataArray != null && dataArray.length > iArray) { // if there is array set the actual
           // data
           data = dataArray[iArray];
           iArray++;
