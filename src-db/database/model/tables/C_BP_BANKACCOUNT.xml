@@ -109,7 +109,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="BANK_NAME" primaryKey="false" required="false" type="VARCHAR" size="50" autoIncrement="false">
+      <column name="BANK_NAME" primaryKey="false" required="false" type="NVARCHAR" size="50" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
