@@ -108,7 +108,7 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
       icl.setDescription("desc " + ic.getName());
       final InventoryCountLine icl2 = ic.getMaterialMgmtInventoryCountLineList().get(0);
       icl2.setQuantityOrderBook(new BigDecimal((icl2.getQuantityOrderBook() == null ? 0f : icl2
-          .getQuantityOrderBook().floatValue()) + 1f));
+          .getQuantityOrderBook().floatValue() + 1f)));
       OBDal.getInstance().save(ic);
     }
     OBDal.getInstance().commitAndClose();
