@@ -45,6 +45,7 @@
         M_PRODUCT_UOM_ID, DESCRIPTION, C_CURRENCY_ID
         FROM C_ORDERLINE
         WHERE C_ORDER_ID = ?
+        ORDER BY LINE ASC
       ]]>
     </Sql>
     <Parameter name="cOrderLineId"/>
