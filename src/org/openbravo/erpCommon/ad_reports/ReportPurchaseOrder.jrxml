@@ -303,7 +303,7 @@
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Client]]></text>
+				<text><![CDATA[Customer]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
