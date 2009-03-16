@@ -241,7 +241,7 @@
 <!--130-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--130-->  <NAME><![CDATA[AD_Org Trx Security validation]]></NAME>
 <!--130-->  <TYPE><![CDATA[S]]></TYPE>
-<!--130-->  <CODE><![CDATA[AD_Org.AD_Org_ID<> '0']]></CODE>
+<!--130-->  <CODE><![CDATA[AD_Org.AD_Org_ID<> '0' AND AD_Org.IsReady='Y']]></CODE>
 <!--130-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--130--></AD_VAL_RULE>
 
