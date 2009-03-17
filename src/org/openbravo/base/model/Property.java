@@ -343,6 +343,9 @@ public class Property {
       if (getPrimitiveType() == Float.class || getPrimitiveType() == float.class) {
         return defaultValue + "f";
       }
+      if (getPrimitiveType() == Long.class || getPrimitiveType() == long.class) {
+        return "(long)" + defaultValue;
+      }
       if (getPrimitiveType() == String.class) {
         if (defaultValue.length() > 1
             && (defaultValue.startsWith("'") || defaultValue.startsWith("\""))) {
