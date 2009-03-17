@@ -97,7 +97,8 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
         return new ArrayList<BaseOBObject>();
       }
       return process(xmlReader);
-
+    } catch (final EntityXMLException xe) {
+      throw xe;
     } catch (final Exception e) {
       throw new EntityXMLException(e);
     }
@@ -145,6 +146,11 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
         final LocalElement element = getElement(xmlReader);
 
         final BaseOBObject bob = processEntityElement(element, xmlReader, false);
+
+        if (hasErrorOccured()) {
+          return result;
+        }
+
         // only add it if okay
         if (bob != null && !checkDuplicates.contains(bob)) {
           result.add(bob);

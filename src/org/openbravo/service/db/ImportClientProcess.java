@@ -68,13 +68,13 @@ public class ImportClientProcess implements org.openbravo.scheduling.Process {
             sb.append("\n");
           }
           sb.append(ir.getErrorMessages());
-          final OBError msg = new OBError();
-          msg.setType("Error");
-          msg.setMessage(sb.toString());
-          msg.setTitle("Errors occured");
-          bundle.setResult(msg);
-          return;
         }
+        final OBError msg = new OBError();
+        msg.setType("Error");
+        msg.setMessage(sb.toString());
+        msg.setTitle("Errors occured");
+        bundle.setResult(msg);
+        return;
       }
       final OBError msg = new OBError();
       msg.setType("Success");
