@@ -609,7 +609,7 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--162-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--162-->  <NAME><![CDATA[All_Payment Rule - Check/Transfer]]></NAME>
 <!--162-->  <TYPE><![CDATA[S]]></TYPE>
-<!--162-->  <CODE><![CDATA[AD_Ref_List.Value IN ('S','T')]]></CODE>
+<!--162-->  <CODE><![CDATA[AD_Ref_List.Value IN ('2','T')]]></CODE>
 <!--162-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--162--></AD_VAL_RULE>
 
