@@ -24212,7 +24212,7 @@
     <movementQuantity>120</movementQuantity>
     <physicalInventoryLine/>
     <movementLine/>
-    <shipmentReceiptLine id="1000051"/>
+    <goodsShipmentLine id="1000051"/>
     <productionLine/>
     <projectIssue/>
     <attributeSetValue id="0"/>
@@ -24233,7 +24233,7 @@
     <movementQuantity>-200</movementQuantity>
     <physicalInventoryLine/>
     <movementLine/>
-    <shipmentReceiptLine id="1000052"/>
+    <goodsShipmentLine id="1000052"/>
     <productionLine/>
     <projectIssue/>
     <attributeSetValue id="0"/>
@@ -24254,7 +24254,7 @@
     <movementQuantity>20</movementQuantity>
     <physicalInventoryLine/>
     <movementLine/>
-    <shipmentReceiptLine id="1000053"/>
+    <goodsShipmentLine id="1000053"/>
     <productionLine/>
     <projectIssue/>
     <attributeSetValue id="0"/>
@@ -24275,7 +24275,7 @@
     <movementQuantity>-20</movementQuantity>
     <physicalInventoryLine/>
     <movementLine/>
-    <shipmentReceiptLine id="1000054"/>
+    <goodsShipmentLine id="1000054"/>
     <productionLine/>
     <projectIssue/>
     <attributeSetValue id="0"/>
@@ -24296,7 +24296,7 @@
     <movementQuantity>-50</movementQuantity>
     <physicalInventoryLine/>
     <movementLine/>
-    <shipmentReceiptLine id="1000055"/>
+    <goodsShipmentLine id="1000055"/>
     <productionLine/>
     <projectIssue/>
     <attributeSetValue id="0"/>
@@ -24312,7 +24312,7 @@
     <active>true</active>
     <invoice id="1000040"/>
     <salesOrderLine id="1000066"/>
-    <shipmentReceiptLine id="1000051"/>
+    <goodsShipmentLine id="1000051"/>
     <lineNo>10</lineNo>
     <description/>
     <product id="1000064"/>
@@ -24344,7 +24344,7 @@
     <active>true</active>
     <invoice id="1000041"/>
     <salesOrderLine id="1000067"/>
-    <shipmentReceiptLine id="1000052"/>
+    <goodsShipmentLine id="1000052"/>
     <lineNo>10</lineNo>
     <description/>
     <product id="1000064"/>
@@ -24376,7 +24376,7 @@
     <active>true</active>
     <invoice id="1000042"/>
     <salesOrderLine id="1000068"/>
-    <shipmentReceiptLine id="1000053"/>
+    <goodsShipmentLine id="1000053"/>
     <lineNo>10</lineNo>
     <description/>
     <product id="1000064"/>
@@ -24408,7 +24408,7 @@
     <active>true</active>
     <invoice id="1000043"/>
     <salesOrderLine id="1000069"/>
-    <shipmentReceiptLine id="1000054"/>
+    <goodsShipmentLine id="1000054"/>
     <lineNo>10</lineNo>
     <description/>
     <product id="1000064"/>
@@ -24440,7 +24440,7 @@
     <active>true</active>
     <invoice id="1000044"/>
     <salesOrderLine id="1000070"/>
-    <shipmentReceiptLine id="1000055"/>
+    <goodsShipmentLine id="1000055"/>
     <lineNo>10</lineNo>
     <description/>
     <product id="1000064"/>
@@ -25327,7 +25327,7 @@
     <client id="1000001"/>
     <organization id="1000001"/>
     <active>true</active>
-    <shipmentReceiptLine id="1000051"/>
+    <goodsShipmentLine id="1000051"/>
     <invoiceLine id="1000086"/>
     <product id="1000064"/>
     <transactionDate>2007-12-11T00:00:00.0Z</transactionDate>
@@ -25341,7 +25341,7 @@
     <client id="1000001"/>
     <organization id="1000001"/>
     <active>true</active>
-    <shipmentReceiptLine id="1000053"/>
+    <goodsShipmentLine id="1000053"/>
     <invoiceLine id="1000088"/>
     <product id="1000064"/>
     <transactionDate>2007-12-11T00:00:00.0Z</transactionDate>
@@ -25357,7 +25357,7 @@
     <active>true</active>
     <salesOrderLine id="1000066"/>
     <product id="1000064"/>
-    <shipmentReceiptLine id="1000051"/>
+    <goodsShipmentLine id="1000051"/>
     <invoiceLine/>
     <transactionDate>2007-12-11T12:33:54.0Z</transactionDate>
     <quantity>120</quantity>
@@ -25372,7 +25372,7 @@
     <active>true</active>
     <salesOrderLine id="1000066"/>
     <product id="1000064"/>
-    <shipmentReceiptLine/>
+    <goodsShipmentLine/>
     <invoiceLine id="1000086"/>
     <transactionDate>2007-12-11T00:00:00.0Z</transactionDate>
     <quantity>120</quantity>
@@ -25387,7 +25387,7 @@
     <active>true</active>
     <salesOrderLine id="1000068"/>
     <product id="1000064"/>
-    <shipmentReceiptLine id="1000053"/>
+    <goodsShipmentLine id="1000053"/>
     <invoiceLine/>
     <transactionDate>2007-12-11T12:55:28.0Z</transactionDate>
     <quantity>20</quantity>
@@ -25402,7 +25402,7 @@
     <active>true</active>
     <salesOrderLine id="1000068"/>
     <product id="1000064"/>
-    <shipmentReceiptLine/>
+    <goodsShipmentLine/>
     <invoiceLine id="1000088"/>
     <transactionDate>2007-12-11T00:00:00.0Z</transactionDate>
     <quantity>20</quantity>
@@ -26113,7 +26113,7 @@
     <startingDate>2000-01-01T00:00:00.0Z</startingDate>
     <endingDate>2099-12-31T00:00:00.0Z</endingDate>
     <manual>true</manual>
-    <shipmentReceiptLine/>
+    <goodsShipmentLine/>
     <invoiceLine/>
     <quantity/>
     <price>15</price>
