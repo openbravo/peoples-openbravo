@@ -40,6 +40,8 @@
   v_Record_ID VARCHAR2(32);
   v_AD_User_ID VARCHAR2(32):='0';
   v_module_id varchar2(32);
+  v_fieldModule varchar2(32);
+  v_Aux number;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -111,7 +113,7 @@
     WHERE AD_Tab_ID=v_Record_ID  AND AD_Table_ID!='291'; -- C_BPartner (multiple tabs)
     
     FOR Cur_Column IN(-- added by Pablo Sarobe
-    SELECT c.Columnname, c.Name, c.Description, c.AD_Column_ID, c.FieldLength, t.tablename
+    SELECT c.Columnname, c.Name, c.Description, c.AD_Column_ID, c.FieldLength, t.tablename, c.AD_Module_ID
     FROM AD_Column c, AD_Table t
     WHERE NOT EXISTS
       (SELECT *
@@ -156,6 +158,19 @@
       IF(UPPER(v_LastColumnName)='UPDATEDBY' AND UPPER(Cur_Column.Columnname) LIKE '%_ID') THEN
         v_isReadOnly:='Y';
       END IF;
+      
+      select count(*)
+        into v_aux
+        from ad_module
+       where ad_module_id = Cur_Column.AD_Module_ID
+         and isInDevelopment='Y';
+         
+      if v_Aux!=0 then
+        v_fieldModule := Cur_Column.AD_Module_ID;
+      else
+        v_fieldModule := v_module_id;
+      end if;
+      
       INSERT
       INTO AD_Field
         (
@@ -170,7 +185,7 @@
         now(), '0', now(), '0',
         Cur_Column.Name, Cur_Column.Description, v_SeqNo, v_Record_ID,
         Cur_Column.AD_Column_ID, v_DisplayLength, 'Y', 
-        v_isDisplayed, v_isReadOnly, v_sortNo, v_sameLine, v_showInRelation, v_module_id) ;
+        v_isDisplayed, v_isReadOnly, v_sortNo, v_sameLine, v_showInRelation, v_fieldModule) ;
       --
       v_count:=v_count + 1;
       -- Added by Pablo Sarobe
