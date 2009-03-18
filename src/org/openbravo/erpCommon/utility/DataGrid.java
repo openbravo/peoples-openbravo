@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Vector;
@@ -380,35 +381,35 @@ public class DataGrid extends HttpSecureAppServlet {
             if ((adReferenceId.equals("12") || adReferenceId.equals("22"))
                 && numberFormatDecimal != null) {
               try {
-                value = numberFormatDecimal.format(new Double(value));
+                value = numberFormatDecimal.format(new BigDecimal(value));
               } catch (Exception e) {
                 e.printStackTrace();
               }
             }
             if ((adReferenceId.equals("29")) && numberFormatQuantity != null) {
               try {
-                value = numberFormatQuantity.format(new Double(value));
+                value = numberFormatQuantity.format(new BigDecimal(value));
               } catch (Exception e) {
                 e.printStackTrace();
               }
             }
             if ((adReferenceId.equals("800008")) && numberFormatPrice != null) {
               try {
-                value = numberFormatPrice.format(new Double(value));
+                value = numberFormatPrice.format(new BigDecimal(value));
               } catch (Exception e) {
                 e.printStackTrace();
               }
             }
             if ((adReferenceId.equals("11")) && numberFormatInteger != null) {
               try {
-                value = numberFormatInteger.format(new Double(value));
+                value = numberFormatInteger.format(new BigDecimal(value));
               } catch (Exception e) {
                 e.printStackTrace();
               }
             }
             if ((adReferenceId.equals("800019")) && numberFormatGeneral != null) {
               try {
-                value = numberFormatGeneral.format(new Double(value));
+                value = numberFormatGeneral.format(new BigDecimal(value));
               } catch (Exception e) {
                 e.printStackTrace();
               }
