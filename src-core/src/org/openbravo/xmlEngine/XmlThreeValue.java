@@ -54,8 +54,11 @@ class XmlThreeValue implements XmlComponentValue {
       strReturn = strReturn.concat(xmlBegin.print());
     else if (xmlThreeTemplate.printStringBegin() != null)
       strReturn = strReturn.concat(xmlThreeTemplate.printStringBegin());
-    if (xmlMiddle != null)
-      strReturn = strReturn.concat(xmlMiddle.print());
+    if (xmlMiddle != null) {
+      String xmlMiddlePrint = xmlMiddle.print();
+      if (xmlMiddlePrint != null)
+        strReturn = strReturn.concat(xmlMiddlePrint);
+    }
     if (xmlEnd != null)
       strReturn = strReturn.concat(xmlEnd.print());
     else if (xmlThreeTemplate.printStringEnd() != null)

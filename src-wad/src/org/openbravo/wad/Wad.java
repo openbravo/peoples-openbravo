@@ -3464,6 +3464,8 @@ public class Wad extends DefaultHandler {
         "org/openbravo/wad/Template_Relation", discard).createXmlDocument();
     xmlDocument.setParameter("form", tabName + "_Edition.html");
     xmlDocument.setParameter("tab", tabNamePresentation);
+    if (strTable.equals("111"))
+      keyColumnName = "AD_Language";
     xmlDocument.setParameter("key", "inp" + Sqlc.TransformaNombreColumna(keyColumnName));
     xmlDocument.setParameter("keyId", keyColumnName);
     xmlDocument.setParameter("tabId", strTab);

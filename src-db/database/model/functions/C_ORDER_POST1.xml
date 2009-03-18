@@ -1223,7 +1223,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     CUR_CB RECORD;
     v_debtPaymentID varchar2(32);
     v_totalCash NUMBER;
-  v_CB_Curr NUMBER;
+  v_CB_Curr varchar2(32);
   BEGIN
     /* ALO
     */
