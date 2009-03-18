@@ -3,8 +3,10 @@ syntax: glob
 .classpath
 .settings
 attachments
+bin
 build
 docs
+log
 modules
 src-gen
 src-loc
