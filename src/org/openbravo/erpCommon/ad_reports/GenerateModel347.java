@@ -302,9 +302,24 @@ public class GenerateModel347 extends HttpSecureAppServlet {
             strAux.append(strBuf);
             strBuf = strAux;
 
+            strBuf = removeCharacters(strBuf);
+
             out.print(strBuf.toString());
             out.close();
+      }
+    }
+
+    public StringBuffer removeCharacters(StringBuffer strIn) {
+      StringBuffer strValidCharacters = new StringBuffer(
+          "abcdefghijklmnñopqrstuvwxyzçABCDEFGHIJKLMNÑOPQRSTUVWXYZÇ0123456789,.-_ \n\r");
+
+      for (int i = 0; i < strIn.length(); i++) {
+        if (strValidCharacters.indexOf(strIn.substring(i, i + 1)) == -1) {
+          strIn.replace(i, i + 1, " ");
         }
+      }
+
+      return strIn;
     }
 
     public String getServletInfo() {
