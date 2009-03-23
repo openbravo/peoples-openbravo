@@ -1802,8 +1802,12 @@ public class TableSQLData implements Serializable {
     }
     ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(getPool(), tableDirName);
     String tables = "(SELECT " + name;
-    for (int i = 0; i < trd.length; i++)
-      tables += ", " + trd[i].name;
+    for (int i = 0; i < trd.length; i++) {
+      // exclude tabledir pk-column as it has already been added in the line above
+      if (!trd[i].name.equals(name)) {
+        tables += ", " + trd[i].name;
+      }
+    }
     tables += " FROM ";
     tables += tableDirName + ") td" + myIndex;
     tables += " on " + tableName + "." + parentFieldName + " = td" + myIndex + "." + name + "\n";
