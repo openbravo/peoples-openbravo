@@ -3293,7 +3293,8 @@ function updateOnChange(field) {
   if (field==null) return false;
   try {
     var lastChanged = inputValue(document.forms[0].inpLastFieldChanged);
-    if (field.name!="inpadClientId" && field.name!="inpadOrgId") field.onchange();
+    //if (field.name!="inpadClientId" && field.name!="inpadOrgId")
+    field.onchange();
     setInputValue(document.forms[0].inpLastFieldChanged, lastChanged);
   } catch (e) {}
   return true;
