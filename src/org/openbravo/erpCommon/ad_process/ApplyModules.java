@@ -205,7 +205,6 @@ public class ApplyModules extends HttpSecureAppServlet {
 
       final String unnappliedModules = getUnnapliedModules();
 
-      ant.setProperty("force", "true");
       if (ApplyModulesData.isUpdatingCore(this)) {
         tasks.add("update.database");
         tasks.add("core.lib");
@@ -214,6 +213,7 @@ public class ApplyModules extends HttpSecureAppServlet {
         tasks.add("compile.complete.deploy");
         ant.setProperty("apply.on.create", "true");
       } else {
+        ant.setProperty("force", "true");
         tasks.add("apply.modules");
         ant.setProperty("module", unnappliedModules);
       }
