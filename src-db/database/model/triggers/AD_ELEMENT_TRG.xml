@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SL
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+    * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -67,9 +67,8 @@ BEGIN
  IF UPDATING THEN
   --  synchronize Column
   UPDATE AD_Column
-    SET Name=:new.Name,
-    Description=:new.Description,
-    Help=:new.Help
+    SET Description=:new.Description,
+        Help=:new.Help
   WHERE AD_Element_ID=:new.AD_Element_ID
     AND exists (select 1
                   from ad_module m, ad_module m1

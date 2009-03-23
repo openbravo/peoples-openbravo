@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -187,13 +187,33 @@
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows deleted: ' || v_rowcount) ;
     DBMS_OUTPUT.PUT_LINE('Creating link from Column to Element') ;
-    UPDATE AD_COLUMN
-      SET AD_Element_id=
-      (SELECT MAX(AD_Element_ID)
-      FROM AD_ELEMENT e
-      WHERE UPPER(AD_COLUMN.ColumnName)=UPPER(e.ColumnName)
-       AND AD_Module_Dependent(e.AD_Module_ID, AD_COLUMN.AD_Module_ID)='Y'
-      )
+    UPDATE AD_COLUMN c
+      SET AD_Element_id=(SELECT MAX(AD_Element_ID)
+                           FROM AD_ELEMENT e
+                          WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
+                            AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y'),
+                   Name=(SELECT COALESCE(T.NAME, E.NAME) AS N
+                           FROM AD_MODULE M,
+                                AD_ELEMENT E LEFT JOIN AD_ELEMENT_TRL T
+                                                    ON E.AD_ELEMENT_ID = T.AD_ELEMENT_ID
+                           WHERE e.AD_Element_ID=(SELECT MAX(AD_Element_ID)
+                                                    FROM AD_ELEMENT e
+                                                    WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
+                                                     AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y')
+                               AND c.AD_MODULE_ID = M.AD_MODULE_ID
+                               AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL)
+                          UNION
+                         SELECT E.NAME AS N
+                           FROM AD_MODULE M,
+                                AD_MODULE M2,
+                                AD_ELEMENT E 
+                           WHERE e.AD_Element_ID=(SELECT MAX(AD_Element_ID)
+                                                    FROM AD_ELEMENT e
+                                                    WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
+                                                     AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y')
+                               AND c.AD_MODULE_ID = M.AD_MODULE_ID
+                               AND M2.AD_MODULE_ID = E.AD_MODULE_ID
+                               AND M.AD_LANGUAGE = M2.AD_LANGUAGE)
     WHERE AD_Element_ID IS NULL;
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
@@ -217,14 +237,6 @@
     
     UPDATE AD_COLUMN c
       SET 
-      Name = (SELECT COALESCE(T.NAME, E.NAME)  
-                FROM AD_MODULE M,
-                     AD_ELEMENT E 
-                     LEFT JOIN AD_ELEMENT_TRL T
-                                         ON E.AD_ELEMENT_ID = T.AD_ELEMENT_ID
-               WHERE c.AD_Element_ID=e.AD_Element_ID
-                 AND c.AD_MODULE_ID = M.AD_MODULE_ID
-                 AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL)),
       Description =
             (SELECT COALESCE(T.Description, E.Description)
                FROM AD_MODULE M,
@@ -249,8 +261,7 @@
                                   ON E.AD_ELEMENT_ID = T.AD_ELEMENT_ID
         WHERE c.AD_Element_ID=e.AD_Element_ID 
           AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL)
-          AND(c.NAME<>COALESCE(T.NAME, e.NAME)
-              OR COALESCE(TO_CHAR(c.Description), ' ')<>COALESCE(TO_CHAR(T.DESCRIPTION), TO_CHAR(e.Description), ' ')
+          AND(COALESCE(TO_CHAR(c.Description), ' ')<>COALESCE(TO_CHAR(T.DESCRIPTION), TO_CHAR(e.Description), ' ')
               OR COALESCE(TO_CHAR(c.Help), ' ')<>COALESCE(TO_CHAR(T.HELP), TO_CHAR(e.Help), ' '))
       )
       ;
