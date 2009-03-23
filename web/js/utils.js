@@ -55,7 +55,7 @@ var isInputFile = false;
 var isPageLoading = true;
 var isUserChanges = false;
 var isUserClick = false;
-
+var calloutProcessedObj = null;
 
 /**
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
@@ -2682,6 +2682,7 @@ function formElementEvent(form, ElementName, calloutName) {
   if (ElementName!="MESSAGE" && ElementName!="CURSOR_FIELD" && ElementName!="EXECUTE" && ElementName!="DISPLAY" && ElementName!="HIDE" && ElementName.indexOf("_BTN")==-1) {
     var obj = eval("document." + form + "." + ElementName + ";");
     if (obj==null || !obj || !obj.type) return false;
+    calloutProcessedObj = obj;
     if (obj.type.toUpperCase().indexOf("RADIO")!=-1) {
       if (obj.onclick!=null && obj.onclick.toString().indexOf(calloutName)==-1) {
         if (obj.onclick.toString().indexOf("callout")!=-1 || obj.onclick.toString().indexOf("reload")!=-1) isReload=true;
@@ -2726,6 +2727,7 @@ function formElementEvent(form, ElementName, calloutName) {
         if (bolReadOnly) obj.readOnly = true;
       }
     }
+    calloutProcessedObj = null;
   }
   return (isReload);
 }
@@ -3096,6 +3098,7 @@ function logChanges(field) {
 */
 function changeToEditingMode(special, field) {
   try {
+    if (field && field == calloutProcessedObj) return false;
     isContextMenuOpened = false;
     if (special == 'force') {
       setWindowEditing(true);
