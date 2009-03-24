@@ -116,20 +116,29 @@ public class ProductComplete extends HttpSecureAppServlet {
       String strClients = Utility.getContext(this, vars, "#User_Client", "ProductComplete");
       String strOrg = vars.getStringParameter("inpAD_Org_ID");
       String strOrgs = Utility.getSelectorOrgs(this, vars, strOrg);
+
+      String isCalledFromProduction = "";
+      if (windowId.equals("800051") || (windowId.equals("800052"))) {
+        log4j
+            .debug("selector called from process plan||work requirement using production=y filter");
+        isCalledFromProduction = "production";
+      }
+
       if (strStore.equals("Y")) {
         if (vars.getLanguage().equals("en_US"))
-          data = ProductCompleteData.select(this, "1", strKeyValue, "", strWarehouse, vars
-              .getRole(), strBpartner, strClients, "1", "", "");
+          data = ProductCompleteData.select(this, "1", strKeyValue, "", strWarehouse,
+              isCalledFromProduction, vars.getRole(), strBpartner, strClients, "1", "", "");
         else
           data = ProductCompleteData.selecttrl(this, "1", vars.getLanguage(), strKeyValue, "",
-              strWarehouse, vars.getRole(), strBpartner, strClients, "1", "", "");
+              strWarehouse, isCalledFromProduction, vars.getRole(), strBpartner, strClients, "1",
+              "", "");
       } else {
         if (vars.getLanguage().equals("en_US"))
           data = ProductCompleteData.selectNotStored(this, "1", strKeyValue, "", strBpartner,
-              strClients, strOrgs, "1", "", "");
+              strClients, strOrgs, isCalledFromProduction, "1", "", "");
         else
           data = ProductCompleteData.selectNotStoredtrl(this, "1", vars.getLanguage(), strKeyValue,
-              "", strBpartner, strClients, strOrgs, "1", "", "");
+              "", strBpartner, strClients, strOrgs, isCalledFromProduction, "1", "", "");
       }
       if (data != null && data.length == 1)
         printPageKey(response, vars, data, strWarehouse);
@@ -148,6 +157,15 @@ public class ProductComplete extends HttpSecureAppServlet {
       String strBpartner = vars.getGlobalVariable("inpBPartner", "ProductComplete.bpartner", "");
       String strStore = vars.getGlobalVariable("inpWithStoreLines",
           "ProductComplete.withstorelines", "");
+
+      String windowId = vars.getGlobalVariable("WindowID", "ProductComplete.windowId", "");
+      String isCalledFromProduction = "";
+      if (windowId.equals("800051") || (windowId.equals("800052"))) {
+        log4j
+            .debug("selector called from process plan||work requirement using production=y filter");
+        isCalledFromProduction = "production";
+      }
+
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
@@ -157,8 +175,9 @@ public class ProductComplete extends HttpSecureAppServlet {
       String strOrg = vars.getStringParameter("inpAD_Org_ID");
       String strOrgs = Utility.getSelectorOrgs(this, vars, strOrg);
 
-      printGridData(response, vars, strKey, strName, strWarehouse, strBpartner, strStore, strOrgs,
-          strClients, strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter);
+      printGridData(response, vars, strKey, strName, strWarehouse, strBpartner, strStore,
+          isCalledFromProduction, strOrgs, strClients, strSortCols + " " + strSortDirs, strOffset,
+          strPageSize, strNewFilter);
     } else
       pageError(response);
   }
@@ -304,9 +323,10 @@ public class ProductComplete extends HttpSecureAppServlet {
   }
 
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String strName, String strWarehouse, String strBpartner, String strStore, String strOrgs,
-      String strClients, String strOrderBy, String strOffset, String strPageSize,
-      String strNewFilter) throws IOException, ServletException {
+      String strName, String strWarehouse, String strBpartner, String strStore,
+      String strIsCalledFromProduction, String strOrgs, String strClients, String strOrderBy,
+      String strOffset, String strPageSize, String strNewFilter) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -331,15 +351,15 @@ public class ProductComplete extends HttpSecureAppServlet {
           if (strStore.equals("Y")) {
             // countRows is the same in en_US and +trl case, so a
             // single countRows method is used
-            strNumRows = ProductCompleteData.countRows(this, strKey, strName, strWarehouse, vars
-                .getRole(), strBpartner, strClients);
+            strNumRows = ProductCompleteData.countRows(this, strKey, strName, strWarehouse,
+                strIsCalledFromProduction, vars.getRole(), strBpartner, strClients);
           } else {
             if (vars.getLanguage().equals("en_US")) {
               strNumRows = ProductCompleteData.countRowsNotStored(this, strKey, strName,
-                  strBpartner, strClients, strOrgs);
+                  strBpartner, strClients, strOrgs, strIsCalledFromProduction);
             } else {
               strNumRows = ProductCompleteData.countRowsNotStoredtrl(this, vars.getLanguage(),
-                  strKey, strName, strBpartner, strClients, strOrgs);
+                  strKey, strName, strBpartner, strClients, strOrgs, strIsCalledFromProduction);
             }
           }
           vars.setSessionValue("ProductComplete.numrows", strNumRows);
@@ -364,19 +384,22 @@ public class ProductComplete extends HttpSecureAppServlet {
 
           if (strStore.equals("Y")) {
             if (vars.getLanguage().equals("en_US"))
-              data = ProductCompleteData.select(this, "ROWNUM", strKey, strName, strWarehouse, vars
-                  .getRole(), strBpartner, strClients, strOrderBy, oraLimit, "");
+              data = ProductCompleteData.select(this, "ROWNUM", strKey, strName, strWarehouse,
+                  strIsCalledFromProduction, vars.getRole(), strBpartner, strClients, strOrderBy,
+                  oraLimit, "");
             else
               data = ProductCompleteData.selecttrl(this, vars.getLanguage(), "ROWNUM", strKey,
-                  strName, strWarehouse, vars.getRole(), strBpartner, strClients, strOrderBy,
-                  oraLimit, "");
+                  strName, strWarehouse, strIsCalledFromProduction, vars.getRole(), strBpartner,
+                  strClients, strOrderBy, oraLimit, "");
           } else {
             if (vars.getLanguage().equals("en_US"))
               data = ProductCompleteData.selectNotStored(this, "ROWNUM", strKey, strName,
-                  strBpartner, strClients, strOrgs, strOrderBy, oraLimit, "");
+                  strBpartner, strClients, strOrgs, strIsCalledFromProduction, strOrderBy,
+                  oraLimit, "");
             else
               data = ProductCompleteData.selectNotStoredtrl(this, "ROWNUM", vars.getLanguage(),
-                  strKey, strName, strBpartner, strClients, strOrgs, strOrderBy, oraLimit, "");
+                  strKey, strName, strBpartner, strClients, strOrgs, strIsCalledFromProduction,
+                  strOrderBy, oraLimit, "");
           }
         } else {
           String pgLimit = strPageSize + " OFFSET " + strOffset;
@@ -391,18 +414,21 @@ public class ProductComplete extends HttpSecureAppServlet {
 
           if (strStore.equals("Y")) {
             if (vars.getLanguage().equals("en_US"))
-              data = ProductCompleteData.select(this, "1", strKey, strName, strWarehouse, vars
-                  .getRole(), strBpartner, strClients, strOrderBy, "", pgLimit);
+              data = ProductCompleteData.select(this, "1", strKey, strName, strWarehouse,
+                  strIsCalledFromProduction, vars.getRole(), strBpartner, strClients, strOrderBy,
+                  "", pgLimit);
             else
               data = ProductCompleteData.selecttrl(this, vars.getLanguage(), "1", strKey, strName,
-                  strWarehouse, vars.getRole(), strBpartner, strClients, strOrderBy, "", pgLimit);
+                  strWarehouse, strIsCalledFromProduction, vars.getRole(), strBpartner, strClients,
+                  strOrderBy, "", pgLimit);
           } else {
             if (vars.getLanguage().equals("en_US"))
               data = ProductCompleteData.selectNotStored(this, "1", strKey, strName, strBpartner,
-                  strClients, strOrgs, strOrderBy, "", pgLimit);
+                  strClients, strOrgs, strIsCalledFromProduction, strOrderBy, "", pgLimit);
             else
               data = ProductCompleteData.selectNotStoredtrl(this, "1", vars.getLanguage(), strKey,
-                  strName, strBpartner, strClients, strOrgs, strOrderBy, "", pgLimit);
+                  strName, strBpartner, strClients, strOrgs, strIsCalledFromProduction, strOrderBy,
+                  "", pgLimit);
           }
 
         }

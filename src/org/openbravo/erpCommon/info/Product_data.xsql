@@ -75,7 +75,6 @@
         <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="key" optional="true" after="ip.IsSummary='N' AND "><![CDATA[ UPPER(ip.Value) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="name" optional="true" after="ip.IsSummary='N' AND "><![CDATA[ UPPER(ip.Name) LIKE UPPER(?) AND ]]></Parameter>
-        <Parameter name="production" type="none" optional="true" after="ip.IsSummary='N' AND "><![CDATA[ ip.production = 'Y' AND ]]></Parameter>
         <Parameter name="adUserClient" type="replace" optional="true" after="ip.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="ip.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="priceListVersion"/>
@@ -103,7 +102,6 @@
       ]]></Sql>
         <Parameter name="key" optional="true" after="WHERE "><![CDATA[ UPPER(p.Value) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="name" optional="true" after="WHERE "><![CDATA[ UPPER(p.Name) LIKE UPPER(?) AND ]]></Parameter>
-        <Parameter name="production" type="none" optional="true" after="AND p.IsSummary='N' "><![CDATA[ AND p.production = 'Y' ]]></Parameter>
         <Parameter name="priceListVersion"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="p.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="p.AD_Org_ID IN (" text="'1'"/>

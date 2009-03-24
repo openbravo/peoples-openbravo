@@ -70,6 +70,7 @@
         <Parameter name="key" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="name" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = ? ]]></Parameter>
+        <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
         <Parameter name="adRoleId"/>
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="W.AD_CLIENT_ID IN (" text="'1'"/>
@@ -106,6 +107,7 @@
         <Parameter name="key" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="name" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = ? ]]></Parameter>
+        <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
         <Parameter name="adRoleId"/>
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="W.AD_CLIENT_ID IN (" text="'1'"/>
@@ -158,6 +160,7 @@
         <Parameter name="key" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="name" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = ? ]]></Parameter>
+        <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
         <Parameter name="adRoleId"/>
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="W.AD_CLIENT_ID IN (" text="'1'"/>  
@@ -184,6 +187,7 @@
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="P.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/>
+        <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
    </SqlMethod>
 
    <SqlMethod name="selectNotStored" type="preparedStatement" return="multiple">
@@ -216,6 +220,7 @@
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="P.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/>
+        <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="P.VALUE" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
@@ -241,6 +246,7 @@
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="P.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/> 
+        <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
    </SqlMethod>
 
    <SqlMethod name="selectNotStoredtrl" type="preparedStatement" return="multiple">
@@ -275,6 +281,7 @@
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="P.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/> 
+        <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="P.VALUE" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>       
