@@ -11,6 +11,8 @@
  */
 package org.openbravo.xmlEngine;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 
 class FunctionEqualValue extends FunctionEvaluationValue {
@@ -25,8 +27,7 @@ class FunctionEqualValue extends FunctionEvaluationValue {
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      return functionTemplate.printFormatOutput(Double.valueOf(arg1Value.printSimple())
-          .doubleValue());
+      return functionTemplate.printFormatOutput(new BigDecimal(arg1Value.printSimple()));
     }
   }
 
@@ -34,8 +35,7 @@ class FunctionEqualValue extends FunctionEvaluationValue {
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      return functionTemplate.printFormatSimple(Double.valueOf(arg1Value.printSimple())
-          .doubleValue());
+      return functionTemplate.printFormatSimple(new BigDecimal(arg1Value.printSimple()));
     }
   }
 

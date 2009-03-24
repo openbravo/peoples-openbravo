@@ -11,6 +11,8 @@
  */
 package org.openbravo.xmlEngine;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 
 class FunctionMinValue extends FunctionEvaluationValue {
@@ -26,8 +28,8 @@ class FunctionMinValue extends FunctionEvaluationValue {
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      return functionTemplate.printFormatOutput(Math.min(Double.valueOf(arg1Value.printSimple())
-          .doubleValue(), Double.valueOf(arg2Value.printSimple()).doubleValue()));
+      return functionTemplate.printFormatOutput(new BigDecimal(arg1Value.printSimple())
+          .min(new BigDecimal(arg2Value.printSimple())));
     }
   }
 
@@ -36,8 +38,8 @@ class FunctionMinValue extends FunctionEvaluationValue {
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      return functionTemplate.printFormatSimple(Math.min(Double.valueOf(arg1Value.printSimple())
-          .doubleValue(), Double.valueOf(arg2Value.printSimple()).doubleValue()));
+      return functionTemplate.printFormatSimple(new BigDecimal(arg1Value.printSimple())
+          .min(new BigDecimal(arg2Value.printSimple())));
     }
   }
 

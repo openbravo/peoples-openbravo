@@ -11,6 +11,9 @@
  */
 package org.openbravo.xmlEngine;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import org.apache.log4j.Logger;
 
 class FunctionModuleValue extends FunctionEvaluationValue {
@@ -29,14 +32,14 @@ class FunctionModuleValue extends FunctionEvaluationValue {
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      double division = Double.valueOf(arg1Value.printSimple()).doubleValue()
-          / Double.valueOf(arg2Value.printSimple()).doubleValue();
-      if (Double.isInfinite(division) || Double.isNaN(division)) {
+      try {
+        // divisionFloor = Math.floor( arg1Value / arg2Value )
+        BigDecimal divisionFloor = new BigDecimal(arg1Value.printSimple()).divide(new BigDecimal(
+            arg2Value.printSimple()), 0, RoundingMode.FLOOR);
+        return functionTemplate.printFormatOutput(new BigDecimal(arg1Value.printSimple())
+            .subtract(new BigDecimal(arg2Value.printSimple()).multiply(divisionFloor)));
+      } catch (ArithmeticException a) {
         return XmlEngine.strTextDividedByZero;
-      } else {
-        return functionTemplate.printFormatOutput(Double.valueOf(arg1Value.printSimple())
-            .doubleValue()
-            - Double.valueOf(arg2Value.printSimple()).doubleValue() * Math.floor(division));
       }
     }
   }
@@ -49,14 +52,13 @@ class FunctionModuleValue extends FunctionEvaluationValue {
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      double division = Double.valueOf(arg1Value.printSimple()).doubleValue()
-          / Double.valueOf(arg2Value.printSimple()).doubleValue();
-      if (Double.isInfinite(division) || Double.isNaN(division)) {
+      try {
+        BigDecimal divisionFloor = new BigDecimal(arg1Value.printSimple()).divide(new BigDecimal(
+            arg2Value.printSimple()), 0, RoundingMode.FLOOR);
+        return functionTemplate.printFormatSimple(new BigDecimal(arg1Value.printSimple())
+            .subtract(new BigDecimal(arg2Value.printSimple()).multiply(divisionFloor)));
+      } catch (ArithmeticException a) {
         return XmlEngine.strTextDividedByZero;
-      } else {
-        return functionTemplate.printFormatSimple(Double.valueOf(arg1Value.printSimple())
-            .doubleValue()
-            - Double.valueOf(arg2Value.printSimple()).doubleValue() * Math.floor(division));
       }
     }
   }

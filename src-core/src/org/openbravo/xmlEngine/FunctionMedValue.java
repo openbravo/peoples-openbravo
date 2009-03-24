@@ -8,14 +8,17 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
- */
+*/
 package org.openbravo.xmlEngine;
 
-import org.apache.log4j.Logger;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import org.apache.log4j.Logger ;
 
 class FunctionMedValue extends FunctionValue {
   int count;
-  double sum;
+  BigDecimal sum;
 
   static Logger log4jFunctionMedValue = Logger.getLogger(FunctionMedValue.class);
 
@@ -24,30 +27,30 @@ class FunctionMedValue extends FunctionValue {
   }
 
   public String print() {
-    if (functionTemplate.formatOutput != null) {
-      return functionTemplate.formatOutput.format(sum / count);
-    } else {
-      return Double.toString(sum / count);
+    try {
+      return functionTemplate.printFormatOutput(sum.divide(new BigDecimal(count), 12, RoundingMode.HALF_UP));
+    } catch (ArithmeticException a) {
+      return XmlEngine.strTextDividedByZero;
     }
   }
 
   public String printSimple() {
-    if (functionTemplate.formatSimple != null) {
-      return functionTemplate.formatSimple.format(sum / count);
-    } else {
-      return Double.toString(sum / count);
+    try {
+      return functionTemplate.printFormatSimple(sum.divide(new BigDecimal(count), 12, RoundingMode.HALF_UP));
+    } catch (ArithmeticException a) {
+      return XmlEngine.strTextDividedByZero;
     }
   }
 
   public void acumulate() {
-    count++;
-    if (!fieldValue.print().equals("")) {
-      sum += Double.valueOf(fieldValue.printSimple()).doubleValue();
+    count ++;
+    if (fieldValue.print() != "") {
+      sum = sum.add(new BigDecimal(fieldValue.printSimple()));
     }
   }
 
   public void init() {
-    sum = 0;
+    sum = BigDecimal.ZERO;
     count = 0;
   }
 
