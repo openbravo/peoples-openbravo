@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1540,6 +1540,10 @@ public class TableSQLData implements Serializable {
           realName);
       break;
     case 35: // PAttribute
+      setTableDirQuery(parentTableName, "M_AttributeSetInstance_ID", field
+          .getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName,
+          realName);
+      break;
     case 30: // Search
       setTableDirQuery(parentTableName, field.getProperty("ColumnNameSearch"), field
           .getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName,
