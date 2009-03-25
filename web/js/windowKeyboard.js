@@ -197,6 +197,10 @@ function mouseClickLogic(evt, obj) {
     while(obj.tagName != 'SELECT') obj = obj.parentNode;
   }
 
+  if (checkGenericTree(obj)) {
+    return true;
+  }
+
   cursorFocus(obj, 'onclick');
 
   if (obj.tagName == 'SELECT') {
@@ -234,12 +238,12 @@ function checkGenericTree(obj) {
   isClickOnGenericTree=false;
   if (isGenericTreeFocused) {
     while(obj.tagName != 'BODY') {
-      obj = obj.parentNode;
       if (obj.getAttribute('id') != null) {
         if (obj.getAttribute('id').indexOf('genericTree') != -1) {
           return true;
         }
       }
+      obj = obj.parentNode;
     }
   }
   return false
