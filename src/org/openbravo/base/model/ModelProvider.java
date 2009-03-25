@@ -690,7 +690,7 @@ public class ModelProvider implements OBSingleton {
         sTable = "AD_User";
 
       if (reference.equals(Reference.PRODUCT_ATTRIBUTE))
-        sTable = "M_Attributesetinstance";
+        sTable = "M_AttributeSetInstance";
 
       try {
         c = getTable(sTable).getPrimaryKeyColumns().get(0);
