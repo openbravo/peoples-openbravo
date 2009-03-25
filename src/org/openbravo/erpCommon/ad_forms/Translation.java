@@ -389,6 +389,10 @@ public class Translation extends HttpSecureAppServlet {
       boolean m_IsCentrallyMaintained = false;
       try {
         m_IsCentrallyMaintained = !(TranslationData.centrallyMaintained(cp, table).equals("0"));
+        if (m_IsCentrallyMaintained)
+          log4j.debug("table:" + table + " IS centrally maintained");
+        else
+          log4j.debug("table:" + table + " is NOT centrally maintained");
       } catch (final Exception e) {
         translationlog4j.error("getTrlColumns (IsCentrallyMaintained)", e);
       }
@@ -683,7 +687,7 @@ public class Translation extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled() && myMessage != null)
         log4j.debug("datasheet message:" + myMessage.getMessage());
 
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
