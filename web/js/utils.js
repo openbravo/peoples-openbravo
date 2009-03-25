@@ -55,6 +55,8 @@ var isInputFile = false;
 var isPageLoading = true;
 var isUserChanges = false;
 var isUserClick = false;
+var isTabClick = false;
+var isButtonClick = false;
 var calloutProcessedObj = null;
 
 /**
@@ -260,7 +262,10 @@ function logClick(hiddenInput) {
   isUserClick = true;
   if(hiddenInput != null) {
     logChanges(hiddenInput);
+    isButtonClick = true;
+    return;
   }
+  isTabClick = true;
 }
 
 /**
@@ -290,7 +295,7 @@ function checkForChanges(f) {
 	  autosave = top.frameMenu.autosave;
 	}
 	
-	if(typeof autosave == 'undefined' || !autosave) { // backward compatibility		
+	if(typeof autosave == 'undefined' || !autosave) { // 2.40 behavior		
 		if (inputValue(form.inpLastFieldChanged)!="") {
 			if (!showJSMessage(26))
 				return false;
@@ -303,11 +308,11 @@ function checkForChanges(f) {
 	else {
 		var promptConfirmation = typeof top.appFrame.confirmOnChanges == 'undefined' ? true : top.appFrame.confirmOnChanges;
 		var hasUserChanges = typeof top.appFrame.isUserChanges == 'undefined' ? false : top.appFrame.isUserChanges;
-		if (form.inpLastFieldChanged && hasUserChanges) { // if the inpLastFieldChanged exists and there is a user change
+		if (form.inpLastFieldChanged && (hasUserChanges || isButtonClick)) { // if the inpLastFieldChanged exists and there is a user change
 			var autoSave = true;		
 			if (promptConfirmation)
 				autoSave = showJSMessage(25);
-			if (autoSave && (hasUserChanges || isUserClick)) {
+			if (autoSave) {
 				if(form.autosave) {
 					form.autosave.value = 'Y';
 				}
