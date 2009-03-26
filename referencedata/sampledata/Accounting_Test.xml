@@ -23879,7 +23879,7 @@
     <calculateFreight>false</calculateFreight>
     <deliveryLocation/>
     <freightCategory/>
-    <freightCurrency/>
+    <freightCurrency id="100"/>
   </MaterialMgmtShipmentInOut>
   <MaterialMgmtShipmentInOut id="1000036">
     <id>1000036</id>
@@ -23935,7 +23935,7 @@
     <calculateFreight>false</calculateFreight>
     <deliveryLocation/>
     <freightCategory/>
-    <freightCurrency/>
+    <freightCurrency id="100"/>
   </MaterialMgmtShipmentInOut>
   <MaterialMgmtShipmentInOut id="1000037">
     <id>1000037</id>
@@ -23991,7 +23991,7 @@
     <calculateFreight>false</calculateFreight>
     <deliveryLocation/>
     <freightCategory/>
-    <freightCurrency/>
+    <freightCurrency id="100"/>
   </MaterialMgmtShipmentInOut>
   <MaterialMgmtShipmentInOut id="1000038">
     <id>1000038</id>
@@ -24047,7 +24047,7 @@
     <calculateFreight>false</calculateFreight>
     <deliveryLocation/>
     <freightCategory/>
-    <freightCurrency/>
+    <freightCurrency id="100"/>
   </MaterialMgmtShipmentInOut>
   <MaterialMgmtShipmentInOut id="1000039">
     <id>1000039</id>
@@ -24103,7 +24103,7 @@
     <calculateFreight>false</calculateFreight>
     <deliveryLocation/>
     <freightCategory/>
-    <freightCurrency/>
+    <freightCurrency id="100"/>
   </MaterialMgmtShipmentInOut>
   <MaterialMgmtShipmentInOutLine id="1000051">
     <id>1000051</id>
