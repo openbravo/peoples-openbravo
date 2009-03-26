@@ -56,6 +56,7 @@
     v_ISDEPRECIATED CHAR(1) ;
     v_RESIDUALASSETVALUEAMT NUMBER;
     v_USELIFEMONTHS NUMBER;
+    V_MONTHS NUMBER;
     v_USELIFEYEARS NUMBER;
     v_ASSETSCHEDULE VARCHAR2(60) ;
     v_TOTAL_DAYS NUMBER;
@@ -294,7 +295,11 @@
             else
               --  v_PercentageGeneral := 100 / v_USELIFEYEARS;
               v_UseLifeYears:=v_UseLifeMonths/12;
-              v_PercentageGeneral:=(((v_AMORTIZATIONVALUEAMT-v_depreciatedPlan) *100/v_AMORTIZATIONVALUEAMT) /(v_USELIFEYEARS-v_DepreciatedLines)) /12;
+              if (v_assetschedule = 'MO') then 
+                v_PercentageGeneral:=(((v_AMORTIZATIONVALUEAMT-v_depreciatedPlan) *100/v_AMORTIZATIONVALUEAMT) /(v_USELIFEYEARS*12-v_DepreciatedLines));
+              else 
+                v_PercentageGeneral:=(((v_AMORTIZATIONVALUEAMT-v_depreciatedPlan) *100/v_AMORTIZATIONVALUEAMT) /(v_USELIFEYEARS-v_DepreciatedLines)) /12;
+              end if;
               SELECT to_number(TO_DATE(ADD_MONTHS(v_AMORTIZATIONSTARTDATE, 12*v_USELIFEYEARS)) - TO_DATE(v_AMORTIZATIONSTARTDATE))
               INTO v_TOTAL_DAYS
               FROM DUAL;
@@ -342,7 +347,12 @@
               INTO v_LINE
               FROM A_AMORTIZATIONLINE
               WHERE A_AMORTIZATION_ID=v_NEW_AMORTIZATION;
-              IF(((v_AMORTIZATIONVALUEAMT*v_PERCENTAGE/100)>(v_AMORTIZATIONVALUEAMT-v_TotalAmt))OR(v_Inserted+1>=v_USELIFEMONTHS) ) THEN
+              SELECT COALESCE(COUNT(A_AMORTIZATIONLINE_ID),0), COALESCE(MAX(A_ASSET.USELIFEMONTHS),1)
+              INTO v_Inserted, V_MONTHS
+              FROM A_AMORTIZATIONLINE, A_ASSET
+              WHERE A_AMORTIZATIONLINE.A_ASSET_ID = A_ASSET.A_ASSET_ID
+              AND A_ASSET.A_ASSET_ID=v_Record_ID;              
+              IF(((v_AMORTIZATIONVALUEAMT*v_PERCENTAGE/100)>(v_AMORTIZATIONVALUEAMT-v_TotalAmt))OR(v_Inserted+1>=v_USELIFEMONTHS) OR(v_Inserted>0 AND mod(v_Inserted+1,V_MONTHS)=0 AND TO_NUMBER(TO_CHAR(v_AMORTIZATIONSTARTDATE,'DD'))=1)) THEN
                 SELECT COALESCE(SUM(AMORTIZATIONAMT),0), COALESCE(SUM(AMORTIZATION_PERCENTAGE),0)
                 INTO v_AMOUNT, v_PERCENTAGE
                 FROM A_AMORTIZATIONLINE
