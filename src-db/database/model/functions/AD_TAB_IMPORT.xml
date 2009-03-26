@@ -41,7 +41,7 @@
   v_AD_User_ID VARCHAR2(32):='0';
   v_module_id varchar2(32);
   v_fieldModule varchar2(32);
-  v_Aux number;
+  v_Aux NUMBER;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
