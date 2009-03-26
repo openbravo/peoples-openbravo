@@ -23,21 +23,19 @@
     <SqlMethod name="select" type="preparedStatement" return="multiple">
     	<SqlMethodComment></SqlMethodComment>
 	    <Sql>
-	      <![CDATA[
-	        SELECT L.AD_CLIENT_ID, B.C_BPARTNER_ID,	         		
-			       L.C_LOCATION_ID, L.ADDRESS1, L.ADDRESS2, L.CITY, L.POSTAL, 
-			       R.NAME AS REGION, 
-			       C.COUNTRYCODE AS COUNTRY
-			  FROM C_LOCATION L, C_BPARTNER_LOCATION B, C_REGION R, C_COUNTRY C
-			 WHERE L.AD_CLIENT_ID = B.AD_CLIENT_ID
-			   AND L.C_LOCATION_ID = B.C_LOCATION_ID
-			   AND L.C_COUNTRY_ID = C.C_COUNTRY_ID
-			   AND L.C_REGION_ID = R.C_REGION_ID
-			   AND L.AD_CLIENT_ID = ?     
-			   AND B.C_BPARTNER_ID = ?	            
-			   AND L.C_LOCATION_ID = ?
-	      ]]>
-	    </Sql>
+              <![CDATA[SELECT L.AD_CLIENT_ID, B.C_BPARTNER_ID, L.C_LOCATION_ID, L.ADDRESS1, L.ADDRESS2, L.CITY, L.POSTAL,
+                   R.NAME AS REGION,
+               C.COUNTRYCODE AS COUNTRY
+               FROM C_LOCATION L
+               LEFT JOIN C_BPARTNER_LOCATION B ON L.C_LOCATION_ID = B.C_LOCATION_ID AND L.AD_CLIENT_ID = B.AD_CLIENT_ID
+               LEFT OUTER JOIN C_REGION R ON L.C_REGION_ID = R.C_REGION_ID
+               LEFT JOIN C_COUNTRY C ON L.C_COUNTRY_ID = C.C_COUNTRY_ID
+               WHERE
+               L.AD_CLIENT_ID = ?
+               AND B.C_BPARTNER_ID = ?
+               AND L.C_LOCATION_ID = ?
+              ]]>
+         </Sql>
     	<Parameter name="clientId"/>
     	<Parameter name="customerId"/>
     	<Parameter name="locationId"/>

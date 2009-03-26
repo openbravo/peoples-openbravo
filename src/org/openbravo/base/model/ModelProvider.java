@@ -689,9 +689,13 @@ public class ModelProvider implements OBSingleton {
       if (columnName.equalsIgnoreCase("CreatedBy") || columnName.equalsIgnoreCase("UpdatedBy"))
         sTable = "AD_User";
 
+      if (reference.equals(Reference.PRODUCT_ATTRIBUTE))
+        sTable = "M_AttributeSetInstance";
+
       try {
         c = getTable(sTable).getPrimaryKeyColumns().get(0);
       } catch (final Exception e) {
+
         e.printStackTrace();
       }
 

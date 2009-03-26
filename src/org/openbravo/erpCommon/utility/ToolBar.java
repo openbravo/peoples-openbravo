@@ -43,6 +43,12 @@ public class ToolBar {
   boolean isRelation = false;
   boolean isEditable = false;
   boolean hasAttachments = false;
+  boolean email = false;
+
+  public void setEmail(boolean email) {
+    this.email = email;
+  }
+
   Hashtable<String, HTMLElement> buttons = new Hashtable<String, HTMLElement>();
 
   public ToolBar(ConnectionProvider _conn, String _language, String _action, boolean _isNew,
@@ -258,6 +264,7 @@ public class ToolBar {
         "ExportCsv", language), getButtonScript("GRIDCSV")));
     buttons.put("GRIDPDF", new ToolBar_Button(base_direction, "ExportPDF", Utility.messageBD(conn,
         "ExportPDF", language), getButtonScript("GRIDPDF")));
+
     if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
       buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn,
           "Print", language), getButtonScript("PRINT")));
@@ -407,6 +414,12 @@ public class ToolBar {
     removeElement("NEXT_RELATION");
     removeElement("NEXT_RELATION_DISABLED");
 
+    // This piece of code used to control the email icon in the manual window. At this point we only
+    // use the email functionality
+    // only to send order (purchase or sales) and invoices (purchase or sales)
+    if (pdf != null && !pdf.contains("orders") && !pdf.contains("invoices")) {
+      removeElement("EMAIL");
+    }
     if (!hasTree)
       removeElement("TREE");
     if (isNew) {
@@ -512,9 +525,14 @@ public class ToolBar {
     removeElement("CAPTURE");
     removeElement("CHECK_CONTENT");
     removeElement("CHECK_ELEMENT");
+    removeElement("EMAIL");
+    removeElement("PRINT");
     if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
       buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn,
           "Print", language), pdf));
+
+    }
+    if (email) {
       buttons.put("EMAIL", new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn,
           "Email", language), pdf));
     }
@@ -610,6 +628,8 @@ public class ToolBar {
     removeElement("NEXT");
     removeElement("LAST");
     removeElement("LAST_RELATION");
+    removeElement("EMAIL");
+    removeElement("PRINT");
 
     removeElement(hasPrevious ? "PREVIOUS_RELATION_DISABLED" : "PREVIOUS_RELATION");
     removeElement(hasNext ? "NEXT_RELATION_DISABLED" : "NEXT_RELATION");
@@ -621,6 +641,9 @@ public class ToolBar {
     if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
       buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn,
           "Print", language), pdf));
+
+    }
+    if (email) {
       buttons.put("EMAIL", new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn,
           "Email", language), pdf));
     }

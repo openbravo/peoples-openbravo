@@ -260,7 +260,7 @@ public class PrintController extends HttpSecureAppServlet {
               if ("".equals(senderAddress) || senderAddress == null) {
                 final OBError on = new OBError();
                 on.setMessage(Utility.messageBD(this, "No sender defined: Please go to client "
-                    + "configuration to complete de email configuration", vars.getLanguage()));
+                    + "configuration to complete the email configuration", vars.getLanguage()));
                 on.setTitle(Utility
                     .messageBD(this, "Email Configuration Error", vars.getLanguage()));
                 on.setType("Error");

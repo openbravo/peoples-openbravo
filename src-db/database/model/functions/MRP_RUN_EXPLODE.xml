@@ -51,6 +51,7 @@
   v_New CHAR := 'N';
   v_Aux_ID VARCHAR2(32);
   v_lastProductID VARCHAR2(32);
+  v_qty NUMBER;
 
   FINISH_PROCESS BOOLEAN DEFAULT FALSE;
   --  Parameter
@@ -99,7 +100,8 @@ BEGIN
                        NULL, NULL, NULL, NULL, p_TimeHorizon,
                        p_PlanningDate, 'Y');
             v_New := 'Y';
-            Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Dependants.DependantProduct, Cur_Run_Lines.Qty*Cur_Dependants.qty, Cur_Run_Lines.Qty*Cur_Dependants.qty, Cur_Run_Lines.MRP_RUN_Line_ID, 'WP', 'N', NULL, NULL, NULL, NULL, NULL, (CASE WHEN Cur_Dependants.qty > 0 THEN Cur_Run_Lines.planneddate ELSE Cur_Run_Lines.plannedorderdate END), Cur_Run_Lines.plannedorderdate, 'Y', (CASE WHEN Cur_Dependants.qty < 0 THEN 'N' ELSE 'Y' END), NULL, v_Aux_ID);
+            v_qty := ROUND((Cur_Run_Lines.Qty*Cur_Dependants.qty)+0.0005,3);
+            Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Dependants.DependantProduct, v_qty, v_qty, Cur_Run_Lines.MRP_RUN_Line_ID, 'WP', 'N', NULL, NULL, NULL, NULL, NULL, (CASE WHEN Cur_Dependants.qty > 0 THEN Cur_Run_Lines.planneddate ELSE Cur_Run_Lines.plannedorderdate END), Cur_Run_Lines.plannedorderdate, 'Y', (CASE WHEN Cur_Dependants.qty < 0 THEN 'N' ELSE 'Y' END), NULL, v_Aux_ID);
           END LOOP;
         END IF;
 

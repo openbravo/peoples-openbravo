@@ -24,11 +24,16 @@
   v_Price        NUMBER;
   v_ProductPrice NUMBER;
   v_IsVerified   CHAR(1);
+  v_currency VARCHAR2(32);
   -- Get BOM Product info
   TYPE RECORD IS REF CURSOR;
     CUR_BOM RECORD;
     --
   BEGIN
+  
+  SELECT c_currency_id into v_currency
+    from ad_client left join M_Product on ad_client.ad_client_id= m_product.ad_client_id
+    where m_product.m_product_id=product_id;
     -- Try to get price from pricelist directly
     SELECT COALESCE(SUM(PriceStd), 0)
     INTO v_Price
@@ -55,7 +60,7 @@
       END LOOP; -- BOM
     END IF;
     --
-    RETURN v_Price;
+    RETURN c_currency_round(v_price, v_currency,null);
 END M_BOM_PRICESTD
 ]]></body>
     </function>

@@ -11,6 +11,9 @@
  */
 package org.openbravo.xmlEngine;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import org.apache.log4j.Logger;
 
 class FunctionDivideValue extends FunctionEvaluationValue {
@@ -29,12 +32,13 @@ class FunctionDivideValue extends FunctionEvaluationValue {
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      double division = Double.valueOf(arg1Value.printSimple()).doubleValue()
-          / Double.valueOf(arg2Value.printSimple()).doubleValue();
-      if (Double.isInfinite(division) || Double.isNaN(division)) {
-        return XmlEngine.strTextDividedByZero;
-      } else {
+      // divide uses exception when divisor=0 so catch and wrap with strTextDividedByZero
+      try {
+        BigDecimal division = new BigDecimal(arg1Value.printSimple()).divide(new BigDecimal(
+            arg2Value.printSimple()), 12, RoundingMode.HALF_UP);
         return functionTemplate.printFormatOutput(division);
+      } catch (ArithmeticException a) {
+        return XmlEngine.strTextDividedByZero;
       }
     }
   }
@@ -47,12 +51,13 @@ class FunctionDivideValue extends FunctionEvaluationValue {
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      double division = Double.valueOf(arg1Value.printSimple()).doubleValue()
-          / Double.valueOf(arg2Value.printSimple()).doubleValue();
-      if (Double.isInfinite(division) || Double.isNaN(division)) {
-        return XmlEngine.strTextDividedByZero;
-      } else {
+      // divide uses exception when divisor=0 so catch and wrap with strTextDividedByZero
+      try {
+        BigDecimal division = new BigDecimal(arg1Value.printSimple()).divide(new BigDecimal(
+            arg2Value.printSimple()), 12, RoundingMode.HALF_UP);
         return functionTemplate.printFormatSimple(division);
+      } catch (ArithmeticException a) {
+        return XmlEngine.strTextDividedByZero;
       }
     }
   }

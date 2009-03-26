@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Vector;
@@ -238,19 +239,66 @@ public class DataGrid extends HttpSecureAppServlet {
     String title = "";
     String description = "";
 
-    // values used for formatting numbers (read from Format.xml file)
-    String format = vars.getSessionValue("#FormatOutput|qtyRelation");
-    String decimal = vars.getSessionValue("#DecimalSeparator|qtyRelation");
-    String group = vars.getSessionValue("#GroupSeparator|qtyRelation");
-    DecimalFormat numberFormat = null;
+    // values used for formatting Amounts (read from Format.xml file)
+    String format = vars.getSessionValue("#FormatOutput|euroRelation");
+    String decimal = vars.getSessionValue("#DecimalSeparator|euroRelation");
+    String group = vars.getSessionValue("#GroupSeparator|euroRelation");
+    DecimalFormat numberFormatDecimal = null;
     if (format != null && !format.equals("") && decimal != null && !decimal.equals("")
         && group != null && !group.equals("")) {
       DecimalFormatSymbols dfs = new DecimalFormatSymbols();
       dfs.setDecimalSeparator(decimal.charAt(0));
       dfs.setGroupingSeparator(group.charAt(0));
-      numberFormat = new DecimalFormat(format, dfs);
+      numberFormatDecimal = new DecimalFormat(format, dfs);
     }
-
+    // values used for formatting Quantities (read from Format.xml file)
+    format = vars.getSessionValue("#FormatOutput|qtyRelation");
+    decimal = vars.getSessionValue("#DecimalSeparator|qtyRelation");
+    group = vars.getSessionValue("#GroupSeparator|qtyRelation");
+    DecimalFormat numberFormatQuantity = null;
+    if (format != null && !format.equals("") && decimal != null && !decimal.equals("")
+        && group != null && !group.equals("")) {
+      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+      dfs.setDecimalSeparator(decimal.charAt(0));
+      dfs.setGroupingSeparator(group.charAt(0));
+      numberFormatQuantity = new DecimalFormat(format, dfs);
+    }
+    // values used for formatting Prices (read from Format.xml file)
+    format = vars.getSessionValue("#FormatOutput|priceRelation");
+    decimal = vars.getSessionValue("#DecimalSeparator|priceRelation");
+    group = vars.getSessionValue("#GroupSeparator|priceRelation");
+    DecimalFormat numberFormatPrice = null;
+    if (format != null && !format.equals("") && decimal != null && !decimal.equals("")
+        && group != null && !group.equals("")) {
+      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+      dfs.setDecimalSeparator(decimal.charAt(0));
+      dfs.setGroupingSeparator(group.charAt(0));
+      numberFormatPrice = new DecimalFormat(format, dfs);
+    }
+    // values used for formatting General (read from Format.xml file)
+    format = vars.getSessionValue("#FormatOutput|generalQtyRelation");
+    decimal = vars.getSessionValue("#DecimalSeparator|generalQtyRelation");
+    group = vars.getSessionValue("#GroupSeparator|generalQtyRelation");
+    DecimalFormat numberFormatGeneral = null;
+    if (format != null && !format.equals("") && decimal != null && !decimal.equals("")
+        && group != null && !group.equals("")) {
+      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+      dfs.setDecimalSeparator(decimal.charAt(0));
+      dfs.setGroupingSeparator(group.charAt(0));
+      numberFormatGeneral = new DecimalFormat(format, dfs);
+    }
+    // values used for formatting Integer (read from Format.xml file)
+    format = vars.getSessionValue("#FormatOutput|integerRelation");
+    decimal = vars.getSessionValue("#DecimalSeparator|integerRelation");
+    group = vars.getSessionValue("#GroupSeparator|integerRelation");
+    DecimalFormat numberFormatInteger = null;
+    if (format != null && !format.equals("") && decimal != null && !decimal.equals("")
+        && group != null && !group.equals("")) {
+      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+      dfs.setDecimalSeparator(decimal.charAt(0));
+      dfs.setGroupingSeparator(group.charAt(0));
+      numberFormatInteger = new DecimalFormat(format, dfs);
+    }
     if (tableSQL != null && headers != null) {
       try {
         // Prepare SQL adding the user filter parameters
@@ -324,11 +372,44 @@ public class DataGrid extends HttpSecureAppServlet {
             String value = data[j].getField(columnname);
             if (adReferenceId.equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            if ((adReferenceId.equals("12") || adReferenceId.equals("22")
-                || adReferenceId.equals("800008") || adReferenceId.equals("800019"))
-                && numberFormat != null) {
+            //Numeric formats:
+            //Decimal: 12, 22
+            //Qty: 29
+            //Price: 800008
+            //Integer: 11
+            //General: 800019
+            if ((adReferenceId.equals("12") || adReferenceId.equals("22"))
+                && numberFormatDecimal != null) {
               try {
-                value = numberFormat.format(new Double(value));
+                value = numberFormatDecimal.format(new BigDecimal(value));
+              } catch (Exception e) {
+                e.printStackTrace();
+              }
+            }
+            if ((adReferenceId.equals("29")) && numberFormatQuantity != null) {
+              try {
+                value = numberFormatQuantity.format(new BigDecimal(value));
+              } catch (Exception e) {
+                e.printStackTrace();
+              }
+            }
+            if ((adReferenceId.equals("800008")) && numberFormatPrice != null) {
+              try {
+                value = numberFormatPrice.format(new BigDecimal(value));
+              } catch (Exception e) {
+                e.printStackTrace();
+              }
+            }
+            if ((adReferenceId.equals("11")) && numberFormatInteger != null) {
+              try {
+                value = numberFormatInteger.format(new BigDecimal(value));
+              } catch (Exception e) {
+                e.printStackTrace();
+              }
+            }
+            if ((adReferenceId.equals("800019")) && numberFormatGeneral != null) {
+              try {
+                value = numberFormatGeneral.format(new BigDecimal(value));
               } catch (Exception e) {
                 e.printStackTrace();
               }

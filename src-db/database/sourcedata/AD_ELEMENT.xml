@@ -5739,10 +5739,14 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1026-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1026-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1026-->  <COLUMNNAME><![CDATA[M_InOutLine_ID]]></COLUMNNAME>
-<!--1026-->  <NAME><![CDATA[Shipment/Receipt Line]]></NAME>
-<!--1026-->  <PRINTNAME><![CDATA[Shipment/Receipt Line]]></PRINTNAME>
-<!--1026-->  <DESCRIPTION><![CDATA[A statement displaying one item, charge, or movement in a shipment/receipt.]]></DESCRIPTION>
-<!--1026-->  <HELP><![CDATA[The Shipment/Receipt Line indicates a unique line in a Shipment/Receipt document]]></HELP>
+<!--1026-->  <NAME><![CDATA[Goods Shipment Line]]></NAME>
+<!--1026-->  <PRINTNAME><![CDATA[Goods Shipment Line]]></PRINTNAME>
+<!--1026-->  <DESCRIPTION><![CDATA[A statement displaying one item, charge, or movement in a shipment.]]></DESCRIPTION>
+<!--1026-->  <HELP><![CDATA[The Goods Shipment Line indicates a unique line in a Shipment document]]></HELP>
+<!--1026-->  <PO_NAME><![CDATA[Goods Receipt Line]]></PO_NAME>
+<!--1026-->  <PO_PRINTNAME><![CDATA[Goods Receipt Line]]></PO_PRINTNAME>
+<!--1026-->  <PO_DESCRIPTION><![CDATA[A statement displaying one item, charge, or movement in a receipt.]]></PO_DESCRIPTION>
+<!--1026-->  <PO_HELP><![CDATA[The Goods Receipt Line indicates a unique line in a Receipt document]]></PO_HELP>
 <!--1026-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1026--></AD_ELEMENT>
 

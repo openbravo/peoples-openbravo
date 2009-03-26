@@ -44,6 +44,8 @@ public class FileImport extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   static boolean firstRowHeaders = true;
 
+  static final int THRESHOLD = 1000;
+
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
@@ -70,9 +72,8 @@ public class FileImport extends HttpSecureAppServlet {
       if (strSeparator.equalsIgnoreCase("F"))
         rows = FileImportData.select(this, strAdImpformatId);
       fieldsData = new FileLoadData(vars, "inpFile", firstRowHeaders, strSeparator, rows);
-      String texto = procesarFichero(vars, fieldsData.getFieldProvider(), request, response,
-          strAdImpformatId, strFirstLineHeader);
-      printPageResult(response, vars, texto, "FIND");
+      printSampleImport(vars, fieldsData.getFieldProvider(), request, response, strAdImpformatId,
+          strFirstLineHeader);
     } else if (vars.commandIn("SAVE")) {
       String strAdImpformatId = vars.getStringParameter("inpadImpformatId");
       FieldProvider[] rows = null;
@@ -272,7 +273,7 @@ public class FileImport extends HttpSecureAppServlet {
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "FileImport.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb(), false, false);
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "FileImport.html",
           strReplaceWith);
@@ -319,20 +320,93 @@ public class FileImport extends HttpSecureAppServlet {
     out.close();
   }
 
+  /**
+   * Prints the intermediate output of the .csv import - a manually generated table. The number of
+   * rows displayed (loaded) is limited to THRESHOLD. Large .csv files can cause out of memory
+   * exceptions, so we limit what can be loaded in the intermediate step here.
+   * 
+   * @param vars
+   * @param data2
+   * @param request
+   * @param response
+   * @param strAdImpformatId
+   * @param strFirstLineHeader
+   * @throws ServletException
+   * @throws IOException
+   */
+  void printSampleImport(VariablesSecureApp vars, FieldProvider[] data2,
+      HttpServletRequest request, HttpServletResponse response, String strAdImpformatId,
+      String strFirstLineHeader) throws ServletException, IOException {
+
+    int count = 0;
+    StringBuilder sb = new StringBuilder();
+    if (data2 != null) {
+      FileImportData[] data = FileImportData.select(this, strAdImpformatId);
+
+      int constant = 0;
+      sb.append("<table cellspacing=\"0\" cellpadding=\"0\" "
+          + "width=\"99%\" class=\"DataGrid_Header_Table "
+          + "DataGrid_Body_Table\" style=\"table-layout: auto;\">"
+          + "<tr class=\"DataGrid_Body_Row\">  " + "<td>");
+      if (log4j.isDebugEnabled())
+        log4j.debug("data2.length: " + data2.length);
+      for (int i = 0; i < data2.length && i < THRESHOLD; i++) {
+        if (log4j.isDebugEnabled())
+          log4j.debug("i:" + i + " - data.length" + data.length);
+        sb.append("<tr class=\"DataGrid_Body_Row DataGrid_Body_Row_" + (i % 2 == 0 ? "0" : "1")
+            + "\">");
+        for (int j = 0; j < data.length; j++) {
+          if (i == 0 && strFirstLineHeader.equalsIgnoreCase("Y"))
+            sb.append("<th class=\"DataGrid_Header_Cell\">");
+          else
+            sb.append("<td class=\"DataGrid_Body_Cell\">");
+          if (!data[j].constantvalue.equals("")) {
+            sb.append(data[j].constantvalue);
+            constant = constant + 1;
+          } else
+            sb.append(parseField(data2[i].getField(String.valueOf(j - constant)),
+                data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint));
+          if (i == 0 && strFirstLineHeader.equalsIgnoreCase("Y"))
+            sb.append("</th>");
+          else
+            sb.append("</td>");
+        }
+        constant = 0;
+        sb.append("</tr>");
+        count++;
+      }
+      sb.append("</td></table>");
+      if (count < data2.length) {
+        sb.insert(0, "<p class=\"LabelText\">&nbsp; ** The following table is a sample " + count
+            + " rows of the " + data2.length + " rows of data in the selected file.</p><br/>");
+      }
+    }
+
+    XmlDocument xmlDocument = null;
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/FileImport_Result")
+        .createXmlDocument();
+    response.setContentType("text/html; charset=UTF-8");
+    String strJS = "\n var r = '" + sb.toString() + "'; \n"
+        + "top.frames['appFrame'].setResult(r); \n "
+        + "top.frames['appFrame'].setProcessingMode('window', false); \n";
+    xmlDocument.setParameter("result", strJS);
+    xmlDocument.setParameter("messageType", "Success");
+    xmlDocument.setParameter("messageTitle", "Success");
+    xmlDocument.setParameter("messageMessage", "Process completed ooh yeah");
+
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
   void printPageResult(HttpServletResponse response, VariablesSecureApp vars, String text,
       String command) throws IOException, ServletException {
     XmlDocument xmlDocument = null;
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/FileImport_Result")
         .createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
-    String strJS = "";
-    if (command.equalsIgnoreCase("FIND")) {
-      strJS = "\n var r = '" + text + "'; \n" + "top.frames['appFrame'].setResult(r); \n "
-          + "top.frames['appFrame'].setProcessingMode('window', false); \n";
-    } else if (command.equalsIgnoreCase("SAVE")) {
-      strJS = "\n top.frames['appFrame'].setProcessingMode('window', false); \n"
-          + "top.frames['appFrame'].document.getElementById('buttonRefresh').onclick();\n";
-    }
+    String strJS = "\n top.frames['appFrame'].setProcessingMode('window', false); \n"
+        + "top.frames['appFrame'].document.getElementById('buttonRefresh').onclick();\n";
     xmlDocument.setParameter("result", strJS);
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

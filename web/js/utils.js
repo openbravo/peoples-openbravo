@@ -55,7 +55,9 @@ var isInputFile = false;
 var isPageLoading = true;
 var isUserChanges = false;
 var isUserClick = false;
-
+var isTabClick = false;
+var isButtonClick = false;
+var calloutProcessedObj = null;
 
 /**
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
@@ -260,7 +262,10 @@ function logClick(hiddenInput) {
   isUserClick = true;
   if(hiddenInput != null) {
     logChanges(hiddenInput);
+    isButtonClick = true;
+    return;
   }
+  isTabClick = true;
 }
 
 /**
@@ -290,7 +295,7 @@ function checkForChanges(f) {
 	  autosave = top.frameMenu.autosave;
 	}
 	
-	if(typeof autosave == 'undefined' || !autosave) { // backward compatibility		
+	if(typeof autosave == 'undefined' || !autosave) { // 2.40 behavior		
 		if (inputValue(form.inpLastFieldChanged)!="") {
 			if (!showJSMessage(26))
 				return false;
@@ -303,11 +308,11 @@ function checkForChanges(f) {
 	else {
 		var promptConfirmation = typeof top.appFrame.confirmOnChanges == 'undefined' ? true : top.appFrame.confirmOnChanges;
 		var hasUserChanges = typeof top.appFrame.isUserChanges == 'undefined' ? false : top.appFrame.isUserChanges;
-		if (form.inpLastFieldChanged && (hasUserChanges || isUserClick)) { // if the inpLastFieldChanged exists and there is a user change
+		if (form.inpLastFieldChanged && (hasUserChanges || isButtonClick)) { // if the inpLastFieldChanged exists and there is a user change
 			var autoSave = true;		
 			if (promptConfirmation)
 				autoSave = showJSMessage(25);
-			if (autoSave && (hasUserChanges || isUserClick)) {
+			if (autoSave) {
 				if(form.autosave) {
 					form.autosave.value = 'Y';
 				}
@@ -1667,10 +1672,12 @@ function addListOrderBy(sourceList, destinationList, withPrefix, selectAll) {
   if (sourceList==null || destinationList==null) return false;
   if (selectAll==null) selectAll=false;
   if (withPrefix==null) withPrefix=false;
-  for (var j=sourceList.length-1;j>=0;j--) {
-    if (selectAll || sourceList.options[j].selected==true) {
-      var text = sourceList.options[j].text;
-      var value = sourceList.options[j].value;
+  var sourceListLength = sourceList.length;
+  var i = 0;
+  for (var j=0;j<sourceListLength;j++) {
+    if (selectAll || sourceList.options[i].selected==true) {
+      var text = sourceList.options[i].text;
+      var value = sourceList.options[i].value;
       if (withPrefix) {
         if (value.indexOf("-")!=-1) value = value.substring(1);
         if (text.indexOf("/\\")!=-1 || text.indexOf("\\/")!=-1) text = text.substring(2);
@@ -1678,7 +1685,9 @@ function addListOrderBy(sourceList, destinationList, withPrefix, selectAll) {
         text = "/\\" + text;
       }
       destinationList.options[destinationList.length] = new Option(text, value);
-      sourceList.options[j]=null;
+      sourceList.options[i]=null;
+    } else {
+      i = i + 1;
     }
   }
   return true;
@@ -1694,10 +1703,16 @@ function addListOrderBy(sourceList, destinationList, withPrefix, selectAll) {
 function addList(sourceList, destinationList, selectAll) {
   if (sourceList==null || destinationList==null) return false;
   if (selectAll==null) selectAll=false;
-  for (var j=sourceList.length-1;j>=0;j--) {
-    if (selectAll || sourceList.options[j].selected==true) {
-      destinationList.options[destinationList.length] = new Option(sourceList.options[j].text, sourceList.options[j].value);
-      sourceList.options[j]=null;
+  var sourceListLength = sourceList.length;
+  var i = 0;
+  for (var j=0;j<sourceListLength;j++) {
+    if (selectAll || sourceList.options[i].selected==true) {
+      var text = sourceList.options[i].text;
+      var value = sourceList.options[i].value;
+      destinationList.options[destinationList.length] = new Option(text, value);
+      sourceList.options[i]=null;
+    } else {
+      i = i + 1;
     }
   }
   return true;
@@ -2672,6 +2687,7 @@ function formElementEvent(form, ElementName, calloutName) {
   if (ElementName!="MESSAGE" && ElementName!="CURSOR_FIELD" && ElementName!="EXECUTE" && ElementName!="DISPLAY" && ElementName!="HIDE" && ElementName.indexOf("_BTN")==-1) {
     var obj = eval("document." + form + "." + ElementName + ";");
     if (obj==null || !obj || !obj.type) return false;
+    calloutProcessedObj = obj;
     if (obj.type.toUpperCase().indexOf("RADIO")!=-1) {
       if (obj.onclick!=null && obj.onclick.toString().indexOf(calloutName)==-1) {
         if (obj.onclick.toString().indexOf("callout")!=-1 || obj.onclick.toString().indexOf("reload")!=-1) isReload=true;
@@ -2716,6 +2732,7 @@ function formElementEvent(form, ElementName, calloutName) {
         if (bolReadOnly) obj.readOnly = true;
       }
     }
+    calloutProcessedObj = null;
   }
   return (isReload);
 }
@@ -3086,6 +3103,7 @@ function logChanges(field) {
 */
 function changeToEditingMode(special, field) {
   try {
+    if (field && field == calloutProcessedObj) return false;
     isContextMenuOpened = false;
     if (special == 'force') {
       setWindowEditing(true);
@@ -3283,7 +3301,8 @@ function updateOnChange(field) {
   if (field==null) return false;
   try {
     var lastChanged = inputValue(document.forms[0].inpLastFieldChanged);
-    if (field.name!="inpadClientId" && field.name!="inpadOrgId") field.onchange();
+    //if (field.name!="inpadClientId" && field.name!="inpadOrgId")
+    field.onchange();
     setInputValue(document.forms[0].inpLastFieldChanged, lastChanged);
   } catch (e) {}
   return true;

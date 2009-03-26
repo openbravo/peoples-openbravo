@@ -141,16 +141,9 @@ public class Product extends HttpSecureAppServlet {
 
       String strPriceListVersion = getPriceListVersion(vars, strPriceList, strDate);
       vars.setSessionValue("Product.priceListVersion", strPriceListVersion);
-
-      String isCalledFromProduction = "";
-      if (windowId.equals("800051")) {
-        log4j.debug("selector called from process plan using production=y filter");
-        isCalledFromProduction = "production";
-      }
-
       ProductData[] data = ProductData.select(this, strWarehouse, "1", strKeyValue + "%", "",
-          isCalledFromProduction, Utility.getContext(this, vars, "#User_Client", "Product"),
-          Utility.getContext(this, vars, "#User_Org", "Product"), strPriceListVersion, "1", "", "");
+          Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars,
+              "#User_Org", "Product"), strPriceListVersion, "1", "", "");
       if (data != null && data.length == 1)
         printPageKey(response, vars, data, strWarehouse, strPriceListVersion);
       else
@@ -170,21 +163,13 @@ public class Product extends HttpSecureAppServlet {
       String strPriceListVersion = vars.getGlobalVariable("inpPriceListVersion",
           "Product.priceListVersion", "");
 
-      String windowId = vars.getGlobalVariable("WindowID", "Product.windowId", "");
-      String isCalledFromProduction = "";
-      if (windowId.equals("800051")) {
-        log4j.debug("selector called from process plan using production=y filter");
-        isCalledFromProduction = "production";
-      }
-
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
       String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
       String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
       printGridData(response, vars, strKey, strName, strOrg, strWarehouse, strPriceListVersion,
-          isCalledFromProduction, strSortCols + " " + strSortDirs, strOffset, strPageSize,
-          strNewFilter);
+          strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter);
     } else
       pageError(response);
   }
@@ -349,8 +334,8 @@ public class Product extends HttpSecureAppServlet {
 
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strName, String strOrg, String strWarehouse, String strPriceListVersion,
-      String strIsCalledFromProduction, String strOrderBy, String strOffset, String strPageSize,
-      String strNewFilter) throws IOException, ServletException {
+      String strOrderBy, String strOffset, String strPageSize, String strNewFilter)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -368,9 +353,9 @@ public class Product extends HttpSecureAppServlet {
           // or
           // first
           // load
-          strNumRows = ProductData.countRows(this, strKey, strName, strIsCalledFromProduction,
-              strPriceListVersion, Utility.getContext(this, vars, "#User_Client", "Product"),
-              Utility.getSelectorOrgs(this, vars, strOrg));
+          strNumRows = ProductData.countRows(this, strKey, strName, strPriceListVersion, Utility
+              .getContext(this, vars, "#User_Client", "Product"), Utility.getSelectorOrgs(this,
+              vars, strOrg));
           vars.setSessionValue("Product.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("Product.numrows");
@@ -382,16 +367,14 @@ public class Product extends HttpSecureAppServlet {
               + " AND "
               + String
                   .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
-          data = ProductData.select(this, strWarehouse, "ROWNUM", strKey, strName,
-              strIsCalledFromProduction, Utility.getContext(this, vars, "#User_Client", "Product"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strPriceListVersion, strOrderBy,
-              oraLimit, "");
+          data = ProductData.select(this, strWarehouse, "ROWNUM", strKey, strName, Utility
+              .getContext(this, vars, "#User_Client", "Product"), Utility.getSelectorOrgs(this,
+              vars, strOrg), strPriceListVersion, strOrderBy, oraLimit, "");
         } else {
           String pgLimit = strPageSize + " OFFSET " + strOffset;
-          data = ProductData.select(this, strWarehouse, "1", strKey, strName,
-              strIsCalledFromProduction, Utility.getContext(this, vars, "#User_Client", "Product"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strPriceListVersion, strOrderBy, "",
-              pgLimit);
+          data = ProductData.select(this, strWarehouse, "1", strKey, strName, Utility.getContext(
+              this, vars, "#User_Client", "Product"), Utility.getSelectorOrgs(this, vars, strOrg),
+              strPriceListVersion, strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);

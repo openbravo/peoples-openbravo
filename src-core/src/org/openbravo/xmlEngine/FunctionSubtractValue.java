@@ -11,6 +11,8 @@
  */
 package org.openbravo.xmlEngine;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 
 class FunctionSubtractValue extends FunctionEvaluationValue {
@@ -26,9 +28,8 @@ class FunctionSubtractValue extends FunctionEvaluationValue {
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      return functionTemplate.printFormatOutput(Double.valueOf(arg1Value.printSimple())
-          .doubleValue()
-          - Double.valueOf(arg2Value.printSimple()).doubleValue());
+      return functionTemplate.printFormatOutput(new BigDecimal(arg1Value.printSimple())
+          .subtract(new BigDecimal(arg2Value.printSimple())));
     }
   }
 
@@ -37,9 +38,8 @@ class FunctionSubtractValue extends FunctionEvaluationValue {
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      return functionTemplate.printFormatSimple(Double.valueOf(arg1Value.printSimple())
-          .doubleValue()
-          - Double.valueOf(arg2Value.printSimple()).doubleValue());
+      return functionTemplate.printFormatSimple(new BigDecimal(arg1Value.printSimple())
+          .subtract(new BigDecimal(arg2Value.printSimple())));
     }
   }
 

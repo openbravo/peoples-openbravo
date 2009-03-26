@@ -381,7 +381,7 @@ public class Translation extends HttpSecureAppServlet {
     Statement st = null;
     try {
       String trlTable = table;
-      if (trl)
+      if (trl && !table.endsWith("_TRL"))
         trlTable = table + "_TRL";
       final TranslationData[] trlColumns = getTrlColumns(table);
       final String keyColumn = table + "_ID";
@@ -389,6 +389,10 @@ public class Translation extends HttpSecureAppServlet {
       boolean m_IsCentrallyMaintained = false;
       try {
         m_IsCentrallyMaintained = !(TranslationData.centrallyMaintained(cp, table).equals("0"));
+        if (m_IsCentrallyMaintained)
+          log4j.debug("table:" + table + " IS centrally maintained");
+        else
+          log4j.debug("table:" + table + " is NOT centrally maintained");
       } catch (final Exception e) {
         translationlog4j.error("getTrlColumns (IsCentrallyMaintained)", e);
       }
@@ -493,7 +497,7 @@ public class Translation extends HttpSecureAppServlet {
       if (!new File(directory).exists())
         (new File(directory)).mkdir();
 
-      String fileName = directory + trlTable + "_TRL" + "_" + AD_Language + ".xml";
+      String fileName = directory + trlTable + "_" + AD_Language + ".xml";
       log4j.info("exportTrl - " + fileName);
       out = new File(fileName);
 
@@ -521,7 +525,7 @@ public class Translation extends HttpSecureAppServlet {
           if (!new File(directory).exists())
             (new File(directory)).mkdir();
 
-          fileName = directory + trlTable + "_TRL" + "_" + AD_Language + ".xml";
+          fileName = directory + trlTable + "_" + AD_Language + ".xml";
           log4j.info("exportTrl - " + fileName);
           out = new File(fileName);
         }
@@ -683,7 +687,7 @@ public class Translation extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled() && myMessage != null)
         log4j.debug("datasheet message:" + myMessage.getMessage());
 
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");

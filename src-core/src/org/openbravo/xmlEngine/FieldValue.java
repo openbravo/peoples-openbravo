@@ -11,6 +11,7 @@
  */
 package org.openbravo.xmlEngine;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -64,13 +65,13 @@ class FieldValue implements XmlComponentValue {
   }
 
   public String print() {
-    double total = 0.0;
+    BigDecimal total = BigDecimal.ZERO;
     if (fieldValue == null || fieldValue.equals("") || fieldValue.equalsIgnoreCase("NULL"))
       return ""; // if the string is empty then Double.parseDouble cannot
     // be done
     else if (fieldTemplate.formatOutput != null) {
       try {
-        total = Double.parseDouble(fieldValue);
+        total = new BigDecimal(fieldValue);
       } catch (Exception e) {
         log4jFieldValue.error("FieldValue.print() - Could not parse to double the string: "
             + fieldValue + "\n" + e);
@@ -86,7 +87,7 @@ class FieldValue implements XmlComponentValue {
       return ""; // if the string is empty then Double.parseDouble cannot
     // be done
     else if (fieldTemplate.formatSimple != null) {
-      return fieldTemplate.formatSimple.format(Double.parseDouble(fieldValue));
+      return fieldTemplate.formatSimple.format(new BigDecimal(fieldValue));
     } else {
       return fieldValue;
     }
@@ -96,7 +97,7 @@ class FieldValue implements XmlComponentValue {
     if (previousFieldValue == null || previousFieldValue.equals(""))
       return "";
     else if (fieldTemplate.formatOutput != null) {
-      return fieldTemplate.formatOutput.format(Double.parseDouble(previousFieldValue));
+      return fieldTemplate.formatOutput.format(new BigDecimal(previousFieldValue));
     } else {
       return previousFieldValue;
     }
@@ -106,7 +107,7 @@ class FieldValue implements XmlComponentValue {
     if (previousFieldValue == null || previousFieldValue.equals(""))
       return "";
     else if (fieldTemplate.formatSimple != null) {
-      return fieldTemplate.formatSimple.format(Double.parseDouble(previousFieldValue));
+      return fieldTemplate.formatSimple.format(new BigDecimal(previousFieldValue));
     } else {
       return previousFieldValue;
     }

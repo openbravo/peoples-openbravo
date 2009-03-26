@@ -143,6 +143,7 @@ public class DataImportService implements OBSingleton {
       final ImportResult ir = new ImportResult();
 
       boolean rolledBack = false;
+      OBContext.getOBContext().setInAdministratorMode(true);
       try {
         // disable the triggers to prevent unexpected extra db actions
         // during import
@@ -233,6 +234,7 @@ public class DataImportService implements OBSingleton {
         t.printStackTrace(System.err);
         ir.setException(t);
       } finally {
+        OBContext.getOBContext().restorePreviousAdminMode();
         if (rolledBack) {
           TriggerHandler.getInstance().clear();
         } else if (TriggerHandler.getInstance().isDisabled()) {

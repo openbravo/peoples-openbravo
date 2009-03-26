@@ -291,6 +291,10 @@ public class BaseXMLEntityConverter implements OBNotSingleton {
     logMessages.append(msg);
   }
 
+  protected boolean hasErrorOccured() {
+    return errorMessages.length() > 0;
+  }
+
   protected void error(String msg) {
     if (errorMessages.length() > 0) {
       errorMessages.append("\n");

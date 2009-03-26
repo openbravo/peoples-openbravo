@@ -19,11 +19,14 @@
 
 package org.openbravo.dal.service;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
+import org.hibernate.impl.SessionImpl;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -66,6 +69,20 @@ public class OBDal implements OBSingleton {
       instance = OBProvider.getInstance().get(OBDal.class);
     }
     return instance;
+  }
+
+  /**
+   * @return the current database connection
+   */
+  public Connection getConnection() {
+    return ((SessionImpl) SessionHandler.getInstance().getSession()).connection();
+  }
+
+  /**
+   * @return the current hibernate session
+   */
+  public Session getSession() {
+    return SessionHandler.getInstance().getSession();
   }
 
   /**
@@ -248,8 +265,7 @@ public class OBDal implements OBSingleton {
    */
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(Class<T> clz) {
     checkReadAccess(clz);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>();
-    obCriteria.setCriteria(SessionHandler.getInstance().getSession().createCriteria(clz));
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(clz.getName());
     obCriteria.setEntity(ModelProvider.getInstance().getEntity(clz));
     return obCriteria;
   }
@@ -263,8 +279,7 @@ public class OBDal implements OBSingleton {
    */
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(String entityName) {
     checkReadAccess(entityName);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>();
-    obCriteria.setCriteria(SessionHandler.getInstance().getSession().createCriteria(entityName));
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(entityName);
     obCriteria.setEntity(ModelProvider.getInstance().getEntity(entityName));
     return obCriteria;
   }

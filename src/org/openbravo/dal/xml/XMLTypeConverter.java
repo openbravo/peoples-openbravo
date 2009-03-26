@@ -137,9 +137,6 @@ public class XMLTypeConverter implements OBSingleton {
       if (BigDecimal.class == targetClass) {
         return (T) new BigDecimal(xml);
       }
-      if (Integer.class == targetClass) {
-        return (T) new Integer(xml);
-      }
       if (Long.class == targetClass) {
         return (T) new Long(xml);
       }
@@ -174,9 +171,6 @@ public class XMLTypeConverter implements OBSingleton {
     }
     if (BigDecimal.class == targetClass) {
       return "decimal";
-    }
-    if (Integer.class == targetClass) {
-      return "integer";
     }
     if (Long.class == targetClass) {
       return "long";

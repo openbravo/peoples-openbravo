@@ -52,7 +52,7 @@
       <foreign-key foreignTable="AD_ALERTRULE" name="ADALERTRULE_ADALERTRULETRL" onDelete="cascade">
         <reference local="AD_ALERTRULE_ID" foreign="AD_ALERTRULE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADALERRTRULETRL">
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADALERRTRULETRL" onDelete="cascade">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_ADALERTRULETRL">

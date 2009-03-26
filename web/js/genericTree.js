@@ -92,6 +92,10 @@
   }
   
   function gt_getDescription(id) {
+    setTimeout(function() {gt_getDescription2(id);},100);
+  }
+
+  function gt_getDescription2(id) {
     var frm = document.frmMain;
     frm.inpNodeId.value = id;
     paramXMLRequest = new Array('begin');

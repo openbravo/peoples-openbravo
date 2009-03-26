@@ -841,9 +841,11 @@ public class FactLine {
         strC_AcctSchema_ID);
     try {
       if (!strSql.equals("")/* && strLine!=null && !strLine.equals("") */) {
-        strSql = strSql.replaceAll("@RecordId@", strRecord_ID);
+        strSql = strSql.replaceAll("@RecordId@", "'" + strRecord_ID + "'");
         if (strLine == null || strLine.equals(""))
           strLine = "NULL";
+        else
+          strLine = "'" + strLine + "'";
         strSql = strSql.replaceAll("@Line@", strLine);
         Statement st = connectionProvider.getStatement();
         ResultSet result;

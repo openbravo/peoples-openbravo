@@ -23,10 +23,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -1594,10 +1594,14 @@ public class Utility {
    * @return file to a String
    */
   public static String fileToString(String strPath) throws FileNotFoundException {
-    final FileReader myFileReader = new FileReader(strPath);
-    final BufferedReader mybr = new BufferedReader(myFileReader);
-    final StringBuffer strMyFile = new StringBuffer("");
+    StringBuffer strMyFile = new StringBuffer("");
     try {
+      File f = new File(strPath);
+      FileInputStream fis = new FileInputStream(f);
+      InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+
+      final BufferedReader mybr = new BufferedReader(isr);
+
       String strTemp = mybr.readLine();
       strMyFile.append(strTemp);
       while (strTemp != null) {
@@ -1606,7 +1610,7 @@ public class Utility {
           strMyFile.append("\n").append(strTemp);
         else {
           mybr.close();
-          myFileReader.close();
+          fis.close();
         }
       }
     } catch (final IOException e) {

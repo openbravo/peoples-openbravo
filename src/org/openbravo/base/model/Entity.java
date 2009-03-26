@@ -69,6 +69,7 @@ public class Entity {
   private boolean isInActive;
 
   private boolean isTraceable;
+  private boolean isTraceableSet = false;
   private boolean isActiveEnabled;
   private boolean isOrganizationEnabled;
   // some views have this:
@@ -405,6 +406,16 @@ public class Entity {
    * @return true if this Entity has created, createdBy etc. properties.
    */
   public boolean isTraceable() {
+    if (!isTraceableSet) {
+      int cnt = 0;
+      for (Property p : getProperties()) {
+        if (p.isAuditInfo()) {
+          cnt++;
+        }
+      }
+      isTraceable = cnt == 4;
+      isTraceableSet = true;
+    }
     return isTraceable;
   }
 

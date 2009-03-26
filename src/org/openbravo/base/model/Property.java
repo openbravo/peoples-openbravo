@@ -184,13 +184,17 @@ public class Property {
     if (getName().toLowerCase().equals("creationdate") && isPrimitive()
         && Date.class.isAssignableFrom(getPrimitiveType())) {
       setAuditInfo(true);
+      // ensure that the casing is correct
+      setName("creationDate");
     } else if (getName().toLowerCase().equals("updated") && isPrimitive()
         && Date.class.isAssignableFrom(getPrimitiveType())) {
       setAuditInfo(true);
     } else if (getName().toLowerCase().equals("updatedby") && !isPrimitive()) {
       setAuditInfo(true);
+      setName("updatedBy");
     } else if (getName().toLowerCase().equals("createdby") && !isPrimitive()) {
       setAuditInfo(true);
+      setName("createdBy");
     } else {
       setAuditInfo(false);
     }
@@ -338,6 +342,9 @@ public class Property {
       }
       if (getPrimitiveType() == Float.class || getPrimitiveType() == float.class) {
         return defaultValue + "f";
+      }
+      if (getPrimitiveType() == Long.class || getPrimitiveType() == long.class) {
+        return "(long)" + defaultValue;
       }
       if (getPrimitiveType() == String.class) {
         if (defaultValue.length() > 1
@@ -846,9 +853,6 @@ public class Property {
 
   public void setAuditInfo(boolean isAuditInfo) {
     this.isAuditInfo = isAuditInfo;
-    if (isAuditInfo) {
-      getEntity().setTraceable(true);
-    }
   }
 
   public String getTransientCondition() {

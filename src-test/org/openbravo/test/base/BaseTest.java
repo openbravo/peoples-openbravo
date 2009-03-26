@@ -51,6 +51,7 @@ public class BaseTest extends TestCase {
     // clear the session otherwise it keeps the old model
     setBigBazaarUserContext();
     super.setUp();
+    setErrorOccured(true);
   }
 
   protected void initializeDalLayer() throws Exception {
@@ -130,6 +131,10 @@ public class BaseTest extends TestCase {
 
   public boolean isErrorOccured() {
     return errorOccured;
+  }
+
+  public void commitTransaction() {
+    setErrorOccured(false);
   }
 
   public void setErrorOccured(boolean errorOccured) {

@@ -230,7 +230,7 @@
             WHERE M_ProductionPlan_ID=CUR_PP.M_ProductionPlan_ID;
             -- Create BOM Line
             v_ResultStr:='CreatingLine BOM';
-            v_Line:=100; -- OriginLine
+            v_Line:=10; -- OriginLine
             Ad_Sequence_Next('M_ProductionLine', CUR_PP.AD_Client_ID, NextNo) ;
             INSERT
             INTO M_PRODUCTIONLINE
@@ -305,7 +305,7 @@
                     v_QtyStorage:=v_QtyStorage - v_Qty;
                     v_QtyAcumulated:=v_QtyAcumulated + v_Qty;
                     v_QtyOrder:=v_storage.QtyOrder*(v_Qty/v_storage.Qty) ;
-                    SELECT COALESCE(MAX(Line), 0) + 100
+                    SELECT COALESCE(MAX(Line), 0) + 10
                     INTO v_Line
                     FROM M_PRODUCTIONLINE
                     WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID;
@@ -339,7 +339,7 @@
                   END LOOP;
                 END IF; --NEXT_PRODUCT
               ELSE
-                SELECT COALESCE(MAX(Line), 0) + 100
+                SELECT COALESCE(MAX(Line), 0) + 10
                 INTO v_Line
                 FROM M_PRODUCTIONLINE
                 WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID;
@@ -387,7 +387,7 @@
             WHERE pl.M_Product_ID=p.M_Product_ID
               AND pl.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
               AND pp.M_PRODUCTION_ID=v_Record_ID
-              AND pl.Line<>100 -- Origin Line
+              AND pl.Line<>10 -- Origin Line
               AND p.IsBOM='Y'
               AND p.IsStocked='N';
             -- Nothing to do
@@ -411,7 +411,7 @@
               WHERE pl.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
                 AND pp.M_Production_ID=v_Record_ID
                 AND pl.M_Product_ID=p.M_Product_ID
-                AND pl.Line<>100 -- Origin Line
+                AND pl.Line<>10 -- Origin Line
                 AND p.IsBOM='Y'
                 AND p.IsStocked='N'
               )
@@ -432,7 +432,7 @@
                 )
               LOOP
                 v_ResultStr:='CreatingLine Products2';
-                SELECT COALESCE(MAX(Line), 0) + 100
+                SELECT COALESCE(MAX(Line), 0) + 10
                 INTO v_Line
                 FROM M_PRODUCTIONLINE
                 WHERE M_ProductionPlan_ID=CUR_PLineBOM.M_ProductionPlan_ID;

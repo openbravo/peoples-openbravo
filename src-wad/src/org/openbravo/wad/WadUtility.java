@@ -161,6 +161,8 @@ public class WadUtility {
         tableDirName = "C_ValidCombination";
       else if (fields.reference.equals("31"))
         tableDirName = "M_Locator";
+      else if (fields.reference.equals("35"))
+        tableDirName = "M_AttributeSetInstance";
       else if (fields.reference.equals("800011"))
         tableDirName = "M_Product";
       else
@@ -170,6 +172,8 @@ public class WadUtility {
         fieldId = "C_ValidCombination_ID";
       else if (fields.reference.equals("31"))
         fieldId = "M_Locator_ID";
+      else if (fields.reference.equals("35"))
+        fieldId = "M_AttributeSetInstance_ID";
       else if (fields.reference.equals("800011"))
         fieldId = "M_Product_ID";
       else
@@ -323,7 +327,7 @@ public class WadUtility {
     } else if (fields.reference.equals("19") || fields.reference.equals("30")
         || fields.reference.equals("31") || fields.reference.equals("35")
         || fields.reference.equals("25") || fields.reference.equals("800011")) { // TableDir, Search
-                                                                                 // y
+      // y
       // Locator
       itable++;
       EditionFieldsData[] dataSearchs = null;
@@ -336,6 +340,8 @@ public class WadUtility {
           tableDirName = "C_ValidCombination";
         else if (fields.reference.equals("31"))
           tableDirName = "M_Locator";
+        else if (fields.reference.equals("35"))
+          tableDirName = "M_AttributeSetInstance";
         else if (fields.reference.equals("800011"))
           tableDirName = "M_Product";
         else if (fields.name.equalsIgnoreCase("C_SETTLEMENT_CANCEL_ID"))
@@ -348,6 +354,8 @@ public class WadUtility {
           fieldId = "C_ValidCombination_ID";
         else if (fields.reference.equals("31"))
           fieldId = "M_Locator_ID";
+        else if (fields.reference.equals("35"))
+          fieldId = "M_AttributeSetInstance_ID";
         else if (fields.reference.equals("800011"))
           fieldId = "M_Product_ID";
         else if (fields.name.equalsIgnoreCase("C_SETTLEMENT_CANCEL_ID"))

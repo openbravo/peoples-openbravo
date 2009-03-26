@@ -4657,10 +4657,10 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800169-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800169-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800169-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800169-->  <VALUE><![CDATA[TaxReport]]></VALUE>
-<!--800169-->  <NAME><![CDATA[Tax Report]]></NAME>
-<!--800169-->  <DESCRIPTION><![CDATA[Tax Report]]></DESCRIPTION>
-<!--800169-->  <HELP><![CDATA[Tax Report]]></HELP>
+<!--800169-->  <VALUE><![CDATA[CreateTaxReport]]></VALUE>
+<!--800169-->  <NAME><![CDATA[Create Tax Report]]></NAME>
+<!--800169-->  <DESCRIPTION><![CDATA[Create Tax Report]]></DESCRIPTION>
+<!--800169-->  <HELP><![CDATA[Create Tax Report]]></HELP>
 <!--800169-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800169-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800169-->  <ISREPORT><![CDATA[N]]></ISREPORT>
@@ -5315,6 +5315,7 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800206-->  <VALUE><![CDATA[CashFlowStatement]]></VALUE>
 <!--800206-->  <NAME><![CDATA[Cash Flow Statement]]></NAME>
 <!--800206-->  <DESCRIPTION><![CDATA[Cash Flow Statement]]></DESCRIPTION>
+<!--800206-->  <HELP><![CDATA[Cash Flow Statement]]></HELP>
 <!--800206-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800206-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800206-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
@@ -5334,6 +5335,7 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800207-->  <VALUE><![CDATA[GenerateCashFlowStatement]]></VALUE>
 <!--800207-->  <NAME><![CDATA[Generate Cash Flow Statement]]></NAME>
 <!--800207-->  <DESCRIPTION><![CDATA[Generate Cash Flow Statement]]></DESCRIPTION>
+<!--800207-->  <HELP><![CDATA[Generate Cash Flow Statement]]></HELP>
 <!--800207-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800207-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800207-->  <ISREPORT><![CDATA[N]]></ISREPORT>

@@ -44,6 +44,7 @@
     Cur_InOutLine RECORD;
     Cur_ProdCost RECORD;
     Cur_PriceList RECORD;
+    Cur_ManualCost RECORD;
     v_rowcount NUMBER;
   BEGIN
     v_Qty:=0;
@@ -91,6 +92,21 @@
     v_Deleted:=v_Deleted + v_rowcount;
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  deleted=' || v_rowcount) ;
+    --RECALCULATE THE DATETO OF MANUAL COSTS
+    FOR Cur_ManualCost IN
+      (SELECT M_COSTING_ID, M_PRODUCT_ID, DATEFROM
+       FROM M_COSTING
+       ORDER BY M_PRODUCT_ID, DATEFROM DESC) LOOP
+      IF (v_ProductOld <> Cur_ManualCost.M_PRODUCT_ID) THEN
+        v_Date := TO_DATE('31-12-9999', 'DD-MM-YYYY');
+      END IF;
+      UPDATE M_COSTING
+      SET DATETO = v_date
+      WHERE M_COSTING_ID = Cur_ManualCost.M_Costing_ID;
+      v_Date := cur_manualcost.DATEFROM;
+      v_ProductOld := cur_manualcost.M_PRODUCT_ID;
+    END LOOP;
+    v_ProductOld:='0';
     v_DateOld:=TO_DATE('01-01-1900', 'DD-MM-YYYY') ;
     FOR Cur_InOutLine IN
       (SELECT M_INOUTLINE.M_INOUTLINE_ID, M_INOUTLINE.MOVEMENTQTY, M_PRODUCT.M_PRODUCT_ID, M_INOUT.MOVEMENTDATE,

@@ -19,6 +19,8 @@
 
 package org.openbravo.test.dal;
 
+import java.math.BigDecimal;
+
 import org.hibernate.criterion.Expression;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
@@ -105,8 +107,8 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
 
       icl.setDescription("desc " + ic.getName());
       final InventoryCountLine icl2 = ic.getMaterialMgmtInventoryCountLineList().get(0);
-      icl2.setQuantityOrderBook((icl2.getQuantityOrderBook() == null ? 0f : icl2
-          .getQuantityOrderBook()) + 1f);
+      icl2.setQuantityOrderBook(new BigDecimal((icl2.getQuantityOrderBook() == null ? 0f : icl2
+          .getQuantityOrderBook().floatValue() + 1f)));
       OBDal.getInstance().save(ic);
     }
     OBDal.getInstance().commitAndClose();

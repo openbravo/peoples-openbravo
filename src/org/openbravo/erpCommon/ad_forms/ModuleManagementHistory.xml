@@ -20,6 +20,7 @@
 <REPORT>
   <template file="ModuleManagementHistory.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
+  <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
@@ -31,10 +32,10 @@
   
   <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>
   <PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
-  <PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="xx"/>
+  <PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
   <PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
-  <PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="xx"/>
+  <PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
 
   <PARAMETER id="inpUser" name="inpUser" default=""/>
   <SUBREPORT id="reportUser" name="reportUser" report="org/openbravo/erpCommon/reference/List">

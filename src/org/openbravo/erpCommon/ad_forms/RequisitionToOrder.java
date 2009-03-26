@@ -442,6 +442,13 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       return myMessage;
     }
 
+    RequisitionToOrderData[] data1 = RequisitionToOrderData.selectVendorData(this, strVendor);
+    if (data1[0].poPaymenttermId == null || data1[0].poPaymenttermId.equals("")) {
+      myMessage.setType("Error");
+      myMessage.setMessage(Utility.messageBD(this, "VendorWithNoPaymentTerm", vars.getLanguage()));
+      return myMessage;
+    }
+
     try {
       conn = getTransactionConnection();
       String strCOrderId = SequenceIdData.getUUID();
@@ -451,19 +458,17 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           docTargetType, false, true);
       String cCurrencyId = RequisitionToOrderData.selectCurrency(this, strPriceListId);
 
-      RequisitionToOrderData[] data1 = RequisitionToOrderData.selectVendorData(this, strVendor);
       try {
         RequisitionToOrderData.insertCOrder(conn, this, strCOrderId, vars.getClient(), strOrg, vars
             .getUser(), strDocumentNo, "DR", "CO", "0", docTargetType, strOrderDate, strOrderDate,
             strOrderDate, strVendor, RequisitionToOrderData.cBPartnerLocationId(this, strVendor),
             RequisitionToOrderData.billto(this, strVendor).equals("") ? RequisitionToOrderData
                 .cBPartnerLocationId(this, strVendor) : RequisitionToOrderData.billto(this,
-                strVendor), cCurrencyId, data1[0].paymentrulepo, data1[0].poPaymenttermId
-                .equals("") ? RequisitionToOrderData.selectPaymentTerm(this, vars.getClient())
-                : data1[0].poPaymenttermId, data1[0].invoicerule.equals("") ? "I"
-                : data1[0].invoicerule, data1[0].deliveryrule.equals("") ? "A"
-                : data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("") ? "D"
-                : data1[0].deliveryviarule, strWarehouse, strPriceListId, "", "", "");
+                strVendor), cCurrencyId, data1[0].paymentrulepo, data1[0].poPaymenttermId,
+            data1[0].invoicerule.equals("") ? "I" : data1[0].invoicerule, data1[0].deliveryrule
+                .equals("") ? "A" : data1[0].deliveryrule, "I",
+            data1[0].deliveryviarule.equals("") ? "D" : data1[0].deliveryviarule, strWarehouse,
+            strPriceListId, "", "", "");
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
         releaseRollbackConnection(conn);
@@ -572,11 +577,12 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       throws IOException, ServletException {
     String pinstance = SequenceIdData.getUUID();
 
-    PInstanceProcessData.insertPInstance(conn, this, pinstance, "104", strcOrderId, "N", vars.getUser(),
-        vars.getClient(), vars.getOrg());
+    PInstanceProcessData.insertPInstance(conn, this, pinstance, "104", strcOrderId, "N", vars
+        .getUser(), vars.getClient(), vars.getOrg());
     RequisitionToOrderData.cOrderPost0(conn, this, pinstance);
 
-    PInstanceProcessData[] pinstanceData = PInstanceProcessData.selectConnection(conn, this, pinstance);
+    PInstanceProcessData[] pinstanceData = PInstanceProcessData.selectConnection(conn, this,
+        pinstance);
     OBError myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
     return myMessage;
   }

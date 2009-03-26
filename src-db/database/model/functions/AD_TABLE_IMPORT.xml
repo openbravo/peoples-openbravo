@@ -250,18 +250,23 @@
          WHERE AD_TABLE_ID = Cur_Column.AD_Table_ID;
       END IF;
 
+      
       IF substr(upper(v_columnName),1,3)='EM_' then
-        db_prefix := substr(v_columnName,4,length(v_columnName)-instr(v_columnName,'_',1,2));
+        db_prefix := substr(v_columnName,4,instr(v_columnName,'_',1,2)-4);
+        DBMS_OUTPUT.PUT_LINE('Prefix:'||db_prefix);
         select max(ad_module_id)
           into v_module_id
           from ad_module_dbprefix
-         where name = db_prefix;
+         where upper(name) = upper(db_prefix);
+          
         if v_module_id is null then
           v_module_id := v_module_table_id;
         end if;
       else
         v_module_id := v_module_table_id;
       end if;
+      
+      DBMS_OUTPUT.PUT_LINE('Inserting Column:'||v_columnName||' to module:'||v_module_id);
       
       INSERT
       INTO AD_COLUMN
@@ -283,7 +288,7 @@
        (CASE Cur_Column.Nullable WHEN 'Y' THEN 'N' ELSE 'Y' END),
         v_IsIdentifier, v_SeqNo, 'N', 'N', v_IsUpdateable, v_AD_Reference_Value_ID, 
         v_AD_Val_Rule_ID, v_DefaultValue, v_IsSessionAttr,
-        Cur_Column.COLUMN_ID, v_module_id) ;
+        Cur_Column.COLUMN_ID, v_module_id);
       --
       v_count:=v_count + 1;
       -- Added by Ismael Ciordia

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_ALERTRULE_TRG">
-    <trigger name="AD_ALERTRULE_TRG" table="AD_ALERTRULE" fires="after" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="AD_ALERTRULE_TRG" table="AD_ALERTRULE" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
 
 
@@ -74,14 +74,6 @@ BEGIN
       SET IsTranslated='N'
     WHERE AD_AlertRule_ID=:new.AD_AlertRule_ID;
    END IF;
-   END IF;
-
-   IF DELETING THEN
-     DELETE FROM AD_AlertRule_Trl
-      WHERE AD_AlertRule_ID=:old.AD_AlertRule_ID;
-
-     DELETE FROM AD_AlertRecipient
-      WHERE AD_AlertRule_ID=:old.AD_AlertRule_ID;
    END IF;
 END AD_ALERTRULE_TRG
 ]]></body>

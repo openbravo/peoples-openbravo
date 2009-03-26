@@ -11,6 +11,7 @@
  */
 package org.openbravo.xmlEngine;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 import org.apache.log4j.Logger;
@@ -52,19 +53,19 @@ class FunctionTemplate implements XmlComponentTemplate, IDComponent {
     return FUNCTION;
   }
 
-  public String printFormatOutput(double value) {
+  public String printFormatOutput(BigDecimal value) {
     if (formatOutput != null) {
       return formatOutput.format(value);
     } else {
-      return Double.toString(value);
+      return value.toPlainString();
     }
   }
 
-  public String printFormatSimple(double value) {
+  public String printFormatSimple(BigDecimal value) {
     if (formatSimple != null) {
       return formatSimple.format(value);
     } else {
-      return Double.toString(value);
+      return value.toPlainString();
     }
   }
 

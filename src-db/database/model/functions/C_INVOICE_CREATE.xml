@@ -65,7 +65,7 @@
     v_Qty NUMBER;
     --MODIFIED BY F.IRIAZABAL
     v_QtyOrder NUMBER;
-    v_Reference VARCHAR2(256):='';
+    v_Reference VARCHAR2(2000):='';
     v_ReferenceOrder CHAR(1) ;
     v_DocSubTypeSO VARCHAR2(60) ;
     --

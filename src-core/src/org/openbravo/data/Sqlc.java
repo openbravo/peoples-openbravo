@@ -90,6 +90,7 @@ public class Sqlc extends DefaultHandler {
     stcElement = new Stack<String>();
     first = true;
     sqlcPackage = null;
+    strComments = null;
 
   }
 

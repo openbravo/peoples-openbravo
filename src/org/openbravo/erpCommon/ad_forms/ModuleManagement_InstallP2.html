@@ -227,10 +227,10 @@ function onLoadDo(){
             <tr>
               <td colspan="4">
                 <div style="height: 0px; width: 0px;"><input class="DataGrid_Table_Dummy_Input" id="genericTree_dummy_input" type="text"></div>
-                <div class="TextArea_FourCells_width Tree_Container" style="height: 100px;" id="genericTree" onclick="gt_focusTreeContainer(this);"> 
+                <div class="TextArea_FourCells_width Tree_Container" style="height: 100px;" id="genericTree" onclick="gt_focusTreeContainer(this);" onmousedown="gt_focusTreeContainer(this);"> 
                   <div style="padding: 20px;">
                   
-                    <FIELD_TMP id="moduleSelected">                  
+                    <FIELD_TMP id="moduleSelected">
                       <div class="Label_ReadOnly_Text">Selected installations:</div>
                       <div style="height: 10px;"></div>
                       <FIELD_TMP id ="modulesSel">
@@ -245,7 +245,7 @@ function onLoadDo(){
                       </FIELD_TMP>
                     </FIELD_TMP>
                   
-                    <FIELD_TMP id="moduleIntallation">                  
+                    <FIELD_TMP id="moduleIntallation">
                       <div class="Label_ReadOnly_Text">Required additional installations:</div>
                       <div style="height: 10px;"></div>
                       <FIELD_TMP id ="modulesInst">
@@ -260,7 +260,7 @@ function onLoadDo(){
                       </FIELD_TMP>
                     </FIELD_TMP>
                     
-                    <FIELD_TMP id="moduleUpdate">                  
+                    <FIELD_TMP id="moduleUpdate">
                       <div style="height: 15px;"></div>
                       <div class="Label_ReadOnly_Text">Required additional updates:</div>
                       <div style="height: 10px;"></div>

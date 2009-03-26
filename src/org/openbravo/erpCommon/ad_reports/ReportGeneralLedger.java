@@ -406,7 +406,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("amtFrom", strAmtFrom);
     xmlDocument.setParameter("amtTo", strAmtTo);
     xmlDocument.setParameter("adOrgId", strOrg);
-    xmlDocument.setParameter("InitialYearDate", strYearInitialDate);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
     xmlDocument.setParameter("paramAll0", strAll.equals("") ? "0" : "1");
     xmlDocument.setParameter("paramHide0", strHide.equals("") ? "0" : "1");
@@ -559,7 +558,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
     parameters.put("Title", classInfo.name);
     parameters.put("ShowPartner", new Boolean(!(strcBpartnerId.equals("") && strAll.equals(""))));
-    parameters.put("Subtitle", Utility.messageBD(this, "GL_Previous", strLanguage));
+    parameters.put("REPORT_SUBTITLE", Utility.messageBD(this, "GL_Previous", strLanguage));
     parameters.put("Final", Utility.messageBD(this, "Final", strLanguage));
     String strDateFormat;
     strDateFormat = vars.getJavaDateFormat();
@@ -571,6 +570,20 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       throw new ServletException(e.getMessage());
     }
     parameters.put("InitialYearDate", date);
+    Date dateTo = null;
+    try {
+        dateTo = dateFormat.parse(strDateTo);
+    } catch (Exception e) {
+        throw new ServletException(e.getMessage());
+    }
+    parameters.put("DateTo", dateTo);
+    Date dateFrom = null;
+    try {
+        dateFrom = dateFormat.parse(strDateFrom);
+    } catch (Exception e) {
+        throw new ServletException(e.getMessage());
+    }
+    parameters.put("DateFrom", dateFrom);
 
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }

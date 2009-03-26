@@ -446,8 +446,8 @@ public class OBContext implements OBNotSingleton {
             + UserRoles.PROPERTY_ROLE + "." + Role.PROPERTY_ACTIVE + "='Y' order by ur."
             + UserRoles.PROPERTY_ROLE + "." + Role.PROPERTY_ID + " asc", false);
         if (ur == null) {
-          throw new OBSecurityException("There are no valid and active user roles "
-              + " for user with id: " + u.getId());
+          throw new OBSecurityException(
+              "Your user is not assigned to a Role and it is required to login into Openbravo. Ask the Security Administrator");
         }
         Hibernate.initialize(ur.getRole());
         setRole(ur.getRole());

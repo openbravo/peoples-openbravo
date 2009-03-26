@@ -280,18 +280,6 @@ var arrAccount=null;
                 </tr>
   <tr>
     <td colspan="6">
-      <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_InfoBar">
-        <tr>
-          <td class="Popup_InfoBar_Icon_cell"><img src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
-          <td class="Popup_InfoBar_text_table">
-            <table>
-              <tr>
-                <td class="Popup_InfoBar_text" id="helpDiscard"><span id="paramHelp">&nbsp;</span></td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
     </td>
   </tr>
           <tr>
@@ -300,7 +288,7 @@ var arrAccount=null;
   <tr>
     <td class="TitleCell"><span class="LabelText">Account schema&nbsp;</span></td>
     <td class="Combo_ContentCell" colspan="2">
-      <select class="ComboKey Combo_TwoCells_width" name="inpcAcctSchemaId" id="inpcAcctSchemaId" onChange="refreshAccounts();displayCombos();return false;">
+      <select class="ComboKey Combo_TwoCells_width required" required="true" name="inpcAcctSchemaId" id="inpcAcctSchemaId" onChange="refreshAccounts();displayCombos();return false;">
         <option value=""></option>
         <div id="reportC_ACCTSCHEMA_ID"></div>
       </select>
@@ -318,7 +306,7 @@ var arrAccount=null;
 	<tr id="selEliminarOrg" style="display:none;">
 		<td class="TitleCell"><span class="LabelText">Organization&nbsp;</span></td>
 		<td class="Combo_ContentCell" colspan="2">
-			<select class="ComboKey Combo_TwoCells_width" name="inpadOrgId" id="inpadOrgId">
+			<select class="ComboKey Combo_TwoCells_width required" required="true" name="inpadOrgId" id="inpadOrgId">
 				<option value=""></option>
 				<div id="reportAD_ORG"></div>
 			</select>

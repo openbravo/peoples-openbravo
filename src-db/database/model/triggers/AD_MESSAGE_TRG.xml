@@ -40,7 +40,8 @@ BEGIN
       INTO v_Aux
       FROM AD_MODULE_DBPREFIX
      WHERE AD_MODULE_ID = :new.AD_Module_ID
-       AND instr(upper(:new.value), upper(name)||'_') = 1;
+       AND (instr(upper(:new.value), upper(name)||'_') = 1
+          OR instr(upper(:new.value), 'EM_'||upper(name)||'_') = 1);
     
     IF v_Aux = 0 THEN
       RAISE_APPLICATION_ERROR(-20536, 'Messages must start with its module DB prefix') ;

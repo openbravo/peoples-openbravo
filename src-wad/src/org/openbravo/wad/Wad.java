@@ -2841,6 +2841,8 @@ public class Wad extends DefaultHandler {
               tableN = "C_ValidCombination";
             else if (fieldsDef[i].referencevalue.equals("31"))
               tableN = "M_Locator";
+            else if (fieldsDef[i].referencevalue.equals("35"))
+              tableN = "M_AttributeSetInstance";
             else if (fieldsDef[i].referencevalue.equals("800011"))
               tableN = "M_Product";
             else if (fieldsDef[i].name.equalsIgnoreCase("createdBy")
@@ -2852,6 +2854,8 @@ public class Wad extends DefaultHandler {
               fieldsDef[i].name = "C_ValidCombination_ID";
             else if (fieldsDef[i].referencevalue.equals("31"))
               fieldsDef[i].name = "M_Locator_ID";
+            else if (fieldsDef[i].referencevalue.equals("35"))
+              fieldsDef[i].name = "M_AttributeSetInstance_ID";
             else if (fieldsDef[i].referencevalue.equals("800011"))
               fieldsDef[i].name = "M_Product_ID";
             else if (fieldsDef[i].name.equalsIgnoreCase("createdBy")
@@ -3464,6 +3468,8 @@ public class Wad extends DefaultHandler {
         "org/openbravo/wad/Template_Relation", discard).createXmlDocument();
     xmlDocument.setParameter("form", tabName + "_Edition.html");
     xmlDocument.setParameter("tab", tabNamePresentation);
+    if (strTable.equals("111"))
+      keyColumnName = "AD_Language";
     xmlDocument.setParameter("key", "inp" + Sqlc.TransformaNombreColumna(keyColumnName));
     xmlDocument.setParameter("keyId", keyColumnName);
     xmlDocument.setParameter("tabId", strTab);

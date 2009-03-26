@@ -66,9 +66,14 @@
 
     FOR Cur_workproposal IN (
       SELECT MRP_RUN_PRODUCTIONLINE.* , MA_PROCESSPLAN.EXPLODEPHASES, 
-      MA_PROCESSPLAN.CONVERSIONRATE, MA_PROCESSPLAN.SECONDARYUNIT
-      FROM MRP_RUN_PRODUCTIONLINE, MA_PROCESSPLAN
+      MA_PROCESSPLAN.CONVERSIONRATE, MA_PROCESSPLAN.SECONDARYUNIT,
+      ROUND((MRP_RUN_PRODUCTIONLINE.qty/A.PROQTY)+0.0005,3) AS PROCESSPLANQTY
+      FROM MRP_RUN_PRODUCTIONLINE, MA_PROCESSPLAN, 
+        (SELECT DISTINCT produced, proqty, ma_processplan_id
+         FROM MA_PROCESSPLAN_TOTALIZED) A
       WHERE MRP_RUN_PRODUCTIONLINE.MA_PROCESSPLAN_ID = MA_PROCESSPLAN.MA_PROCESSPLAN_ID
+        AND MA_PROCESSPLAN.MA_PROCESSPLAN_ID = A.MA_PROCESSPLAN_ID
+        AND A.PRODUCED = MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID
         AND MRP_RUN_PRODUCTION_ID = v_Record_ID
         AND INOUTTRXTYPE = 'WP'
         AND MA_WORKREQUIREMENT_ID IS NULL
@@ -88,10 +93,10 @@
       ) VALUES (
         v_WR_ID, v_Client_ID, v_Org_ID, 'Y',
         now(), v_User_ID, now(), v_User_ID, null,
-        Cur_workproposal.MA_PROCESSPLAN_ID, Cur_workproposal.qty,
+        Cur_workproposal.MA_PROCESSPLAN_ID, Cur_workproposal.PROCESSPLANQTY,
         now(), Cur_workproposal.plannedorderdate, Cur_workproposal.planneddate,
         'N', 'N', 'N', v_DocumentNo, Cur_workproposal.explodephases,
-        (CASE WHEN Cur_workproposal.conversionrate IS NOT NULL THEN (Cur_workproposal.conversionrate*Cur_workproposal.qty) ELSE null END), 
+        (CASE WHEN Cur_workproposal.conversionrate IS NOT NULL THEN (Cur_workproposal.conversionrate*Cur_workproposal.PROCESSPLANQTY) ELSE null END), 
         Cur_workproposal.secondaryunit, Cur_workproposal.conversionrate
       );
       UPDATE MRP_RUN_PRODUCTIONLINE

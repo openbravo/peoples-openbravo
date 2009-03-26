@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1540,6 +1540,10 @@ public class TableSQLData implements Serializable {
           realName);
       break;
     case 35: // PAttribute
+      setTableDirQuery(parentTableName, "M_AttributeSetInstance_ID", field
+          .getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName,
+          realName);
+      break;
     case 30: // Search
       setTableDirQuery(parentTableName, field.getProperty("ColumnNameSearch"), field
           .getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName,
@@ -1802,8 +1806,12 @@ public class TableSQLData implements Serializable {
     }
     ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(getPool(), tableDirName);
     String tables = "(SELECT " + name;
-    for (int i = 0; i < trd.length; i++)
-      tables += ", " + trd[i].name;
+    for (int i = 0; i < trd.length; i++) {
+      // exclude tabledir pk-column as it has already been added in the line above
+      if (!trd[i].name.equals(name)) {
+        tables += ", " + trd[i].name;
+      }
+    }
     tables += " FROM ";
     tables += tableDirName + ") td" + myIndex;
     tables += " on " + tableName + "." + parentFieldName + " = td" + myIndex + "." + name + "\n";
@@ -2054,9 +2062,13 @@ public class TableSQLData implements Serializable {
         dataAux.setData("adReferenceValueId", prop.getProperty("AD_Reference_Value_ID"));
         dataAux.setData("isidentifier", (prop.getProperty("IsIdentifier").equals("Y") ? "true"
             : "false"));
-        dataAux.setData("iskey",
-            (prop.getProperty("ColumnName").equals(getKeyColumn()) && !cloneRecord) ? "true"
-                : "false");
+
+        boolean isKey = (!getTableName().equals("AD_Language")
+            && prop.getProperty("ColumnName").equals(getKeyColumn()) && !cloneRecord)
+            || (getTableName().equals("AD_Language") && prop.getProperty("ColumnName").equals(
+                "AD_Language"));
+
+        dataAux.setData("iskey", isKey ? "true" : "false");
         dataAux.setData("isvisible", ((prop.getProperty("IsDisplayed").equals("Y") && prop
             .getProperty("ShowInRelation").equals("Y")) ? "true" : "false"));
         dataAux.setData("name", prop.getProperty("Name"));

@@ -34,6 +34,8 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 /**
  * Tests export of entities to xml
  * 
+ * TEST NEEDS TO BE REWORKED AS TEST DATA HAS CHANGED
+ * 
  * @author mtaal
  */
 

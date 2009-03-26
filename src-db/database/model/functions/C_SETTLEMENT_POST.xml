@@ -303,6 +303,22 @@
       END IF;
     END IF;--FINISH_PROCESS
 
+    IF(NOT FINISH_PROCESS) THEN
+	/*
+	*  Checking Restrictions
+	*/
+	v_ResultStr:='CheckingRestrictions - C_DEBT_PAYMENT MANUAL IS NOT SPLIT';
+	SELECT COUNT(*), AD_COLUMN_IDENTIFIER_STD ('C_Debt_Payment', TO_CHAR(MAX(c.C_Debt_Payment_Id)))
+	INTO v_Aux, v_column_identifier
+	FROM C_DEBT_PAYMENT c
+	WHERE c.C_SETTLEMENT_CANCEL_ID=v_Record_ID
+	AND c.ISMANUAL = 'Y'
+	AND c.ISPAID = 'N';
+	IF v_Aux>0 THEN
+	   RAISE_APPLICATION_ERROR(-20000, '@ManualDebtpayment@'||' "'||v_column_identifier||'" '||'@CanNotBeSplit@') ;
+	   END IF;
+    END IF;--FINISH_PROCESS
+
 
     IF(NOT FINISH_PROCESS) THEN
       v_ResultStr:='CheckingRestrictions - C_DEBT_PAYMENT ORG IS IN C_SETTLEMENT ORG TREE';

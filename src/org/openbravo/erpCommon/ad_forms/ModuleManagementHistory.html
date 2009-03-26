@@ -285,11 +285,10 @@ var baseDirectory = "../../../../../web/";
                           class="dojoValidateValid TextBox_btn_OneCell_width"
                           required="false" value="" maxlength="10" name="inpDateFrom"
                           onkeyup="autoCompleteDate(this);"
-                          onchange="validateDateTextBox(this.id);logChanges(this);return true;"
                           displayformat="xx" saveformat="yy"/>
                         </td>
                         <td class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.paramDateFrom', document.frmMain.paramDateFrom.value, false);return false;">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <tr>
                               <td class="FieldButton_bg">
@@ -312,7 +311,6 @@ var baseDirectory = "../../../../../web/";
                           class="dojoValidateValid TextBox_btn_OneCell_width"
                           required="false" value="" maxlength="10" name="inpDateTo"
                           onkeyup="autoCompleteDate(this);"
-                          onchange="validateDateTextBox(this.id);logChanges(this);return true;"
                           displayformat="xx" saveformat="yy"/>
                         </td>
                         <td class="FieldButton_ContentCell">
