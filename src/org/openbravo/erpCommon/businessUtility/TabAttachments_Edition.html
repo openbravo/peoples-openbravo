@@ -148,28 +148,52 @@
             <td></td>
             <td class="Button_RightAlign_ContentCell">
               <div>
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Save'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE_xx_RELATION', false, null, 'TabAttachments_Edition.html', '_self');return false;" id="linkButtonSaveRelation">
-                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Save';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                <button type="button" 
+                  id="linkButtonSaveRelation" 
+                  class="ButtonLink" 
+                  onclick="submitCommandForm('SAVE_xx_RELATION', false, null, 'TabAttachments_Edition.html', '_self');return false;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Save'; return true;" 
+                  onblur="buttonEvent('onblur', this);" 
+                  onkeyup="buttonEvent('onkeyup', this);" 
+                  onkeydown="buttonEvent('onkeydown', this);" 
+                  onkeypress="buttonEvent('onkeypress', this);" 
+                  onmouseup="buttonEvent('onmouseup', this);" 
+                  onmousedown="buttonEvent('onmousedown', this);" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Save'; return true;" 
+                  onmouseout="buttonEvent('onmouseout', this);">
+                  <table class="Button">
                     <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_save" alt="Save" title="Save" src="../../../../../web/images/blank.gif" border=0/></td>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_save" alt="Save" title="Save" src="../../../../../web/images/blank.gif" border="0" /></td>
                       <td class="Button_text Button_width">Save</td>
                       <td class="Button_right"></td>
                     </tr>
                   </table>
-                </a>
+                </button>
               </div>
             </td>
             <td class="Button_LeftAlign_ContentCell">
               <div>
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('DEFAULT', false, null, 'TabAttachments_F1.html', '_self');return false;">
-                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                <button type="button" 
+                  id="buttonCancel" 
+                  class="ButtonLink" 
+                  onclick="submitCommandForm('DEFAULT', false, null, 'TabAttachments_F1.html', '_self');return false;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;" 
+                  onblur="buttonEvent('onblur', this);" 
+                  onkeyup="buttonEvent('onkeyup', this);" 
+                  onkeydown="buttonEvent('onkeydown', this);" 
+                  onkeypress="buttonEvent('onkeypress', this);" 
+                  onmouseup="buttonEvent('onmouseup', this);" 
+                  onmousedown="buttonEvent('onmousedown', this);" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Cancel'; return true;" 
+                  onmouseout="buttonEvent('onmouseout', this);">
+                  <table class="Button">
                     <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border=0/></td>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border="0" /></td>
                       <td class="Button_text Button_width">Cancel</td>
                       <td class="Button_right"></td>
                     </tr>
                   </table>
-                </a>
+                </button>
               </div>
             </td>
             <td></td>

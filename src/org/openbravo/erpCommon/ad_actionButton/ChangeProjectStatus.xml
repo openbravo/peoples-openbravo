@@ -33,7 +33,7 @@
   <PARAMETER id="buttonOk" name="ok" attribute="alt" replace="xx" default=""/>
   <PARAMETER id="projectstatus" name="projectstatus" attribute="value" default=""/>
   <PARAMETER id="paramArray" name="array" default=""/>
-  <PARAMETER id="linkButtonOk" name="processId" default="" attribute="onclick" replace="xx"/>
+  <PARAMETER id="buttonOK" name="processId" default="" attribute="onclick" replace="xx"/>
   <PARAMETER id="paramCheck" name="check" default="Y"/>
   <PARAMETER id="projectaction" name="projectaction"/>
   <SUBREPORT id="reportprojectaction" name="reportprojectaction" report="org/openbravo/erpCommon/reference/List">

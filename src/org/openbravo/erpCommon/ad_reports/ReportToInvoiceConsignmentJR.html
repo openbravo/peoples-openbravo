@@ -318,15 +318,27 @@ function onloadFunctions() {
                     <td class="TitleCell"></td>
                     <td class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Export Results to PDF Format'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('FIND', true, 'ReportToInvoiceConsignmentJR.pdf', 'ReportToInvoiceConsignmentJR', null, false, '700', '1000', true);return false;" id="buttonPDF">
-                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='PDF_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                          <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_pdf" alt="Export Results to PDF Format" title="Export Results to PDF Format" src="../web/images/blank.gif" border="0"></img></td>
-                            <td class="Button_text">PDF Format</td>
-                            <td class="Button_right"></td>
-                          </tr>
-                        </table>
-                        </a>
+                        <button type="button" 
+                          id="buttonPDF" 
+                          class="ButtonLink" 
+                          onclick="openServletNewWindow('FIND', true, 'ReportToInvoiceConsignmentJR.pdf', 'ReportToInvoiceConsignmentJR', null, false, '700', '1000', true);return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='Export Results to PDF Format'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='Export Results to PDF Format'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_pdf" alt="Export Results to PDF Format" title="Export Results to PDF Format" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">PDF Format</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
                       </div>
                     </td>
                     <td class="ContentCell"></input>

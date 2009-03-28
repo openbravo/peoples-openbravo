@@ -284,7 +284,7 @@ function onloadFunctions() {
                   <td class="Combo_ContentCell" colspan="2"> <select  name="inpOrg" id="inpOrg" class="Combo Combo_TwoCells_width">
                       <option value=""> <div id="reportAD_ORGID"></div></option>
                     </select></td>
-		<td class="TitleCell"><span class="LabelText">Show Invoice info</span></td>
+                  <td class="TitleCell"><span class="LabelText">Show Invoice info</span></td>
                   <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpDetalle" value="-1" id="paramDetalle" checked=""></input></span></td>
                   <td class="ContentCell"> </td>
                 </tr>
@@ -305,11 +305,11 @@ function onloadFunctions() {
                     </td>
                   </tr>
                   <tr>
- 		<td class="TitleCell"><span class="LabelText">Sales transaction</span></td>
+                    <td class="TitleCell"><span class="LabelText">Sales transaction</span></td>
                     <td class="Radio_Check_ContentCell"> <input type="radio" name="inpSales" value="S" id="paramSales" checked="" class="RadioButton"></input>
- 		<td class="TitleCell"><span class="LabelText">Purchase transaction</span></td>
+                    <td class="TitleCell"><span class="LabelText">Purchase transaction</span></td>
                     <td class="Radio_Check_ContentCell"><input type="radio" name="inpSales" value="P" id="paramPurchases" checked="" class="RadioButton"></input>
- 		<td class="TitleCell"><span class="LabelText">Both</span></td>
+                    <td class="TitleCell"><span class="LabelText">Both</span></td>
                     <td class="Radio_Check_ContentCell"><input type="radio" name="inpSales" value="B" id="paramBoth" checked="" class="RadioButton"></input>
                   <tr>
                     <td colspan="6">
@@ -331,15 +331,27 @@ function onloadFunctions() {
                     <td class="TitleCell"></td>
                     <td class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('FIND', true, 'ReportTaxInvoice.html', 'ReportTaxInvoice', null, false, '700', '1000', true);return false;" id="buttonHTML">
-                        <table class="Button"onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                          <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
-                            <td class="Button_text">HTML Format</td>
-                            <td class="Button_right"></td>
-                          </tr>
-                        </table>
-                        </a>
+                        <button type="button" 
+                          id="buttonHTML" 
+                          class="ButtonLink" 
+                          onclick="openServletNewWindow('FIND', true, 'ReportTaxInvoice.html', 'ReportTaxInvoice', null, false, '700', '1000', true);return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='View Results in a New Window'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">HTML Format</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
                       </div>
                     </td>
                     <td class="ContentCell"></input>
@@ -348,9 +360,7 @@ function onloadFunctions() {
                     <td class="ContentCell"></td>
                     <td class="ContentCell"></td>
                   </tr>
-		</table>
-  
- 
+    </table>
 
                       <!-- USER CONTROLS -->
                 </td>

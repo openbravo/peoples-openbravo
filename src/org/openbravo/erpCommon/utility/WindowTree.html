@@ -388,39 +388,49 @@ function getKeyField() {
               <td class="Button_LeftAlign_ContentCell">
 
                   <div id="unlockbutton" style="display: none;">
-                    <a class="ButtonLink" href="#"
-                      onfocus="setWindowElementFocus(this); window.status='Unlock Tree'; return true;"
-                      onblur="window.status=''; return true;"
-                      onkeypress="this.className='ButtonLink_active'; return true;"
-                      onkeyup="this.className='ButtonLink_focus'; return true;"
-                      onclick="UnlockTree();">
-
-                      <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Unlock Tree';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                    <button type="button" 
+                      class="ButtonLink" 
+                      onclick="UnlockTree();" 
+                      onfocus="buttonEvent('onfocus', this); window.status='Unlock Tree'; return true;" 
+                      onblur="buttonEvent('onblur', this);" 
+                      onkeyup="buttonEvent('onkeyup', this);" 
+                      onkeydown="buttonEvent('onkeydown', this);" 
+                      onkeypress="buttonEvent('onkeypress', this);" 
+                      onmouseup="buttonEvent('onmouseup', this);" 
+                      onmousedown="buttonEvent('onmousedown', this);" 
+                      onmouseover="buttonEvent('onmouseover', this); window.status='Unlock Tree'; return true;" 
+                      onmouseout="buttonEvent('onmouseout', this);">
+                      <table class="Button">
                         <tr>
-                          <td class="Button_left"><img class="Button_Icon Button_Icon_unlock" alt="Unlock Tree" title="Unlock Tree" src="../../../../../web/images/blank.gif" border=0 id="buttonOk"/></td>
+                          <td class="Button_left"><img class="Button_Icon Button_Icon_unlock" alt="Unlock Tree" title="Unlock Tree" src="../../../../../web/images/blank.gif" border="0" id="buttonOk" /></td>
                           <td class="Button_text">Unlock Tree</td>
                           <td class="Button_right"></td>
                         </tr>
                       </table>
-                    </a>
+                    </button>
                   </div>
 
                   <div id="lockbutton" style="display: none;">
-                    <a class="ButtonLink" href="#"
-                      onfocus="setWindowElementFocus(this); window.status='Lock Tree'; return true;"
-                      onblur="window.status=''; return true;"
-                      onkeypress="this.className='ButtonLink_active'; return true;"
-                      onkeyup="this.className='ButtonLink_focus'; return true;"
-                      onclick="LockTree();">
-
-                      <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Lock Tree';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                    <button type="button" 
+                      class="ButtonLink" 
+                      onclick="LockTree();" 
+                      onfocus="buttonEvent('onfocus', this); window.status='Lock Tree'; return true;" 
+                      onblur="buttonEvent('onblur', this);" 
+                      onkeyup="buttonEvent('onkeyup', this);" 
+                      onkeydown="buttonEvent('onkeydown', this);" 
+                      onkeypress="buttonEvent('onkeypress', this);" 
+                      onmouseup="buttonEvent('onmouseup', this);" 
+                      onmousedown="buttonEvent('onmousedown', this);" 
+                      onmouseover="buttonEvent('onmouseover', this); window.status='Lock Tree'; return true;" 
+                      onmouseout="buttonEvent('onmouseout', this);">
+                      <table class="Button">
                         <tr>
-                          <td class="Button_left"><img class="Button_Icon Button_Icon_lock" alt="Lock Tree" title="Lock Tree" src="../../../../../web/images/blank.gif" border=0 id="buttonOk"/></td>
+                          <td class="Button_left"><img class="Button_Icon Button_Icon_lock" alt="Lock Tree" title="Lock Tree" src="../../../../../web/images/blank.gif" border="0" id="buttonOk" /></td>
                           <td class="Button_text">Lock Tree</td>
                           <td class="Button_right"></td>
                         </tr>
                       </table>
-                    </a>
+                    </button>
                   </div>
 
               </td>
@@ -428,43 +438,52 @@ function getKeyField() {
               <td class="Button_RightAlign_ContentCell">
 
                   <div>
-                    <a class="ButtonLink" href="#"
-                      onfocus="setWindowElementFocus(this); window.status='Expand all'; return true;"
-                      onblur="window.status=''; return true;"
-                      onkeypress="this.className='ButtonLink_active'; return true;"
-                      onkeyup="this.className='ButtonLink_focus'; return true;"
-                      onclick="treeObj.expandAll()">
-
-                      <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Expand all';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                    <button type="button" 
+                      class="ButtonLink" 
+                      onclick="treeObj.expandAll();" 
+                      onfocus="buttonEvent('onfocus', this); window.status='Expand all'; return true;" 
+                      onblur="buttonEvent('onblur', this);" 
+                      onkeyup="buttonEvent('onkeyup', this);" 
+                      onkeydown="buttonEvent('onkeydown', this);" 
+                      onkeypress="buttonEvent('onkeypress', this);" 
+                      onmouseup="buttonEvent('onmouseup', this);" 
+                      onmousedown="buttonEvent('onmousedown', this);" 
+                      onmouseover="buttonEvent('onmouseover', this); window.status='Expand all'; return true;" 
+                      onmouseout="buttonEvent('onmouseout', this);">
+                      <table class="Button">
                         <tr>
-                          <td class="Button_left"><img class="Button_Icon Button_Icon_expand" alt="Expand all" title="Expand all" src="../../../../../web/images/blank.gif" border=0 id="buttonOk"/></td>
+                          <td class="Button_left"><img class="Button_Icon Button_Icon_expand" alt="Expand all" title="Expand all" src="../../../../../web/images/blank.gif" border="0" id="buttonOk" /></td>
                           <td class="Button_text">Expand all</td>
                           <td class="Button_right"></td>
                         </tr>
                       </table>
-                    </a>
+                    </button>
                   </div>
 
               </td>
               <td class="Button_LeftAlign_ContentCell">
 
-
                   <div>
-                    <a class="ButtonLink" href="#"
-                      onfocus="setWindowElementFocus(this); window.status='Collapse all'; return true;"
-                      onblur="window.status=''; return true;"
-                      onkeypress="this.className='ButtonLink_active'; return true;"
-                      onkeyup="this.className='ButtonLink_focus'; return true;"
-                      onclick="treeObj.collapseAll(); treeObj.expandNode(0);">
-
-                      <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Collapse all';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                    <button type="button" 
+                      class="ButtonLink" 
+                      onclick="treeObj.collapseAll(); treeObj.expandNode(0);" 
+                      onfocus="buttonEvent('onfocus', this); window.status='Collapse all'; return true;" 
+                      onblur="buttonEvent('onblur', this);" 
+                      onkeyup="buttonEvent('onkeyup', this);" 
+                      onkeydown="buttonEvent('onkeydown', this);" 
+                      onkeypress="buttonEvent('onkeypress', this);" 
+                      onmouseup="buttonEvent('onmouseup', this);" 
+                      onmousedown="buttonEvent('onmousedown', this);" 
+                      onmouseover="buttonEvent('onmouseover', this); window.status='Collapse all'; return true;" 
+                      onmouseout="buttonEvent('onmouseout', this);">
+                      <table class="Button">
                         <tr>
-                          <td class="Button_left"><img class="Button_Icon Button_Icon_contract" alt="Collapse all" title="Collapse all" src="../../../../../web/images/blank.gif" border=0 id="buttonOk"/></td>
+                          <td class="Button_left"><img class="Button_Icon Button_Icon_contract" alt="Collapse all" title="Collapse all" src="../../../../../web/images/blank.gif" border="0" id="buttonOk" /></td>
                           <td class="Button_text">Collapse all</td>
                           <td class="Button_right"></td>
                         </tr>
                       </table>
-                    </a>
+                    </button>
                   </div>
 
               </td>
@@ -472,21 +491,26 @@ function getKeyField() {
               <td class="Button_RightAlign_ContentCell">
 
                   <div>
-                    <a class="ButtonLink" href="#"
-                      onfocus="setWindowElementFocus(this); window.status='Close'; return true;"
-                      onblur="window.status=''; return true;"
-                      onkeypress="this.className='ButtonLink_active'; return true;"
-                      onkeyup="this.className='ButtonLink_focus'; return true;"
-                      onclick="window.close();">
-
-                      <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Close';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                    <button type="button" 
+                      class="ButtonLink" 
+                      onclick="window.close();" 
+                      onfocus="buttonEvent('onfocus', this); window.status='Close'; return true;" 
+                      onblur="buttonEvent('onblur', this);" 
+                      onkeyup="buttonEvent('onkeyup', this);" 
+                      onkeydown="buttonEvent('onkeydown', this);" 
+                      onkeypress="buttonEvent('onkeypress', this);" 
+                      onmouseup="buttonEvent('onmouseup', this);" 
+                      onmousedown="buttonEvent('onmousedown', this);" 
+                      onmouseover="buttonEvent('onmouseover', this); window.status='Close'; return true;" 
+                      onmouseout="buttonEvent('onmouseout', this);">
+                      <table class="Button">
                         <tr>
-                          <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Close" title="Close" src="../../../../../web/images/blank.gif" border=0 id="buttonOk"/></td>
+                          <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Close" title="Close" src="../../../../../web/images/blank.gif" border="0" id="buttonOk" /></td>
                           <td class="Button_text Button_width">Close</td>
                           <td class="Button_right"></td>
                         </tr>
                       </table>
-                    </a>
+                    </button>
                   </div>
 
               </td>

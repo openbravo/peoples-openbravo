@@ -286,15 +286,27 @@ var arrWarehouse=null;
               <td class="TitleCell"></td>
               <td class="Button_CenterAlign_ContentCell">
                 <div>
-                  <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='View Results'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;"onclick="submitCommandForm('FIND', false, null, 'ReportParetoProduct.html', '_self', null, false);return false;" id="buttonSearch">
-                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                    <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
-                      <td class="Button_text">Search</td>
-                      <td class="Button_right"></td>
-                    </tr>
-                  </table>
-                  </a>
+                  <button type="button" 
+                    id="buttonSearch" 
+                    class="ButtonLink" 
+                    onclick="submitCommandForm('FIND', false, null, 'ReportParetoProduct.html', '_self', null, false);return false;" 
+                    onfocus="buttonEvent('onfocus', this); window.status='Search'; return true;" 
+                    onblur="buttonEvent('onblur', this);" 
+                    onkeyup="buttonEvent('onkeyup', this);" 
+                    onkeydown="buttonEvent('onkeydown', this);" 
+                    onkeypress="buttonEvent('onkeypress', this);" 
+                    onmouseup="buttonEvent('onmouseup', this);" 
+                    onmousedown="buttonEvent('onmousedown', this);" 
+                    onmouseover="buttonEvent('onmouseover', this); window.status='Search'; return true;" 
+                    onmouseout="buttonEvent('onmouseout', this);">
+                    <table class="Button">
+                      <tr>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border="0" /></td>
+                        <td class="Button_text Button_width">Search</td>
+                        <td class="Button_right"></td>
+                      </tr>
+                    </table>
+                  </button>
                 </div>
               </td>
               <td class="ContentCell"></td>
@@ -366,15 +378,27 @@ var arrWarehouse=null;
                   <td></td>
                   <td class="Button_LeftAlign_ContentCell">
                     <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Updates ABC Org specific property'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('GENERATE', true, null, null, null, true, true);return false;" id="buttonUpdateABC">
-                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Updates ABC Org specific property';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                        <tr>
-                          <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Update ABC" title="Update ABC" src="../../../../../web/images/blank.gif" border=0/></td>
-                          <td class="Button_text Button_width">Update ABC</td>
-                          <td class="Button_right"></td>
-                        </tr>
-                      </table>
-                      </a>
+                      <button type="button" 
+                        id="buttonUpdateABC" 
+                        class="ButtonLink" 
+                        onclick="submitCommandForm('GENERATE', true, null, null, null, true, true);return false;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Update ABC'; return true;" 
+                        onblur="buttonEvent('onblur', this);" 
+                        onkeyup="buttonEvent('onkeyup', this);" 
+                        onkeydown="buttonEvent('onkeydown', this);" 
+                        onkeypress="buttonEvent('onkeypress', this);" 
+                        onmouseup="buttonEvent('onmouseup', this);" 
+                        onmousedown="buttonEvent('onmousedown', this);" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Update ABC'; return true;" 
+                        onmouseout="buttonEvent('onmouseout', this);">
+                        <table class="Button">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Update ABC" title="Update ABC" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_text Button_width">Update ABC</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                      </button>
                     </div>
                   </td>
                   <td class="TitleCell"></td>

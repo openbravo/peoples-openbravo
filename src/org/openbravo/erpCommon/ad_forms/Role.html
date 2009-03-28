@@ -485,15 +485,27 @@ var arrWare=null;
                         <td></td>
                         <td class="Button_CenterAlign_ContentCell">
                           <div>
-                            <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='OK'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="return saveOptions();" id="buttonOK">
-                              <table class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='OK'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                            <button type="button" 
+                              id="buttonOK" 
+                              class="ButtonLink" 
+                              onclick="return saveOptions();" 
+                              onfocus="buttonEvent('onfocus', this); window.status='Accept'; return true;" 
+                              onblur="buttonEvent('onblur', this);" 
+                              onkeyup="buttonEvent('onkeyup', this);" 
+                              onkeydown="buttonEvent('onkeydown', this);" 
+                              onkeypress="buttonEvent('onkeypress', this);" 
+                              onmouseup="buttonEvent('onmouseup', this);" 
+                              onmousedown="buttonEvent('onmousedown', this);" 
+                              onmouseover="buttonEvent('onmouseover', this); window.status='Accept'; return true;" 
+                              onmouseout="buttonEvent('onmouseout', this);">
+                              <table class="Button">
                                 <tr>
-                                  <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="OK" title="OK" src="../../../../../web/images/blank.gif" border="0/"></img></td>
+                                  <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border="0" /></td>
                                   <td class="Button_text Button_width">OK</td>
                                   <td class="Button_right"></td>
                                 </tr>
                               </table>
-                            </a>
+                            </button>
                           </div>
                         </td>
                         <td></td>
@@ -553,29 +565,52 @@ var arrWare=null;
                         <td></td>
                         <td class="Button_RightAlign_ContentCell">
                           <div>
-                            <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Change password'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitPassword();return false;" id="buttonChange">
-                              <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Change password';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                            <button type="button" 
+                              id="buttonChange" 
+                              class="ButtonLink" 
+                              onclick="submitPassword();return false;" 
+                              onfocus="buttonEvent('onfocus', this); window.status='Change'; return true;" 
+                              onblur="buttonEvent('onblur', this);" 
+                              onkeyup="buttonEvent('onkeyup', this);" 
+                              onkeydown="buttonEvent('onkeydown', this);" 
+                              onkeypress="buttonEvent('onkeypress', this);" 
+                              onmouseup="buttonEvent('onmouseup', this);" 
+                              onmousedown="buttonEvent('onmousedown', this);" 
+                              onmouseover="buttonEvent('onmouseover', this); window.status='Change'; return true;" 
+                              onmouseout="buttonEvent('onmouseout', this);">
+                              <table class="Button">
                                 <tr>
-                                  <td class="Button_left"><img class="Button_Icon Button_Icon_password" alt="Change password" title="Change password" src="../../../../../web/images/blank.gif" border=0/></td>
+                                  <td class="Button_left"><img class="Button_Icon Button_Icon_password" alt="Change" title="Change" src="../../../../../web/images/blank.gif" border="0" /></td>
                                   <td class="Button_text Button_width">Change</td>
                                   <td class="Button_right"></td>
                                 </tr>
                               </table>
-                            </a>
+                            </button>
                           </div>
                         </td>
 
                         <td class="Button_LeftAlign_ContentCell">
                           <div>
-                            <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Clear'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="document.frmMain.reset();return false;">
-                              <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Clear';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                            <button type="button" 
+                              class="ButtonLink" 
+                              onclick="document.frmMain.reset();return false;" 
+                              onfocus="buttonEvent('onfocus', this); window.status='Clear'; return true;" 
+                              onblur="buttonEvent('onblur', this);" 
+                              onkeyup="buttonEvent('onkeyup', this);" 
+                              onkeydown="buttonEvent('onkeydown', this);" 
+                              onkeypress="buttonEvent('onkeypress', this);" 
+                              onmouseup="buttonEvent('onmouseup', this);" 
+                              onmousedown="buttonEvent('onmousedown', this);" 
+                              onmouseover="buttonEvent('onmouseover', this); window.status='Clear'; return true;" 
+                              onmouseout="buttonEvent('onmouseout', this);">
+                              <table class="Button">
                                 <tr>
-                                  <td class="Button_left"><img class="Button_Icon Button_Icon_clear" alt="Clear" title="Clear" src="../../../../../web/images/blank.gif" border=0/></td>
+                                  <td class="Button_left"><img class="Button_Icon Button_Icon_clear" alt="Clear" title="Clear" src="../../../../../web/images/blank.gif" border="0" /></td>
                                   <td class="Button_text Button_width">Clear</td>
                                   <td class="Button_right"></td>
                                 </tr>
                               </table>
-                            </a>
+                            </button>
                           </div>
                         </td>
                         <td></td>

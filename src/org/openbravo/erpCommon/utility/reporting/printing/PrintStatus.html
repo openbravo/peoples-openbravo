@@ -195,16 +195,27 @@ function checkStatus()
                 <table style="width: 550px !important;" cellspacing="0" cellpadding="0" border="0" class="Login_Home_TableEdition">
                   <tr>
                     <td colspan="6" align="center" class="Button_CenterAlign_ContentCell">
-                      <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Closed'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="window.close();return false;">
-                        <table class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Closed'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                      <button type="button" 
+                        id="buttonCancel" 
+                        class="ButtonLink" 
+                        onclick="window.close();return false;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Close'; return true;" 
+                        onblur="buttonEvent('onblur', this);" 
+                        onkeyup="buttonEvent('onkeyup', this);" 
+                        onkeydown="buttonEvent('onkeydown', this);" 
+                        onkeypress="buttonEvent('onkeypress', this);" 
+                        onmouseup="buttonEvent('onmouseup', this);" 
+                        onmousedown="buttonEvent('onmousedown', this);" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Close'; return true;" 
+                        onmouseout="buttonEvent('onmouseout', this);">
+                        <table class="Button">
                           <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Closed" title="Closed" src="../../../../../web/images/blank.gif" border="0"></img></td>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Close" title="Close" src="../../../../../web/images/blank.gif" border="0" /></td>
                             <td class="Button_text Button_width">Close</td>
-
                             <td class="Button_right"></td>
                           </tr>
                         </table>
-                      </a>
+                      </button>
                     </td>
                   </tr>
 

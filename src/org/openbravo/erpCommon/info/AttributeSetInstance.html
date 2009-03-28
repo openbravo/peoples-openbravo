@@ -182,18 +182,18 @@ function validateSelector(action) {
                   id="buttonOK" 
                   class="ButtonLink" 
                   onclick="validateSelector('SAVE');return false;" 
-                  onfocus="buttonEvent('onfocus', this); window.status='OK'; return true;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Accept'; return true;" 
                   onblur="buttonEvent('onblur', this);" 
                   onkeyup="buttonEvent('onkeyup', this);" 
                   onkeydown="buttonEvent('onkeydown', this);" 
                   onkeypress="buttonEvent('onkeypress', this);" 
                   onmouseup="buttonEvent('onmouseup', this);" 
                   onmousedown="buttonEvent('onmousedown', this);" 
-                  onmouseover="buttonEvent('onmouseover', this); window.status='OK'; return true;" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Accept'; return true;" 
                   onmouseout="buttonEvent('onmouseout', this);">
                   <table class="Button">
                     <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="OK" title="OK" src="../../../../../web/images/blank.gif" border="0" /></td>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border="0" /></td>
                       <td class="Button_text Button_width">OK</td>
                       <td class="Button_right"></td>
                     </tr>
@@ -204,6 +204,7 @@ function validateSelector(action) {
             <td class="Button_LeftAlign_ContentCell">
               <div>
                 <button type="button" 
+                  id="buttonCancel" 
                   class="ButtonLink" 
                   onclick="validateSelector('CLEAR');return false;" 
                   onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;" 

@@ -262,7 +262,7 @@ function onloadFunctions() {
                   <td class="TitleCell"><span class="LabelText">To Date</span></td>
                   <td class="TextBox_btn_ContentCell">
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-    <tr> 
+                      <tr>
                         <td class="TextBox_ContentCell">
                           <input dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
                         </td>
@@ -288,7 +288,7 @@ function onloadFunctions() {
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-			 <input type="hidden" name="inpcBPartnerId" id="paramBPartnerId" value=""></input> 
+                          <input type="hidden" name="inpcBPartnerId" id="paramBPartnerId" value=""></input> 
                           <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpBpartnerId_DES" maxlength="20" value=""></input>
                         </td>
                         <td class="FieldButton_ContentCell">
@@ -310,7 +310,7 @@ function onloadFunctions() {
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-			<input type="hidden" name="inpcProjectId" id="C_Project_ID" value=""></input> 
+                          <input type="hidden" name="inpcProjectId" id="C_Project_ID" value=""></input> 
                           <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpcProjectId_D" id="C_Project_ID_D" maxlength="20" value=""></input>
                         </td>
                         <td class="FieldButton_ContentCell">
@@ -331,8 +331,8 @@ function onloadFunctions() {
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Warehouse</span></td>
                   <td class="Combo_ContentCell" colspan="2"> <select  name="inpmWarehouseId" id="inpmWarehouseId" class="Combo Combo_TwoCells_width">
-          <option value=""> <div id="reportM_WAREHOUSEID"></div></option>
-        </select></td>
+                    <option value=""> <div id="reportM_WAREHOUSEID"></div></option>
+                    </select></td>
                   <td class="ContentCell"></td>
                   <td class="TitleCell"></td>
                   <td class="ContentCell"></td>
@@ -351,42 +351,65 @@ function onloadFunctions() {
                         <tr class="FieldGroup_BottomMargin"/>
                       </tbody>
                       </table>
-            </td>
-          </tr>
+                    </td>
+                  </tr>
                   <tr>
                     <td class="TitleCell"></td>
                     <td class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('EDIT_HTML', false, 'ReportShipmentEditionJR.html', 'ReportShipmentEditionJR', null, false, '700', '1000', true);return false;" id="buttonHTML">
-                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                          <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
-                            <td class="Button_text">HTML Format</td>
-                            <td class="Button_right"></td>
-                          </tr>
-                        </table>
-                        </a>
+                        <button type="button" 
+                          id="buttonHTML" 
+                          class="ButtonLink" 
+                          onclick="openServletNewWindow('EDIT_HTML', false, 'ReportShipmentEditionJR.html', 'ReportShipmentEditionJR', null, false, '700', '1000', true);return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='View Results in a New Window'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">HTML Format</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
                       </div>
                     </td>
                     <td class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Export Results to PDF Format'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('EDIT_PDF', false, 'ReportShipmentEditionJR.pdf', 'ReportShipmentEditionJR', null, false, '700', '1000', true);return false;">
-                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='PDF_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                          <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_pdf" alt="Export Results to PDF Format" title="Export Results to PDF Format" src="../../../../../web/images/blank.gif" border=0/></td>
-                            <td class="Button_text">PDF Format</td>
-                            <td class="Button_right"></td>
-                          </tr>
-                        </table>
-                        </a>
+                        <button type="button" 
+                          class="ButtonLink" 
+                          onclick="openServletNewWindow('EDIT_PDF', false, 'ReportShipmentEditionJR.pdf', 'ReportShipmentEditionJR', null, false, '700', '1000', true);return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='Export Results to PDF Format'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='Export Results to PDF Format'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_pdf" alt="Export Results to PDF Format" title="Export Results to PDF Format" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">PDF Format</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
                       </div>
                     </td>
                     <td class="ContentCell"></input>
                     </td>
                     <td class="TitleCell"></td>
                     <td class="ContentCell"></td>
-    		  </tr>
-  		</table>
+          </tr>
+      </table>
 
                       <!-- USER CONTROLS -->
                 </td>

@@ -164,26 +164,27 @@ function redirectWhenPopup() {
                   <td></td>
                   <td class="Button_CenterAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#"
-                        onfocus="setWindowElementFocus(this); window.status='xx'; return true;"
-                        onblur="window.status=''; return true;"
-                        onkeypress="this.className='ButtonLink_active'; return true;"
-                        onkeyup="this.className='ButtonLink_focus'; return true;"
-                        onclick="buttonOK_click();"
-                        id="buttonOK">
-                        <table class="Button"
-                          onmousedown="this.className='Button_active'; return true;"
-                          onmouseup="this.className='Button'; return true;"
-                          onmouseover="this.className='Button_hover'; window.status='Login'; return true;"
-                          onmouseout="this.className='Button'; window.status=''; return true;"
-                          id="fieldTable">
+                      <button type="button" 
+                        id="buttonOK" 
+                        class="ButtonLink" 
+                        onclick="buttonOK_click();" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Login'; return true;" 
+                        onblur="buttonEvent('onblur', this);" 
+                        onkeyup="buttonEvent('onkeyup', this);" 
+                        onkeydown="buttonEvent('onkeydown', this);" 
+                        onkeypress="buttonEvent('onkeypress', this);" 
+                        onmouseup="buttonEvent('onmouseup', this);" 
+                        onmousedown="buttonEvent('onmousedown', this);" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Login'; return true;" 
+                        onmouseout="buttonEvent('onmouseout', this);">
+                        <table class="Button" id="fieldTable">
                           <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Logn" title="Login" src="../../../../../web/images/blank.gif" border=0 id="fieldButton"/></td>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Login" title="Login" src="../../../../../web/images/blank.gif" border="0" id="fieldButton" /></td>
                             <td class="Button_text Button_width">Login</td>
                             <td class="Button_right"></td>
                           </tr>
                         </table>
-                      </a>
+                      </button>
                     </div>
                   </td>
                   <td>

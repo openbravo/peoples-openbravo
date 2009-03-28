@@ -309,15 +309,27 @@
 					</td>
 					<td colspan="2" id="CopyFrom_inp_td" class=""><div id="editDiscard"><div id="CopyFrom_inp">
   <input type="hidden" id="CopyFrom" onchange="logChanges(this.inputNode);return true;" value="N" name="inpcopyfrom"/>
-  <a id="CopyFrom_linkBTN" onclick="addFile();return false;" onkeyup="this.className='ButtonLink_focus'; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onblur="window.status=''; return true;" onfocus="setWindowElementFocus(this); window.status='Copy Lines'; return true;" href="#" class="ButtonLink">
-    <table width="175" onmouseout="this.className='Button'; window.status=''; return true;" onmouseover="this.className='Button_hover'; window.status='Copy Lines'; return true;" onmouseup="this.className='Button'; return true;" onmousedown="this.className='Button_active'; return true;" class="Button">
-      <tbody><tr>
-        <td class="Button_left"><img border="0" src="../web/images/blank.gif" title="Copy Lines" alt="Copy Lines" class="Button_Icon Button_Icon_process"/></td>
-     	 <td id="CopyFrom_BTNname"  class="Button_text">Add Attachment</td>
-        <td class="Button_right"/>
+  <button type="button" 
+    id="CopyFrom_linkBTN" 
+    class="ButtonLink" 
+    onclick="addFile();return false;" 
+    onfocus="buttonEvent('onfocus', this); window.status='Copy Lines'; return true;" 
+    onblur="buttonEvent('onblur', this);" 
+    onkeyup="buttonEvent('onkeyup', this);" 
+    onkeydown="buttonEvent('onkeydown', this);" 
+    onkeypress="buttonEvent('onkeypress', this);" 
+    onmouseup="buttonEvent('onmouseup', this);" 
+    onmousedown="buttonEvent('onmousedown', this);" 
+    onmouseover="buttonEvent('onmouseover', this); window.status='Copy Lines'; return true;" 
+    onmouseout="buttonEvent('onmouseout', this);">
+    <table class="Button">
+      <tr>
+        <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Copy Lines" title="Copy Lines" src="../../../../../web/images/blank.gif" border="0" /></td>
+        <td class="Button_text Button_width" id="CopyFrom_BTNname">Add Attachment</td>
+        <td class="Button_right"></td>
       </tr>
-    </tbody></table>
-  </a>
+    </table>
+  </button>
 </div></div></div></td></td></tr></div>
 </div></td>
 </tr>
@@ -332,51 +344,51 @@
 					<tr>
 						<td class="Button_RightAlign_ContentCell" style="padding-top: 30px">
 							<div>
-								<a class="ButtonLink" href="#"
-									onfocus="this.className='ButtonLink_hover'; window.status='Send'; return true;"
-									onblur="this.className='ButtonLink'; window.status=''; return true;"
-									onkeypress="this.className='ButtonLink_active'; return true;"
-									onkeyup="this.className='ButtonLink_hover'; return true;">
-	
-									<table class="Button" onclick="actionSendEmail();return false;"
-										onmouseout="this.className='Button';window.status='';return true;"
-										onmouseover="this.className='Button_hover';window.status='Send';return true;"
-										onmousedown="this.className='Button_active';return true;"
-										onmouseup="this.className='Button';return true;">
-										<tr>
-											<td class="Button_left"><img
-												class="Button_Icon Button_Icon_ok" alt="Send" title="Send"
-												src="../../../../../web/images/blank.gif" border=0 /></td>
-											<td class="Button_text Button_width">Send</td>
-											<td class="Button_right"></td>
-										</tr>
-									</table>
-								</a>
+                <button type="button" 
+                  class="ButtonLink" 
+                  onclick="actionSendEmail();return false;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Send'; return true;" 
+                  onblur="buttonEvent('onblur', this);" 
+                  onkeyup="buttonEvent('onkeyup', this);" 
+                  onkeydown="buttonEvent('onkeydown', this);" 
+                  onkeypress="buttonEvent('onkeypress', this);" 
+                  onmouseup="buttonEvent('onmouseup', this);" 
+                  onmousedown="buttonEvent('onmousedown', this);" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Send'; return true;" 
+                  onmouseout="buttonEvent('onmouseout', this);">
+                  <table class="Button">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Send" title="Send" src="../../../../../web/images/blank.gif" border="0" /></td>
+                      <td class="Button_text Button_width">Send</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </button>
 							</div>
 						</td>
 						<td class="Button_LeftAlign_ContentCell" style="padding-top: 30px">
 							<div>
-								<a class="ButtonLink" href="#"
-									onfocus="this.className='ButtonLink_hover'; window.status='Cancel'; return true;"
-									onblur="this.className='ButtonLink'; window.status=''; return true;"
-									onkeypress="this.className='ButtonLink_active'; return true;"
-									onkeyup="this.className='ButtonLink_hover'; return true;"
-									onclick="closePopUp();return false;">
-									
-									<table class="Button"
-										onmouseout="this.className='Button';window.status='';return true;"
-										onmouseover="this.className='Button_hover';window.status='Cancel';return true;"
-										onmousedown="this.className='Button_active';return true;"
-										onmouseup="this.className='Button';return true;">
-										<tr>
-											<td class="Button_left"><img
-												class="Button_Icon Button_Icon_cancel" alt="Cancel"
-												title="Cancel" src="../../../../../web/images/blank.gif" border=0 /></td>
-											<td class="Button_text Button_width">Cancel</td>
-											<td class="Button_right"></td>
-										</tr>
-									</table>
-								</a>
+                <button type="button" 
+                  id="buttonCancel" 
+                  class="ButtonLink" 
+                  onclick="closePopUp();return false;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;" 
+                  onblur="buttonEvent('onblur', this);" 
+                  onkeyup="buttonEvent('onkeyup', this);" 
+                  onkeydown="buttonEvent('onkeydown', this);" 
+                  onkeypress="buttonEvent('onkeypress', this);" 
+                  onmouseup="buttonEvent('onmouseup', this);" 
+                  onmousedown="buttonEvent('onmousedown', this);" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Cancel'; return true;" 
+                  onmouseout="buttonEvent('onmouseout', this);">
+                  <table class="Button">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border="0" /></td>
+                      <td class="Button_text Button_width">Cancel</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </button>
 							</div>
 						</td>
 					</tr>

@@ -267,58 +267,103 @@
           <tr>
             <td class="Button_RightAlign_ContentCell">
               <div id="editable">
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Add'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('NEW', false, null, 'TabAttachments_F1.html', '_self');return false;">
-                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Add';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                <button type="button" 
+                  class="ButtonLink" 
+                  onclick="submitCommandForm('NEW', false, null, 'TabAttachments_F1.html', '_self');return false;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Add'; return true;" 
+                  onblur="buttonEvent('onblur', this);" 
+                  onkeyup="buttonEvent('onkeyup', this);" 
+                  onkeydown="buttonEvent('onkeydown', this);" 
+                  onkeypress="buttonEvent('onkeypress', this);" 
+                  onmouseup="buttonEvent('onmouseup', this);" 
+                  onmousedown="buttonEvent('onmousedown', this);" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Add'; return true;" 
+                  onmouseout="buttonEvent('onmouseout', this);">
+                  <table class="Button">
                     <tr>
-                      <td class="Button_left"></td>
+                      <td class="Button_left"><img class="Button_Icon" alt="Add" title="Add" src="../../../../../web/images/blank.gif" border="0" /></td>
                       <td class="Button_text Button_width">Add</td>
                       <td class="Button_right"></td>
                     </tr>
                   </table>
-                </a>
+                </button>
               </div>
             </td>
             <td class="Button_RightAlign_ContentCell">
               <div id="editable">
-	              <div id="widthData">
-	                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Edit'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('EDIT', false, null, 'TabAttachments_F1.html', '_self');return false;">
-	                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Edit';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-	                    <tr>
-	                      <td class="Button_left"></td>
-	                      <td class="Button_text Button_width">Edit</td>
-	                      <td class="Button_right"></td>
-	                    </tr>
-	                  </table>
-	                </a>
+                <div id="widthData">
+                  <button type="button" 
+                    class="ButtonLink" 
+                    onclick="submitCommandForm('EDIT', false, null, 'TabAttachments_F1.html', '_self');return false;" 
+                    onfocus="buttonEvent('onfocus', this); window.status='Edit'; return true;" 
+                    onblur="buttonEvent('onblur', this);" 
+                    onkeyup="buttonEvent('onkeyup', this);" 
+                    onkeydown="buttonEvent('onkeydown', this);" 
+                    onkeypress="buttonEvent('onkeypress', this);" 
+                    onmouseup="buttonEvent('onmouseup', this);" 
+                    onmousedown="buttonEvent('onmousedown', this);" 
+                    onmouseover="buttonEvent('onmouseover', this); window.status='Edit'; return true;" 
+                    onmouseout="buttonEvent('onmouseout', this);">
+                    <table class="Button">
+                      <tr>
+                        <td class="Button_left"><img class="Button_Icon" alt="Edit" title="Edit" src="../../../../../web/images/blank.gif" border="0" /></td>
+                        <td class="Button_text Button_width">Edit</td>
+                        <td class="Button_right"></td>
+                      </tr>
+                    </table>
+                  </button>
                 </div>
               </div>
             </td>
             <td class="Button_LeftAlign_ContentCell">
               <div id="widthData">
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Download'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('DISPLAY_DATA', false, null, 'TabAttachments_F1.html', '_self');return false;" id="buttonDownload">
-                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Download';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                <button type="button" 
+                  id="buttonDownload" 
+                  class="ButtonLink" 
+                  onclick="submitCommandForm('DISPLAY_DATA', false, null, 'TabAttachments_F1.html', '_self');return false;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Download'; return true;" 
+                  onblur="buttonEvent('onblur', this);" 
+                  onkeyup="buttonEvent('onkeyup', this);" 
+                  onkeydown="buttonEvent('onkeydown', this);" 
+                  onkeypress="buttonEvent('onkeypress', this);" 
+                  onmouseup="buttonEvent('onmouseup', this);" 
+                  onmousedown="buttonEvent('onmousedown', this);" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Download'; return true;" 
+                  onmouseout="buttonEvent('onmouseout', this);">
+                  <table class="Button">
                     <tr>
-                      <td class="Button_left"></td>
+                      <td class="Button_left"><img class="Button_Icon" alt="Download" title="Download" src="../../../../../web/images/blank.gif" border="0" /></td>
                       <td class="Button_text Button_width">Download</td>
                       <td class="Button_right"></td>
                     </tr>
                   </table>
-                </a>
+                </button>
               </div>
             </td>
             <td class="Button_RightAlign_ContentCell">
               <div id="editable">
-	              <div id="widthData">
-	                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Delete'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('DEL', false, null, 'TabAttachments_F1.html', '_self');return false;">
-	                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Delete';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-	                    <tr>
-	                      <td class="Button_left"></td>
-	                      <td class="Button_text Button_width">Delete</td>
-	                      <td class="Button_right"></td>
-	                    </tr>
-	                  </table>
-	                </a>
-	              </div>
+                <div id="widthData">
+                  <button type="button" 
+                    class="ButtonLink" 
+                    onclick="submitCommandForm('DEL', false, null, 'TabAttachments_F1.html', '_self');return false;" 
+                    onfocus="buttonEvent('onfocus', this); window.status='Delete'; return true;" 
+                    onblur="buttonEvent('onblur', this);" 
+                    onkeyup="buttonEvent('onkeyup', this);" 
+                    onkeydown="buttonEvent('onkeydown', this);" 
+                    onkeypress="buttonEvent('onkeypress', this);" 
+                    onmouseup="buttonEvent('onmouseup', this);" 
+                    onmousedown="buttonEvent('onmousedown', this);" 
+                    onmouseover="buttonEvent('onmouseover', this); window.status='Delete'; return true;" 
+                    onmouseout="buttonEvent('onmouseout', this);">
+                    <table class="Button">
+                      <tr>
+                        <td class="Button_left"><img class="Button_Icon" alt="Delete" title="Delete" src="../../../../../web/images/blank.gif" border="0" /></td>
+                        <td class="Button_text Button_width">Delete</td>
+                        <td class="Button_right"></td>
+                      </tr>
+                    </table>
+                  </button>
+                </div>
               </div>
             </td>
           </tr>

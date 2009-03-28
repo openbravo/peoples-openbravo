@@ -234,7 +234,7 @@ function validate() {
                               </tbody>
                             </table> 
                              <!-- End MessageBox -->
-                                        
+
               <!-- USER CONTROLS -->
               <table class="Main_Client_TableEdition">
                 <tr>
@@ -247,7 +247,7 @@ function validate() {
                 </tr>
                 
                 <tr>
-    			  <td colspan="6">
+                  <td colspan="6">
                     <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_InfoBar">
                       <tr>
                         <td class="Popup_InfoBar_Icon_cell"><img src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
@@ -347,7 +347,7 @@ function validate() {
                 
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Date Ordered</span></td>
-              	  <td class="TextBox_btn_ContentCell">  
+                  <td class="TextBox_btn_ContentCell">  
                     <table border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
@@ -392,15 +392,27 @@ function validate() {
             <td class="TitleCell"></td>
             <td class="Button_LeftAlign_ContentCell">
               <div>
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE', true);return false;" id="buttonProcess">
-                <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Process';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                  <tr>
-                    <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../web/images/blank.gif" border="0" /></td>
-                    <td class="Button_text Button_width">Process</td>
-                    <td class="Button_right"></td>
-                  </tr>
-                </table>
-                </a>
+                <button type="button" 
+                  id="buttonProcess" 
+                  class="ButtonLink" 
+                  onclick="submitCommandForm('SAVE', true);return false;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Process'; return true;" 
+                  onblur="buttonEvent('onblur', this);" 
+                  onkeyup="buttonEvent('onkeyup', this);" 
+                  onkeydown="buttonEvent('onkeydown', this);" 
+                  onkeypress="buttonEvent('onkeypress', this);" 
+                  onmouseup="buttonEvent('onmouseup', this);" 
+                  onmousedown="buttonEvent('onmousedown', this);" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Process'; return true;" 
+                  onmouseout="buttonEvent('onmouseout', this);">
+                  <table class="Button">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border="0" /></td>
+                      <td class="Button_text Button_width">Process</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </button>
               </div>
             </td>
             <td class="Button_LeftAlign_ContentCell"></td>
@@ -408,8 +420,8 @@ function validate() {
             <td class="TitleCell"></td>
             <td class="ContentCell"></td>
           </tr>
-                 
-              </table>              
+
+              </table>
                <!-- End USER CONTROLS -->
                      
                 </td>
@@ -417,10 +429,9 @@ function validate() {
               </table>
               </td>
             </tr>
-          </table>     
+          </table>
         
         </div>
-            
 
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
           <tr>

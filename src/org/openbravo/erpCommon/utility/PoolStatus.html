@@ -211,15 +211,27 @@ var baseDirectory = "../../../../../web/";
                   <td></td>
                   <td class="Button_LeftAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="document.forms[0].submit();return false;" onmouseover="window.status='Process';return true;" id="buttonProcess">
-                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Process';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                        <tr>
-                          <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border=0/></td>
-                          <td class="Button_text Button_width">Process</td>
-                          <td class="Button_right"></td>
-                        </tr>
-                      </table>
-                      </a>
+                      <button type="button" 
+                        id="buttonProcess" 
+                        class="ButtonLink" 
+                        onclick="document.forms[0].submit();return false;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Process'; return true;" 
+                        onblur="buttonEvent('onblur', this);" 
+                        onkeyup="buttonEvent('onkeyup', this);" 
+                        onkeydown="buttonEvent('onkeydown', this);" 
+                        onkeypress="buttonEvent('onkeypress', this);" 
+                        onmouseup="buttonEvent('onmouseup', this);" 
+                        onmousedown="buttonEvent('onmousedown', this);" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Process'; return true;" 
+                        onmouseout="buttonEvent('onmouseout', this);">
+                        <table class="Button">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_text Button_width">Process</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                      </button>
                     </div>
                   </td>
                   <td></td>
