@@ -37,14 +37,19 @@
 <PARAMETER id="processDescription" name="processDescription" replace="#processDescription#" default=""/>
 <PARAMETER id="processHelp" name="processHelp" replace="#processHelp#" default=""/>
 
-<PARAMETER id="linkButtonCancel" name="cancel" attribute="onmouseover" replace="xx" default=""/>
-<PARAMETER id="linkButtonOk" name="ok" attribute="onmouseover" replace="xx" default=""/>
-<PARAMETER id="buttonCancel" name="cancel" attribute="alt" replace="xx" default=""/>
-<PARAMETER id="buttonOk" name="ok" attribute="alt" replace="xx" default=""/>
-<PARAMETER id="tdButtonOk" name="ok"/>
-<PARAMETER id="buttonCancel" name="cancel" attribute="title" replace="xx" default=""/>
+
+<PARAMETER id="buttonOK" name="ok" attribute="onmouseover" replace="xx" default=""/>
+<PARAMETER id="buttonOK" name="ok" attribute="onfocus" replace="xx" default=""/>
+<PARAMETER id="imgButtonOK" name="ok" attribute="alt" replace="xx" default=""/>
+<PARAMETER id="imgButtonOK" name="ok" attribute="title" replace="xx" default=""/>
+<PARAMETER id="tdButtonOK" name="ok"/>
+
+<PARAMETER id="buttonCancel" name="cancel" attribute="onmouseover" replace="xx" default=""/>
+<PARAMETER id="buttonCancel" name="cancel" attribute="onfocus" replace="xx" default=""/>
+<PARAMETER id="imgButtonCancel" name="cancel" attribute="alt" replace="xx" default=""/>
+<PARAMETER id="imgButtonCancel" name="cancel" attribute="title" replace="xx" default=""/>
 <PARAMETER id="tdButtonCancel" name="cancel"/>
-<PARAMETER id="buttonOk" name="ok" attribute="title" replace="xx" default=""/>
+
 
 <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
 <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
