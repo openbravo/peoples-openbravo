@@ -20,7 +20,7 @@
 /**
 * @fileoverview Main functions for displaying preloaded critical messages in
 * corresponding languages (save changes, number out of range, invalid value, 
-* etc.). This library works hand in hand with the MessagesJS.java (mapped 
+* etc.). This library works hand in hand with the DynamicJS.java (mapped 
 * to utility/DynamicJS.js) servlet found in the erpCommon/utility folder.
 */
 
