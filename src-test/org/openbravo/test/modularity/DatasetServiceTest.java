@@ -80,6 +80,7 @@ public class DatasetServiceTest extends BaseTest {
 
     for (final DataSet ds : dss) {
       final String xml = DataExportService.getInstance().exportDataSetToXML(ds, "0", parameters);
+      System.err.println(xml);
     }
     setErrorOccured(false);
   }
@@ -114,10 +115,10 @@ public class DatasetServiceTest extends BaseTest {
     for (final DataSet d : ds) {
       System.err.println("Exporting DataSet: " + d.getName());
       System.err.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-      final List<DataSetTable> dts = dss.getDataSetTables(d);
+      final List<DataSetTable> dts = d.getDataSetTableList();
       for (final DataSetTable dt : dts) {
         System.err.println("Exporting DataSetTable: " + dt.getTable().getName());
-        final List<DataSetColumn> dcs = dss.getDataSetColumns(dt);
+        final List<DataSetColumn> dcs = dt.getDataSetColumnList();
 
         final List<BaseOBObject> bobs = dss.getExportableObjects(dt, "0", parameters);
         for (final BaseOBObject bob : bobs) {
@@ -144,9 +145,9 @@ public class DatasetServiceTest extends BaseTest {
   public void psuedoCode() {
     final DataSetService dss = DataSetService.getInstance();
     final DataSet ds = dss.getDataSetByValue("My great DataSet");
-    for (final DataSetTable dt : dss.getDataSetTables(ds)) {
+    for (final DataSetTable dt : ds.getDataSetTableList()) {
       final List<BaseOBObject> bobs = dss.getExportableObjects(dt, "0");
-      final List<DataSetColumn> dscs = dss.getDataSetColumns(dt);
+      final List<DataSetColumn> dscs = dt.getDataSetColumnList();
       for (final BaseOBObject bob : bobs) {
         final List<Property> ps = dss.getExportableProperties(bob, dt, dscs);
         for (final Property p : ps) {
