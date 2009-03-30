@@ -158,6 +158,7 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
         }
       }
       repairReferences();
+      checkDanglingObjects();
       return result;
     } catch (XMLStreamException e) {
       throw new EntityXMLException(e);

@@ -128,6 +128,7 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
       }
     }
     repairReferences();
+    checkDanglingObjects();
     return result;
   }
 
