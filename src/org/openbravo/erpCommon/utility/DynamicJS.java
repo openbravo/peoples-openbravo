@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,10 +34,10 @@ import org.openbravo.utils.FormatUtilities;
 /**
  * @author Fernando Iriazabal
  * 
- *         Servlet that prints a javascript with the confirmation messages for the check javascript
+ *         Servlet that prints a javascript with dynamic functions such as the confirmation messages for the check javascript
  *         of the window.
  */
-public class MessagesJS extends HttpSecureAppServlet {
+public class DynamicJS extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   public void init(ServletConfig config) {
@@ -66,12 +66,12 @@ public class MessagesJS extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page");
     OBError myError = null;
-    MessagesJSData[] data = null;
+    DynamicJSData[] data = null;
     try {
-      data = MessagesJSData.select(this, vars.getLanguage());
+      data = DynamicJSData.select(this, vars.getLanguage());
     } catch (ServletException ex) {
       myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-      log4j.error("Error in MessagesJS.printPageDataSheet(): " + myError.getTitle() + " - "
+      log4j.error("Error in DynamicJS.printPageDataSheet(): " + myError.getTitle() + " - "
           + myError.getMessage());
       return;
     }

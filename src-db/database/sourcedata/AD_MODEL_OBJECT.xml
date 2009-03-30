@@ -3030,7 +3030,7 @@
 <!--801429-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--801429-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--801429-->  <ACTION><![CDATA[X]]></ACTION>
-<!--801429-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.utility.MessagesJS]]></CLASSNAME>
+<!--801429-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.utility.DynamicJS]]></CLASSNAME>
 <!--801429-->  <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--801429-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--801429-->  <OBJECT_TYPE><![CDATA[S]]></OBJECT_TYPE>
