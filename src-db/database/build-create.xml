@@ -190,7 +190,8 @@ create.database: creates the database from scratch.
       <transaction>
         CREATE DATABASE ${bbdd.sid}
                   WITH ENCODING='UTF8'
-                  OWNER=${bbdd.user};
+                  OWNER=${bbdd.user}
+                  TEMPLATE=template0;
       </transaction>
     </sql>
   </target>

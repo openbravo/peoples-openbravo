@@ -257,7 +257,8 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
       <transaction>
         CREATE DATABASE ${bbdd.sid}
                   WITH ENCODING='UTF8'
-                  OWNER=${bbdd.user};
+                  OWNER=${bbdd.user}
+                  TEMPLATE=template0;
       </transaction>
     </sql>
   </target>
