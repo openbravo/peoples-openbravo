@@ -141,41 +141,75 @@
             <td/>
             <td class="Button_RightAlign_ContentCell">
               <div>
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Configure'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="configure();return false;" id="buttonConfigure" >
-                  <table class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Configure'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                <button type="button" 
+                  id="buttonConfigure" 
+                  class="ButtonLink" 
+                  onclick="configure();return false;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Configure'; return true;" 
+                  onblur="buttonEvent('onblur', this);" 
+                  onkeyup="buttonEvent('onkeyup', this);" 
+                  onkeydown="buttonEvent('onkeydown', this);" 
+                  onkeypress="buttonEvent('onkeypress', this);" 
+                  onmouseup="buttonEvent('onmouseup', this);" 
+                  onmousedown="buttonEvent('onmousedown', this);" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Configure'; return true;" 
+                  onmouseout="buttonEvent('onmouseout', this);">
+                  <table class="Button">
                     <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Configure" title="Configure" src="../../../../../web/images/blank.gif" border="0"></img></td>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Configure" title="Configure" src="../../../../../web/images/blank.gif" border="0" /></td>
                       <td class="Button_text Button_width">Configure</td>
                       <td class="Button_right"></td>
                     </tr>
                   </table>
-                </a>
+                </button>
               </div>
             </td>
             <td class="Button_LeftAlign_ContentCell">
               <div>
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Disable'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="disable();return false;">
-                  <table class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Disable'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                <button type="button" 
+                  class="ButtonLink" 
+                  onclick="disable();return false;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Search'; return true;" 
+                  onblur="buttonEvent('onblur', this);" 
+                  onkeyup="buttonEvent('onkeyup', this);" 
+                  onkeydown="buttonEvent('onkeydown', this);" 
+                  onkeypress="buttonEvent('onkeypress', this);" 
+                  onmouseup="buttonEvent('onmouseup', this);" 
+                  onmousedown="buttonEvent('onmousedown', this);" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Search'; return true;" 
+                  onmouseout="buttonEvent('onmouseout', this);">
+                  <table class="Button">
                     <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Disable" title="Disable" src="../../../../../web/images/blank.gif" border="0"></img></td>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Disable" title="Disable" src="../../../../../web/images/blank.gif" border="0" /></td>
                       <td class="Button_text Button_width">Disable</td>
                       <td class="Button_right"></td>
                     </tr>
                   </table>
-                </a>
+                </button>
               </div>
             </td>
             <td class="Button_LeftAlign_ContentCell">
               <div>
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Later'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="postpone();return false;">
-                  <table class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Later'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                <button type="button" 
+                  class="ButtonLink" 
+                  onclick="postpone();return false;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Later'; return true;" 
+                  onblur="buttonEvent('onblur', this);" 
+                  onkeyup="buttonEvent('onkeyup', this);" 
+                  onkeydown="buttonEvent('onkeydown', this);" 
+                  onkeypress="buttonEvent('onkeypress', this);" 
+                  onmouseup="buttonEvent('onmouseup', this);" 
+                  onmousedown="buttonEvent('onmousedown', this);" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Later'; return true;" 
+                  onmouseout="buttonEvent('onmouseout', this);">
+                  <table class="Button">
                     <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Later" title="Later" src="../../../../../web/images/blank.gif" border="0"></img></td>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Later" title="Later" src="../../../../../web/images/blank.gif" border="0" /></td>
                       <td class="Button_text Button_width">Later</td>
                       <td class="Button_right"></td>
                     </tr>
                   </table>
-                </a>
+                </button>
               </div>
             </td>
             <td/>

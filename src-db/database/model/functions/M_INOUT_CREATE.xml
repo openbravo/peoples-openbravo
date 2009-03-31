@@ -596,7 +596,7 @@
           END IF;
         END LOOP; -- Order Header Loop
         IF (v_order_delivered_count = 0 AND v_order_partial_count = 0) THEN
-          v_Message = '@ZeroOrdersProcessed@';
+          v_Message := '@ZeroOrdersProcessed@';
           v_result :=0;
         ELSIF (v_order_partial_count <> 0 OR v_order_delivered_count <> v_order_count) THEN
           v_result :=2;

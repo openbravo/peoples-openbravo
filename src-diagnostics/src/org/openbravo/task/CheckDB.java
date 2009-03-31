@@ -31,6 +31,7 @@ import org.apache.tools.ant.Task;
 import org.openbravo.utils.PropertiesManager;
 import org.openbravo.utils.Version;
 
+
 public class CheckDB extends Task {
   static Logger log4j = Logger.getLogger(CheckDB.class);
 
@@ -163,6 +164,23 @@ public class CheckDB extends Task {
         log4j.info("Open cursors OK");
       }
 
+      try {
+        st = connSystem
+            .prepareStatement("select value from nls_database_parameters where parameter='NLS_NCHAR_CHARACTERSET'");
+        result = st.executeQuery();
+        result.next();
+        String nchar_charset = result.getString(1);
+        if (nchar_charset.equals("AL16UTF16"))
+          log4j.info("NCHAR charset encoding OK.");
+        else {
+          throw new BuildException("NCHAR charset encoding incorrect. Current encoding: "
+              + nchar_charset + ". Required encoding: AL16UTF16");
+        }
+        result.close();
+        st.close();
+      } catch (final Exception e) {
+        throw new BuildException(e.getMessage());
+      }
     } else { // PostgreSQL
       // Check version
       log4j.info("Checking PostgreSQL version...");

@@ -55,8 +55,8 @@
     <FIELD id="fieldCOrderlineId" attribute="value">id</FIELD>
 	<FIELD id="paramDateReceiptxx" attribute="id" replace="xx">cBpartnerId</FIELD>
 	<FIELD id="paramDateReceiptxx" attribute="name" replace="xx">cBpartnerId</FIELD>
-	<FIELD id="paramDateReceiptxx" attribute="displayFormat" name="displayFormat"/>
-    <FIELD id="paramDateReceiptxx" attribute="saveFormat" name="displayFormat"/>
+	<PARAMETER id="paramDateReceiptxx" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramDateReceiptxx" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
 	<FIELD id="paramDateReceiptxxinvalidSpan" attribute="id" replace="xx">cBpartnerId</FIELD>
 	<FIELD id="paramDateReceiptxxinvalidSpanText" attribute="id" replace="xx">cBpartnerId</FIELD>
 	<FIELD id="paramDateReceiptxxmissingSpan" attribute="id" replace="xx">cBpartnerId</FIELD>

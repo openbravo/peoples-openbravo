@@ -30,7 +30,7 @@
       </script>
       <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
       </script>
-      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
         var defaultLang = "en_US";
       </script>
@@ -41,7 +41,7 @@
       <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
-      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
       <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
@@ -289,18 +289,18 @@ function onloadFunctions() {
                   </td>
                   <td class="TitleCell"><span class="LabelText">Currency</span></td>
                   <td class="Combo_ContentCell">
-  		     		<select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
-     		      	<option value=""><div id="reportC_Currency_ID"></div></option>
-   		     		</select>
-		   		  </td>
+              <select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+                <option value=""><div id="reportC_Currency_ID"></div></option>
+              </select>
+            </td>
                   </tr>
                   <tr>
-				  <td class="TitleCell"><span class="LabelText">Project</span></td>
+                  <td class="TitleCell"><span class="LabelText">Project</span></td>
                   <td class="TextBox_btn_ContentCell" colspan="2">
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-			<input type="hidden" name="inpcProjectId" id="C_Project_ID" value=""></input> 
+                          <input type="hidden" name="inpcProjectId" id="C_Project_ID" value=""></input> 
                           <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpcProjectId_D" id="C_Project_ID_D" maxlength="20" value=""></input>
                         </td>
                         <td class="FieldButton_ContentCell">
@@ -325,11 +325,11 @@ function onloadFunctions() {
 
                 </tr>
                   <tr>
-		<td class="TitleCell"><span class="LabelText">Public/Private</span></td>
+                  <td class="TitleCell"><span class="LabelText">Public/Private</span></td>
                   <td class="Combo_ContentCell" colspan="2"> <select name="inpProjectpublic" id="paramC_PROJECTPUBLIC" class="Combo Combo_TwoCells_width">
                       <option value=""> <div id="reportC_PROJECTPUBLIC"></div></option>
                     </select></td>
-		<td class="TitleCell"><span class="LabelText">In charge</span></td>
+                  <td class="TitleCell"><span class="LabelText">In charge</span></td>
                   <td class="Combo_ContentCell" colspan="2"> <select name="inpSalesRepId" id="paramSALESREP" class="Combo Combo_TwoCells_width">
                       <option value=""> <div id="reportSALESREP"></div></option>
                     </select></td>
@@ -513,12 +513,12 @@ function onloadFunctions() {
                     </table>
                   </td>
                  </tr>
-		<tr>
+                  <tr>
                     <td class="TitleCell"><span class="LabelText">Product cat.</span></td>
 
                     <td class="Dimension_ContentCell" colspan="2">
                       <select name="inpmProductCategoryId" multiple="" id="reportC_PRODUCTCATREGORY" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
-		</select>
+                      </select>
                     </td>
 
 
@@ -526,22 +526,22 @@ function onloadFunctions() {
                     <td class="TitleCell"><span class="LabelText">Region</span></td>
                     <td class="Dimension_ContentCell" colspan="2">
                       <select name="inpcRegionId" multiple="" id="reportC_REGIONID" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
-		</select>
+                      </select>
                     </td>
 
                   </tr>
-        	   <tr>
-		<td class="TitleCell"><span class="LabelText">Status</span></td>
+                  <tr>
+                    <td class="TitleCell"><span class="LabelText">Status</span></td>
 
                     <td class="Dimension_ContentCell" colspan="2">
                       <select name="inpProjectstatus" multiple="" id="reportC_PROJECTSTATUS" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
-		</select>
+                      </select>
                     </td>
-		<td class="TitleCell"><span class="LabelText">Phase</span></td>
+                    <td class="TitleCell"><span class="LabelText">Phase</span></td>
                     <td class="Dimension_ContentCell" colspan="2">
                       <select name="inpProjectphase" multiple="" id="reportC_PROJECTPHASE" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
                     </td>
-<tr>
+                  <tr>
                     <td class="TitleCell"><span class="LabelText">Work type</span></td>
                     <td class="Dimension_ContentCell" colspan="2">
                       <select name="inpProjectkind" multiple="" id="reportC_PROJECTKIND" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
@@ -572,28 +572,51 @@ function onloadFunctions() {
                     <td class="TitleCell"></td>
                     <td class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('EDIT_HTML', true, 'ReportInvoiceCustomerFilterJR.html', 'ReportInvoiceCustomerFilterJR',null, false, '700', '1000', true);return false;" id="buttonHTML">
-                        <table class="Button"onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                          <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border="0"/></td>
-                            <td class="Button_text">HTML Format</td>
-                            <td class="Button_right"></td>
-                          </tr>
-                        </table>
-                        </a>
+                        <button type="button" 
+                          id="buttonHTML" 
+                          class="ButtonLink" 
+                          onclick="openServletNewWindow('EDIT_HTML', true, 'ReportInvoiceCustomerFilterJR.html', 'ReportInvoiceCustomerFilterJR',null, false, '700', '1000', true);return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='View Results in a New Window'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">HTML Format</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
                       </div>
                     </td>
-		<td class="Button_CenterAlign_ContentCell">
+                    <td class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Export Results to PDF Format'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('EDIT_PDF', true, 'ReportInvoiceCustomerFilterJR.html', 'ReportInvoiceCustomerFilterJR', null, false, '700', '1024', true);return false;">
-                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='PDF_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                          <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_pdf" alt="Export Results to PDF Format" title="Export Results to PDF Format" src="../../../../../web/images/blank.gif" border=0/></td>
-                            <td class="Button_text">PDF Format</td>
-                            <td class="Button_right"></td>
-                          </tr>
-                        </table>
-                        </a>
+                        <button type="button" 
+                          class="ButtonLink" 
+                          onclick="openServletNewWindow('EDIT_PDF', true, 'ReportInvoiceCustomerFilterJR.html', 'ReportInvoiceCustomerFilterJR', null, false, '700', '1024', true);return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='Export Results to PDF Format'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='Export Results to PDF Format'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_pdf" alt="Export Results to PDF Format" title="Export Results to PDF Format" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">PDF Format</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
                       </div>
                     </td>
                     <td class="ContentCell">

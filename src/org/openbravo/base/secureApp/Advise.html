@@ -187,28 +187,28 @@ var baseDirectory = "../../../../../web/";
                 <table style="width: 550px !important;" cellspacing="0" cellpadding="0" border ="0" class="Login_Home_TableEdition">
                   <tr>
                     <td colspan="6" align="center" class="Button_CenterAlign_ContentCell">
-
-                      <a class="ButtonLink" href="#"
-                        onfocus="this.className='ButtonLink_hover'; window.status='Back'; return true;"
-                        onblur="this.className='ButtonLink'; window.status=''; return true;"
-                        onkeypress="this.className='ButtonLink_active'; return true;"
-                        onkeyup="this.className='ButtonLink_hover'; return true;"
-                        onclick="history.back();return false;">
-                        <table class="Button"
-                          onmousedown="this.className='Button_active'; return true;"
-                          onmouseup="this.className='Button'; return true;"
-                          onmouseover="this.className='Button_hover'; window.status='Back'; return true;"
-                          onmouseout="this.className='Button'; window.status=''; return true;">
+                      <button type="button" 
+                        class="ButtonLink" 
+                        onclick="history.back();return false;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Back'; return true;" 
+                        onblur="buttonEvent('onblur', this);" 
+                        onkeyup="buttonEvent('onkeyup', this);" 
+                        onkeydown="buttonEvent('onkeydown', this);" 
+                        onkeypress="buttonEvent('onkeypress', this);" 
+                        onmouseup="buttonEvent('onmouseup', this);" 
+                        onmousedown="buttonEvent('onmousedown', this);" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Back'; return true;" 
+                        onmouseout="buttonEvent('onmouseout', this);">
+                        <table class="Button">
                           <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_back" alt="Back" title="Back" src="../../../../../web/images/blank.gif" border=0 id="fieldButton"/></td>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_back" alt="Back" title="Back" src="../../../../../web/images/blank.gif" border="0" id="fieldButton" /></td>
                             <td class="Button_text Button_width">Back</td>
                             <td class="Button_right"></td>
                           </tr>
                         </table>
-                      </a>
+                      </button>
                     </td>
                   </tr>
-
                 </table>
               </td>
             </tr>

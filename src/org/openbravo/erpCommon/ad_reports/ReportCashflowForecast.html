@@ -22,7 +22,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-<title>Cashflow Forecast Report</title>
+    <title>Cashflow Forecast Report</title>
     <link rel="shortcut icon" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
      
@@ -31,7 +31,7 @@
       </script>
       <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
       </script>
-      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
         var defaultLang = "en_US";
       </script>
@@ -42,7 +42,7 @@
       <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
-      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
       <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
@@ -252,7 +252,7 @@ function onloadFunctions() {
                   <td class="ContentCell"> </td>
                   </tr>
                 <tr>
-    <td class="TitleCell"><span class="LabelText">Break by date</span></td>
+                <td class="TitleCell"><span class="LabelText">Break by date</span></td>
                 <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" id="breakDate" name="inpBreakDate"></input></span></td>
                   <td class="ContentCell"> </td>
                   <td class="ContentCell"> </td>
@@ -279,15 +279,27 @@ function onloadFunctions() {
                     <td class="TitleCell"></td>
                     <td class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND');return false;" id="buttonHTML">
-                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                          <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
-                            <td class="Button_text">HTML Format</td>
-                            <td class="Button_right"></td>
-                          </tr>
-                        </table>
-                        </a>
+                        <button type="button" 
+                          id="buttonHTML" 
+                          class="ButtonLink" 
+                          onclick="submitCommandForm('FIND');return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='View Results in a New Window'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">HTML Format</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
                       </div>
                     </td>
                     <td class="ContentCell"></input>
@@ -297,12 +309,12 @@ function onloadFunctions() {
                     <td class="ContentCell"></td>
                   </tr>
     </table>
-	
-	<br>
-	
-	<table class="Main_Client_TableEdition">
-	  <tr>
-		<td colspan="6">
+  
+  <br>
+  
+  <table class="Main_Client_TableEdition">
+    <tr>
+    <td colspan="6">
 
     <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" ><!--RESUMEN DE TODAS LAS CUENTAS AUNQUE ELIGAN UNA EN CONCRETO/-->
       <tr class="DataGrid_Body_Row"> 

@@ -277,6 +277,40 @@ public class BaseXMLEntityConverter implements OBNotSingleton {
     }
   }
 
+  /**
+   * Checks for objects which were not found in the database but are neither defined in the imported
+   * xml. This is not allowed and can result in strange errors.
+   * 
+   * If a dangling object is found then the error message is added to the list of error messages.
+   */
+  protected void checkDanglingObjects() {
+
+    // clone the resolved entities
+    final List<BaseOBObject> resolvedValues = new ArrayList<BaseOBObject>(getEntityResolver()
+        .getData().values());
+
+    // remove the to-insert objects from the resolvedEntities
+    resolvedValues.removeAll(getToInsert());
+
+    // now at this point there should not be any new objects anymore
+    // in the resolvedEntities
+    final StringBuilder sb = new StringBuilder();
+    for (BaseOBObject bob : resolvedValues) {
+      if (bob.isNewOBObject()) {
+        if (sb.length() > 0) {
+          sb.append("\n");
+        }
+        sb.append("Referenced object " + bob.getEntityName() + " (id: " + bob.getId()
+            + ") not present in the xml or in the database.");
+      }
+    }
+
+    if (sb.length() > 0) {
+      error(sb.toString());
+    }
+
+  }
+
   protected void warn(String msg) {
     if (warningMessages.length() > 0) {
       warningMessages.append("\n");

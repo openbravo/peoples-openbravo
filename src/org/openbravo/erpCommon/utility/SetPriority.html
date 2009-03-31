@@ -28,7 +28,7 @@
 var baseDirectory = "../../../../../web/";
 </script>
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
-<script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+<script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
   var defaultLang = "en_US";
 </script>
@@ -42,7 +42,7 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
-<script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+<script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
 <script type="text/javascript"> 
@@ -186,7 +186,7 @@ var baseDirectory = "../../../../../web/";
                                 <td class="MessageBox_RightMargin"></td>
                               </tr>
                               </tbody>
-                            </table>              
+                            </table>
            <!-- USER CONTROLS -->
            <table class="Main_Client_TableEdition">
                 <tr>
@@ -220,16 +220,16 @@ var baseDirectory = "../../../../../web/";
                       <tr class="Popup_Client_Selector_DataGrid_HeaderRow"> 
                           <td width="10" class="DataGrid_Body_LineNoCell">&nbsp;</td>
                           <th width="320" class="DataGrid_Header_Cell">Category</th>
-                          <th width="60" class="DataGrid_Header_Cell">Priority</th>                          
+                          <th width="60" class="DataGrid_Header_Cell">Priority</th>
                       </tr>
                       <div id="sectionDetail"> 
                       <tr id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
                           <td class="DataGrid_Body_LineNoCell"><input id="fieldCatVal" type="radio" name="category" value="x"></input></td>
                           <td class="DataGrid_Body_Cell" id="fieldCategory">&nbsp;</td>
-                          <td class="DataGrid_Body_Cell" id="fieldPriority">&nbsp;</td>                          
+                          <td class="DataGrid_Body_Cell" id="fieldPriority">&nbsp;</td>
                       </tr>
                       </div>
-                </table>                                     
+                </table>
 
                 </td>
               </tr>
@@ -266,30 +266,42 @@ var baseDirectory = "../../../../../web/";
                  </table>
                  </td>
                 </tr>
-                <tr>                  
+                <tr>
                   <td>
                       <select name="priority" size="1" class="Combo Combo_TwoCells_width">
                              <option value="DEBUG" selected="">DEBUG</option>
                              <option value="INFO">INFO</option>
                              <option value="WARN">WARN</option>
-							 <option value="ERROR">ERROR</option>
+                             <option value="ERROR">ERROR</option>
                              <option value="FATAL">FATAL</option>
                         </select>
-				 </td>
-				 </tr>
-				 <tr>                
+                  </td>
+                </tr>
+                <tr>
                   <td class="Button_LeftAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="document.forms[0].submit();return false;" onmouseover="window.status='Process';return true;" id="buttonProcess">
-                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Process';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                        <tr>
-                          <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border=0/></td>
-                          <td class="Button_text Button_width">Process</td>
-                          <td class="Button_right"></td>
-                        </tr>
-                      </table>
-                      </a>
-                    </div>                    
+                      <button type="button" 
+                        id="buttonProcess" 
+                        class="ButtonLink" 
+                        onclick="document.forms[0].submit();return false;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Process'; return true;" 
+                        onblur="buttonEvent('onblur', this);" 
+                        onkeyup="buttonEvent('onkeyup', this);" 
+                        onkeydown="buttonEvent('onkeydown', this);" 
+                        onkeypress="buttonEvent('onkeypress', this);" 
+                        onmouseup="buttonEvent('onmouseup', this);" 
+                        onmousedown="buttonEvent('onmousedown', this);" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Process'; return true;" 
+                        onmouseout="buttonEvent('onmouseout', this);">
+                        <table class="Button">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_text Button_width">Process</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                      </button>
+                    </div>
                   </td>
                   <td class="TitleCell"></td>
                   <td class="ContentCell"></td>

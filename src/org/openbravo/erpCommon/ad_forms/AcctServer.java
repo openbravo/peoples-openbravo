@@ -236,7 +236,7 @@ public abstract class AcctServer {
 
   /**
    * Cosntructor
-   * 
+   *
    * @param m_AD_Client_ID
    *          Client ID of these Documents
    * @param connectionProvider
@@ -256,7 +256,7 @@ public abstract class AcctServer {
   }
 
   public void run(VariablesSecureApp vars) throws IOException, ServletException {
-    AD_Client_ID = vars.getClient();
+    if (AD_Client_ID.equals("")) AD_Client_ID = vars.getClient();
     try {
       Connection con = connectionProvider.getTransactionConnection();
       String strIDs = "";
@@ -290,7 +290,7 @@ public abstract class AcctServer {
 
   /**
    * Factory - Create Posting document
-   * 
+   *
    * @param AD_Table_ID
    *          Table ID of Documents
    * @param AD_Client_ID
@@ -533,7 +533,7 @@ public abstract class AcctServer {
 
   /**
    * Post Commit. Save Facts & Document
-   * 
+   *
    * @param status
    *          status
    * @return Posting Status
@@ -579,7 +579,7 @@ public abstract class AcctServer {
 
   /**
    * Save to Disk - set posted flag
-   * 
+   *
    * @param con
    *          connection
    * @return true if saved
@@ -788,7 +788,7 @@ public abstract class AcctServer {
 
   /**
    * Posting logic for Accounting Schema index
-   * 
+   *
    * @param index
    *          Accounting Schema index
    * @return posting status/error code
@@ -846,7 +846,7 @@ public abstract class AcctServer {
 
   /**
    * Is the Source Document Balanced
-   * 
+   *
    * @return true if (source) baanced
    */
   public boolean isBalanced() {
@@ -865,7 +865,7 @@ public abstract class AcctServer {
 
   /**
    * Is Document convertible to currency and Conversion Type
-   * 
+   *
    * @param acctSchema
    *          accounting schema
    * @return true, if vonvertable to accounting currency
@@ -925,7 +925,7 @@ public abstract class AcctServer {
 
   /**
    * Get the Amount (loaded in loadDocumentDetails)
-   * 
+   *
    * @param AmtType
    *          see AMTTYPE_*
    * @return Amount
@@ -938,7 +938,7 @@ public abstract class AcctServer {
 
   /**
    * Get Amount with index 0
-   * 
+   *
    * @return Amount (primary document amount)
    */
   public String getAmount() {
@@ -947,7 +947,7 @@ public abstract class AcctServer {
 
   /**
    * Convert an amount
-   * 
+   *
    * @param CurFrom_ID
    *          The C_Currency_ID FROM
    * @param CurTo_ID
@@ -1006,7 +1006,7 @@ public abstract class AcctServer {
 
   /**
    * Is Period Open
-   * 
+   *
    * @return true if period is open
    */
   public boolean isPeriodOpen() {
@@ -1052,7 +1052,7 @@ public abstract class AcctServer {
 
   /**
    * Get fully qualified Account Combination
-   * 
+   *
    * @param AD_Client_ID
    *          client
    * @param AD_Org_ID
@@ -1160,7 +1160,7 @@ public abstract class AcctServer {
 
   /**
    * Matching
-   * 
+   *
    * <pre>
    *  Derive Invoice-Receipt Match from PO-Invoice and PO-Receipt
    *  Purchase Order (20)
@@ -1174,10 +1174,10 @@ public abstract class AcctServer {
    *  (b) Creates Indirects
    *      - Invoice1 - Receipt2 (5)
    *  (Not imlemented)
-   * 
-   * 
+   *
+   *
    * </pre>
-   * 
+   *
    * @return number of records created
    */
   public int match(VariablesSecureApp vars, ConnectionProvider conn, Connection con) {
@@ -1232,7 +1232,7 @@ public abstract class AcctServer {
 
   /**
    * Create MatchInv record
-   * 
+   *
    * @param AD_Client_ID
    *          Client
    * @param AD_Org_ID
@@ -1270,7 +1270,7 @@ public abstract class AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   * 
+   *
    * @param AcctType
    *          see ACCTTYPE_*
    * @param as
@@ -1426,14 +1426,14 @@ public abstract class AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line (and tax) amounts from total - no rounding
-   * 
+   *
    * @return positive amount, if total header is bigger than lines
    */
   public abstract BigDecimal getBalance();
 
   /**
    * Create Facts (the accounting logic)
-   * 
+   *
    * @param as
    *          accounting schema
    * @return Fact

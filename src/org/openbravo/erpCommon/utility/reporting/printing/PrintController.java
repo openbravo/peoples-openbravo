@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SL All
- * portions are Copyright (C) 2008 Openbravo SL All Rights Reserved.
+ * portions are Copyright (C) 2008-2009 Openbravo SL All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -187,6 +187,10 @@ public class PrintController extends HttpSecureAppServlet {
         globalParameters.strDefaultDesignPath, globalParameters.prefix, classInfo, multiReports);
 
     if (vars.commandIn("PRINT")) {
+      // Order documents by Document No.
+      if (multiReports)
+        documentIds = orderByDocumentNo(documentType, documentIds);
+
       /*
        * PRINT option will print directly to the UI for a single report. For multiple reports the
        * documents will each be saved individually and the concatenated in the same manner as the
@@ -216,6 +220,10 @@ public class PrintController extends HttpSecureAppServlet {
       }
       printReports(response, jrPrintReports, savedReports);
     } else if (vars.commandIn("ARCHIVE")) {
+      // Order documents by Document No.
+      if (multiReports)
+        documentIds = orderByDocumentNo(documentType, documentIds);
+
       /*
        * ARCHIVE will save each report individually and then print the reports in a single printable
        * (concatenated) format.
@@ -1217,6 +1225,48 @@ public class PrintController extends HttpSecureAppServlet {
       throw new ServletException("Error trying to get the attached file", e);
     }
 
+  }
+
+  /**
+   * Returns an array of document's ID ordered by Document No ASC
+   * 
+   * @param documentType
+   * @param documentIds
+   *          array of document's ID without order
+   * @return List of ordered IDs
+   * @throws ServletException
+   */
+  private String[] orderByDocumentNo(DocumentType documentType, String[] documentIds)
+      throws ServletException {
+    String strTable = documentType.getTableName();
+
+    StringBuffer strIds = new StringBuffer();
+    strIds.append("'");
+    for (int i = 0; i < documentIds.length; i++) {
+      if (i > 0) {
+        strIds.append("', '");
+      }
+      strIds.append(documentIds[i]);
+    }
+    strIds.append("'");
+
+    PrintControllerData[] printControllerData;
+    String documentIdsOrdered[] = new String[documentIds.length];
+    int i = 0;
+    if (strTable.equals("C_INVOICE")) {
+      printControllerData = PrintControllerData.selectInvoices(this, strIds.toString());
+      for (PrintControllerData docID : printControllerData) {
+        documentIdsOrdered[i++] = docID.getField("Id");
+      }
+    } else if (strTable.equals("C_ORDER")) {
+      printControllerData = PrintControllerData.selectOrders(this, strIds.toString());
+      for (PrintControllerData docID : printControllerData) {
+        documentIdsOrdered[i++] = docID.getField("Id");
+      }
+    } else
+      return documentIds;
+
+    return documentIdsOrdered;
   }
 
   @Override

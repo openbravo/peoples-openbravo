@@ -90,7 +90,7 @@ public class ClientImportProcessor implements EntityXMLProcessor {
     } else if (bob instanceof Role) {
       final Role role = (Role) bob;
       if (role.getName().indexOf(originalName) == -1) {
-        role.setName(role.getName() + "_" + getNewName());
+        role.setName(getNewName() + "_" + role.getName());
       } else {
         role.setName(replace(role.getName(), originalName));
       }
@@ -100,17 +100,21 @@ public class ClientImportProcessor implements EntityXMLProcessor {
         return;
       }
       if (user.getUsername().indexOf(originalName) == -1) {
-        user.setUsername(user.getUsername() + "_" + getNewName());
+        user.setUsername(getNewName() + "_" + user.getUsername());
       } else {
         user.setUsername(replace(user.getUsername(), originalName));
       }
     } else if (bob instanceof Organization) {
       final Organization org = (Organization) bob;
-      org.setName(replace(org.getName(), originalName));
+      if (org.getName().indexOf(originalName) == -1) {
+        org.setName(getNewName() + "_" + org.getName());
+      } else {
+        org.setName(replace(org.getName(), originalName));
+      }
     } else if (bob instanceof Warehouse) {
       final Warehouse wh = (Warehouse) bob;
       if (wh.getName().indexOf(originalName) == -1) {
-        wh.setName(wh.getName() + "_" + getNewName());
+        wh.setName(getNewName() + "_" + wh.getName());
       } else {
         wh.setName(replace(wh.getName(), originalName));
       }

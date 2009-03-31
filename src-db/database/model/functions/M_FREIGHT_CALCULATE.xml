@@ -43,6 +43,7 @@
     v_IsSOTrx CHAR(1) ;
     v_Amt NUMBER;
     v_Currency_ID VARCHAR2(32);
+    v_Freight_Currency_ID VARCHAR2(32);
     v_RoundLine CHAR(1) ;
     v_RoundTotal CHAR(1) ;
     v_FreightUnit VARCHAR2(60) ;
@@ -83,12 +84,14 @@
       M_FreightCategory_ID,
       MovementDate,
       nopackages,
-      IsSOTrx
+      IsSOTrx,
+      Freight_Currency_ID
     INTO v_Shipper_ID,
       v_FreightCategory_ID,
       v_Date,
       v_Qty,
-      v_IsSOTrx
+      v_IsSOTrx,
+      v_Freight_Currency_ID
     FROM M_InOut
     WHERE M_InOut_ID=v_Record_ID;
     v_ResultStr:='Set to and from region';
@@ -185,6 +188,7 @@
               AND QtyFrom<=v_Qty
               AND QtyTo>v_Qty
               AND ValidFrom<v_date
+              AND (v_Freight_Currency_ID IS NULL OR C_Currency_ID=v_Freight_Currency_ID)
             GROUP BY M_Shipper_ID
             )
             af
@@ -221,6 +225,7 @@
             AND QtyTo>v_Qty
             AND ValidFrom<v_date
             AND M_Shipper_ID=v_Shipper_ID
+            AND (v_Freight_Currency_ID IS NULL OR C_Currency_ID=v_Freight_Currency_ID)
           ORDER BY ValidFrom DESC
           )
         LOOP

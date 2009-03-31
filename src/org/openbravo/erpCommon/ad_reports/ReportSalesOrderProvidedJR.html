@@ -30,7 +30,7 @@
       </script>
       <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
       </script>
-      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
         var defaultLang = "en_US";
       </script>
@@ -41,7 +41,7 @@
       <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
-      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 	  <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
@@ -296,10 +296,10 @@ new Array(2,4,'F4')
                   </td>
                   <td class="TitleCell"><span class="LabelText">Currency</span></td>
                   <td class="Combo_ContentCell">
-  		     		<select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
-     		      	<option value=""><div id="reportC_Currency_ID"></div></option>
-   		     		</select>
-		   		  </td>
+                    <select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+                      <option value=""><div id="reportC_Currency_ID"></div></option>
+                    </select>
+                </td>
                 </tr>
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Business Partner</span></td>
@@ -307,7 +307,7 @@ new Array(2,4,'F4')
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-			 <input type="hidden" name="inpcBPartnerId" id="paramBPartnerId" value=""></input> 
+                          <input type="hidden" name="inpcBPartnerId" id="paramBPartnerId" value=""></input> 
                           <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpBpartnerId_DES" maxlength="20" value=""></input>
                         </td>
                         <td class="FieldButton_ContentCell">
@@ -329,7 +329,7 @@ new Array(2,4,'F4')
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-			<input type="hidden" name="inpcProjectId" id="C_Project_ID" value=""></input> 
+                          <input type="hidden" name="inpcProjectId" id="C_Project_ID" value=""></input> 
                           <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpcProjectId_D" id="C_Project_ID_D" maxlength="20" value=""></input>
                         </td>
                         <td class="FieldButton_ContentCell">
@@ -362,13 +362,13 @@ new Array(2,4,'F4')
                   <td class="Combo_ContentCell" colspan="2"> <select  name="inpmCategoryId" onchange="changeComboData(frmMain.inpArticulo, array, frmMain.inpmCategoryId.options[frmMain.inpmCategoryId.selectedIndex].value, true);" id="inpmCategoryId" class="Combo Combo_TwoCells_width">
                       <option value=""> <div id="reportM_PRODUCT_CATEGORYID"></div></option>
                     </select></td>
-		<td class="TitleCell"><span class="LabelText">Product</span></td>
+                  <td class="TitleCell"><span class="LabelText">Product</span></td>
                   <td class="TextBox_btn_ContentCell" colspan="2">
                     <table border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
 
                       <tr>
                         <td class="TextBox_ContentCell">
-			 <input type="hidden" name="inpmProductId" id="paramProductId" value=""></input> 
+                          <input type="hidden" name="inpmProductId" id="paramProductId" value=""></input> 
                           <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text" name="inpmProductId_D" maxlength="20" value=""></input>
                         </td>
                         <td class="FieldButton_ContentCell">
@@ -417,15 +417,27 @@ new Array(2,4,'F4')
                     <td class="TitleCell"></td>
                     <td class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('FIND', true, 'ReportSalesOrderProvidedJRPop.html', 'ReportSalesOrderProvidedJR', null, false, '700', '1000', true);return false;" id="buttonHTML">
-                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                          <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
-                            <td class="Button_text">HTML Format</td>
-                            <td class="Button_right"></td>
-                          </tr>
-                        </table>
-                        </a>
+                        <button type="button" 
+                          id="buttonHTML" 
+                          class="ButtonLink" 
+                          onclick="openServletNewWindow('FIND', true, 'ReportSalesOrderProvidedJRPop.html', 'ReportSalesOrderProvidedJR', null, false, '700', '1000', true);return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='View Results in a New Window'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">HTML Format</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
                       </div>
                     </td>
                     <td class="ContentCell"></td>
@@ -433,7 +445,7 @@ new Array(2,4,'F4')
                     <td class="ContentCell"></td>
                     <td class="ContentCell"></td>
                   </tr>
-		</table>
+                </table>
 
                       <!-- USER CONTROLS -->
                 </td>
