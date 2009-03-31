@@ -135,11 +135,18 @@
 
       function validate(action, form, value) {
          var appFrame = top.frames.appFrame;
-         var loc = appFrame.location.toString();
-         if( loc.indexOf('Home.html') != -1 || typeof(appFrame.depurar_validate_wrapper) == 'undefined' || typeof(appFrame.depurar) == 'undefined') {
+         if(!appFrame.isUserChanges) {
              return true;
          }
-         return appFrame.depurar_validate_wrapper(action, form, value);
+         var loc = appFrame.location.toString();
+         if( loc.indexOf('Home.html') != -1 || typeof appFrame.validate == 'undefined') {
+             return true;
+         }
+         return appFrame.validate(action, form, value);
+      }
+
+      function depurar_validate_wrapper(action, form, value) {
+          return validate(action, form, value);
       }
 
       function getForm() {
