@@ -179,7 +179,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
 
     // xmlDocument.setParameter("paramMessage",
     // (strMessage.equals("")?"":"alert('" + strMessage + "');"));
-
+    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("displayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
