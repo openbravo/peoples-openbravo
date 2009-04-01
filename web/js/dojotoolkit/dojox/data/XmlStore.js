@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -12,7 +12,7 @@ dojo.provide("dojox.data.XmlItem");
 
 dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.filter");
-dojo.require("dojox.data.dom");
+dojo.require("dojox.xml.parser");
 
 dojo.declare("dojox.data.XmlStore", null, {
 	//	summary:
@@ -390,7 +390,7 @@ dojo.declare("dojox.data.XmlStore", null, {
 			errorHandler(new Error("No URL specified."));
 			return;
 		}
-		var localRequest = (!this.sendQuery ? request : null); // use request for _getItems()
+		var localRequest = (!this.sendQuery ? request : {}); // use request for _getItems()
 
 		var self = this;
 		var getArgs = {
@@ -499,7 +499,7 @@ dojo.declare("dojox.data.XmlStore", null, {
 			if(node.nodeType != 1 /*ELEMENT_NODE*/){
 				continue;
 			}
-            var item = this._getItem(node);
+			var item = this._getItem(node);
 			if(query){
 				var found = true;
 				var ignoreCase = request.queryOptions ? request.queryOptions.ignoreCase : false; 
@@ -1072,7 +1072,7 @@ dojo.declare("dojox.data.XmlStore", null, {
 		//		A post content
 		var element = item.element;
 		var declaration = "<?xml version=\"1.0\"?>"; // FIXME: encoding?
-		return declaration + dojox.data.dom.innerXML(element); //XML string
+		return declaration + dojox.xml.parser.innerXML(element); //XML string
 	},
 
 	_getPutContent: function(item){
@@ -1089,7 +1089,7 @@ dojo.declare("dojox.data.XmlStore", null, {
 		//		A post content
 		var element = item.element;
 		var declaration = "<?xml version=\"1.0\"?>"; // FIXME: encoding?
-		return declaration + dojox.data.dom.innerXML(element); //XML string
+		return declaration + dojox.xml.parser.innerXML(element); //XML string
 	},
 
 /* internal API */
@@ -1176,7 +1176,7 @@ dojo.declare("dojox.data.XmlStore", null, {
 		if(element){
 			return element.ownerDocument;  //DOMDocument
 		}else if(!this._document){
-			return dojox.data.dom.createDocument(); // DOMDocument
+			return dojox.xml.parser.parse(); // DOMDocument
 		}
 		return null; //null
 	},
@@ -1394,7 +1394,7 @@ dojo.declare("dojox.data.XmlStore", null, {
 				handleDocument = function(data){
 					var item = null;
 					if(data){
-						var items = self._getItems(items, null);
+						var items = self._getItems(items, {});
 						if(items.length === 1){
 							item = items[0];
 						}else{

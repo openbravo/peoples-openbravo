@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -25,12 +25,12 @@ dojo.require("dojox.form.manager._Mixin");
 		//		of controlled elements.
 		//		It should be used together with dojox.form.manager.Mixin.
 
-		gatherClassState: function(/* String */ className, /* Object? */ names){
+		gatherClassState: function(className, names){
 			// summary:
 			//		Gather the presence of a certain class in all controlled elements.
-			// className:
+			// className: String:
 			//		The class name to test for.
-			// names:
+			// names: Object?:
 			//		If it is an array, it is a list of names to be processed.
 			//		If it is an object, dictionary keys are names to be processed.
 			//		If it is omitted, all known form elements are to be processed.
@@ -42,12 +42,12 @@ dojo.require("dojox.form.manager._Mixin");
 			return result;	// Object
 		},
 
-		addClass: function(/* String */ className, /* Object? */ names){
+		addClass: function(className, names){
 			// summary:
 			//		Add a class to nodes according to the supplied set of names
-			// className:
+			// className: String:
 			//		Class name to add.
-			// names:
+			// names: Object?:
 			//		If it is an array, it is a list of names to be processed.
 			//		If it is an object, dictionary keys are names to be processed.
 			//		If it is omitted, all known form elements are to be processed.
@@ -59,12 +59,12 @@ dojo.require("dojox.form.manager._Mixin");
 			return this;	// self
 		},
 
-		removeClass: function(/* String */ className, /* Object? */ names){
+		removeClass: function(className, names){
 			// summary:
 			//		Remove a class from nodes according to the supplied set of names
-			// className:
+			// className: String:
 			//		Class name to remove.
-			// names:
+			// names: Object?:
 			//		If it is an array, it is a list of names to be processed.
 			//		If it is an object, dictionary keys are names to be processed.
 			//		If it is omitted, all known form elements are to be processed.

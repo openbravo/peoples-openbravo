@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -152,7 +152,7 @@ dojo.declare("dojox.image.LightboxDialog",
 
 	// imgUrl: String
 	//		The src="" attribute of our imageNode (can be null at statup)
-	imgUrl: "",
+	imgUrl: dijit._Widget.prototype._blankGif,
 		
 	// errorMessage: String
 	// 		The text to display when an unreachable image is linked
@@ -171,6 +171,8 @@ dojo.declare("dojox.image.LightboxDialog",
 	//		Path to the image used when a 404 is encountered
 	errorImg: dojo.moduleUrl("dojox.image","resources/images/warning.png"),
 
+	_fixSizes: false, // janktastic solution to #8967
+
 /*
 	// privates:
 	_imageReady: false,
@@ -184,7 +186,7 @@ dojo.declare("dojox.image.LightboxDialog",
 	_animConnects: [],
 */
 	
-	templateString:"<div class=\"dojoxLightbox\" dojoAttachPoint=\"containerNode\">\n\t<div style=\"position:relative\">\n\t\t<div dojoAttachPoint=\"imageContainer\" class=\"dojoxLightboxContainer\">\n\t\t\t<img dojoAttachPoint=\"imgNode\" src=\"${imgUrl}\" class=\"dojoxLightboxImage\" alt=\"${title}\">\n\t\t\t<div class=\"dojoxLightboxFooter\" dojoAttachPoint=\"titleNode\">\n\t\t\t\t<div class=\"dijitInline LightboxClose\" dojoAttachPoint=\"closeNode\"></div>\n\t\t\t\t<div class=\"dijitInline LightboxNext\" dojoAttachPoint=\"nextNode\"></div>\t\n\t\t\t\t<div class=\"dijitInline LightboxPrev\" dojoAttachPoint=\"prevNode\"></div>\n\n\t\t\t\t<div class=\"dojoxLightboxText\"><span dojoAttachPoint=\"textNode\">${title}</span><span dojoAttachPoint=\"groupCount\" class=\"dojoxLightboxGroupText\"></span></div>\n\t\t\t</div>\n\t\t</div>\t\n\t\t\n\t</div>\n</div>\n",
+	templateString:"<div class=\"dojoxLightbox\" dojoAttachPoint=\"containerNode\">\n\t<div style=\"position:relative\">\n\t\t<div dojoAttachPoint=\"imageContainer\" class=\"dojoxLightboxContainer\">\n\t\t\t<img dojoAttachPoint=\"imgNode\" src=\"${imgUrl}\" class=\"dojoxLightboxImage\" alt=\"${title}\">\n\t\t\t<div class=\"dojoxLightboxFooter\" dojoAttachPoint=\"titleNode\">\n\t\t\t\t<div class=\"dijitInline LightboxClose\" dojoAttachPoint=\"closeNode\"></div>\n\t\t\t\t<div class=\"dijitInline LightboxNext\" dojoAttachPoint=\"nextNode\"></div>\t\n\t\t\t\t<div class=\"dijitInline LightboxPrev\" dojoAttachPoint=\"prevNode\"></div>\n\t\t\t\t<div class=\"dojoxLightboxText\"><span dojoAttachPoint=\"textNode\">${title}</span><span dojoAttachPoint=\"groupCount\" class=\"dojoxLightboxGroupText\"></span></div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n",
 
 	startup: function(){
 		// summary: Add some extra event handlers, and startup our superclass.
@@ -192,9 +194,6 @@ dojo.declare("dojox.image.LightboxDialog",
 		this.inherited(arguments);
 		this._animConnects = [];
 		this._clone = dojo.clone(this.imgNode);
-		// FIXME: this looks these will always listen and run. move to _modalConnects
-		this.connect(document.documentElement,"onkeypress","_handleKey");
-		this.connect(window,"onresize","_position"); 
 		this.connect(this.nextNode, "onclick", "_nextImage");
 		this.connect(this.prevNode, "onclick", "_prevImage");
 		this.connect(this.closeNode, "onclick", "hide");
@@ -214,11 +213,18 @@ dojo.declare("dojox.image.LightboxDialog",
 		var _t = this; // size
 
 		// we only need to call dijit.Dialog.show() if we're not already open.
-		if(!_t.open){ _t.inherited(arguments); }
-
+		if(!_t.open){ 
+			_t.inherited(arguments); 
+			this._modalconnects.push(
+				dojo.connect(dojo.global, "onscroll", this, "_position"),
+				dojo.connect(dojo.global, "onresize", this, "_position"),
+				dojo.connect(dojo.body(), "onkeypress", this, "_handleKey")
+			);
+		}
+		
 		if(this._wasStyled){
 			// ugly fix for IE being stupid:
-			dojo._destroyElement(_t.imgNode);
+			dojo.destroy(_t.imgNode);
 			_t.imgNode = dojo.clone(_t._clone);
 			dojo.place(_t.imgNode,_t.imageContainer,"first");
 			_t._makeAnims();
@@ -304,7 +310,6 @@ dojo.declare("dojox.image.LightboxDialog",
 
 	_prevImage: function(){
 		// summary: Load previous image in group
-
 		if(this.inGroup){ 
 			if(this._positionIndex == 0){
 				this._positionIndex = this.inGroup.length - 1;
@@ -361,13 +366,17 @@ dojo.declare("dojox.image.LightboxDialog",
 
 	hide: function(){
 		// summary: Hide the Master Lightbox
-		dojo.fadeOut({node:this.titleNode, duration:200,
+		dojo.fadeOut({
+			node: this.titleNode, 
+			duration: 200,
 			onEnd: dojo.hitch(this,function(){
 				// refs #5112 - if you _don't_ change the .src, safari will _never_ fire onload for this image
 				this.imgNode.src = this._blankGif; 
 			}) 
-		}).play(5); 
+		}).play(5);
+
 		this.inherited(arguments);
+
 		this.inGroup = null;
 		this._positionIndex = null;
 	},
@@ -400,7 +409,8 @@ dojo.declare("dojox.image.LightboxDialog",
 		var key = (e.charCode == dk.SPACE ? dk.SPACE : e.keyCode);
 		switch(key){
 			
-			case dk.ESCAPE: this.hide(); break;
+			case dk.ESCAPE: 
+				this.hide(); break;
 
 			case dk.DOWN_ARROW:
 			case dk.RIGHT_ARROW:

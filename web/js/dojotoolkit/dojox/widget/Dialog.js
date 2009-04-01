@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -19,7 +19,14 @@ dojo.declare('dojox.widget.Dialog',
 	// summary: A Lightbox-like Modal-dialog for HTML Content
 	//
 	// description:
-	//		An HTML 
+	//		An HTML-capable Dialog widget with advanced sizing 
+	//		options, animated show/hide and other useful options.
+	//		
+	//		This Dialog is also very easy to apply custom styles to.
+	//		
+	//		It works identically to a `dijit.Dialog` with several 
+	//		additional parameters.
+	
 	templateString:"<div class=\"dojoxDialog\" tabindex=\"-1\" waiRole=\"dialog\" waiState=\"labelledby-${id}_title\">\n\t<div dojoAttachPoint=\"titleBar\" class=\"dojoxDialogTitleBar\">\n\t\t<span dojoAttachPoint=\"titleNode\" class=\"dojoxDialogTitle\" id=\"${id}_title\">${title}</span>\n\t</div>\n\t<div dojoAttachPoint=\"dojoxDialogWrapper\">\n\t\t<div dojoAttachPoint=\"containerNode\" class=\"dojoxDialogPaneContent\"></div>\n\t</div>\n\t<div dojoAttachPoint=\"closeButtonNode\" class=\"dojoxDialogCloseIcon\" dojoAttachEvent=\"onclick: onCancel\">\n\t\t\t<span dojoAttachPoint=\"closeText\" class=\"closeText\">x</span>\n\t</div>\n</div>\n",
 	
 	// sizeToViewport: Boolean
@@ -64,6 +71,12 @@ dojo.declare('dojox.widget.Dialog',
 	//		Make the pane draggable. Differs from dijit.Dialog by setting default to false
 	draggable: false, // simply over-ride the default from dijit.Dialog 
 	
+	// modal: Boolean
+	// 		If true, this Dialog instance will be truly modal and prevent closing until
+	//		explicitly told to by calling hide() - Defaults to false to preserve previous
+	// 		behaviors.
+	modal: false,
+	
 	constructor: function(props, node){
 		this.easing = props.easing || dojo._defaultEasing; 
 		this.dimensions = props.dimensions || [300, 300];
@@ -73,10 +86,7 @@ dojo.declare('dojox.widget.Dialog',
 		// summary: Piggyback on dijit.Dialog's _setup for load-time options, deferred to 
 		//		
 		this.inherited(arguments);
-		if(!this._alreadyInitialized){
-			// FIXME: should this be optional, too?
-			this.connect(this._underlay.domNode,"onclick","onCancel");
-			
+		if(!this._alreadyInitialized){			
 			this._navIn = dojo.fadeIn({ node: this.closeButtonNode });
 			this._navOut = dojo.fadeOut({ node: this.closeButtonNode }); 
 			if(!this.showTitle){
@@ -86,7 +96,6 @@ dojo.declare('dojox.widget.Dialog',
 	},
 	
 	layout: function(e){
-		
 		this._setSize();
 		this.inherited(arguments);
 	},
@@ -94,12 +103,13 @@ dojo.declare('dojox.widget.Dialog',
 	_setSize: function(){
 		// summary: cache and set our desired end position 
 		this._vp = dijit.getViewport();
-		var tc = this.containerNode;
-		var vpSized = this.sizeToViewport;
-		this._displaysize = {
+		var tc = this.containerNode,
+			vpSized = this.sizeToViewport
+		;
+		return this._displaysize = {
 			w: vpSized ? tc.scrollWidth : this.dimensions[0],
 			h: vpSized ? tc.scrollHeight : this.dimensions[1]
-		};
+		}; // Object
 	},
 	
 	show: function(){
@@ -119,6 +129,19 @@ dojo.declare('dojox.widget.Dialog',
 		
 		this.inherited(arguments);
 
+		if(this.modal){
+			// prevent escape key from closing dialog
+			// connect to body to trap this event from the Dialog a11y code, and stop escape key
+			// from doing anything in the modal:true case:
+			this._modalconnects.push(dojo.connect(dojo.body(), "onkeypress", function(e){
+				if(e.charOrCode == dojo.keys.ESCAPE){
+					dojo.stopEvent(e);
+				}
+			}));
+		}else{
+			// otherwise, allow clicking on the underlay to close
+			this._modalconnects.push(dojo.connect(dijit._underlay.domNode, "onclick", this, "onCancel"));
+		}
 		this._modalconnects.push(dojo.connect(this.domNode,"onmouseenter",this,"_handleNav"));
 		this._modalconnects.push(dojo.connect(this.domNode,"onmouseleave",this,"_handleNav"));
 		
@@ -127,11 +150,11 @@ dojo.declare('dojox.widget.Dialog',
 	_handleNav: function(e){
 		// summary: Handle's showing or hiding the close icon
 
-		var navou = "_navOut"; 
-		var navin = "_navIn";
-
-		var animou = (e.type == "mouseout" ? navin : navou);
-		var animin = (e.type == "mouseout" ? navou : navin);
+		var navou = "_navOut", 
+			navin = "_navIn",
+			animou = (e.type == "mouseout" ? navin : navou),
+			animin = (e.type == "mouseout" ? navou : navin)
+		;
 		
 		this[animou].stop();
 		this[animin].play();
@@ -177,9 +200,12 @@ dojo.declare('dojox.widget.Dialog',
 
 	_position: function(){
 		
+		if(!this._started){ return; } // prevent content: from firing this anim #8914
+		
 		if(this._sizing){
 			this._sizing.stop();	
 			this.disconnect(this._sizingConnect);
+			delete this._sizing; 
 		}
 		
 		this.inherited(arguments);
@@ -194,13 +220,13 @@ dojo.declare('dojox.widget.Dialog',
 			method: this.sizeMethod
 		};
 
-		var ds = this._displaysize;
+		var ds = this._displaysize || this._setSize();
 		props['width'] = ds.w = (ds.w + pad >= this._vp.w || this.sizeToViewport) 
 			? this._vp.w - pad : ds.w;
 			
 		props['height'] = ds.h = (ds.h + pad >= this._vp.h || this.sizeToViewport) 
 			? this._vp.h - pad : ds.h;
-
+		
 		this._sizing = dojox.fx.sizeTo(props);
 		this._sizingConnect = this.connect(this._sizing,"onEnd","_showContent");
 		this._sizing.play();

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -244,16 +244,14 @@ dojo.declare("dojox.data.JsonRestStore",
 			var store = item.__id ? dojox.data._getStoreForItem(item) : this;
 			if(dojox.json.schema && store.schema && store.schema.properties){
 				// if we have a schema and schema validator available we will validate the property change
-				var result = dojox.json.schema.checkPropertyChange(value,store.schema.properties[attribute]);
-				if(!result.valid){
-					throw new Error(dojo.map(result.errors,function(error){return error.message;}).join(","));
-				}
+				dojox.json.schema.mustBeValid(dojox.json.schema.checkPropertyChange(value,store.schema.properties[attribute]));
 			}
-			if(old !== value){
-				store.changing(item);
-				item[attribute]=value;
-				store.onSet(item,attribute,old,value);
+			if(attribute == store.idAttribute){
+				throw new Error("Can not change the identity attribute for an item");
 			}
+			store.changing(item);
+			item[attribute]=value;
+			store.onSet(item,attribute,old,value);
 		},
 		setValues: function(item, attribute, values){
 			// summary:
@@ -326,14 +324,17 @@ dojo.declare("dojox.data.JsonRestStore",
 			//		returns true if the item is marked as dirty.
 			return dojox.rpc.JsonRest.isDirty(item);
 		},
-		isItem: function(item){
-			// summary:
-			//	Checks to see if a passed 'item'
-			//	is really belongs to this JsonRestStore.
+		isItem: function(item, anyStore){
+			//	summary:
+			//		Checks to see if a passed 'item'
+			//		really belongs to this JsonRestStore.
 			//
 			//	item: /* object */
-			//	attribute: /* string */
-			return item && item.__id && this.service == dojox.rpc.JsonRest.getServiceAndId(item.__id).service;
+			//		The value to test for being an item
+			//	anyStore: /* boolean*/
+			//		If true, this will return true if the value is an item for any JsonRestStore,
+			//		not just this instance
+			return item && item.__id && (anyStore || this.service == dojox.rpc.JsonRest.getServiceAndId(item.__id).service);
 		},
 		_doQuery: function(args){
 			var query= typeof args.queryStr == 'string' ? args.queryStr : args.query;
@@ -343,7 +344,7 @@ dojo.declare("dojox.data.JsonRestStore",
 			// index the results
 			var count = results.length;
 			// if we don't know the length, and it is partial result, we will guess that it is twice as big, that will work for most widgets
-			return {totalCount:deferred.fullLength || (deferred.request.count == count ? count * 2 : count), items: results};
+			return {totalCount:deferred.fullLength || (deferred.request.count == count ? (deferred.request.start || 0) + count * 2 : count), items: results};
 		},
 
 		getConstructor: function(){
@@ -354,7 +355,7 @@ dojo.declare("dojox.data.JsonRestStore",
 		getIdentity: function(item){
 			var id = item.__clientId || item.__id;
 			if(!id){
-				this.inherited(arguments); // let service store throw the error
+				return id;
 			}
 			var prefix = this.service.servicePath;
 			// support for relative or absolute referencing with ids 
@@ -364,7 +365,7 @@ dojo.declare("dojox.data.JsonRestStore",
 			var id = args.identity;
 			var store = this;
 			// if it is an absolute id, we want to find the right store to query
-			if(id.match(/^(\w*:)?\//)){
+			if(id.toString().match(/^(\w*:)?\//)){
 				var serviceAndId = dojox.rpc.JsonRest.getServiceAndId(id);
 				store = serviceAndId.service._store;
 				args.identity = serviceAndId.id; 
@@ -391,7 +392,12 @@ dojo.declare("dojox.data.JsonRestStore",
 	}
 );
 dojox.data._getStoreForItem = function(item){
-	return item.__id && dojox.rpc.JsonRest.services[item.__id.match(/.*\//)[0]]._store;
+	if(item.__id){
+		var servicePath = item.__id.toString().match(/.*\//)[0];
+		var service = dojox.rpc.JsonRest.services[servicePath];
+		return service ? service._store : new dojox.data.JsonRestStore({target:servicePath});
+	}
+	return null;
 };
 dojox.json.ref._useRefs = true; // Use referencing when identifiable objects are referenced
 

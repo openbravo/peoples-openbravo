@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -49,7 +49,18 @@ dojo.declare("dojox.data.ServiceStore",
 			//		This can be a preexisting id provided by the server.  
 			//		If an ID isn't already provided when an object
 			//		is fetched or added to the store, the autoIdentity system
-			//		will generate an id for it and add it to the index. 
+			//		will generate an id for it and add it to the index.
+			// 
+			// The *estimateCountFactor* parameter
+			// 		This parameter is used by the ServiceStore to estimate the total count. When
+			//		paging is indicated in a fetch and the response includes the full number of items
+			//	 	requested by the fetch's count parameter, then the total count will be estimated
+			//		to be estimateCountFactor multiplied by the provided count. If this is 1, then it is assumed that the server
+			//		does not support paging, and the response is the full set of items, where the
+			// 		total count is equal to the numer of items returned. If the server does support
+			//		paging, an estimateCountFactor of 2 is a good value for estimating the total count
+			//		It is also possible to override _processResults if the server can provide an exact 
+			// 		total count.
 			//
 			// The *syncMode* parameter
 			//		Setting this to true will set the store to using synchronous calls by default.
@@ -94,6 +105,7 @@ dojo.declare("dojox.data.ServiceStore",
 		schema: null,
 		idAttribute: "id",
 		syncMode: false,
+		estimateCountFactor: 1,
 		getSchema: function(){
 			return this.schema; 
 		},
@@ -141,7 +153,7 @@ dojo.declare("dojox.data.ServiceStore",
 
 			var res = [];
 			for(var i in item){
-				if(item.hasOwnProperty(i) && i != '__id' && i != '__clientId'){
+				if(item.hasOwnProperty(i) && !(i.charAt(0) == '_' && i.charAt(1) == '_')){
 					res.push(i);
 				}
 			}
@@ -177,7 +189,7 @@ dojo.declare("dojox.data.ServiceStore",
 		
 			// we have no way of determining if it belongs, we just have object returned from
 			// 	service queries
-			return (typeof item == 'object') && item; 
+			return (typeof item == 'object') && item && !(item instanceof Date); 
 		},
 
 		isItemLoaded: function(item){
@@ -218,7 +230,7 @@ dojo.declare("dojox.data.ServiceStore",
 			}else if(args.onItem){
 				// even if it is already loaded, we will use call the callback, this makes it easier to 
 				// use when it is not known if the item is loaded (you can always safely call loadItem). 
-				args.onItem.call(args.scope, result);
+				args.onItem.call(args.scope, args.item);
 			}
 			return item;
 		},
@@ -257,7 +269,7 @@ dojo.declare("dojox.data.ServiceStore",
 				}
 			}
 			var count = results.length;
-			return {totalCount: deferred.request.count == count ? count * 2 : count, items: results};
+			return {totalCount: deferred.request.count == count ? (deferred.request.start || 0) + count * this.estimateCountFactor : count, items: results};
 		},
 		close: function(request){
 			return request && request.abort && request.abort();
@@ -345,9 +357,6 @@ dojo.declare("dojox.data.ServiceStore",
 
 		
 		getIdentity: function(item){
-			if(!("__id" in item)){
-				throw new Error("Identity attribute not found");
-			}
 			return item.__id;
 		},
 

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -74,7 +74,7 @@ dojo.provide("dojo._base.array");
 			//	|	dojo.forEach(
 			//	|		[ "thinger", "blah", "howdy", 10 ],
 			//	|		function(item){
-			//	|			console.debug(item);
+			//	|			console.log(item);
 			//	|		}
 			//	|	);
 			//	example:
@@ -82,7 +82,7 @@ dojo.provide("dojo._base.array");
 			//	|	dojo.forEach(
 			//	|		[ "thinger", "blah", "howdy", 10 ],
 			//	|		function(item, idx, arr){
-			//	|			console.debug(item, "at index:", idx);
+			//	|			console.log(item, "at index:", idx);
 			//	|		}
 			//	|	);
 			//	example:
@@ -91,7 +91,7 @@ dojo.provide("dojo._base.array");
 			//	|	var obj = {
 			//	|		prefix: "logged via obj.callback:", 
 			//	|		callback: function(item){
-			//	|			console.debug(this.prefix, item);
+			//	|			console.log(this.prefix, item);
 			//	|		}
 			//	|	};
 			//	|	
@@ -238,5 +238,7 @@ dojo.provide("dojo._base.array");
 		}
 	});
 })();
+/*
+*/
 
 }

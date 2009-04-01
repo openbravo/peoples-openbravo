@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -9,7 +9,7 @@ if(!dojo._hasResource["dojox.dtl.contrib.dijit"]){ //_hasResource checks added b
 dojo._hasResource["dojox.dtl.contrib.dijit"] = true;
 dojo.provide("dojox.dtl.contrib.dijit");
 
-dojo.require("dojox.dtl.html");
+dojo.require("dojox.dtl.dom");
 dojo.require("dojo.parser");
 
 (function(){
@@ -148,14 +148,14 @@ dojo.require("dojo.parser");
 			node = cloneNode(node);
 			var old = ddcd.widgetsInTemplate;
 			ddcd.widgetsInTemplate = false;
-			this._template = new dd.HtmlTemplate(node);
+			this._template = new dd.DomTemplate(node);
 			ddcd.widgetsInTemplate = old;
 		}
 	},
 	{
 		render: function(context, buffer){
 			if(this._parsed){
-				var _buffer = new dd.HtmlBuffer();
+				var _buffer = new dd.DomBuffer();
 				this._template.render(context, _buffer);
 				var root = cloneNode(_buffer.getRootNode());
 				var div = document.createElement("div");

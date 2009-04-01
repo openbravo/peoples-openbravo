@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -46,10 +46,10 @@ dojo.require("dojox.sketch.Anchor");
 	//	helper functions
 	p._rot=function(){
 		//	arrowhead rotation
-		var opp=this.start.y-this.control.y;
-		var adj=this.start.x-this.control.x;
-		if(!adj){ adj=1; }
-		this.rotation=Math.atan(opp/adj);
+		var opp=this.control.y-this.start.y;
+		var adj=this.control.x-this.start.x;
+		//if(!adj){ adj=1; }
+		this.rotation=Math.atan2(opp,adj);
 	};
 	p._pos=function(){
 		//	text position
@@ -127,7 +127,6 @@ dojo.require("dojox.sketch.Anchor");
 
 		//	rotation matrix
 		var rot=this.rotation;
-		if(this.control.x>=this.end.x&&this.control.x<this.start.x){ rot+=Math.PI; }
 		var tRot=dojox.gfx.matrix.rotate(rot);
 
 		//	draw the shapes
@@ -170,7 +169,6 @@ dojo.require("dojox.sketch.Anchor");
 
 		//	rotation matrix
 		var rot=this.rotation;
-		if(this.control.x<this.start.x){ rot+=Math.PI; }
 		var tRot=dojox.gfx.matrix.rotate(rot);
 
 		this.shape.setTransform(this.transform);
@@ -193,12 +191,13 @@ dojo.require("dojox.sketch.Anchor");
 	p.zoom=function(pct){
 		if(this.arrowhead){
 			pct = pct || this.figure.zoomFactor;
+			ta.Annotation.prototype.zoom.call(this,pct);
+			//pct = dojox.gfx.renderer=='vml'?1:pct;
 			if(this._curPct!==pct){
 				this._curPct=pct;
 				var l=pct>1?20:Math.floor(20/pct), w=pct>1?5:Math.floor(5/pct),h=pct>1?3:Math.floor(3/pct);
 				this.arrowhead.setShape("M0,0 l"+l+",-"+w+" -"+h+","+w+" "+h+","+w+" Z");
 			}
-			ta.Annotation.prototype.zoom.call(this,pct);
 		}
 	};
 
@@ -213,7 +212,6 @@ dojo.require("dojox.sketch.Anchor");
 	p.serialize=function(){
 		var s=this.property('stroke');
 		var r=this.rotation*(180/Math.PI);
-		if(this.start.x>this.end.x){ r-=180; }
 		r=Math.round(r*Math.pow(10,4))/Math.pow(10,4);
 		return '<g '+this.writeCommonAttrs()+'>'
 			+ '<path style="stroke:'+s.color+';stroke-width:'+s.width+';fill:none;" d="'

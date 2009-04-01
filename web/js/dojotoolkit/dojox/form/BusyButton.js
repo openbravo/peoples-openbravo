@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -11,7 +11,7 @@ dojo.provide("dojox.form.BusyButton");
 
 dojo.require("dijit.form.Button");
 
-dojo.requireLocalization("dijit", "loading", null, "th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ROOT,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
+dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare("dojox.form._BusyButtonMixin",
 	null, 

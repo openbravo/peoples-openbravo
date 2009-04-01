@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -20,16 +20,21 @@ dojo.require("dojo._base.connect");
 			name = del._normalizeEventName(name);
 			fp = del._fixCallback(name, fp);
 			var oname = name;
-			if(!dojo.isIE && (name == "mouseenter" || name == "mouseleave")){
+			if(
+								!dojo.isIE && 
+								(name == "mouseenter" || name == "mouseleave")
+			){
 				var ofp = fp;
 				//oname = name;
 				name = (name == "mouseenter") ? "mouseover" : "mouseout";
-				fp = function(e){
-					// check tagName to fix a FF2 bug with invalid nodes (hidden child DIV of INPUT)
-					// which causes isDecendant to return false which causes
-					// spurious, and more importantly, incorrect mouse events to fire.
-					// TODO: remove tagName check when Firefox 2 is no longer supported
-					try{ e.relatedTarget.tagName; }catch(e2){ return; }
+				fp = function(e){		
+					if(dojo.isFF <= 2) {
+						// check tagName to fix a FF2 bug with invalid nodes (hidden child DIV of INPUT)
+						// which causes isDescendant to return false which causes
+						// spurious, and more importantly, incorrect mouse events to fire.
+						// TODO: remove tagName check when Firefox 2 is no longer supported
+						try{ e.relatedTarget.tagName; }catch(e2){ return; }
+					}
 					if(!dojo.isDescendant(e.relatedTarget, node)){
 						// e.type = oname; // FIXME: doesn't take? SJM: event.type is generally immutable.
 						return ofp.call(this, e); 
@@ -221,7 +226,7 @@ dojo.require("dojo._base.connect");
 		SCROLL_LOCK: 145
 	};
 	
-	// IE event normalization
+		// IE event normalization
 	if(dojo.isIE){ 
 		var _trySetKeyCode = function(e, code){
 			try{
@@ -422,7 +427,7 @@ dojo.require("dojo._base.connect");
 			del._preventDefault.call(evt);
 		}
 	}
-
+	
 	del._synthesizeEvent = function(evt, props){
 			var faux = dojo.mixin({}, evt, props);
 			del._setKeyChar(faux);
@@ -434,7 +439,7 @@ dojo.require("dojo._base.connect");
 			return faux;
 	}
 	
-	// Opera event normalization
+		// Opera event normalization
 	if(dojo.isOpera){
 		dojo.mixin(del, {
 			_fixEvent: function(evt, sender){
@@ -457,10 +462,10 @@ dojo.require("dojo._base.connect");
 			}
 		});
 	}
-
-	// Webkit event normalization
+	
+		// Webkit event normalization
 	if(dojo.isWebKit){
-		del._add = del.add;
+				del._add = del.add;
 		del._remove = del.remove;
 
 		dojo.mixin(del, {
@@ -520,8 +525,8 @@ dojo.require("dojo._base.connect");
 				return evt;
 			}
 		});
-	}
-})();
+		}
+	})();
 
 if(dojo.isIE){
 	// keep this out of the closure

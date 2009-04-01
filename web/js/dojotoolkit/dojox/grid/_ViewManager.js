@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -265,6 +265,11 @@ dojo.declare('dojox.grid._ViewManager', null, {
 		var top = inTop;
 		for(var i=0, v; v=this.views[i]; i++){
 			top = v.setScrollTop(inTop);
+			// Work around IE not firing scroll events that cause header offset
+			// issues to occur.
+			if(dojo.isIE && v.headerNode && v.scrollboxNode){
+				v.headerNode.scrollLeft = v.scrollboxNode.scrollLeft;
+			}
 		}
 		return top;
 		//this.onEach("setScrollTop", [ inTop ]);

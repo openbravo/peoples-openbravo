@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -472,6 +472,25 @@ dojo.declare("dojox.data.AndOrReadStore", null,{
 						self._loadInProgress = false;
 						errorCallback(error, keywordArgs);
 					});
+					
+					//Wire up the cancel to abort of the request
+					//This call cancel on the deferred if it hasn't been called
+					//yet and then will chain to the simple abort of the
+					//simpleFetch keywordArgs
+					var oldAbort = null;
+					if(keywordArgs.abort){
+						oldAbort = keywordArgs.abort;
+					}
+					keywordArgs.abort = function(){
+						var df = getHandler;
+						if (df && df.fired === -1){
+							df.cancel();
+							df = null;
+						}
+						if(oldAbort){
+							oldAbort.call(keywordArgs);
+						}
+					};
 				}
 			}else if(this._jsonData){
 				try{

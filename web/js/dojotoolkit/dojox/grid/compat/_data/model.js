@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -491,7 +491,7 @@ dojo.declare("dojox.grid.data.DojoData", dojox.grid.data.Dynamic, {
 		var row = {}; 
 		row.__dojo_data_item = item;
 		dojo.forEach(this.fields.values, function(a){
-			value = this.store.getValue(item, a.name);
+			var value = this.store.getValue(item, a.name);
 			row[a.name] = (value === undefined || value === null)?"":value;
 		}, this);
 		return row;

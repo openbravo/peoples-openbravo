@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -13,7 +13,7 @@ dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 dojo.require("dijit._Container");
 dojo.require("dojox.atom.io.Connection");
-dojo.requireLocalization("dojox.atom.widget", "FeedViewerEntry", null, "es,it,zh-tw,ko,cs,pt,ROOT,hu,fr,zh,ja,pl,ru,de");
+dojo.requireLocalization("dojox.atom.widget", "FeedViewerEntry", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
 
 dojo.experimental("dojox.atom.widget.FeedViewer");
 

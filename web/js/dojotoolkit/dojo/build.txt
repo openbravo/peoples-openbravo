@@ -37,6 +37,7 @@ dojo.js:
 /opt/dojo-svn/deploy/dijit/_Widget.js
 /opt/dojo-svn/deploy/dojox/collections/_base.js
 /opt/dojo-svn/deploy/dojox/collections/Dictionary.js
+/opt/dojo-svn/deploy/dojox/xml/parser.js
 /opt/dojo-svn/deploy/dojox/data/dom.js
 /opt/dojo-svn/deploy/dojo/regexp.js
 /opt/dojo-svn/deploy/dojo/i18n.js

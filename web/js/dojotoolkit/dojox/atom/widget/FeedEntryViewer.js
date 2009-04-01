@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -15,7 +15,7 @@ dojo.require("dijit._Templated");
 dojo.require("dijit._Container");
 dojo.require("dijit.layout.ContentPane");
 dojo.require("dojox.atom.io.Connection");
-dojo.requireLocalization("dojox.atom.widget", "FeedEntryViewer", null, "es,it,zh-tw,ko,ROOT,cs,pt,hu,fr,zh,ja,pl,ru,de");
+dojo.requireLocalization("dojox.atom.widget", "FeedEntryViewer", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
 
 dojo.experimental("dojox.atom.widget.FeedEntryViewer");
 
@@ -95,69 +95,25 @@ dojo.declare("dojox.atom.widget.FeedEntryViewer",[dijit._Widget, dijit._Template
 		//		Function to clear all the display nodes for the ATOM entry from the viewer.
 		//	description:
 		//		Function to clear all the display nodes for the ATOM entry from the viewer.
-		dojo.style(this.entryTitleRow, 'display', 'none');
-		dojo.style(this.entryAuthorRow, 'display', 'none');
-		dojo.style(this.entryContributorRow, 'display', 'none');
-		dojo.style(this.entrySummaryRow, 'display', 'none');
-		dojo.style(this.entryContentRow, 'display', 'none');
-		dojo.style(this.entryIdRow, 'display', 'none');
-		dojo.style(this.entryUpdatedRow, 'display', 'none');
 
-		while (this.entryTitleNode.firstChild){
-			dojo._destroyElement(this.entryTitleNode.firstChild);
-		}
+		dojo.forEach([
+			"entryTitleRow", "entryAuthorRow", "entryContributorRow", "entrySummaryRow", "entryContentRow", 
+			"entryIdRow", "entryUpdatedRow"
+			], function(node){
+				dojo.style(this[node], "display", "none");
+			}, this);
+
+		dojo.forEach([
+			"entryTitleNode", "entryTitleHeader", "entryAuthorHeader", "entryContributorHeader",
+			"entryContributorNode", "entrySummaryHeader", "entrySummaryNode", "entryContentHeader",
+			"entryContentNode", "entryIdNode", "entryIdHeader", "entryUpdatedHeader", "entryUpdatedNode"
+			], function(part){
+				while(this[part].firstChild){
+                    dojo.destroy(this[part].firstChild);
+				}
+			}
+		,this);
 		
-		while (this.entryTitleHeader.firstChild){
-			dojo._destroyElement(this.entryTitleHeader.firstChild);
-		}
-
-		while (this.entryAuthorNode.firstChild){
-			dojo._destroyElement(this.entryAuthorNode.firstChild);
-		}
-		
-		while (this.entryAuthorHeader.firstChild){
-			dojo._destroyElement(this.entryAuthorHeader.firstChild);
-		}
-
-		while (this.entryContributorHeader.firstChild){
-			dojo._destroyElement(this.entryContributorHeader.firstChild);
-		}
-
-		while (this.entryContributorNode.firstChild){
-			dojo._destroyElement(this.entryContributorNode.firstChild);
-		}
-
-		while (this.entrySummaryHeader.firstChild){
-			dojo._destroyElement(this.entrySummaryHeader.firstChild);
-		}
-
-		while (this.entrySummaryNode.firstChild){
-			dojo._destroyElement(this.entrySummaryNode.firstChild);
-		}
-
-		while (this.entryContentHeader.firstChild){
-			dojo._destroyElement(this.entryContentHeader.firstChild);
-		}
-
-		while (this.entryContentNode.firstChild){
-			dojo._destroyElement(this.entryContentNode.firstChild);
-		}
-
-		while (this.entryIdNode.firstChild){
-			dojo._destroyElement(this.entryIdNode.firstChild);
-		}
-
-		while (this.entryIdHeader.firstChild){
-			dojo._destroyElement(this.entryIdHeader.firstChild);
-		}
-
-		while (this.entryUpdatedHeader.firstChild){
-			dojo._destroyElement(this.entryUpdatedHeader.firstChild);
-		}
-
-		while (this.entryUpdatedNode.firstChild){
-			dojo._destroyElement(this.entryUpdatedNode.firstChild);
-		}
 	},
 
 	setEntry: function(/*object*/entry, /*object*/feed, /*boolean*/leaveMenuState){

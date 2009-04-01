@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -10,9 +10,8 @@ dojo._hasResource["dojox.cometd.RestChannels"] = true;
 dojo.provide("dojox.cometd.RestChannels");
  
 dojo.require("dojox.rpc.Client");
-if(dojox.data && dojox.data.JsonRestStore){
-	dojo.require("dojox.data.restListener");
-}
+dojo.requireIf(dojox.data && !!dojox.data.JsonRestStore,"dojox.data.restListener");
+
 // Note that cometd _base is _not_ required, this can run standalone, but ifyou want 
 // cometd functionality, you must explicitly load/require it elsewhere, and cometd._base
 // MUST be loaded prior to RestChannels ifyou use it.
@@ -59,7 +58,7 @@ if(dojox.data && dojox.data.JsonRestStore){
 			// The *reloadDataOnReconnect* parameter:
 			// 		This indicates whether RestChannels should re-download data when a connection
 			// 		is restored (value of true), or if it should re-subscribe with retroactive subscriptions
-			// 		(X-Subscribe-Since header) using HEAD requests (value of false). The 
+			// 		(Subscribe-Since header) using HEAD requests (value of false). The 
 			// 		default is true.	
 			dojo.mixin(this,options);
 			// If we have a Rest service available and we are auto subscribing, we will augment the Rest service 
@@ -89,7 +88,7 @@ if(dojox.data && dojox.data.JsonRestStore){
 		absoluteUrl: function(baseUrl,relativeUrl){
 			return new dojo._Url(baseUrl,relativeUrl)+'';
 		},
-		acceptType: "x-application/rest+json,application/http;q=0.9,*/*;q=0.7",
+		acceptType: "application/rest+json,application/http;q=0.9,*/*;q=0.7",
 		subscriptions: {},
 		subCallbacks: {},
 		autoReconnectTime: 3000,
@@ -108,7 +107,7 @@ if(dojox.data && dojox.data.JsonRestStore){
 			this.started = true;
 			if(!this.connected){
 				this.connectionId = dojox.rpc.Client.clientId;
-				var clientIdHeader = this.createdClientId ? 'X-Client-Id' : 'X-Create-Client-Id';
+				var clientIdHeader = this.createdClientId ? 'Client-Id' : 'Create-Client-Id';
 				this.createdClientId = true;
 				var headers = {Accept:this.acceptType};
 				headers[clientIdHeader] = this.connectionId;
@@ -122,8 +121,10 @@ if(dojox.data && dojox.data.JsonRestStore){
 					if(xhr && xhr.status > 400){
 						return onerror(true);
 					}
-					data = data.substring(self.lastIndex);
-					var contentType = xhr && (xhr.contentType || xhr.getResponseHeader("Content-Type"));
+					if(typeof data == 'string'){
+						data = data.substring(self.lastIndex);
+					}
+					var contentType = xhr && (xhr.contentType || xhr.getResponseHeader("Content-Type")) || (typeof data != 'string' && "already json");
 					var error = self.onprogress(xhr,data,contentType);
 					if(error){
 						if(onerror()){
@@ -171,7 +172,7 @@ if(dojox.data && dojox.data.JsonRestStore){
 			  	
 	  			 
 				if(window.attachEvent){// IE needs a little help with cleanup
-					attachEvent("onunload",function(){
+					window.attachEvent("onunload",function(){
 						self.connected= false;
 						if(xhr){
 							xhr.abort();
@@ -191,7 +192,7 @@ if(dojox.data && dojox.data.JsonRestStore){
 					method:method,
 					content: data,
 					params:args.content,
-					subscribe:headers["X-Subscribe"]
+					subscribe:args.headers["Subscribe"]
 				});
 				args.url = this.url;
 				method = "POST";
@@ -253,9 +254,9 @@ if(dojox.data && dojox.data.JsonRestStore){
 				headers["Cache-Control"] = "max-age=0";
 				since = typeof since == 'number' ? new Date(since).toUTCString() : since;
 				if(since){
-					headers["X-Subscribe-Since"] = since;
+					headers["Subscribe-Since"] = since;
 				}
-				headers["X-Subscribe"] = args.unsubscribe ? 'none' : '*';
+				headers["Subscribe"] = args.unsubscribe ? 'none' : '*';
 				var dfd = this._send(method,args);
 				
 				var self = this;
@@ -266,7 +267,7 @@ if(dojox.data && dojox.data.JsonRestStore){
 							args.confirmation();
 						}
 					}
-					if(xhr && xhr.getResponseHeader("X-Subscribed")  == "OK"){
+					if(xhr && xhr.getResponseHeader("Subscribed")  == "OK"){
 						var lastMod = xhr.getResponseHeader('Last-Modified');
 						
 						if(xhr.responseText){ 
@@ -316,7 +317,7 @@ if(dojox.data && dojox.data.JsonRestStore){
 			return this._send("POST",{url:channel,contentType : 'application/json'},data);
 		},
 		_processMessage: function(message){
-			message.event = message.event || message.getResponseHeader('X-Event');
+			message.event = message.event || message.getResponseHeader('Event');
 			if(message.event=="connection-conflict"){
 				return "conflict"; // indicate an error
 			}
@@ -350,8 +351,7 @@ if(dojox.data && dojox.data.JsonRestStore){
 				}
 				catch(e){
 				}
-			}
-			else if(dojox.io && dojox.io.httpParse && contentType.match(/application\/http/)){
+			}else if(dojox.io && dojox.io.httpParse && contentType.match(/application\/http/)){
 				// do HTTP tunnel parsing
 				var topHeaders = '';
 				if(xhr && xhr.getAllResponseHeaders){
@@ -359,6 +359,8 @@ if(dojox.data && dojox.data.JsonRestStore){
 					topHeaders = xhr.getAllResponseHeaders();
 				}
 				xhrs = dojox.io.httpParse(data,topHeaders,xhr.readyState != 4);
+			}else if(typeof data == "object"){
+				xhrs = data;
 			}
 			if(xhrs){
 				for(var i = 0;i < xhrs.length;i++){

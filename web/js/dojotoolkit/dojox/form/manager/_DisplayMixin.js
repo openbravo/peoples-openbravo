@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -20,10 +20,10 @@ dojo.declare("dojox.form.manager._DisplayMixin", null, {
 	//		parameter of controlled nodes.
 	//		It should be used together with dojox.form.manager.Mixin.
 
-	gatherDisplayState: function(/* Object? */ names){
+	gatherDisplayState: function(names){
 		// summary:
 		//		Gather display state of all attached elements and return as a dictionary.
-		// names:
+		// names: Object?:
 		//		If it is an array, it is a list of names to be processed.
 		//		If it is an object, dictionary keys are names to be processed.
 		//		If it is omitted, all known attach point nodes are to be processed.
@@ -35,15 +35,15 @@ dojo.declare("dojox.form.manager._DisplayMixin", null, {
 		return result;	// Object
 	},
 
-	show: function(/* Object? */ state, /* Boolean */ defaultState){
+	show: function(state, defaultState){
 		// summary:
 		//		Show attached nodes according to the supplied state object.
-		// state:
+		// state: Object?:
 		//		Optional. If a name-value dictionary, the value is true
 		//		to show and false to hide. If an array, all names in the
 		//		array will be set to defaultState. If omitted, all form
 		//		elements will be set to defaultState.
-		// defaultState:
+		// defaultState: Boolean?:
 		//		The default state (true, if omitted).
 
 		if(arguments.length < 2){
@@ -57,10 +57,10 @@ dojo.declare("dojox.form.manager._DisplayMixin", null, {
 		return this;	// self
 	},
 
-	hide: function(/* Object? */ state){
+	hide: function(state){
 		// summary:
 		//		Hide attached nodes according to the supplied state object.
-		// state:
+		// state: Object?:
 		//		Optional. If a name-value dictionary, the value is true
 		//		to show and false to hide. If an array, all names in the
 		//		array will be hidden. If omitted, all form elements
