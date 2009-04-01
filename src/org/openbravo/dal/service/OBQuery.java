@@ -240,7 +240,7 @@ public class OBQuery<E extends BaseOBObject> {
 
     if (isFilterOnActive() && e.isActiveEnabled()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
-          + "isActive='Y' ";
+          + "active='Y' ";
       if (addWhereClause) {
         addWhereClause = false;
       }
