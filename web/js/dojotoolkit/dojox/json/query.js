@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -184,7 +184,6 @@ dojo.provide("dojox.json.query");
 		// 	 	This finds objects in array with a price less than 15.00 and sorts then
 		// 		by rating, highest rated first, and returns the first ten items in from this
 		// 		filtered and sorted list.
-		tokens = [];
 		var depth = 0;	
 		var str = [];
 		query = query.replace(/"(\\.|[^"\\])*"|'(\\.|[^'\\])*'|[\[\]]/g,function(t){
@@ -198,10 +197,10 @@ dojo.provide("dojox.json.query");
 			// creates a function call and puts the expression so far in a parameter for a call 
 			prefix = name + "(" + prefix;
 		}
-		function makeRegex(t,a,b,c,d){
+		function makeRegex(t,a,b,c,d,e,f,g){
 			// creates a regular expression matcher for when wildcards and ignore case is used 
-			return str[d].match(/[\*\?]/) || c == '~' ?
-					"/^" + str[d].substring(1,str[d].length-1).replace(/\\([btnfr\\"'])|([^\w\*\?])/g,"\\$1$2").replace(/([\*\?])/g,".$1") + (c == '~' ? '$/i' : '$/') + ".test(" + a + ")" :
+			return str[g].match(/[\*\?]/) || f == '~' ?
+					"/^" + str[g].substring(1,str[g].length-1).replace(/\\([btnfr\\"'])|([^\w\*\?])/g,"\\$1$2").replace(/([\*\?])/g,"[\\w\\W]$1") + (f == '~' ? '$/i' : '$/') + ".test(" + a + ")" :
 					t;
 		}
 		query.replace(/(\]|\)|push|pop|shift|splice|sort|reverse)\s*\(/,function(){
@@ -233,7 +232,7 @@ dojo.provide("dojox.json.query");
 							return "var av= " + b.replace(/\$obj/,"a") + ",bv= " + b.replace(/\$obj/,"b") + // FIXME: Should check to make sure the $obj token isn't followed by characters
 									";if(av>bv||bv==null){return " + (a== "/" ? 1 : -1) +";}\n" +
 									"if(bv>av||av==null){return " + (a== "/" ? -1 : 1) +";}\n";
-					}) + "})";
+					}) + "return 0;})";
 				}
 				oper = t.match(/^\[(-?[0-9]*):(-?[0-9]*):?(-?[0-9]*)\]/); // slice [0:3]
 				if(oper){
@@ -250,9 +249,9 @@ dojo.provide("dojox.json.query");
 				}
 				return t;
 			}).
-			replace(/(\$obj\s*(\.\s*[\w_$]+\s*)*)(==|~)\s*`([0-9]+)/g,makeRegex). // create regex matching
-			replace(/`([0-9]+)\s*(==|~)\s*(\$obj(\s*\.\s*[\w_$]+)*)/g,function(t,a,b,c,d){ // and do it for reverse =
-				return makeRegex(t,c,d,b,a);
+			replace(/(\$obj\s*((\.\s*[\w_$]+\s*)|(\[\s*`([0-9]+)\s*`\]))*)(==|~)\s*`([0-9]+)/g,makeRegex). // create regex matching
+			replace(/`([0-9]+)\s*(==|~)\s*(\$obj\s*((\.\s*[\w_$]+)|(\[\s*`([0-9]+)\s*`\]))*)/g,function(t,a,b,c,d,e,f,g){ // and do it for reverse =
+				return makeRegex(t,c,d,e,f,g,b,a);
 			});
 		query = prefix + (query.charAt(0) == '$' ? "" : "$") + query.replace(/`([0-9]+|\])/g,function(t,a){
 			//restore the strings

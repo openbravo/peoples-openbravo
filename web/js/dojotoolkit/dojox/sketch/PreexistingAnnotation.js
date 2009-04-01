@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -146,8 +146,9 @@ dojo.require("dojox.sketch.Anchor");
 	p.zoom=function(pct){
 		if(this.rectShape){
 			pct = pct || this.figure.zoomFactor;
-			this.rectShape.setStroke({color:this.property('fill'), width:1/pct});
 			ta.Annotation.prototype.zoom.call(this,pct);
+			pct = dojox.gfx.renderer=='vml'?1:pct;
+			this.rectShape.setStroke({color:this.property('fill'), width:1/pct});
 		}
 	};
 	p.serialize=function(){

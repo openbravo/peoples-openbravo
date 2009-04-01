@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -20,7 +20,7 @@ dojo.require("dojo.i18n");
 
 //Load the bundles containing localization information for
 // names and formats 
-dojo.requireLocalization("dojo.cldr", "hebrew", null, "");
+dojo.requireLocalization("dojo.cldr", "hebrew", null, "ROOT,he");
 
 (function(){
 	// Format a pattern without literals

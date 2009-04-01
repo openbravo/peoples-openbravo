@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -65,8 +65,7 @@ dojo.provide("dojox.lang.functional.lambda");
 				// lower-case words from the list of potential arguments
 				var vars = s.
 					replace(/(?:\b[A-Z]|\.[a-zA-Z_$])[a-zA-Z_$\d]*|[a-zA-Z_$][a-zA-Z_$\d]*:|this|true|false|null|undefined|typeof|instanceof|in|delete|new|void|arguments|decodeURI|decodeURIComponent|encodeURI|encodeURIComponent|escape|eval|isFinite|isNaN|parseFloat|parseInt|unescape|dojo|dijit|dojox|window|document|'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"/g, "").
-					match(/([a-z_$][a-z_$\d]*)/gi) || [];
-				var t = {};
+					match(/([a-z_$][a-z_$\d]*)/gi) || [], t = {};
 				dojo.forEach(vars, function(v){
 					if(!(v in t)){
 						args.push(v);

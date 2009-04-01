@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -60,7 +60,7 @@ if(typeof window != 'undefined'){
 				//		http://developer.mozilla.org/en/mozIJSSubScriptLoader
 				var l = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
 					.getService(Components.interfaces.mozIJSSubScriptLoader);
-				l.loadSubScript(uri, d.global)
+				var value = l.loadSubScript(uri, d.global)
 				if(cb){ cb(value); }
 				return true;
 			}else{
@@ -82,7 +82,7 @@ if(typeof window != 'undefined'){
 		// var owloc = window.location+"";
 		// var base = document.getElementsByTagName("base");
 		// var hasBase = (base && base.length > 0);
-		hasBase = false;
+		var hasBase = false;
 
 		d._getText = function(/*URI*/ uri, /*Boolean*/ fail_ok){
 			// summary: Read the contents of the specified uri and return those contents.
@@ -274,10 +274,6 @@ if(typeof window != 'undefined'){
 		}
 	}
 
-	dojo._fakeLoadInit = function(){
-		dojo._loadInit({type: "load"});
-	}
-
 	/*
 	(function(){
 		var _w = window;
@@ -309,7 +305,7 @@ if(typeof window != 'undefined'){
 	if(!dojo.config.afterOnLoad){
 		window.addEventListener("DOMContentLoaded",function(e){ 
 			dojo._loadInit(e);
-			// console.debug("DOM content loaded", e);
+			// console.log("DOM content loaded", e);
 		}, false);
 	}
 

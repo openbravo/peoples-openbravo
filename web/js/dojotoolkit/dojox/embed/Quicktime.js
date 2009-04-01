@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -145,7 +145,7 @@ dojo.provide("dojox.embed.Quicktime");
 		//
 		//	example:
 		//		Embed a QuickTime movie in a document using the new operator, and get a reference to it.
-		//	|	var movie = new dojox.embed.QuickTime({
+		//	|	var movie = new dojox.embed.Quicktime({
 		//	|		path: "path/to/my/movie.mov",
 		//	|		width: 400,
 		//	|		height: 300
@@ -153,7 +153,7 @@ dojo.provide("dojox.embed.Quicktime");
 		//
 		//	example:
 		//		Embed a movie in a document without using the new operator.
-		//	|	var movie = dojox.embed.QuickTime({
+		//	|	var movie = dojox.embed.Quicktime({
 		//	|		path: "path/to/my/movie.mov",
 		//	|		width: 400,
 		//	|		height: 300

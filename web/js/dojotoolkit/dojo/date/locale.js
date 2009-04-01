@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -19,7 +19,7 @@ dojo.require("dojo.i18n");
 
 // Load the bundles containing localization information for
 // names and formats
-dojo.requireLocalization("dojo.cldr", "gregorian", null, "es,it,it-it,en,en-ca,zh-tw,ko,pt,es-es,en-au,pt-br,zh-cn,ko-kr,ROOT,fr,zh,en-gb,ja,de");
+dojo.requireLocalization("dojo.cldr", "gregorian", null, "ROOT,ar,ca,cs,da,de,el,en,en-au,en-ca,en-gb,es,es-es,fi,fr,he,hu,it,it-it,ja,ko,ko-kr,nb,nl,pl,pt,pt-br,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-cn,zh-tw");
 
 //NOTE: Everything in this module assumes Gregorian calendars.
 // Other calendars will be implemented in separate modules.
@@ -145,7 +145,7 @@ dojo.requireLocalization("dojo.cldr", "gregorian", null, "es,it,it-it,en,en-ca,z
 					s = tz.join("");
 					break;
 //				case 'Y': case 'u': case 'W': case 'F': case 'g': case 'A': case 'e':
-//					console.debug(match+" modifier unimplemented");
+//					console.log(match+" modifier unimplemented");
 				default:
 					throw new Error("dojo.date.locale.format: invalid pattern char: "+pattern);
 			}
@@ -332,7 +332,7 @@ dojo.date.locale.parse = function(/*String*/value, /*dojo.date.locale.__FormatOp
 					}
 					v = dojo.indexOf(months, v);
 					if(v == -1){
-//						console.debug("dojo.date.locale.parse: Could not parse month name: '" + v + "'.");
+//						console.log("dojo.date.locale.parse: Could not parse month name: '" + v + "'.");
 						return false;
 					}
 				}else{
@@ -350,7 +350,7 @@ dojo.date.locale.parse = function(/*String*/value, /*dojo.date.locale.__FormatOp
 				}
 				v = dojo.indexOf(days, v);
 				if(v == -1){
-//					console.debug("dojo.date.locale.parse: Could not parse weekday name: '" + v + "'.");
+//					console.log("dojo.date.locale.parse: Could not parse weekday name: '" + v + "'.");
 					return false;
 				}
 
@@ -375,7 +375,7 @@ dojo.date.locale.parse = function(/*String*/value, /*dojo.date.locale.__FormatOp
 					pm = pm.replace(period,'').toLowerCase();
 				}
 				if(options.strict && v != am && v != pm){
-//					console.debug("dojo.date.locale.parse: Could not parse am/pm part.");
+//					console.log("dojo.date.locale.parse: Could not parse am/pm part.");
 					return false;
 				}
 
@@ -390,7 +390,7 @@ dojo.date.locale.parse = function(/*String*/value, /*dojo.date.locale.__FormatOp
 			case 'k': //hour (0-11)
 				//TODO: strict bounds checking, padding
 				if(v > 23){
-//					console.debug("dojo.date.locale.parse: Illegal hours value");
+//					console.log("dojo.date.locale.parse: Illegal hours value");
 					return false;
 				}
 
@@ -411,7 +411,7 @@ dojo.date.locale.parse = function(/*String*/value, /*dojo.date.locale.__FormatOp
 //TODO				var firstDay = 0;
 //			default:
 //TODO: throw?
-//				console.debug("dojo.date.locale.parse: unsupported pattern char=" + token.charAt(0));
+//				console.log("dojo.date.locale.parse: unsupported pattern char=" + token.charAt(0));
 		}
 		return true;
 	});
@@ -539,7 +539,7 @@ function _buildDateTimeRE(tokens, bundle, options, pattern){
 			// case 'z':
 			// case 'Z':
 				s = ".*";
-//				console.debug("parse of date format, pattern=" + pattern);
+//				console.log("parse of date format, pattern=" + pattern);
 		}
 
 		if(tokens){ tokens.push(match); }

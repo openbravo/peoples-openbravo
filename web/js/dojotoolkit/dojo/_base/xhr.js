@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -241,7 +241,7 @@ dojo.require("dojo._base.query");
 		},
 		xml: function(xhr){
 			var result = xhr.responseXML;
-			if(_d.isIE && (!result || !result.documentElement)){
+						if(_d.isIE && (!result || !result.documentElement)){
 				var ms = function(n){ return "MSXML" + n + ".DOMDocument"; }
 				var dp = ["Microsoft.XMLDOM", ms(6), ms(4), ms(3), ms(2)];
 				_d.some(dp, function(p){
@@ -254,7 +254,7 @@ dojo.require("dojo._base.query");
 					return true;
 				});
 			}
-			return result; // DOMDocument
+						return result; // DOMDocument
 		}
 	};
 
@@ -298,7 +298,7 @@ dojo.require("dojo._base.query");
 		//		is of type dojo.__IoCallbackArgs. This function will
 		//		be called when the request fails due to a network or server error, the url
 		//		is invalid, etc. It will also be called if the load or handle callback throws an
-		//		exception, unless djConfig.isDebug is true.  This allows deployed applications
+		//		exception, unless djConfig.debugAtAllCosts is true.  This allows deployed applications
 		//		to continue to run even when a logic error happens in the callback, while making
 		//		it easier to troubleshoot while in debug mode.
 		//	handle: Function?
@@ -474,12 +474,12 @@ dojo.require("dojo._base.query");
 		//summary: okHandler function for dojo._ioSetArgs call.
 
 		var ret = _d._contentHandlers[dfd.ioArgs.handleAs](dfd.ioArgs.xhr);
-		return (typeof ret == "undefined") ? null : ret;
+		return ret === undefined ? null : ret;
 	}
 	var _deferError = function(/*Error*/error, /*Deferred*/dfd){
 		//summary: errHandler function for dojo._ioSetArgs call.
 
-		console.debug(error);
+		console.error(error);
 		return error;
 	}
 
@@ -519,7 +519,7 @@ dojo.require("dojo._base.query");
 						}
 					}
 				};
-				if(dojo.config.isDebug){
+				if(dojo.config.debugAtAllCosts){
 					func.call(this);
 				}else{
 					try{
@@ -553,10 +553,10 @@ dojo.require("dojo._base.query");
 
 	//Automatically call cancel all io calls on unload
 	//in IE for trac issue #2357.
-	if(_d.isIE){
+		if(_d.isIE){
 		_d.addOnWindowUnload(_d._ioCancelAll);
 	}
-
+	
 	_d._ioWatch = function(/*Deferred*/dfd,
 		/*Function*/validCheck,
 		/*Function*/ioCheck,
@@ -573,14 +573,22 @@ dojo.require("dojo._base.query");
 		//resHandle:
 		//		Function used to process response. Gets the dfd
 		//		object as its only argument.
-		if(dfd.ioArgs.args.timeout){
+		var args = dfd.ioArgs.args;
+		if(args.timeout){
 			dfd.startTime = (new Date()).getTime();
 		}
 		_inFlight.push({dfd: dfd, validCheck: validCheck, ioCheck: ioCheck, resHandle: resHandle});
 		if(!_inFlightIntvl){
 			_inFlightIntvl = setInterval(_watchInFlight, 50);
 		}
-		_watchInFlight(); // handle sync requests
+		// handle sync requests
+		//A weakness: async calls in flight
+		//could have their handlers called as part of the
+		//_watchInFlight call, before the sync's callbacks
+		// are called.
+		if(args.sync){
+			_watchInFlight();
+		}
 	}
 
 	var _defaultContentType = "application/x-www-form-urlencoded";
@@ -682,7 +690,7 @@ dojo.require("dojo._base.query");
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 		}
 		// FIXME: set other headers here!
-		if(dojo.config.isDebug){
+		if(dojo.config.debugAtAllCosts){
 			xhr.send(ioArgs.query);
 		}else{
 			try{

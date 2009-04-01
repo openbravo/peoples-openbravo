@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -12,13 +12,14 @@ dojo.experimental("dojox.widget.RollingList");
 
 dojo.require("dijit._Templated");
 dojo.require("dijit.layout.ContentPane");
+dojo.require("dijit.layout._LayoutWidget");
 dojo.require("dijit.Menu");
 dojo.require("dojox.html.metrics");
 dojo.require("dijit.form.Button");
 
 dojo.require("dojo.i18n"); 
 dojo.requireLocalization("dojox.widget", "RollingList", null, "ROOT"); 
-dojo.requireLocalization("dijit", "common", null, "ROOT,th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
+dojo.requireLocalization("dijit", "common", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare("dojox.widget._RollingListPane",
 	[dijit.layout.ContentPane, dijit._Templated, dijit._Contained], {
@@ -134,16 +135,16 @@ dojo.declare("dojox.widget._RollingListPane",
 		}
 	},
 	
-	_loadCheck: function(/* Boolean? */ forceLoad){
+	_loadCheck: function(){
 		// summary: checks that the store is loaded
 		if(!this._started){
 			var c = this.connect(this, "startup", function(){
 				this.disconnect(c);
-				this._loadCheck(forceLoad);
+				this._loadCheck();
 			});
 		}
 		var displayState = this.domNode && this._isShown();
-		if((this.store || this.items) && (forceLoad || (this.refreshOnShow && displayState) || (!this.isLoaded && displayState))){
+		if((this.store || this.items) && ((this.refreshOnShow && displayState) || (!this.isLoaded && displayState))){
 			this._loadQuery();
 		}
 	},
@@ -298,10 +299,10 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 	//  The menu that we will call addChild() on for adding items
 	_menu: null,
 	
-	_loadCheck: function(/* Boolean? */ forceLoad){
+	_loadCheck: function(){
 		// summary: checks that the store is loaded
 		var displayState = this._isShown();
-		if((this.store || this.items) && (forceLoad || (this.refreshOnShow && displayState) || (!this.isLoaded && displayState))){
+		if((this.store || this.items) && ((this.refreshOnShow && displayState) || (!this.isLoaded && displayState))){
 			this._loadQuery();
 		}
 	},

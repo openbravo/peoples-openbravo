@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -10,6 +10,7 @@ dojo._hasResource["dojox.io.xhrScriptPlugin"] = true;
 dojo.provide("dojox.io.xhrScriptPlugin");
 dojo.require("dojox.io.xhrPlugins");
 dojo.require("dojo.io.script");
+dojo.require("dojox.io.scriptFrame");
 
 dojox.io.xhrScriptPlugin = function(/*String*/url, /*String*/callbackParamName, /*Function?*/httpAdapter){
 	// summary:
@@ -31,9 +32,12 @@ dojox.io.xhrScriptPlugin = function(/*String*/url, /*String*/callbackParamName, 
 		function(method,args,hasBody){
 			var send = function(){
 				args.callbackParamName = callbackParamName;
+				if(dojo.body()){
+					args.frameDoc = "frame" + Math.random();
+				}
 				return dojo.io.script.get(args);
 			}
-			return (httpAdapter ? httpAdapter(send, true) : send)(method, args, hasBody); // use the windowName transport
+			return (httpAdapter ? httpAdapter(send, true) : send)(method, args, hasBody); // use the JSONP transport
 		}
 	);
 };

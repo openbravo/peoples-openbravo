@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -100,10 +100,12 @@ dojo.declare("dojox.grid._Layout", null, {
 			var w = 0;
 			if(inDef.colSpan > 1){
 				w = 0;
-			}else if(!isNaN(inDef.width)){
-				w = inDef.width + "em";
 			}else{
-				w = inDef.width || self.defaultWidth;
+				w = inDef.width || self._defaultCellProps.width || self.defaultWidth;
+
+				if(!isNaN(w)){
+					w = w + "em";
+				}
 			}
 			return w;
 		};
@@ -138,7 +140,7 @@ dojo.declare("dojox.grid._Layout", null, {
 			// Check and calculate the sum of all relative widths
 			if(doRel && cell.relWidth){
 				relSum += cell.relWidth;
-			}else if (cell.width){
+			}else if(cell.width){
 				var w = cell.width;
 				if(typeof w == "string" && w.slice(-1) == "%"){
 					pctSum += window.parseInt(w, 10);
@@ -178,6 +180,9 @@ dojo.declare("dojox.grid._Layout", null, {
 	
 	addViewDef: function(inDef){
 		this._defaultCellProps = inDef.defaultCell || {};
+		if(inDef.width && inDef.width == "auto"){
+			delete inDef.width;
+		}
 		return dojo.mixin({}, inDef, {cells: this.addRowsDef(inDef.rows || inDef.cells)});
 	},
 	

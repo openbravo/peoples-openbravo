@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -15,10 +15,11 @@ dojo.require("dojox.lang.oo.Filter");
 dojo.require("dojox.lang.oo.Decorator");
 
 (function(){
-	var oo = dojox.lang.oo, Filter = oo.Filter, Decorator = oo.Decorator,
+	var oo = dojox.lang.oo, Filter = oo.Filter, Decorator = oo.Decorator, empty = {},
 		defaultFilter = function(name){ return name; },
 		defaultDecorator = function(name, newValue, oldValue){ return newValue; },
 		defaultMixer = function(target, name, newValue, oldValue){ target[name] = newValue; },
+		defaults = {},	// for the internal use in the mixin()
 
 		applyDecorator = oo.applyDecorator = function(decorator, name, newValue, oldValue){
 			//	summary:
@@ -57,7 +58,7 @@ dojo.require("dojox.lang.oo.Decorator");
 	};
 	=====*/
 
-	oo._mixin = function(target, source, defaults){
+	oo.__mixin = function(target, source, decorator, filter, mixer){
 		//	summary:
 		//		mixes in two objects processing decorators and filters
 		//	target: Object:
@@ -69,32 +70,13 @@ dojo.require("dojox.lang.oo.Decorator");
 		//	returns: Object:
 		//		target
 
-		var name, targetName, prop, newValue, oldValue, 
-			decorator = defaultDecorator, filter = defaultFilter, mixer = defaultMixer;
+		var name, targetName, prop, newValue, oldValue;
 			
-		// change defaults conditionally
-		if(defaults){
-			decorator = defaults.decorator || decorator,
-			filter = defaults.filter || filter,
-			mixer = defaults.mixer || mixer;
-		}
-		
-		// process object decorator/filter
-		if(source instanceof Decorator){
-			// use this decorator as a default for all attributes
-			decorator = source.decorator;
-			source = source.value;
-		}
-		if(source instanceof Filter){
-			filter = source.filter;
-			source = source.bag;
-		}
-		
 		// start mixing in properties
 		for(name in source){
-			if(source.hasOwnProperty(name)){
+			if(!(name in empty)){
 				prop = source[name];
-				targetName = filter(name);
+				targetName = filter(name, target, source, prop);
 				if(targetName){
 					// name is accepted
 					oldValue = target[targetName];
@@ -119,11 +101,24 @@ dojo.require("dojox.lang.oo.Decorator");
 		//		source of properties, more than one source is allowed
 		// returns: Object:
 		//		target
-
-		for(var i = 1, l = arguments.length; i < l; ++i){
-			oo._mixin(target, arguments[i]);
+		
+		var decorator, filter, i = 1, l = arguments.length;
+		for(; i < l; ++i){
+			source = arguments[i];
+			if(source instanceof Filter){
+				filter = source.filter;
+				source = source.bag;
+			}else{
+				filter = defaultFilter;
+			}
+			if(source instanceof Decorator){
+				decorator = source.decorator;
+				source = source.value;
+			}else{
+				decorator = defaultDecorator;
+			}
+			oo.__mixin(target, source, decorator, filter, defaultMixer);
 		}
-
 		return target;	// Object
 	};
 })();

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -13,7 +13,7 @@ dojo.require("dojox.form._FormSelectWidget");
 dojo.require("dojox.form._HasDropDown");
 dojo.require("dijit.Menu");
 
-dojo.requireLocalization("dijit.form", "validate", null, "th,es,sv,it,nl,ROOT,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
+dojo.requireLocalization("dijit.form", "validate", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare("dojox.form.DropDownSelect", [dojox.form._FormSelectWidget, dojox.form._HasDropDown], {
 	attributeMap: dojo.mixin(dojo.clone(dojox.form._FormSelectWidget.prototype.attributeMap),{value:"valueNode",name:"valueNode"}),
@@ -23,7 +23,7 @@ dojo.declare("dojox.form.DropDownSelect", [dojox.form._FormSelectWidget, dojox.f
 
 	baseClass: "dojoxDropDownSelect",
 	
-	templateString:"<span class=\"dijit dijitReset dijitLeft dijitInline\"\n\tdojoAttachPoint=\"dropDownNode\"\n\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse,onmousedown:_onMouse\"\n\t><span class='dijitReset dijitRight dijitInline'\n\t\t><span class='dijitReset dijitInline dijitButtonNode'\n\t\t\t><table class=\"dojoxDropDownSelectTable\" dojoAttachPoint=\"tableNode\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tbody><tr\n\t\t\t\t><td class=\"dojoxDropDownSelectTableContent\" \n\t\t\t\t\t><span class=\"dijitReset dijitInline dijitButtonText\"  dojoAttachPoint=\"containerNode,popupStateNode\" id=\"${id}_label\"></span\n\t\t\t\t\t><input type=\"hidden\" name=\"${name}\" dojoAttachPoint=\"valueNode\" value=\"${value}\" />\n\t\t\t\t</td><td class=\"dojoxDropDownSelectTableButton\" \n\t\t\t\t\t><button class=\"dijitReset dijitStretch dijitButtonContents\" type=\"button\"\n\t\t\t\t\t\tdojoAttachPoint=\"focusNode,titleNode\" waiRole=\"button\" waiState=\"haspopup-true,labelledby-${id}_label\"\n\t\t\t\t\t\t><span class=\"dijitReset dijitInline dijitArrowButtonInner\">&thinsp;</span\n\t\t\t\t\t\t><span class=\"dijitReset dijitInline dijitArrowButtonChar\" waiRole=\"presentation\">&#9660;</span\n\t\t\t\t\t></button\n\t\t\t\t></td\n\t\t\t></tr></tbody></table\n\t\t></span\n\t></span\n></span>\n",
+	templateString:"<table class='dijit dijitReset dijitInline dijitLeft'\n\tdojoAttachPoint=\"dropDownNode,tableNode\" cellspacing='0' cellpadding='0' waiRole=\"presentation\"\n\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse,onmousedown:_onMouse\"\n\t><tbody waiRole=\"presentation\"><tr waiRole=\"presentation\"\n\t\t><td class=\"dijitReset dijitStretch dijitButtonContents dijitButtonNode\" \n\t\t\t><span class=\"dijitReset dijitInline dijitButtonText\"  dojoAttachPoint=\"containerNode,popupStateNode\" id=\"${id}_label\"></span\n\t\t\t><input type=\"hidden\" ${nameAttrSetting} dojoAttachPoint=\"valueNode\" value=\"${value}\" />\n\t\t</td><td class=\"dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton\" \n\t\t\t\tdojoAttachPoint=\"focusNode,titleNode\" waiRole=\"button\" waiState=\"haspopup-true,labelledby-${id}_label\"\n\t\t\t><div class=\"dijitReset dijitArrowButtonInner\">&thinsp;</div\n\t\t\t><div class=\"dijitReset dijitArrowButtonChar\" waiRole=\"presentation\">&#9660;</div\n\t\t></td\n\t></tr></tbody\n></table>\n",
 	
 	// attributeMap: Object
 	//		Add in our style to be applied to the focus node
@@ -176,6 +176,9 @@ dojo.declare("dojox.form.DropDownSelect", [dojox.form._FormSelectWidget, dojox.f
 		if(dojo.attr(this.srcNodeRef, "disabled")){
 			this.attr("disabled", true);
 		}
+		if(this.tableNode.style.width){
+			dojo.addClass(this.domNode, this.baseClass + "FixedWidth");
+		}
 	},
 
 	startup: function(){
@@ -232,6 +235,14 @@ dojo.declare("dojox.form.DropDownSelect", [dojox.form._FormSelectWidget, dojox.f
 		this._iDisabled = value;
 		if(!value && this._childrenLoaded && this.options.length === 0){
 			return;
+		}
+		this.inherited(arguments);
+	},
+
+	uninitialize: function(preserveDom){
+		if(this.dropDown){
+			this.dropDown.destroyRecursive(preserveDom);
+			delete this.dropDown;
 		}
 		this.inherited(arguments);
 	}

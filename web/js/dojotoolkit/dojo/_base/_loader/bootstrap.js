@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -107,7 +107,6 @@ djConfig = {
 	//		Save dojo/resources/blank.html to your domain and set `djConfig.dojoBlankHtmlUrl` 
 	//		to the path on your domain your copy of blank.html.
 	dojoBlankHtmlUrl: undefined
-	
 }
 =====*/
 
@@ -198,8 +197,8 @@ dojo.global = {
 	};
 =====*/
 	dojo.locale = d.config.locale;
-	
-	var rev = "$Rev: 15812 $".match(/\d+/);
+
+	var rev = "$Rev: 16807 $".match(/\d+/); 
 
 	dojo.version = {
 		// summary: 
@@ -214,8 +213,8 @@ dojo.global = {
 		//		Descriptor flag. If total version is "1.2.0beta1", will be "beta1"
 		//	revision: Number
 		//		The SVN rev from which dojo was pulled
-		major: 1, minor: 1, patch: 0, flag: "dev",
-		revision: rev ? +rev[0] : 999999, //FIXME: use NaN?
+		major: 1, minor: 3, patch: 0, flag: "dev",
+		revision: rev ? +rev[0] : NaN,
 		toString: function(){
 			with(d.version){
 				return major + "." + minor + "." + patch + flag + " (" + revision + ")";	// String
@@ -223,17 +222,17 @@ dojo.global = {
 		}
 	}
 
-	// Register with the OpenAjax hub
+		// Register with the OpenAjax hub
 	if(typeof OpenAjax != "undefined"){
 		OpenAjax.hub.registerLibrary(dojo._scopeName, "http://dojotoolkit.org", d.version.toString());
 	}
-
+	
+	var tobj = {};
 	dojo._mixin = function(/*Object*/ obj, /*Object*/ props){
 		// summary:
 		//		Adds all properties and methods of props to obj. This addition
 		//		is "prototype extension safe", so that instances of objects
 		//		will not pass along prototype defaults.
-		var tobj = {};
 		for(var x in props){
 			// the "tobj" condition avoid copying properties in "props"
 			// inherited from Object.prototype.  For example, if obj has a custom
@@ -243,7 +242,7 @@ dojo.global = {
 				obj[x] = props[x];
 			}
 		}
-		// IE doesn't recognize custom toStrings in for..in
+				// IE doesn't recognize custom toStrings in for..in
 		if(d.isIE && props){
 			var p = props.toString;
 			if(typeof p == "function" && p != obj.toString && p != tobj.toString &&
@@ -251,7 +250,7 @@ dojo.global = {
 					obj.toString = props.toString;
 			}
 		}
-		return obj; // Object
+				return obj; // Object
 	}
 
 	dojo.mixin = function(/*Object*/obj, /*Object...*/props){
@@ -282,7 +281,7 @@ dojo.global = {
 		//	|			// property configuration:
 		//	|			dojo.mixin(this, properties);
 		//	|	
-		//	|			console.debug(this.quip);
+		//	|			console.log(this.quip);
 		//	|			//  ...
 		//	|		},
 		//	|		quip: "I wasn't born yesterday, you know - I've seen movies.",
@@ -304,9 +303,10 @@ dojo.global = {
 		//	|	);
 		//	|	
 		//	|	// will print "Carl Brutanananadilewski"
-		//	|	console.debug(flattened.name);
+		//	|	console.log(flattened.name);
 		//	|	// will print "true"
-		//	|	console.debug(flattened.braces);
+		//	|	console.log(flattened.braces);
+		if(!obj){ obj = {}; }
 		for(var i=1, l=arguments.length; i<l; i++){
 			d._mixin(obj, arguments[i]);
 		}

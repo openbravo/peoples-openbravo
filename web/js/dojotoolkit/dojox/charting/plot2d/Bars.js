@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -61,7 +61,7 @@ dojo.require("dojox.lang.functional.reversed");
 			}
 			var t = this.chart.theme, color, stroke, fill, f, gap, height,
 				ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
-				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler);
+				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler),
 				baseline = Math.max(0, this._hScaler.bounds.lower),
 				baselineWidth = ht(baseline),
 				events = this.events();

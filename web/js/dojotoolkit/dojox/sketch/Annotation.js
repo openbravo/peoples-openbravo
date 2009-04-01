@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -43,7 +43,7 @@ dojo.require("dojox.sketch._Plugin");
 			if(!(f._startPoint.x==e.pageX&&f._startPoint.y==e.pageY)){
 				//	The minimum number of pixels one has to travel before a shape
 				//		gets drawn.
-				var limit=40;
+				var limit=10;
 				if(Math.max(
 					limit, 
 					Math.abs(f._absEnd.x-f._start.x), 
@@ -144,8 +144,10 @@ dojo.require("dojox.sketch._Plugin");
 	p.serialize=function(){ };
 	p.getBBox=function(){ };
 	p.beginEdit=function(type){
-		this._type=type||ta.CommandTypes.Move;
-		this._prevState=this.serialize();
+		if(!this._type){
+			this._type=type||ta.CommandTypes.Move;
+			this._prevState=this.serialize();
+		}
 	};
 	p.endEdit=function(){
 		if(this._prevState!=this.serialize()){
@@ -217,18 +219,25 @@ dojo.require("dojox.sketch._Plugin");
 	};
 	p.zoom=function(pct){
 		pct = pct || this.figure.zoomFactor;
-		if(this.pathShape){
-			var s=dojo.clone(this.property('stroke'));
-			s.width=pct>1?s.width:Math.ceil(s.width/pct)+"px";
-			this.pathShape.setStroke(s);
-		}
 		if(this.labelShape){
 			var f=dojo.clone(this.property('font'));
 			f.size=Math.ceil(f.size/pct)+"px";
 			this.labelShape.setFont(f);
 		}
+		
 		for(var n in this.anchors){
 			this.anchors[n].zoom(pct);
+		}
+		
+		//In VML, path are always the same width no matter scaling factors,
+		//so aways use 1 for VML
+		if(dojox.gfx.renderer=='vml'){
+        	pct=1;
+        }
+		if(this.pathShape){
+			var s=dojo.clone(this.property('stroke'));
+			s.width=pct>1?s.width:Math.ceil(s.width/pct)+"px";
+			this.pathShape.setStroke(s);
 		}
 	};
 	p.writeCommonAttrs=function(){

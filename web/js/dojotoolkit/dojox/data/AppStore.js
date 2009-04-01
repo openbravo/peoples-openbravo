@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -10,10 +10,8 @@ dojo._hasResource["dojox.data.AppStore"] = true;
 dojo.provide("dojox.data.AppStore");
 
 dojo.require("dojox.atom.io.Connection");
-dojo.require("dojox.data.dom");
 dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.filter");
-dojo.requireLocalization("dojox.data", "AppStore", null, "es,it,ROOT,zh-tw,ko,cs,pt,hu,fr,zh,ja,pl,ru,de");
 
 dojo.experimental("dojox.data.AppStore");
 
@@ -21,7 +19,8 @@ dojo.declare("dojox.data.AppStore",
 	null,{
 
 	url: "",			// So the parser can instantiate the store via markup.
-	xmethod: false,		// Whether to use X-Method-Override for PUT/DELETE.
+	urlPreventCache: false, 	// Whether or not to pass the preventCache parameter to the connection
+	xmethod: false,			// Whether to use X-Method-Override for PUT/DELETE.
 	
 	_atomIO: null,
 	_feed: null,
@@ -42,13 +41,16 @@ dojo.declare("dojox.data.AppStore",
 		//	args:
 		//		An anonymous object to initialize properties.  It expects the following values:
 		//		url:		The url of the Collection to load.
+		//		urlPreventCache:	Whether or not to append on cache prevention params (as defined by dojo.xhr*)
 		
 		if(args && args.url){
 			this.url = args.url;
 		}
+		if(args && args.urlPreventCache){
+			this.urlPreventCache = args.urlPreventCache;
+		}
 		if(!this.url){
-			var _nlsResources = dojo.i18n.getLocalization("dojox.data", "AppStore");
-			throw new Error(_nlsResources.missingUrl);
+			throw new Error("A URL is required to instantiate an APP Store object");
 		}
 	},
 	
@@ -112,8 +114,10 @@ dojo.declare("dojox.data.AppStore",
 		//	item:
 		//		The item to test for being contained by the store.
 		if(!this.isItem(item)){ 
-			var _nlsResources = dojo.i18n.getLocalization("dojox.data", "AppStore");
-			throw new Error(_nlsResources.invalidItem);
+			throw new Error("This error message is provided when a function is called in the following form: "
+				+ "getAttribute(argument, attributeName).  The argument variable represents the member "
+				+ "or owner of the object. The error is created when an item that does not belong "
+				+ "to this store is specified as an argument.");
 		}
 	},
 
@@ -128,8 +132,8 @@ dojo.declare("dojox.data.AppStore",
 		//
 		// returns: Returns a boolean indicating whether this is a valid attribute.
 		if(typeof attribute !== "string"){ 
-			var _nlsResources = dojo.i18n.getLocalization("dojox.data", "AppStore");
-			throw new Error(_nlsResources.invalidAttributeType);
+			throw new Error("The attribute argument must be a string. The error is created "
+			+ "when a different type of variable is specified such as an array or object.");
 		}
 
 		for(var key in dojox.atom.io.model._actions){
@@ -270,10 +274,7 @@ dojo.declare("dojox.data.AppStore",
 	isItem: function(/* anything */ something){
 		//	summary: 
 		//		See dojo.data.api.Read.isItem()
-		if(something && something.store && something.store === this){
-			return true; //boolean
-		}
-		return false; //boolean
+		return something && something.store && something.store === this; //boolean
 	},
 
 	isItemLoaded: function(/* anything */ something){
@@ -307,7 +308,7 @@ dojo.declare("dojox.data.AppStore",
 			}
 			this._requests.push({request: request, fh: fetchHandler, eh: errorHandler});
 			if(flag){
-				this._atomIO = new dojox.atom.io.Connection();
+				this._atomIO = new dojox.atom.io.Connection(false, this.urlPreventCache);
 				this._atomIO.getFeed(this.url,this._setFeed, null, this);
 			}
 		}
@@ -517,7 +518,7 @@ dojo.declare("dojox.data.AppStore",
 				this._requests.push({add:entry});
 			}else{
 				this._requests = [{add:entry}];
-				this._atomIO = new dojox.atom.io.Connection();
+				this._atomIO = new dojox.atom.io.Connection(false, this.urlPreventCache);
 				this._atomIO.getFeed(this.url,dojo.hitch(this,this._setFeed));
 			}
 		}
@@ -542,7 +543,7 @@ dojo.declare("dojox.data.AppStore",
 				this._requests.push({remove:item});
 			}else{
 				this._requests = [{remove:item}];
-				this._atomIO = new dojox.atom.io.Connection();
+				this._atomIO = new dojox.atom.io.Connection(false, this.urlPreventCache);
 				this._atomIO.getFeed(this.url,dojo.hitch(this,this._setFeed));
 			}
 		}

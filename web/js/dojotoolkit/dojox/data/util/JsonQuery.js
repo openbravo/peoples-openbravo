@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -11,18 +11,36 @@ dojo.provide("dojox.data.util.JsonQuery");
 // this is a mixin to convert object attribute queries to 
 // JSONQuery/JSONPath syntax to be sent to the server.
 dojo.declare("dojox.data.util.JsonQuery", null, {
-	_toJsonQuery: function(args){
-
+	useFullIdInQueries: false,
+	_toJsonQuery: function(args, jsonQueryPagination){
+		var first = true;
+		var self = this;
+		function buildQuery(path, query){
+			if(query.__id){
+				// it is a reference to a persisted object, need to make it a query by id
+				var newQuery = {};
+				newQuery[self.idAttribute] = self.useFullIdInQueries ? query.__id : query[self.idAttribute];
+				query = newQuery;
+			}
+			for(var i in query){
+				// iterate through each property, adding them to the overall query
+				var value = query[i];
+				var newPath = path + (/^[a-zA-Z_][\w_]*$/.test(i) ? '.' + i : '[' + dojo._escapeString(i) + ']');
+				if(value && typeof value == "object"){
+					buildQuery(newPath, value);
+				}else if(value!="*"){ // full wildcards can be ommitted
+					jsonQuery += (first ? "" : "&") + newPath +
+						((args.queryOptions && args.queryOptions.ignoreCase) ? "~" : "=") +
+						 dojo.toJson(value);
+					first = false;
+				}
+			}			
+		}
 		// performs conversion of Dojo Data query objects and sort arrays to JSONQuery strings
 		if(args.query && typeof args.query == "object"){
 			// convert Dojo Data query objects to JSONQuery
-			var jsonQuery = "[?(", first = true;
-			for(var i in args.query){
-				if(args.query[i]!="*"){ // full wildcards can be ommitted
-					jsonQuery += (first ? "" : "&") + "@[" + dojo._escapeString(i) + "]=" + dojox.json.ref.toJson(args.query[i]);
-					first = false;
-				}
-			}
+			var jsonQuery = "[?(";
+			buildQuery("@", args.query);
 			if(!first){
 				// use ' instead of " for quoting in JSONQuery, and end with ]
 				jsonQuery += ")]"; 
@@ -47,7 +65,8 @@ dojo.declare("dojox.data.util.JsonQuery", null, {
 				args.queryStr += ']';
 			}
 		}
-		if(this.jsonQueryPagination && (args.start || args.count)){
+		// this is optional because with client side paging JSONQuery doesn't yield the total count
+		if(jsonQueryPagination && (args.start || args.count)){
 			// pagination
 			args.queryStr = (args.queryStr || (typeof args.query == 'string' ? args.query : "")) +
 				'[' + (args.start || '') + ':' + (args.count ? (args.start || 0) + args.count : '') + ']'; 
@@ -60,7 +79,7 @@ dojo.declare("dojox.data.util.JsonQuery", null, {
 	},
 	jsonQueryPagination: true,
 	fetch: function(args){
-		this._toJsonQuery(args);
+		this._toJsonQuery(args, this.jsonQueryPagination);
 		return this.inherited(arguments);
 	},
 	isUpdateable: function(){
@@ -72,7 +91,8 @@ dojo.declare("dojox.data.util.JsonQuery", null, {
 	},
 	clientSideFetch: function(/*Object*/ request,/*Array*/ baseResults){
 		request._jsonQuery = request._jsonQuery || dojox.json.query(this._toJsonQuery(request));
-		return request._jsonQuery(baseResults);
+		// we use client side paging function here instead of JSON Query because we must also determine the total count
+		return this.clientSidePaging(request, request._jsonQuery(baseResults));
 	},
 	querySuperSet: function(argsSuper,argsSub){
 		if(!argsSuper.query){

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -16,8 +16,8 @@ dojo.require("dijit._Container");
 dojo.require("dijit.Editor");
 dojo.require("dijit.form.TextBox");
 dojo.require("dijit.form.SimpleTextarea");
-dojo.requireLocalization("dojox.atom.widget", "FeedEntryEditor", null, "es,it,zh-tw,ko,cs,pt,hu,fr,zh,ja,ROOT,pl,ru,de");
-dojo.requireLocalization("dojox.atom.widget", "PeopleEditor", null, "es,it,ROOT,zh-tw,ko,cs,pt,hu,fr,zh,ja,pl,ru,de");
+dojo.requireLocalization("dojox.atom.widget", "FeedEntryEditor", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
+dojo.requireLocalization("dojox.atom.widget", "PeopleEditor", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
 
 dojo.experimental("dojox.atom.widget.FeedEntryEditor");
 
@@ -515,7 +515,7 @@ dojo.declare("dojox.atom.widget.FeedEntryEditor",dojox.atom.widget.FeedEntryView
 				editor.close(false,true);
 				editor.destroy();
 				while(parent.firstChild){
-					dojo._destroyElement(parent.firstChild);
+					dojo.destroy(parent.firstChild);
 				}
 				newEditor = this._createEditor(parent, {value: value}, true, false);
 				this._editors[type] = newEditor;
@@ -527,7 +527,7 @@ dojo.declare("dojox.atom.widget.FeedEntryEditor",dojox.atom.widget.FeedEntryView
 				value = editor.attr('value');
 				editor.destroy();
 				while(parent.firstChild){
-					dojo._destroyElement(parent.firstChild);
+					dojo.destroy(parent.firstChild);
 				}
 				newEditor = this._createEditor(parent, {value: value}, true, true);
 				newEditor = dojo.hitch(newEditor, newEditor.generateEditor)();
@@ -806,10 +806,7 @@ dojo.declare("dojox.atom.widget.FeedEntryEditor",dojox.atom.widget.FeedEntryView
 		if(this._contentEditor){
 			// Note that the superclass clear destroys the widget since it's in the child widget list, 
 			// so this is just ref clearing.
-			this._contentEditor = null;
-			this._setObject = null;
-			this._oldContent = null;
-			this._contentEditorCreator = null;
+			this._contentEditor = this._setObject = this._oldContent = this._contentEditorCreator = null;
 			this._editors = {};
 		}
 	},

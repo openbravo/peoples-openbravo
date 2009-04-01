@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -78,6 +78,7 @@ if(typeof window != 'undefined'){
 	// attempt to figure out the path to dojo if it isn't set in the config
 	(function(){
 		var d = dojo;
+
 		// this is a scope protection closure. We set browser versions and grab
 		// the URL we were loaded from here.
 
@@ -134,12 +135,20 @@ if(typeof window != 'undefined'){
 			}
 		}
 
-		if(dua.indexOf("Gecko") >= 0 && !d.isKhtml && !d.isWebKit){ d.isMozilla = d.isMoz = tv; }
+				if(dua.indexOf("Gecko") >= 0 && !d.isKhtml && !d.isWebKit){ d.isMozilla = d.isMoz = tv; }
 		if(d.isMoz){
-			d.isFF = parseFloat(dua.split("Firefox/")[1]) || undefined;
+			//We really need to get away from this. Consider a sane isGecko approach for the future.
+			d.isFF = parseFloat(dua.split("Firefox/")[1] || dua.split("Minefield/")[1] || dua.split("Shiretoko/")[1]) || undefined;
 		}
 		if(document.all && !d.isOpera){
 			d.isIE = parseFloat(dav.split("MSIE ")[1]) || undefined;
+			//In cases where the page has an HTTP header or META tag with
+			//X-UA-Compatible, then it is in emulation mode, for a previous
+			//version. Make sure isIE reflects the desired version.
+			//document.documentMode of 5 means quirks mode.
+			if(d.isIE >= 8 && document.documentMode != 5){
+				d.isIE = document.documentMode;
+			}
 		}
 
 		//Workaround to get local file loads of dojo to work on IE 7
@@ -147,7 +156,7 @@ if(typeof window != 'undefined'){
 		if(dojo.isIE && window.location.protocol === "file:"){
 			dojo.config.ieForceActiveXXhr=true;
 		}
-
+		
 		var cm = document.compatMode;
 		d.isQuirks = cm == "BackCompat" || cm == "QuirksMode" || d.isIE < 6;
 
@@ -155,17 +164,15 @@ if(typeof window != 'undefined'){
 		d.locale = dojo.config.locale || (d.isIE ? n.userLanguage : n.language).toLowerCase();
 
 		// These are in order of decreasing likelihood; this will change in time.
-		d._XMLHTTP_PROGIDS = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
-
+				d._XMLHTTP_PROGIDS = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
+		
 		d._xhrObj = function(){
 			// summary: 
-			//		does the work of portably generating a new XMLHTTPRequest
-			//		object.
-			var http = null;
-			var last_e = null;
-			if(!dojo.isIE || !dojo.config.ieForceActiveXXhr){
-				try{ http = new XMLHttpRequest(); }catch(e){}
-			}
+			//		does the work of portably generating a new XMLHTTPRequest object.
+			var http, last_e;
+						if(!dojo.isIE || !dojo.config.ieForceActiveXXhr){
+							try{ http = new XMLHttpRequest(); }catch(e){}
+						}
 			if(!http){
 				for(var i=0; i<3; ++i){
 					var progid = d._XMLHTTP_PROGIDS[i];
@@ -181,7 +188,7 @@ if(typeof window != 'undefined'){
 					}
 				}
 			}
-
+			
 			if(!http){
 				throw new Error("XMLHTTP not available: "+last_e);
 			}
@@ -250,89 +257,7 @@ if(typeof window != 'undefined'){
 			return http.responseText; // String
 		}
 		
-		d._windowUnloaders = [];
-		
-		d.windowUnloaded = function(){
-			// summary:
-			//		signal fired by impending window destruction. You may use
-			//		dojo.addOnWIndowUnload() or dojo.connect() to this method to perform
-			//		page/application cleanup methods. See dojo.addOnWindowUnload for more info.
-			var mll = this._windowUnloaders;
-			while(mll.length){
-				(mll.pop())();
-			}
-		}
 
-		d.addOnWindowUnload = function(/*Object?*/obj, /*String|Function?*/functionName){
-			// summary:
-			//		registers a function to be triggered when window.onunload fires.
-			//		Be careful trying to modify the DOM or access JavaScript properties
-			//		during this phase of page unloading: they may not always be available.
-			//		Consider dojo.addOnUnload() if you need to modify the DOM or do heavy
-			//		JavaScript work.
-			// example:
-			//	|	dojo.addOnWindowUnload(functionPointer)
-			//	|	dojo.addOnWindowUnload(object, "functionName")
-			//	|	dojo.addOnWindowUnload(object, function(){ /* ... */});
-	
-			d._onto(d._windowUnloaders, obj, functionName);
-		}
-	})();
-
-	dojo._initFired = false;
-	//	BEGIN DOMContentLoaded, from Dean Edwards (http://dean.edwards.name/weblog/2006/06/again/)
-	dojo._loadInit = function(e){
-		dojo._initFired = true;
-		// allow multiple calls, only first one will take effect
-		// A bug in khtml calls events callbacks for document for event which isnt supported
-		// for example a created contextmenu event calls DOMContentLoaded, workaround
-		var type = (e && e.type) ? e.type.toLowerCase() : "load";
-		if(arguments.callee.initialized || (type != "domcontentloaded" && type != "load")){ return; }
-		arguments.callee.initialized = true;
-		if("_khtmlTimer" in dojo){
-			clearInterval(dojo._khtmlTimer);
-			delete dojo._khtmlTimer;
-		}
-
-		if(dojo._inFlightCount == 0){
-			dojo._modulesLoaded();
-		}
-	}
-
-	dojo._fakeLoadInit = function(){
-		dojo._loadInit({type: "load"});
-	}
-
-	if(!dojo.config.afterOnLoad){
-		//	START DOMContentLoaded
-		// Mozilla and Opera 9 expose the event we could use
-		if(document.addEventListener){
-			// NOTE: 
-			//		due to a threading issue in Firefox 2.0, we can't enable
-			//		DOMContentLoaded on that platform. For more information, see:
-			//		http://trac.dojotoolkit.org/ticket/1704
-			if(dojo.isWebKit > 525 || dojo.isOpera || dojo.isFF >= 3 || (dojo.isMoz && dojo.config.enableMozDomContentLoaded === true)){
-				document.addEventListener("DOMContentLoaded", dojo._loadInit, null);
-			}
-	
-			//	mainly for Opera 8.5, won't be fired if DOMContentLoaded fired already.
-			//  also used for Mozilla because of trac #1640
-			window.addEventListener("load", dojo._loadInit, null);
-		}
-	
-		if(dojo.isAIR){
-			window.addEventListener("load", dojo._loadInit, null);
-		}else if((dojo.isWebKit < 525) || dojo.isKhtml){
-			dojo._khtmlTimer = setInterval(function(){
-				if(/loaded|complete/.test(document.readyState)){
-					dojo._loadInit(); // call the onload handler
-				}
-			}, 10);
-		}
-		//	END DOMContentLoaded
-	}
-
-	(function(){
 		var _w = window;
 		var _handleNodeEvent = function(/*String*/evtName, /*Function*/fp){
 			// summary:
@@ -347,29 +272,156 @@ if(typeof window != 'undefined'){
 			};
 		};
 
-		if(dojo.isIE){
-			// 	for Internet Explorer. readyState will not be achieved on init
-			// 	call, but dojo doesn't need it however, we'll include it
-			// 	because we don't know if there are other functions added that
-			// 	might.  Note that this has changed because the build process
-			// 	strips all comments -- including conditional ones.
-			if(!dojo.config.afterOnLoad){
-				document.write('<scr'+'ipt defer src="//:" '
-					+ 'onreadystatechange="if(this.readyState==\'complete\'){' + dojo._scopeName + '._loadInit();}">'
-					+ '</scr'+'ipt>'
-				);
-			}
 
-			try{
-				document.namespaces.add("v","urn:schemas-microsoft-com:vml");
-				document.createStyleSheet().addRule("v\\:*", "behavior:url(#default#VML)");
-			}catch(e){}
+		d._windowUnloaders = [];
+		
+		d.windowUnloaded = function(){
+			// summary:
+			//		signal fired by impending window destruction. You may use
+			//		dojo.addOnWindowUnload() to register a listener for this
+			//		event. NOTE: if you wish to dojo.connect() to this method
+			//		to perform page/application cleanup, be aware that this
+			//		event WILL NOT fire if no handler has been registered with
+			//		dojo.addOnWindowUnload. This behavior started in Dojo 1.3.
+			//		Previous versions always triggered dojo.windowUnloaded. See
+			//		dojo.addOnWindowUnload for more info.
+			var mll = d._windowUnloaders;
+			while(mll.length){
+				(mll.pop())();
+			}
+		};
+
+		var _onWindowUnloadAttached = 0;
+		d.addOnWindowUnload = function(/*Object?|Function?*/obj, /*String|Function?*/functionName){
+			// summary:
+			//		registers a function to be triggered when window.onunload
+			//		fires. 
+			//	description:
+			//		The first time that addOnWindowUnload is called Dojo
+			//		will register a page listener to trigger your unload
+			//		handler with. Note that registering these handlers may
+			//		destory "fastback" page caching in browsers that support
+			//		it. Be careful trying to modify the DOM or access
+			//		JavaScript properties during this phase of page unloading:
+			//		they may not always be available. Consider
+			//		dojo.addOnUnload() if you need to modify the DOM or do
+			//		heavy JavaScript work since it fires at the eqivalent of
+			//		the page's "onbeforeunload" event.
+			// example:
+			//	|	dojo.addOnWindowUnload(functionPointer)
+			//	|	dojo.addOnWindowUnload(object, "functionName");
+			//	|	dojo.addOnWindowUnload(object, function(){ /* ... */});
+
+			d._onto(d._windowUnloaders, obj, functionName);
+			if(!_onWindowUnloadAttached){
+				_onWindowUnloadAttached = 1;
+				_handleNodeEvent("onunload", d.windowUnloaded);
+			}
+		};
+
+		var _onUnloadAttached = 0;
+		d.addOnUnload = function(/*Object?|Function?*/obj, /*String|Function?*/functionName){
+			// summary:
+			//		registers a function to be triggered when the page unloads.
+			//	description:
+			//		The first time that addOnUnload is called Dojo will
+			//		register a page listener to trigger your unload handler
+			//		with. 
+			//
+			//		In a browser enviroment, the functions will be triggered
+			//		during the window.onbeforeunload event. Be careful of doing
+			//		too much work in an unload handler. onbeforeunload can be
+			//		triggered if a link to download a file is clicked, or if
+			//		the link is a javascript: link. In these cases, the
+			//		onbeforeunload event fires, but the document is not
+			//		actually destroyed. So be careful about doing destructive
+			//		operations in a dojo.addOnUnload callback.
+			//
+			//		Further note that calling dojo.addOnUnload will prevent
+			//		browsers from using a "fast back" cache to make page
+			//		loading via back button instantaneous. 
+			// example:
+			//	|	dojo.addOnUnload(functionPointer)
+			//	|	dojo.addOnUnload(object, "functionName")
+			//	|	dojo.addOnUnload(object, function(){ /* ... */});
+
+			d._onto(d._unloaders, obj, functionName);
+			if(!_onUnloadAttached){
+				_onUnloadAttached = 1;
+				_handleNodeEvent("onbeforeunload", dojo.unloaded);
+			}
+		};
+
+	})();
+
+	dojo._initFired = false;
+	//	BEGIN DOMContentLoaded, from Dean Edwards (http://dean.edwards.name/weblog/2006/06/again/)
+	dojo._loadInit = function(e){
+		dojo._initFired = true;
+		// allow multiple calls, only first one will take effect
+		// A bug in khtml calls events callbacks for document for event which isnt supported
+		// for example a created contextmenu event calls DOMContentLoaded, workaround
+		var type = e && e.type ? e.type.toLowerCase() : "load";
+		if(arguments.callee.initialized || (type != "domcontentloaded" && type != "load")){ return; }
+		arguments.callee.initialized = true;
+		if("_khtmlTimer" in dojo){
+			clearInterval(dojo._khtmlTimer);
+			delete dojo._khtmlTimer;
 		}
 
-		// FIXME: dojo.unloaded requires dojo scope, so using anon function wrapper.
-		_handleNodeEvent("onbeforeunload", function() { dojo.unloaded(); });
-		_handleNodeEvent("onunload", function() { dojo.windowUnloaded(); });
-	})();
+		if(dojo._inFlightCount == 0){
+			dojo._modulesLoaded();
+		}
+	}
+
+	if(!dojo.config.afterOnLoad){
+		//	START DOMContentLoaded
+		// Mozilla and Opera 9 expose the event we could use
+				if(document.addEventListener){
+			// NOTE: 
+			//		due to a threading issue in Firefox 2.0, we can't enable
+			//		DOMContentLoaded on that platform. For more information, see:
+			//		http://trac.dojotoolkit.org/ticket/1704
+			if(dojo.isWebKit > 525 || dojo.isOpera || dojo.isFF >= 3 || (dojo.isMoz && dojo.config.enableMozDomContentLoaded === true)){
+						document.addEventListener("DOMContentLoaded", dojo._loadInit, null);
+					}
+	
+			//	mainly for Opera 8.5, won't be fired if DOMContentLoaded fired already.
+			//  also used for Mozilla because of trac #1640
+			window.addEventListener("load", dojo._loadInit, null);
+		}
+			
+				if(dojo.isAIR){
+			window.addEventListener("load", dojo._loadInit, null);
+		}else if((dojo.isWebKit < 525) || dojo.isKhtml){
+			dojo._khtmlTimer = setInterval(function(){
+				if(/loaded|complete/.test(document.readyState)){
+					dojo._loadInit(); // call the onload handler
+				}
+			}, 10);
+		}
+				//	END DOMContentLoaded
+	}
+
+		if(dojo.isIE){
+		// 	for Internet Explorer. readyState will not be achieved on init
+		// 	call, but dojo doesn't need it however, we'll include it
+		// 	because we don't know if there are other functions added that
+		// 	might.  Note that this has changed because the build process
+		// 	strips all comments -- including conditional ones.
+		if(!dojo.config.afterOnLoad){
+			document.write('<scr'+'ipt defer src="//:" '
+				+ 'onreadystatechange="if(this.readyState==\'complete\'){' + dojo._scopeName + '._loadInit();}">'
+				+ '</scr'+'ipt>'
+			);
+		}
+
+		try{
+			document.namespaces.add("v","urn:schemas-microsoft-com:vml");
+			document.createStyleSheet().addRule("v\\:*", "behavior:url(#default#VML);  display:inline-block");
+		}catch(e){}
+	}
+	
 
 	/*
 	OpenAjax.subscribe("OpenAjax", "onload", function(){

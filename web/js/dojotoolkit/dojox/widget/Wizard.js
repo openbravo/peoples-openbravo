@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -14,8 +14,8 @@ dojo.require("dijit.layout.ContentPane");
 dojo.require("dijit.form.Button");
 
 dojo.require("dojo.i18n"); 
-dojo.requireLocalization("dijit", "common", null, "ROOT,th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb"); 
-dojo.requireLocalization("dojox.widget", "Wizard", null, "th,es,sv,it,ROOT,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb"); 
+dojo.requireLocalization("dijit", "common", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw"); 
+dojo.requireLocalization("dojox.widget", "Wizard", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw"); 
 
 dojo.declare(
 	"dojox.widget.Wizard",
@@ -170,6 +170,11 @@ dojo.declare("dojox.widget.WizardPane",
 		if(dojo.isString(this.doneFunction) && this.doneFunction){
 			this.doneFunction = dojo.getObject(this.doneFunction);
 		}
+	},
+
+	_onShow: function(){
+		if(this.isFirstChild){ this.canGoBack = false; }
+		this.inherited(arguments);
 	},
 
 	_checkPass: function(){

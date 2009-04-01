@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -12,7 +12,7 @@ dojo.provide("dojox.form.PasswordValidator");
 dojo.require("dijit.form._FormWidget");
 dojo.require("dijit.form.ValidationTextBox");
 
-dojo.requireLocalization("dojox.form", "PasswordValidator", null, "th,es,sv,it,ROOT,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
+dojo.requireLocalization("dojox.form", "PasswordValidator", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare("dojox.form._ChildTextBox", dijit.form.ValidationTextBox, {
 	// summary:
@@ -92,6 +92,16 @@ dojo.declare("dojox.form._OldPWBox", dojox.form._ChildTextBox, {
 			return this.inherited(arguments);
 		}
 		return "";
+	},
+
+	_setBlurValue: function(){
+		// TextBox._setBlurValue calls this._setValueAttr(this.attr('value'), ...)
+		// Because we are overridding _getValueAttr to return "" when the containerWidget
+		// is not valid, TextBox._setBlurValue will cause OldPWBox's value to be set to ""
+		//
+		// So, we directly call ValidationTextBox._getValueAttr to bypass our _getValueAttr
+		var value = dijit.form.ValidationTextBox.prototype._getValueAttr.call(this);
+		this._setValueAttr(value, (this.isValid ? this.isValid() : true));
 	}
 });
 

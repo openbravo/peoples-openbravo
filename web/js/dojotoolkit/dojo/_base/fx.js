@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -20,7 +20,8 @@ dojo.require("dojo._base.html");
 */
 (function(){ 
 
-	var d = dojo, _mixin = d.mixin;
+	var d = dojo;
+	var _mixin = d.mixin;
 	
 	dojo._Line = function(/*int*/ start, /*int*/ end){
 		//	summary:
@@ -130,7 +131,7 @@ dojo.require("dojo._base.html");
 			//	args:
 			//		The arguments to pass to the event.
 			if(this[evt]){
-				if(dojo.config.isDebug){
+				if(dojo.config.debugAtAllCosts){
 					this[evt].apply(this, args||[]);
 				}else{
 					try{
@@ -337,16 +338,18 @@ dojo.require("dojo._base.html");
 		}
 	};
 
-	var _makeFadeable = (d.isIE) ? function(node){
-		// only set the zoom if the "tickle" value would be the same as the
-		// default
-		var ns = node.style;
-		// don't set the width to auto if it didn't already cascade that way.
-		// We don't want to f anyones designs
-		if(!ns.width.length && d.style(node, "width") == "auto"){
-			ns.width = "auto";
-		}
-	} : function(){};
+	var _makeFadeable = 
+				d.isIE ? function(node){
+			// only set the zoom if the "tickle" value would be the same as the
+			// default
+			var ns = node.style;
+			// don't set the width to auto if it didn't already cascade that way.
+			// We don't want to f anyones designs
+			if(!ns.width.length && d.style(node, "width") == "auto"){
+				ns.width = "auto";
+			}
+		} : 
+				function(){};
 
 	dojo._fade = function(/*Object*/ args){
 		//	summary: 
@@ -360,7 +363,7 @@ dojo.require("dojo._base.html");
 		
 		props.start = !("start" in fArgs) ?
 			function(){ 
-				return Number(d.style(fArgs.node, "opacity")||0); 
+				return +d.style(fArgs.node, "opacity")||0; 
 			} : fArgs.start;
 		props.end = fArgs.end;
 
@@ -538,10 +541,10 @@ dojo.require("dojo._base.html");
 				var isColor = (p.toLowerCase().indexOf("color") >= 0);
 				function getStyle(node, p){
 					// dojo.style(node, "height") can return "auto" or "" on IE; this is more reliable:
-					var v = ({height: node.offsetHeight, width: node.offsetWidth})[p];
+					var v = {height: node.offsetHeight, width: node.offsetWidth}[p];
 					if(v !== undefined){ return v; }
 					v = d.style(node, p);
-					return (p == "opacity") ? Number(v) : (isColor ? v : parseFloat(v));
+					return (p == "opacity") ? +v : (isColor ? v : parseFloat(v));
 				}
 				if(!("end" in prop)){
 					prop.end = getStyle(this.node, p);
@@ -553,7 +556,7 @@ dojo.require("dojo._base.html");
 					prop.start = new d.Color(prop.start);
 					prop.end = new d.Color(prop.end);
 				}else{
-					prop.start = (p == "opacity") ? Number(prop.start) : parseFloat(prop.start);
+					prop.start = (p == "opacity") ? +prop.start : parseFloat(prop.start);
 				}
 			}
 			this.curve = new PropLine(pm);

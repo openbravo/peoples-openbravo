@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -28,7 +28,7 @@ dojo.require("dojox.lang.functional.reversed");
 				var s = this.group;
 				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
 			}
-			var t = this.chart.theme, color, stroke, fill, f, gap, width, thickness
+			var t = this.chart.theme, color, stroke, fill, f, gap, width, thickness,
 				ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
 				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler),
 				baseline = Math.max(0, this._vScaler.bounds.lower),

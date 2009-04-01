@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -68,9 +68,8 @@ dojo.require("dojo.fx");
 		//	|		duration:300
 		//	|	  });
 
-		var helperNode = dojo.doc.createElement("div");
-
-		var node = args.node = dojo.byId(args.node), 
+		var helperNode = dojo.create("div"),
+			node = args.node = dojo.byId(args.node), 
 			s = node.style,
 			dims = null, 
 			hs = null, 
@@ -195,7 +194,7 @@ dojo.require("dojo.fx");
 
 		var finalize = function(){
 //			helperNode.parentNode.removeChild(helperNode);
-			dojo._destroyElement(helperNode);
+			dojo.destroy(helperNode);
 			// fixes a flicker when the animation ends
 			s.backgroundColor = endColor;
 			s.visibility = "visible";
@@ -342,7 +341,7 @@ dojo.require("dojo.fx");
 			bgColor = dojo.style(n, "backgroundColor"), 
 			lightColor = args.lightColor || "#dddddd",
 			darkColor = args.darkColor, 
-			helperNode = dojo.doc.createElement("div"),
+			helperNode = dojo.create("div"),
 			anims = [],
 			hn = [],
 			dir = args.dir || "right",
@@ -378,7 +377,7 @@ dojo.require("dojo.fx");
 			hn[i] = dojo.clone(helperNode);
 			var	finalize = function(x){
 					return function(){
-						dojo._destroyElement(hn[x]);
+						dojo.destroy(hn[x]);
 					}
 				}(i)
 			;
@@ -425,7 +424,7 @@ dojo.require("dojo.fx");
 		var rows = args.rows || 4,
 			cols = args.cols || 4,
 			anims = [],
-			helperNode = dojo.doc.createElement("div"),
+			helperNode = dojo.create("div"),
 			n = args.node,
 			coords = dojo.coords(n, true),
 			x = coords.x,
@@ -494,7 +493,7 @@ dojo.require("dojo.fx");
 				}),
 				removeHelper = function(xn){
 					return function(){
-						dojo._destroyElement(xn);
+						dojo.destroy(xn);
 					}
 				}(hn)
 				;

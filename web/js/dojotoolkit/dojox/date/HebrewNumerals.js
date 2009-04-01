@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -61,7 +61,7 @@ dojo.experimental("dojox.date.HebrewNumerals");
 		if(ind > -1){
 			str = str1.concat(str.substr(str[0], ind), _REP[2], str.substr(str[ind+2], str.length-ind-2));
 		}else if( ( ind=str.indexOf(_REP[1]) ) > -1){
-			str = str1.concat(str.substr(str[0], ind), _rep[3], str.substr(str[ind+2], str.length-ind-2));
+			str = str1.concat(str.substr(str[0], ind), _REP[3], str.substr(str[ind+2], str.length-ind-2));
 		}
 	
 		if(str.length > 1){
@@ -170,7 +170,6 @@ dojo.experimental("dojox.date.HebrewNumerals");
 		//if (nDay > this.getDaysInHebrewMonth(_month, this._year)){
 		//	nDay = this.getDaysInHebrewMonth(this._month, this._year);
 		//}
-	
 		return nDay;		
 	};
 	
@@ -195,7 +194,7 @@ dojo.experimental("dojox.date.HebrewNumerals");
 		// |		
 			
 		//month number from 0 to 12
-		var monnum = dojox.date.HebrewNumerals.parseDayHebrewLetters(monthStr) - 1; 
+		var monnum = dojox.date.HebrewNumerals.parseDayHebrewLetters(monthStr) - 1;
 
 		if(monnum == -1){
 			console.warn("The month name is incorrect , set 0"); // TODO: perhaps throw instead?

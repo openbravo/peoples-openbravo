@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -16,14 +16,16 @@ dojo.declare("dojox.atom.io.Connection",null,{
 	//   Specifically, it provides a mechanism by which feeds can be fetched and entries can be fetched, created
 	//   deleted, and modified.  It also provides access to the introspection data.
 
-	constructor: function(/* Boolean */sync){
+	constructor: function(/* Boolean */sync, /* Boolean */preventCache){
 		// 	summary: 
 		//		initializer
 		this.sync = sync;
+		this.preventCache = preventCache;
 	},
 
-	useCache: false,
-	alertsEnabled: false,
+	preventCache: false, //Flag to denote if the instance should use the xhr prevent cache mechanism
+
+	alertsEnabled: false, //Flag to turn on alerts instead of throwing errors.
 
 	getFeed: function(/*String*/url, /*Function*/callback, /*Function*/errorCallback, scope){
 		// 	summary: 
@@ -112,6 +114,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 			url: url,
 			handleAs: "xml",
 			sync: this.sync,
+			preventCache: this.preventCache,
 			load: function(data, args){
 				var node	 = null;
 				var evaldObj = data;
@@ -224,6 +227,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 			handleAs: "text",
 			contentType: "text/xml",
 			sync: this.sync,
+			preventCache: this.preventCache,
 			load: function(data, args){
 				var location = null;
 				if(retrieveUpdated){
@@ -330,6 +334,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 			handleAs: "text",
 			contentType: "text/xml",
 			sync: this.sync,
+			preventCache: this.preventCache,
 			postData: entry.toString(true),
 			load: function(data, args){
 				var location = args.xhr.getResponseHeader("Location");
@@ -416,6 +421,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 			url: url,
 			handleAs: "text",
 			sync: this.sync,
+			preventCache: this.preventCache,
 			load: function(data, args){
 				callback.call(scope, args);
 				return data;

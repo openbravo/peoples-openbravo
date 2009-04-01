@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -45,6 +45,7 @@ dojo.declare("dojox.form._CheckedMultiSelectItem",
 		}else{
 			this._type = {type: "radio", baseClass: "dijitRadio"};
 		}
+		this.disabled = this.option.disabled = this.option.disabled||false;
 		this.inherited(arguments);
 	},
 
@@ -104,8 +105,9 @@ dojo.declare("dojox.form._CheckedMultiSelectItem",
 	_setDisabledAttr: function(value){
 		// summary:
 		//		Disables (or enables) all the children as well
-		this.checkBox.attr("disabled", value);
-		this.disabled = value;
+		this.disabled = value||this.option.disabled;
+		this.checkBox.attr("disabled", this.disabled);
+		dojo.toggleClass(this.domNode, "dojoxMultiSelectDisabled", this.disabled);
 	},
 	
 	_setReadOnlyAttr: function(value){
@@ -185,6 +187,13 @@ dojo.declare("dojox.form.CheckedMultiSelect", dojox.form._FormSelectWidget, {
 			}
 		});
 		this._setStateClass();
+	},
+
+	uninitialize: function(){
+		// Make sure these children are destroyed
+		dojo.forEach(this._getChildren(), function(child){
+			child.destroyRecursive();
+		});
 	}
 });
 

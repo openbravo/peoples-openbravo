@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2008, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -10,7 +10,7 @@ dojo._hasResource["dojo.number"] = true;
 dojo.provide("dojo.number");
 
 dojo.require("dojo.i18n");
-dojo.requireLocalization("dojo.cldr", "number", null, "es,it,en,ja-jp,zh-tw,ko,pt,en-us,es-es,en-au,zh-cn,ROOT,ko-kr,fr,zh,en-gb,ja,de,de-de");
+dojo.requireLocalization("dojo.cldr", "number", null, "ROOT,ar,ca,cs,da,de,de-de,el,en,en-au,en-gb,en-us,es,es-es,fi,fr,he,hu,it,ja,ja-jp,ko,ko-kr,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-cn,zh-tw");
 dojo.require("dojo.string");
 dojo.require("dojo.regexp");
 
@@ -32,7 +32,7 @@ dojo.number.__FormatOptions = function(){
 	//		information in the provided pattern.
 	//	round: Number?
 	//		5 rounds to nearest .5; 0 rounds to nearest whole (default). -1
-	//		means don't round.
+	//		means do not round.
 	//	currency: String?
 	//		an [ISO4217](http://en.wikipedia.org/wiki/ISO_4217) currency code, a three letter sequence like "USD"
 	//	symbol: String?
@@ -57,16 +57,16 @@ dojo.number.format = function(/*Number*/value, /*dojo.number.__FormatOptions?*/o
 	//		Formatting patterns appropriate to the locale are chosen from the
 	//		[CLDR](http://unicode.org/cldr) as well as the appropriate symbols and
 	//		delimiters.  See <http://www.unicode.org/reports/tr35/#Number_Elements>
+	//		If value is Infinity, -Infinity, or is not a valid JavaScript number, return null.
 	// value:
-	//		the number to be formatted.  If not a valid JavaScript number,
-	//		return null.
+	//		the number to be formatted
 
 	options = dojo.mixin({}, options || {});
 	var locale = dojo.i18n.normalizeLocale(options.locale);
 	var bundle = dojo.i18n.getLocalization("dojo.cldr", "number", locale);
 	options.customs = bundle;
 	var pattern = options.pattern || bundle[(options.type || "decimal") + "Format"];
-	if(isNaN(value)){ return null; } // null
+	if(isNaN(value) || Math.abs(value) == Infinity){ return null; } // null
 	return dojo.number._applyPattern(value, pattern, options); // String
 };
 
@@ -123,38 +123,45 @@ dojo.number._applyPattern = function(/*Number*/value, /*String*/pattern, /*dojo.
 		dojo.number._formatAbsolute(value, numberPattern[0], {decimal: decimal, group: group, places: options.places, round: options.round}));
 }
 
-dojo.number.round = function(/*Number*/value, /*Number?*/places, /*Number?*/multiple){
+dojo.number.round = function(/*Number*/value, /*Number?*/places, /*Number?*/increment){
 	//	summary:
-	//		An inexact rounding method for low-precision values to compensate for
-	//		binary floating point artifacts.
+	//		Rounds to the nearest value with the given number of decimal places, away from zero
 	//	description:
-	//		Rounds the value to the nearest value with the given number of decimal places (.5 up)
-	//		Also rounds up values which are very close to, but under the cut off, likely due to the
-	//		binary floating point representation.  Therefore, the rounding may not be mathematically correct
-	//		for full precision floating point values.
+	//		Rounds to the nearest value with the given number of decimal places, away from zero if equal.
+	//		Similar to Number.toFixed(), but compensates for browser quirks. Rounding can be done by
+	//		fractional increments also, such as the nearest quarter.
+	//		NOTE: Subject to floating point errors.  See dojox.math.round for experimental workaround.
 	//	value:
-	//		the number to round
+	//		The number to round
 	//	places:
-	//		the number of decimal places where rounding takes place.  Defaults to 0 for whole rounding.
-	//	multiple:
-	//		rounds next place to nearest multiple
+	//		The number of decimal places where rounding takes place.  Defaults to 0 for whole rounding.
+	//		Must be non-negative.
+	//	increment:
+	//		Rounds next place to nearest value of increment/10.  10 by default.
 	//	example:
-	//		>>> 4.8-(1.1+2.2)
-	//		1.4999999999999996
-	//		>>> Math.round(4.8-(1.1+2.2))
-	//		1
-	//		>>> dojo.number.round(4.8-(1.1+2.2))
-	//		2
-	//		>>> ((4.8-(1.1+2.2))/100)
-	//		0.014999999999999996
-	//		>>> ((4.8-(1.1+2.2))/100).toFixed(2)
-	//		"0.01"
-	//		>>> dojo.number.round((4.8-(1.1+2.2))/100,2)
-	//		0.02
-	var wholeFigs = Math.log(Math.abs(value))/Math.log(10);
-	var factor = 10 / (multiple || 10);
-	var delta = Math.pow(10, -14+wholeFigs);
-	return (factor * (+value+delta)).toFixed(places) / factor; // Number
+	//		>>> dojo.number.round(-0.5)
+	//		-1
+	//		>>> dojo.number.round(162.295, 2)
+	//		162.29  // note floating point error.  Should be 162.3
+	//		>>> dojo.number.round(10.71, 0, 2.5)
+	//		10.75
+	var factor = 10 / (increment || 10);
+	return (factor * +value).toFixed(places) / factor; // Number
+}
+
+if((0.9).toFixed() == 0){
+	// (isIE) toFixed() bug workaround: Rounding fails on IE when most significant digit
+	// is just after the rounding place and is >=5
+	(function(){
+		var round = dojo.number.round;
+		dojo.number.round = function(v, p, m){
+			var d = Math.pow(10, -p || 0), a = Math.abs(v);
+			if(!v || a >= d || a * Math.pow(10, p + 1) < 5){
+				d = 0;
+			}
+			return round(v, p, m) + (v > 0 ? d : -d);
+		}
+	})();
 }
 
 /*=====
@@ -421,7 +428,7 @@ dojo.number.parse = function(/*String*/expression, /*dojo.number.__ParseOptions?
 		replace(new RegExp("["+info.group + "\\s\\xa0"+"]", "g"), "").
 		replace(info.decimal, ".");
 	// Adjust for negative sign, percent, etc. as necessary
-	return Number(absoluteMatch) * info.factor; //Number
+	return absoluteMatch * info.factor; //Number
 };
 
 /*=====
@@ -545,7 +552,7 @@ dojo.number._integerRegexp = function(/*dojo.number.__IntegerRegexpFlags?*/flags
 	var numberRE = dojo.regexp.buildGroupRE(flags.separator,
 		function(sep){
 			if(!sep){
-				return "(?:0|[1-9]\\d*)";
+				return "(?:\\d+)";
 			}
 
 			sep = dojo.regexp.escapeString(sep);
@@ -553,6 +560,7 @@ dojo.number._integerRegexp = function(/*dojo.number.__IntegerRegexpFlags?*/flags
 			else if(sep == "\xa0"){ sep = "\\s\\xa0"; }
 
 			var grp = flags.groupSize, grp2 = flags.groupSize2;
+			//TODO: should we continue to enforce that numbers with separators begin with 1-9?  See #6933
 			if(grp2){
 				var grp2RE = "(?:0|[1-9]\\d{0," + (grp2-1) + "}(?:[" + sep + "]\\d{" + grp2 + "})*[" + sep + "]\\d{" + grp + "})";
 				return ((grp-grp2) > 0) ? "(?:" + grp2RE + "|(?:0|[1-9]\\d{0," + (grp-1) + "}))" : grp2RE;
