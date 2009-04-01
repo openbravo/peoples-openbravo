@@ -62,11 +62,12 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strAttribute = vars.getStringParameter("inpmAttributesetinstanceId");
       String strTabId = vars.getStringParameter("inpTabId");
       String strQty = vars.getStringParameter("inpqtyordered");
+      String cancelPriceAd = vars.getStringParameter("inpcancelpricead");
 
       try {
         printPage(response, vars, strChanged, strQtyOrdered, strPriceActual, strDiscount,
             strPriceLimit, strPriceList, strCOrderId, strProduct, strUOM, strAttribute, strTabId,
-            strQty, strPriceStd);
+            strQty, strPriceStd, cancelPriceAd);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -77,8 +78,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strQtyOrdered, String strPriceActual, String strDiscount, String strPriceLimit,
       String strPriceList, String strCOrderId, String strProduct, String strUOM,
-      String strAttribute, String strTabId, String strQty, String strPriceStd) throws IOException,
-      ServletException {
+      String strAttribute, String strTabId, String strQty, String strPriceStd, String cancelPriceAd)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
       log4j.debug("CHANGED:" + strChanged);
@@ -136,11 +137,29 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     if (strChanged.equals("inppriceactual")) {
       if (log4j.isDebugEnabled())
         log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
-      priceStd = new BigDecimal(SLOrderProductData.getOffersStdPrice(this,
-          dataOrder[0].cBpartnerId, strPriceActual.replace("\"", ""), strProduct,
-          dataOrder[0].dateordered, strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
-      // priceList
-      resultado.append("new Array(\"inppricestd\", \"" + priceStd.toString() + "\"),");
+      if ("Y".equals(cancelPriceAd)) {
+        priceStd = priceActual;
+        resultado.append("new Array(\"inppricestd\", \"" + priceStd.toString() + "\"),");
+      } else {
+        priceStd = new BigDecimal(SLOrderProductData.getOffersStdPrice(this,
+            dataOrder[0].cBpartnerId, strPriceActual.replace("\"", ""), strProduct,
+            dataOrder[0].dateordered, strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
+        // priceList
+        resultado.append("new Array(\"inppricestd\", \"" + priceStd.toString() + "\"),");
+      }
+
+    }
+
+    if (strChanged.equals("inpcancelpricead")) {
+      if ("Y".equals(cancelPriceAd)) {
+        resultado.append("new Array(\"inppriceactual\", \"" + strPriceStd + "\"),");
+      } else {
+        strPriceActual = SLOrderProductData.getOffersPrice(this, dataOrder[0].dateordered,
+            dataOrder[0].cBpartnerId, strProduct, (strPriceStd.equals("undefined") ? "0"
+                : strPriceStd.replace("\"", "")), strQty, dataOrder[0].mPricelistId,
+            dataOrder[0].id);
+        resultado.append("new Array(\"inppriceactual\", \"" + strPriceActual + "\"),");
+      }
     }
 
     /*
