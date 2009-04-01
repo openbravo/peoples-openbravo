@@ -8145,7 +8145,7 @@
 <!--1004400005-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1004400005-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400005-->  <VALUE><![CDATA[M]]></VALUE>
-<!--1004400005-->  <NAME><![CDATA[Locked by Requistision to Order window]]></NAME>
+<!--1004400005-->  <NAME><![CDATA[Locked by Requisition to Order window]]></NAME>
 <!--1004400005-->  <AD_REFERENCE_ID><![CDATA[1004400001]]></AD_REFERENCE_ID>
 <!--1004400005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400005--></AD_REF_LIST>
