@@ -388,7 +388,7 @@
                                                                      AND IT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
                                                                      AND T.C_TAX_ID = IT.C_TAX_ID
                                                                      AND UPPER(T.NAME) NOT LIKE '%I%R%P%F%'
-                                                                     AND T.RATE > 0
+                                                                     AND UPPER(T.NAME) NOT LIKE '%RETEN%'
                                                                      AND (R.C_REGION_ID IS NULL
                                                                           OR R.NAME NOT IN ('CEUTA', 'MELILLA', 'TENERIFE', 'LAS PALMAS'))
                                                                 UNION
@@ -431,7 +431,7 @@
       COALESCE(LPAD(' ', 9, ' '), '         ') AS NIF_REPRESENTANTE,
       COALESCE(TO_CHAR(RPAD(UPPER((CASE WHEN BP.NAME IS NULL THEN BP.NAME2 WHEN BP.NAME='' THEN BP.NAME2 ELSE BP.NAME END)), 40, ' ')), '                                        ') AS NOMBRE_SOCIAL,
       'D' AS TIPO_DECLARACION,
-      COALESCE(SUBSTR(L.POSTAL,1,2), '  ') AS CODIGO_PROVINCIA,
+      COALESCE(SUBSTR(MAX(BPL.ISTAXLOCATION||L.POSTAL),2,2), '  ') AS CODIGO_PROVINCIA,
       '  ' AS CODIGO_PAIS, ' ' AS ESPACIO,
       (CASE I.ISSOTRX WHEN 'Y' THEN 'B' ELSE 'A' END) AS CLAVE_CODIGO,
       COALESCE(LPAD(REPLACE(TO_CHAR(TO_NUMBER(ROUND(SUM(I.TOTALLINES+(SELECT SUM(IT.TAXAMT)
@@ -514,7 +514,7 @@
                      AND (R.C_REGION_ID IS NULL
                           OR R.NAME NOT IN ('CEUTA', 'MELILLA', 'TENERIFE', 'LAS PALMAS')))
       AND I.AD_ORG_ID IN ('1')
-      GROUP BY BP.NAME, BP.NAME2, BP.TAXID, I.ISSOTRX, SUBSTR(L.POSTAL,1,2), BP.C_BPARTNER_ID
+      GROUP BY BP.NAME, BP.NAME2, BP.TAXID, I.ISSOTRX, BP.C_BPARTNER_ID
       HAVING ROUND(SUM(I.TOTALLINES+(SELECT SUM(IT.TAXAMT)
                                                      FROM C_INVOICETAX IT
                                                     WHERE IT.C_INVOICE_ID = I.C_INVOICE_ID
@@ -557,8 +557,8 @@
   <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT BP.NAME, BP.NAME2 as NOMBRE_DECLARANTE, BP.TAXID as id, I.ISSOTRX as SOPORTE, SUBSTR(L.POSTAL,1,2) as CLAVE_CODIGO,
-        COALESCE(LPAD(REPLACE(TO_CHAR(TO_NUMBER(ROUND(SUM(IL.LINENETAMT+TO_NUMBER(C_INVOICELINE_TAX(IL.C_INVOICELINE_ID))), 2)), 'FM000000000000.00'), '.', ''), 15, '0'), '000000000000000') AS IMPORTES_METALICO_E_INMUEBLES,
+      SELECT BP.NAME, BP.NAME2 as NOMBRE_DECLARANTE, BP.TAXID as id, I.ISSOTRX as SOPORTE, SUBSTR(MAX(BPL.ISTAXLOCATION||L.POSTAL),2,2) as CLAVE_CODIGO,
+        COALESCE(LPAD(REPLACE(TO_CHAR(TO_NUMBER(ROUND(SUM(IL.LINENETAMT+C_INVOICELINE_TAX(IL.C_INVOICELINE_ID)), 2)), 'FM000000000000.00'), '.', ''), 15, '0'), '000000000000000') AS IMPORTES_METALICO_E_INMUEBLES,
         P.DESCRIPTION
       FROM C_INVOICE  I, 
            C_INVOICELINE IL,
@@ -608,7 +608,7 @@
                           OR R.NAME NOT IN ('CEUTA', 'MELILLA', 'TENERIFE', 'LAS PALMAS')))
       AND I.AD_ORG_ID IN ('1')
       AND BP.C_BPARTNER_ID = ?
-      GROUP BY BP.NAME, BP.NAME2, BP.TAXID, I.ISSOTRX, SUBSTR(L.POSTAL,1,2), P.DESCRIPTION
+      GROUP BY BP.NAME, BP.NAME2, BP.TAXID, I.ISSOTRX, P.DESCRIPTION
       HAVING ROUND(SUM(IL.LINENETAMT+C_INVOICELINE_TAX(IL.C_INVOICELINE_ID)), 2) >= 3005.06
     ]]></Sql>
     <Parameter name="mProduct" optional="true" type="replace" after="AND P.M_PRODUCT_ID IN (" text="'1'"/>
