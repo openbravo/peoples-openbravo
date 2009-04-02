@@ -44,6 +44,7 @@ public class WindowTabs {
   private String action = "";
   private int level = 0;
   boolean editView = true;
+  boolean newRecord = false;
   private Hashtable<String, Stack<WindowTabsData>> tabs = new Hashtable<String, Stack<WindowTabsData>>();
   private Stack<WindowTabsData> breadcrumb = new Stack<WindowTabsData>();
 
@@ -64,6 +65,13 @@ public class WindowTabs {
       String _windowId, boolean _editView) throws Exception {
     this(_conn, _vars, _tabId, _windowId);
     this.editView = _editView;
+  }
+
+  public WindowTabs(ConnectionProvider _conn, VariablesSecureApp _vars, String _tabId,
+      String _windowId, boolean _editView, boolean _newRecord) throws Exception {
+    this(_conn, _vars, _tabId, _windowId);
+    this.editView = _editView;
+    this.newRecord = _newRecord;
   }
 
   public WindowTabs(ConnectionProvider _conn, VariablesSecureApp _vars, String _tabId,
@@ -616,9 +624,27 @@ public class WindowTabs {
   private String getUrlCommand(String _tabId, String _tabName, int _level) {
     final StringBuffer text = new StringBuffer();
     if (!_tabId.equals(this.TabID) && this.level + 1 >= _level) {
-      text.append("logClick(null);submitCommandForm('").append(
-          ((this.level > _level) ? "DEFAULT" : "TAB")).append("', ");
-      text.append((editView) ? "isUserChanges" : "false").append(", null, '");
+      if (this.newRecord && this.level < _level) {
+        // Log user click when is NEW record and clicking a child tab
+        text.append("logClick(null);");
+      }
+      text.append("submitCommandForm('").append(((this.level > _level) ? "DEFAULT" : "TAB"))
+          .append("', ");
+
+      if (this.editView) {
+        if (this.newRecord) {
+          if (this.level >= _level) {
+            text.append("false"); // Don't validate when click parent or sibling tab
+          } else {
+            text.append("true"); // Always validate when are in NEW record and clicking a child tab
+          }
+        } else {
+          text.append("false"); // Don't validate on previously saved record
+        }
+      } else {
+        text.append("false"); // Don't validate in Grid mode
+      }
+      text.append(", null, '");
       text.append(FormatUtilities.replace(_tabName)).append(
           "_Relation.html', '_self', null, true);");
     }

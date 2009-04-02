@@ -51,8 +51,9 @@ public class UsedByLink extends HttpSecureAppServlet {
       final String strTabId = vars.getRequiredStringParameter("inpTabId");
       final String strKeyColumn = vars.getRequiredStringParameter("inpkeyColumnId");
       final String strTableId = vars.getRequiredStringParameter("inpTableId");
-      final String strKeyId = vars.getRequiredStringParameter("inp"
-          + Sqlc.TransformaNombreColumna(strKeyColumn));
+      final String strColumnName = Sqlc.TransformaNombreColumna(strKeyColumn);
+      String strKeyId = vars.getGlobalVariable("inp" + strColumnName, strWindow + "|"
+          + strKeyColumn);
       printPage(response, vars, strWindow, strTabId, strKeyColumn, strKeyId, strTableId);
     } else if (vars.commandIn("LINKS")) {
       final String strWindow = vars.getStringParameter("inpwindowId");
