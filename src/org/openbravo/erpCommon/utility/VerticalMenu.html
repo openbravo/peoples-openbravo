@@ -139,14 +139,10 @@
              return true;
          }
          var loc = appFrame.location.toString();
-         if( loc.indexOf('Home.html') != -1 || typeof appFrame.validate == 'undefined') {
+         if( loc.indexOf('Home.html') != -1 || typeof appFrame.depurar_validate_wrapper == 'undefined') {
              return true;
          }
-         return appFrame.validate(action, form, value);
-      }
-
-      function depurar_validate_wrapper(action, form, value) {
-          return validate(action, form, value);
+         return appFrame.depurar_validate_wrapper(action, form, value);
       }
 
       function getForm() {
