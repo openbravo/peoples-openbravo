@@ -140,7 +140,8 @@ public class ToolBar {
 
   private String getButtonScript(String name) {
     if (name.equals("RELATED_INFO")) {
-      return "openServletNewWindow('DEFAULT', true, '../utility/UsedByLink.html', 'LINKS', null, true, 500, 600, true);";
+      return (this.isNew ? "logClick(null);" : "")
+          + "openServletNewWindow('DEFAULT', true, '../utility/UsedByLink.html', 'LINKS', null, true, 500, 600, true);";
     } else if (name.equals("EDIT")) {
       return "submitCommandForm('" + name + "', true, null, '" + servlet_action
           + (isSrcWindow ? "" : "_Relation") + ".html', '_self', null, "
@@ -865,7 +866,9 @@ public class ToolBar {
       sbElement.append("<td class=\"Main_ToolBar_textlabel_bg_body\">");
       sbElement
           .append(
-              "<a class=\"Main_ToolBar_text_relatedinfo\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', true, '../utility/UsedByLink.html', 'LINKS', null, true, 500, 600, true);\">")
+              "<a class=\"Main_ToolBar_text_relatedinfo\" href=\"#\" onclick=\""
+                  + (this.isNew ? "logClick(null);" : "")
+                  + "openServletNewWindow('DEFAULT', true, '../utility/UsedByLink.html', 'LINKS', null, true, 500, 600, true);\">")
           .append(Utility.messageBD(conn, "Linked Items", language)).append("</a></td>\n");
     }
     sbElement.append("<td ");

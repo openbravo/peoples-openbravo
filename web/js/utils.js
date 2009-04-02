@@ -54,7 +54,6 @@ var isInputFile = false;
 
 var isPageLoading = true;
 var isUserChanges = false;
-var isUserClick = false;
 var isTabClick = false;
 var isButtonClick = false;
 var calloutProcessedObj = null;
@@ -259,7 +258,6 @@ function logClick(hiddenInput) {
   if(typeof autosave == "undefined" || !autosave) {
     return;
   }
-  isUserClick = true;
   if(hiddenInput != null) {
     logChanges(hiddenInput);
     isButtonClick = true;
@@ -308,7 +306,7 @@ function checkForChanges(f) {
 	else {
 		var promptConfirmation = typeof top.appFrame.confirmOnChanges == 'undefined' ? true : top.appFrame.confirmOnChanges;
 		var hasUserChanges = typeof top.appFrame.isUserChanges == 'undefined' ? false : top.appFrame.isUserChanges;
-		if (form.inpLastFieldChanged && (hasUserChanges || isButtonClick)) { // if the inpLastFieldChanged exists and there is a user change
+		if (form.inpLastFieldChanged && (hasUserChanges || isButtonClick || isTabClick)) { // if the inpLastFieldChanged exists and there is a user change
 			var autoSave = true;		
 			if (promptConfirmation)
 				autoSave = showJSMessage(25);
@@ -317,7 +315,7 @@ function checkForChanges(f) {
 					form.autosave.value = 'Y';
 				}
 			}
-		}	
+		}
 		return true;
 	}	
 }
