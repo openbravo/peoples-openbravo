@@ -73,4 +73,13 @@
     </Sql>
     <Parameter name="cOrderId"/>
   </SqlMethod>
+  <SqlMethod name="selectOldDocTypeTargetId" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT c_doctypetarget_id FROM C_ORDER WHERE C_ORDER_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="cOrderId"/>
+  </SqlMethod>
 </SqlClass>
