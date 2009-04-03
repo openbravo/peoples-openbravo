@@ -394,7 +394,7 @@
 <!--118-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--118-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--118-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--118-->  <FILTERCLAUSE><![CDATA[(EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND (bp.IsEmployee='Y' OR bp.IsSalesRep='Y')) 
+<!--118-->  <FILTERCLAUSE><![CDATA[(EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND (bp.IsEmployee='Y' OR bp.IsSalesRep='Y'))
 OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--118-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--118--></AD_TAB>
@@ -9322,6 +9322,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800165-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--800165-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800165-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--800165-->  <ORDERBYCLAUSE><![CDATA[created]]></ORDERBYCLAUSE>
 <!--800165-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800165-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800165-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
@@ -12070,12 +12071,12 @@ The corresponding tables have then the following setting:
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <FILTERCLAUSE><![CDATA[AD_Model_Object.AD_TAB_ID        is null and 
-AD_Model_Object.AD_TASK_ID       is null and 
-AD_Model_Object.AD_WORKFLOW_ID   is null and 
-AD_Model_Object.AD_PROCESS_ID    is null and 
-AD_Model_Object.AD_FORM_ID       is null and 
-AD_Model_Object.AD_REFERENCE_ID  is null and 
+<!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <FILTERCLAUSE><![CDATA[AD_Model_Object.AD_TAB_ID        is null and
+AD_Model_Object.AD_TASK_ID       is null and
+AD_Model_Object.AD_WORKFLOW_ID   is null and
+AD_Model_Object.AD_PROCESS_ID    is null and
+AD_Model_Object.AD_FORM_ID       is null and
+AD_Model_Object.AD_REFERENCE_ID  is null and
 AD_Model_Object.AD_CALLOUT_ID    is null ]]></FILTERCLAUSE>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918--></AD_TAB>
@@ -12111,7 +12112,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <NAME><![CDATA[Period Control]]></NAME>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <DESCRIPTION><![CDATA[View to display the Period Control for the selected organization]]></DESCRIPTION>
-<!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <HELP><![CDATA[The Period Control depends on the fiscal calendar of the selected organization. 
+<!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <HELP><![CDATA[The Period Control depends on the fiscal calendar of the selected organization.
 This tab is read only. If you want to control the periods you must use the "Open/Close Period Control" window inside Financial Management || Accounting || Transactions]]></HELP>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <AD_TABLE_ID><![CDATA[CB391C8A13D74B688A34017B5B5D1F5D]]></AD_TABLE_ID>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <AD_WINDOW_ID><![CDATA[110]]></AD_WINDOW_ID>
