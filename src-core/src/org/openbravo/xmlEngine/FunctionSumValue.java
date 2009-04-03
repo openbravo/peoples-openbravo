@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import org.apache.log4j.Logger;
 
 class FunctionSumValue extends FunctionValue {
-  BigDecimal sum;
+  BigDecimal sum = BigDecimal.ZERO;
 
   static Logger log4jFunctionSumValue = Logger.getLogger(FunctionSumValue.class);
 
@@ -25,15 +25,11 @@ class FunctionSumValue extends FunctionValue {
   }
 
   public String print() {
-    String strPrint = "";
-    if (sum != null) {
-      if (functionTemplate.formatOutput != null) {
-        strPrint =  functionTemplate.formatOutput.format(sum);
+	  if (functionTemplate.formatOutput != null) {
+        return functionTemplate.formatOutput.format(sum);
       } else {
-        strPrint = sum.toPlainString();
+        return sum.toPlainString();
       }
-    }
-    return strPrint;	
   }
 
   public String printSimple() {
