@@ -2063,10 +2063,9 @@ public class TableSQLData implements Serializable {
         dataAux.setData("isidentifier", (prop.getProperty("IsIdentifier").equals("Y") ? "true"
             : "false"));
 
-        boolean isKey = (!getTableName().equals("AD_Language")
+        boolean isKey = (!getTabID().equals("445")
             && prop.getProperty("ColumnName").equals(getKeyColumn()) && !cloneRecord)
-            || (getTableName().equals("AD_Language") && prop.getProperty("ColumnName").equals(
-                "AD_Language"));
+            || (getTabID().equals("445") && prop.getProperty("ColumnName").equals("AD_Language"));
 
         dataAux.setData("iskey", isKey ? "true" : "false");
         dataAux.setData("isvisible", ((prop.getProperty("IsDisplayed").equals("Y") && prop
