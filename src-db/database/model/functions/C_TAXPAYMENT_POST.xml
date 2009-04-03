@@ -134,12 +134,12 @@ BEGIN
 
         v_paymentrule := 'T';
         v_currencyratetype := 'S';
-      
+
       select c_calendar_id into v_calendar_ID
       from ad_clientinfo
       where ad_client_id = v_client_id;
-      
-      select c_period_id into v_period_id 
+
+      select c_period_id into v_period_id
       from c_period
       where enddate = (select max(enddate) from c_period where enddate <=v_date
                       and exists (select 1 from c_year where c_calendar_id = v_calendar_ID
@@ -160,7 +160,7 @@ BEGIN
       into v_gl_journalid, v_gl_journalbatchid, v_settlementid
       from c_taxpayment tp
       inner join gl_journal glj on tp.gl_journal_id=glj.gl_journal_id
-      inner join gl_journalbatch gljb on gljb.gl_journalbatch_id=glj.gl_journal_id
+      inner join gl_journalbatch gljb on gljb.gl_journalbatch_id=glj.gl_journalbatch_id
       where tp.C_TAXPAYMENT_ID = v_record_id;
 
       update gl_journal set docaction='RE' where gl_journal_id=v_gl_journalid;
@@ -260,19 +260,19 @@ BEGIN
       v_totalcredit := v_totalcredit+v_debit;
 
       end loop;
-      
-      select count(*) 
+
+      select count(*)
       into v_TRTcountY
       from c_taxregister_type tt where tt.issotrx='Y';
-      
-      select count(*) 
+
+      select count(*)
       into v_TRTcountN
       from c_taxregister_type tt where tt.issotrx='N';
-      
+
       if v_TRTcountY=0 or v_TRTcountN=0 then
       RAISE_APPLICATION_ERROR(-20100, '@TwoRegisterTypesNeeded@');
       end if;
-      
+
       select case when tt.issotrx='Y' then max(glitem_debit_acct) else max(glitem_credit_acct) end, max(tt.c_glitem_id)
       into v_glitem_acct, v_glitem_id
       from c_taxregister_type tt
