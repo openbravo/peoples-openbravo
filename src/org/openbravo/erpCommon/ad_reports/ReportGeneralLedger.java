@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -180,8 +181,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
-    ReportGeneralLedgerData[][] subreport = null;
-    ReportGeneralLedgerData[][] subreport2 = null;
     ReportGeneralLedgerData[] data = null;
     String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
     String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
@@ -290,9 +289,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                   : "partner");
       }
       // Now dataTotal is covered until the first record to show in this screen, so previous amounts
-      // are calculated accurately
+      // are calculated accurately, and saved in previousDebit and previousCredit variables.
       String strOld = "";
-      for (int i = 0; data != null && i < dataTotal.length; i++) {
+      for (int i = 0; i < data.length && i < dataTotal.length; i++) {
         if (dataTotal[i].factAcctId.equals(data[0].factAcctId)) {
           if (!strOld.equals(((strcBpartnerId.equals("") && strAll.equals("")) ? ""
               : dataTotal[i].cBpartnerId)
@@ -312,48 +311,67 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         previousCredit = previousCredit.add(new BigDecimal(dataTotal[i].amtacctcr));
         strOld = (((strcBpartnerId.equals("") && strAll.equals("")) ? "" : dataTotal[i].cBpartnerId) + dataTotal[i].id);
       }
-      // And previous amounts (until DateFrom) is calculated through
+
+      // And previous amounts (until DateFrom) are calculated through
       // ReportGeneralLedgerData.selectPrevious and, if necessary, amounts of previous screen are
       // added
-      subreport = new ReportGeneralLedgerData[data.length][];
+      ArrayList<Object> list = new ArrayList<Object>();
       strOld = "";
       int j = 0;
+      ReportGeneralLedgerData[] subreportElement = new ReportGeneralLedgerData[1];
       for (int i = 0; data != null && i < data.length; i++) {
         if (!strOld.equals(((strcBpartnerId.equals("") && strAll.equals("")) ? ""
             : data[i].cBpartnerId)
             + data[i].id)) {
+          subreportElement = new ReportGeneralLedgerData[1];
           if (i == 0) {
-            subreport[j] = new ReportGeneralLedgerData[1];
-            subreport[j][0] = new ReportGeneralLedgerData();
-            subreport[j][0].totaldr = previousDebit.toPlainString();
-            subreport[j][0].totalcr = previousCredit.toPlainString();
-            subreport[j][0].total = previousDebit.subtract(previousCredit).toPlainString();
+            subreportElement = new ReportGeneralLedgerData[1];
+            subreportElement[0] = new ReportGeneralLedgerData();
+            subreportElement[0].totaldr = previousDebit.toPlainString();
+            subreportElement[0].totalcr = previousCredit.toPlainString();
+            subreportElement[0].total = previousDebit.subtract(previousCredit).toPlainString();
           } else
-            subreport[j] = ReportGeneralLedgerData.selectPrevious(this,
-                (strcBpartnerId.equals("") && strAll.equals("")) ? "" : data[i].cBpartnerId,
-                strcAcctSchemaId, data[i].id, strYearInitialDate, strDateFrom, strOrgFamily);
-          data[i].totalacctdr = subreport[j][0].totaldr;
-          data[i].totalacctcr = subreport[j][0].totalcr;
-          data[i].totalacctsub = subreport[j][0].total;
+            subreportElement = ReportGeneralLedgerData.selectPrevious(this, (strcBpartnerId
+                .equals("") && strAll.equals("")) ? "" : data[i].cBpartnerId, strcAcctSchemaId,
+                data[i].id, strYearInitialDate, strDateFrom, strOrgFamily);
+          data[i].totalacctdr = subreportElement[0].totaldr;
+          data[i].totalacctcr = subreportElement[0].totalcr;
+          data[i].totalacctsub = subreportElement[0].total;
+          list.add(subreportElement);
           j++;
         }
+        data[i].previousdebit = subreportElement[0].totaldr;
+        data[i].previouscredit = subreportElement[0].totalcr;
+        data[i].previoustotal = subreportElement[0].total;
         strOld = (((strcBpartnerId.equals("") && strAll.equals("")) ? "" : data[i].cBpartnerId) + data[i].id);
       }
-      subreport2 = new ReportGeneralLedgerData[data.length][];
+      /*
+       * subreport = new ReportGeneralLedgerData[j][]; list.toArray(subreport);
+       */
+      list = new ArrayList<Object>();
       String strTotal = "";
       int g = 0;
-      for (int i = 0; data != null && i < data.length; i++) {
+      subreportElement = new ReportGeneralLedgerData[1];
+      for (int i = 0; i < dataTotal.length && i < data.length; i++) {
         if (!strTotal.equals(((strcBpartnerId.equals("") && strAll.equals("")) ? ""
             : data[i].cBpartnerId)
             + data[i].id)) {
-          subreport2[g] = ReportGeneralLedgerData.selectTotal(this,
+          subreportElement = new ReportGeneralLedgerData[1];
+          subreportElement = ReportGeneralLedgerData.selectTotal(this,
               (strcBpartnerId.equals("") && strAll.equals("")) ? "" : data[i].cBpartnerId,
               strcAcctSchemaId, data[i].id, strYearInitialDate, DateTimeData.nDaysAfter(this,
                   strDateTo, "1"), strOrgFamily);
           g++;
         }
+        data[i].finaldebit = subreportElement[0].totaldr;
+        data[i].finalcredit = subreportElement[0].totalcr;
+        data[i].finaltotal = subreportElement[0].total;
         strTotal = (((strcBpartnerId.equals("") && strAll.equals("")) ? "" : data[i].cBpartnerId) + data[i].id);
       }
+      /*
+       * subreport2 = new ReportGeneralLedgerData[g][]; list.toArray(subreport2);
+       */
+
       boolean hasPrevious = !(data == null || data.length == 0 || initRecordNumber <= 1);
       boolean hasNext = !(data == null || data.length == 0 || data.length < intRecordRange);
       toolbar
@@ -442,14 +460,14 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       xmlDocument.setData("structure1", data);
     else
       xmlDocument.setData("structure2", data);
-    if (strcBpartnerId.equals("") && strAll.equals(""))
-      xmlDocument.setDataArray("reportTotals", "structure", subreport);
-    else
-      xmlDocument.setDataArray("reportTotals2", "structure", subreport);
-    if (strcBpartnerId.equals("") && strAll.equals(""))
-      xmlDocument.setDataArray("reportAll", "structure", subreport2);
-    else
-      xmlDocument.setDataArray("reportAll2", "structure", subreport2);
+
+    /*
+     * if (strcBpartnerId.equals("") && strAll.equals("")) xmlDocument.setDataArray("reportTotals",
+     * "structure", subreport); else xmlDocument.setDataArray("reportTotals2", "structure",
+     * subreport); if (strcBpartnerId.equals("") && strAll.equals(""))
+     * xmlDocument.setDataArray("reportAll", "structure", subreport2); else
+     * xmlDocument.setDataArray("reportAll2", "structure", subreport2);
+     */
 
     out.println(xmlDocument.print());
     out.close();
@@ -461,6 +479,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strHide, String strcAcctSchemaId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PDF");
+    response.setContentType("text/html; charset=UTF-8");
     ReportGeneralLedgerData[] data = null;
     ReportGeneralLedgerData[] subreport = null;
     String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
@@ -539,6 +558,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
     String strOutput = vars.commandIn("PDF") ? "pdf" : "xls";
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedger.jrxml";
+    if (strOutput.equals("pdf"))
+      response.setHeader("Content-disposition", "inline; filename=ReportGeneralLedgerPDF.pdf");
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
 
@@ -572,16 +593,16 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     parameters.put("InitialYearDate", date);
     Date dateTo = null;
     try {
-        dateTo = dateFormat.parse(strDateTo);
+      dateTo = dateFormat.parse(strDateTo);
     } catch (Exception e) {
-        throw new ServletException(e.getMessage());
+      throw new ServletException(e.getMessage());
     }
     parameters.put("DateTo", dateTo);
     Date dateFrom = null;
     try {
-        dateFrom = dateFormat.parse(strDateFrom);
+      dateFrom = dateFormat.parse(strDateFrom);
     } catch (Exception e) {
-        throw new ServletException(e.getMessage());
+      throw new ServletException(e.getMessage());
     }
     parameters.put("DateFrom", dateFrom);
 
