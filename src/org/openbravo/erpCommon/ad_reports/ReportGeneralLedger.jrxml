@@ -29,25 +29,22 @@
 		vAlign="Middle"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
-	>
-	</style>
+	/>
 	<style 
 		name="Report_Title"
 		isDefault="false"
+		leftPadding="5"
 		fontName="Bitstream Vera Sans"
 		fontSize="18"
-	>
-					<box leftPadding="5"></box>
-	</style>
+	/>
 	<style 
 		name="Report_Subtitle"
 		isDefault="false"
 		forecolor="#555555"
+		leftPadding="5"
 		fontName="Bitstream Vera Sans"
 		fontSize="14"
-	>
-					<box leftPadding="5"></box>
-	</style>
+	/>
 	<style 
 		name="Total_Field"
 		isDefault="false"
@@ -55,12 +52,11 @@
 		forecolor="#000000"
 		backcolor="#CCCCCC"
 		vAlign="Middle"
+		leftPadding="5"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="true"
-	>
-					<box leftPadding="5"></box>
-	</style>
+	/>
 	<style 
 		name="Detail_Header"
 		isDefault="false"
@@ -68,14 +64,15 @@
 		forecolor="#FFFFFF"
 		backcolor="#5D5D5D"
 		vAlign="Middle"
+		leftBorder="1Point"
+		leftBorderColor="#FFFFFF"
+		leftPadding="5"
+		rightBorder="1Point"
+		rightBorderColor="#FFFFFF"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="true"
-	>
-					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
-	</style>
+	/>
 	<style 
 		name="GroupHeader_DarkGray"
 		isDefault="false"
@@ -83,19 +80,17 @@
 		forecolor="#FFFFFF"
 		backcolor="#555555"
 		vAlign="Middle"
+		leftPadding="5"
 		fontName="Bitstream Vera Sans"
 		fontSize="18"
 		isBold="true"
-	>
-					<box leftPadding="5"></box>
-	</style>
+	/>
 	<style 
 		name="GroupHeader_Gray"
 		isDefault="false"
 		mode="Opaque"
 		backcolor="#999999"
-	>
-	</style>
+	/>
 	<style 
 		name="Detail_Line"
 		isDefault="false"
@@ -110,8 +105,7 @@
 				isDefault="false"
 				mode="Opaque"
 				backcolor="#CCCCCC"
-			>
-			</style>
+			/>
 		</conditionalStyle>
 	</style>
 	<style 
@@ -120,46 +114,40 @@
 		mode="Opaque"
 		forecolor="#000000"
 		backcolor="#CCCCCC"
-	>
-	</style>
+	/>
 	<style 
 		name="Report_Data_Label"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="true"
-	>
-	</style>
+	/>
 	<style 
 		name="Report_Data_Field"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="false"
-	>
-	</style>
+	/>
 	<style 
 		name="Report_Footer"
 		isDefault="true"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
-	>
-	</style>
+	/>
 	<style 
 		name="Group_Data_Label"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="14"
 		isBold="true"
-	>
-	</style>
+	/>
 	<style 
 		name="Group_Data_Field"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="14"
-	>
-	</style>
+	/>
 	<style 
 		name="Detail_Data_Label"
 		isDefault="false"
@@ -168,8 +156,7 @@
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="true"
-	>
-	</style>
+	/>
 	<style 
 		name="Detail_Data_Field"
 		isDefault="false"
@@ -177,16 +164,14 @@
 		backcolor="#CCCCCC"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
-	>
-	</style>
+	/>
 	<style 
 		name="Group_Footer"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="true"
-	>
-	</style>
+	/>
 
 	<parameter name="ATTACH" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String"/>
@@ -227,6 +212,12 @@
 	<parameter name="DateFrom" isForPrompting="false" class="java.util.Date">
 		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("01-07-2006")]]></defaultValueExpression>
 	</parameter>
+	<parameter name="Org" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["0,1000006"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DateToPlus1" isForPrompting="false" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("22-12-2222")]]></defaultValueExpression>
+	</parameter>
 	<queryString><![CDATA[SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, DATEACCT, FACT_ACCT.ACCTDESCRIPTION AS NAME,
         AMTACCTDR, AMTACCTCR, FACT_ACCT_GROUP_ID, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID,
         FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID, 0 AS TOTALDR,
@@ -237,7 +228,7 @@
           FROM C_ELEMENTVALUE
           WHERE c_elementvalue.ELEMENTLEVEL = 'S'
         )
-        AND FACT_ACCT.AD_ORG_ID IN ($P!{USER_ORG})
+        AND FACT_ACCT.AD_ORG_ID IN ($P!{Org})
         AND FACT_ACCT.AD_CLIENT_ID IN ($P!{USER_CLIENT})
         AND DATEACCT >= $P{DateFrom}
         AND DATEACCT < $P{DateTo}
@@ -256,13 +247,13 @@
 	<field name="ad_table_id" class="java.lang.String"/>
 	<field name="description" class="java.lang.String"/>
 	<field name="c_bpartner_id" class="java.lang.String"/>
-	<field name="totaldr" class="java.lang.Integer"/>
-	<field name="totalcr" class="java.lang.Integer"/>
+	<field name="totaldr" class="java.math.BigDecimal"/>
+	<field name="totalcr" class="java.math.BigDecimal"/>
 	<field name="totalacctdr" class="java.math.BigDecimal"/>
 	<field name="totalacctcr" class="java.math.BigDecimal"/>
 	<field name="totalacctsub" class="java.math.BigDecimal"/>
 	<field name="total" class="java.math.BigDecimal"/>
-	<field name="saldo" class="java.lang.Integer"/>
+	<field name="saldo" class="java.math.BigDecimal"/>
 	<field name="padre" class="java.lang.String"/>
 
 	<variable name="DetailFieldTotal" class="java.lang.String" resetType="Report" calculation="Nothing">
@@ -302,12 +293,7 @@
 						width="120"
 						height="23"
 						key="staticText"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font pdfFontName="Helvetica"/>
 					</textElement>
@@ -322,9 +308,7 @@
 						forecolor="#555555"
 						key="line-2"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -334,12 +318,7 @@
 						width="415"
 						height="23"
 						key="textField"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="18"/>
 					</textElement>
@@ -359,9 +338,7 @@
 						forecolor="#555555"
 						key="line-32"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -371,9 +348,7 @@
 						height="0"
 						forecolor="#555555"
 						key="line-34"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
 				</line>
 			</band>
 			</groupFooter>
@@ -391,9 +366,7 @@
 						forecolor="#555555"
 						key="line-6"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<staticText>
 					<reportElement
@@ -403,12 +376,7 @@
 						width="90"
 						height="16"
 						key="staticText"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font pdfFontName="Helvetica" size="12"/>
 					</textElement>
@@ -422,12 +390,7 @@
 						width="79"
 						height="16"
 						key="textField"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font size="12"/>
 					</textElement>
@@ -442,9 +405,7 @@
 						forecolor="#555555"
 						key="line-4"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -457,9 +418,7 @@
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[$P{ShowPartner}]]></printWhenExpression>
 						</reportElement>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -469,12 +428,7 @@
 						width="356"
 						height="16"
 						key="textField"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="12"/>
 					</textElement>
@@ -488,12 +442,7 @@
 						width="91"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#333333" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font/>
 					</textElement>
@@ -507,12 +456,7 @@
 						width="56"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#333333" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font/>
 					</textElement>
@@ -526,12 +470,7 @@
 						width="56"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#333333" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font/>
 					</textElement>
@@ -545,12 +484,7 @@
 						width="76"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#333333" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font/>
 					</textElement>
@@ -565,9 +499,7 @@
 						forecolor="#555555"
 						key="line-37"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<staticText>
 					<reportElement
@@ -577,12 +509,7 @@
 						width="238"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#333333" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font/>
 					</textElement>
@@ -626,11 +553,14 @@
 					<subreportParameter  name="USER_ORG">
 						<subreportParameterExpression><![CDATA[$P{USER_ORG}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter  name="Org">
+						<subreportParameterExpression><![CDATA[$P{Org}]]></subreportParameterExpression>
+					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<returnValue subreportVariable="PreviousBalance" toVariable="PreviousBalance"/>
 					<returnValue subreportVariable="PreviousDebit" toVariable="PreviousDebit"/>
 					<returnValue subreportVariable="PreviousCredit" toVariable="PreviousCredit"/>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ReportData}]]></subreportExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"ReportGeneralLedger_Previous.jasper"]]></subreportExpression>
 				</subreport>
 				<line direction="TopDown">
 					<reportElement
@@ -640,9 +570,7 @@
 						height="0"
 						forecolor="#555555"
 						key="line-42"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
 				</line>
 			</band>
 			</groupHeader>
@@ -659,9 +587,7 @@
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[$P{ShowPartner}]]></printWhenExpression>
 						</reportElement>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -672,9 +598,7 @@
 						forecolor="#555555"
 						key="line-29"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -685,9 +609,7 @@
 						forecolor="#555555"
 						key="line-30"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -697,9 +619,7 @@
 						height="0"
 						forecolor="#555555"
 						key="line-31"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -709,9 +629,7 @@
 						height="0"
 						forecolor="#555555"
 						key="line-35"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
 				</line>
 				<frame>					<reportElement
 						style="Total_Gray"
@@ -721,11 +639,7 @@
 						width="517"
 						height="16"
 						key="frame-2"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 				</frame>				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="110"
@@ -733,11 +647,7 @@
 						width="56"
 						height="16"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
@@ -750,11 +660,7 @@
 						width="56"
 						height="16"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
@@ -767,11 +673,7 @@
 						width="75"
 						height="16"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
@@ -785,11 +687,7 @@
 						width="89"
 						height="16"
 						key="staticText-6"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font size="10"/>
 					</textElement>
@@ -810,7 +708,7 @@
 						<subreportParameterExpression><![CDATA[new String("Final")]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Date">
-						<subreportParameterExpression><![CDATA[$P{DateTo}]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$P{DateToPlus1}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Partner">
 						<subreportParameterExpression><![CDATA[$F{c_bpartner_id}]]></subreportParameterExpression>
@@ -833,8 +731,11 @@
 					<subreportParameter  name="USER_ORG">
 						<subreportParameterExpression><![CDATA[$P{USER_ORG}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter  name="Org">
+						<subreportParameterExpression><![CDATA[$P{Org}]]></subreportParameterExpression>
+					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ReportData}]]></subreportExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"ReportGeneralLedger_Previous.jasper"]]></subreportExpression>
 				</subreport>
 				<line direction="TopDown">
 					<reportElement
@@ -845,9 +746,7 @@
 						forecolor="#555555"
 						key="line-38"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -857,9 +756,7 @@
 						height="0"
 						forecolor="#555555"
 						key="line-39"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -869,9 +766,7 @@
 						height="0"
 						forecolor="#555555"
 						key="line-41"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -882,9 +777,7 @@
 						forecolor="#555555"
 						key="line-43"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 			</band>
 			</groupFooter>
@@ -908,12 +801,7 @@
 						width="535"
 						height="20"
 						key="textField"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font/>
 					</textElement>
@@ -926,9 +814,7 @@
 						width="535"
 						height="0"
 						key="line-1"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
 				</line>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -938,12 +824,7 @@
 						width="535"
 						height="20"
 						key="textField"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font size="14"/>
 					</textElement>
@@ -966,9 +847,7 @@
 						forecolor="#555555"
 						key="line-15"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -979,9 +858,7 @@
 						forecolor="#555555"
 						key="line-16"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -994,9 +871,7 @@
 						stretchType="RelativeToBandHeight">
 							<printWhenExpression><![CDATA[$P{ShowPartner}]]></printWhenExpression>
 						</reportElement>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -1007,9 +882,7 @@
 						forecolor="#555555"
 						key="line-18"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight" pen="2Point"/>
 				</line>
 				<frame>					<reportElement
 						style="Detail_Line"
@@ -1018,11 +891,7 @@
 						width="517"
 						height="16"
 						key="frame-1"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="282"
@@ -1031,11 +900,7 @@
 						height="16"
 						key="textField-13"
 						stretchType="RelativeToBandHeight"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -1049,11 +914,7 @@
 						height="16"
 						key="textField-14"
 						stretchType="RelativeToBandHeight"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -1067,11 +928,7 @@
 						height="16"
 						key="textField-15"
 						stretchType="RelativeToBandHeight"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -1085,11 +942,7 @@
 						height="16"
 						key="textField-16"
 						stretchType="RelativeToBandHeight"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -1103,11 +956,7 @@
 						height="16"
 						key="textField-17"
 						stretchType="RelativeToBandHeight"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -1129,11 +978,7 @@
 						width="95"
 						height="16"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Helvetica" size="10"/>
 					</textElement>
@@ -1149,11 +994,7 @@
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Helvetica" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
@@ -1167,9 +1008,7 @@
 						height="0"
 						forecolor="#000000"
 						key="line"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
 				</line>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1179,11 +1018,7 @@
 						width="79"
 						height="16"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="10"/>
 					</textElement>
@@ -1197,11 +1032,7 @@
 						width="76"
 						height="16"
 						key="staticText-1"/>
-					<box leftPadding="5" topPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
@@ -1217,11 +1048,7 @@
 						key="staticText-5">
 							<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()==1)]]></printWhenExpression>
 						</reportElement>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font/>
 					</textElement>

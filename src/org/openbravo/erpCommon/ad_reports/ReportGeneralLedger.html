@@ -531,7 +531,15 @@ var arrAccountTo=null;
                       <th width="75%" class="DataGrid_Header_Cell">DESCRIPTION</th>
                     </tr>
 
-                    <div id="reportTotals"></div>
+                    <div id="sectionDetailTotals">
+                      <tr class="DataGrid_Body_Row">
+                        <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold">PREVIOUS</span></th>
+                        <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="fieldSubreportPreviousDebit"></span></th>
+                        <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="fieldSubreportPreviousCredit"></span></th>
+                        <th width="15%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="fieldSubreportPreviousTotal"></span></th>
+                        <th width="75%" class="DataGrid_Header_Cell_Amount"></th>
+                      </tr>
+                    </div>
                     <div id="sectionDetail"> 
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
                         <td width="10%" class="DataGrid_Body_Cell">
@@ -565,7 +573,15 @@ var arrAccountTo=null;
                         </th>
                         <th width="75%" class="DataGrid_Header_Cell">&nbsp;</td>
                       </tr>
-                      <div id="reportAll"></div>
+                      <div id="sectionDetailTotals">
+                        <tr class="DataGrid_Body_Row">
+                          <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold">TOTAL</span></th>
+                          <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalDebit"></span></th>
+                          <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalCredit"></span></th>
+                          <th width="15%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalTotal"></span></th>
+                          <th width="75%" class="DataGrid_Header_Cell_Amount"></th>
+                        </tr>
+                      </div>
                     </tr>
                   </table>
                   <div style="height:15px;" />
@@ -591,7 +607,15 @@ var arrAccountTo=null;
                         <th width="75%" class="DataGrid_Header_Cell">DESCRIPTION</th>
                       </tr>
 
-                      <div id="reportTotals2"></div>
+                    <div id="sectionDetailTotals">
+                      <tr class="DataGrid_Body_Row">
+                        <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold">SALDO ANTERIOR</span></th>
+                        <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="fieldSubreportPreviousDebit2"></span></th>
+                        <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="fieldSubreportPreviousCredit2"></span></th>
+                        <th width="15%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="fieldSubreportPreviousTotal2"></span></th>
+                        <th width="75%" class="DataGrid_Header_Cell_Amount"></th>
+                      </tr>
+                    </div>
                       <div id="sectionDetail2"> 
                         <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow2xx"> 
                           <td width="10%" class="DataGrid_Body_Cell">
@@ -622,8 +646,15 @@ var arrAccountTo=null;
 						<TH width="15%" class="DataGrid_Header_Cell_Amount"><SPAN id="fieldTotalSubAdded2">xx1000.00</SPAN></TH>
 						<TH width="75%" class="DataGrid_Header_Cell_Amount">&nbsp;</TD>
                       </tr>
-                      <div id="reportAll2"></div>
-                    </div>
+                      <div id="sectionDetailTotals">
+                        <tr class="DataGrid_Body_Row">
+                          <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold">SUMA Y SIGUE</span></th>
+                          <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalDebit2"></span></th>
+                          <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalCredit2"></span></th>
+                          <th width="15%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalTotal2"></span></th>
+                          <th width="75%" class="DataGrid_Header_Cell_Amount"></th>
+                        </tr>
+                      </div>                    </div>
                   </table>
                   <div style="height:15px;" />
                 </div>

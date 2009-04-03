@@ -93,8 +93,13 @@
 	<FUNCTION id="fieldTotalCrAdded" name="ADD" arg1="fieldTotalCredit" arg2="fieldTotalacctcrSum" format="euroInform"/>
 	<FUNCTION id="fieldTotalSubAdded" name="SUBTRACT" arg1="fieldTotalDrAdded" arg2="fieldTotalCrAdded" format="euroInform"/>
 
-    <SUBREPORT id="reportTotals" name="reportTotals" report="org/openbravo/erpCommon/ad_reports/Totals"></SUBREPORT>
-    <SUBREPORT id="reportAll" name="reportAll" report="org/openbravo/erpCommon/ad_reports/Totals"></SUBREPORT>
+    <FIELD id="fieldSubreportPreviousDebit" format="euroInform">previousdebit</FIELD>
+    <FIELD id="fieldSubreportPreviousCredit" format="euroInform">previouscredit</FIELD>
+    <FIELD id="fieldSubreportPreviousTotal" format="euroInform">previoustotal</FIELD>
+
+    <FIELD id="totalDebit" format="euroInform">finaldebit</FIELD>
+    <FIELD id="totalCredit" format="euroInform">finalcredit</FIELD>
+    <FIELD id="totalTotal" format="euroInform">finaltotal</FIELD>
 
     <SUBREPORT id="reportC_ELEMENTVALUEFROM" name="reportC_ELEMENTVALUEFROM" report="org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="parameterListSelected" withId="paramC_ELEMENTVALUE_IDFROM"/>
@@ -153,8 +158,13 @@
 	<FUNCTION id="fieldTotalCrAdded2" name="ADD" arg1="fieldTotalCredit2" arg2="fieldTotalacctcrSum2" format="euroInform"/>
 	<FUNCTION id="fieldTotalSubAdded2" name="SUBTRACT" arg1="fieldTotalDrAdded2" arg2="fieldTotalCrAdded2" format="euroInform"/>
 
-    <SUBREPORT id="reportTotals2" name="reportTotals2" report="org/openbravo/erpCommon/ad_reports/Totals"></SUBREPORT>
-    <SUBREPORT id="reportAll2" name="reportAll2" report="org/openbravo/erpCommon/ad_reports/Totals"></SUBREPORT>
+    <FIELD id="fieldSubreportPreviousDebit2" format="euroInform">previousdebit</FIELD>
+    <FIELD id="fieldSubreportPreviousCredit2" format="euroInform">previouscredit</FIELD>
+    <FIELD id="fieldSubreportPreviousTotal2" format="euroInform">previoustotal</FIELD>
+
+    <FIELD id="totalDebit2" format="euroInform">finaldebit</FIELD>
+    <FIELD id="totalCredit2" format="euroInform">finalcredit</FIELD>
+    <FIELD id="totalTotal2" format="euroInform">finaltotal</FIELD>
 
     <!--PARAMETER id="functionSumLine22" name="ADD" default="prueba"/-->
     <SECTION id="sectionPartner" field="partner"/>
