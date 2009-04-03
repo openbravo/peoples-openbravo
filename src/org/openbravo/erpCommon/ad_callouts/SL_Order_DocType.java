@@ -117,7 +117,7 @@ public class SL_Order_DocType extends HttpSecureAppServlet {
         InvoiceRule = (DocSubTypeSO.equals("PR") ? "I" : "D");
         DeliveryRule = "A";
         if (dataNew[0].isdocnocontrolled.equals("Y")) {
-          if (!newDocNo && !AD_Sequence_ID.equals(dataNew[0].adSequenceId))
+          if (!newDocNo && !AD_Sequence_ID.equals(dataNew[0].adSequenceId)&&!SLOrderDocTypeData.selectOldDocTypeTargetId(this,strOrder).equalsIgnoreCase(strDocTypeTarget))
             newDocNo = true;
           if (newDocNo) {
             if (vars.getRole().equalsIgnoreCase("System")
