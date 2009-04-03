@@ -1039,6 +1039,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         reportId = UUID.randomUUID();
         saveReport(variables, jasperPrint, exportParameters, strFileName + "-" + (reportId) + "."
             + strOutputType);
+        response.setHeader("Content-disposition", "inline" + "; filename=" + strFileName + "-"
+            + (reportId) + ".html");
         printPagePopUpDownload(response.getOutputStream(), strFileName + "-" + (reportId) + "."
             + strOutputType);
       } else {
