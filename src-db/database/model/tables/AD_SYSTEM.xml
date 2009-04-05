@@ -61,7 +61,7 @@
         <default><![CDATA[1]]></default>
         <onCreateDefault/>
       </column>
-      <column name="TAD_THEME" primaryKey="false" required="false" type="VARCHAR" size="25" autoIncrement="false">
+      <column name="TAD_THEME" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
