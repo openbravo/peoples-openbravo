@@ -97,7 +97,7 @@
         linestable.style.height = ((mnu.clientHeight - (filtertable?filtertable.clientHeight:0) - (addtable?addtable.clientHeight:0))/2)-1;
         selectedtable.style.height = (mnu.clientHeight - (filtertable?filtertable.clientHeight:0) - (addtable?addtable.clientHeight:0))/2;
         var filtertablew = document.getElementById("filtertablew");
-        linestable.style.width = filtertablew.clientWidth + 14;
+        linestable.style.width = filtertablew.clientWidth + 42;
         selectedtable.style.width = filtertablew.clientWidth + 14;
       }
 
@@ -389,7 +389,7 @@
                           </tr>
                         </table>
                       </div>
-                        <div id="linestable">
+                        <div id="linestable" style="overflow: auto;">
                           <table class="Main_Client_TableEdition">
                             <tr>
                               <td>
