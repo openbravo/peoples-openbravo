@@ -30,6 +30,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
@@ -69,7 +70,7 @@ public class ReportCashJR extends HttpSecureAppServlet {
     } else {
       data = ReportCashJRData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
           "#User_Client", "ReportCashJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportCashJR"), strDateFrom, strCashbook, strDateTo);
+          "ReportCashJR"), strDateFrom, strCashbook, DateTimeData.nDaysAfter(this, strDateTo, "1"));
 
       String strReportPath = "@basedesign@"
           + "/org/openbravo/erpCommon/ad_reports/ReportCashJR.jrxml";
@@ -79,18 +80,6 @@ public class ReportCashJR extends HttpSecureAppServlet {
       parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client", "ReportBankJR"));
       renderJR(vars, response, strReportPath, "html", parameters, data, null);
     }
-
-    /*
-     * xmlDocument =xmlEngine.readXmlTemplate( "org/openbravo/erpCommon/ad_reports/ReportCashJREdit"
-     * ).createXmlDocument(); data = ReportCashJRData.select(this, vars.getLanguage(),
-     * Utility.getContext(this, vars, "#User_Client", "ReportCashJR"), Utility.getContext(this,
-     * vars, "#AccessibleOrgTree", "ReportCashJR"), strDateFrom, DateTimeData.nDaysAfter(this,
-     * strDateTo,"1"), strCashbook); xmlDocument.setParameter("sumAmount",
-     * ReportCashJRData.BeginningBalance(this, Utility.getContext(this, vars, "#User_Client",
-     * "ReportCashJR"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashJR"), strDateFrom,
-     * strCashbook)); xmlDocument.setData("structure1", data); out.println(xmlDocument.print());
-     * out.close();
-     */
 
   }
 
