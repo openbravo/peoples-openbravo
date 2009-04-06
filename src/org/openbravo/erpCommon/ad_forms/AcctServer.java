@@ -256,7 +256,7 @@ public abstract class AcctServer {
   }
 
   public void run(VariablesSecureApp vars) throws IOException, ServletException {
-    AD_Client_ID = vars.getClient();
+    if (AD_Client_ID.equals("")) AD_Client_ID = vars.getClient();
     try {
       Connection con = connectionProvider.getTransactionConnection();
       String strIDs = "";
