@@ -234,14 +234,6 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
     xmlDocument.setParameter("mProduct", strmProductId);
 
-    if (strmProductId.equals("")) {
-      data = new ReportProductMovementData[0];
-    } else {
-      data = ReportProductMovementData.select(this, vars.getLanguage(), Utility.getContext(this,
-          vars, "#AccessibleOrgTree", "ReportProductMovement"), Utility.getContext(this, vars,
-          "#User_Client", "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(this,
-          strDateTo, "1"), strcBpartnerId, strmProductId, strmAttributesetinstanceId);
-    }
     xmlDocument.setData("reportM_ATTRIBUTESETINSTANCE_ID", "liststructure",
         AttributeSetInstanceComboData.select(this, vars.getLanguage(), strmProductId, Utility
             .getContext(this, vars, "#User_Client", "ReportProductMovement"), Utility.getContext(
