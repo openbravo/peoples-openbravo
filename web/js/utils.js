@@ -2606,7 +2606,7 @@ function formElementValue(form, ElementName, Value) {
           }
         }
         if (!hasMultiSelect) obj.selectedIndex = index;
-      } else Value = fillCombo(obj, Value, true, ((obj.className.toUpperCase().indexOf("REQUIRED")!=-1) || obj.className.toUpperCase().indexOf("KEY")!=-1 || (obj.className.toUpperCase().indexOf("READONLY")!=-1)));
+      } else Value = fillCombo(obj, Value, true, ((obj.className.toUpperCase().indexOf("REQUIRED")!=-1) || obj.className.toUpperCase().indexOf("KEY")!=-1));
     } else if (obj.type.toUpperCase().indexOf("CHECKBOX")!=-1) {
       selectCheckbox(obj, Value);
     } else if (obj.type.toUpperCase().indexOf("RADIO")!=-1 || obj.type.toUpperCase().indexOf("CHECK")!=-1) {
