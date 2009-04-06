@@ -37,6 +37,43 @@ public class DocDPManagement extends AcctServer {
   private String SeqNo = "0";
 
   /**
+   * @return the log4j
+   */
+  public static Logger getLog4j() {
+    return log4j;
+  }
+
+  /**
+   * @param log4j
+   *          the log4j to set
+   */
+  public static void setLog4j(Logger log4j) {
+    DocDPManagement.log4j = log4j;
+  }
+
+  /**
+   * @return the seqNo
+   */
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  /**
+   * @param seqNo
+   *          the seqNo to set
+   */
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
+
+  /**
    * Constructor
    * 
    * @param AD_Client_ID
@@ -124,6 +161,20 @@ public class DocDPManagement extends AcctServer {
    */
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
+    // Select specific definition
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    if (!strClassname.equals("")) {
+      try {
+        DocDPManagementTemplate newTemplate = (DocDPManagementTemplate) Class.forName(strClassname)
+            .newInstance();
+        return newTemplate.createFact(this, as, conn, con, vars);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     log4j.debug("createFact - Inicio");
     // create Fact Header
     Fact fact = null;

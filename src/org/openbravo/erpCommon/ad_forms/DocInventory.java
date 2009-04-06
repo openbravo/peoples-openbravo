@@ -135,6 +135,20 @@ public class DocInventory extends AcctServer {
    */
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
+    // Select specific definition
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    if (!strClassname.equals("")) {
+      try {
+        DocInventoryTemplate newTemplate = (DocInventoryTemplate) Class.forName(strClassname)
+            .newInstance();
+        return newTemplate.createFact(this, as, conn, con, vars);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     // Log.trace(Log.l4_Data, "Doc.Inventory.createFact");
     C_Currency_ID = as.getC_Currency_ID();
     // create Fact Header
@@ -172,6 +186,43 @@ public class DocInventory extends AcctServer {
     SeqNo = "0";
     return fact;
   } // createFact
+
+  /**
+   * @return the log4jDocInventory
+   */
+  public static Logger getLog4jDocInventory() {
+    return log4jDocInventory;
+  }
+
+  /**
+   * @param log4jDocInventory
+   *          the log4jDocInventory to set
+   */
+  public static void setLog4jDocInventory(Logger log4jDocInventory) {
+    DocInventory.log4jDocInventory = log4jDocInventory;
+  }
+
+  /**
+   * @return the seqNo
+   */
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  /**
+   * @param seqNo
+   *          the seqNo to set
+   */
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
 
   public String nextSeqNo(String oldSeqNo) {
     log4jDocInventory.debug("DocInventory - oldSeqNo = " + oldSeqNo);

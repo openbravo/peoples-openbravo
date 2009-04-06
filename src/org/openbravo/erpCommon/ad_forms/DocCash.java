@@ -30,6 +30,44 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class DocCash extends AcctServer {
   private static final long serialVersionUID = 1L;
+
+  /**
+   * @return the log4jDocCash
+   */
+  public static Logger getLog4jDocCash() {
+    return log4jDocCash;
+  }
+
+  /**
+   * @param log4jDocCash
+   *          the log4jDocCash to set
+   */
+  public static void setLog4jDocCash(Logger log4jDocCash) {
+    DocCash.log4jDocCash = log4jDocCash;
+  }
+
+  /**
+   * @return the seqNo
+   */
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  /**
+   * @param seqNo
+   *          the seqNo to set
+   */
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
+
   static Logger log4jDocCash = Logger.getLogger(DocCash.class);
 
   private String SeqNo = "0";
@@ -194,7 +232,19 @@ public class DocCash extends AcctServer {
       log4jDocCash.warn("createFact - C_CashBook_ID not set");
       return null;
     }
-
+    // Select specific definition
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    if (!strClassname.equals("")) {
+      try {
+        DocCashTemplate newTemplate = (DocCashTemplate) Class.forName(strClassname).newInstance();
+        return newTemplate.createFact(this, as, conn, con, vars);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     // create Fact Header
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();

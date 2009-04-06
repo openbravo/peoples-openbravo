@@ -138,7 +138,7 @@ public class DocPayment extends AcctServer {
    * <pre>
    * 
    *  Flow:
-   *    1. Currency conversion variations 
+   *    1. Currency conversion variations
    *    2. Non manual DPs in settlement
    *       2.1 Cancelled
    *       2.2 Generated
@@ -156,6 +156,20 @@ public class DocPayment extends AcctServer {
    */
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
+    // Select specific definition
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    if (!strClassname.equals("")) {
+      try {
+        DocPaymentTemplate newTemplate = (DocPaymentTemplate) Class.forName(strClassname)
+            .newInstance();
+        return newTemplate.createFact(this, as, conn, con, vars);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     if (log4j.isDebugEnabled())
       log4j.debug("DocPayment - createFact - p_lines.length - " + p_lines.length);
     Fact fact = new Fact(this, as, Fact.POST_Actual);
@@ -324,6 +338,65 @@ public class DocPayment extends AcctServer {
     if (log4j.isDebugEnabled())
       log4j.debug("DocPayment - createFact - finish");
     return fact;
+  }
+
+  /**
+   * @return the log4j
+   */
+  public static Logger getLog4j() {
+    return log4j;
+  }
+
+  /**
+   * @param log4j
+   *          the log4j to set
+   */
+  public static void setLog4j(Logger log4j) {
+    DocPayment.log4j = log4j;
+  }
+
+  /**
+   * @return the seqNo
+   */
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  /**
+   * @param seqNo
+   *          the seqNo to set
+   */
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  /**
+   * @return the settlementType
+   */
+  public String getSettlementType() {
+    return SettlementType;
+  }
+
+  /**
+   * @param settlementType
+   *          the settlementType to set
+   */
+  public void setSettlementType(String settlementType) {
+    SettlementType = settlementType;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
+
+  /**
+   * @return the zERO
+   */
+  public static BigDecimal getZERO() {
+    return ZERO;
   }
 
   public String convertAmount(String Amount, boolean isReceipt, String DateAcct,
