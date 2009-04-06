@@ -81,6 +81,7 @@
     <FIELD id="fieldDebtGenerate">debtgenerate</FIELD>
     <FIELD id="fieldStatus">status</FIELD>
     <FIELD id="fieldDpStatus">dpstatus</FIELD>
+    <FIELD id="fieldSalesRepName">salesrepname</FIELD>
     <FIELD id="fieldPaid">ispaid</FIELD>
     <FIELD id="idfieldCInvoiceId" attribute="onclick" replace="xx">cInvoiceId</FIELD>
     <FIELD id="idfieldCInvoiceId" attribute="onclick" replace="yy">invoiceType</FIELD>
@@ -117,6 +118,7 @@
     <FIELD id="fieldDebtGenerate2">debtgenerate</FIELD>
     <FIELD id="fieldStatus2">status</FIELD>
     <FIELD id="fieldDpStatus2">dpstatus</FIELD>
+    <FIELD id="fieldSalesRepName2">salesrepname</FIELD>
     <FIELD id="fieldPaid2">ispaid</FIELD>
     <FIELD id="idfieldCInvoiceId2" attribute="onclick" replace="xx">cInvoiceId</FIELD>
     <FIELD id="idfieldCInvoiceId2" attribute="onclick" replace="yy">invoiceType</FIELD>
