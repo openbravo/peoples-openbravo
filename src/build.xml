@@ -439,14 +439,14 @@ build.war: build a war file in the lib directory.
       <fileset dir="${base.modules}">
         <include name="*/web/*/**/skins/**" />
       </fileset>
-      <mapper type="regexp" from="(.*)(\${file.separator}web)(.*)" to="\3" />
+      <mapper type="regexp" from="(.*)(\${file.separator}web)(.*\${file.separator})(skins\${file.separator})(.*)" to="\3\5" />
     </copy>
 
     <copy todir="${base.context}/web/skins/rtl" encoding="UTF-8">
       <fileset dir="${base.modules}">
         <include name="*/web/*/**/skins/**" />
       </fileset>
-      <mapper type="regexp" from="(.*)(\${file.separator}web)(.*)" to="\3" />
+      <mapper type="regexp" from="(.*)(\${file.separator}web)(.*\${file.separator})(skins\${file.separator})(.*)" to="\3\5" />
     </copy>
 
     <java classname="org.openbravo.translate.RTLSkin" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
