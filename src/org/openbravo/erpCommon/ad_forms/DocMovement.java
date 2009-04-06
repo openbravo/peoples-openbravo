@@ -124,6 +124,20 @@ public class DocMovement extends AcctServer {
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     C_Currency_ID = as.getC_Currency_ID();
+    // Select specific definition
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    if (!strClassname.equals("")) {
+      try {
+        DocMovementTemplate newTemplate = (DocMovementTemplate) Class.forName(strClassname)
+            .newInstance();
+        return newTemplate.createFact(this, as, conn, con, vars);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     // create Fact Header
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
@@ -155,6 +169,43 @@ public class DocMovement extends AcctServer {
     SeqNo = "0";
     return fact;
   } // createFact
+
+  /**
+   * @return the log4jDocMovement
+   */
+  public static Logger getLog4jDocMovement() {
+    return log4jDocMovement;
+  }
+
+  /**
+   * @param log4jDocMovement
+   *          the log4jDocMovement to set
+   */
+  public static void setLog4jDocMovement(Logger log4jDocMovement) {
+    DocMovement.log4jDocMovement = log4jDocMovement;
+  }
+
+  /**
+   * @return the seqNo
+   */
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  /**
+   * @param seqNo
+   *          the seqNo to set
+   */
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
 
   public String nextSeqNo(String oldSeqNo) {
     log4jDocMovement.debug("DocMovement - oldSeqNo = " + oldSeqNo);

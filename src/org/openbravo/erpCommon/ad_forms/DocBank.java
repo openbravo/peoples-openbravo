@@ -32,6 +32,43 @@ public class DocBank extends AcctServer {
   private static final long serialVersionUID = 1L;
   static Logger log4jDocBank = Logger.getLogger(DocBank.class);
 
+  /**
+   * @return the log4jDocBank
+   */
+  public static Logger getLog4jDocBank() {
+    return log4jDocBank;
+  }
+
+  /**
+   * @param log4jDocBank
+   *          the log4jDocBank to set
+   */
+  public static void setLog4jDocBank(Logger log4jDocBank) {
+    DocBank.log4jDocBank = log4jDocBank;
+  }
+
+  /**
+   * @return the seqNo
+   */
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  /**
+   * @param seqNo
+   *          the seqNo to set
+   */
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
+
   private String SeqNo = "0";
 
   /**
@@ -178,6 +215,19 @@ public class DocBank extends AcctServer {
    */
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
+    // Select specific definition
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    if (!strClassname.equals("")) {
+      try {
+        DocBankTemplate newTemplate = (DocBankTemplate) Class.forName(strClassname).newInstance();
+        return newTemplate.createFact(this, as, conn, con, vars);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     log4jDocBank.debug("createFact - Inicio");
     // create Fact Header
     Fact fact = null;

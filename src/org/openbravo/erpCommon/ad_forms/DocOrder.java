@@ -32,7 +32,7 @@ public class DocOrder extends AcctServer {
   static Logger log4jDocOrder = Logger.getLogger(DocOrder.class);
 
   /** Contained Optional Tax Lines */
-  public DocTax[] m_taxes = null;
+  private DocTax[] m_taxes = null;
 
   /**
    * Constructor
@@ -191,6 +191,19 @@ public class DocOrder extends AcctServer {
    */
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
+    // Select specific definition
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    if (!strClassname.equals("")) {
+      try {
+        DocOrderTemplate newTemplate = (DocOrderTemplate) Class.forName(strClassname).newInstance();
+        return newTemplate.createFact(this, as, conn, con, vars);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     // Purchase Order
     if (DocumentType.equals(AcctServer.DOCTYPE_POrder))
       updateProductInfo(as.getC_AcctSchema_ID(), conn, con);
@@ -199,6 +212,43 @@ public class DocOrder extends AcctServer {
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     return fact;
   } // createFact
+
+  /**
+   * @return the log4jDocOrder
+   */
+  public static Logger getLog4jDocOrder() {
+    return log4jDocOrder;
+  }
+
+  /**
+   * @param log4jDocOrder
+   *          the log4jDocOrder to set
+   */
+  public static void setLog4jDocOrder(Logger log4jDocOrder) {
+    DocOrder.log4jDocOrder = log4jDocOrder;
+  }
+
+  /**
+   * @return the m_taxes
+   */
+  public DocTax[] getM_taxes() {
+    return m_taxes;
+  }
+
+  /**
+   * @param m_taxes
+   *          the m_taxes to set
+   */
+  public void setM_taxes(DocTax[] m_taxes) {
+    this.m_taxes = m_taxes;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
 
   /**
    * Update Product Info. - Costing (PriceLastPO) - PO (PriceLastPO)

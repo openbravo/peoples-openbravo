@@ -160,6 +160,20 @@ public class DocGLJournal extends AcctServer {
    */
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
+    // Select specific definition
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    if (!strClassname.equals("")) {
+      try {
+        DocGLJournalTemplate newTemplate = (DocGLJournalTemplate) Class.forName(strClassname)
+            .newInstance();
+        return newTemplate.createFact(this, as, conn, con, vars);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     // create Fact Header
     Fact fact = new Fact(this, as, m_PostingType);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
@@ -180,6 +194,58 @@ public class DocGLJournal extends AcctServer {
     SeqNo = "0";
     return fact;
   } // createFact
+
+  /**
+   * @return the log4jDocGLJournal
+   */
+  public static Logger getLog4jDocGLJournal() {
+    return log4jDocGLJournal;
+  }
+
+  /**
+   * @param log4jDocGLJournal
+   *          the log4jDocGLJournal to set
+   */
+  public static void setLog4jDocGLJournal(Logger log4jDocGLJournal) {
+    DocGLJournal.log4jDocGLJournal = log4jDocGLJournal;
+  }
+
+  /**
+   * @return the seqNo
+   */
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  /**
+   * @param seqNo
+   *          the seqNo to set
+   */
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  /**
+   * @return the m_PostingType
+   */
+  public String getM_PostingType() {
+    return m_PostingType;
+  }
+
+  /**
+   * @param postingType
+   *          the m_PostingType to set
+   */
+  public void setM_PostingType(String postingType) {
+    m_PostingType = postingType;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
 
   public String nextSeqNo(String oldSeqNo) {
     log4jDocGLJournal.debug("DocGLJournal - oldSeqNo = " + oldSeqNo);

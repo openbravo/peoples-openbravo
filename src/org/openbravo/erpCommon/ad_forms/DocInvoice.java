@@ -32,8 +32,8 @@ public class DocInvoice extends AcctServer {
   private static final long serialVersionUID = 1L;
   static Logger log4jDocInvoice = Logger.getLogger(DocInvoice.class);
 
-  private DocTax[] m_taxes = null;
-  private String SeqNo = "0";
+  DocTax[] m_taxes = null;
+  String SeqNo = "0";
 
   /**
    * Constructor
@@ -105,6 +105,58 @@ public class DocInvoice extends AcctServer {
     list.toArray(dl);
     return dl;
   } // loadLines
+
+  /**
+   * @return the log4jDocInvoice
+   */
+  public static Logger getLog4jDocInvoice() {
+    return log4jDocInvoice;
+  }
+
+  /**
+   * @param log4jDocInvoice
+   *          the log4jDocInvoice to set
+   */
+  public static void setLog4jDocInvoice(Logger log4jDocInvoice) {
+    DocInvoice.log4jDocInvoice = log4jDocInvoice;
+  }
+
+  /**
+   * @return the m_taxes
+   */
+  public DocTax[] getM_taxes() {
+    return m_taxes;
+  }
+
+  /**
+   * @param m_taxes
+   *          the m_taxes to set
+   */
+  public void setM_taxes(DocTax[] m_taxes) {
+    this.m_taxes = m_taxes;
+  }
+
+  /**
+   * @return the seqNo
+   */
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  /**
+   * @param seqNo
+   *          the seqNo to set
+   */
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
 
   private DocTax[] loadTaxes() {
     ArrayList<Object> list = new ArrayList<Object>();
@@ -195,6 +247,20 @@ public class DocInvoice extends AcctServer {
    */
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
+    // Select specific definition
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    if (!strClassname.equals("")) {
+      try {
+        DocInvoiceTemplate newTemplate = (DocInvoiceTemplate) Class.forName(strClassname)
+            .newInstance();
+        return newTemplate.createFact(this, as, conn, con, vars);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     log4jDocInvoice.debug("Starting create fact");
     // create Fact Header
     Fact fact = new Fact(this, as, Fact.POST_Actual);
@@ -407,7 +473,7 @@ public class DocInvoice extends AcctServer {
    * @param C_AcctSchema_ID
    *          accounting schema
    */
-  private void updateProductInfo(String C_AcctSchema_ID, ConnectionProvider conn, Connection con) {
+  public void updateProductInfo(String C_AcctSchema_ID, ConnectionProvider conn, Connection con) {
     log4jDocInvoice.debug("updateProductInfo - C_Invoice_ID=" + this.Record_ID);
 
     /**
