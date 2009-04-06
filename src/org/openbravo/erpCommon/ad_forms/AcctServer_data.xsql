@@ -30,7 +30,7 @@
         SELECT  a.C_INVOICE_ID AS ID, '' AS DOCBASETYPE, '' AS GL_CATEGORY_ID, '' AS AD_CLIENT_ID, '' AS AD_ORG_ID, '' AS ISACTIVE,
         '' AS CREATED, '' AS CREATEDBY, '' AS UPDATED, '' AS UPDATEDBY, '' AS ISSOTRX, '' AS DOCUMENTNO, '' AS DOCSTATUS,
         '' AS DOCACTION, '' AS PROCESSING, '' AS PROCESSED, '' AS POSTED, '' AS C_DOCTYPE_ID, '' AS C_DOCTYPETARGET_ID,
-        '' AS C_ORDER_ID, '' AS DESCRIPTION, '' AS ISTRANSFERRED, '' AS ISPRINTED, '' AS SALESREP_ID, 
+        '' AS C_ORDER_ID, '' AS DESCRIPTION, '' AS ISTRANSFERRED, '' AS ISPRINTED, '' AS SALESREP_ID,
         '' AS DATEINVOICED, '' AS DATEPRINTED, '' AS DATEACCT, '' AS C_BPARTNER_ID, '' AS C_BPARTNER_LOCATION_ID, '' AS POREFERENCE,
         '' AS ISDISCOUNTPRINTED, '' AS DATEORDERED, '' AS C_CURRENCY_ID, '' AS PAYMENTRULE, '' AS C_PAYMENTTERM_ID,
         '' AS C_CHARGE_ID, '' AS CHARGEAMT, '' AS TOTALLINES, '' AS GRANDTOTAL, '' AS M_PRICELIST_ID, '' AS ISTAXINCLUDED,
@@ -41,9 +41,9 @@
         FROM C_INVOICE a, ad_org WHERE a.AD_CLIENT_ID=?
         AND ad_org.ad_org_id=a.ad_org_id
         AND AD_ISORGINCLUDED(ad_org.ad_org_id, ?, ad_org.ad_client_id)<>-1
-        AND PROCESSED='Y' 
+        AND PROCESSED='Y'
         AND (PROCESSING='N' OR PROCESSING IS NULL)
-        AND POSTED='N' 
+        AND POSTED='N'
         ORDER BY a.CREATED) A
      ]]>
      </Sql>
@@ -57,10 +57,10 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE DUAL SET Processing='Y' 
+        UPDATE DUAL SET Processing='Y'
         WHERE CLAVE_ID = ?
         AND Processed='Y'
-        AND (Processing='N' OR Processing IS NULL) 
+        AND (Processing='N' OR Processing IS NULL)
         AND Posted='N'
      ]]>
      </Sql>
@@ -112,7 +112,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        INSERT INTO AD_Note (AD_Note_ID,AD_Client_ID,AD_Org_ID,IsActive, Created,CreatedBy,Updated,UpdatedBy, 
+        INSERT INTO AD_Note (AD_Note_ID,AD_Client_ID,AD_Org_ID,IsActive, Created,CreatedBy,Updated,UpdatedBy,
         AD_Message_ID,Text,Reference, AD_User_ID,AD_Table_ID,Record_ID,Processed)
         SELECT ?,?,?, 'Y',now(),?,now(),0,
                AD_Message_ID,?,?,?,?,?,'N'
@@ -124,11 +124,11 @@
         <Parameter name="org"/>
         <Parameter name="user"/>
         <Parameter name="text"/>
-        <Parameter name="reference"/>    
+        <Parameter name="reference"/>
         <Parameter name="user"/>
         <Parameter name="table"/>
         <Parameter name="Record"/>
-        <Parameter name="messageValue"/>     
+        <Parameter name="messageValue"/>
      </SqlMethod>
    <SqlMethod name="currencyConvert" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -170,7 +170,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE DUAL SET Processing='N' 
+        UPDATE DUAL SET Processing='N'
         WHERE CLAVE_ID = ?
      ]]>
      </Sql>
@@ -225,13 +225,13 @@
       <![CDATA[
         SELECT m1.AD_Client_ID,m2.AD_Org_ID,m1.C_InvoiceLine_ID,m2.M_InOutLine_ID,m1.M_Product_ID,
         m1.DateTrx as datetrx1,m2.DateTrx as datetrx2, m1.Qty as qty1, m2.Qty as qty2
-        FROM M_MatchPO m1, M_MatchPO m2 
+        FROM M_MatchPO m1, M_MatchPO m2
         WHERE m1.C_OrderLine_ID=m2.C_OrderLine_ID
         AND m1.M_InOutLine_ID IS NULL
         AND m2.C_InvoiceLine_ID IS NULL
         AND m1.M_Product_ID=m2.M_Product_ID
         AND m1.AD_Client_ID=?
-        AND NOT EXISTS (SELECT * FROM M_MatchInv mi 
+        AND NOT EXISTS (SELECT * FROM M_MatchInv mi
         WHERE mi.C_InvoiceLine_ID=m1.C_InvoiceLine_ID AND mi.M_InOutLine_ID=m2.M_InOutLine_ID)
      ]]>
      </Sql>
@@ -241,8 +241,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        INSERT INTO M_MatchInv (M_MatchInv_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy, 
-        M_InOutLine_ID,C_InvoiceLine_ID,M_Product_ID,DateTrx,Qty, Processing,Processed,Posted) 
+        INSERT INTO M_MatchInv (M_MatchInv_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
+        M_InOutLine_ID,C_InvoiceLine_ID,M_Product_ID,DateTrx,Qty, Processing,Processed,Posted)
         VALUES (?,?,?,'Y',now(),0,now(),0,?,?,
         ?,TO_DATE(?),TO_NUMBER(?), 'N','Y','N')
      ]]>
@@ -358,7 +358,7 @@
    <SqlMethod name="selectDiscountExpAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT a.PayDiscount_Exp_Acct as account_ID FROM C_BP_Group_Acct a, C_BPartner bp 
+        SELECT a.PayDiscount_Exp_Acct as account_ID FROM C_BP_Group_Acct a, C_BPartner bp
         WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID=? AND a.C_AcctSchema_ID=?
         AND STATUS IS NULL
       </Sql>
@@ -368,7 +368,7 @@
    <SqlMethod name="selectDiscountRevAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT PayDiscount_Rev_Acct as account_ID FROM C_BP_Group_Acct a, C_BPartner bp 
+        SELECT PayDiscount_Rev_Acct as account_ID FROM C_BP_Group_Acct a, C_BPartner bp
         WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID=? AND a.C_AcctSchema_ID=?
         AND STATUS IS NULL
       </Sql>
@@ -378,7 +378,7 @@
    <SqlMethod name="selectWriteOffAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT WriteOff_Acct as account_ID FROM C_BP_Group_Acct a, C_BPartner bp 
+        SELECT WriteOff_Acct as account_ID FROM C_BP_Group_Acct a, C_BPartner bp
         WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID=? AND a.C_AcctSchema_ID=?
         AND STATUS IS NULL
       </Sql>
@@ -510,10 +510,10 @@
    <SqlMethod name="selectTables" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-     SELECT DISTINCT(AD_Table.AD_Table_ID) as id, 
-               (case when ad_table.po_window_id is null then '' else ad_column_identifier('AD_Window',TO_CHAR(ad_table.po_window_id),?) end)||(case when ad_table.po_window_id is null then '' else ' - ' end)||ad_column_identifier('AD_Window',TO_CHAR(ad_table.ad_window_id),?) as name  
-        FROM AD_TABLE, C_ACCTSCHEMA_TABLE  
-       WHERE AD_TABLE.AD_TABLE_ID = C_ACCTSCHEMA_TABLE.AD_TABLE_ID         
+     SELECT DISTINCT(AD_Table.AD_Table_ID) as id,
+               (case when ad_table.po_window_id is null then '' else ad_column_identifier('AD_Window',TO_CHAR(ad_table.po_window_id),?) end)||(case when ad_table.po_window_id is null then '' else ' - ' end)||ad_column_identifier('AD_Window',TO_CHAR(ad_table.ad_window_id),?) as name
+        FROM AD_TABLE, C_ACCTSCHEMA_TABLE
+       WHERE AD_TABLE.AD_TABLE_ID = C_ACCTSCHEMA_TABLE.AD_TABLE_ID
          AND AD_TABLE.ISACTIVE = 'Y'
          AND C_ACCTSCHEMA_TABLE.ISACTIVE = 'Y'
          AND C_ACCTSCHEMA_TABLE.AD_CLIENT_ID IN ('1')
@@ -521,19 +521,19 @@
       </Sql>
       <Parameter name="language"/>
       <Parameter name="language"/>
-      <Parameter name="adUserClient" type="replace" optional="true" after="C_ACCTSCHEMA_TABLE.AD_CLIENT_ID IN (" text="'1'"/>      
+      <Parameter name="adUserClient" type="replace" optional="true" after="C_ACCTSCHEMA_TABLE.AD_CLIENT_ID IN (" text="'1'"/>
    </SqlMethod>
-   
+
    <SqlMethod name="selectOrganizations" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       	SELECT AD_Org.AD_Org_ID as ID, AD_Org.Name
       	FROM AD_Org, AD_OrgType
       	WHERE AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
-      	AND (IsLegalEntity='Y' OR IsBusinessUnit='Y') 
+      	AND (IsLegalEntity='Y' OR IsBusinessUnit='Y')
       	AND AD_Org.AD_Client_ID IN ('1')
       </Sql>
-      <Parameter name="adUserClient" type="replace" optional="true" after="AD_Org.AD_Client_ID IN (" text="'1'"/>      
+      <Parameter name="adUserClient" type="replace" optional="true" after="AD_Org.AD_Client_ID IN (" text="'1'"/>
    </SqlMethod>
    <SqlMethod name="selectDocuments" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -568,7 +568,7 @@
    <SqlMethod name="selectDocTypes" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-      select docbasetype as name from c_doctype 
+      select docbasetype as name from c_doctype
       where ad_table_id = ?
       and ad_client_id = ?
       </Sql>
@@ -628,5 +628,30 @@
 		WHERE C_ACCTSCHEMA_ID = ?
       </Sql>
       <Parameter name="cAcctschemaId"/>
+   </SqlMethod>
+   <SqlMethod name="selectTemplate" type="preparedStatement" return="string" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT CLASSNAME
+        FROM C_ACCTSCHEMA_TABLE, AD_CREATEFACT_TEMPLATE
+        WHERE C_ACCTSCHEMA_TABLE.AD_CREATEFACT_TEMPLATE_ID = AD_CREATEFACT_TEMPLATE.AD_CREATEFACT_TEMPLATE_ID
+        AND C_ACCTSCHEMA_ID = ?
+        AND C_ACCTSCHEMA_TABLE.AD_TABLE_ID = ?
+      </Sql>
+      <Parameter name="cAcctschemaId"/>
+      <Parameter name="adTableId"/>
+   </SqlMethod>
+   <SqlMethod name="selectTemplateDoc" type="preparedStatement" return="string" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      SELECT AD_CREATEFACT_TEMPLATE.CLASSNAME
+      FROM C_ACCTSCHEMA_TABLE, C_ACCTSCHEMA_TABLE_DOCTYPE, AD_CREATEFACT_TEMPLATE
+      WHERE C_ACCTSCHEMA_TABLE_DOCTYPE.AD_CREATEFACT_TEMPLATE_ID = AD_CREATEFACT_TEMPLATE.AD_CREATEFACT_TEMPLATE_ID
+      AND C_ACCTSCHEMA_TABLE.C_ACCTSCHEMA_TABLE_ID = C_ACCTSCHEMA_TABLE_DOCTYPE.C_ACCTSCHEMA_TABLE_ID
+      AND C_ACCTSCHEMA_TABLE.C_ACCTSCHEMA_ID = ?
+      AND C_ACCTSCHEMA_TABLE_DOCTYPE.DOCBASETYPE = ?
+      </Sql>
+      <Parameter name="cAcctschemaId"/>
+      <Parameter name="docbasetype"/>
    </SqlMethod>
   </SqlClass>
