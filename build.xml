@@ -50,7 +50,7 @@ preinstall.complete: deprecated.
 install: deprecated.
 deploy.context: deploy the context into Tomcat using the manager
 install.source: install the ERP from sources (from subversion).
-eclipse.install.source: install the ERP from sources for eclipse (from subversion).
+eclipse.install.source: install the ERP from sources for eclipse (from Mercurial).
 create.database: refer to create.database target of database.
 update.database: refer to update.database target of database.
 create.database.structure: refer to create.database.structure target of database.
@@ -472,9 +472,19 @@ compare.database.structure: refer to compare.database.structure target of databa
 		-->
   </target>
 
-  <target name="eclipse.install.source">
-    <antcall target="install.source" />
-    <eclipse.refreshLocal resource="openbravo" depth="infinite" />
+  <target name="eclipse.install.source" depends="init,code.rev">
+    <antcall target="database.lib" />
+    <antcall target="create.database" />
+    <eclipse.incrementalBuild project="OpenbravoCore" kind="full"/>
+    <antcall target="eclipse.wad.lib"/>
+    <antcall target="eclipse.trl.lib"/>
+    <antcall target="eclipse.compile.complete"/>
+    <echo message="applying modules" />
+    <taskdef name="applyModule" classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" />
+    <antcall target="import.sample.data" />
   </target>
 
   <target name="create.database" depends="init,code.rev, core.lib">
