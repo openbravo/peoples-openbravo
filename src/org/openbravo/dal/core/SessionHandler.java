@@ -110,9 +110,9 @@ public class SessionHandler implements OBNotSingleton {
    */
   public void save(Object obj) {
     if (Identifiable.class.isAssignableFrom(obj.getClass())) {
-      session.save(((Identifiable) obj).getEntityName(), obj);
+      session.saveOrUpdate(((Identifiable) obj).getEntityName(), obj);
     } else {
-      session.save(obj);
+      session.saveOrUpdate(obj);
     }
   }
 

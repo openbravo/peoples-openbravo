@@ -182,7 +182,10 @@ public class DalMappingGenerator implements OBSingleton {
     // sb.append(" not-null=\"true\"");
     // }
 
-    if (!p.isUpdatable() || p.isInactive()) {
+    // ignoring isUpdatable for now as this is primarily used 
+    // for ui and not for background processes
+    // if (!p.isUpdatable() || p.isInactive()) {
+    if (p.isInactive()) {
       sb.append(" update=\"false\"");
     }
     if (p.isInactive()) {
