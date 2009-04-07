@@ -29,7 +29,7 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --  Record Info
-    v_Version NUMBER;
+    v_Version VARCHAR2(32);
     v_ProcessPlanVersion_ID VARCHAR2(32);
     v_Client_ID VARCHAR2(32);
     v_Org_ID VARCHAR2(32);
@@ -70,7 +70,7 @@
       v_Org_ID:=Cur_Parameter.AD_Org_ID;
       v_Client_ID:=Cur_Parameter.AD_Client_ID;
       IF(Cur_Parameter.ParameterName='MA_Processplan_Version_ID') THEN
-        v_Version:=Cur_Parameter.P_Number;
+        v_Version:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  Version=' || v_Version) ;
       END IF;
     END LOOP; --  Get Parameter
