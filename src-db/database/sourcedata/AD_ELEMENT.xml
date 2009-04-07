@@ -5726,10 +5726,14 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1025-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1025-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1025-->  <COLUMNNAME><![CDATA[M_InOut_ID]]></COLUMNNAME>
-<!--1025-->  <NAME><![CDATA[Shipment/Receipt]]></NAME>
-<!--1025-->  <PRINTNAME><![CDATA[Shipment/Receipt]]></PRINTNAME>
-<!--1025-->  <DESCRIPTION><![CDATA[The document number for identifying an act of sending or receiving goods.]]></DESCRIPTION>
-<!--1025-->  <HELP><![CDATA[The Shipment / Receipt ID indicates the unique document for this shipment or receipt.]]></HELP>
+<!--1025-->  <NAME><![CDATA[Goods Shipment]]></NAME>
+<!--1025-->  <PRINTNAME><![CDATA[Goods Shipment]]></PRINTNAME>
+<!--1025-->  <DESCRIPTION><![CDATA[The document number for identifying an act of sending goods.]]></DESCRIPTION>
+<!--1025-->  <HELP><![CDATA[The Shipment ID indicates the unique document for this shipment.]]></HELP>
+<!--1025-->  <PO_NAME><![CDATA[Goods Receipt]]></PO_NAME>
+<!--1025-->  <PO_PRINTNAME><![CDATA[Goods Receipt]]></PO_PRINTNAME>
+<!--1025-->  <PO_DESCRIPTION><![CDATA[The document number for identifying an act of receiving goods.]]></PO_DESCRIPTION>
+<!--1025-->  <PO_HELP><![CDATA[The Receipt ID indicates the unique document for this receipt.]]></PO_HELP>
 <!--1025-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1025--></AD_ELEMENT>
 
