@@ -33,18 +33,23 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-
+  --In case the value is in a different module than its reference check the value
+  --starts with that module's dbprefix or in case it is a value for skins list
+  --it starts with the module's java package.
   SELECT count(*)
     INTO v_Aux
-    FROM AD_REFERENCE R, 
-         AD_PACKAGE M
+    FROM AD_REFERENCE R
    WHERE R.AD_REFERENCE_ID = :new.AD_REFERENCE_ID
-     AND R.AD_MODULE_ID = M.AD_Module_ID
      AND R.AD_MODULE_ID != :new.AD_Module_ID
      AND NOT EXISTS (SELECT 1 
                       FROM AD_MODULE_DBPREFIX P
                       WHERE P.AD_MODULE_ID = :new.AD_Module_ID 
-                      AND instr(upper(:new.value), upper(P.name)||'_') = 1);
+                      AND instr(upper(:new.value), upper(P.name)||'_') = 1)
+     AND NOT (:new.AD_REFERENCE_ID = '800102'
+             AND EXISTS (SELECT 1
+                           FROM AD_MODULE M2
+                          WHERE M2.AD_MODULE_ID = :NEW.AD_MODULE_ID
+                          AND instr(upper(:new.VALUE), upper(M2.JAVAPACKAGE))=1));
   
   IF v_Aux != 0 THEN
     RAISE_APPLICATION_ERROR(-20536, 'Names must start with its module''s DB prefix') ;
