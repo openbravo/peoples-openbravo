@@ -170,7 +170,7 @@
 	        UPDATED, UPDATEDBY, LINE, DESCRIPTION, PLANNEDQTY, M_PRODUCT_ID, M_PRODUCT_CATEGORY_ID, 
 	        PRODUCT_DESCRIPTION, PRODUCT_NAME, PRODUCT_VALUE) 
         VALUES (?,?,?,?,now(),?,
-        	now(),?,?,?,?,?,?,
+        	now(),?,TO_NUMBER(?),?,TO_NUMBER(?),?,?,
         	?,?,?)
       ]]>
     </Sql>
