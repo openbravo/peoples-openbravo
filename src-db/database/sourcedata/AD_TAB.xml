@@ -593,6 +593,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--127-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--127-->  <AD_COLUMN_ID><![CDATA[786]]></AD_COLUMN_ID>
 <!--127-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--127-->  <WHERECLAUSE><![CDATA[C_Conversion_Rate.C_Currency_ID = @C_Currency_ID@]]></WHERECLAUSE>
 <!--127-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--127-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--127-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -1389,7 +1390,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--179-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--179-->  <ISREADONLY><![CDATA[Y]]></ISREADONLY>
 <!--179-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--179-->  <WHERECLAUSE><![CDATA[M_Storage_Detail.qtyonhand <>0]]></WHERECLAUSE>
+<!--179-->  <WHERECLAUSE><![CDATA[M_Storage_Detail.qtyonhand <>0 AND M_Storage_Detail.M_Locator_ID = @M_Locator_ID@]]></WHERECLAUSE>
 <!--179-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--179-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--179-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -4565,6 +4566,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--407-->  <ISREADONLY><![CDATA[Y]]></ISREADONLY>
 <!--407-->  <AD_COLUMN_ID><![CDATA[2012]]></AD_COLUMN_ID>
 <!--407-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--407-->  <WHERECLAUSE><![CDATA[M_Product.M_Product_Category_ID = @M_Product_Category_ID@]]></WHERECLAUSE>
 <!--407-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--407-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--407-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
@@ -6533,6 +6535,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--536-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--536-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--536-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--536-->  <WHERECLAUSE><![CDATA[R_ContactInterest.R_InterestArea_ID = @R_InterestArea_ID@]]></WHERECLAUSE>
 <!--536-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--536-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--536-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
@@ -7027,6 +7030,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800009-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--800009-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800009-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--800009-->  <WHERECLAUSE><![CDATA[M_Product_Template.C_BPartner_ID = @C_BPartner_ID@]]></WHERECLAUSE>
 <!--800009-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800009-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800009-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
@@ -7142,6 +7146,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800016-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--800016-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800016-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--800016-->  <WHERECLAUSE><![CDATA[M_Rappel_Bpartner.M_Rappel_ID = @M_Rappel_ID@]]></WHERECLAUSE>
 <!--800016-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800016-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800016-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
@@ -7188,6 +7193,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800018-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--800018-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800018-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--800018-->  <WHERECLAUSE><![CDATA[M_Rappel_Invoice.M_Rappel_Bpartner_ID = @M_Rappel_Bpartner_ID@]]></WHERECLAUSE>
 <!--800018-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800018-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800018-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
@@ -11485,6 +11491,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500000-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--1000500000-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--1000500000-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--1000500000-->  <WHERECLAUSE><![CDATA[C_POC_CONFIGURATION.AD_Client_ID = @AD_Client_ID@]]></WHERECLAUSE>
 <!--1000500000-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1000500000-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1000500000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
@@ -11509,6 +11516,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500001-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--1000500001-->  <AD_COLUMN_ID><![CDATA[1000500024]]></AD_COLUMN_ID>
 <!--1000500001-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--1000500001-->  <WHERECLAUSE><![CDATA[C_POC_DOCTYPE_TEMPLATE.C_DocType_ID = @C_DocType_ID@]]></WHERECLAUSE>
 <!--1000500001-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1000500001-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1000500001-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
@@ -11999,6 +12007,7 @@ The corresponding tables have then the following setting:
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <ISTRANSLATIONTAB><![CDATA[Y]]></ISTRANSLATIONTAB>
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <WHERECLAUSE><![CDATA[AD_Module_Trl.AD_Module_ID = @AD_Module_ID@]]></WHERECLAUSE>
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
