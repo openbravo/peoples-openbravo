@@ -30,13 +30,14 @@
       	SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (
 	        SELECT bp.C_BPartner_ID, bp.VALUE, bp.NAME as name, replace(bp.NAME, '''', CHR(92) || '''') as name_hidden, 
 	        (bp.SO_CreditLimit-bp.SO_CreditUsed) AS SO_CreditAvailable, bp.SO_CreditUsed, 
-	        bp.ActualLifetimeValue, bp.URL, MAX(s.EMAIL) AS EMAIL, MAX(s.NAME) as SALESREP, bp.C_BPartner_ID || '#' || bp.NAME AS RowKey
+	        bp.ActualLifetimeValue, bp.URL, MAX(s.EMAIL) AS EMAIL, MAX(sales.NAME) as SALESREP, bp.C_BPartner_ID || '#' || bp.NAME AS RowKey
 	        FROM C_BPARTNER_LOCATION l left join AD_USER c on l.C_BPartner_Location_ID = c.C_BPartner_Location_ID
 	                                   left join C_LOCATION a on l.C_Location_ID=a.C_Location_ID
 	                                   left join C_REGION on a.C_REGION_ID = C_REGION.C_REGION_ID,
-	             C_BPARTNER bp left join  AD_USER s on bp.SALESREP_ID = s.AD_USER_ID
+	             C_BPARTNER bp left join  AD_USER s on bp.SALESREP_ID = s.c_bpartner_id 
+                               left join C_BPARTNER sales on bp.SALESREP_ID = sales.C_BPARTNER_ID
 	        WHERE bp.C_BPARTNER_ID = l.C_BPartner_ID
-	        AND COALESCE(c.IsActive, 'Y')='Y' 
+            AND COALESCE(c.IsActive, 'Y')='Y' 
 	        AND bp.IsSummary='N' 
 	        AND bp.AD_Client_ID IN ('1') 
 	        AND bp.AD_Org_ID IN ('1') 
@@ -55,8 +56,8 @@
         <Parameter name="contact" optional="true" after="AND COALESCE(l.IsActive, 'Y')='Y'"><![CDATA[AND UPPER(c.Name) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="codigoPostal" optional="true" after="AND COALESCE(l.IsActive, 'Y')='Y'"><![CDATA[AND UPPER(a.Postal) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="provincia" optional="true" after="AND COALESCE(l.IsActive, 'Y')='Y'"><![CDATA[AND UPPER(C_REGION.NAME) LIKE UPPER(?)]]></Parameter>
-        <Parameter name="clients" optional="true" type="none" after="AND COALESCE(l.IsActive, 'Y')='Y'"><![CDATA[AND ISCUSTOMER = 'Y' ]]></Parameter>
-        <Parameter name="vendors" optional="true" type="none" after="AND COALESCE(l.IsActive, 'Y')='Y'"><![CDATA[AND ISVENDOR ='Y']]></Parameter>
+        <Parameter name="clients" optional="true" type="none" after="AND COALESCE(l.IsActive, 'Y')='Y'"><![CDATA[AND bp.ISCUSTOMER = 'Y' ]]></Parameter>
+        <Parameter name="vendors" optional="true" type="none" after="AND COALESCE(l.IsActive, 'Y')='Y'"><![CDATA[AND bp.ISVENDOR ='Y']]></Parameter>
         <Parameter name="ciudad" optional="true" after="AND COALESCE(l.IsActive, 'Y')='Y'"><![CDATA[AND UPPER(a.City) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="bp.NAME" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
