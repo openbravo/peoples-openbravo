@@ -106,6 +106,8 @@ button.ButtonLink_active, button.ButtonLink_active:active, button.ButtonLink_act
   outline: none;
 }
 
+button.ButtonLink_focus::-moz-focus-inner { border: 0; }
+
 button.ButtonLink_focus, button.ButtonLink_focus:active, button.ButtonLink_focus:hover, button.ButtonLink_focus:visited, button.ButtonLink_focus:link, button.ButtonLink_focus:focus {
   background: none;
   border: 0;
