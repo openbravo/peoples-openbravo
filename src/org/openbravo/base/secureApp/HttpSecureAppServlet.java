@@ -209,16 +209,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           strWarehouse = DefaultOptionsData.defaultWarehouse(this, strUserAuth);
           if (strWarehouse == null) {
             if (!strRole.equals("0")) {
+              // enable admin mode, as normal non admin-role
+              // has no read-access to i.e. AD_OrgType
+              final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
               try {
-                // enable admin mode, as normal non admin-role
-                // has no read-access to i.e. AD_OrgType
-                OBContext.getOBContext().setInAdministratorMode(true);
 
                 strWarehouse = DefaultOptionsData.getDefaultWarehouse(this, strClient, new OrgTree(
                     this, strClient).getAccessibleTree(this, strRole).toString());
 
               } finally {
-                OBContext.getOBContext().restorePreviousAdminMode();
+                OBContext.getOBContext().setInAdministratorMode(prevMode);
               }
             } else
               strWarehouse = "";

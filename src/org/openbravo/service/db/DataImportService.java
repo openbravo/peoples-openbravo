@@ -145,7 +145,7 @@ public class DataImportService implements OBSingleton {
       final ImportResult ir = new ImportResult();
 
       boolean rolledBack = false;
-      OBContext.getOBContext().setInAdministratorMode(true);
+      final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
       try {
         // disable the triggers to prevent unexpected extra db actions
         // during import
@@ -262,7 +262,7 @@ public class DataImportService implements OBSingleton {
         t.printStackTrace(System.err);
         ir.setException(t);
       } finally {
-        OBContext.getOBContext().restorePreviousAdminMode();
+        OBContext.getOBContext().setInAdministratorMode(prevMode);
         if (rolledBack) {
           TriggerHandler.getInstance().clear();
         } else if (TriggerHandler.getInstance().isDisabled()) {
@@ -422,7 +422,7 @@ public class DataImportService implements OBSingleton {
 
       // store the ad_ref_data_loaded
       if (!isClientImport) {
-        OBContext.getOBContext().setInAdministratorMode(true);
+        final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
         try {
           for (final BaseOBObject ins : xec.getToInsert()) {
             final String originalId = xec.getEntityResolver().getOriginalId(ins);
@@ -447,7 +447,7 @@ public class DataImportService implements OBSingleton {
           }
           OBDal.getInstance().flush();
         } finally {
-          OBContext.getOBContext().restorePreviousAdminMode();
+          OBContext.getOBContext().setInAdministratorMode(prevMode);
         }
       }
     } catch (final Throwable t) {

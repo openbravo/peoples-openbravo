@@ -163,43 +163,53 @@ public class EntityResolver implements OBNotSingleton {
         data.put(getKey(entityName, id), result);
       }
 
-      // TODO: add warning if the entity is created in a different
-      // client/organization than the inputted ones
-      // Set the client and organization on the most detailed level
-      // looking at the accesslevel of the entity
-      Client setClient;
-      Organization setOrg;
-      if (entity.getAccessLevel() == AccessLevel.SYSTEM) {
-        setClient = clientZero;
-        setOrg = organizationZero;
-      } else if (entity.getAccessLevel() == AccessLevel.SYSTEM_CLIENT) {
-        setClient = client;
-        setOrg = organizationZero;
-      } else if (entity.getAccessLevel() == AccessLevel.CLIENT) {
-        setClient = client;
-        setOrg = organizationZero;
-      } else if (entity.getAccessLevel() == AccessLevel.CLIENT_ORGANIZATION) {
-        setClient = client;
-        setOrg = organization;
-      } else if (entity.getAccessLevel() == AccessLevel.ORGANIZATION) {
-        // TODO: is this correct? That it is the same as the previous
-        // one?
-        setClient = client;
-        setOrg = organization;
-      } else if (entity.getAccessLevel() == AccessLevel.ALL) {
-        setClient = client;
-        setOrg = organization;
-      } else {
-        throw new EntityXMLException("Access level " + entity.getAccessLevel() + " not supported");
-      }
-      if (entity.isClientEnabled()) {
-        result.setValue(PROPERTY_CLIENT, setClient);
-      }
-      if (entity.isOrganizationEnabled()) {
-        result.setValue(PROPERTY_ORGANIZATION, setOrg);
-      }
+      setClientOrganization(result);
     }
     return result;
+  }
+
+  protected void setClientOrganization(BaseOBObject bob) {
+
+    setClientOrganizationZero();
+
+    final Entity entity = bob.getEntity();
+
+    // TODO: add warning if the entity is created in a different
+    // client/organization than the inputted ones
+    // Set the client and organization on the most detailed level
+    // looking at the accesslevel of the entity
+    Client setClient;
+    Organization setOrg;
+    if (entity.getAccessLevel() == AccessLevel.SYSTEM) {
+      setClient = clientZero;
+      setOrg = organizationZero;
+    } else if (entity.getAccessLevel() == AccessLevel.SYSTEM_CLIENT) {
+      setClient = client;
+      setOrg = organizationZero;
+    } else if (entity.getAccessLevel() == AccessLevel.CLIENT) {
+      setClient = client;
+      setOrg = organizationZero;
+    } else if (entity.getAccessLevel() == AccessLevel.CLIENT_ORGANIZATION) {
+      setClient = client;
+      setOrg = organization;
+    } else if (entity.getAccessLevel() == AccessLevel.ORGANIZATION) {
+      // TODO: is this correct? That it is the same as the previous
+      // one?
+      setClient = client;
+      setOrg = organization;
+    } else if (entity.getAccessLevel() == AccessLevel.ALL) {
+      setClient = client;
+      setOrg = organization;
+    } else {
+      throw new EntityXMLException("Access level " + entity.getAccessLevel() + " not supported");
+    }
+    if (entity.isClientEnabled()) {
+      bob.setValue(PROPERTY_CLIENT, setClient);
+    }
+    if (entity.isOrganizationEnabled()) {
+      bob.setValue(PROPERTY_ORGANIZATION, setOrg);
+    }
+
   }
 
   // search on the basis of the access level of the entity
@@ -297,8 +307,9 @@ public class EntityResolver implements OBNotSingleton {
   // and then re-imported that it occurs multiple times.
   private List<String> getId(String id, Entity entity, String orgId) {
     final String[] searchOrgIds = getOrgIds(orgId);
+    final boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
+    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
     try {
-      OBContext.getOBContext().setInAdministratorMode(true);
       final OBCriteria<ReferenceDataStore> rdlCriteria = OBDal.getInstance().createCriteria(
           ReferenceDataStore.class);
       rdlCriteria.setFilterOnActive(false);
@@ -319,7 +330,10 @@ public class EntityResolver implements OBNotSingleton {
       }
       return result;
     } finally {
-      OBContext.getOBContext().restorePreviousAdminMode();
+      // only set back if the previous was false
+      if (!adminMode) {
+        OBContext.getOBContext().setInAdministratorMode(prevMode);
+      }
     }
   }
 

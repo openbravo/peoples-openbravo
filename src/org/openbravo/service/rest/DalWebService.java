@@ -415,8 +415,8 @@ public class DalWebService implements WebService {
     OBDal.getInstance().flush();
 
     // store the ad_ref_data_loaded
+    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
     try {
-      OBContext.getOBContext().setInAdministratorMode(true);
       for (final BaseOBObject ins : xec.getToInsert()) {
         final String originalId = xec.getEntityResolver().getOriginalId(ins);
         // completely new object, manually added to the xml
@@ -436,7 +436,7 @@ public class DalWebService implements WebService {
         OBDal.getInstance().save(rdl);
       }
     } finally {
-      OBContext.getOBContext().restorePreviousAdminMode();
+      OBContext.getOBContext().setInAdministratorMode(prevMode);
     }
     final String log = (xec.getLogMessages() != null ? xec.getLogMessages() : "")
         + (xec.getLogMessages() != null ? "\n" : "") + "Updated " + xec.getToUpdate().size()
