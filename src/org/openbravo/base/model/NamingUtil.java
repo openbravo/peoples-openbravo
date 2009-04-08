@@ -50,7 +50,6 @@ public class NamingUtil {
     reservedNames.put("transient", "trnsnt");
     reservedNames.put("case", "cse");
     reservedNames.put("char", "chr");
-    reservedNames.put("public", "pblic");
   }
 
   /**

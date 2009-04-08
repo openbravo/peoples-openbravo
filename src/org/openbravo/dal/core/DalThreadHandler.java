@@ -52,6 +52,9 @@ public abstract class DalThreadHandler extends ThreadHandler {
       }
     } finally {
       SessionHandler.deleteSessionHandler();
+      if (OBContext.getOBContext() != null) {
+        OBContext.getOBContext().setInAdministratorMode(false);
+      }
       OBContext.setOBContext((OBContext) null);
     }
   }

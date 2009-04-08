@@ -504,10 +504,7 @@ public class EntityXMLConverter implements OBNotSingleton {
           .getCodeRevision()
           + "");
     } finally {
-      // only set back if the previous was false
-      if (!adminMode) {
-        OBContext.getOBContext().setInAdministratorMode(adminMode);
-      }
+      OBContext.getOBContext().setInAdministratorMode(adminMode);
     }
   }
 

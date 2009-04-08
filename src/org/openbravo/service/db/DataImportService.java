@@ -141,11 +141,11 @@ public class DataImportService implements OBSingleton {
   public ImportResult importClientData(EntityXMLProcessor importProcessor, boolean importAuditInfo,
       Reader reader) {
     try {
-      OBContext.getOBContext().setInAdministratorMode(true);
 
       final ImportResult ir = new ImportResult();
 
       boolean rolledBack = false;
+      OBContext.getOBContext().setInAdministratorMode(true);
       try {
         // disable the triggers to prevent unexpected extra db actions
         // during import
@@ -279,8 +279,6 @@ public class DataImportService implements OBSingleton {
       return ir;
     } catch (final Exception e) {
       throw new OBException(e);
-    } finally {
-      OBContext.getOBContext().restorePreviousAdminMode();
     }
 
   }
