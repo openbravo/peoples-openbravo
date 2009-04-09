@@ -63,7 +63,7 @@
 
   v_Count NUMBER;
   v_Aux_ID VARCHAR2(32);
-  v_ParentLine NUMBER;
+  v_ParentLine VARCHAR2(32);
 
   FINISH_PROCESS BOOLEAN DEFAULT FALSE;
   --  Parameter
