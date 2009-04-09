@@ -74,7 +74,7 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
       String strShown = vars.getInGlobalVariable("inpShown",
           "ReportShipmentDimensionalAnalyzeJR|shown", "");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportShipmentDimensionalAnalyzeJR|org",
-          "0");
+          "");
       String strmWarehouseId = vars.getGlobalVariable("inpmWarehouseId",
           "ReportShipmentDimensionalAnalyzeJR|warehouse", "");
       String strsalesrepId = vars.getGlobalVariable("inpSalesrepId",
@@ -121,8 +121,7 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
       String strShown = vars.getInStringParameter("inpShown");
       String strmWarehouseId = vars.getRequestGlobalVariable("inpmWarehouseId",
           "ReportShipmentDimensionalAnalyzeJR|warehouse");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportShipmentDimensionalAnalyzeJR|org",
-          "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportShipmentDimensionalAnalyzeJR|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportShipmentDimensionalAnalyzeJR|salesrep");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
@@ -159,8 +158,7 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
       String strShown = vars.getInStringParameter("inpShown");
       String strmWarehouseId = vars.getRequestGlobalVariable("inpmWarehouseId",
           "ReportShipmentDimensionalAnalyzeJR|warehouse");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportShipmentDimensionalAnalyzeJR|org",
-          "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportShipmentDimensionalAnalyzeJR|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportShipmentDimensionalAnalyzeJR|salesrep");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
@@ -399,6 +397,7 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard" };
+    if (strOrg.equals("")) strOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";

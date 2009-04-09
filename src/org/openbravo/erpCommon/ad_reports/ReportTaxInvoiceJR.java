@@ -57,7 +57,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportTaxInvoiceJR|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportTaxInvoiceJR|DateTo", "");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTaxInvoiceJR|Org", "0");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTaxInvoiceJR|Org", "");
       String strDetail = vars.getStringParameter("inpDetalle", "-1");
       String strSales = vars.getStringParameter("inpSales", "S");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales);
@@ -66,8 +66,6 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
           "ReportTaxInvoiceJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTaxInvoiceJR|DateTo");
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTaxInvoiceJR|Org");
-      if (strOrg.equals(""))
-        strOrg = "0";
       String strDetail = vars.getStringParameter("inpDetalle");
       String strSales = vars.getStringParameter("inpSales");
       printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "html");
@@ -76,8 +74,6 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
           "ReportTaxInvoiceJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTaxInvoiceJR|DateTo");
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTaxInvoiceJR|Org");
-      if (strOrg.equals(""))
-        strOrg = "0";
       String strDetail = vars.getStringParameter("inpDetalle");
       String strSales = vars.getStringParameter("inpSales");
       printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "xls");
@@ -93,6 +89,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     String strSale = "";
     String strPurchase = "";
+    if (strOrg.equals("")) strOrg = vars.getOrg();
     if (log4j.isDebugEnabled())
       log4j.debug("****** strSales: " + strSales + " fecha desde: " + strDateFrom
           + " fecha hasta: " + strDateTo + " detalle: " + strDetail);

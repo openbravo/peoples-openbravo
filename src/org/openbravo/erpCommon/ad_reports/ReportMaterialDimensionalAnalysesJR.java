@@ -74,7 +74,7 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
       String strShown = vars.getInGlobalVariable("inpShown",
           "ReportMaterialDimensionalAnalysesJR|shown", "");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportMaterialDimensionalAnalysesJR|org",
-          "0");
+          "");
       String strOrder = vars.getGlobalVariable("inpOrder",
           "ReportMaterialDimensionalAnalysesJR|order", "Normal");
       String strMayor = vars.getGlobalVariable("inpMayor",
@@ -112,8 +112,7 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
           "ReportMaterialDimensionalAnalysesJR|product");
       String strNotShown = vars.getInStringParameter("inpNotShown");
       String strShown = vars.getInStringParameter("inpShown");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportMaterialDimensionalAnalysesJR|org",
-          "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportMaterialDimensionalAnalysesJR|org");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
           "ReportMaterialDimensionalAnalysesJR|order");
       String strMayor = vars.getStringParameter("inpMayor", "");
@@ -144,8 +143,7 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
           "ReportMaterialDimensionalAnalysesJR|product");
       String strNotShown = vars.getInStringParameter("inpNotShown");
       String strShown = vars.getInStringParameter("inpShown");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportMaterialDimensionalAnalysesJR|org",
-          "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportMaterialDimensionalAnalysesJR|org");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
           "ReportMaterialDimensionalAnalysesJR|order");
       String strMayor = vars.getStringParameter("inpMayor", "");
@@ -318,6 +316,7 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
     String[] discard1 = { "selEliminarBody1", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard" };
+    if (strOrg.equals("")) strOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";

@@ -76,7 +76,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
           "ReportSalesDimensionalAnalyzeJR|notShown", "");
       String strShown = vars.getInGlobalVariable("inpShown",
           "ReportSalesDimensionalAnalyzeJR|shown", "");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportSalesDimensionalAnalyzeJR|org", "0");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportSalesDimensionalAnalyzeJR|org", "");
       String strsalesrepId = vars.getGlobalVariable("inpSalesrepId",
           "ReportSalesDimensionalAnalyzeJR|salesrep", "");
       String strOrder = vars.getGlobalVariable("inpOrder", "ReportSalesDimensionalAnalyzeJR|order",
@@ -121,7 +121,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
           "ReportSalesDimensionalAnalyzeJR|warehouse");
       String strNotShown = vars.getInStringParameter("inpNotShown");
       String strShown = vars.getInStringParameter("inpShown");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportSalesDimensionalAnalyzeJR|org", "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportSalesDimensionalAnalyzeJR|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportSalesDimensionalAnalyzeJR|salesrep");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
@@ -158,7 +158,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
           "ReportSalesDimensionalAnalyzeJR|warehouse");
       String strNotShown = vars.getInStringParameter("inpNotShown");
       String strShown = vars.getInStringParameter("inpShown");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportSalesDimensionalAnalyzeJR|org", "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportSalesDimensionalAnalyzeJR|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportSalesDimensionalAnalyzeJR|salesrep");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
@@ -384,6 +384,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard" };
+    if (strOrg.equals("")) strOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";

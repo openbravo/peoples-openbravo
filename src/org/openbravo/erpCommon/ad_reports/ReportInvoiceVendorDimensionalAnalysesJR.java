@@ -71,7 +71,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
       String strShown = vars.getInGlobalVariable("inpShown",
           "ReportInvoiceVendorDimensionalAnalysesJR|shown", "");
       String strOrg = vars.getGlobalVariable("inpOrg",
-          "ReportInvoiceVendorDimensionalAnalysesJR|Org", "0");
+          "ReportInvoiceVendorDimensionalAnalysesJR|Org", "");
       String strOrder = vars.getGlobalVariable("inpOrder",
           "ReportInvoiceVendorDimensionalAnalysesJR|order", "Normal");
       String strMayor = vars.getGlobalVariable("inpMayor",
@@ -111,8 +111,8 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
           "ReportInvoiceVendorDimensionalAnalysesJR|product");
       String strNotShown = vars.getInStringParameter("inpNotShown");
       String strShown = vars.getInStringParameter("inpShown");
-      String strOrg = vars.getGlobalVariable("inpOrg",
-          "ReportInvoiceVendorDimensionalAnalysesJR|Org", "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg",
+          "ReportInvoiceVendorDimensionalAnalysesJR|Org");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
           "ReportInvoiceVendorDimensionalAnalysesJR|order");
       String strMayor = vars.getStringParameter("inpMayor", "");
@@ -145,8 +145,8 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
           "ReportInvoiceVendorDimensionalAnalysesJR|product");
       String strNotShown = vars.getInStringParameter("inpNotShown");
       String strShown = vars.getInStringParameter("inpShown");
-      String strOrg = vars.getGlobalVariable("inpOrg",
-          "ReportInvoiceVendorDimensionalAnalysesJR|Org", "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg",
+          "ReportInvoiceVendorDimensionalAnalysesJR|Org");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
           "ReportInvoiceVendorDimensionalAnalysesJR|order");
       String strMayor = vars.getStringParameter("inpMayor", "");
@@ -338,6 +338,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     String[] discard1 = { "selEliminarBody1", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard" };
+    if (strOrg.equals("")) strOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";

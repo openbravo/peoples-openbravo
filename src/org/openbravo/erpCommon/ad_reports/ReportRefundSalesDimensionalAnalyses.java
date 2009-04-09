@@ -80,7 +80,7 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
       String strShown = vars.getInGlobalVariable("inpShown",
           "ReportRefundSalesDimensionalAnalyses|shown", "");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportRefundSalesDimensionalAnalyses|org",
-          "0");
+          "");
       String strsalesrepId = vars.getGlobalVariable("inpSalesrepId",
           "ReportRefundSalesDimensionalAnalyses|salesrep", "");
       String strmWarehouseId = vars.getGlobalVariable("inpmWarehouseId",
@@ -127,8 +127,7 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
           "ReportRefundSalesDimensionalAnalyses|product");
       String strNotShown = vars.getInStringParameter("inpNotShown");
       String strShown = vars.getInStringParameter("inpShown");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportRefundSalesDimensionalAnalyses|org",
-          "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportRefundSalesDimensionalAnalyses|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportRefundSalesDimensionalAnalyses|salesrep");
       String strmWarehouseId = vars.getRequestGlobalVariable("inpmWarehouseId",
@@ -348,6 +347,7 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard" };
+    if (strOrg.equals("")) strOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";
