@@ -40,7 +40,7 @@
   v_Qty NUMBER;
   v_PlannedDate DATE;
   v_PlannedOrderDate DATE;
-  v_Product NUMBER;
+  v_Product VARCHAR2(32);
 
   v_Qty_New NUMBER;
   v_NeededQty_New NUMBER;
