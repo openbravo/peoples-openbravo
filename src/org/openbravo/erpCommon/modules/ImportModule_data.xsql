@@ -149,6 +149,40 @@
       <Parameter name="moduleId"/>
    </SqlMethod>
    
+   <SqlMethod name="updateModuleDate" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        UPDATE AD_MODULE
+           SET UPDATED = (SELECT LAST_DBUPDATE FROM AD_SYSTEM_INFO)
+         WHERE AD_MODULE_ID = ?
+           AND UPDATED > (SELECT LAST_DBUPDATE FROM AD_SYSTEM_INFO)
+      </Sql>
+      <Parameter name="moduleId"/>
+   </SqlMethod>
+   
+   <SqlMethod name="updateModulePrefixDate" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        UPDATE AD_MODULE_DBPREFIX
+           SET UPDATED = (SELECT LAST_DBUPDATE FROM AD_SYSTEM_INFO)
+         WHERE AD_MODULE_ID = ?
+         AND UPDATED > (SELECT LAST_DBUPDATE FROM AD_SYSTEM_INFO)
+      </Sql>
+      <Parameter name="moduleId"/>
+   </SqlMethod>
+   
+    <SqlMethod name="updateModuleDependencyDate" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        UPDATE AD_MODULE_DEPENDENCY
+           SET UPDATED = (SELECT LAST_DBUPDATE FROM AD_SYSTEM_INFO)
+         WHERE AD_MODULE_ID = ?
+         AND UPDATED > (SELECT LAST_DBUPDATE FROM AD_SYSTEM_INFO)
+      </Sql>
+      <Parameter name="moduleId"/>
+   </SqlMethod>
+   
+   
    <SqlMethod name="getParentNode" type="preparedStatement" return="string">
      <Sql>
        SELECT AD_MODULE_ID
@@ -159,3 +193,4 @@
      <Parameter name="moduleId"/>
    </SqlMethod>
 </SqlClass>
+
