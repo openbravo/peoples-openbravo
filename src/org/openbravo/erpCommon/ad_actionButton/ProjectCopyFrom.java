@@ -51,7 +51,7 @@ public class ProjectCopyFrom extends HttpSecureAppServlet {
       String strWindow = vars.getStringParameter("inpwindowId");
       String strTab = vars.getStringParameter("inpTabId");
       String strProject = vars.getStringParameter("inpProject", "");
-      String strKey = vars.getRequiredGlobalVariable("inpcProjectId", strWindow + "|C_Project_ID");
+      String strKey = vars.getGlobalVariable("inpcProjectId", strWindow + "|C_Project_ID");
       printPage(response, vars, strKey, strProject, strWindow, strTab, strProcessId);
     } else if (vars.commandIn("SAVE")) {
       String strWindow = vars.getStringParameter("inpwindowId");
