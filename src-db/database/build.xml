@@ -131,6 +131,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
   <target name="update.database.mod">
     <alterdatabasedatamod driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="DEBUG" basedir="${base.modules}/" baseConfig="${base.config}" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" module="${module}" userId="0" propertiesFile="${base.config}/Openbravo.properties" force="${force}" />
     <antcall target="database.postupdate.${bbdd.rdbms}" />
+    <antcall target="update.dbupdate.timestamp" />
   </target>
   <target name="clean.database.ORACLE">
     <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue">
@@ -441,3 +442,4 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
     </sql>
   </target>
 </project>
+

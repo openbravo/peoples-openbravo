@@ -788,6 +788,12 @@ public class ImportModule {
     for (final DynaBean module : dbPrefix) {
       platform.updateinsert(conn, db, module);
     }
+    for (final DynaBean module : dModulesToInstall) {
+      String modID = (String) module.get("AD_MODULE_ID");
+      ImportModuleData.updateModuleDate(pool, modID);
+      ImportModuleData.updateModulePrefixDate(pool, modID);
+      ImportModuleData.updateModuleDependencyDate(pool, modID);
+    }
     conn.close();
   }
 
@@ -1130,3 +1136,4 @@ public class ImportModule {
     }
   }
 }
+
