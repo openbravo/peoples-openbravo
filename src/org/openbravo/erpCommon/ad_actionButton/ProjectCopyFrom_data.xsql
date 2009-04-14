@@ -115,7 +115,7 @@
            now(),?,now(),?,
            ?,?,?,
            ?,?,?,
-           ?,?)
+           TO_NUMBER(?),TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="c_project_id"/>
