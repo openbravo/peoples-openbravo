@@ -48,7 +48,7 @@ BEGIN
     --  Default Accounts for all AcctSchema
  IF (INSERTING) THEN
      FOR Cur_Defaults IN (
-		SELECT  d1.*
+		SELECT  distinct d1.*
 		FROM  C_BP_Group_Acct d1, ad_Org_AcctSchema a
 		WHERE  d1.C_BP_Group_ID=:new.C_BP_Group_ID
 		AND d1.C_AcctSchema_ID = a.C_AcctSchema_ID
