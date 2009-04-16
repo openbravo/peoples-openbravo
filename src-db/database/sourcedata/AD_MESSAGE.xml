@@ -63664,7 +63664,7 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <VALUE><![CDATA[20531]]></VALUE>
-<!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <MSGTEXT><![CDATA[Not valid DB Prefix. DB Prefix must contain only upper alpha numeric characters and underscore (_) and it cannot start with underscore.]]></MSGTEXT>
+<!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <MSGTEXT><![CDATA[Not valid DB Prefix. DB Prefix must contain only upper alpha numeric characters and it must start with an alphabetic character.]]></MSGTEXT>
 <!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--51AF5F10036A4B14A54EC2DF10A94B7C--></AD_MESSAGE>
