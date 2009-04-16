@@ -41,6 +41,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
 /**
@@ -141,6 +143,8 @@ public class DatabaseValidator implements SystemValidator {
     }
 
     // System.err.println(updateSql);
+
+    checkIncorrectClientOrganizationName(result);
 
     return result;
   }
@@ -412,6 +416,52 @@ public class DatabaseValidator implements SystemValidator {
       result.addError(SystemValidationType.WRONG_LENGTH, "Column " + dbTable.getName() + "."
           + dbColumn.getName() + " has incorrect length, expecting " + expectedLength + " but was "
           + dbColumn.getSizeAsInt());
+    }
+  }
+
+  // checks for all entities if the reference to the client indeed has the name client
+  // and the same for the organization property
+  private void checkIncorrectClientOrganizationName(SystemValidationResult result) {
+    final Entity orgEntity = ModelProvider.getInstance().getEntity(Organization.ENTITY_NAME);
+    final Entity clientEntity = ModelProvider.getInstance().getEntity(Client.ENTITY_NAME);
+    for (Entity entity : ModelProvider.getInstance().getModel()) {
+      boolean hasClientReference = false;
+      boolean hasOrgReference = false;
+      boolean hasValidOrg = false;
+      String invalidOrgName = null;
+      boolean hasValidClient = false;
+      String invalidClientName = null;
+      for (Property p : entity.getProperties()) {
+        if (!p.isPrimitive() && p.getTargetEntity() == orgEntity && !hasValidOrg) {
+          hasOrgReference = true;
+          hasValidOrg = p.getName().equals(Client.PROPERTY_ORGANIZATION);
+          if (!hasValidOrg) {
+            invalidOrgName = p.getName();
+          }
+        }
+        if (!p.isPrimitive() && p.getTargetEntity() == clientEntity && !hasValidClient) {
+          hasClientReference = true;
+          hasValidClient = p.getName().equals(Organization.PROPERTY_CLIENT);
+          if (!hasValidClient) {
+            invalidClientName = p.getName();
+          }
+        }
+      }
+      // can this ever be false?
+      if (hasClientReference && !hasValidClient) {
+        result.addError(SystemValidationType.INCORRECT_CLIENT_ORG_PROPERTY_NAME, "Table  "
+            + entity.getTableName() + " has a column referencing AD_Client. "
+            + " The AD_Column.name (note: different from AD_Column.columnname!) of this column "
+            + "should have the value " + Organization.PROPERTY_CLIENT + ", it currently has "
+            + invalidClientName);
+      }
+      if (hasOrgReference && !hasValidOrg) {
+        result.addError(SystemValidationType.INCORRECT_CLIENT_ORG_PROPERTY_NAME, "Table  "
+            + entity.getTableName() + " has a column referencing AD_Org. "
+            + " The AD_Column.name (note: different from AD_Column.columnname!) of this column "
+            + "should have the value " + Client.PROPERTY_ORGANIZATION + ", it currently has "
+            + invalidOrgName);
+      }
     }
   }
 
