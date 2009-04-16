@@ -82,6 +82,13 @@ body {
   width: 50px;
 }
 
+button.ButtonLink::-moz-focus-inner { border: 0; }
+button.ButtonLink_hover::-moz-focus-inner { border: 0; }
+button.ButtonLink_active::-moz-focus-inner { border: 0; }
+button.ButtonLink_focus::-moz-focus-inner { border: 0; }
+button.ButtonLink_default::-moz-focus-inner { border: 0; }
+button.ButtonLink_disabled::-moz-focus-inner { border: 0; }
+
 button.ButtonLink, button.ButtonLink:active, button.ButtonLink:hover, button.ButtonLink:visited, button.ButtonLink:link, button.ButtonLink:focus, button.ButtonLink_default, button.ButtonLink_disabled {
   background: none;
   border: 0;
@@ -105,8 +112,6 @@ button.ButtonLink_active, button.ButtonLink_active:active, button.ButtonLink_act
   text-decoration: none;
   outline: none;
 }
-
-button.ButtonLink_focus::-moz-focus-inner { border: 0; }
 
 button.ButtonLink_focus, button.ButtonLink_focus:active, button.ButtonLink_focus:hover, button.ButtonLink_focus:visited, button.ButtonLink_focus:link, button.ButtonLink_focus:focus {
   background: none;
