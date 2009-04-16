@@ -446,6 +446,14 @@ public class DatabaseValidator implements SystemValidator {
             invalidClientName = p.getName();
           }
         }
+        if (p.isPrimitive() && p.getPrimitiveObjectType() != null
+            && Date.class.isAssignableFrom(p.getPrimitiveObjectType())
+            && p.getName().toLowerCase().equals("created") && !entity.isTraceable()) {
+          result
+              .addWarning(
+                  SystemValidationType.WRONG_NAME,
+                  "The table has a column created, Note that the audit column which stores the creation time MUST be called: creation Date");
+        }
       }
       // can this ever be false?
       if (hasClientReference && !hasValidClient) {
