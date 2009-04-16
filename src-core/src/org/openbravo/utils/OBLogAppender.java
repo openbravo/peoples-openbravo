@@ -84,8 +84,10 @@ public class OBLogAppender extends AppenderSkeleton {
         final String msg;
         if (getLayout() != null) {
           msg = getLayout().format(event);
+        } else if (event.getMessage() != null) {
+          msg = event.getMessage() + "\n";
         } else {
-          msg = event.getMessage().toString() + "\n";
+          msg = " No message for event ";
         }
         logToProject(event.getLevel(), msg);
       }
