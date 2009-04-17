@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -684,8 +684,8 @@ public class ImportModule {
     final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
     final Document doc = docBuilder.parse(obDir + "/.classpath");
     for (final DynaBean module : dModulesToInstall) {
-      final String dir = obDir + "/modules/" + (String) module.get("JAVAPACKAGE") + "/src";
-      if (new File(dir).exists()) {
+      final String dir = "modules/" + (String) module.get("JAVAPACKAGE") + "/src";
+      if (new File(obDir + "/" + dir).exists()) {
         addClassPathEntry(doc, dir);
       } else {
         log4j.info(dir + " does not exist, no claspath entry added");
@@ -714,10 +714,8 @@ public class ImportModule {
     Attr attr = doc.createAttribute("kind");
     attr.setValue("src");
     cpAttributes.setNamedItem(attr);
-    attr = doc.createAttribute("including");
-    attr.setValue("**/*.java");
-    cpAttributes.setNamedItem(attr);
-    attr = doc.createAttribute("src");
+
+    attr = doc.createAttribute("path");
     attr.setValue(dir);
     cpAttributes.setNamedItem(attr);
 
@@ -1136,4 +1134,3 @@ public class ImportModule {
     }
   }
 }
-
