@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -104,7 +104,6 @@ public class RegisterModule extends HttpSecureAppServlet {
           e.printStackTrace();
         }
       }
-
       if (!error) {
         OBError message = new OBError();
         message.setType("Success");
@@ -112,6 +111,8 @@ public class RegisterModule extends HttpSecureAppServlet {
         vars.setMessage("RegisterModule", message);
         error = true;
       }
+    } else {
+      discard[0] = "discardDefault";
     }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
