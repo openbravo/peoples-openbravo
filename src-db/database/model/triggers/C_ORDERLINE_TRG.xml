@@ -59,7 +59,7 @@ IF (UPDATING) THEN
   * Check Product changes = not possible when reservation, invoice or delivery exists
   */
  IF (DELETING) THEN
-  IF (:old.QtyReserved <> 0) THEN
+  IF (:old.QtyReserved <> 0 AND :old.C_ORDER_DISCOUNT_ID IS NULL) THEN
    RAISE_APPLICATION_ERROR(-20200, 'Changed Product had Reservation=' || :old.QtyReserved);
   ELSIF (:old.QtyDelivered <> 0) THEN
    RAISE_APPLICATION_ERROR(-20201, 'Changed Product had Delieveries=' || :old.QtyDelivered);

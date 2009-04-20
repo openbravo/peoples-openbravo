@@ -93,6 +93,14 @@
     END_PROCESSING BOOLEAN:=FALSE;
     v_CBPartner_ID VARCHAR2(32);
     rowcount NUMBER;
+    
+    v_CumDiscount NUMBER;
+    v_OldCumDiscount NUMBER;
+    v_OrderLineSeqNo NUMBER;
+    Cur_COrderDiscount RECORD;
+    Cur_TaxDiscount RECORD;
+    v_OrderLine VARCHAR2(32);
+    v_Discount NUMBER;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -260,6 +268,10 @@
             Processed='N',
             Updated=now()
           WHERE C_Order_ID=v_Record_ID;
+	  DELETE
+          FROM C_ORDERLINE
+          WHERE C_ORDER_DISCOUNT_ID IS NOT NULL
+          AND C_ORDER_ID=v_Record_ID;
           --ADDED BY E.ARGAL
           --Invalidate debt payments added by ALO
           UPDATE C_DEBT_PAYMENT
@@ -572,6 +584,90 @@
         END IF;
       END IF;
     END IF;--END_PROCESSING
+    IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
+     /**************************************************************************
+        * Calculate Discounts
+        *************************************************************************/
+        v_CumDiscount:=0;
+        v_OldCumDiscount:=0;
+        v_Line:=10;
+        SELECT MAX(LINE) +10
+        INTO v_OrderLineSeqNo
+        FROM C_ORDERLINE
+        WHERE C_ORDER_ID=v_Record_ID;            
+        FOR Cur_COrderDiscount IN
+          (SELECT C_ORDER_DISCOUNT.C_ORDER_DISCOUNT_ID,
+            C_DISCOUNT.DISCOUNT,
+            C_DISCOUNT.M_PRODUCT_ID,
+            C_DISCOUNT.NAME,
+            C_ORDER_DISCOUNT.CASCADE,
+            C_DISCOUNT.C_DISCOUNT_ID,
+            M_PRODUCT.C_UOM_ID
+          FROM C_ORDER_DISCOUNT,
+            C_DISCOUNT,
+            M_PRODUCT
+          WHERE C_ORDER_DISCOUNT.C_DISCOUNT_ID=C_DISCOUNT.C_DISCOUNT_ID
+            AND C_DISCOUNT.M_PRODUCT_ID=M_PRODUCT.M_PRODUCT_ID
+            AND C_ORDER_DISCOUNT.C_ORDER_ID=v_Record_ID
+            AND C_ORDER_DISCOUNT.ISACTIVE='Y'
+          ORDER BY C_ORDER_DISCOUNT.LINE
+          )
+        LOOP
+          v_CumDiscount:=(1-v_OldCumDiscount) * Cur_COrderDiscount.Discount/100;
+          v_OldCumDiscount:=v_OldCumDiscount + v_CumDiscount;
+          FOR Cur_TaxDiscount IN
+            (SELECT C_ORDERLINE.C_TAX_ID,
+              SUM(C_ORDERLINE.LINENETAMT) AS LINENETAMT
+            FROM C_ORDERLINE
+            WHERE C_ORDER_ID=v_Record_ID
+              AND C_ORDERLINE.LINENETAMT<>0
+              AND C_ORDER_DISCOUNT_ID IS NULL
+            GROUP BY C_TAX_ID
+            )
+          LOOP
+            IF(Cur_COrderDiscount.CASCADE='Y') THEN
+              v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * v_CumDiscount;
+            ELSE
+              v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * Cur_COrderDiscount.Discount/100;
+            END IF;
+            v_OrderLineSeqNo:=10 + v_OrderLineSeqNo;
+            v_OrderLine:=get_uuid() ;
+            
+            INSERT INTO c_orderline
+              (
+                c_orderline_id, ad_client_id, ad_org_id, isactive, created, createdby, 
+                updated, updatedby, c_order_id, line, c_bpartner_id, c_bpartner_location_id, 
+                dateordered, datepromised, datedelivered, dateinvoiced, description, 
+                m_product_id, m_warehouse_id, directship, c_uom_id, qtyordered, 
+                qtyreserved, qtydelivered, qtyinvoiced, m_shipper_id, c_currency_id, 
+                pricelist, priceactual, pricelimit, linenetamt, discount, freightamt, 
+                c_charge_id, chargeamt, c_tax_id, s_resourceassignment_id, ref_orderline_id, 
+                m_attributesetinstance_id, isdescription, quantityorder, m_product_uom_id, 
+                m_offer_id, pricestd, C_ORDER_DISCOUNT_ID
+              )
+            VALUES 
+              (
+                v_OrderLine, v_Client_ID, v_Org_ID, 'Y', now(), v_UpdatedBy,
+                now(), v_UpdatedBy, v_Record_ID, v_OrderLineSeqNo, NULL, NULL, 
+                now(), now(), now(), now(), Cur_COrderDiscount.NAME, 
+                Cur_COrderDiscount.M_PRODUCT_ID, v_M_Warehouse_ID, 'N', Cur_COrderDiscount.C_UOM_ID, 1, 
+                0, 0, 0, NULL, v_c_currency_id, 
+                v_Discount, v_Discount, v_Discount, v_Discount, 0, 0, 
+                NULL, NULL, Cur_TaxDiscount.C_TAX_ID, NULL, NULL, 
+                NULL, 'N', NULL, NULL, 
+                NULL, v_Discount, NULL
+              );
+           
+            UPDATE C_ORDERLINE
+            SET C_ORDER_DISCOUNT_ID=Cur_COrderDiscount.C_ORDER_DISCOUNT_ID
+            WHERE C_ORDERLINE_ID=v_OrderLine;
+            
+
+          END LOOP;
+          v_Line:=v_Line + 10;
+        END LOOP;
+    END IF;
+    
     IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
       /**
       * Convert to Target DocType
