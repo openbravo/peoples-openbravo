@@ -60,17 +60,18 @@ var baseDirectory = "../../../../../web/";
 
   function doPing(url) {
     try {
-      return submitXmlHttpRequest(pingCallback, document.frmMain, "CHECK", url, false);
+      var paramXMLReq = null;
+      return submitXmlHttpRequest(pingCallback, document.frmMain, "CHECK", url, false, null, paramXMLReq)
     } catch (e) {
       alert(e);
     }
   }
 
-  function pingCallback() {
-    if (getReadyStateHandler(xmlreq,null,false)) {
+  function pingCallback(paramXMLParticular, XMLHttpRequestObj) {
+    if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
       try {
-        if (xmlreq.responseText) {
-          if (xmlreq.responseText == 'success') {
+        if (XMLHttpRequestObj.responseText) {
+          if (XMLHttpRequestObj.responseText == 'success') {
             isResponse=true;
             isSuccess=true;
           }

@@ -60,11 +60,11 @@ function onLoadDo(){
   function onResizeDo(){
   }
   
-  function callback(){
-    if (getReadyStateHandler(xmlreq)) {
+  function callback(paramXMLParticular, XMLHttpRequestObj) {
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
       try {
-        if (xmlreq.responseText) {
-          strText = xmlreq.responseText;
+        if (XMLHttpRequestObj.responseText) {
+          strText = XMLHttpRequestObj.responseText;
           document.getElementById("license").innerHTML=strText;
         }
         
@@ -78,7 +78,8 @@ function onLoadDo(){
   function viewModuleAgreement(id){
     var frm = document.frmMain;
     document.getElementById("paramKey").value=id;
-    return submitXmlHttpRequest(callback, null, "LICENSE", "ModuleManagement.html", false);
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(callback, null, "LICENSE", "ModuleManagement.html", false, null, paramXMLReq);
   }
   
   </script>    

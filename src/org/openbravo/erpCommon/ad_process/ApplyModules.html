@@ -97,12 +97,12 @@
 
     var processing = false;
 
-    function getError1(){
+    function getError1(paramXMLParticular, XMLHttpRequestObj) {
      var strText = "";
-      if (getReadyStateHandler(xmlreq)) {
+      if (getReadyStateHandler(XMLHttpRequestObj)) {
         try {
-          if (xmlreq.responseText) {
-            strText = xmlreq.responseText;
+          if (XMLHttpRequestObj.responseText) {
+            strText = XMLHttpRequestObj.responseText;
             if (strText != "") setMessage(strText);
             else alert("OK");
           }
@@ -113,8 +113,9 @@
     }
     
     function getError() {
-    var frm = document.frmMain;
-      return submitXmlHttpRequest(getError1, frm, "GETERR", "ApplyModules.html", false);
+      var frm = document.frmMain;
+      var paramXMLReq = null;
+      return submitXmlHttpRequest(getError1, frm, "GETERR", "ApplyModules.html", false, null, paramXMLReq);
     }
     
     function finalize() {
@@ -126,17 +127,17 @@
       setTimeout("getError()",100);
     }
     
-    function endProcess(){
+    function endProcess(paramXMLParticular, XMLHttpRequestObj) {
       var strText = "";
       var id = "";
       var imageId = "";
       try {
-        if (xmlreq != null && xmlreq.responseText) {
-          strText = xmlreq.responseText
+        if (XMLHttpRequestObj != null && XMLHttpRequestObj.responseText) {
+          strText = XMLHttpRequestObj.responseText
           addText(strText);
         }
       } catch (e) {}
-      if (getReadyStateHandler(xmlreq)) finalize();
+      if (getReadyStateHandler(XMLHttpRequestObj)) finalize();
       return true;
     }
     
@@ -148,7 +149,8 @@
       //displayLogicElement('buttonCancel',false);
       displayLogicElement('confirmation',false);
       displayLogicElement('log',true);
-      return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false);
+      var paramXMLReq = null;
+      return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false, null, paramXMLReq);
     }
   </script>
 </head>

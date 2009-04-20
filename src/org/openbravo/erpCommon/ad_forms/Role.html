@@ -135,17 +135,18 @@ var arrWare=null;
     function submitPassword() {
       if (!validate()) return false
       try {
-        return submitXmlHttpRequest(callback, frmMain, "CHANGE", "Role.html", false);
+        var paramXMLReq = null;
+        return submitXmlHttpRequest(callback, frmMain, "CHANGE", "Role.html", false, null, paramXMLReq);
       }
       catch (e) {
       }
     }
 
-    function callback() {
+    function callback(paramXMLParticular, XMLHttpRequestObj) {
       var strText;
-      if (getReadyStateHandler(xmlreq,null,false)) {
+      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
         try {
-          if (xmlreq.responseXML) strText = xmlreq.responseXML;
+          if (XMLHttpRequestObj.responseXML) strText = XMLHttpRequestObj.responseXML;
         } catch (e) {
           initialize_MessageBox('messageBoxID');
           setValues_MessageBox('messageBoxID','ERROR','ERROR',e);

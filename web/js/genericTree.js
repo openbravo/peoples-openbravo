@@ -22,19 +22,19 @@
 */
 
   //Functions for ajax tree control
-  function gt_callback(paramArray) {
+  function gt_callback(paramXMLParticular, XMLHttpRequestObj) {
     var strText = "";
     var id = "";
     var imageId = "";
-    if (getReadyStateHandler(xmlreq)) {
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
       try {
-        if (xmlreq.responseText) strText = xmlreq.responseText;
+        if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
       } catch (e) {
       }
-      if (paramArray!=null && paramArray.length>0) {
-        id = paramArray[0];
-        imageId = paramArray[1];
-        folderId = paramArray[2];
+      if (paramXMLParticular!=null && paramXMLParticular.length>0) {
+        id = paramXMLParticular[0];
+        imageId = paramXMLParticular[1];
+        folderId = paramXMLParticular[2];
       }
       layer(id, strText, true, false);
       gt_showHideLayer(id, imageId, folderId);
@@ -66,8 +66,8 @@
     frm.inpLevel.value = document.getElementById("inpLevel"+id).value;
     var dataLayer = readLayer("returnText" + id, true);
     if (dataLayer==null || dataLayer=="") {
-      paramXMLRequest = new Array('returnText' + id, 'buttonTree' + id, 'folder'+id);
-      return submitXmlHttpRequest(gt_callback, frm, CommandValue, "../utility/GenericTreeServlet.html", false);
+      var paramXMLReq = new Array('returnText' + id, 'buttonTree' + id, 'folder'+id);
+      return submitXmlHttpRequest(gt_callback, frm, CommandValue, "../utility/GenericTreeServlet.html", false, null, paramXMLReq);
     } else {
       gt_showHideLayer("returnText" + id, "buttonTree" + id, "folder"+id);
     }
@@ -75,16 +75,16 @@
   //----
   
   //Functions to manage descriptions with ajax
-   function gt_callbackDescription(paramArray) {
+   function gt_callbackDescription(paramXMLParticular, XMLHttpRequestObj) {
     var strText = "";
-    if (getReadyStateHandler(xmlreq)) {
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
       try {
-        if (xmlreq.responseText) strText = xmlreq.responseText;
+        if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
       } catch (e) {
       }
       document.getElementById('nodeDescription').innerHTML = strText;
-      if (paramArray!=null && paramArray.length>0) {
-        goToAnchor = paramArray[0];
+      if (paramXMLParticular!=null && paramXMLParticular.length>0) {
+        goToAnchor = paramXMLParticular[0];
         if (goToAnchor!=null && goToAnchor!='') goToDivAnchor('nodeDescription',goToAnchor);
       }
     }
@@ -92,21 +92,17 @@
   }
   
   function gt_getDescription(id) {
-    setTimeout(function() {gt_getDescription2(id);},100);
-  }
-
-  function gt_getDescription2(id) {
     var frm = document.frmMain;
     frm.inpNodeId.value = id;
-    paramXMLRequest = new Array('begin');
-    return submitXmlHttpRequest(gt_callbackDescription, frm, "DESCRIPTION", "../utility/GenericTreeServlet.html", false);
+    var paramXMLReq = new Array('begin');
+    return submitXmlHttpRequest(gt_callbackDescription, frm, "DESCRIPTION", "../utility/GenericTreeServlet.html", false, null, paramXMLReq);
   }
   
   function gt_getUpdateDescription(id){
     var frm = document.frmMain;
     frm.inpNodeId.value = id;
-    paramXMLRequest = new Array('anchor');
-    return submitXmlHttpRequest(gt_callbackDescription, frm, "DESCRIPTION", "../utility/GenericTreeServlet.html", false);
+    var paramXMLReq = new Array('anchor');
+    return submitXmlHttpRequest(gt_callbackDescription, frm, "DESCRIPTION", "../utility/GenericTreeServlet.html", false, null, paramXMLReq);
   }
   
   function gt_selectAllNodes(value){
