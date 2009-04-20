@@ -179,7 +179,10 @@ public class DocAmortization extends AcctServer {
       VariablesSecureApp vars) throws ServletException {
     log4jDocAmortization.debug("createFact - Inicio");
     // Select specific definition
-    String strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
     if (!strClassname.equals("")) {
       try {
         DocAmortizationTemplate newTemplate = (DocAmortizationTemplate) Class.forName(strClassname)
