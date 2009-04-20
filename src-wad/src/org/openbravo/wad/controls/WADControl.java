@@ -354,9 +354,11 @@ public class WADControl {
     if (labelText.trim().equals(""))
       labelText = column;
     String columnId = getData("AdColumnId");
-
+    String columnLink = getData("ColumnNameLabel");
+    if (columnLink == null || columnLink.equals(""))
+      columnLink = getData("ColumnName");
     label = new WADLabelControl(WADLabelControl.FIELD_LABEL, null, null, columnId, column, null,
         null, getData("IsLinkable"), getData("KeyColumnName"), getData("ColumnNameInp"),
-        getData("AD_Table_ID"));
+        getData("AD_Table_ID"), columnLink);
   }
 }

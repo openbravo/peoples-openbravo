@@ -999,7 +999,7 @@ public class WadUtility {
     }
 
     auxControl.setData("IsLinkable", "Y");
-    // auxControl.setData("ColumnNameLabel", strColumnName);
+    auxControl.setData("ColumnNameLabel", strColumnName);
     auxControl.setData("KeyColumnName", keyName);
     auxControl.setData("AD_Table_ID", strTableID);
     auxControl.setData("ColumnLabelText", strColumnName);
