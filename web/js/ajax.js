@@ -27,15 +27,15 @@ var paramXMLRequest = null; //Deprecated in 2.50
 
 function getXMLHttpRequest() {
   // Create XMLHttpRequest object in non-Microsoft browsers
-  var XMLHttpRequestObj = null
-  if (!XMLHttpRequestObj && typeof XMLHttpRequest != 'undefined') {
-    try {
-      XMLHttpRequestObj = new XMLHttpRequest();
-    } catch (e) {
-      XMLHttpRequestObj = false;
-    }
+  var XMLHttpRequestObj = null;
+
+  try {
+    XMLHttpRequestObj = new XMLHttpRequest();
+  } catch (e) {
+    XMLHttpRequestObj = false;
   }
-  else if (window.ActiveXObject) {
+
+  if (window.ActiveXObject) {
     try {
       // Try to create XMLHttpRequest in later versions
       // of Internet Explorer
