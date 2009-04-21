@@ -40,6 +40,7 @@
         AND EL.C_ORDERLINE_ID IS NULL
         AND EL.ISINVOICED='Y'
         AND E.PROCESSED='Y'
+        AND E.ISACTIVE='Y'        
         AND E.AD_CLIENT_ID IN ('1')
         AND E.AD_ORG_ID IN ('1')
         ORDER BY E.AD_ORG_ID, el.C_BPartner_ID, el.C_Project_ID, e.S_TimeExpense_ID, el.Line
