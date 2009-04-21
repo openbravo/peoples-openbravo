@@ -39,7 +39,7 @@
         AND 1=1
         AND  2=2
         GROUP BY ev.accountSign, 1) A, DUAL
-      WHERE A.ID = '1'
+      WHERE A.ID = to_char('1')
       ORDER BY 1) AA
      ]]></Sql> 
     <Parameter name="levelId" type="replace" optional="true" after="SELECT A.ID, to_char(" text="'12'"/>
@@ -63,7 +63,7 @@
     <Parameter name="filter" type="replace" optional="true" after="AND 1=1" text="AND  2=2"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY ev.accountSign" text=", 1"/>
     <Parameter name="tableDimension" type="replace" optional="true" after=") A, " text="DUAL"/>
-    <Parameter name="idtableDimension" type="replace" optional="true" after="WHERE A.ID = " text="'1'"/>
+    <Parameter name="idtableDimension" type="replace" optional="true" after="WHERE A.ID = to_char(" text="'1'"/>
     <Parameter name="nivel" type="replace" optional="true" after="ORDER BY " text="1"/>
   </SqlMethod>
 
@@ -181,7 +181,7 @@
             AND 3=3
             AND  4=4
             GROUP BY D.PERIOD, 1 ) A, DUAL
-            WHERE A.ID = '8'
+            WHERE A.ID = to_char('8')
             GROUP BY A.ID, A.PERIOD, 1 
             ORDER BY 1, A.PERIOD) AA
      ]]></Sql>
@@ -219,7 +219,7 @@
     <Parameter name="filter" type="replace" optional="true" after="AND 3=3" text="AND  4=4"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY D.PERIOD" text=", 1"/>
     <Parameter name="tableDimension" type="replace" optional="true" after=") A, " text="DUAL"/>
-    <Parameter name="idtableDimension" type="replace" optional="true" after="WHERE A.ID = " text="'8'"/>
+    <Parameter name="idtableDimension" type="replace" optional="true" after="WHERE A.ID = to_char(" text="'8'"/>
     <Parameter name="nivel" type="replace" optional="true" after="GROUP BY A.ID, A.PERIOD, " text="1"/>
     <Parameter name="nivel" type="replace" optional="true" after="ORDER BY " text="1"/>
   </SqlMethod>
@@ -259,7 +259,7 @@
             AND 3=3
             AND  4=4
             GROUP BY D.PERIOD, 1) A, DUAL
-            WHERE A.ID = '8'
+            WHERE A.ID = to_char('8')
             GROUP BY A.ID, A.PERIOD, 1
             ORDER BY 1, A.PERIOD) AA
      ]]></Sql>
@@ -297,7 +297,7 @@
     <Parameter name="filter" type="replace" optional="true" after="AND 3=3" text="AND  4=4"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY D.PERIOD" text=", 1"/>
     <Parameter name="tableDimension" type="replace" optional="true" after=") A, " text="DUAL"/>
-    <Parameter name="idtableDimension" type="replace" optional="true" after="WHERE A.ID = " text="'8'"/>
+    <Parameter name="idtableDimension" type="replace" optional="true" after="WHERE A.ID = to_char(" text="'8'"/>
     <Parameter name="nivel" type="replace" optional="true" after="GROUP BY A.ID, A.PERIOD, " text="1"/>
     <Parameter name="nivel" type="replace" optional="true" after="ORDER BY " text="1"/>
   </SqlMethod>
