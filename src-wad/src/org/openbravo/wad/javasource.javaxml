@@ -516,13 +516,15 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
           } else vars.setMessage(tabId, myError);
         }
         if (myError==null) {
+          myError = new OBError();
           if (count==0) {
-            myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=Error");
-            vars.setMessage(tabId, myError);
+            myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+            myError.setType("Error");            
           } else {
-            myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=Success");
-            vars.setMessage(tabId, myError);
+            myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+            myError.setType("Success");
           }
+          vars.setMessage(tabId, myError);
         }
         if (log4j.isDebugEnabled() &amp;&amp; myError!=null) log4j.debug(myError.getMessage());
         printPageClosePopUp(response, vars);
