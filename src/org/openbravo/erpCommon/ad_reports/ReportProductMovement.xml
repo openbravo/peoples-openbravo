@@ -65,6 +65,7 @@
     <FIELD id="fieldId" attribute="onclick" replace="yy">issotrx</FIELD>
     <FIELD id="fieldDocumentNo">documentno</FIELD>
     <FIELD id="fieldName">name</FIELD>
+    <FIELD id="fieldAttr">attr</FIELD>
     <FIELD id="fieldPartnername">partnername</FIELD>
     <FIELD id="fieldMovementdate">movementdate</FIELD>
     <FIELD id="fieldMovementqty">movementqty</FIELD>
