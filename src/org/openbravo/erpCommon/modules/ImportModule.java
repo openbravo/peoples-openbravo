@@ -282,6 +282,10 @@ public class ImportModule {
 
           installModule(file, moduleToInstallID);
 
+          if (moduleToInstallID.equals("0"))
+            Utility.mergeOpenbravoProperties(obDir + "/config/Openbravo.properties", obDir
+                + "/config/Openbravo.properties.template");
+
           final Vector<DynaBean> allModules = new Vector<DynaBean>(); // all
           // modules
           // include
@@ -387,6 +391,10 @@ public class ImportModule {
 
             getModulesFromObx(dynMod, dynDep, dynDBPrefix, new ByteArrayInputStream(getMod));
             insertDynaModulesInDB(dynMod, dynDep, dynDBPrefix);
+
+            if (modulesToUpdate[i].getModuleID().equals("0"))
+              Utility.mergeOpenbravoProperties(obDir + "/config/Openbravo.properties", obDir
+                  + "/config/Openbravo.properties.template");
 
             // Entries for .classpath should be there, do not try to
             // insert them
@@ -1133,4 +1141,5 @@ public class ImportModule {
       super(msg);
     }
   }
+
 }
