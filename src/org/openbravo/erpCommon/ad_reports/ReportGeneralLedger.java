@@ -413,8 +413,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         .selectCombo(this, vars.getRole()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("cElementValueFrom", strcelementvaluefrom);
-    xmlDocument.setParameter("cElementValueTo", strcelementvalueto);
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -425,33 +423,22 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("amtTo", strAmtTo);
     xmlDocument.setParameter("adOrgId", strOrg);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
+    xmlDocument.setParameter("paramElementvalueIdTo", strcelementvalueto);
+    xmlDocument.setParameter("paramElementvalueIdFrom", strcelementvaluefrom);
+    xmlDocument.setParameter("inpElementValueIdTo_DES", vars
+        .getStringParameter("inpElementValueIdTo_DES"));
+    xmlDocument.setParameter("inpElementValueIdFrom_DES", vars
+        .getStringParameter("inpElementValueIdFrom_DES"));
     xmlDocument.setParameter("paramAll0", strAll.equals("") ? "0" : "1");
     xmlDocument.setParameter("paramHide0", strHide.equals("") ? "0" : "1");
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(
             this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
             ""), strcBpartnerIdAux));
-    xmlDocument.setData("reportC_ELEMENTVALUEFROM", "liststructure", ReportGeneralLedgerData
-        .selectC_ElementValue_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
-            "ReportGeneralLedger"), strcelementvaluefrom, strcAcctSchemaId));
-    xmlDocument.setData("reportC_ELEMENTVALUETO", "liststructure", ReportGeneralLedgerData
-        .selectC_ElementValue_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
-            "ReportGeneralLedger"), strcelementvaluefrom, strcAcctSchemaId));
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
             "ReportGeneralLedger"), strcAcctSchemaId));
-
-    xmlDocument.setParameter("accounFromArray", arrayDobleEntrada("arrAccountFrom",
-        ReportGeneralLedgerData.selectC_ElementValue_ID_Double(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars,
-            "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom)));
-    xmlDocument.setParameter("accounToArray", arrayDobleEntrada("arrAccountTo",
-        ReportGeneralLedgerData.selectC_ElementValue_ID_Double(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars,
-            "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom)));
 
     if (log4j.isDebugEnabled())
       log4j.debug("data.length: " + data.length);
