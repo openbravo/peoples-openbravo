@@ -39,6 +39,10 @@
       layer(id, strText, true, false);
       gt_showHideLayer(id, imageId, folderId);
     }
+    try {
+      gt_adjustTreeWidth();
+    } catch (e) {
+    }
     return true;
   }
 
@@ -70,6 +74,10 @@
       return submitXmlHttpRequest(gt_callback, frm, CommandValue, "../utility/GenericTreeServlet.html", false, null, paramXMLReq);
     } else {
       gt_showHideLayer("returnText" + id, "buttonTree" + id, "folder"+id);
+      try {
+        gt_adjustTreeWidth();
+      } catch (e) {
+      }
     }
   }
   //----
@@ -455,5 +463,43 @@
 	  }
 	}
   }
+
+  function gt_adjustTreeWidth() {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE")!=-1) {
+      return true;
+    }
+    var gt_cont = document.getElementById('genericTreeRowContainer');
+    var width_old = document.getElementById('genericTree').clientWidth;
+    var height_old = gt_cont.clientHeight;
+    var width_new = width_old + 3000;
+    gt_cont.style.width = width_new;
+    var height_new = gt_cont.clientHeight;
+    if (height_old > height_new) {
+      gt_cont.style.width = width_old;
+      gt_changeTreeWidth();
+    } else {
+      gt_cont.style.width = width_old - 10;
+    }
+  }
+
+  function gt_changeTreeWidth() {
+    var gt_cont = document.getElementById('genericTreeRowContainer');
+    var height_old = null;
+    var height_new = null;
+    var width_old = gt_cont.clientWidth;
+    var width_new = gt_cont.clientWidth;
+    for (var i=0; i+=5; i<2000) {
+      height_old = gt_cont.clientHeight;
+      width_new = width_old + i;
+      gt_cont.style.width = width_new;
+      height_new = gt_cont.clientHeight;
+      if (height_old <= height_new) {
+        width_new = width_old + i + 150;
+        gt_cont.style.width = width_new;
+        break;
+      }
+    }
+  }
+
 
   //---

@@ -4445,6 +4445,7 @@ td.TextBox_MsgContainerVt_td {
 */
 
 .Tree_Row {
+  clear: left;
   height: 19px;
 }
 
