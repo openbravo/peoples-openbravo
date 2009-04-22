@@ -22,22 +22,26 @@
 */
 
   //Functions for ajax tree control
-  function gt_callback(paramArray) {
+  function gt_callback(paramXMLParticular, XMLHttpRequestObj) {
     var strText = "";
     var id = "";
     var imageId = "";
-    if (getReadyStateHandler(xmlreq)) {
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
       try {
-        if (xmlreq.responseText) strText = xmlreq.responseText;
+        if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
       } catch (e) {
       }
-      if (paramArray!=null && paramArray.length>0) {
-        id = paramArray[0];
-        imageId = paramArray[1];
-        folderId = paramArray[2];
+      if (paramXMLParticular!=null && paramXMLParticular.length>0) {
+        id = paramXMLParticular[0];
+        imageId = paramXMLParticular[1];
+        folderId = paramXMLParticular[2];
       }
       layer(id, strText, true, false);
       gt_showHideLayer(id, imageId, folderId);
+    }
+    try {
+      gt_adjustTreeWidth();
+    } catch (e) {
     }
     return true;
   }
@@ -66,25 +70,29 @@
     frm.inpLevel.value = document.getElementById("inpLevel"+id).value;
     var dataLayer = readLayer("returnText" + id, true);
     if (dataLayer==null || dataLayer=="") {
-      paramXMLRequest = new Array('returnText' + id, 'buttonTree' + id, 'folder'+id);
-      return submitXmlHttpRequest(gt_callback, frm, CommandValue, "../utility/GenericTreeServlet.html", false);
+      var paramXMLReq = new Array('returnText' + id, 'buttonTree' + id, 'folder'+id);
+      return submitXmlHttpRequest(gt_callback, frm, CommandValue, "../utility/GenericTreeServlet.html", false, null, paramXMLReq);
     } else {
       gt_showHideLayer("returnText" + id, "buttonTree" + id, "folder"+id);
+      try {
+        gt_adjustTreeWidth();
+      } catch (e) {
+      }
     }
   }
   //----
   
   //Functions to manage descriptions with ajax
-   function gt_callbackDescription(paramArray) {
+   function gt_callbackDescription(paramXMLParticular, XMLHttpRequestObj) {
     var strText = "";
-    if (getReadyStateHandler(xmlreq)) {
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
       try {
-        if (xmlreq.responseText) strText = xmlreq.responseText;
+        if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
       } catch (e) {
       }
       document.getElementById('nodeDescription').innerHTML = strText;
-      if (paramArray!=null && paramArray.length>0) {
-        goToAnchor = paramArray[0];
+      if (paramXMLParticular!=null && paramXMLParticular.length>0) {
+        goToAnchor = paramXMLParticular[0];
         if (goToAnchor!=null && goToAnchor!='') goToDivAnchor('nodeDescription',goToAnchor);
       }
     }
@@ -92,21 +100,17 @@
   }
   
   function gt_getDescription(id) {
-    setTimeout(function() {gt_getDescription2(id);},100);
-  }
-
-  function gt_getDescription2(id) {
     var frm = document.frmMain;
     frm.inpNodeId.value = id;
-    paramXMLRequest = new Array('begin');
-    return submitXmlHttpRequest(gt_callbackDescription, frm, "DESCRIPTION", "../utility/GenericTreeServlet.html", false);
+    var paramXMLReq = new Array('begin');
+    return submitXmlHttpRequest(gt_callbackDescription, frm, "DESCRIPTION", "../utility/GenericTreeServlet.html", false, null, paramXMLReq);
   }
   
   function gt_getUpdateDescription(id){
     var frm = document.frmMain;
     frm.inpNodeId.value = id;
-    paramXMLRequest = new Array('anchor');
-    return submitXmlHttpRequest(gt_callbackDescription, frm, "DESCRIPTION", "../utility/GenericTreeServlet.html", false);
+    var paramXMLReq = new Array('anchor');
+    return submitXmlHttpRequest(gt_callbackDescription, frm, "DESCRIPTION", "../utility/GenericTreeServlet.html", false, null, paramXMLReq);
   }
   
   function gt_selectAllNodes(value){
@@ -459,5 +463,43 @@
 	  }
 	}
   }
+
+  function gt_adjustTreeWidth() {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE")!=-1) {
+      return true;
+    }
+    var gt_cont = document.getElementById('genericTreeRowContainer');
+    var width_old = document.getElementById('genericTree').clientWidth;
+    var height_old = gt_cont.clientHeight;
+    var width_new = width_old + 3000;
+    gt_cont.style.width = width_new;
+    var height_new = gt_cont.clientHeight;
+    if (height_old > height_new) {
+      gt_cont.style.width = width_old;
+      gt_changeTreeWidth();
+    } else {
+      gt_cont.style.width = width_old - 10;
+    }
+  }
+
+  function gt_changeTreeWidth() {
+    var gt_cont = document.getElementById('genericTreeRowContainer');
+    var height_old = null;
+    var height_new = null;
+    var width_old = gt_cont.clientWidth;
+    var width_new = gt_cont.clientWidth;
+    for (var i=0; i+=5; i<2000) {
+      height_old = gt_cont.clientHeight;
+      width_new = width_old + i;
+      gt_cont.style.width = width_new;
+      height_new = gt_cont.clientHeight;
+      if (height_old <= height_new) {
+        width_new = width_old + i + 150;
+        gt_cont.style.width = width_new;
+        break;
+      }
+    }
+  }
+
 
   //---

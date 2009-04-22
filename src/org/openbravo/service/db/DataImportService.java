@@ -20,6 +20,7 @@
 package org.openbravo.service.db;
 
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +49,7 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.ReferenceDataStore;
+import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
@@ -143,7 +145,7 @@ public class DataImportService implements OBSingleton {
       final ImportResult ir = new ImportResult();
 
       boolean rolledBack = false;
-      OBContext.getOBContext().setInAdministratorMode(true);
+      final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
       try {
         // disable the triggers to prevent unexpected extra db actions
         // during import
@@ -199,6 +201,7 @@ public class DataImportService implements OBSingleton {
         // now save and update
         // do inserts and updates in opposite order, this is important
         // so that the objects on which other depend are inserted first
+        final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         final List<BaseOBObject> toInsert = xec.getToInsert();
         int done = 0;
         final Set<BaseOBObject> inserted = new HashSet<BaseOBObject>();
@@ -208,6 +211,13 @@ public class DataImportService implements OBSingleton {
           insertObjectGraph(ins, inserted);
           ir.getInsertedObjects().add(ins);
           done++;
+
+          if (ins instanceof TreeNode) {
+            final TreeNode tn = (TreeNode) ins;
+            if (tn.getTree().getTypeArea().equals("OO")) {
+              treeNodes.add(tn);
+            }
+          }
         }
         Check.isTrue(done == toInsert.size(),
             "Not all objects have been inserted, check for loop: " + done + "/" + toInsert.size());
@@ -223,6 +233,13 @@ public class DataImportService implements OBSingleton {
           OBDal.getInstance().save(upd);
           ir.getUpdatedObjects().add(upd);
           done++;
+
+          if (upd instanceof TreeNode) {
+            final TreeNode tn = (TreeNode) upd;
+            if (tn.getTree().getTypeArea().equals("OO")) {
+              treeNodes.add(tn);
+            }
+          }
         }
         Check.isTrue(done == toUpdate.size(),
             "Not all objects have been inserted, check for loop: " + done + "/" + toUpdate.size());
@@ -230,11 +247,22 @@ public class DataImportService implements OBSingleton {
         // flush to set the ids in the objects
         OBDal.getInstance().flush();
 
+        // now walk through the treenodes to repair id's
+        for (TreeNode tn : treeNodes) {
+          final Organization org = (Organization) xec.getEntityResolver().resolve(
+              Organization.ENTITY_NAME, tn.getNode(), true);
+          if (!org.getId().equals(tn.getNode())) {
+            tn.setNode(org.getId());
+          }
+        }
+        OBDal.getInstance().flush();
       } catch (final Throwable t) {
+        OBDal.getInstance().rollbackAndClose();
+        rolledBack = true;
         t.printStackTrace(System.err);
         ir.setException(t);
       } finally {
-        OBContext.getOBContext().restorePreviousAdminMode();
+        OBContext.getOBContext().setInAdministratorMode(prevMode);
         if (rolledBack) {
           TriggerHandler.getInstance().clear();
         } else if (TriggerHandler.getInstance().isDisabled()) {
@@ -343,6 +371,7 @@ public class DataImportService implements OBSingleton {
       // now save and update
       // do inserts and updates in opposite order, this is important
       // so that the objects on which other depend are inserted first
+      final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
       final List<BaseOBObject> toInsert = xec.getToInsert();
       int done = 0;
       final Set<BaseOBObject> inserted = new HashSet<BaseOBObject>();
@@ -352,6 +381,13 @@ public class DataImportService implements OBSingleton {
         insertObjectGraph(ins, inserted);
         ir.getInsertedObjects().add(ins);
         done++;
+
+        if (ins instanceof TreeNode) {
+          final TreeNode tn = (TreeNode) ins;
+          if (tn.getTree().getTypeArea().equals("OO")) {
+            treeNodes.add(tn);
+          }
+        }
       }
       Check.isTrue(done == toInsert.size(), "Not all objects have been inserted, check for loop: "
           + done + "/" + toInsert.size());
@@ -374,9 +410,19 @@ public class DataImportService implements OBSingleton {
       // flush to set the ids in the objects
       OBDal.getInstance().flush();
 
+      // now walk through the treenodes to repair id's
+      for (TreeNode tn : treeNodes) {
+        final Organization org = (Organization) xec.getEntityResolver().resolve(
+            Organization.ENTITY_NAME, tn.getNode(), true);
+        if (!org.getId().equals(tn.getNode())) {
+          tn.setNode(org.getId());
+        }
+      }
+      OBDal.getInstance().flush();
+
       // store the ad_ref_data_loaded
       if (!isClientImport) {
-        OBContext.getOBContext().setInAdministratorMode(true);
+        final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
         try {
           for (final BaseOBObject ins : xec.getToInsert()) {
             final String originalId = xec.getEntityResolver().getOriginalId(ins);
@@ -401,10 +447,12 @@ public class DataImportService implements OBSingleton {
           }
           OBDal.getInstance().flush();
         } finally {
-          OBContext.getOBContext().restorePreviousAdminMode();
+          OBContext.getOBContext().setInAdministratorMode(prevMode);
         }
       }
     } catch (final Throwable t) {
+      OBDal.getInstance().rollbackAndClose();
+      rolledBack = true;
       t.printStackTrace(System.err);
       ir.setException(t);
     } finally {

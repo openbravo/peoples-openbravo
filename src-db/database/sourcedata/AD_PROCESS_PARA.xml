@@ -3531,9 +3531,9 @@ You find the current status in the Document Status field. The options are listed
 <!--355-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--355-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--355-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--355-->  <NAME><![CDATA[Shipment/Receipt]]></NAME>
-<!--355-->  <DESCRIPTION><![CDATA[The document number for identifying an act of sending or receiving goods.]]></DESCRIPTION>
-<!--355-->  <HELP><![CDATA[The Shipment / Receipt ID indicates the unique document for this shipment or receipt.]]></HELP>
+<!--355-->  <NAME><![CDATA[Goods Shipment]]></NAME>
+<!--355-->  <DESCRIPTION><![CDATA[The document number for identifying an act of sending goods.]]></DESCRIPTION>
+<!--355-->  <HELP><![CDATA[The Shipment ID indicates the unique document for this shipment.]]></HELP>
 <!--355-->  <AD_PROCESS_ID><![CDATA[224]]></AD_PROCESS_ID>
 <!--355-->  <SEQNO><![CDATA[20]]></SEQNO>
 <!--355-->  <AD_REFERENCE_ID><![CDATA[30]]></AD_REFERENCE_ID>
@@ -3828,9 +3828,9 @@ The values of the actual Product Attributes]]></HELP>
 <!--800000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800000-->  <NAME><![CDATA[Shipment/Receipt]]></NAME>
-<!--800000-->  <DESCRIPTION><![CDATA[The document number for identifying an act of sending or receiving goods.]]></DESCRIPTION>
-<!--800000-->  <HELP><![CDATA[The Shipment / Receipt ID indicates the unique document for this shipment or receipt.]]></HELP>
+<!--800000-->  <NAME><![CDATA[Goods Shipment]]></NAME>
+<!--800000-->  <DESCRIPTION><![CDATA[The document number for identifying an act of sending goods.]]></DESCRIPTION>
+<!--800000-->  <HELP><![CDATA[The Shipment ID indicates the unique document for this shipment.]]></HELP>
 <!--800000-->  <AD_PROCESS_ID><![CDATA[800010]]></AD_PROCESS_ID>
 <!--800000-->  <SEQNO><![CDATA[10]]></SEQNO>
 <!--800000-->  <AD_REFERENCE_ID><![CDATA[30]]></AD_REFERENCE_ID>

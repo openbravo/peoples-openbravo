@@ -70,11 +70,12 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       String strWindowId = vars.getStringParameter("inpwindowId");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       String strTabId = vars.getStringParameter("inpTabId");
+      String cancelPriceAd = vars.getStringParameter("inpcancelpricead");
 
       try {
         printPage(response, vars, strUOM, strPriceList, strPriceStd, strPriceLimit, strCurrency,
             strMProductID, strCBPartnerLocationID, strDateOrdered, strADOrgID, strMWarehouseID,
-            strCOrderId, strWindowId, strIsSOTrx, strCBpartnerID, strTabId, strQty);
+            strCOrderId, strWindowId, strIsSOTrx, strCBpartnerID, strTabId, strQty, cancelPriceAd);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -86,8 +87,8 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       String strPriceList, String strPriceStd, String strPriceLimit, String strCurrency,
       String strMProductID, String strCBPartnerLocationID, String strDateOrdered,
       String strADOrgID, String strMWarehouseID, String strCOrderId, String strWindowId,
-      String strIsSOTrx, String strCBpartnerID, String strTabId, String strQty) throws IOException,
-      ServletException {
+      String strIsSOTrx, String strCBpartnerID, String strTabId, String strQty, String cancelPriceAd)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -114,7 +115,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     }
     StringBuffer resultado = new StringBuffer();
 
-    if (strPriceActual.equals(""))
+    if (strPriceActual.equals("") || "Y".equals(cancelPriceAd))
       strPriceActual = strPriceStd;
 
     // Discount...
@@ -189,7 +190,8 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLOrderProduct"),
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "SLOrderProduct"),
             Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
         tld = comboTableData.select(false);
@@ -215,7 +217,8 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLOrderProduct"),
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "SLOrderProduct"),
             Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
         tld = comboTableData.select(false);

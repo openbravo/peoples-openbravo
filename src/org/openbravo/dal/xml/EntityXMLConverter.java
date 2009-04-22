@@ -41,6 +41,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.IdentifierProvider;
+import org.openbravo.base.structure.Traceable;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -277,7 +278,8 @@ public class EntityXMLConverter implements OBNotSingleton {
       // not exported, a mandatory field should always be exported
       // auditinfo is mandatory but can be ignored for export
       // as it is always set
-      if (p.isAuditInfo() && !isOptionExportAuditInfo()) {
+      if (p.isAuditInfo() && !isOptionExportAuditInfo()
+          && Traceable.class.isAssignableFrom(obObject.getClass())) {
         continue;
       }
       final boolean isTransientField = p.isTransient(obObject);

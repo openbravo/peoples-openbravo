@@ -29,12 +29,14 @@
   <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
 	<PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
 	<PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
-  <PARAMETER id="paramC_ELEMENTVALUE_IDFROM" name="cElementValueFrom" default=""/>
-  <PARAMETER id="paramC_ELEMENTVALUE_IDTO" name="cElementValueTo" default=""/>
   <PARAMETER id="paramAD_ORGID" name="adOrgId"/>
   <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>
   <PARAMETER id="paramAmtFrom" name="amtFrom" attribute="value"/>
   <PARAMETER id="paramAmtTo" name="amtTo" attribute="value"/>
+  <PARAMETER id="paramElementvalueIdTo" name="paramElementvalueIdTo" attribute="value"/>
+  <PARAMETER id="paramElementvalueIdFrom" name="paramElementvalueIdFrom" attribute="value"/>
+  <PARAMETER id="inpElementValueIdTo_DES" name="inpElementValueIdTo_DES" attribute="value"/>
+  <PARAMETER id="inpElementValueIdFrom_DES" name="inpElementValueIdFrom_DES" attribute="value"/>
 
   <PARAMETER id="parameterAll" name="all" default="1"/>
   <PARAMETER id="paramAll" name="paramAll0" boolean="checked" withId="parameterAll" default="1"/>
@@ -51,9 +53,6 @@
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
 
-  <PARAMETER id="paramArrayAccountFrom" name="accounFromArray"/>
-  <PARAMETER id="paramArrayAccountTo" name="accounToArray"/>
-	
   <PARAMETER id="param2" name="param2" default="2"/>
 
   <structure name="structure1">
@@ -101,13 +100,6 @@
     <FIELD id="totalCredit" format="euroInform">finalcredit</FIELD>
     <FIELD id="totalTotal" format="euroInform">finaltotal</FIELD>
 
-    <SUBREPORT id="reportC_ELEMENTVALUEFROM" name="reportC_ELEMENTVALUEFROM" report="org/openbravo/erpCommon/reference/List">
-      <ARGUMENT name="parameterListSelected" withId="paramC_ELEMENTVALUE_IDFROM"/>
-    </SUBREPORT>
-
-    <SUBREPORT id="reportC_ELEMENTVALUETO" name="reportC_ELEMENTVALUETO" report="org/openbravo/erpCommon/reference/List">
-      <ARGUMENT name="parameterListSelected" withId="paramC_ELEMENTVALUE_IDTO"/>
-    </SUBREPORT>
 
     <SUBREPORT id="reportAD_ORGID" name="reportAD_ORGID" report="org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="parameterListSelected" withId="paramAD_ORGID"/>

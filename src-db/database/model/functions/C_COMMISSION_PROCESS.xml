@@ -163,7 +163,7 @@
       --
     BEGIN
       FOR CUR_CLine IN
-        (SELECT *  FROM C_CommissionLine  WHERE C_Commission_ID=v_Record_ID)
+        (SELECT *  FROM C_CommissionLine  WHERE C_Commission_ID=v_Record_ID AND IsActive='Y')
       LOOP
         v_ResultStr:='InsertingAmt';
         -- For every Commission Line create empty Amt line (updated by Detail)

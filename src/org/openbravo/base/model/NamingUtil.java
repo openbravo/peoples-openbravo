@@ -39,17 +39,59 @@ public class NamingUtil {
   public static final String ENTITY_NAME_CONSTANT = "ENTITY_NAME";
   public static final String PROPERTY_CONSTANT_PREFIX = "PROPERTY_";
 
-  private static HashMap<String, String> reservedNames = null;
+  private static HashMap<String, String> reservedNames = new HashMap<String, String>();
 
   static {
-
-    reservedNames = new HashMap<String, String>();
-    reservedNames.put("default", "deflt");
-    reservedNames.put("import", "imprt");
-    reservedNames.put("package", "pkg");
-    reservedNames.put("transient", "trnsnt");
     reservedNames.put("case", "cse");
     reservedNames.put("char", "chr");
+    reservedNames.put("abstract", "abstrct");
+    reservedNames.put("continue", "cntinue");
+    reservedNames.put("for", "fr");
+    reservedNames.put("new", "nw");
+    reservedNames.put("switch", "swtch");
+    reservedNames.put("assert", "assrt");
+    reservedNames.put("default", "deflt");
+    reservedNames.put("package", "pkg");
+    reservedNames.put("synchronized", "synchrnized");
+    reservedNames.put("boolean", "bolean");
+    reservedNames.put("do", "d");
+    reservedNames.put("if", "i");
+    reservedNames.put("private", "prvate");
+    reservedNames.put("this", "ths");
+    reservedNames.put("break", "brk");
+    reservedNames.put("double", "dble");
+    reservedNames.put("implements", "implments");
+    reservedNames.put("protected", "prtected");
+    reservedNames.put("throw", "thrw");
+    reservedNames.put("byte", "bte");
+    reservedNames.put("else", "els");
+    reservedNames.put("import", "imprt");
+    reservedNames.put("public", "pblic");
+    reservedNames.put("throws", "thrws");
+    reservedNames.put("case", "cse");
+    reservedNames.put("enum", "enm");
+    reservedNames.put("instanceof", "instnceof");
+    reservedNames.put("return", "rturn");
+    reservedNames.put("transient", "trnsnt");
+    reservedNames.put("catch", "ctch");
+    reservedNames.put("extends", "xtends");
+    reservedNames.put("int", "nt");
+    reservedNames.put("short", "shrt");
+    reservedNames.put("try", "tr");
+    reservedNames.put("char", "chr");
+    reservedNames.put("final", "fnl");
+    reservedNames.put("interface", "interfce");
+    reservedNames.put("static", "statc");
+    reservedNames.put("void", "vod");
+    reservedNames.put("class", "clss");
+    reservedNames.put("finally", "finlly");
+    reservedNames.put("long", "lng");
+    reservedNames.put("strictfp", "strctfp");
+    reservedNames.put("volatile", "volatle");
+    reservedNames.put("float", "flt");
+    reservedNames.put("native", "natve");
+    reservedNames.put("super", "spr");
+    reservedNames.put("while", "whle");
   }
 
   /**

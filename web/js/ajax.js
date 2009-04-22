@@ -22,36 +22,37 @@
 * HTML reports to display/hide a subreport)
 */
 
-var xmlreq = false;
-var paramXMLRequest = null;
+var xmlreq = false; //Deprecated in 2.50
+var paramXMLRequest = null; //Deprecated in 2.50
 
 function getXMLHttpRequest() {
   // Create XMLHttpRequest object in non-Microsoft browsers
-  if (!xmlreq && typeof XMLHttpRequest != 'undefined') {
-    try {
-      xmlreq = new XMLHttpRequest();
-    } catch (e) {
-      xmlreq = false;
-    }
+  var XMLHttpRequestObj = null;
+
+  try {
+    XMLHttpRequestObj = new XMLHttpRequest();
+  } catch (e) {
+    XMLHttpRequestObj = false;
   }
-  else if (window.ActiveXObject) {
+
+  if (window.ActiveXObject) {
     try {
       // Try to create XMLHttpRequest in later versions
       // of Internet Explorer
-      xmlreq = new ActiveXObject("Msxml2.XMLHTTP");
+      XMLHttpRequestObj = new ActiveXObject("Msxml2.XMLHTTP");
     } catch (e1) {
       // Failed to create required ActiveXObject
       try {
         // Try version supported by older versions
         // of Internet Explorer
-        xmlreq = new ActiveXObject("Microsoft.XMLHTTP");
+        XMLHttpRequestObj = new ActiveXObject("Microsoft.XMLHTTP");
       } catch (e2) {
         // Unable to create an XMLHttpRequest by any means
-        xmlreq = false;
+        XMLHttpRequestObj = false;
       }
     }
   }
-  return xmlreq;
+  return XMLHttpRequestObj;
 }
 
 function getReadyStateHandler(req, responseXmlHandler, notifyError) {
@@ -75,33 +76,41 @@ function getReadyStateHandler(req, responseXmlHandler, notifyError) {
   return false;
 }
 
-function submitXmlHttpRequestUrl(callbackFunction, url, debug) {
-  if (!xmlreq) xmlreq = getXMLHttpRequest();
+function submitXmlHttpRequestUrl(callbackFunction, url, debug, paramXMLReq) {
+  var XMLHttpRequestObj = null;
+  XMLHttpRequestObj = getXMLHttpRequest();
+  if (!paramXMLReq) paramXMLReq = paramXMLRequest; //Deprecated in 2.50
+  if (!XMLHttpRequestObj) XMLHttpRequestObj = getXMLHttpRequest();
   if (debug==null) debug=false;
-  if (!xmlreq) {
+  if (!XMLHttpRequestObj) {
     alert("Your browser doesn't support this technology");
     return false;
   }
   if (debug)
     if (!debugXmlHttpRequest(url)) return false;
-  xmlreq.open("GET", url);
-  var paramXMLParticular = paramXMLRequest;
-  xmlreq.onreadystatechange = function () {
-    return callbackFunction(paramXMLParticular);
+  XMLHttpRequestObj.open("GET", url);
+  var paramXMLParticular = paramXMLReq;
+  xmlreq = XMLHttpRequestObj; //Deprecated in 2.50
+  XMLHttpRequestObj.onreadystatechange = function () {
+    return callbackFunction(paramXMLParticular, XMLHttpRequestObj);
   }
-  paramXMLRequest = null;
-  xmlreq.send(null);
+  xmlreq = null; //Deprecated in 2.50
+  paramXMLRequest = null; //Deprecated in 2.50
+  XMLHttpRequestObj.send(null);
 
   return true;
 }
 
 // extraParams is added unencoded to the POST-data, so caller has to do encoding if needed
-function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, extraParams) {
-  if (!xmlreq) xmlreq = getXMLHttpRequest();
+function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, extraParams, paramXMLReq) {
+  var XMLHttpRequestObj = null;
+  XMLHttpRequestObj = getXMLHttpRequest();
+ // if (!xmlreq) xmlreq = getXMLHttpRequest(); //Deprecated in 2.50
+  if (!paramXMLReq) paramXMLReq = paramXMLRequest; //Deprecated in 2.50
   if (formObject==null) formObject = document.forms[0];
   if (debug==null) debug=false;
   if (Action==null) Action = formObject.action;
-  if (!xmlreq) {
+  if (!XMLHttpRequestObj) {
     alert("Your browser doesn't support this technology");
     return false;
   }
@@ -120,24 +129,27 @@ function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, A
 
   if (debug)
     if (!debugXmlHttpRequest(Command)) return false;
-  //xmlreq.open("GET", Action + "?" + sendText);
-  xmlreq.open("POST", Action);
+  //XMLHttpRequestObj.open("GET", Action + "?" + sendText);
+  XMLHttpRequestObj.open("POST", Action);
   try {
-    xmlreq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    XMLHttpRequestObj.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   } catch (e) {}
-  var paramXMLParticular = paramXMLRequest;
-  xmlreq.onreadystatechange = function () {
-    return callbackFunction(paramXMLParticular);
+  var paramXMLParticular = paramXMLReq;
+  xmlreq = XMLHttpRequestObj; //Deprecated in 2.50
+  XMLHttpRequestObj.onreadystatechange = function () {
+  return callbackFunction(paramXMLParticular, XMLHttpRequestObj);
   }
-  //xmlreq.send(null);
-  paramXMLRequest = null;
-  xmlreq.send(sendText);
+  xmlreq = null; //Deprecated in 2.50
+  //XMLHttpRequestObj.send(null);
+  paramXMLRequest = null; //Deprecated in 2.50
+  XMLHttpRequestObj.send(sendText);
 
   return true;
 }
 
-function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, debug) {
-  submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, null);
+function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, debug, extraParams, paramXMLReq) {
+  extraParams = null; //if you want to use with params use directly submitXmlHttpRequestWithParams instead
+  submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, extraParams, paramXMLReq);
 }
 
 function lockField(inputField) {

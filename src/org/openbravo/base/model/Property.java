@@ -209,7 +209,7 @@ public class Property {
         getEntity().setOrganizationPartOfKey(true);
       }
     }
-    if (getName().equalsIgnoreCase("isactive") && isPrimitive()) {
+    if (getName().equalsIgnoreCase("active") && isPrimitive()) {
       getEntity().setActiveEnabled(true);
     }
   }

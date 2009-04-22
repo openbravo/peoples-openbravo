@@ -152,19 +152,21 @@ function getUrl() {
 }
 
 function getDataBaseMessage(value, responseFunction) {
-  //paramXMLRequest = new Array('field', 'fieldName');
-  submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (getUrl() + "/businessUtility/MessageJS.html?inpvalue=JS" + escape(value)), false)
+  //var paramXMLReq = new Array('field', 'fieldName');
+  var paramXMLReq = null;
+  submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (getUrl() + "/businessUtility/MessageJS.html?inpvalue=JS" + escape(value)), false, paramXMLReq)
 }
 
 function getDataBaseStandardMessage(value, responseFunction) {
-  submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (getUrl() + "/businessUtility/MessageJS.html?inpvalue=" + escape(value)), false)
+  var paramXMLReq = null;
+  submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (getUrl() + "/businessUtility/MessageJS.html?inpvalue=" + escape(value)), false, paramXMLReq)
 }
 
-function messageResponse(paramArray) {
+function messageResponse(paramArray, XMLHttpRequestObj) {
    var obj;
-   if (getReadyStateHandler(xmlreq)) {
+   if (getReadyStateHandler(XMLHttpRequestObj)) {
     try {
-      if (xmlreq.responseXML) obj = xmlreq.responseXML.documentElement;
+      if (XMLHttpRequestObj.responseXML) obj = XMLHttpRequestObj.responseXML.documentElement;
     } catch (e) {
     }
     /*if (paramArray!=null && paramArray.length>0) {

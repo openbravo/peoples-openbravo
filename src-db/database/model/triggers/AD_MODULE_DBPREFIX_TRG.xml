@@ -21,6 +21,7 @@
   V_Char char;
   v_isregistered char(1);
   v_old_name varchar(60);
+  startsWithLetter boolean;
     
 BEGIN
     
@@ -43,12 +44,18 @@ BEGIN
    END IF;
    --Check DB_Prefix
    IF INSERTING OR UPDATING THEN
+     startsWithLetter := false;
      FOR I IN 1..LENGTH(:new.name) LOOP
        v_char := substr(:new.name,i,1);
        IF NOT (v_char between 'A' and 'Z' 
-               or v_char between '0' and '9'
-               or (v_char = '_' and i>1)) THEN
-        RAISE_APPLICATION_ERROR(-20531, 'Not valid DB_Prefix') ;
+               or v_char between '0' and '9') THEN
+        RAISE_APPLICATION_ERROR(-20531, '@20531@') ;
+       END IF;
+       IF v_char between 'A' and 'Z' THEN
+         startsWithLetter := true;
+       END IF;
+       IF NOT startsWithLetter THEN
+         RAISE_APPLICATION_ERROR(-20531, '@20531@') ;
        END IF;
      END LOOP;
    END IF;

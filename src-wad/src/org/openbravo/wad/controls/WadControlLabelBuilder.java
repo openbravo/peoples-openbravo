@@ -40,7 +40,7 @@ public class WadControlLabelBuilder {
     if (labelControl.isLinkable()) {
       result
           .append("<a class=\"LabelLink\" href=\"#\" onclick=\"sendDirectLink(document.frmMain, '");
-      result.append(labelControl.getColumnName());
+      result.append(labelControl.getColumnLink());
       result.append("', document.frmMain.");
       result.append(labelControl.getKeyColumnName());
       result.append(".value, '../utility/ReferencedLink.html', document.frmMain.inp");

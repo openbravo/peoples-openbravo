@@ -91,7 +91,7 @@
       </column>
       <column name="DISPLAYEDACCOUNT" primaryKey="false" required="false" type="NVARCHAR" size="50" autoIncrement="false">
         <default/>
-        <onCreateDefault><![CDATA[SELECT C_BANK.NAME || '. ' || C_BANK.CODEBANK || '-' || C_BANK.CODEBRANCH || '-' || C_BANK.DIGITCONTROL || '-' || A.DIGITCONTROL || '-' || A.CODEACCOUNT FROM C_BANK, C_BANKACCOUNT A WHERE C_BANK.C_BANK_ID = A.C_BANK_ID AND C_BANKACCOUNT.C_BANKACCOUNT_ID=A.C_BANKACCOUNT_ID]]></onCreateDefault>
+        <onCreateDefault><![CDATA[SELECT SUBSTR(C_BANK.NAME,23) || '. ' || C_BANK.CODEBANK || '-' || C_BANK.CODEBRANCH || '-' || C_BANK.DIGITCONTROL || '-' || A.DIGITCONTROL || '-' || A.CODEACCOUNT FROM C_BANK, C_BANKACCOUNT A WHERE C_BANK.C_BANK_ID = A.C_BANK_ID AND C_BANKACCOUNT.C_BANKACCOUNT_ID=A.C_BANKACCOUNT_ID]]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBANKACCOUNT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>

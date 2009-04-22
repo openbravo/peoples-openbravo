@@ -79,6 +79,7 @@ var baseDirectory = "../../../../../web/";
     gt_setActiveUninstall();
 
     resizeArea();
+    gt_adjustTreeWidth();
 
   }
 
@@ -86,12 +87,12 @@ var baseDirectory = "../../../../../web/";
     resizeArea();
   }
   
-  function scan_callback() {
+  function scan_callback(paramXMLParticular, XMLHttpRequestObj) {
     var strText = "";
-    if (getReadyStateHandler(xmlreq)) {
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
       try {
-        if (xmlreq.responseText) {
-          strText = xmlreq.responseText;
+        if (XMLHttpRequestObj.responseText) {
+          strText = XMLHttpRequestObj.responseText;
 
           elements = strText.split("|");
           document.getElementById('notifications').innerHTML=elements[0];
@@ -122,7 +123,8 @@ var baseDirectory = "../../../../../web/";
 	} else {
 	  changeClass('notifications', 'Tree_Actions', 'Tree_Actions_Processing', true);
 	}
-    return submitXmlHttpRequest(scan_callback, document.frmMain, "SCAN", "ModuleManagement.html", false);
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(scan_callback, document.frmMain, "SCAN", "ModuleManagement.html", false, null, paramXMLReq);
   }
   
   function installUpdate(id){

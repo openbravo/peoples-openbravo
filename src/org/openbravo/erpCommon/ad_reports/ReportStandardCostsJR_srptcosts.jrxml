@@ -306,7 +306,7 @@ ORDER BY LINEORDER, QUANTITY DESC, COST DESC]]></queryString>
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[CONCEPT]]></text>
+				<text><![CDATA[Resources]]></text>
 				</staticText>
 				<staticText>
 					<reportElement

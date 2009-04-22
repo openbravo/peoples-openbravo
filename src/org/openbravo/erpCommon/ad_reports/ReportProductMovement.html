@@ -52,8 +52,12 @@
       </script>
 <script language="JavaScript" type="text/javascript">
  function abrirVentana(id, issotrx){
-  if (issotrx == 'Si')  submitCommandFormParameter('DIRECT', document.frmMain.inpmInoutId, id, false, document.frmMain, '../GoodsShipment/Header_Relation.html', null, false, true);
+  if (issotrx == 'Y')  submitCommandFormParameter('DIRECT', document.frmMain.inpmInoutId, id, false, document.frmMain, '../GoodsShipment/Header_Relation.html', null, false, true);
   else submitCommandFormParameter('DIRECT', document.frmMain.inpmInoutId, id, false, document.frmMain, '../GoodsReceipt/Header_Relation.html', null, false, true)
+ }
+ function BOMorWorkEffort(id, isBOM){
+	 if (isBOM == 'Y') submitCommandFormParameter('DIRECT', document.frmMain.inpmProductionplanId, id, false, document.frmMain, '../BillofMaterialsProduction/ProductionPlan_Relation.html', null, false, true);
+	 else submitCommandFormParameter('DIRECT', document.frmMain.inpmProductionplanId, id, false, document.frmMain, '../WorkEffort/ProductionRun_Relation.html', null, false, true);
  }
 function validate(action)
 {
@@ -428,16 +432,17 @@ function onloadFunctions(){
                 <div style="height:25px;" />
                 <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="selEliminar1">
                   <tr class="DataGrid_Body_Row"> 
-                    <th class="DataGrid_Header_Cell" colspan="11"><span>Incoming/Outgoing</span></th>
+                    <th class="DataGrid_Header_Cell" colspan="12"><span>Incoming/Outgoing</span></th>
                   </tr>
                   <div id="sectionPartner"> 
                     <tr class="DataGrid_Body_Row"> 
-                      <th colspan="11" class="DataGrid_Header_Cell"><span>Customer<span>:&nbsp;</span><span id="fieldPartnername">xxAguinaga</span></span></th>
+                      <th colspan="12" class="DataGrid_Header_Cell"><span>Customer<span>:&nbsp;</span><span id="fieldPartnername">xxAguinaga</span></span></th>
                     </tr>
                     <tr class="DataGrid_Body_Row"> 
                       <th width="10%" class="DataGrid_Header_Cell">Document No.</th>
                       <th width="10%" class="DataGrid_Header_Cell">Date</th>
                       <th width="34%" class="DataGrid_Header_Cell">Description</th>
+                      <th width="20%" class="DataGrid_Header_Cell">Attribute</th>
                       <th width="12%" class="DataGrid_Header_Cell" colspan="3">
                         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
                           <tr class="DataGrid_Body_Row">
@@ -467,10 +472,11 @@ function onloadFunctions(){
                     </tr>
                     <div id="sectionDetail"> 
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
-                        <td width="10%" class="DataGrid_Body_Cell"><a href="#" onclick="abrirVentana(xx, 'yy');return false;" onmouseover="window.status='Incoming/Outgoing';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
+                        <td width="10%" class="DataGrid_Body_Cell"><a href="#" onclick="abrirVentana('xx', 'yy');return false;" onmouseover="window.status='Incoming/Outgoing';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
                           <span id="fieldDocumentNo">xx850000007</span></a></td>
                         <td width="10%" class="DataGrid_Body_Cell" id="fieldMovementdate">xxfd200</td>
                         <td width="34%" class="DataGrid_Body_Cell" id="fieldName">xx2345</td>
+                        <td width="20%" class="DataGrid_Body_Cell" id="fieldAttr">xx2345</td>
                         <td width="4%"  class="DataGrid_Body_Cell" id="fieldXOrigin">xx3</td>
                         <td width="4%"  class="DataGrid_Body_Cell" id="fieldYOrigin">xx3</td>
                         <td width="4%"  class="DataGrid_Body_Cell" id="fieldZOrigin">xx3</td>
@@ -514,7 +520,7 @@ function onloadFunctions(){
                     <div id="sectionDetail1"> 
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow2xx">
                         <td class="DataGrid_Body_Cell" width="8%" id="fieldMovementdate1">xx23-02-2004</td>
-                        <td class="DataGrid_Body_Cell" width="26%"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpmInventoryId, xx, false, document.frmMain, '../PhysicalInventory/Header_Relation.html', null, false, true);return false;" onmouseover="window.status='yy';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId2"> 
+                        <td class="DataGrid_Body_Cell" width="26%"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpmInventoryId, 'xx', false, document.frmMain, '../PhysicalInventory/Header_Relation.html', null, false, true);return false;" onmouseover="window.status='yy';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId2"> 
                           <span id="fieldMovement">xx850000007</span></a></td>
                         <td class="DataGrid_Body_Cell" width="26%" id="fieldName1">xx2345</td>
                         <td class="DataGrid_Body_Cell" width="4%"  id="fieldXOrigin1">xx3</td>
@@ -569,7 +575,7 @@ function onloadFunctions(){
                     <div id="sectionDetail2">
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow3xx">
                         <td class="DataGrid_Body_Cell" width="7%" id="fieldMovementdate2">xxfd200</td>
-                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpmMovementId, xx, false,     document.frmMain, '../GoodsMovements/Header_Relation.html', null, false, true);return false;" onmouseover="window.status='Inventory Move';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId3"> 
+                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpmMovementId, 'xx', false,     document.frmMain, '../GoodsMovements/Header_Relation.html', null, false, true);return false;" onmouseover="window.status='Inventory Move';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId3"> 
                           <span id="fieldMovement2">xx850000007</span></a></td>
                         <td class="DataGrid_Body_Cell" width="26%" id="fieldName2">xx2345</td>
                         <td class="DataGrid_Body_Cell" width="4%" id="fieldXOrigin2">xx3</td>
@@ -628,7 +634,7 @@ function onloadFunctions(){
                     <div id="sectionDetail3"> 
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow4xx">
                         <td class="DataGrid_Body_Cell" width="7%" id="fieldMovementdate3">xxfd200</td>
-                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpmProductionplanId, xx, false, document.frmMain, '../BillofMaterialsProduction/ProductionPlan_Relation.html', null, false, true);return false;" onmouseover="window.status='Production Plan';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId4"> 
+                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclick="BOMorWorkEffort('xx', 'zz');return false;" onmouseover="window.status='Production Plan';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId4"> 
                         <span id="fieldProductionPlan">xx850000007</span></a></td>
                         <td class="DataGrid_Body_Cell" width="26%" id="fieldName3">xx2345</td>
                         <td class="DataGrid_Body_Cell" width="4%" id="fieldXOrigin3">xx3</td>

@@ -516,13 +516,15 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
           } else vars.setMessage(tabId, myError);
         }
         if (myError==null) {
+          myError = new OBError();
           if (count==0) {
-            myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=Error");
-            vars.setMessage(tabId, myError);
+            myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+            myError.setType("Error");            
           } else {
-            myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=Success");
-            vars.setMessage(tabId, myError);
+            myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+            myError.setType("Success");
           }
+          vars.setMessage(tabId, myError);
         }
         if (log4j.isDebugEnabled() &amp;&amp; myError!=null) log4j.debug(myError.getMessage());
         printPageClosePopUp(response, vars);
@@ -853,6 +855,10 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
           if (data1!=null &#38;&#38; data1.length!=0) data[0] = data1[0];
         } else </FIELDS_TMP></PARAMETER_TMP>data = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectEdit(this, vars.getLanguage()<PARAMETER_TMP id="whereClauseParams"></PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="client">, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARAMETER_TMP>);
   
+        if (!str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("") &amp;&amp; (data == null || data.length==0)) {
+          response.sendRedirect(strDireccion + request.getServletPath() + "?Command=RELATION");
+          return;
+        }
         refreshSessionEdit(vars, data);
         strCommand = "EDIT";
       }

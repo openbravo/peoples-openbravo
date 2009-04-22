@@ -76,6 +76,14 @@ public class ExtractModule {
       log4j.info("Extracting module: " + module.javapackage);
       final String moduleDirectory = modulesBaseDir + "/modules/" + module.javapackage;
 
+      if (!(new File(moduleDirectory).exists())) {
+
+        throw new OBException(
+            "Directory "
+                + moduleDirectory
+                + " for module does not exist.\nYou may have not exported database before packaging this module");
+      }
+
       relativeDir = modulesBaseDir + File.separator + "modules" + File.separator;
       final FileOutputStream file = new FileOutputStream(destDir + "/" + module.javapackage + "-"
           + module.version + ".obx");
@@ -89,7 +97,7 @@ public class ExtractModule {
       log4j.info("Completed file: " + destDir + "/" + module.javapackage + "-" + module.version
           + ".obx");
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error("Error packaging module", e);
     }
 
   }

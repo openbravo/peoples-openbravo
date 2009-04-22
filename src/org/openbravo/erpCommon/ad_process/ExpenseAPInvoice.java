@@ -401,7 +401,10 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       myMessage.setMessage(Utility.messageBD(this, "PriceListVersionNotFound", vars.getLanguage())
           + ' ' + Utility.messageBD(this, "ForProduct", vars.getLanguage()) + ' ' + strProd + ' '
           + Utility.messageBD(this, "And", vars.getLanguage()) + ' '
-          + Utility.messageBD(this, "Employee", vars.getLanguage()) + ' ' + strEmpl);
+          + Utility.messageBD(this, "Employee", vars.getLanguage()) + ' ' + strEmpl + ". "
+          + Utility.messageBD(this, "PleaseAddTheProduct", vars.getLanguage()) + ' '
+          + Utility.messageBD(this, strProd, vars.getLanguage()) + ' '
+          + Utility.messageBD(this, "ToPurchasePriceList", vars.getLanguage()) + ".");
       return myMessage;
     } catch (Exception e) {
       try {

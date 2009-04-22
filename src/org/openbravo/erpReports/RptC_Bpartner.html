@@ -36,18 +36,18 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript">
-function callback(paramArray) {
+function callback(paramXMLParticular, XMLHttpRequestObj) {
   var strText = "";
   var id = "";
   var imageId = "";
-  if (getReadyStateHandler(xmlreq)) {
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
     try {
-      if (xmlreq.responseText) strText = xmlreq.responseText;
+      if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
     } catch (e) {
     }
-    if (paramArray!=null && paramArray.length>0) {
-      id = paramArray[0];
-      imageId = paramArray[1];
+    if (paramXMLParticular!=null && paramXMLParticular.length>0) {
+      id = paramXMLParticular[0];
+      imageId = paramXMLParticular[1];
     }
     layer(id, strText, true, false);
     showHideLayer(id, imageId);
@@ -76,8 +76,8 @@ function updateData(CommandValue, id) {
   frm.inpTypeDocument.value = id;
   var dataLayer = readLayer("returnText" + id, true);
   if (dataLayer==null || dataLayer=="") {
-    paramXMLRequest = new Array('returnText' + id, 'buttonTree' + id);
-    return submitXmlHttpRequest(callback, frm, CommandValue, "RptC_Bpartner.pdf", false);
+    var paramXMLReq = new Array('returnText' + id, 'buttonTree' + id);
+    return submitXmlHttpRequest(callback, frm, CommandValue, "RptC_Bpartner.pdf", false, null, paramXMLReq);
   } else {
     showHideLayer("returnText" + id, "buttonTree" + id);
   }

@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '3549';
+  var number = '3616';
   return number;
 }
 
@@ -3811,7 +3811,8 @@ function changeAuditStatus() {
   else strShowAudit="Y";
   displayLogic();
   changeAuditIcon(strShowAudit);
-  submitXmlHttpRequest(xx, null, 'CHANGE', "../utility/ChangeAudit", false);
+  var paramXMLReq = null;
+  submitXmlHttpRequest(xx, null, 'CHANGE', "../utility/ChangeAudit", false, null, paramXMLReq);
   return true;
 }
 
@@ -3819,8 +3820,8 @@ function changeAuditStatus() {
 * Change the status for show audit in Relation mode, in local javascript variable and in session value (with ajax)
 **/
 function changeAuditStatusRelation() {
-  
-  submitXmlHttpRequest(document.getElementById("buttonRefresh").onclick, null, 'CHANGE', "../utility/ChangeAudit", false);
+  var paramXMLReq = null;
+  submitXmlHttpRequest(document.getElementById("buttonRefresh").onclick, null, 'CHANGE', "../utility/ChangeAudit", false, null, paramXMLReq);
   return true;
 }
 
@@ -3834,12 +3835,12 @@ function changeAuditIcon(newStatus) {
     setTimeout("getDataBaseStandardMessage('showAudit', changeAuditIconTitle)",100);
 }
 
- function changeAuditIconTitle() {
+ function changeAuditIconTitle(paramXMLParticular, XMLHttpRequestObj) {
    var obj;
    object = document.getElementById("buttonAudit");
-   if (getReadyStateHandler(xmlreq)) {
+   if (getReadyStateHandler(XMLHttpRequestObj)) {
     try {
-      if (xmlreq.responseXML) obj = xmlreq.responseXML.documentElement;
+      if (XMLHttpRequestObj.responseXML) obj = XMLHttpRequestObj.responseXML.documentElement;
     } catch (e) {
     }
     

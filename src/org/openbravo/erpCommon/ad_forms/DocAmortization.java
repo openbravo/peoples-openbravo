@@ -36,7 +36,22 @@ public class DocAmortization extends AcctServer {
 
   private String SeqNo = "0";
   /** Account Type - Asset */
-  public static final String ACCTTYPE_Depreciation = "1";
+  private static final String ACCTTYPE_Depreciation = "1";
+
+  /**
+   * @return the aCCTTYPE_Depreciation
+   */
+  public static String getACCTTYPE_Depreciation() {
+    return ACCTTYPE_Depreciation;
+  }
+
+  /**
+   * @return the aCCTTYPE_AccumDepreciation
+   */
+  public static String getACCTTYPE_AccumDepreciation() {
+    return ACCTTYPE_AccumDepreciation;
+  }
+
   public static final String ACCTTYPE_AccumDepreciation = "2";
 
   /**
@@ -48,6 +63,43 @@ public class DocAmortization extends AcctServer {
   public DocAmortization(String AD_Client_ID, String AD_Org_ID,
       ConnectionProvider connectionProvider) {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
+  }
+
+  /**
+   * @return the log4jDocAmortization
+   */
+  public static Logger getLog4jDocAmortization() {
+    return log4jDocAmortization;
+  }
+
+  /**
+   * @param log4jDocAmortization
+   *          the log4jDocAmortization to set
+   */
+  public static void setLog4jDocAmortization(Logger log4jDocAmortization) {
+    DocAmortization.log4jDocAmortization = log4jDocAmortization;
+  }
+
+  /**
+   * @return the seqNo
+   */
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  /**
+   * @param seqNo
+   *          the seqNo to set
+   */
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
   }
 
   public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
@@ -126,6 +178,20 @@ public class DocAmortization extends AcctServer {
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     log4jDocAmortization.debug("createFact - Inicio");
+    // Select specific definition
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    if (!strClassname.equals("")) {
+      try {
+        DocAmortizationTemplate newTemplate = (DocAmortizationTemplate) Class.forName(strClassname)
+            .newInstance();
+        return newTemplate.createFact(this, as, conn, con, vars);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     // create Fact Header
     Fact fact = null;
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();

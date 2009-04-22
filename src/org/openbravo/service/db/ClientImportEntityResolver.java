@@ -104,6 +104,7 @@ public class ClientImportEntityResolver extends EntityResolver {
         // keep it here so it can be found later
         getData().put(getKey(entityName, id), result);
       }
+      setClientOrganization(result);
     }
     return result;
   }

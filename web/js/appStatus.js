@@ -348,11 +348,11 @@ function setAttachmentIcon(value) {
   return true;
 }
 
-function callbackAttachmentIcon(){
+function callbackAttachmentIcon(paramXMLParticular, XMLHttpRequestObj) {
   var strText = "";
-  if (getReadyStateHandler(xmlreq,null,false)) {
+  if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
     try {
-      if (xmlreq.responseText) strText = xmlreq.responseText;
+      if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
     } catch (e) {
     }
     if(strText == "true" && document.getElementById("buttonAttachment").className.indexOf("Main_ToolBar_Button_Icon_AttachedDocuments") == -1)
@@ -364,8 +364,10 @@ function callbackAttachmentIcon(){
 }
 
 function checkAttachmentIcon(){
-  if(document.getElementById('buttonAttachment'))
-    submitXmlHttpRequest(callbackAttachmentIcon, null, 'CHECK', "../businessUtility/TabAttachments_FS.html?inpKey=" +document.getElementsByName(document.frmMain.inpKeyName.value)[0].value , false);
+  if(document.getElementById('buttonAttachment')) {
+    var paramXMLReq = null;
+    submitXmlHttpRequest(callbackAttachmentIcon, null, 'CHECK', "../businessUtility/TabAttachments_FS.html?inpKey=" +document.getElementsByName(document.frmMain.inpKeyName.value)[0].value , false, null, paramXMLReq);
+  }
 }
 
 function checkAttachmentIconRelation(){

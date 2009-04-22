@@ -1026,9 +1026,9 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800021-->  <DESCRIPTION><![CDATA[Filter User's Role]]></DESCRIPTION>
 <!--800021-->  <TYPE><![CDATA[S]]></TYPE>
 <!--800021-->  <CODE><![CDATA[EXISTS ( SELECT 1
-        FROM  AD_USER_ROLES A_U_R 
+        FROM  AD_USER_ROLES A_U_R
         WHERE A_U_R.AD_ROLE_ID = AD_Role.AD_Role_ID
-        AND A_U_R.ISACTIVE = 'Y' 
+        AND A_U_R.ISACTIVE = 'Y'
         AND A_U_R.AD_USER_ID = @AD_User_ID@)]]></CODE>
 <!--800021-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800021--></AD_VAL_RULE>
@@ -1054,12 +1054,12 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800023-->  <DESCRIPTION><![CDATA[Filter Organization by Role]]></DESCRIPTION>
 <!--800023-->  <TYPE><![CDATA[S]]></TYPE>
 <!--800023-->  <CODE><![CDATA[EXISTS (SELECT 1 FROM AD_ROLE_ORGACCESS A_R_O, ad_role r
-        WHERE A_R_O.AD_ORG_ID = AD_ORG.AD_Org_ID 
-        AND A_R_O.ISACTIVE = 'Y' 
-        AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
-        and r.ad_role_id = @Default_AD_Role_ID@ 
-        AND R.ISACTIVE = 'Y' 
-        AND (LPAD(TO_CHAR(R.USERLEVEL), 1, '1')='S' OR AD_ORG.AD_ORG_ID <> '0') 
+        WHERE A_R_O.AD_ORG_ID = AD_ORG.AD_Org_ID
+        AND A_R_O.ISACTIVE = 'Y'
+        AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID
+        and r.ad_role_id = @Default_AD_Role_ID@
+        AND R.ISACTIVE = 'Y'
+        AND (LPAD(TO_CHAR(R.USERLEVEL), 1, '1')='S' OR AD_ORG.AD_ORG_ID <> '0')
         AND A_R_O.AD_ROLE_ID = @Default_AD_Role_ID@)]]></CODE>
 <!--800023-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800023--></AD_VAL_RULE>
@@ -1246,10 +1246,10 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--324A9767D9B94A8A8154DEB3ACA6E063-->  <NAME><![CDATA[Business Partner Withholding]]></NAME>
 <!--324A9767D9B94A8A8154DEB3ACA6E063-->  <DESCRIPTION><![CDATA[Show the Withholdings which belong to the Business Partner]]></DESCRIPTION>
 <!--324A9767D9B94A8A8154DEB3ACA6E063-->  <TYPE><![CDATA[S]]></TYPE>
-<!--324A9767D9B94A8A8154DEB3ACA6E063-->  <CODE><![CDATA[EXISTS (SELECT 1 
-              FROM C_BP_Withholding w , C_BPartner b 
+<!--324A9767D9B94A8A8154DEB3ACA6E063-->  <CODE><![CDATA[EXISTS (SELECT 1
+              FROM C_BP_Withholding w , C_BPartner b
               WHERE w.C_BPartner_ID=b.C_BPartner_ID
-              AND w.C_Withholding_ID=C_Withholding.C_Withholding_ID  
+              AND w.C_Withholding_ID=C_Withholding.C_Withholding_ID
               AND W.C_BPartner_ID=@C_BPartner_ID@)]]></CODE>
 <!--324A9767D9B94A8A8154DEB3ACA6E063-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--324A9767D9B94A8A8154DEB3ACA6E063--></AD_VAL_RULE>
@@ -1325,6 +1325,17 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--80418A74E20E4D2590CF848E90D7CD6D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--80418A74E20E4D2590CF848E90D7CD6D--></AD_VAL_RULE>
 
+<!--8195248D186A4DEC89938C45837A1BCB--><AD_VAL_RULE>
+<!--8195248D186A4DEC89938C45837A1BCB-->  <AD_VAL_RULE_ID><![CDATA[8195248D186A4DEC89938C45837A1BCB]]></AD_VAL_RULE_ID>
+<!--8195248D186A4DEC89938C45837A1BCB-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--8195248D186A4DEC89938C45837A1BCB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--8195248D186A4DEC89938C45837A1BCB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--8195248D186A4DEC89938C45837A1BCB-->  <NAME><![CDATA[AD_Table Acctschema table]]></NAME>
+<!--8195248D186A4DEC89938C45837A1BCB-->  <TYPE><![CDATA[S]]></TYPE>
+<!--8195248D186A4DEC89938C45837A1BCB-->  <CODE><![CDATA[AD_CreateFact_Template.AD_Table_ID=@AD_Table_ID@]]></CODE>
+<!--8195248D186A4DEC89938C45837A1BCB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--8195248D186A4DEC89938C45837A1BCB--></AD_VAL_RULE>
+
 <!--8286A51A2C2C494798EABA6D27CA534D--><AD_VAL_RULE>
 <!--8286A51A2C2C494798EABA6D27CA534D-->  <AD_VAL_RULE_ID><![CDATA[8286A51A2C2C494798EABA6D27CA534D]]></AD_VAL_RULE_ID>
 <!--8286A51A2C2C494798EABA6D27CA534D-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1343,7 +1354,7 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
                                             and ad_dataset.accesslevel = '6')) OR
               (ad_table.accesslevel in ('3','7') and exists(select 1 from ad_dataset
                                             where ad_dataset_id = @AD_DATASET_ID@
-                                            and ad_dataset.accesslevel = '3'))                                           
+                                            and ad_dataset.accesslevel = '3'))
               )]]></CODE>
 <!--8286A51A2C2C494798EABA6D27CA534D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8286A51A2C2C494798EABA6D27CA534D--></AD_VAL_RULE>

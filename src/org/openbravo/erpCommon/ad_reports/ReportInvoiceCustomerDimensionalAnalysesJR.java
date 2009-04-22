@@ -74,7 +74,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strShown = vars.getInGlobalVariable("inpShown",
           "ReportInvoiceCustomerDimensionalAnalysesJR|shown", "");
       String strOrg = vars.getGlobalVariable("inpOrg",
-          "ReportInvoiceCustomerDimensionalAnalysesJR|org", "0");
+          "ReportInvoiceCustomerDimensionalAnalysesJR|org", "");
       String strsalesrepId = vars.getGlobalVariable("inpSalesrepId",
           "ReportInvoiceCustomerDimensionalAnalysesJR|salesrep", "");
       String strcProjectId = vars.getGlobalVariable("inpcProjectId",
@@ -121,8 +121,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           "ReportInvoiceCustomerDimensionalAnalysesJR|product");
       String strNotShown = vars.getInStringParameter("inpNotShown");
       String strShown = vars.getInStringParameter("inpShown");
-      String strOrg = vars.getGlobalVariable("inpOrg",
-          "ReportInvoiceCustomerDimensionalAnalysesJR|org", "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg",
+          "ReportInvoiceCustomerDimensionalAnalysesJR|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportInvoiceCustomerDimensionalAnalysesJR|salesrep");
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId",
@@ -161,8 +161,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           "ReportInvoiceCustomerDimensionalAnalysesJR|product");
       String strNotShown = vars.getInStringParameter("inpNotShown");
       String strShown = vars.getInStringParameter("inpShown");
-      String strOrg = vars.getGlobalVariable("inpOrg",
-          "ReportInvoiceCustomerDimensionalAnalysesJR|org", "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg",
+          "ReportInvoiceCustomerDimensionalAnalysesJR|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportInvoiceCustomerDimensionalAnalysesJR|salesrep");
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId",
@@ -407,6 +407,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard" };
+    if (strOrg.equals("")) strOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";

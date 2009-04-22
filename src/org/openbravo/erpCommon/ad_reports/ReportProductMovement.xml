@@ -62,9 +62,10 @@
     <FIELD id="fieldRownum1">rownum</FIELD>
     <FUNCTION id="funcEvenOddRow1xx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
     <FIELD id="fieldId" attribute="onclick" replace="xx">mInoutId</FIELD>
-    <FIELD id="fieldId" attribute="onclick" replace="yy">out</FIELD>
+    <FIELD id="fieldId" attribute="onclick" replace="yy">issotrx</FIELD>
     <FIELD id="fieldDocumentNo">documentno</FIELD>
     <FIELD id="fieldName">name</FIELD>
+    <FIELD id="fieldAttr">attr</FIELD>
     <FIELD id="fieldPartnername">partnername</FIELD>
     <FIELD id="fieldMovementdate">movementdate</FIELD>
     <FIELD id="fieldMovementqty">movementqty</FIELD>
@@ -118,6 +119,7 @@
     <FIELD id="fieldRownum4">rownum</FIELD>
     <FUNCTION id="funcEvenOddRow4xx" name="MODULE" arg1="fieldRownum4" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
     <FIELD id="fieldId4" attribute="onclick" replace="xx">mProductionplanId</FIELD>
+    <FIELD id="fieldId4" attribute="onclick" replace="yy">issotrx</FIELD>
     <FIELD id="fieldProductionPlan">productionPlan</FIELD>
     <FIELD id="fieldName3">name</FIELD>
     <FIELD id="fieldPartnername3">partnername</FIELD>

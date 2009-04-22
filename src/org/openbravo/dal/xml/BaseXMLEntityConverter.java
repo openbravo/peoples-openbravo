@@ -300,8 +300,18 @@ public class BaseXMLEntityConverter implements OBNotSingleton {
         if (sb.length() > 0) {
           sb.append("\n");
         }
-        sb.append("Referenced object " + bob.getEntityName() + " (id: " + bob.getId()
-            + ") not present in the xml or in the database.");
+
+        Object idObject = null;
+        for (Object key : getEntityResolver().getData().keySet()) {
+          final Object value = getEntityResolver().getData().get(key);
+          if (value == bob) {
+            idObject = key;
+            break;
+          }
+        }
+
+        sb.append("Referenced object " + bob.getEntityName() + " (id: " + bob.getId() + " / "
+            + idObject + ") not present in the xml or in the database.");
       }
     }
 

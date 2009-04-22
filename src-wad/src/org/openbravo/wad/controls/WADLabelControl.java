@@ -22,12 +22,14 @@ public class WADLabelControl {
   private String tableId = "";
   private boolean isLinkable = false;
 
+  private String columnLink;
+
   public WADLabelControl() {
   }
 
   public WADLabelControl(int labelType, String tabId, String fieldId, String columnId,
       String columnName, String baseLabelText, String trlLabelText, String linkable,
-      String keyColumnName, String columnNameInp, String AD_Table_ID) {
+      String keyColumnName, String columnNameInp, String AD_Table_ID, String columnLink) {
 
     setTabId(tabId);
     setFieldId(fieldId);
@@ -40,6 +42,16 @@ public class WADLabelControl {
     setColumnNameInp(columnNameInp);
     setKeyColumnName(keyColumnName);
     setTableId(AD_Table_ID);
+    setColumnLink(columnLink);
+
+  }
+
+  public String getColumnLink() {
+    return columnLink;
+  }
+
+  public void setColumnLink(String columnLink) {
+    this.columnLink = columnLink;
   }
 
   public int getLabelType() {

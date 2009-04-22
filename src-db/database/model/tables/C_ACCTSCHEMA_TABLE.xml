@@ -41,6 +41,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_CREATEFACT_TEMPLATE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="ACCTDESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -53,6 +57,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_C_ACCTSCHEMA_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CREATEFACT_TEMPLATE" name="CACCTSCHEMA_ADCREATEFACTTEMP">
+        <reference local="AD_CREATEFACT_TEMPLATE_ID" foreign="AD_CREATEFACT_TEMPLATE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CACCTSCHEMATABLE">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>

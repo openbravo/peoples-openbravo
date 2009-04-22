@@ -612,7 +612,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
             log4j.debug("inpLevel" + strLevel + ":"
                 + vars.getStringParameter("inpNivel" + strLevel));
           data = ReportAccountingCountDimensionalAnalysesData.select(this, "'" + arrayString[0]
-              + "'", vars.getStringParameter("inpNivel" + strLevel), arrayString[2],
+              + "'", vars.getStringParameter("inpNivel" + strLevel,"0"), arrayString[2],
               arrayString[1], vars.getStringParameter("inpNivel1", "0"), vars.getStringParameter(
                   "inpNivel2", "0"), vars.getStringParameter("inpNivel3", "0"), vars
                   .getStringParameter("inpNivel4", "0"), arrayString[3], Utility.getContext(this,
@@ -632,7 +632,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
               .createXmlDocument();
 
           data = ReportAccountingCountDimensionalAnalysesData.selectComparative(this, "'"
-              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel),
+              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel,"0"),
               arrayString[2], arrayString[1], vars.getStringParameter("inpNivel1", "0"), vars
                   .getStringParameter("inpNivel2", "0"), vars.getStringParameter("inpNivel3", "0"),
               vars.getStringParameter("inpNivel4", "0"), arrayString[3], Utility.getContext(this,
@@ -653,7 +653,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
               .createXmlDocument();
 
           data = ReportAccountingCountDimensionalAnalysesData.selectPeriod(this, "'"
-              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel),
+              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel,"0"),
               arrayString[2], arrayString[1], vars.getStringParameter("inpNivel1", "0"), vars
                   .getStringParameter("inpNivel2", "0"), vars.getStringParameter("inpNivel3", "0"),
               vars.getStringParameter("inpNivel4", "0"), arrayString[3], Utility.getContext(this,
@@ -669,7 +669,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
               "org/openbravo/erpCommon/ad_reports/ReportAccountingComparativePeriod")
               .createXmlDocument();
           data = ReportAccountingCountDimensionalAnalysesData.selectPeriodComparative(this, "'"
-              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel),
+              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel,"0"),
               arrayString[2], arrayString[1], vars.getStringParameter("inpNivel1", "0"), vars
                   .getStringParameter("inpNivel2", "0"), vars.getStringParameter("inpNivel3", "0"),
               vars.getStringParameter("inpNivel4", "0"), arrayString[3], Utility.getContext(this,
@@ -689,7 +689,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
               .createXmlDocument();
 
           data = ReportAccountingCountDimensionalAnalysesData.selectPeriodQuarter(this, "'"
-              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel),
+              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel,"0"),
               arrayString[2], arrayString[1], vars.getStringParameter("inpNivel1", "0"), vars
                   .getStringParameter("inpNivel2", "0"), vars.getStringParameter("inpNivel3", "0"),
               vars.getStringParameter("inpNivel4", "0"), arrayString[3], Utility.getContext(this,
@@ -705,7 +705,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
               "org/openbravo/erpCommon/ad_reports/ReportAccountingComparativePeriod")
               .createXmlDocument();
           data = ReportAccountingCountDimensionalAnalysesData.selectPeriodComparativeQuarter(this,
-              "'" + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel),
+              "'" + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel,"0"),
               arrayString[2], arrayString[1], vars.getStringParameter("inpNivel1", "0"), vars
                   .getStringParameter("inpNivel2", "0"), vars.getStringParameter("inpNivel3", "0"),
               vars.getStringParameter("inpNivel4", "0"), arrayString[3], Utility.getContext(this,
@@ -843,8 +843,8 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
             arrayAux = (String[]) (vectorArray.elementAt(j));
             j++;
           }
-          strFilter += " AND " + arrayAux[3] + " = "
-              + vars.getStringParameter("inpNivel" + (i + 1));
+          strFilter += " AND " + arrayAux[3] + " = '"
+              + vars.getStringParameter("inpNivel" + (i + 1))+"'";
 
         }
       }

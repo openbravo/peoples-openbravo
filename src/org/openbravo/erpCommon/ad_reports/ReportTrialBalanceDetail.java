@@ -84,7 +84,7 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String strTreeAccount = ReportTrialBalanceDetailData.treeAccount(this, vars.getClient());
     ReportTrialBalanceDetailData[] data = null;
-    if (strDateFrom.equals("") && strDateTo.equals("")) {
+    if (strDateFrom.equals("") && strDateTo.equals("")|| strId.equals("")) {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportTrialBalanceDetail", discard)
           .createXmlDocument();

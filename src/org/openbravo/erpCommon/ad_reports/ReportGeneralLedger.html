@@ -25,7 +25,7 @@
 
     <link rel="shortcut icon" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
-     
+
     <script language="JavaScript" type="text/javascript" id="paramDirectory">
       var baseDirectory = "../../../../../web/";
       </script>
@@ -61,14 +61,6 @@ function imprimir()
 	return true;
 }
 
-function CALLOUT_ELEMENTVALUE() {
-  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
-  var cmbAccountFrom = document.frmMain.inpcElementValueIdFrom;  
-  var cmbAccountTo = document.frmMain.inpcElementValueIdTo;  
-  changeComboData(cmbAccountFrom, arrAccountFrom, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
-  changeComboData(cmbAccountTo, arrAccountTo, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);  
-  return true;
-}
 
 function validate(){
 	var frm = document.frmMain;
@@ -106,7 +98,7 @@ function onloadFunctions() {
 		setTabTableParentElement();
 		enableShortcuts('edition');
 		setBrowserAutoComplete(false);
-		
+
 		resizeArea();
 		updateMenuIcon('buttonMenu');
 
@@ -123,9 +115,6 @@ function onloadFunctions() {
 var arrAccountFrom=null;
 </script>
 
-<script language="JavaScript" type="text/javascript" id="paramArrayAccountTo">
-var arrAccountTo=null;
-</script>
 
 
 
@@ -335,21 +324,59 @@ var arrAccountTo=null;
             </tr>
             <tr>
               <td class="TitleCell"> <span class="LabelText">Accounting schema</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="CALLOUT_ELEMENTVALUE()">
+              <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width">
                   <option value=""> <div id="reportC_ACCTSCHEMA_ID"></div></option>
                 </select>
               </td>
             </tr>
             <tr>
               <td class="TitleCell"><span class="LabelText">From Account</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select name="inpcElementValueIdFrom" id="inpcElementValueIdFrom" class="Combo Combo_TwoCells_width">
-                  <option value=""> <div id="reportC_ELEMENTVALUEFROM"></div></option>
-                </select></td>
-              <td class="TitleCell"><span class="LabelText">To Account</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select name="inpcElementValueIdTo" id="inpcElementValueIdTo" class="Combo Combo_TwoCells_width">
-                  <option value=""> <div id="reportC_ELEMENTVALUETO"></div></option>
-                </select>
+              <td class="TextBox_btn_ContentCell" colspan="2">
+                <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                  <tr>
+                    <td class="TextBox_ContentCell">
+                      <input type="hidden" name="inpcElementValueIdFrom" id="paramElementvalueIdFrom" value=""></input>
+                      <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpElementValueIdFrom_DES" id="inpElementValueIdFrom_DES" maxlength="20" value=""></input>
+                    </td>
+                    <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Account'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value);return false;">
+                      <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Search';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                        <tr>
+                          <td class="FieldButton_bg">
+                            <img alt="Account" class="FieldButton_Icon FieldButton_Icon_Account" title="Account" src="../../../../../web/images/blank.gif" border="0"></img>
+                          </td>
+                        </tr>
+                      </table>
+                      </a>
+                    </td>
+                  </tr>
+                </table>
               </td>
+              <td class="TitleCell"><span class="LabelText">To Account</span></td>
+              <td class="TextBox_btn_ContentCell" colspan="2">
+                <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                  <tr>
+                    <td class="TextBox_ContentCell">
+                      <input type="hidden" name="inpcElementValueIdTo" id="paramElementvalueToId" value=""></input>
+                      <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpElementValueIdTo_DES" id="inpElementValueIdTo_DES" maxlength="20" value=""></input>
+                    </td>
+                    <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Account'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdTo', 'inpElementValueIdTo_DES', document.frmMain.inpElementValueIdTo_DES.value);return false;">
+                      <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Search';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                        <tr>
+                          <td class="FieldButton_bg">
+                            <img alt="Account" class="FieldButton_Icon FieldButton_Icon_Account" title="Account" src="../../../../../web/images/blank.gif" border="0"></img>
+                          </td>
+                        </tr>
+                      </table>
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+
             <tr>
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
@@ -482,18 +509,18 @@ var arrAccountTo=null;
               <td class="TitleCell"></td>
               <td class="Button_CenterAlign_ContentCell">
                 <div>
-                  <button type="button" 
-                    id="buttonHTML" 
-                    class="ButtonLink" 
-                    onclick="submitCommandForm('FIND', true, frmMain, 'ReportGeneralLedger.html','_self');return false;" 
-                    onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
-                    onblur="buttonEvent('onblur', this);" 
-                    onkeyup="buttonEvent('onkeyup', this);" 
-                    onkeydown="buttonEvent('onkeydown', this);" 
-                    onkeypress="buttonEvent('onkeypress', this);" 
-                    onmouseup="buttonEvent('onmouseup', this);" 
-                    onmousedown="buttonEvent('onmousedown', this);" 
-                    onmouseover="buttonEvent('onmouseover', this); window.status='View Results in a New Window'; return true;" 
+                  <button type="button"
+                    id="buttonHTML"
+                    class="ButtonLink"
+                    onclick="submitCommandForm('FIND', true, frmMain, 'ReportGeneralLedger.html','_self');return false;"
+                    onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;"
+                    onblur="buttonEvent('onblur', this);"
+                    onkeyup="buttonEvent('onkeyup', this);"
+                    onkeydown="buttonEvent('onkeydown', this);"
+                    onkeypress="buttonEvent('onkeypress', this);"
+                    onmouseup="buttonEvent('onmouseup', this);"
+                    onmousedown="buttonEvent('onmousedown', this);"
+                    onmouseover="buttonEvent('onmouseover', this); window.status='View Results in a New Window'; return true;"
                     onmouseout="buttonEvent('onmouseout', this);">
                     <table class="Button">
                       <tr>
@@ -516,14 +543,14 @@ var arrAccountTo=null;
             <tr>
               <td colspan="6">
                 <div style="height:25px;" />
-                <div id="sectionAmount"> 
+                <div id="sectionAmount">
                   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
-                    <tr class="DataGrid_Body_Row"> 
+                    <tr class="DataGrid_Body_Row">
                       <th colspan="2" class="DataGrid_Header_Cell">Account No.<span>:&nbsp;</span><span id="fieldValue">xx70000</span></th>
                       <th colspan="3" class="DataGrid_Header_Cell">Name<span>:&nbsp;</span><span id="fieldName">xxChecking Unallocated Receipts</span></th>
                     </tr>
-                 
-                    <tr class="DataGrid_Body_Row"> 
+
+                    <tr class="DataGrid_Body_Row">
                       <th width="10%" class="DataGrid_Header_Cell">DATE</th>
                       <th width="10%" class="DataGrid_Header_Cell">DEBIT</th>
                       <th width="10%" class="DataGrid_Header_Cell">CREDIT</th>
@@ -540,8 +567,8 @@ var arrAccountTo=null;
                         <th width="75%" class="DataGrid_Header_Cell_Amount"></th>
                       </tr>
                     </div>
-                    <div id="sectionDetail"> 
-                      <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
+                    <div id="sectionDetail">
+                      <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
                         <td width="10%" class="DataGrid_Body_Cell">
                           <a href="#" onclick="submitCommandFormParameter('DIRECT2', document.frmMain.inpFactAcctGroupId, 'xx', false, document.frmMain, 'ReportGeneralLedgerJournal.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"><span id="fieldDateacct">xx22/04/2010</span>
                           </a>
@@ -557,7 +584,7 @@ var arrAccountTo=null;
                         <td width="75%" id="fieldDescription" class="DataGrid_Body_Cell">xxArrasate</td>
                       </tr>
                     </div>
-                    <tr class="DataGrid_Body_Row"> 
+                    <tr class="DataGrid_Body_Row">
                         <TH width="10%" class="DataGrid_Header_Cell"><SPAN >TOTAL</SPAN>
 						<input type="hidden" id="fieldTotalDebit" value=""/>
 						<input type="hidden" id="fieldTotalCredit" value=""/>
@@ -586,14 +613,14 @@ var arrAccountTo=null;
                   </table>
                   <div style="height:15px;" />
                 </div>
-                <div id="sectionPartner"> 
+                <div id="sectionPartner">
                   <table cellspacing="0" cellpadding="0" width="90%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
-                    <tr class="DataGrid_Body_Row"> 
+                    <tr class="DataGrid_Body_Row">
                       <td width="100%" class="DataGrid_Header_Cell">Customer
                         <span id="fieldPartner2"></span></td>
                     </tr>
 
-                    <div id="sectionAmount2"> 
+                    <div id="sectionAmount2">
 
                       <tr class="DataGrid_Body_Row">
                         <th colspan="2" class="DataGrid_Header_Cell">Account No.<span>:&nbsp;</span><span id="fieldValue2">xx70000</span></th>
@@ -609,15 +636,15 @@ var arrAccountTo=null;
 
                     <div id="sectionDetailTotals">
                       <tr class="DataGrid_Body_Row">
-                        <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold">SALDO ANTERIOR</span></th>
+                        <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold">PREVIOUS</span></th>
                         <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="fieldSubreportPreviousDebit2"></span></th>
                         <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="fieldSubreportPreviousCredit2"></span></th>
                         <th width="15%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="fieldSubreportPreviousTotal2"></span></th>
                         <th width="75%" class="DataGrid_Header_Cell_Amount"></th>
                       </tr>
                     </div>
-                      <div id="sectionDetail2"> 
-                        <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow2xx"> 
+                      <div id="sectionDetail2">
+                        <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow2xx">
                           <td width="10%" class="DataGrid_Body_Cell">
                             <a href="#" onclick="submitCommandFormParameter('DIRECT2', document.frmMain.inpFactAcctGroupId, 'xx', false, document.frmMain, 'ReportGeneralLedgerJournal.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId2"><span id="fieldDateacct2">xx22/04/2010</span>
                             </a>
@@ -648,7 +675,7 @@ var arrAccountTo=null;
                       </tr>
                       <div id="sectionDetailTotals">
                         <tr class="DataGrid_Body_Row">
-                          <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold">SUMA Y SIGUE</span></th>
+                          <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold">TOTAL</span></th>
                           <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalDebit2"></span></th>
                           <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalCredit2"></span></th>
                           <th width="15%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalTotal2"></span></th>

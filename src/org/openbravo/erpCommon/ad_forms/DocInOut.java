@@ -136,6 +136,19 @@ public class DocInOut extends AcctServer {
    */
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
+    // Select specific definition
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    if (!strClassname.equals("")) {
+      try {
+        DocInOutTemplate newTemplate = (DocInOutTemplate) Class.forName(strClassname).newInstance();
+        return newTemplate.createFact(this, as, conn, con, vars);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     C_Currency_ID = as.getC_Currency_ID();
     // create Fact Header
     Fact fact = new Fact(this, as, Fact.POST_Actual);
@@ -213,6 +226,43 @@ public class DocInOut extends AcctServer {
     SeqNo = "0";
     return fact;
   } // createFact
+
+  /**
+   * @return the log4jDocInOut
+   */
+  public static Logger getLog4jDocInOut() {
+    return log4jDocInOut;
+  }
+
+  /**
+   * @param log4jDocInOut
+   *          the log4jDocInOut to set
+   */
+  public static void setLog4jDocInOut(Logger log4jDocInOut) {
+    DocInOut.log4jDocInOut = log4jDocInOut;
+  }
+
+  /**
+   * @return the seqNo
+   */
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  /**
+   * @param seqNo
+   *          the seqNo to set
+   */
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
 
   public String nextSeqNo(String oldSeqNo) {
     log4jDocInOut.debug("DocInOut - oldSeqNo = " + oldSeqNo);

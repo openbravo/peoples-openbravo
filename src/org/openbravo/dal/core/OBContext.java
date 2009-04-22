@@ -192,7 +192,6 @@ public class OBContext implements OBNotSingleton {
 
   // disables security checks
   private boolean inAdministratorMode;
-  private boolean prevAdminMode;
   // the "0" user is the administrator
   private boolean isAdministrator;
   private boolean isInitialized = false;
@@ -389,7 +388,6 @@ public class OBContext implements OBNotSingleton {
     entityAccessChecker = null;
 
     inAdministratorMode = false;
-    prevAdminMode = false;
     isAdministrator = false;
     isInitialized = false;
 
@@ -635,15 +633,10 @@ public class OBContext implements OBNotSingleton {
     return inAdministratorMode || isAdministrator;
   }
 
-  public void setInAdministratorMode(boolean inAdministratorMode) {
-    if (this.inAdministratorMode != inAdministratorMode) {
-      prevAdminMode = isInAdministratorMode();
-    }
+  public boolean setInAdministratorMode(boolean inAdministratorMode) {
+    final boolean prevMode = isInAdministratorMode();
     this.inAdministratorMode = inAdministratorMode;
-  }
-
-  public void restorePreviousAdminMode() {
-    setInAdministratorMode(prevAdminMode);
+    return prevMode;
   }
 
   public boolean isInitialized() {

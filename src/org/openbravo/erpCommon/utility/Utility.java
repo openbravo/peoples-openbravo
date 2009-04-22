@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +42,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -425,7 +427,7 @@ public class Utility {
           return "'0'"; // force to be org *
 
         Window window;
-        OBContext.getOBContext().setInAdministratorMode(true);
+        final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
         try {
           window = org.openbravo.dal.service.OBDal.getInstance().get(Window.class, strWindow);
           if (window.getWindowType().equals("T")) {
@@ -461,7 +463,7 @@ public class Utility {
             }
           }
         } finally {
-          OBContext.getOBContext().restorePreviousAdminMode();
+          OBContext.getOBContext().setInAdministratorMode(prevMode);
         }
       }
 
@@ -2183,4 +2185,45 @@ public class Utility {
     }
   }
 
+  /**
+   * When updating core it is necessary to update Openbravo properties maintaining already assigned
+   * properties. Thus properties in original file are preserved but the new ones in
+   * Openbravo.properties.template file are added with the default value.
+   * 
+   * @throws IOException
+   * @throws FileNotFoundException
+   * @return false in case no changes where needed, true in case the merge includes some changes and
+   *         the original file is modified
+   */
+  public static boolean mergeOpenbravoProperties(String originalFile, String newFile)
+      throws FileNotFoundException, IOException {
+    Properties origOBProperties = new Properties();
+    Properties newOBProperties = new Properties();
+    boolean modified = false;
+
+    // load both files
+    origOBProperties.load(new FileInputStream(originalFile));
+    newOBProperties.load(new FileInputStream(newFile));
+
+    Enumeration<?> newProps = newOBProperties.propertyNames();
+    while (newProps.hasMoreElements()) {
+      String propName = (String) newProps.nextElement();
+      String origValue = origOBProperties.getProperty(propName);
+
+      // try to get original value for new property, if it does not exist add it to original
+      // properties with its default value
+      if (origValue == null) {
+        String newValue = newOBProperties.getProperty(propName);
+        origOBProperties.setProperty(propName, newValue);
+        modified = true;
+      }
+    }
+
+    // save original file only in case it has modifications
+    if (modified) {
+      origOBProperties
+          .store(new FileOutputStream(originalFile), "Automatically updated properties");
+    }
+    return modified;
+  }
 }

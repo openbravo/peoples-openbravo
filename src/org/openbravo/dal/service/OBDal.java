@@ -348,6 +348,44 @@ public class OBDal implements OBSingleton {
     }
   }
 
+  /**
+   * Returns an in-clause HQL clause denoting the organizations which are allowed to be read by the
+   * current user. The in-clause can be directly used in a HQL. The return string will be for
+   * example: in ('1000000', '1000001')
+   * 
+   * @return an in-clause which can be directly used inside of a HQL clause
+   * @see OBContext#getReadableOrganizations()
+   */
+  public String getReadableOrganizationsInClause() {
+    return createInClause(OBContext.getOBContext().getReadableOrganizations());
+  }
+
+  /**
+   * Returns an in-clause HQL clause denoting the clients which are allowed to be read by the
+   * current user. The in-clause can be directly used in a HQL. The return string will be for
+   * example: in ('1000000', '1000001')
+   * 
+   * @return an in-clause which can be directly used inside of a HQL clause
+   * @see OBContext#getReadableClients()
+   */
+  public String getReadableClientsInClause() {
+    return createInClause(OBContext.getOBContext().getReadableClients());
+  }
+
+  private String createInClause(String[] values) {
+    if (values.length == 0) {
+      return " in ('') ";
+    }
+    final StringBuilder sb = new StringBuilder();
+    for (final String v : values) {
+      if (sb.length() > 0) {
+        sb.append(", ");
+      }
+      sb.append("'" + v + "'");
+    }
+    return " in (" + sb.toString() + ")";
+  }
+
   private void checkReadAccess(Class<?> clz) {
     checkReadAccess(DalUtil.getEntityName(clz));
   }

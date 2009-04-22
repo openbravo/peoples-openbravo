@@ -81,7 +81,6 @@ public class DalContextListener implements ServletContextListener {
   }
 
   public void contextDestroyed(ServletContextEvent event) {
-    System.err.println("Removing sessionfactory");
     ModelProvider.setInstance(null);
     SessionFactoryController.setInstance(null);
   }

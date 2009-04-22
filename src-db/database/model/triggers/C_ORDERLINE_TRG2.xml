@@ -170,15 +170,18 @@ BEGIN
    v_PriceNew := M_Get_Offer_Price(Cur_Offer.M_Offer_ID, v_Price);
    v_Amt := v_Price - v_PriceNew;
 
-   INSERT INTO C_ORDERLINE_OFFER
-       (C_ORDERLINE_OFFER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-      CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-      C_ORDERLINE_ID, LINE, M_OFFER_ID, PRICEOFFER, AMTOFFER)
-   VALUES
-       (v_OrderLine_Offer_ID, :NEW.AD_Client_ID, :NEW.AD_Org_ID, :NEW.IsActive,
-      now(),:NEW.CreatedBy, now(),:NEW.UpdatedBy,
-     :NEW.C_OrderLine_ID, v_lineno, Cur_Offer.M_Offer_Id, ROUND(v_Price,v_Precision), ROUND(v_Amt,v_Precision));
-    v_Price := v_PriceNew;
+   IF (:NEW.CANCELPRICEAD='N')
+    THEN
+     INSERT INTO C_ORDERLINE_OFFER
+         (C_ORDERLINE_OFFER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+        CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+        C_ORDERLINE_ID, LINE, M_OFFER_ID, PRICEOFFER, AMTOFFER)
+     VALUES
+         (v_OrderLine_Offer_ID, :NEW.AD_Client_ID, :NEW.AD_Org_ID, :NEW.IsActive,
+        now(),:NEW.CreatedBy, now(),:NEW.UpdatedBy,
+       :NEW.C_OrderLine_ID, v_lineno, Cur_Offer.M_Offer_Id, ROUND(v_Price,v_Precision), ROUND(v_Amt,v_Precision));
+      v_Price := v_PriceNew;
+   END IF;
   END LOOP;
  END IF;
 

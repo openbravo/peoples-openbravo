@@ -115,10 +115,11 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
   }
 
   public <T extends BaseOBObject> void removeAll(Class<T> clz, int expectCount, Criterion c) {
+    boolean prevMode = false;
     try {
       setErrorOccured(true);
       setUserContext("1000019");
-      OBContext.getOBContext().setInAdministratorMode(true);
+      prevMode = OBContext.getOBContext().setInAdministratorMode(true);
 
       final Criteria criteria = SessionHandler.getInstance().getSession().createCriteria(clz);
       if (c != null) {
@@ -134,7 +135,7 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
       }
       setErrorOccured(false);
     } finally {
-      OBContext.getOBContext().restorePreviousAdminMode();
+      OBContext.getOBContext().setInAdministratorMode(prevMode);
     }
   }
 

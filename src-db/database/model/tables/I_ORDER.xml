@@ -269,11 +269,11 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="PAYMENTRULE1" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="PAYMENTRULE1" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PAYMENTRULE2" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="PAYMENTRULE2" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

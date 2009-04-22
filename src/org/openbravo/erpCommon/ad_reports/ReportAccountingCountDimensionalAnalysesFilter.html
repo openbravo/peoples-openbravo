@@ -94,18 +94,18 @@ function validate()
 	return true;
 }
 
-function callback(paramArray) {
+function callback(paramXMLParticular, XMLHttpRequestObj) {
 	var strText = "";
 	var id = "";
 	var imageId = "";
-	if (getReadyStateHandler(xmlreq)) {
+	if (getReadyStateHandler(XMLHttpRequestObj)) {
 		try {
-			if (xmlreq.responseText) strText = xmlreq.responseText;
+			if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
 		} catch (e) {
 		}
-		if (paramArray!=null && paramArray.length>0) {
-			id = paramArray[0];
-			imageId = paramArray[1];
+		if (paramXMLParticular!=null && paramXMLParticular.length>0) {
+			id = paramXMLParticular[0];
+			imageId = paramXMLParticular[1];
 		}
 		layer(id, strText, true, false);
 		showHideLayer(id, imageId);
@@ -146,8 +146,8 @@ function updateData(CommandValue, nivel1, nivel2, nivel3, nivel4, id, level, col
 	  markCheckedAllElements(frm.inpmProductId_IN);
 	  markCheckedAllElements(frm.inpcBPartnerId_IN);
 	  markCheckedAllElements(frm.inpShown);
-	  paramXMLRequest = new Array('returnText' + id, 'buttonTree' + id);
-	  return submitXmlHttpRequest(callback, frm, CommandValue, "ReportAccountingCountDimensionalAnalysesFilter.html", false);
+	  var paramXMLReq = new Array('returnText' + id, 'buttonTree' + id);
+	  return submitXmlHttpRequest(callback, frm, CommandValue, "ReportAccountingCountDimensionalAnalysesFilter.html", false, null, paramXMLReq);
   } else {
   	showHideLayer("returnText" + id + paramLevel[level-1], "buttonTree" + id + + paramLevel[level-1]);
   }
