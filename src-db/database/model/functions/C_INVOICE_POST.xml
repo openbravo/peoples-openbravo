@@ -1454,7 +1454,7 @@ cWithHoldId varchar2(32);
               v_GenDebt_PaymentID varchar2(32);
               v_SettlementDocTypeID varchar2(32) ;
               v_settlement_ID VARCHAR2(32) ;
-       v_CB_Curr NUMBER;
+	      v_CB_Curr VARCHAR2(32) ;
               v_SDocument_No C_SETTLEMENT.DocumentNo%TYPE;
             BEGIN
               IF v_IsSOTrx ='Y' THEN
