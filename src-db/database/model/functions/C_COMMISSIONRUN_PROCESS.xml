@@ -43,7 +43,7 @@ TYPE RECORD IS REF CURSOR;
  v_C_Currency_ID     varchar2(32);
  v_PaymentRule     VARCHAR(60);
  v_M_PriceList_ID    varchar2(32);
- v_POReference     NUMBER;
+ v_POReference     varchar2(20);
  v_Product_ID     varchar2(32);
  v_Tax_ID      varchar2(32);
  v_UOM_ID      varchar2(32);
