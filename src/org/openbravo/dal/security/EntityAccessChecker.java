@@ -64,6 +64,7 @@ public class EntityAccessChecker implements OBNotSingleton {
   private String roleId;
 
   private Set<Entity> writableEntities = new HashSet<Entity>();
+
   private Set<Entity> readableEntities = new HashSet<Entity>();
   // the derived readable entities only contains the entities which are
   // derived
@@ -102,7 +103,7 @@ public class EntityAccessChecker implements OBNotSingleton {
       for (final Tab t : ts) {
         final String tableName = t.getTable().getDBTableName();
         final Entity e = mp.getEntityByTableName(tableName);
-        if (e == null) { // happens for AD_Client_Info
+        if (e == null) { // happens for AD_Client_Info and views
           continue;
         }
         if (writeAccess) {
@@ -151,12 +152,12 @@ public class EntityAccessChecker implements OBNotSingleton {
    */
   public void dump() {
     System.err.println("");
-    System.err.println(">>> Readabled entities: ");
+    System.err.println(">>> Readable entities: ");
     System.err.println("");
     dumpSorted(readableEntities);
 
     System.err.println("");
-    System.err.println(">>> Derived Readabled entities: ");
+    System.err.println(">>> Derived Readable entities: ");
     System.err.println("");
     dumpSorted(derivedReadableEntities);
 
@@ -166,6 +167,17 @@ public class EntityAccessChecker implements OBNotSingleton {
     dumpSorted(writableEntities);
     System.err.println("");
     System.err.println("");
+
+    final Set<Entity> readableNotWritable = new HashSet<Entity>(readableEntities);
+    readableNotWritable.removeAll(writableEntities);
+
+    System.err.println("");
+    System.err.println(">>> Readable Not-Writable entities: ");
+    System.err.println("");
+    dumpSorted(readableNotWritable);
+    System.err.println("");
+    System.err.println("");
+
   }
 
   private void dumpSorted(Set<Entity> set) {
@@ -269,7 +281,8 @@ public class EntityAccessChecker implements OBNotSingleton {
     }
 
     if (!readableEntities.contains(entity)) {
-      throw new OBSecurityException("Entity " + entity + " is not readable by this user");
+      throw new OBSecurityException("Entity " + entity + " is not readable by the user "
+          + obContext.getUser().getId());
     }
   }
 
@@ -287,6 +300,14 @@ public class EntityAccessChecker implements OBNotSingleton {
 
   public void setObContext(OBContext obContext) {
     this.obContext = obContext;
+  }
+
+  public Set<Entity> getReadableEntities() {
+    return readableEntities;
+  }
+
+  public Set<Entity> getWritableEntities() {
+    return writableEntities;
   }
 
 }

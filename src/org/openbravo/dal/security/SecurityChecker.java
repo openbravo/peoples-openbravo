@@ -162,7 +162,7 @@ public class SecurityChecker implements OBSingleton {
           // TODO: maybe move rollback to exception throwing
           SessionHandler.getInstance().setDoRollback(true);
           throw new OBSecurityException("Client (" + clientId + ") of object (" + obj
-              + ") is not present  in ClientList " + obContext.getCurrentClient().getId());
+              + ") is not present in ClientList " + obContext.getCurrentClient().getId());
         }
       }
 
@@ -180,7 +180,7 @@ public class SecurityChecker implements OBSingleton {
           // TODO: maybe move rollback to exception throwing
           SessionHandler.getInstance().setDoRollback(true);
           throw new OBSecurityException("Organization " + orgId + " of object (" + obj
-              + ") is not present  in OrganizationList " + obContext.getWritableOrganizations());
+              + ") is not present in OrganizationList " + obContext.getWritableOrganizations());
         }
       }
     }
