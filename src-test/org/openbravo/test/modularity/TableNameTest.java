@@ -135,6 +135,30 @@ public class TableNameTest extends BaseTest {
   }
 
   /**
+   * This test tryies to change the package for the table created in testCreateTable1 to a package
+   * in core, this should fail because the naming rules are not filled
+   */
+  public void testChangePackage() {
+    setUserContext("0");
+    OBCriteria<Table> obCriteria = OBDal.getInstance().createCriteria(Table.class);
+    obCriteria.add(Expression.eq(Module.PROPERTY_NAME, "TEST1_Table1"));
+    List<Table> tables = obCriteria.list();
+    Table table = tables.get(0);
+    table.setDataPackage(getPackage("org.openbravo.model.ad.module"));
+    OBDal.getInstance().save(table);
+    boolean exception = false;
+    try {
+      // force dal commit to throw exception
+      OBDal.getInstance().commitAndClose();
+    } catch (org.hibernate.exception.GenericJDBCException e) {
+      exception = true;
+    }
+    assertTrue("Saved table but it shouldn't be", exception);
+
+    commitTransaction();
+  }
+
+  /**
    * Removes all created objects from database.
    */
   public void testCleanUp() {
