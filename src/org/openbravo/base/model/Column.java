@@ -221,13 +221,22 @@ public class Column extends ModelObject {
     if (super.isActive() && !isPrimitiveType()) {
       final Column thatColumn = getReferenceType();
 
+      // note calls isSuperActive(), if it would call isActive there is a danger
+      // for infinite looping, see issue:
+      // https://issues.openbravo.com/view.php?id=8632
       if (thatColumn != null
-          && (!thatColumn.isActive() || !thatColumn.getTable().isActive() || thatColumn.getTable()
-              .isView())) {
+          && (!thatColumn.isSuperActive() || !thatColumn.getTable().isActive() || thatColumn
+              .getTable().isView())) {
         log.error("Column " + this + " refers to a non active table or column or to a view"
             + thatColumn);
       }
     }
+    return super.isActive();
+  }
+
+  // method to prevent infinite looping checking for exceptions. See this issue:
+  // https://issues.openbravo.com/view.php?id=8632
+  private boolean isSuperActive() {
     return super.isActive();
   }
 
