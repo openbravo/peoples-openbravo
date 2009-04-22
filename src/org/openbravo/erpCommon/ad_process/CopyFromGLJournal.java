@@ -91,7 +91,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
     OBError myError = null;
     try {
       conn = this.getTransactionConnection();
-      CopyFromGLJournalData[] data = CopyFromGLJournalData.select(this, strGLJournalBatch, strKey);
+      CopyFromGLJournalData[] data = CopyFromGLJournalData.select(this, strKey, strGLJournalBatch);
       for (int i = 0; data != null && i < data.length; i++) {
         String strSequence = SequenceIdData.getUUID();
         String strDocumentNo = Utility.getDocumentNo(this, vars, windowId, "GL_Journal", Utility
