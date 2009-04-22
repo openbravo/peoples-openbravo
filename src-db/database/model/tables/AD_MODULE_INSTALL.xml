@@ -133,9 +133,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODINSTALL_ADMODULE_FK" onDelete="cascade">
-        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
-      </foreign-key>
       <check name="AD_MOD_ins_INDEVELOPMENT_CHK"><![CDATA[ISINDEVELOPMENT IN ('Y', 'N')]]></check>
       <check name="AD_MOD_ins_ISTRANSLATEABLE_CHK"><![CDATA[ISTRANSLATIONREQUIRED IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_ins_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
