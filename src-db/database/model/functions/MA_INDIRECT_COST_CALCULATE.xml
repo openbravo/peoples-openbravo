@@ -25,7 +25,7 @@ v_record_ID VARCHAR2(32);
 v_resultstr VARCHAR2(2000);
 v_result NUMBER:= 1;
 v_message VARCHAR2(2000);
-p_user NUMBER;
+p_user VARCHAR2(32);
 v_total NUMBER;
 v_cost_type VARCHAR2(60);
 -- FINISH_PROCESS                        BOOLEAN := FALSE;
