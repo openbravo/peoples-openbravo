@@ -37,7 +37,12 @@ public class MergePropertiesTest extends TestCase {
   private static String ORIGINAL_FILE = "test-orig.properties";
   private static String NEW_FILE = "test-new.properties";
 
-  // crates original properties file to be tested later
+  /**
+   * crates original properties file to be tested later
+   * 
+   * @throws FileNotFoundException
+   * @throws IOException
+   */
   public void testCreateOriginalFile1() throws FileNotFoundException, IOException {
     Properties prop = new Properties();
     prop.setProperty("test1", "value1.custom");
@@ -45,7 +50,12 @@ public class MergePropertiesTest extends TestCase {
     prop.store(new FileOutputStream(ORIGINAL_FILE), "Original properties file");
   }
 
-  // creates new properties file to be tested later
+  /**
+   * creates new properties file to be tested later
+   * 
+   * @throws FileNotFoundException
+   * @throws IOException
+   */
   public void testCreateNewFile1() throws FileNotFoundException, IOException {
     Properties prop = new Properties();
     prop.setProperty("test1", "value1.default");
@@ -54,7 +64,12 @@ public class MergePropertiesTest extends TestCase {
     prop.store(new FileOutputStream(NEW_FILE), "New properties file");
   }
 
-  // merges previously created files and checks expected values
+  /**
+   * merges previously created files and checks expected values
+   * 
+   * @throws FileNotFoundException
+   * @throws IOException
+   */
   public void testMerge() throws FileNotFoundException, IOException {
     boolean modified = Utility.mergeOpenbravoProperties(ORIGINAL_FILE, NEW_FILE);
     assertTrue("File has not been modified while it should be", modified);
@@ -69,12 +84,20 @@ public class MergePropertiesTest extends TestCase {
         "value3.default"));
   }
 
-  // deletes testing files
+  /**
+   * deletes testing files
+   */
   public void testDeleteFiles1() {
     assertTrue("couldn't delete " + ORIGINAL_FILE, new File(ORIGINAL_FILE).delete());
     assertTrue("couldn't delete " + ORIGINAL_FILE, new File(NEW_FILE).delete());
   }
 
+  /**
+   * Creates another properties file for testing
+   * 
+   * @throws FileNotFoundException
+   * @throws IOException
+   */
   public void testCreateOriginalFile2() throws FileNotFoundException, IOException {
     Properties prop = new Properties();
     prop.setProperty("test1", "value1.custom");
@@ -82,7 +105,12 @@ public class MergePropertiesTest extends TestCase {
     prop.store(new FileOutputStream(ORIGINAL_FILE), "Original properties file");
   }
 
-  // creates new properties file to be tested later
+  /**
+   * creates new properties file with the same properties as the previous one
+   * 
+   * @throws FileNotFoundException
+   * @throws IOException
+   */
   public void testCreateNewFile2() throws FileNotFoundException, IOException {
     Properties prop = new Properties();
     prop.setProperty("test1", "value1.default");
@@ -90,7 +118,13 @@ public class MergePropertiesTest extends TestCase {
     prop.store(new FileOutputStream(NEW_FILE), "New properties file");
   }
 
-  // merges previously created files, in this case there should not be modifications
+  /**
+   * merges previously created files, in this case there should not be modifications because they
+   * have the same properties
+   * 
+   * @throws FileNotFoundException
+   * @throws IOException
+   */
   public void testMerge2() throws FileNotFoundException, IOException {
     boolean modified = Utility.mergeOpenbravoProperties(ORIGINAL_FILE, NEW_FILE);
     assertFalse("File has been modified while it shouldn't be", modified);
@@ -104,7 +138,9 @@ public class MergePropertiesTest extends TestCase {
 
   }
 
-  // deletes testing files
+  /**
+   * deletes testing files
+   */
   public void testDeleteFiles2() {
     assertTrue("couldn't delete " + ORIGINAL_FILE, new File(ORIGINAL_FILE).delete());
     assertTrue("couldn't delete " + ORIGINAL_FILE, new File(NEW_FILE).delete());

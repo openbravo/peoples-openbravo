@@ -29,9 +29,16 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDBPrefix;
 import org.openbravo.test.base.BaseTest;
 
+/**
+ * This tests check that db prefixes are correctly checked when they are inserted in DB in order not
+ * to follow modularity rules
+ * 
+ */
 public class DBPrefixTest extends BaseTest {
 
-  // Creates a new module to test with
+  /**
+   * Creates a new module to test with
+   */
   public void testCreateModule() {
     setUserContext("0");
     Module module = OBProvider.getInstance().get(Module.class);
@@ -44,39 +51,51 @@ public class DBPrefixTest extends BaseTest {
     commitTransaction();
   }
 
-  // Add a valid dbprefixes, everything should go ok
-  // only alphabetic upper chars
+  /**
+   * Add a valid dbprefixes, everything should go ok only alphabetic upper chars
+   */
   public void testAddDBPrefixValid1() {
     insertDBPrefix("OK", true);
   }
 
-  // alpha numeric chars not startin with a numeric one
+  /**
+   * alpha numeric chars not starting with a numeric one
+   */
   public void testAddDBPrefixValid2() {
     insertDBPrefix("OK12", true);
   }
 
-  // Add not valid db prefixes
-  // starts with number
+  /**
+   * Add not valid db prefixes starts with number
+   */
   public void testAddDBPrefixNotValid1() {
     insertDBPrefix("1FAIL", false);
   }
 
-  // contains lower case letters
+  /**
+   * contains lower case letters
+   */
   public void testAddDBPrefixNotValid2() {
     insertDBPrefix("Fail", false);
   }
 
-  // contains underscore
+  /**
+   * contains underscore
+   */
   public void testAddDBPrefixNotValid3() {
     insertDBPrefix("FAIL_1", false);
   }
 
-  // contains other non-alphabetic chars
+  /**
+   * contains other non-alphabetic chars
+   */
   public void testAddDBPrefixNotValid4() {
     insertDBPrefix("FAIL&/1", false);
   }
 
-  // Deletes all the modules matching the name for the testing one
+  /**
+   * Deletes all the modules matching the name for the testing one
+   */
   public void testDeleteModule() {
     setUserContext("0");
     final OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
