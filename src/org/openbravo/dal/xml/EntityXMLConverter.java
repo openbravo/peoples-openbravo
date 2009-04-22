@@ -159,11 +159,15 @@ public class EntityXMLConverter implements OBNotSingleton {
    * @return the resulting xml string
    */
   public String toXML(Collection<BaseOBObject> bobs) {
-    final StringWriter sw = new StringWriter();
-    setOutput(sw);
-    clear();
-    process(bobs);
-    return sw.toString();
+    try {
+      final StringWriter sw = new StringWriter();
+      clear();
+      setOutput(sw);
+      process(bobs);
+      return sw.toString();
+    } catch (Exception e) {
+      throw new EntityXMLException(e);
+    }
   }
 
   /**
@@ -333,7 +337,7 @@ public class EntityXMLConverter implements OBNotSingleton {
         for (final Object o : c) {
           // embed in the parent
           if (isOptionEmbedChildren()) {
-            export((BaseOBObject) o, true);
+            export((BaseOBObject) o, false);
           } else {
             // add the child as a tag, the child entityname is
             // used as the tagname
