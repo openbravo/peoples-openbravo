@@ -22,53 +22,56 @@ package org.openbravo.test.system;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openbravo.service.system.ApplicationDictionaryValidator;
+import org.openbravo.service.system.DatabaseValidator;
 import org.openbravo.service.system.ModuleValidator;
 import org.openbravo.service.system.SystemValidationResult;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Test the System Validation.
+ * Tests System Validation.
+ * 
+ * @see DatabaseValidator
+ * @see ModuleValidator
  * 
  * @author mtaal
  */
 
 public class SystemValidatorTest extends BaseTest {
 
+  private static final Logger log = Logger.getLogger(SystemValidatorTest.class);
+
   public void _testSystemValidation() {
-    setErrorOccured(true);
     setUserContext("0");
     final ApplicationDictionaryValidator adValidator = new ApplicationDictionaryValidator();
     final Map<String, SystemValidationResult> results = adValidator.validate();
 
     for (String key : results.keySet()) {
-      System.err.println("++++++++++++++++++++++++++++++++++++++++++++++++++");
-      System.err.println(key);
-      System.err.println("++++++++++++++++++++++++++++++++++++++++++++++++++");
+      log.debug("++++++++++++++++++++++++++++++++++++++++++++++++++");
+      log.debug(key);
+      log.debug("++++++++++++++++++++++++++++++++++++++++++++++++++");
       final SystemValidationResult result = results.get(key);
       printResult(result);
     }
-    setErrorOccured(false);
   }
 
   public void testModulesValidation() {
-    setErrorOccured(true);
     setUserContext("0");
     final ModuleValidator moduleValidator = new ModuleValidator();
     final SystemValidationResult result = moduleValidator.validate();
     printResult(result);
-    setErrorOccured(false);
   }
 
   private void printResult(SystemValidationResult result) {
     for (SystemValidationType validationType : result.getWarnings().keySet()) {
-      System.err.println("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
-      System.err.println("Warnings for Validation type: " + validationType);
-      System.err.println("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      log.debug("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      log.debug("Warnings for Validation type: " + validationType);
+      log.debug("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
       final List<String> warnings = result.getWarnings().get(validationType);
       for (String warning : warnings) {
-        System.err.println(warning);
+        log.debug(warning);
       }
     }
 
@@ -84,8 +87,11 @@ public class SystemValidatorTest extends BaseTest {
           sb.append("\n");
         }
       }
+      if (errors.size() > 0) {
+        fail(sb.toString());
+      }
     }
-    System.err.println(sb.toString());
+    log.debug(sb.toString());
   }
 
 }

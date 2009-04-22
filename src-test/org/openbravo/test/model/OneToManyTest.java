@@ -19,6 +19,7 @@
 
 package org.openbravo.test.model;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -30,69 +31,64 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Test cases for one-to-many support
+ * Test cases for one-to-many support.
  * 
  * @author iperdomo
  */
 public class OneToManyTest extends BaseTest {
 
+  private static final Logger log = Logger.getLogger(OneToManyTest.class);
+
   private String lineId;
 
   public void testAccessChildCollection() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
     final OBCriteria<Order> order = OBDal.getInstance().createCriteria(Order.class);
     // order.add(Expression.eq("id", "1000019"));
     for (final Order o : order.list()) {
-      System.out.println("Order: " + o.toString());
+      log.debug("Order: " + o.toString());
       for (final OrderLine l : o.getOrderLineList()) {
-        System.out.println("Line: " + l.toString());
+        log.debug("Line: " + l.toString());
       }
-      System.out.println("-----");
+      log.debug("-----");
     }
-    setErrorOccured(false);
   }
 
   public void testDeleteChild() {
 
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
     final OBCriteria<Order> orders = OBDal.getInstance().createCriteria(Order.class);
     orders.add(Expression.eq(Order.PROPERTY_DOCUMENTSTATUS, "DR")); // Draft
     // document
 
     for (final Order o : orders.list()) {
-      System.out.println("Order: " + o.get(Order.PROPERTY_DOCUMENTNO) + " - no. lines: "
+      log.debug("Order: " + o.get(Order.PROPERTY_DOCUMENTNO) + " - no. lines: "
           + o.getOrderLineList().size());
 
       if (o.getOrderLineList().size() > 0) {
         final OrderLine l = o.getOrderLineList().get(0);
         lineId = l.getId();
-        System.out.println("OrderLine to remove: " + l.toString());
+        log.debug("OrderLine to remove: " + l.toString());
         o.getOrderLineList().remove(l); // or
         // OBDal.getInstance().remove(
         // l);
       }
     }
 
-    setErrorOccured(false);
   }
 
   public void testConfirmDeleted() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
 
     final OBCriteria<OrderLine> lines = OBDal.getInstance().createCriteria(OrderLine.class);
     lines.add(Expression.eq(OrderLine.PROPERTY_ID, lineId));
 
     assertEquals(0, lines.list().size());
 
-    setErrorOccured(false);
   }
 
   public void testAddChild() throws Exception {
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
     final OBCriteria<BusinessPartner> bpartners = OBDal.getInstance().createCriteria(
         BusinessPartner.class);
     bpartners.add(Expression.eq(BusinessPartner.PROPERTY_SEARCHKEY, "mafalda"));
@@ -114,6 +110,5 @@ public class OneToManyTest extends BaseTest {
       assertEquals(count + 1, partner.getADUserList().size());
     } else
       throw new Exception("malfalda not found in business partners list");
-    setErrorOccured(false);
   }
 }

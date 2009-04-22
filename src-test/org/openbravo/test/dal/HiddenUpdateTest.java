@@ -27,12 +27,9 @@ import org.hibernate.EmptyInterceptor;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalSessionFactoryController;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLConverter;
@@ -41,8 +38,6 @@ import org.openbravo.test.base.BaseTest;
 /**
  * Test for updates which can happen behind the scenes (but should not happen) if properties are
  * accidentally changed.
- * 
- * Note the testcases assume that they are run in the order defined in this class.
  * 
  * @author mtaal
  */
@@ -53,11 +48,9 @@ public class HiddenUpdateTest extends BaseTest {
   // Hidden updates can occur when a load/read of an entity also
   // changes the state, or that hibernate detects dirty in another way
   public void testHiddenUpdates() {
-    setErrorOccured(true);
     setUserContext("0");
 
     final SessionFactoryController currentSFC = SessionFactoryController.getInstance();
-    OBContext.getOBContext().setInAdministratorMode(true);
     try {
       final SessionFactoryController newSFC = new LocalSessionFactoryController();
       SessionFactoryController.setInstance(newSFC);
@@ -73,12 +66,6 @@ public class HiddenUpdateTest extends BaseTest {
         final PersistentClass pc = (PersistentClass) it.next();
         final String entityName = pc.getEntityName();
 
-        final Entity e = ModelProvider.getInstance().getEntity(entityName);
-
-        if (entityName.startsWith("C_Selection")) {
-          continue;
-        }
-        System.err.println("++++++++ Reading entity " + entityName + " +++++++++++");
         for (final Object o : OBDal.getInstance().createCriteria(entityName).list()) {
           if (o == null) {
             // can occur when reading views which have nullable
@@ -92,9 +79,7 @@ public class HiddenUpdateTest extends BaseTest {
       }
     } finally {
       SessionFactoryController.setInstance(currentSFC);
-      OBContext.getOBContext().setInAdministratorMode(false);
     }
-    setErrorOccured(false);
   }
 
   class LocalSessionFactoryController extends DalSessionFactoryController {

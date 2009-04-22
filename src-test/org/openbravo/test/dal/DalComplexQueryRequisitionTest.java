@@ -23,18 +23,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.procurement.RequisitionLine;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Tests a complex query using the DAL
+ * Tests a complex query using the DAL. Is used in the Developers Guide HowTo.
  * 
  * @author mtaal
  */
 
-public class DalComplexQueryRequisition extends BaseTest {
+public class DalComplexQueryRequisitionTest extends BaseTest {
+
+  private static final Logger log = Logger.getLogger(DalComplexQueryRequisitionTest.class);
+
   // SELECT M_REQUISITIONLINE_ID, M_REQUISITIONLINE.NEEDBYDATE,
   // M_REQUISITIONLINE.QTY - M_REQUISITIONLINE.ORDEREDQTY AS QTYTOORDER,
   // M_REQUISITIONLINE.PRICEACTUAL AS PRICE,
@@ -69,8 +73,10 @@ public class DalComplexQueryRequisition extends BaseTest {
   // ORDER BY M_REQUISITIONLINE.NEEDBYDATE, M_REQUISITIONLINE.M_PRODUCT_ID,
   // M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID
 
+  /**
+   * Tests a complex query related to requisition lines.
+   */
   public void testComplexQueryOne() {
-    setErrorOccured(true);
     setUserContext("100");
 
     // the query parameters are added to this list
@@ -155,53 +161,51 @@ public class DalComplexQueryRequisition extends BaseTest {
     for (RequisitionLine requisitionLine : obQuery.list()) {
       // now print the information from the select clause
       // SELECT M_REQUISITIONLINE_ID, M_REQUISITIONLINE.NEEDBYDATE,
-      System.err.println(requisitionLine.getId());
-      System.err.println(requisitionLine.getNeedByDate());
+      log.debug(requisitionLine.getId());
+      log.debug(requisitionLine.getNeedByDate());
       // M_REQUISITIONLINE.QTY - M_REQUISITIONLINE.ORDEREDQTY AS QTYTOORDER,
       if (requisitionLine.getOrderQuantity() != null) {
-        System.err.println(requisitionLine.getQuantity().min(requisitionLine.getOrderQuantity()));
+        log.debug(requisitionLine.getQuantity().min(requisitionLine.getOrderQuantity()));
       }
       // M_REQUISITIONLINE.PRICEACTUAL AS PRICE,
-      System.err.println(requisitionLine.getUnitPrice());
+      log.debug(requisitionLine.getUnitPrice());
 
       // AD_COLUMN_IDENTIFIER(to_char('C_BPartner'),
       // to_char(COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID)), ?) AS
       // VENDOR,
       if (requisitionLine.getBusinessPartner() != null) {
-        System.err.println(requisitionLine.getBusinessPartner().getIdentifier());
+        log.debug(requisitionLine.getBusinessPartner().getIdentifier());
       } else if (requisitionLine.getRequisition().getBusinessPartner() != null) {
-        System.err.println(requisitionLine.getRequisition().getBusinessPartner().getIdentifier());
+        log.debug(requisitionLine.getRequisition().getBusinessPartner().getIdentifier());
       }
 
       // AD_COLUMN_IDENTIFIER(to_char('M_PriceList'),
       // to_char(COALESCE(M_REQUISITIONLINE.M_PRICELIST_ID,
       // M_REQUISITION.M_PRICELIST_ID)), ?) AS PRICELISTID,
       if (requisitionLine.getPriceList() != null) {
-        System.err.println(requisitionLine.getPriceList().getIdentifier());
+        log.debug(requisitionLine.getPriceList().getIdentifier());
       } else if (requisitionLine.getRequisition().getPriceList() != null) {
-        System.err.println(requisitionLine.getRequisition().getPriceList().getIdentifier());
+        log.debug(requisitionLine.getRequisition().getPriceList().getIdentifier());
       }
 
       // AD_COLUMN_IDENTIFIER(to_char('M_Product'),
       // to_char(M_REQUISITIONLINE.M_PRODUCT_ID), ?) AS PRODUCT,
-      System.err.println(requisitionLine.getProduct().getIdentifier());
+      log.debug(requisitionLine.getProduct().getIdentifier());
 
       // AD_COLUMN_IDENTIFIER(to_char('M_AttributeSetInstance'),
       // to_char(M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID), ?) AS ATTRIBUTE,
       if (requisitionLine.getAttributeSetValue() != null) {
-        System.err.println(requisitionLine.getAttributeSetValue().getIdentifier());
+        log.debug(requisitionLine.getAttributeSetValue().getIdentifier());
       }
 
       // AD_COLUMN_IDENTIFIER(to_char('AD_User'), to_char(M_REQUISITION.AD_USER_ID), ?) AS REQUESTER
-      System.err.println(requisitionLine.getRequisition().getUserContact().getIdentifier());
+      log.debug(requisitionLine.getRequisition().getUserContact().getIdentifier());
 
-      System.err.println(requisitionLine.getIdentifier());
+      log.debug(requisitionLine.getIdentifier());
     }
-    setErrorOccured(false);
   }
 
   public void _testComplexQueryOne() {
-    setErrorOccured(true);
     setUserContext("100");
 
     final StringBuilder whereClause = new StringBuilder();
@@ -288,47 +292,46 @@ public class DalComplexQueryRequisition extends BaseTest {
     for (RequisitionLine requisitionLine : obQuery.list()) {
       // now print the information from the select clause
       // SELECT M_REQUISITIONLINE_ID, M_REQUISITIONLINE.NEEDBYDATE,
-      System.err.println(requisitionLine.getId());
-      System.err.println(requisitionLine.getNeedByDate());
+      log.debug(requisitionLine.getId());
+      log.debug(requisitionLine.getNeedByDate());
       // M_REQUISITIONLINE.QTY - M_REQUISITIONLINE.ORDEREDQTY AS QTYTOORDER,
-      System.err.println(requisitionLine.getQuantity().min(requisitionLine.getOrderQuantity()));
+      log.debug(requisitionLine.getQuantity().min(requisitionLine.getOrderQuantity()));
       // M_REQUISITIONLINE.PRICEACTUAL AS PRICE,
-      System.err.println(requisitionLine.getUnitPrice());
+      log.debug(requisitionLine.getUnitPrice());
 
       // AD_COLUMN_IDENTIFIER(to_char('C_BPartner'),
       // to_char(COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID)), ?) AS
       // VENDOR,
       if (requisitionLine.getBusinessPartner() != null) {
-        System.err.println(requisitionLine.getBusinessPartner().getIdentifier());
+        log.debug(requisitionLine.getBusinessPartner().getIdentifier());
       } else if (requisitionLine.getRequisition().getBusinessPartner() != null) {
-        System.err.println(requisitionLine.getRequisition().getBusinessPartner().getIdentifier());
+        log.debug(requisitionLine.getRequisition().getBusinessPartner().getIdentifier());
       }
 
       // AD_COLUMN_IDENTIFIER(to_char('M_PriceList'),
       // to_char(COALESCE(M_REQUISITIONLINE.M_PRICELIST_ID,
       // M_REQUISITION.M_PRICELIST_ID)), ?) AS PRICELISTID,
       if (requisitionLine.getPriceList() != null) {
-        System.err.println(requisitionLine.getPriceList().getIdentifier());
+        log.debug(requisitionLine.getPriceList().getIdentifier());
       } else if (requisitionLine.getRequisition().getPriceList() != null) {
-        System.err.println(requisitionLine.getRequisition().getPriceList().getIdentifier());
+        log.debug(requisitionLine.getRequisition().getPriceList().getIdentifier());
       }
 
       // AD_COLUMN_IDENTIFIER(to_char('M_Product'),
       // to_char(M_REQUISITIONLINE.M_PRODUCT_ID), ?) AS PRODUCT,
-      System.err.println(requisitionLine.getProduct().getIdentifier());
+      log.debug(requisitionLine.getProduct().getIdentifier());
 
       // AD_COLUMN_IDENTIFIER(to_char('M_AttributeSetInstance'),
       // to_char(M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID), ?) AS ATTRIBUTE,
       if (requisitionLine.getAttributeSetValue() != null) {
-        System.err.println(requisitionLine.getAttributeSetValue().getIdentifier());
+        log.debug(requisitionLine.getAttributeSetValue().getIdentifier());
       }
 
       // AD_COLUMN_IDENTIFIER(to_char('AD_User'), to_char(M_REQUISITION.AD_USER_ID), ?) AS REQUESTER
-      System.err.println(requisitionLine.getRequisition().getUserContact().getIdentifier());
+      log.debug(requisitionLine.getRequisition().getUserContact().getIdentifier());
 
-      System.err.println(requisitionLine.getIdentifier());
+      log.debug(requisitionLine.getIdentifier());
     }
-    System.err.println("done");
-    setErrorOccured(false);
+    log.debug("done");
   }
 }

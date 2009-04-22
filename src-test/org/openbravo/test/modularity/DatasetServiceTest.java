@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -38,15 +39,16 @@ import org.openbravo.service.db.DataExportService;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Tests the Dataset Service Object
+ * Tests the Dataset Service Object, queries, expressions etc.
  * 
  * @author mtaal
  */
 
 public class DatasetServiceTest extends BaseTest {
 
+  private static final Logger log = Logger.getLogger(DatasetServiceTest.class);
+
   public void testCheckQueries() {
-    setErrorOccured(true);
     setUserContext("100");
 
     Map<String, Object> parameters = new HashMap<String, Object>();
@@ -61,15 +63,13 @@ public class DatasetServiceTest extends BaseTest {
           // just test but do nothing with return value
           DataSetService.getInstance().getExportableObjects(dt, "0", parameters);
         } catch (final Exception e) {
-          System.err.println(ds.getName() + ": " + dt.getEntityName() + ": " + e.getMessage());
+          log.debug(ds.getName() + ": " + dt.getEntityName() + ": " + e.getMessage());
         }
       }
     }
-    setErrorOccured(false);
   }
 
   public void testExportAllDataSets() {
-    setErrorOccured(true);
     setUserContext("100");
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
     final List<DataSet> dss = obc.list();
@@ -80,14 +80,12 @@ public class DatasetServiceTest extends BaseTest {
 
     for (final DataSet ds : dss) {
       final String xml = DataExportService.getInstance().exportDataSetToXML(ds, "0", parameters);
-      System.err.println(xml);
+      log.debug(xml);
     }
-    setErrorOccured(false);
   }
 
   // test whereclause
   public void testDataSetTable() {
-    setErrorOccured(true);
     setUserContext("100");
     final DataSetTable dst = OBProvider.getInstance().get(DataSetTable.class);
     final Table t = OBProvider.getInstance().get(Table.class);
@@ -97,13 +95,11 @@ public class DatasetServiceTest extends BaseTest {
         + "='N') and client.id='0'");
     final List<BaseOBObject> l = DataSetService.getInstance().getExportableObjects(dst, "0");
     for (final BaseOBObject bob : l) {
-      System.err.println(bob.getIdentifier());
+      log.debug(bob.getIdentifier());
     }
-    setErrorOccured(false);
   }
 
   public void testReadAll() {
-    setErrorOccured(true);
     setBigBazaarAdminContext();
 
     Map<String, Object> parameters = new HashMap<String, Object>();
@@ -113,11 +109,11 @@ public class DatasetServiceTest extends BaseTest {
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
     final List<DataSet> ds = obc.list();
     for (final DataSet d : ds) {
-      System.err.println("Exporting DataSet: " + d.getName());
-      System.err.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+      log.debug("Exporting DataSet: " + d.getName());
+      log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
       final List<DataSetTable> dts = d.getDataSetTableList();
       for (final DataSetTable dt : dts) {
-        System.err.println("Exporting DataSetTable: " + dt.getTable().getName());
+        log.debug("Exporting DataSetTable: " + dt.getTable().getName());
         final List<DataSetColumn> dcs = dt.getDataSetColumnList();
 
         final List<BaseOBObject> bobs = dss.getExportableObjects(dt, "0", parameters);
@@ -134,12 +130,11 @@ public class DatasetServiceTest extends BaseTest {
           // } else {
           // sb.append(value);
           // }
-          // System.err.println(sb.toString());
+          // log.debug(sb.toString());
           // }
         }
       }
     }
-    setErrorOccured(false);
   }
 
   public void psuedoCode() {
@@ -170,6 +165,6 @@ public class DatasetServiceTest extends BaseTest {
   }
 
   public void exportProperty(Property p, Object value) {
-    System.err.println(p + ": " + value);
+    log.debug(p + ": " + value);
   }
 }

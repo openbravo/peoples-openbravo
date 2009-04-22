@@ -32,7 +32,7 @@ import org.openbravo.service.system.SystemService;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Test the System Service class.
+ * Test the {@link SystemService} class.
  * 
  * @author mtaal
  */
@@ -40,7 +40,6 @@ import org.openbravo.test.base.BaseTest;
 public class SystemServiceTest extends BaseTest {
 
   public void testChangedDataSet() {
-    setErrorOccured(true);
     setUserContext("0");
     final List<DataSet> dss = OBDal.getInstance().createCriteria(DataSet.class).list();
     final Date now = new Date(System.currentTimeMillis());
@@ -53,11 +52,9 @@ public class SystemServiceTest extends BaseTest {
     for (DataSet ds : dss) {
       assertTrue(DataSetService.getInstance().hasChanged(ds, past));
     }
-    setErrorOccured(false);
   }
 
   public void testChangedClasses() {
-    setErrorOccured(true);
     setUserContext("0");
     final Class<?>[] clzs = new Class<?>[] { Table.class, Column.class, Reference.class };
 
@@ -67,6 +64,5 @@ public class SystemServiceTest extends BaseTest {
     // 600 days in the past
     final Date past = new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 600));
     assertTrue(SystemService.getInstance().hasChanged(clzs, past));
-    setErrorOccured(false);
   }
 }

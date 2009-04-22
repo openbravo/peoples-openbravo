@@ -21,6 +21,7 @@ package org.openbravo.test.dal;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -41,24 +42,24 @@ import org.openbravo.test.base.BaseTest;
  */
 
 public class DynamicEntityTest extends BaseTest {
+  private static final Logger log = Logger.getLogger(DynamicEntityTest.class);
+
   public void testCreateBPGroup() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
     final DynamicOBObject bpGroup = new DynamicOBObject();
     bpGroup.setEntityName(Category.ENTITY_NAME);
     bpGroup.set(Category.PROPERTY_DEFAULT, true);
     bpGroup.set(Category.PROPERTY_DESCRIPTION, "hello world");
     bpGroup.set(Category.PROPERTY_NAME, "hello world");
     bpGroup.set(Category.PROPERTY_SEARCHKEY, "hello world");
+    bpGroup.setActive(true);
     OBDal.getInstance().save(bpGroup);
     printXML(bpGroup);
-    setErrorOccured(false);
   }
 
   // query for the BPGroup again and remove it
   public void testRemoveBPGroup() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
     obc.add(Expression.eq(Category.PROPERTY_NAME, "hello world"));
     final List<Category> bpgs = obc.list();
@@ -87,18 +88,15 @@ public class DynamicEntityTest extends BaseTest {
       OBDal.getInstance().remove(bga);
     }
     OBDal.getInstance().remove(bpgs.get(0));
-    setErrorOccured(false);
   }
 
   // check if the BPGroup was removed
   public void testCheckBPGroupRemoved() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
     obc.add(Expression.eq(Category.PROPERTY_NAME, "hello world"));
     final List<Category> bpgs = obc.list();
     assertEquals(0, bpgs.size());
-    setErrorOccured(false);
   }
 
   private void printXML(BaseOBObject bob) {
@@ -112,7 +110,7 @@ public class DynamicEntityTest extends BaseTest {
     // Note: bob.getEntity() also gives the entity of the object
 
     // print the opening tag
-    System.err.println("<" + e.getName() + ">");
+    log.debug("<" + e.getName() + ">");
 
     // iterate through the properties of the entity
     for (final Property p : e.getProperties()) {
@@ -123,7 +121,7 @@ public class DynamicEntityTest extends BaseTest {
 
       // handle null, just create an empty tag for that
       if (value == null) {
-        System.err.println(indent + "<" + p.getName() + "/>");
+        log.debug(indent + "<" + p.getName() + "/>");
         continue;
       }
 
@@ -131,17 +129,17 @@ public class DynamicEntityTest extends BaseTest {
       if (p.isPrimitive()) {
         // in reality some form of xml conversion/encoding should take
         // place...
-        System.err.println(indent + "<" + p.getName() + ">" + value + "</" + p.getName() + ">");
+        log.debug(indent + "<" + p.getName() + ">" + value + "</" + p.getName() + ">");
       } else {
         // cast to the parent of all openbravo objects
         final BaseOBObject referencedObject = (BaseOBObject) value;
         // assumes that the id is always a primitive type
-        System.err.println(indent + "<" + p.getName() + ">" + referencedObject.getId() + "</"
-            + p.getName() + ">");
+        log.debug(indent + "<" + p.getName() + ">" + referencedObject.getId() + "</" + p.getName()
+            + ">");
       }
     }
 
     // and the closing tag
-    System.err.println("</" + e.getName() + ">");
+    log.debug("</" + e.getName() + ">");
   }
 }

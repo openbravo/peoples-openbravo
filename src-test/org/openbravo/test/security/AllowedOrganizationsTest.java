@@ -39,7 +39,6 @@ import org.openbravo.test.base.BaseTest;
 public class AllowedOrganizationsTest extends BaseTest {
 
   public void testOrganizationTree() {
-    setErrorOccured(true);
     setBigBazaarAdminContext();
     final OrganizationStructureProvider osp = new OrganizationStructureProvider();
     osp.setClientId("1000000");
@@ -55,7 +54,6 @@ public class AllowedOrganizationsTest extends BaseTest {
     checkResult("1000007", osp, new String[] { "1000000", "0", "1000005", "1000007" });
     checkResult("1000008", osp, new String[] { "1000000", "1000006", "0", "1000008", "1000005" });
     checkResult("1000009", osp, new String[] { "1000009", "1000006", "0", "1000000", "1000005" });
-    setErrorOccured(false);
   }
 
   private void checkResult(String id, OrganizationStructureProvider osp, String[] values) {
@@ -66,16 +64,7 @@ public class AllowedOrganizationsTest extends BaseTest {
     }
   }
 
-  public void testProjectUpdate() {
-    setErrorOccured(true);
-    setUserContext("1000001");
-    final Project p = OBDal.getInstance().get(Project.class, "1000001");
-    p.setName(p.getName() + "A");
-    setErrorOccured(false);
-  }
-
   public void testOrganizationCheck() {
-    setErrorOccured(true);
     setUserContext("0");
     OBContext.getOBContext().getOrganizationStructureProvider().reInitialize();
 
@@ -94,6 +83,5 @@ public class AllowedOrganizationsTest extends BaseTest {
       // no fail!
       SessionHandler.getInstance().rollback();
     }
-    setErrorOccured(false);
   }
 }

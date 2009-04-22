@@ -22,6 +22,7 @@ package org.openbravo.test.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.model.Column;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -31,11 +32,14 @@ import org.openbravo.base.model.Table;
 import org.openbravo.test.base.BaseTest;
 
 /**
+ * Tests the in-memory runtime model.
  * 
  * @author iperdomo
  */
 
 public class RuntimeModelTest extends BaseTest {
+
+  private static final Logger log = Logger.getLogger(RuntimeModelTest.class);
 
   // don't initialize dal layer for model tests
   @Override
@@ -46,10 +50,9 @@ public class RuntimeModelTest extends BaseTest {
 
   public void testDumpModel() {
     for (Entity e : ModelProvider.getInstance().getModel()) {
-      System.err.println(">>>>>>>>>>>>>> " + e.getName() + " (" + e.getTableName()
-          + ") <<<<<<<<<<<<<<<<<");
+      log.debug(">>>>>>>>>>>>>> " + e.getName() + " (" + e.getTableName() + ") <<<<<<<<<<<<<<<<<");
       for (Property p : e.getProperties()) {
-        System.err.println(p.getName() + " (" + p.getColumnName() + ")");
+        log.debug(p.getName() + " (" + p.getColumnName() + ")");
       }
     }
   }
@@ -57,14 +60,14 @@ public class RuntimeModelTest extends BaseTest {
   public void testPK() {
     final ArrayList<Table> tablesWithoutPK = new ArrayList<Table>();
     for (final Table t : ModelProvider.getInstance().getTables()) {
-      if (t.getPrimaryKeyColumns().size() == 0) {
+      if (!t.isView() && t.getPrimaryKeyColumns().size() == 0) {
         tablesWithoutPK.add(t);
       }
     }
     if (tablesWithoutPK.size() != 0) {
-      System.err.println("Tables without primary keys defined:");
+      log.debug("Tables without primary keys defined:");
       for (final Table t2 : tablesWithoutPK) {
-        System.err.println(t2);
+        log.debug(t2);
       }
     }
     assertEquals(0, tablesWithoutPK.size());
@@ -72,10 +75,10 @@ public class RuntimeModelTest extends BaseTest {
 
   public void testModelProvider() {
     for (final Entity e : ModelProvider.getInstance().getModel()) {
-      System.out.println("tablename: " + e.getTableName() + " -- classname: " + e.getClassName()
+      log.debug("tablename: " + e.getTableName() + " -- classname: " + e.getClassName()
           + " -- mappingname: " + e.getName());
       for (final Property p : e.getProperties())
-        System.out.println("property: " + p.getColumnName() + " -- mapping: " + p.getName());
+        log.debug("property: " + p.getColumnName() + " -- mapping: " + p.getName());
     }
     assertNotNull(ModelProvider.getInstance().getModel());
   }
@@ -85,7 +88,7 @@ public class RuntimeModelTest extends BaseTest {
     boolean duplicated = false;
     for (final Entity e : ModelProvider.getInstance().getModel()) {
       if (mappings.contains(e.getName())) {
-        System.err.println("Duplicated table mapping name: " + e.getName());
+        log.debug("Duplicated table mapping name: " + e.getName());
         duplicated = true;
         break;
       }
@@ -100,7 +103,7 @@ public class RuntimeModelTest extends BaseTest {
       final List<String> propMappings = new ArrayList<String>();
       for (final Property p : e.getProperties()) {
         if (!p.isOneToMany() && propMappings.contains(p.getName())) {
-          System.err.println("Duplicated column mapping name: " + p.getName() + " -- column: "
+          log.debug("Duplicated column mapping name: " + p.getName() + " -- column: "
               + p.getColumnName() + " -- table: " + e.getTableName());
           duplicated = true;
         }
@@ -114,24 +117,24 @@ public class RuntimeModelTest extends BaseTest {
     int total = 0;
     for (final Table t : ModelProvider.getInstance().getTables()) {
       if (!t.isView() && t.getPrimaryKeyColumns().size() > 1) {
-        System.out.println("Table: " + t.getId() + " - " + t.getTableName());
-        System.out.print("  Columns : ");
+        log.debug("Table: " + t.getId() + " - " + t.getTableName());
+        log.debug("  Columns : ");
         for (final Column c : t.getColumns())
-          System.out.print(c.getColumnName() + ", ");
-        System.out.print("\n");
-        System.out.print("    Keys: ");
+          log.debug(c.getColumnName() + ", ");
+        log.debug("\n");
+        log.debug("    Keys: ");
         for (final Column c : t.getPrimaryKeyColumns())
-          System.out.print(c.getColumnName() + ", ");
-        System.out.print("\n");
-        System.out.print("    Identifiers: ");
+          log.debug(c.getColumnName() + ", ");
+        log.debug("\n");
+        log.debug("    Identifiers: ");
         for (final Column c : t.getIdentifierColumns())
-          System.out.print(c.getColumnName() + ", ");
-        System.out.print("\n");
+          log.debug(c.getColumnName() + ", ");
+        log.debug("\n");
         total++;
       }
     }
     if (total != 0)
-      System.err.println(total + " tables with more than one primary key");
+      log.debug(total + " tables with more than one primary key");
     assertEquals(0, total);
   }
 
@@ -142,9 +145,9 @@ public class RuntimeModelTest extends BaseTest {
         tables.add(t.getTableName());
     }
     if (tables.size() != 0) {
-      System.err.println(tables.size() + " tables without Identifier columns");
+      log.debug(tables.size() + " tables without Identifier columns");
       for (final String tableName : tables)
-        System.err.println(tableName);
+        log.debug(tableName);
     }
     // assertEquals(0, tables.size());
   }
@@ -164,7 +167,7 @@ public class RuntimeModelTest extends BaseTest {
     }
 
     if (columns.size() != 0) {
-      System.err.println(columns.size() + " columns set as *isParent* errors (wrong reference): "
+      log.debug(columns.size() + " columns set as *isParent* errors (wrong reference): "
           + columns.toString());
     }
     assertEquals(0, columns.size());
@@ -182,7 +185,7 @@ public class RuntimeModelTest extends BaseTest {
     }
 
     if (columns.size() != 0)
-      System.err.println(columns.size() + " columns set as *isParent* and are *primitive type*: "
+      log.debug(columns.size() + " columns set as *isParent* and are *primitive type*: "
           + columns.toString());
     assertEquals(0, columns.size());
   }
@@ -199,7 +202,7 @@ public class RuntimeModelTest extends BaseTest {
     }
 
     if (columns.size() != 0)
-      System.err.println(columns.size()
+      log.debug(columns.size()
           + " columns set as *isParent* with reference *TABLE* and don't have table defined : "
           + columns.toString());
     assertEquals(0, columns.size());

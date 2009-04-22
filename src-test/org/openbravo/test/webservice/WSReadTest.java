@@ -82,7 +82,6 @@ public class WSReadTest extends BaseWSTest {
   }
 
   public void testAllToXML() {
-    setErrorOccured(true);
     setBigBazaarAdminContext();
     final Configuration cfg = SessionFactoryController.getInstance().getConfiguration();
 
@@ -91,7 +90,6 @@ public class WSReadTest extends BaseWSTest {
       final String entityName = pc.getEntityName();
       doTestGetRequest("/ws/dal/" + entityName, "<ob:Openbravo", 200);
     }
-    setErrorOccured(false);
   }
 
 }

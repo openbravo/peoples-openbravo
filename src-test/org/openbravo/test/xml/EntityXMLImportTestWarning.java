@@ -22,8 +22,10 @@ package org.openbravo.test.xml;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLConverter;
@@ -43,62 +45,49 @@ import org.openbravo.service.db.ImportResult;
 
 public class EntityXMLImportTestWarning extends XMLBaseTest {
 
-  public void testNotWritableWarningUpdate() {
+  public void testNotWritableUpdate() {
     cleanRefDataLoaded();
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
+    addReadWriteAccess(Greeting.class);
 
     final List<Greeting> gs = getList(Greeting.class);
     String xml = getXML(gs);
 
     // change the xml to force an update
     xml = xml.replaceAll("</name>", "t</name>");
+
+    final Client c = OBDal.getInstance().get(Client.class, "1000000");
+    final Organization o = OBDal.getInstance().get(Organization.class, "1000000");
     setUserContext("1000000");
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000000"),
-        OBDal.getInstance().get(Organization.class, "1000000"), xml);
+    OBContext.getOBContext().setCurrentOrganization(o);
+    OBContext.getOBContext().setCurrentClient(c);
+
+    // remove the entity to force a not-write situation
+    final Entity entity = ModelProvider.getInstance().getEntity(Greeting.class);
+    OBContext.getOBContext().getEntityAccessChecker().getWritableEntities().remove(entity);
+    OBContext.getOBContext().getEntityAccessChecker().getReadableEntities().add(entity);
+
+    final ImportResult ir = DataImportService.getInstance().importDataFromXML(c, o, xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
+    } else if (ir.getErrorMessages() != null) {
+      fail(ir.getErrorMessages());
     } else {
+      // assertEquals(0, ir.getUpdatedObjects().size());
+      // assertEquals(0, ir.getUpdatedObjects().size());
       assertTrue(ir.getWarningMessages() != null);
       assertTrue(ir.getWarningMessages().indexOf("updating") != -1);
       assertTrue(ir.getWarningMessages().indexOf(" because it is not writable") != -1);
     }
     // force a rollback, so that the db is not changed
-    setErrorOccured(true);
-  }
-
-  public void testNotWritableReferencedDataWarning() {
-    cleanRefDataLoaded();
-    setErrorOccured(true);
-    setUserContext("1000001");
-
-    final List<Warehouse> ws = getList(Warehouse.class);
-    String xml = getXML(ws);
-
-    // change the xml to force an update
-    xml = xml.replaceAll("</name>", "t</name>");
-    setUserContext("1000020");
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000001"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
-    if (ir.getException() != null) {
-      ir.getException().printStackTrace(System.err);
-      fail(ir.getException().getMessage());
-    } else {
-      assertTrue(ir.getWarningMessages() != null);
-      assertTrue(ir.getWarningMessages().indexOf("updating") != -1);
-      assertTrue(ir.getWarningMessages().indexOf(" because it is not writable") != -1);
-    }
-    // force a rollback, so that the db is not changed
-    setErrorOccured(true);
+    rollback();
   }
 
   public void testNotWritableInsertWarning() {
     cleanRefDataLoaded();
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
+    addReadWriteAccess(Warehouse.class);
 
     final List<Warehouse> ws = getList(Warehouse.class);
     String xml = getXML(ws);
@@ -106,52 +95,27 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     // change the xml to force an update
     xml = xml.replaceAll("</name>", "t</name>");
     xml = xml.replaceAll("</id>", "new</id>");
-    setUserContext("1000001");
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000001"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
-    if (ir.getException() != null) {
-      ir.getException().printStackTrace(System.err);
-      fail(ir.getException().getMessage());
-    } else {
-      assertTrue(ir.getWarningMessages() != null);
-      assertTrue(ir.getWarningMessages().indexOf("Not allowed to create entity") != -1);
-      assertTrue(ir.getWarningMessages().indexOf(" because it is not writable") != -1);
-    }
+    final Client c = OBDal.getInstance().get(Client.class, "1000001");
+    final Organization o = OBDal.getInstance().get(Organization.class, "1000001");
+    setUserContext("1000019");
+
+    // remove the entity from the writable entities to force an access error
+    final Entity entity = ModelProvider.getInstance().getEntity(Warehouse.class);
+    OBContext.getOBContext().getEntityAccessChecker().getWritableEntities().remove(entity);
+
+    final ImportResult ir = DataImportService.getInstance().importDataFromXML(c, o, xml);
+    assertTrue("No error messages, error messages expected", ir.getErrorMessages() != null);
+    assertTrue("Incorrect error", ir.getErrorMessages().indexOf("Object Warehouse") != -1);
+    assertTrue("Incorrect error", ir.getErrorMessages().indexOf("is new but not writable") != -1);
+    assertTrue("There should not be warnings", ir.getWarningMessages() == null);
     // force a rollback, so that the db is not changed
-    setErrorOccured(true);
-  }
-
-  public void testNotUpdatingReferencedDataWarning() {
-    cleanRefDataLoaded();
-    setErrorOccured(true);
-    setUserContext("1000001");
-
-    final List<Warehouse> ws = getList(Warehouse.class);
-    String xml = getXML(ws);
-
-    // change the xml to force an update
-    xml = xml.replaceAll("</name>", "t</name>");
-    xml = xml.replaceAll("</id>", "new</id>");
-    setUserContext("0");
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000001"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
-    if (ir.getException() != null) {
-      ir.getException().printStackTrace(System.err);
-      fail(ir.getException().getMessage());
-    } else {
-      assertTrue(ir.getWarningMessages() != null);
-      assertTrue(ir.getWarningMessages().indexOf("has not been updated because it already exists") != -1);
-    }
-    // force a rollback, so that the db is not changed
-    setErrorOccured(true);
+    rollback();
   }
 
   public void testUpdatingOtherOrganizationWarning() {
     cleanRefDataLoaded();
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
+    addReadWriteAccess(Warehouse.class);
 
     final List<Warehouse> ws = getList(Warehouse.class);
     String xml = getXML(ws);
@@ -166,6 +130,8 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
+    } else if (ir.getErrorMessages() != null) {
+      fail(ir.getErrorMessages());
     } else {
       assertTrue(ir.getWarningMessages() != null);
       assertTrue(ir.getWarningMessages().indexOf("Updating entity") != -1);
@@ -173,13 +139,14 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
           "eventhough it does not belong to the target organization ") != -1);
     }
     // force a rollback, so that the db is not changed
-    setErrorOccured(true);
+    rollback();
   }
 
-  public void testUpdateOtherClientWarning() {
+  // works also but disabled for now
+  public void _testUpdateOtherOrganizationWarning() {
     cleanRefDataLoaded();
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
+    addReadWriteAccess(Location.class);
 
     final List<Location> cs = getList(Location.class);
     String xml = getXML(cs);
@@ -197,57 +164,55 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
+    } else if (ir.getErrorMessages() != null) {
+      fail(ir.getErrorMessages());
     } else {
       assertTrue(ir.getWarningMessages() != null);
       assertTrue(ir.getWarningMessages().indexOf("Updating entity") != -1);
       assertTrue(ir.getWarningMessages().indexOf(
-          "eventhough it does not belong to the target client") != -1);
-    }
-    // force a rollback, so that the db is not changed
-    setErrorOccured(true);
-  }
-
-  public void testInsertOtherOrganizationWarning() {
-    cleanRefDataLoaded();
-    setErrorOccured(true);
-    setUserContext("100");
-
-    final List<Location> cs = getList(Location.class);
-    String xml = getXML(cs);
-
-    // clears the session and ensures that it starts with a new one
-    SessionHandler.getInstance().rollback();
-
-    // the following should result in creation of location
-    xml = xml.replaceAll("<name>", "<name>new");
-    xml = xml.replaceAll("region id=\"", "region id=\"new");
-    xml = xml.replaceAll("Region id=\"", "Region id=\"new");
-    System.err.println(xml);
-    setUserContext("0");
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000000"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
-    if (ir.getException() != null) {
-      ir.getException().printStackTrace(System.err);
-      fail(ir.getException().getMessage());
-    } else {
-      assertTrue(ir.getWarningMessages() != null);
-      assertTrue(ir.getWarningMessages().indexOf("Creating entity ") != -1);
-      assertTrue(ir.getWarningMessages().indexOf(
           "eventhough it does not belong to the target organization") != -1);
     }
     // force a rollback, so that the db is not changed
-    setErrorOccured(true);
+    rollback();
   }
 
+  // public void testInsertOtherClientWarning() {
+  // cleanRefDataLoaded();
+  // setUserContext("0");
+  //
+  // final List<Region> cs = getList(Region.class);
+  // String xml = getXML(cs);
+  //
+  // // clears the session and ensures that it starts with a new one
+  // SessionHandler.getInstance().rollback();
+  //
+  // // the following should result in creation of location
+  // xml = xml.replaceAll("<name>", "<name>new");
+  // xml = xml.replaceAll("region id=\"", "region id=\"new");
+  // xml = xml.replaceAll("Region id=\"", "Region id=\"new");
+  // setUserContext("0");
+  // final ImportResult ir = DataImportService.getInstance().importDataFromXML(
+  // OBDal.getInstance().get(Client.class, "1000000"),
+  // OBDal.getInstance().get(Organization.class, "1000001"), xml);
+  // if (ir.getException() != null) {
+  // ir.getException().printStackTrace(System.err);
+  // fail(ir.getException().getMessage());
+  // } else {
+  // assertTrue(ir.getWarningMessages() != null);
+  // assertTrue(ir.getWarningMessages().indexOf("Creating entity ") != -1);
+  // assertTrue(ir.getWarningMessages().indexOf(
+  // "eventhough it does not belong to the target organization") != -1);
+  // }
+  // // force a rollback, so that the db is not changed
+  // rollback();
+  // }
+
   public <T extends BaseOBObject> List<T> getList(Class<T> clz) {
-    setErrorOccured(true);
     final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
     return obc.list();
   }
 
   public <T extends BaseOBObject> String getXML(List<T> objs) {
-    setErrorOccured(true);
     final EntityXMLConverter exc = EntityXMLConverter.newInstance();
     exc.setOptionIncludeReferenced(true);
     // exc.setOptionEmbedChildren(true);
@@ -257,7 +222,6 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
   }
 
   public <T extends BaseOBObject> String getXML(Class<T> clz) {
-    setErrorOccured(true);
     final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
     final EntityXMLConverter exc = EntityXMLConverter.newInstance();
     exc.setOptionIncludeReferenced(true);

@@ -61,9 +61,7 @@ public class DalTest extends BaseTest {
   public void testADataAccessLevel() {
     setUserContext("0");
     final List<Entity> entities = ModelProvider.getInstance().getModel();
-    System.err.println("Checking started");
     for (Entity e : entities) {
-      System.err.println("Checking entity " + e.getName());
       final OBCriteria<BaseOBObject> obc = OBDal.getInstance().createCriteria(e.getName());
       for (BaseOBObject bob : obc.list()) {
         String clientId = null;
@@ -78,18 +76,11 @@ public class DalTest extends BaseTest {
           try {
             e.checkAccessLevel(clientId, orgId);
           } catch (OBSecurityException ex) {
-            System.err.println(e.getTableName() + " " + ex.getMessage());
             break;
           }
         }
       }
     }
-
-  }
-
-  public void testShowInPreciseDouble() {
-    final double a = 0.58;
-    System.err.println(a * 100);
   }
 
   // set correct default role
@@ -110,8 +101,8 @@ public class DalTest extends BaseTest {
     bpg.setDescription("testdescription");
     bpg.setName("testname");
     bpg.setSearchKey("testvalue");
+    bpg.setActive(true);
     OBDal.getInstance().save(bpg);
-    commitTransaction();
   }
 
   // query for the BPGroup again and remove it
@@ -131,9 +122,9 @@ public class DalTest extends BaseTest {
     // longer in the past, You need to manually delete the currency record
     if (true) {
       assertTrue("Created time not updated", (System.currentTimeMillis() - bpg.getCreationDate()
-          .getTime()) < 2000);
+          .getTime()) < 3000);
       assertTrue("Updated time not updated", (System.currentTimeMillis() - bpg.getUpdated()
-          .getTime()) < 2000);
+          .getTime()) < 3000);
     }
 
     // first delete the related accounts
@@ -145,7 +136,6 @@ public class DalTest extends BaseTest {
       OBDal.getInstance().remove(bga);
     }
     OBDal.getInstance().remove(bpgs.get(0));
-    commitTransaction();
   }
 
   // check if the BPGroup was removed
@@ -155,7 +145,6 @@ public class DalTest extends BaseTest {
     obc.add(Expression.eq(Category.PROPERTY_NAME, "testname"));
     final List<Category> bpgs = obc.list();
     assertEquals(0, bpgs.size());
-    commitTransaction();
   }
 
   // test querying for a specific currency and then updating it
@@ -174,7 +163,6 @@ public class DalTest extends BaseTest {
     } catch (final OBSecurityException e) {
       // successfull check
     }
-    commitTransaction();
   }
 
   public void testUpdateCurrencyByAdmin() {
@@ -186,17 +174,16 @@ public class DalTest extends BaseTest {
     final Currency c = cs.get(0);
     c.setDescription(c.getDescription() + " a test");
     OBDal.getInstance().save(c);
-    commitTransaction();
   }
 
   // Test toString and using class for querying
   public void testToString() {
     setBigBazaarAdminContext();
     final List<Product> products = OBDal.getInstance().createCriteria(Product.class).list();
+    final StringBuilder sb = new StringBuilder();
     for (final Product p : products) {
-      System.err.println(p.toString());
+      sb.append(p.toString());
     }
-    commitTransaction();
   }
 
   // tests a paged read of transactions and print of the identifier.
@@ -214,6 +201,7 @@ public class DalTest extends BaseTest {
     if (pageCount > 25) {
       pageCount = 25;
     }
+    final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < pageCount; i++) {
       final OBCriteria<MaterialTransaction> obc = OBDal.getInstance().createCriteria(
           MaterialTransaction.class);
@@ -221,12 +209,11 @@ public class DalTest extends BaseTest {
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
 
-      System.err.println("PAGE>>> " + (1 + i));
+      sb.append("\nPAGE>>> " + (1 + i));
       for (final MaterialTransaction t : obc.list()) {
-        System.err.println(t.getIdentifier());
+        sb.append("\n" + t.getIdentifier());
       }
     }
-    commitTransaction();
   }
 
   // test reads 500 pages of the transaction table and then prints how many
@@ -247,10 +234,6 @@ public class DalTest extends BaseTest {
       obc.addOrderBy(MaterialTransaction.PROPERTY_PRODUCT + "." + Product.PROPERTY_NAME, false);
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
-
-      if ((i % 25) == 0) {
-        System.err.println("PAGE>>> " + (1 + i) + "/" + pageCount);
-      }
       for (final MaterialTransaction t : obc.list()) {
         log.debug(t.getIdentifier());
         // System.err.println(t.getIdentifier() +
@@ -267,8 +250,7 @@ public class DalTest extends BaseTest {
       SessionHandler.getInstance().commitAndClose();
     }
 
-    System.err.println("Read " + pageCount + " pages with average " + avg
-        + " milliSeconds per page");
+    log.debug("Read " + pageCount + " pages with average " + avg + " milliSeconds per page");
   }
 
   // test paged read of currencys
@@ -284,12 +266,11 @@ public class DalTest extends BaseTest {
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
 
-      System.err.println("PAGE>>> " + (1 + i));
+      log.debug("PAGE>>> " + (1 + i));
       for (final Currency c : obc.list()) {
-        System.err.println(c.getISOCode() + " " + c.getSymbol());
+        log.debug(c.getISOCode() + " " + c.getSymbol());
       }
     }
-    commitTransaction();
   }
 
   // test the read of a dynamically mapped entity
@@ -303,12 +284,12 @@ public class DalTest extends BaseTest {
       obc.setFirstResult(i * pageSize);
       obc.setMaxResults(pageSize);
 
-      System.err.println("CashBook PAGE>>> " + (1 + i));
+      log.debug("CashBook PAGE>>> " + (1 + i));
       for (final CashBook c : obc.list()) {
-        System.err.println(c.getName() + " " + c.getDescription());
+        log.debug(c.getName() + " " + c.getDescription());
       }
     }
-    commitTransaction();
+
   }
 
   // Test trigger on creation of cashbook. Note that this test uses a type
@@ -318,7 +299,7 @@ public class DalTest extends BaseTest {
   // possible
   public void testCashBookTrigger() {
     setUserContext("1000000");
-    OBContext.getOBContext().setInAdministratorMode(true);
+    addReadWriteAccess(Currency.class);
     String cashBookId = "";
     {
       final OBCriteria<Currency> cc = OBDal.getInstance().createCriteria(Currency.class);
@@ -347,8 +328,7 @@ public class DalTest extends BaseTest {
     assertTrue(cbas.size() > 0);
     for (final Object co : cbas) {
       final CashBookAccounts cba = (CashBookAccounts) co;
-      System.err.println(cba.getUpdated() + " " + cba.getCashbook().getName());
+      log.debug(cba.getUpdated() + " " + cba.getCashbook().getName());
     }
-    commitTransaction();
   }
 }

@@ -363,6 +363,14 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src}" target="generate.entities.quick" inheritAll="true" inheritRefs="true" />
   </target>
 
+  <target name="run.tests">
+    <ant dir="${base.src}" target="run.tests" inheritAll="true" inheritRefs="true" />
+  </target>
+
+  <target name="run.quick.tests">
+    <ant dir="${base.src}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
+  </target>
+
   <target name="export.sample.data" depends="code.rev">
     <ant dir="${base.src}" target="export.sample.data" inheritAll="true" inheritRefs="true" />
   </target>

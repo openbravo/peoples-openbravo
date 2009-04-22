@@ -48,7 +48,6 @@ public class DBPrefixTest extends BaseTest {
     module.setDescription("Testing dbprefixes");
     module.setInDevelopment(true);
     OBDal.getInstance().save(module);
-    commitTransaction();
   }
 
   /**
@@ -105,7 +104,6 @@ public class DBPrefixTest extends BaseTest {
       System.out.println("Removing module: " + mod.getName());
       OBDal.getInstance().remove(mod);
     }
-    commitTransaction();
   }
 
   // Obtains the module iserted for testing purposes
@@ -136,13 +134,12 @@ public class DBPrefixTest extends BaseTest {
       OBDal.getInstance().commitAndClose();
     } catch (org.hibernate.exception.GenericJDBCException e) {
       exception = true;
+      OBDal.getInstance().rollbackAndClose();
     }
 
     if (isValid)
       assertFalse("Not inserted a valid prefix:" + name, exception);
     else
       assertTrue("Inserted a non-valid prefix:" + name, exception);
-
-    commitTransaction();
   }
 }

@@ -26,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.openbravo.base.exception.OBException;
@@ -40,17 +41,17 @@ import org.openbravo.test.base.BaseTest;
 
 public class BaseWSTest extends BaseTest {
 
+  private static final Logger log = Logger.getLogger(BaseWSTest.class);
+
   private static final String OB_URL = "http://localhost:8080/openbravo";
   private static final String LOGIN = "Openbravo";
   private static final String PWD = "openbravo";
 
   protected void doDirectDeleteRequest(String wsPart, int expectedResponse) {
     try {
-      setErrorOccured(true);
       final HttpURLConnection hc = createConnection(wsPart, "DELETE");
       hc.connect();
       assertEquals(expectedResponse, hc.getResponseCode());
-      setErrorOccured(false);
     } catch (final Exception e) {
       throw new OBException(e);
     }
@@ -59,7 +60,6 @@ public class BaseWSTest extends BaseTest {
   protected String doContentRequest(String wsPart, String content, int expectedResponse,
       String expectedContent, String method) {
     try {
-      setErrorOccured(true);
       final HttpURLConnection hc = createConnection(wsPart, method);
       final OutputStream os = hc.getOutputStream();
       os.write(content.getBytes("UTF-8"));
@@ -78,10 +78,9 @@ public class BaseWSTest extends BaseTest {
       final Document doc = sr.read(is);
       final String retContent = XMLUtil.getInstance().toString(doc);
       if (retContent.indexOf(expectedContent) == -1) {
-        System.err.println(retContent);
+        log.debug(retContent);
         fail();
       }
-      setErrorOccured(false);
       return retContent;
     } catch (final Exception e) {
       throw new OBException(e);
@@ -102,7 +101,6 @@ public class BaseWSTest extends BaseTest {
 
   protected String doTestGetRequest(String wsPart, String testContent, int responseCode) {
     try {
-      setErrorOccured(true);
       final HttpURLConnection hc = createConnection(wsPart, "GET");
       hc.connect();
       final SAXReader sr = new SAXReader();
@@ -110,12 +108,11 @@ public class BaseWSTest extends BaseTest {
       final Document doc = sr.read(is);
       final String content = XMLUtil.getInstance().toString(doc);
       if (testContent != null && content.indexOf(testContent) == -1) {
-        System.err.println(content);
+        log.debug(content);
         fail();
       }
       assertEquals(responseCode, hc.getResponseCode());
       is.close();
-      setErrorOccured(false);
       return content;
     } catch (final Exception e) {
       throw new OBException(e);
@@ -129,7 +126,7 @@ public class BaseWSTest extends BaseTest {
         return new PasswordAuthentication(LOGIN, PWD.toCharArray());
       }
     });
-    System.err.println(method + ": " + OB_URL + wsPart);
+    log.debug(method + ": " + OB_URL + wsPart);
     final URL url = new URL(OB_URL + wsPart);
     final HttpURLConnection hc = (HttpURLConnection) url.openConnection();
     hc.setRequestMethod(method);

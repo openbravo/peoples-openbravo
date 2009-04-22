@@ -19,6 +19,7 @@
 
 package org.openbravo.test.dal;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openbravo.base.structure.BaseOBObject;
@@ -29,15 +30,18 @@ import org.openbravo.model.ad.domain.ModelImplementation;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Allows testing of hql
+ * Tests hql and the DAL.
+ * 
+ * NOTE: simple test class only used for testing queries manually, should not be part of a test
+ * suite.
  * 
  * @author mtaal
  */
 
 public class HqlTest extends BaseTest {
-  // creates a new BPGroup, test simple save, BPGroup is removed in next test
+  private static final Logger log = Logger.getLogger(HqlTest.class);
+
   public void testDalWhereClause() {
-    setErrorOccured(true);
     setUserContext("100");
     // final String where =
     // " tree.id='10' and exists( from ADMenu as menu where menu.id = node_id and menu.module.id='0')"
@@ -53,23 +57,22 @@ public class HqlTest extends BaseTest {
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
     for (final BaseOBObject o : obq.list()) {
-      System.err.println(o.getIdentifier());
+      log.debug(o.getIdentifier());
     }
-    setErrorOccured(false);
   }
 
   // query for the BPGroup again and remove it
   public void testHql() {
-    setErrorOccured(true);
     setUserContext("100");
 
     final Session s = SessionHandler.getInstance().getSession();
     final Query q = s
-        .createQuery("select mo from ADModelObject as mo left join mo.callout left join mo.reference where mo.callout.module.id='0' or mo.reference.module.id='0'");
+        .createQuery("select mo from "
+            + ModelImplementation.ENTITY_NAME
+            + " as mo left join mo.callout left join mo.reference where mo.callout.module.id='0' or mo.reference.module.id='0'");
     for (final Object o : q.list()) {
-      System.err.println(((BaseOBObject) o).getIdentifier());
+      log.debug(((BaseOBObject) o).getIdentifier());
     }
 
-    setErrorOccured(false);
   }
 }

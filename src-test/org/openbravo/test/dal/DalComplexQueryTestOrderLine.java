@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openbravo.dal.service.OBDal;
@@ -37,6 +38,8 @@ import org.openbravo.test.base.BaseTest;
  */
 
 public class DalComplexQueryTestOrderLine extends BaseTest {
+
+  private static final Logger log = Logger.getLogger(DalComplexQueryTestOrderLine.class);
 
   // SELECT C_ORDERLINE.C_ORDERLINE_ID AS ID, C_ORDER.C_ORDER_ID AS C_ORDER_ID, C_ORDER.DOCUMENTNO
   // AS DOCUMENTNO, C_ORDER.DATEORDERED AS DATEORDERED,
@@ -62,8 +65,10 @@ public class DalComplexQueryTestOrderLine extends BaseTest {
   // C_ORDERLINE.QTYORDERED
   // ORDER BY PARTNER_NAME, DOCUMENTNO, DATEORDERED
 
+  /**
+   * Tests a complexer query related to order lines.
+   */
   public void testComplexOBQuery() {
-    setErrorOccured(true);
     setUserContext("100");
 
     // create the where clause
@@ -112,30 +117,30 @@ public class DalComplexQueryTestOrderLine extends BaseTest {
     for (OrderLine ol : qry.list()) {
 
       // C_ORDERLINE.C_ORDERLINE_ID AS ID, C_ORDER.C_ORDER_ID AS C_ORDER_ID
-      System.err.println(ol.getId());
-      System.err.println(ol.getSalesOrder().getId());
+      log.debug(ol.getId());
+      log.debug(ol.getSalesOrder().getId());
 
       // C_ORDER.DOCUMENTNO AS DOCUMENTNO, C_ORDER.DATEORDERED AS DATEORDERED,
-      System.err.println(ol.getSalesOrder().getDocumentNo());
-      System.err.println(ol.getSalesOrder().getOrderDate());
+      log.debug(ol.getSalesOrder().getDocumentNo());
+      log.debug(ol.getSalesOrder().getOrderDate());
 
       // C_BPARTNER.C_BPARTNER_ID AS C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER_NAME,
-      System.err.println(ol.getSalesOrder().getBusinessPartner().getId());
-      System.err.println(ol.getSalesOrder().getBusinessPartner().getName());
+      log.debug(ol.getSalesOrder().getBusinessPartner().getId());
+      log.debug(ol.getSalesOrder().getBusinessPartner().getName());
 
       // AD_COLUMN_IDENTIFIER(TO_CHAR('M_Product'), TO_CHAR(C_ORDERLINE.M_PRODUCT_ID),
       // TO_CHAR(?)) AS PRODUCT_NAME,
-      System.err.println(ol.getProduct().getIdentifier());
-      System.err.println(ol.getProduct().getId());
-      System.err.println(ol.getProduct().getName());
+      log.debug(ol.getProduct().getIdentifier());
+      log.debug(ol.getProduct().getId());
+      log.debug(ol.getProduct().getName());
 
       // M_ATTRIBUTESETINSTANCE.DESCRIPTION AS DESCRIPTION,
       if (ol.getAttributeSetValue() != null) {
-        System.err.println(ol.getAttributeSetValue().getDescription());
+        log.debug(ol.getAttributeSetValue().getDescription());
       }
 
       // C_ORDERLINE.QTYORDERED AS TOTAL_QTY,
-      System.err.println(ol.getOrderedQuantity());
+      log.debug(ol.getOrderedQuantity());
 
       // C_ORDERLINE.QTYORDERED-SUM(COALESCE(M_MATCHPO.QTY,0)) AS QTYORDERED, '-1' AS ISACTIVE
       // todo this we have to repeat the sum query, we use direct hql for this
@@ -145,13 +150,11 @@ public class DalComplexQueryTestOrderLine extends BaseTest {
       final Query query = session.createQuery(hql);
       query.setParameter(0, ol);
       final BigDecimal sum = (BigDecimal) query.uniqueResult();
-      System.err.println(sum);
+      log.debug(sum);
     }
-    setErrorOccured(false);
   }
 
   public void testComplexQueryTwoHQL() {
-    setErrorOccured(true);
     setUserContext("100");
 
     final StringBuilder selectClause = new StringBuilder();
@@ -211,7 +214,7 @@ public class DalComplexQueryTestOrderLine extends BaseTest {
     final String hql = selectClause.toString() + fromClause.toString() + whereClause.toString()
         + groupClause.toString() + orderByClause.toString();
 
-    System.err.println(hql);
+    log.debug(hql);
 
     // final Session session = OBDal.getInstance().getSession();
     // session.createQuery(hql.toString());
@@ -221,9 +224,8 @@ public class DalComplexQueryTestOrderLine extends BaseTest {
     for (Object o : query.list()) {
       final Object[] os = (Object[]) o;
       for (Object result : os) {
-        System.err.println(result);
+        log.debug(result);
       }
     }
-    setErrorOccured(false);
   }
 }

@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.DataSet;
@@ -34,7 +35,10 @@ import org.openbravo.service.db.DataExportService;
 /**
  * Tests if the client definition data set is complete.
  * 
+ * Class is based on an old structure of the Openbravo project, keeping it for reference.
+ * 
  * @author mtaal
+ * @deprecated
  */
 
 public class ClientDataSetCompleteTest extends XMLBaseTest {
@@ -47,8 +51,9 @@ public class ClientDataSetCompleteTest extends XMLBaseTest {
       throw new OBException("No dataset found with name " + DataExportService.CLIENT_DATA_SET_NAME);
     }
     final DataSet dataSet = obc.list().get(0);
-    final File dir = new File(
-        "/home/mtaal/mydata/dev/workspaces/obtrunk/openbravo/src-db/database/sampledata");
+    final String sourcePath = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .get("source.path");
+    final File dir = new File(sourcePath + "/src-db/database/sampledata");
     final Set<String> names = new HashSet<String>();
     for (final File child : dir.listFiles()) {
       if (!child.isDirectory()) {
@@ -58,8 +63,12 @@ public class ClientDataSetCompleteTest extends XMLBaseTest {
     for (final DataSetTable dst : dataSet.getDataSetTableList()) {
       names.remove(dst.getTable().getDBTableName().toUpperCase() + ".xml");
     }
+    final StringBuilder sb = new StringBuilder();
     for (final String name : names) {
-      System.err.println(name);
+      sb.append(" " + name);
+    }
+    if (names.size() > 0) {
+      fail("Not all sample data files are present in the client data set: " + sb.toString());
     }
   }
 }

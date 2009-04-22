@@ -21,6 +21,7 @@ package org.openbravo.test.webservice;
 
 import java.io.FileNotFoundException;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -36,6 +37,8 @@ import org.openbravo.model.common.geography.Region;
  */
 
 public class WSUpdateTest extends BaseWSTest {
+
+  private static final Logger log = Logger.getLogger(WSUpdateTest.class);
 
   private static String cityId = null;
 
@@ -64,7 +67,7 @@ public class WSUpdateTest extends BaseWSTest {
 
   public void testReadUpdateCity() throws Exception {
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
-    System.err.println(System.currentTimeMillis());
+    log.debug(System.currentTimeMillis());
     String newCity;
     if (city.indexOf("<coordinates>") != -1) { // test already run
       final int index1 = city.indexOf("<coordinates>");
@@ -82,8 +85,8 @@ public class WSUpdateTest extends BaseWSTest {
 
   public void testIncorrectRootTag() throws Exception {
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
-    System.err.println(city);
-    System.err.println("---");
+    log.debug(city);
+    log.debug("---");
     String newCity = city.replaceAll("ob:Openbravo", "ob:WrongOpenbravo");
     final String content = doContentRequest("/ws/dal/City/" + cityId, newCity, 500, "<updated>",
         "POST");
@@ -104,7 +107,7 @@ public class WSUpdateTest extends BaseWSTest {
     newCity = newCity.substring(0, index) + "City id=\"test"
         + newCity.substring(index + "City id=\"test".length());
     final String content = doContentRequest("/ws/dal/City", newCity, 200, "<inserted>", "POST");
-    // System.err.println(content);
+    // log.debug(content);
     // get the id and check if it is there
     final int index1 = content.indexOf("City id=\"") + "City id=\"".length();
     final int index2 = content.indexOf("\"", index1);

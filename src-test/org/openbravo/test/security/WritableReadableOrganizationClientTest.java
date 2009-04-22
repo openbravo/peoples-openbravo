@@ -33,20 +33,18 @@ import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Tests check of the accesslevel of an entity
+ * Tests check of writable organization and allowed client.
  * 
  * @author mtaal
  */
 
-public class WritableReadableOrganizationTest extends BaseTest {
+public class WritableReadableOrganizationClientTest extends BaseTest {
 
   public void testAccessLevelCO() {
-    setErrorOccured(true);
     setUserContext("0");
     doCheckUser();
     setBigBazaarUserContext();
     doCheckUser();
-    setErrorOccured(false);
   }
 
   private void doCheckUser() {
@@ -71,7 +69,6 @@ public class WritableReadableOrganizationTest extends BaseTest {
   }
 
   public void testClient() {
-    setErrorOccured(true);
     final OBContext obContext = OBContext.getOBContext();
     final String[] cs = obContext.getReadableClients();
     final String cid = obContext.getCurrentClient().getId();
@@ -87,12 +84,10 @@ public class WritableReadableOrganizationTest extends BaseTest {
       }
     }
     assertTrue("Current client " + cid + " not found in clienttlist " + sb.toString(), found);
-    setErrorOccured(false);
   }
 
-  public void testUpdateCosting() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+  public void testUpdateNotAllowed() {
+    setUserContext("1000000");
     final OBCriteria<Costing> obc = OBDal.getInstance().createCriteria(Costing.class);
     obc.add(Expression.eq("id", "1000078"));
     final List<Costing> cs = obc.list();
@@ -100,35 +95,32 @@ public class WritableReadableOrganizationTest extends BaseTest {
     final Costing c = cs.get(0);
     c.setCost(c.getCost() + 1);
 
-    // switch usercontext to force eexception
+    // switch usercontext to force exception
     setUserContext("1000002");
     try {
       SessionHandler.getInstance().commitAndClose();
       fail("Writable organizations not checked");
     } catch (final OBSecurityException e) {
-      e.printStackTrace(System.err);
       assertTrue("Invalid exception " + e.getMessage(), e.getMessage().indexOf(
           " is not writable by this user") != -1);
     }
-    setErrorOccured(false);
   }
 
-  public void testUpdateBPGroup() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+  public void testCheckInvalidClient() {
+    setUserContext("1000000");
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
     obc.add(Expression.eq("name", "Standard"));
     final List<Category> bogs = obc.list();
     assertEquals(1, bogs.size());
     final Category bp = bogs.get(0);
     bp.setDescription(bp.getDescription() + "A");
+    // switch usercontext to force exception
+    setUserContext("1000019");
     try {
       SessionHandler.getInstance().commitAndClose();
     } catch (final OBSecurityException e) {
       assertTrue("Invalid exception " + e.getMessage(), e.getMessage().indexOf(
-          "is not present  in OrganizationList") != -1);
+          "is not present in ClientList") != -1);
     }
-
-    setErrorOccured(false);
   }
 }

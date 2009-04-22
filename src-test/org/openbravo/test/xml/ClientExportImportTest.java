@@ -45,7 +45,6 @@ import org.openbravo.service.db.ReferenceDataTask;
 public class ClientExportImportTest extends XMLBaseTest {
 
   public void _testImportReferenceData() throws Exception {
-    setErrorOccured(true);
     setUserContext("0");
 
     final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
@@ -69,19 +68,17 @@ public class ClientExportImportTest extends XMLBaseTest {
         }
       }
     }
-    setErrorOccured(true);
   }
 
-  public void _testExportImportClient1000000() {
+  public void testExportImportClient1000000() {
     exportImport("1000000");
   }
 
-  public void _testExportImportClient1000001() {
+  public void testExportImportClient1000001() {
     exportImport("1000001");
   }
 
   private void exportImport(String clientId) {
-    setErrorOccured(true);
     setUserContext("0");
     final Map<String, Object> parameters = new HashMap<String, Object>();
     parameters.put(DataExportService.CLIENT_ID_PARAMETER_NAME, clientId);
@@ -90,7 +87,13 @@ public class ClientExportImportTest extends XMLBaseTest {
     DataExportService.getInstance().exportClientToXML(parameters, false, sw);
     String xml = sw.toString();
     try {
-      final File f = new File("/tmp/export.xml");
+      final String sourcePath = (String) OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties().get("source.path");
+      final File dir = new File(sourcePath + File.separator + "temp");
+      if (!dir.exists()) {
+        dir.mkdir();
+      }
+      final File f = new File(dir, "export.xml");
       if (f.exists()) {
         f.delete();
       }
@@ -108,7 +111,6 @@ public class ClientExportImportTest extends XMLBaseTest {
           false, new StringReader(xml));
       xml = null;
       if (ir.getException() != null) {
-        ir.getException().printStackTrace(System.err);
         throw new OBException(ir.getException());
       }
       if (ir.getErrorMessages() != null) {
@@ -125,17 +127,9 @@ public class ClientExportImportTest extends XMLBaseTest {
           assertTrue(!ce.getClient().getId().equals("0"));
         }
       }
-
-      System.err.println(ir.getWarningMessages());
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
       throw new OBException(e);
     }
-    setErrorOccured(false);
-  }
-
-  public void testImportBB() {
-    doImport("bb.xml");
   }
 
   public void _testImportAccountingTest() {
@@ -143,7 +137,6 @@ public class ClientExportImportTest extends XMLBaseTest {
   }
 
   private void doImport(String fileName) {
-    setErrorOccured(true);
     setUserContext("0");
 
     final ClientImportProcessor importProcessor = new ClientImportProcessor();
@@ -156,20 +149,14 @@ public class ClientExportImportTest extends XMLBaseTest {
       final ImportResult ir = DataImportService.getInstance().importClientData(importProcessor,
           false, new FileReader(f));
       if (ir.getException() != null) {
-        ir.getException().printStackTrace(System.err);
         throw new OBException(ir.getException());
       }
       if (ir.getErrorMessages() != null && ir.getErrorMessages().trim().length() > 0) {
-        System.err.println(ir.getErrorMessages());
         fail(ir.getErrorMessages());
       }
-
-      System.err.println(ir.getWarningMessages());
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
       throw new OBException(e);
     }
-    setErrorOccured(false);
   }
 
 }
