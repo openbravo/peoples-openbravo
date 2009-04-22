@@ -367,6 +367,10 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src}" target="run.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
+  <target name="run.all.tests">
+    <ant dir="${base.src}" target="run.all.tests" inheritAll="true" inheritRefs="true" />
+  </target>
+
   <target name="run.quick.tests">
     <ant dir="${base.src}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
   </target>
