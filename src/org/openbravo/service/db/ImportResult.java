@@ -78,6 +78,13 @@ public class ImportResult {
    * @return the error messages, if no error messages then null is returned.
    */
   public String getErrorMessages() {
+    // append the exception message
+    if (getException() != null) {
+      if (errorMessages != null) {
+        return errorMessages + "\n" + getException().getMessage();
+      }
+      return getException().getMessage();
+    }
     return errorMessages;
   }
 
@@ -106,6 +113,7 @@ public class ImportResult {
 
   void setException(Throwable exception) {
     this.exception = exception;
+
   }
 
   /**
