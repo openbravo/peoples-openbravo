@@ -474,9 +474,9 @@
       DECLARE
       TYPE RECORD IS REF CURSOR;
         Cur_Lines RECORD;
-        p_CashBook NUMBER;
-        p_Cash NUMBER;
-        p_CashLine NUMBER;
+        p_CashBook VARCHAR2(32) ;
+        p_Cash VARCHAR2(32) ;
+        p_CashLine VARCHAR2(32) ;
         p_Line NUMBER;
         p_Amount NUMBER;
       BEGIN
