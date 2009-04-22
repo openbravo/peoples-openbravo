@@ -25,9 +25,7 @@ import java.util.List;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.Greeting;
 import org.openbravo.model.common.enterprise.Organization;
@@ -86,7 +84,6 @@ public class EntityXMLIssues extends XMLBaseTest {
    * null.
    */
   public void testMantis6213() {
-    final String spaces = "   ";
     cleanRefDataLoaded();
     final Client c = OBDal.getInstance().get(Client.class, "1000000");
     final Organization o = OBDal.getInstance().get(Organization.class, "1000000");
@@ -125,40 +122,16 @@ public class EntityXMLIssues extends XMLBaseTest {
     final BaseOBObject bob = ir.getInsertedObjects().get(0);
     assertEquals(id, bob.getId());
 
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
 
     // now reread the greeting and check that the space is still there
     final UOM newUom = OBDal.getInstance().get(UOM.class, id);
     // before testing if it is okay remove it!
     OBDal.getInstance().remove(newUom);
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
 
     // ensure that hibernate did not give us the same object twice
     assertTrue(uom != newUom);
     assertEquals(uom.getSymbol(), newUom.getSymbol());
-  }
-
-  public <T extends BaseOBObject> List<T> getList(Class<T> clz) {
-    final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
-    return obc.list();
-  }
-
-  public <T extends BaseOBObject> String getXML(List<T> objs) {
-    final EntityXMLConverter exc = EntityXMLConverter.newInstance();
-    exc.setOptionIncludeReferenced(true);
-    // exc.setOptionEmbedChildren(true);
-    // exc.setOptionIncludeChildren(true);
-    exc.setAddSystemAttributes(false);
-    return exc.toXML(new ArrayList<BaseOBObject>(objs));
-  }
-
-  public <T extends BaseOBObject> String getXML(Class<T> clz) {
-    final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
-    final EntityXMLConverter exc = EntityXMLConverter.newInstance();
-    exc.setOptionIncludeReferenced(true);
-    // exc.setOptionEmbedChildren(true);
-    // exc.setOptionIncludeChildren(true);
-    exc.setAddSystemAttributes(false);
-    return exc.toXML(new ArrayList<BaseOBObject>(obc.list()));
   }
 }

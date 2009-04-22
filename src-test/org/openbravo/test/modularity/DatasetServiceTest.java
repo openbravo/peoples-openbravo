@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
@@ -39,7 +38,7 @@ import org.openbravo.service.db.DataExportService;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Tests the Dataset Service Object, queries, expressions etc.
+ * Tests the {@link DataSetService} object and its methods.
  * 
  * @author mtaal
  */
@@ -48,6 +47,12 @@ public class DatasetServiceTest extends BaseTest {
 
   private static final Logger log = Logger.getLogger(DatasetServiceTest.class);
 
+  /**
+   * Tests that all data sets have correct queries defined in the DataSetTable.
+   * 
+   * @see DataSet#getDataSetTableList()
+   * @see DataSetTable#getSQLWhereClause()
+   */
   public void testCheckQueries() {
     setUserContext("100");
 
@@ -69,6 +74,9 @@ public class DatasetServiceTest extends BaseTest {
     }
   }
 
+  /**
+   * Exports the data of all data sets.
+   */
   public void testExportAllDataSets() {
     setUserContext("100");
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
@@ -84,7 +92,11 @@ public class DatasetServiceTest extends BaseTest {
     }
   }
 
-  // test whereclause
+  /**
+   * Creates a whereclause and tests it using a {@link DataSetTable}.
+   * 
+   * @see Table
+   */
   public void testDataSetTable() {
     setUserContext("100");
     final DataSetTable dst = OBProvider.getInstance().get(DataSetTable.class);
@@ -99,6 +111,9 @@ public class DatasetServiceTest extends BaseTest {
     }
   }
 
+  /**
+   * Read all data defined for all data sets.
+   */
   public void testReadAll() {
     setBigBazaarAdminContext();
 
@@ -135,36 +150,5 @@ public class DatasetServiceTest extends BaseTest {
         }
       }
     }
-  }
-
-  public void psuedoCode() {
-    final DataSetService dss = DataSetService.getInstance();
-    final DataSet ds = dss.getDataSetByValue("My great DataSet");
-    for (final DataSetTable dt : ds.getDataSetTableList()) {
-      final List<BaseOBObject> bobs = dss.getExportableObjects(dt, "0");
-      final List<DataSetColumn> dscs = dt.getDataSetColumnList();
-      for (final BaseOBObject bob : bobs) {
-        final List<Property> ps = dss.getExportableProperties(bob, dt, dscs);
-        for (final Property p : ps) {
-          final Object value = bob.get(p.getName());
-          // handle references and export only their id's
-          if (value instanceof BaseOBObject) {
-            // this assumes that the id is a primitive type
-            // and not itself a reference!
-            exportProperty(p, (bob).getId());
-          } else {
-            exportProperty(p, value);
-          }
-        }
-
-      }
-    }
-    // this needs to be done if the export service is not called
-    // through a normal http request
-    SessionHandler.getInstance().commitAndClose();
-  }
-
-  public void exportProperty(Property p, Object value) {
-    log.debug(p + ": " + value);
   }
 }

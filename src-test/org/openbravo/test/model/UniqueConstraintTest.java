@@ -33,7 +33,8 @@ import org.openbravo.model.common.geography.Country;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Tests unique constraints
+ * Tests the api which allows to query for objects which would match a certain object based on the
+ * unique constraints defined: {@link OBDal#findUniqueConstrainedObjects(BaseOBObject)}.
  * 
  * @author mtaal
  */
@@ -42,12 +43,18 @@ public class UniqueConstraintTest extends BaseTest {
 
   private static final Logger log = Logger.getLogger(UniqueConstraintTest.class);
 
+  /**
+   * Check that the unique constraints are loaded ([@link {@link Entity#getUniqueConstraints()}).
+   */
   public void testUniqueConstraintLoad() {
     final Entity entity = ModelProvider.getInstance().getEntityByTableName("C_Country_Trl");
     assertEquals(1, entity.getUniqueConstraints().size());
     dumpUniqueConstraints();
   }
 
+  /**
+   * Tests the {@link OBDal#findUniqueConstrainedObjects(BaseOBObject)} method.
+   */
   public void testUniqueConstraintQuerying() {
     setUserContext("1000001");
     addReadWriteAccess(Country.class);

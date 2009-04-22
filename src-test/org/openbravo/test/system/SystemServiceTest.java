@@ -39,6 +39,9 @@ import org.openbravo.test.base.BaseTest;
 
 public class SystemServiceTest extends BaseTest {
 
+  /**
+   * Test the {@link DataSetService#hasChanged(DataSet, Date)} method.
+   */
   public void testChangedDataSet() {
     setUserContext("0");
     final List<DataSet> dss = OBDal.getInstance().createCriteria(DataSet.class).list();
@@ -54,6 +57,10 @@ public class SystemServiceTest extends BaseTest {
     }
   }
 
+  /**
+   * Tests the {@link SystemService#hasChanged(Class[], Date)} method which is used to check if an
+   * object in a specific table have changed since a specific time.
+   */
   public void testChangedClasses() {
     setUserContext("0");
     final Class<?>[] clzs = new Class<?>[] { Table.class, Column.class, Reference.class };

@@ -32,7 +32,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Test the expression processor used in datasets.
+ * Test the expression processor used in datasets: {@link Evaluator}.
  * 
  * @author mtaal
  */
@@ -40,6 +40,9 @@ import org.openbravo.test.base.BaseTest;
 public class EvaluationTest extends BaseTest {
   private static final Logger log = Logger.getLogger(EvaluationTest.class);
 
+  /**
+   * Tests the evaluation of a simple java script expression executed on a set of objects.
+   */
   public void testEvaluation() {
     setUserContext("0");
 
@@ -58,6 +61,9 @@ public class EvaluationTest extends BaseTest {
       final Boolean result = Evaluator.getInstance().evaluateBoolean(t, script);
       log.debug(t.getName() + " : " + result);
       found = found || result;
+      if (found) {
+        break;
+      }
     }
     assertTrue(found);
   }

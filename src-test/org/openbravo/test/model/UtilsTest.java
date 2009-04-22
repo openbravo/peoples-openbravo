@@ -36,7 +36,7 @@ import org.openbravo.model.ad.access.User;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Not to be used in practice, just dumps the model and other information.
+ * Not to be used in practice, contains some utility methods.
  * 
  * @author mtaal
  */

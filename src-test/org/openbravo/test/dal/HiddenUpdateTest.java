@@ -37,16 +37,20 @@ import org.openbravo.test.base.BaseTest;
 
 /**
  * Test for updates which can happen behind the scenes (but should not happen) if properties are
- * accidentally changed.
+ * accidentally changed. An example of this is that a boolean field has a null in the database, then
+ * when hibernate reads it from the database as a default false is set in that field. Then when
+ * checking for dirty the object has changed as the boolean value has changed from null to false.
  * 
  * @author mtaal
  */
 
 public class HiddenUpdateTest extends BaseTest {
 
-  // Test for hidden updates, these are not allowed!
-  // Hidden updates can occur when a load/read of an entity also
-  // changes the state, or that hibernate detects dirty in another way
+  /**
+   * Tests for hidden updates. Hidden updates can occur when a load/read of an entity also changes
+   * the state, or that hibernate detects dirty in another way. Use the Hibernate Interceptor
+   * concept.
+   */
   public void testHiddenUpdates() {
     setUserContext("0");
 
@@ -82,14 +86,14 @@ public class HiddenUpdateTest extends BaseTest {
     }
   }
 
-  class LocalSessionFactoryController extends DalSessionFactoryController {
+  private class LocalSessionFactoryController extends DalSessionFactoryController {
     @Override
     protected void setInterceptor(Configuration configuration) {
       configuration.setInterceptor(new LocalInterceptor());
     }
   }
 
-  class LocalInterceptor extends EmptyInterceptor {
+  private class LocalInterceptor extends EmptyInterceptor {
 
     private static final long serialVersionUID = 1L;
 

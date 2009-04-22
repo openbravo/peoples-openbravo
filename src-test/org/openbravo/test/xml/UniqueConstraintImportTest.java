@@ -38,7 +38,11 @@ import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 
 /**
- * Test the influence of unique constraints when importing data.
+ * Test the influence of unique constraints when importing data. In case of a unique constraint
+ * objects with different id's and the same values for the unique key fields can be matched. So if
+ * the xml contains an object with id A and a value for a unique key field V1 and in the database
+ * there is an object with B which also has the value V1 for the unique key field. Then object A
+ * will overwrite object B in the database.
  * 
  * @author mtaal
  */
@@ -47,7 +51,9 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
 
   private static final Logger log = Logger.getLogger(UniqueConstraintImportTest.class);
 
-  // country trl table can be empty, create some test values
+  /**
+   * Builds the testdata, {@link CountryTrl} objects for a specific {@link Country}.
+   */
   public void testACreateCountryTrl() {
     setUserContext("0");
     final Country country = getCountry("Norway");
@@ -78,10 +84,13 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
     log.debug("Created " + created + " countrytrl objects");
   }
 
-  // this test, reads countrytrl from the db and imports them again
-  // after changing the id. This should result in updates of existing
-  // countrytrl because they are found using the unique constraint of country
-  // and language
+  /**
+   * Reads {@link CountryTrl} objects from the db and imports them again after changing the id. This
+   * should result in updates of existing {@link CountryTrl} objeccts because they are found using
+   * the unique constraint of country and language.
+   * 
+   * This method also cleans up the testdata.
+   */
   public void testCountryTrlImport() {
     setUserContext("100");
 

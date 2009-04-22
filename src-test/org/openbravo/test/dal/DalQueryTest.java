@@ -41,7 +41,7 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Test different parts of the dal api, specifically querying.
+ * Test different parts of the dal api: {@link OBDal}, {@link OBCriteria} and {@link OBQuery}.
  * 
  * Note the testcases assume that they are run in the order defined in this class.
  * 
@@ -87,6 +87,9 @@ public class DalQueryTest extends BaseTest {
     assertTrue(obq.list().size() > 0);
   }
 
+  /**
+   * Tests a left join with {@link ModelImplementation} as the main class.
+   */
   public void testDalWhereLeftJoinClause() {
     setUserContext("100");
     final String where = "as mo left join mo.callout left join mo.reference where mo.callout.module.id='0' or mo.reference.module.id='0'";
@@ -95,6 +98,9 @@ public class DalQueryTest extends BaseTest {
     assertTrue(obq.list().size() > 0);
   }
 
+  /**
+   * Tests a left join with {@link ModelImplementation} as the main class.
+   */
   public void testDalOtherWhereLeftJoinClause() {
     setUserContext("100");
     final String where = "as mo left join mo.callout left join mo.reference where (mo.callout.module.id='0' or mo.reference.module.id='0') and exists(from ADUser where id<>'0')";
@@ -103,6 +109,9 @@ public class DalQueryTest extends BaseTest {
     assertTrue(obq.list().size() > 0);
   }
 
+  /**
+   * Tests a left join with {@link ModelImplementation} as the main class.
+   */
   public void testDalAnOtherWhereLeftJoinClause() {
     setUserContext("100");
     final String where = "exists(from ADUser where id<>'0')";
@@ -112,7 +121,7 @@ public class DalQueryTest extends BaseTest {
   }
 
   /**
-   * Test creates a new {@link Category} and saves it. The new object is removed in next test
+   * Test creates a new {@link Category} and saves it. The new object is removed in the next test.
    */
   public void testCreateBPGroup() {
     setUserContext("1000000");
@@ -131,6 +140,8 @@ public class DalQueryTest extends BaseTest {
    */
   public void testRemoveBPGroup() {
     setUserContext("1000000");
+    addReadWriteAccess(Category.class);
+    addReadWriteAccess(CategoryAccounts.class);
     final OBQuery<Category> obQuery = OBDal.getInstance().createQuery(Category.class,
         Category.PROPERTY_NAME + "='testname' or " + Category.PROPERTY_SEARCHKEY + "='testvalue'");
     final List<Category> bpgs = obQuery.list();
@@ -167,6 +178,7 @@ public class DalQueryTest extends BaseTest {
    */
   public void testCheckBPGroupRemoved() {
     setUserContext("1000000");
+    addReadWriteAccess(Category.class);
     final OBQuery<Category> obQuery = OBDal.getInstance().createQuery(Category.class,
         Category.PROPERTY_NAME + "='testname' or " + Category.PROPERTY_SEARCHKEY + "='testvalue'");
     final List<Category> bpgs = obQuery.list();
@@ -189,7 +201,8 @@ public class DalQueryTest extends BaseTest {
       OBDal.getInstance().save(c);
       fail("No security check");
     } catch (final OBSecurityException e) {
-      // successfull check
+      // successfull check, do not commit the change
+      rollback();
     }
   }
 

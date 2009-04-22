@@ -64,7 +64,7 @@ public class DalPerformanceProductTest extends BaseTest {
         avg = (avg + System.currentTimeMillis() - time) / 2;
       }
       time = System.currentTimeMillis();
-      OBDal.getInstance().commitAndClose();
+      commitTransaction();
     }
 
     log.debug("Read " + pageCount + " pages with average " + avg + " milliSeconds per page");
@@ -105,7 +105,7 @@ public class DalPerformanceProductTest extends BaseTest {
         avg = (avg + System.currentTimeMillis() - time) / 2;
       }
       time = System.currentTimeMillis();
-      OBDal.getInstance().commitAndClose();
+      commitTransaction();
     }
 
     log.debug("Read " + pageCount + " pages with average " + avg
@@ -151,11 +151,11 @@ public class DalPerformanceProductTest extends BaseTest {
     // don't be bothered by security exceptions
     addReadWriteAccess(Product.class);
     for (final Product t : obc.list()) {
-      t.setName(t.getName() + "t");
+      t.setName(t.getName() + "_t");
       OBDal.getInstance().save(t);
     }
     OBDal.getInstance().flush();
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
     log.debug("Updated " + count + " products in " + (System.currentTimeMillis() - time)
         + " milliseconds ");
   }
@@ -182,7 +182,9 @@ public class DalPerformanceProductTest extends BaseTest {
 
       // log.debug("PAGE>>> " + (1 + i));
       for (final Product t : obc.list()) {
-        t.setName(t.getName() + "t");
+        if (t.getName().endsWith("_t")) {
+          t.setName(t.getName().substring(0, t.getName().length() - 2));
+        }
         OBDal.getInstance().save(t);
       }
       if (avg == 0) {
@@ -191,7 +193,7 @@ public class DalPerformanceProductTest extends BaseTest {
         avg = (avg + System.currentTimeMillis() - time) / 2;
       }
       time = System.currentTimeMillis();
-      OBDal.getInstance().commitAndClose();
+      commitTransaction();
     }
 
     log.debug("Updated " + pageCount + " pages of products with average " + avg

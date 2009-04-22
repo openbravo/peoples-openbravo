@@ -34,7 +34,6 @@ public class AllTests {
     suite.addTestSuite(DalTest.class);
     suite.addTestSuite(DynamicEntityTest.class);
     suite.addTestSuite(HiddenUpdateTest.class);
-    suite.addTestSuite(HqlTest.class);
     suite.addTestSuite(MappingGenerationTest.class);
     suite.addTestSuite(ValidationTest.class);
     return suite;

@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.security.EntityAccessChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.currency.Currency;
@@ -34,6 +35,8 @@ import org.openbravo.test.base.BaseTest;
 /**
  * Tests access on the basis of window and table definitions. Also tests derived read access.
  * 
+ * @see EntityAccessChecker
+ * 
  * @author mtaal
  */
 
@@ -41,6 +44,9 @@ public class EntityAccessTest extends BaseTest {
 
   private static final Logger log = Logger.getLogger(EntityAccessTest.class);
 
+  /**
+   * Creates test data, a {@link Currency}.
+   */
   public void testCreateCurrency() {
     setBigBazaarAdminContext();
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
@@ -58,9 +64,12 @@ public class EntityAccessTest extends BaseTest {
     }
   }
 
-  // query for the currency again and remove it
+  /**
+   * Test tries to remove the {@link Currency}. Which should fail as it is not deletable.
+   */
   public void testNonDeletable() {
     setUserContext("1000000");
+    addReadWriteAccess(Currency.class);
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "TE2"));
     final List<Currency> cs = obc.list();
@@ -76,6 +85,10 @@ public class EntityAccessTest extends BaseTest {
     }
   }
 
+  /**
+   * Checks the derived readable concept, only identifier fields of a derived readable object may be
+   * read.
+   */
   public void testCheckDerivedReadableCurrency() {
     setUserContext("1000020");
     final Currency c = OBDal.getInstance().get(Currency.class, "100");
@@ -90,7 +103,9 @@ public class EntityAccessTest extends BaseTest {
     }
   }
 
-  // test derived readable on a set method and test save action
+  /**
+   * Test derived readable on a set method, also there this check must be done.
+   */
   public void testUpdateCurrencyDerivedRead() {
     setUserContext("1000020");
     final Currency c = OBDal.getInstance().get(Currency.class, "100");
@@ -111,7 +126,10 @@ public class EntityAccessTest extends BaseTest {
     }
   }
 
-  // test non readable
+  /**
+   * Checks non-readable, if an object/entity is not readable then it may not be read through the
+   * {@link OBDal}.
+   */
   public void testNonReadable() {
     setUserContext("1000002");
     try {
@@ -126,13 +144,16 @@ public class EntityAccessTest extends BaseTest {
     }
   }
 
-  public void testUpdateCurrencySucces() {
-    setBigBazaarAdminContext();
+  /**
+   * Removes the test data by using the administrator account.
+   */
+  public void testZDeleteTestData() {
+    setUserContext("0");
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
+    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "TE2"));
     final List<Currency> cs = obc.list();
-    final Currency c = cs.get(0);
-    c.setDescription(" a test");
-    OBDal.getInstance().save(c);
+    assertEquals(1, cs.size());
+    OBDal.getInstance().remove(cs.get(0));
   }
+
 }

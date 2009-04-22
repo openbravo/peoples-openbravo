@@ -40,7 +40,8 @@ import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 
 /**
- * Test import of data with a business object, adding and removing childs
+ * Test import of data with a business object ({@link PaymentTerm) and {@link PaymentTermLine},
+ * adding and removing childs
  * 
  * @author mtaal
  */
@@ -57,13 +58,16 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   private String[] currentPaymentTerms = new String[] { "1000000", "1000001", "1000002", "1000003",
       "1000004" };
 
+  /** Sets up the test data, creates a first of Payment Terms. */
   public void testAPaymentTerm() {
     cleanRefDataLoaded();
     setUserContext("1000000");
     createSavePaymentTerm();
   }
 
-  // export and create in client 100001
+  /**
+   * Export the Payment Terms from the 1000000 client and import them in 1000001 client.
+   */
   public void testBPaymentTerm() {
 
     // read from 1000000
@@ -96,7 +100,10 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     assertEquals(0, ir.getUpdatedObjects().size());
   }
 
-  // do the same thing again, no updates!
+  /**
+   * Execute the same test as in {@link #testBPaymentTerm()}, as it is repeated and no data has
+   * changed no updates should take place.
+   */
   public void testCPaymentTerm() {
 
     // read from 1000000
@@ -123,7 +130,10 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     assertEquals(0, ir.getUpdatedObjects().size());
   }
 
-  // change a child so that it is updated and change a parent
+  /**
+   * Now do the same as in {@link #testCPaymentTerm()} only now with some small changes in the xml,
+   * so that some objects are updated.
+   */
   public void testDPaymentTerm() {
 
     // read from 1000000
@@ -164,7 +174,10 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     }
   }
 
-  // remove the first payment line of each payment term
+  /**
+   * Test removal of a PaymentTermLine from a PaymentTerm in the xml, then import. After importing
+   * the PaymentTermLine should have gone.
+   */
   public void testEPaymentTerm() {
 
     // read from 1000000
@@ -206,7 +219,9 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     }
   }
 
-  // test that the removal was successfull
+  /**
+   * Tests that the previous test {@link #testEPaymentTerm()} was successfull.
+   */
   public void testFPaymentTerm() {
     setUserContext("1000019");
     final List<PaymentTerm> pts = getPaymentTerms();
@@ -218,7 +233,9 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     }
   }
 
-  // and now add a line!
+  /**
+   * Add a PaymentTermLine in the xml and import it, there should be an extra line then.
+   */
   public void testGPaymentTerm() {
 
     // read from 1000000
@@ -269,7 +286,9 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     }
   }
 
-  // test that the Addition was successfull
+  /**
+   * Tests that {@link #testGPaymentTerm()} was successfull.
+   */
   public void testHPaymentTerm() {
     setUserContext("1000019");
     setAccess();
@@ -281,9 +300,12 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     }
   }
 
-  // cleans up everything
+  /**
+   * Remove the testdata.
+   */
   public void testZPaymentTerm() {
     setUserContext("1000000");
+    setAccess();
     final List<PaymentTerm> pts = getPaymentTerms();
     // financialmanagementpaymenttermline is not deletable, but as we are cleaning up
     // force delete by being the admin
@@ -291,7 +313,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     for (final PaymentTerm pt : pts) {
       OBDal.getInstance().remove(pt);
     }
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
 
     setUserContext("1000019");
     final List<PaymentTerm> pts2 = getPaymentTerms();
@@ -301,7 +323,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     for (final PaymentTerm pt : pts2) {
       OBDal.getInstance().remove(pt);
     }
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
   }
 
   private void createSavePaymentTerm() {
@@ -345,8 +367,9 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     return obc.list();
   }
 
+  // overridden because also children are exported
   @SuppressWarnings("unchecked")
-  public <T extends BaseOBObject> String getXML(List<?> pts) {
+  protected <T extends BaseOBObject> String getXML(List<T> pts) {
     final EntityXMLConverter exc = EntityXMLConverter.newInstance();
     exc.setOptionIncludeReferenced(true);
     exc.setOptionEmbedChildren(true);

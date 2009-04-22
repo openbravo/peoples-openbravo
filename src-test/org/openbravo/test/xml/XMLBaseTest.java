@@ -25,15 +25,19 @@ import java.io.FileReader;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.model.ad.utility.ReferenceDataStore;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Supports testing of xml imports/export.
+ * Supports testing of xml imports/export. Provides convenience methods.
  * 
  * @author mtaal
  */
@@ -88,6 +92,30 @@ public class XMLBaseTest extends BaseTest {
     for (final ReferenceDataStore rdl : obc.list()) {
       OBDal.getInstance().remove(rdl);
     }
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
+  }
+
+  protected <T extends BaseOBObject> List<T> getList(Class<T> clz) {
+    final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
+    return obc.list();
+  }
+
+  protected <T extends BaseOBObject> String getXML(List<T> objs) {
+    final EntityXMLConverter exc = EntityXMLConverter.newInstance();
+    exc.setOptionIncludeReferenced(true);
+    // exc.setOptionEmbedChildren(true);
+    // exc.setOptionIncludeChildren(true);
+    exc.setAddSystemAttributes(false);
+    return exc.toXML(new ArrayList<BaseOBObject>(objs));
+  }
+
+  protected <T extends BaseOBObject> String getXML(Class<T> clz) {
+    final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
+    final EntityXMLConverter exc = EntityXMLConverter.newInstance();
+    exc.setOptionIncludeReferenced(true);
+    // exc.setOptionEmbedChildren(true);
+    // exc.setOptionIncludeChildren(true);
+    exc.setAddSystemAttributes(false);
+    return exc.toXML(new ArrayList<BaseOBObject>(obc.list()));
   }
 }

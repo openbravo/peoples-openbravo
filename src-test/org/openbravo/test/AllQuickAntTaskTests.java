@@ -44,6 +44,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
  * a developer to run tests in between without waiting to long for results. Testcases which should
  * not be here is for example the import of a complete client.
  * 
+ * NOTE: this suite should not contact test classes which have side-effects (change the database
+ * without cleaning up).
+ * 
  * @author mtaal
  */
 public class AllQuickAntTaskTests {

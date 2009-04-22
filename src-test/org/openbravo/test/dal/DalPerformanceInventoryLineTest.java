@@ -72,7 +72,7 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
     final InventoryCountLine baseLine = (InventoryCountLine) DalUtil.copy(iclObc.list().get(0),
         false);
     final long time = System.currentTimeMillis();
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
     for (int i = 0; i < NO_HEADER; i++) {
       final InventoryCount ic = (InventoryCount) DalUtil.copy(baseIc, false);
       ic.setPosted("N");
@@ -86,7 +86,7 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
       }
       OBDal.getInstance().save(ic);
     }
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
     log.debug("Created " + NO_HEADER + " inventorycounts and " + (NO_HEADER * NO_LINE)
         + " inventory lines" + " in " + (System.currentTimeMillis() - time) + " milliseconds");
   }
@@ -108,7 +108,7 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
     final InventoryCountLine baseLine = (InventoryCountLine) DalUtil.copy(iclObc.list().get(0),
         false);
     final long time = System.currentTimeMillis();
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
 
     final OBCriteria<InventoryCount> icObc = OBDal.getInstance().createCriteria(
         InventoryCount.class);
@@ -130,9 +130,23 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
           .getQuantityOrderBook().floatValue() + 1f)));
       OBDal.getInstance().save(ic);
     }
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
     log.debug("Read " + cnt + " inventorycounts with each " + cntLine
         + " inventory lines and added one new line and updated one line in "
         + (System.currentTimeMillis() - time) + " milliseconds");
+  }
+
+  /**
+   * Removes the created {@link InventoryCount} and {@link InventoryCountLine} records.
+   */
+  public void testZCleanUp() {
+    addReadWriteAccess(InventoryCount.class);
+    addReadWriteAccess(InventoryCountLine.class);
+    final OBCriteria<InventoryCount> icObc = OBDal.getInstance().createCriteria(
+        InventoryCount.class);
+    icObc.add(Expression.like("name", NAME_PREFIX + "%"));
+    for (InventoryCount ic : icObc.list()) {
+      OBDal.getInstance().remove(ic);
+    }
   }
 }

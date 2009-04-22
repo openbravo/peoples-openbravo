@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,9 +23,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.criterion.Expression;
-import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.Category;
@@ -35,11 +34,19 @@ import org.openbravo.test.base.BaseTest;
 /**
  * Tests check of writable organization and allowed client.
  * 
+ * @see OBContext#getWritableOrganizations()
+ * @see OBContext#getReadableClients()
+ * @see OBContext#getReadableOrganizations()
+ * 
  * @author mtaal
  */
 
 public class WritableReadableOrganizationClientTest extends BaseTest {
 
+  /**
+   * Checks for two users that each writable organization also occurs in the readable organizations
+   * list.
+   */
   public void testAccessLevelCO() {
     setUserContext("0");
     doCheckUser();
@@ -68,6 +75,12 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
     }
   }
 
+  /**
+   * Checks that the current client is present in the set of readable clients.
+   * 
+   * @see OBContext#getReadableClients()
+   * @see OBContext#getCurrentClient()
+   */
   public void testClient() {
     final OBContext obContext = OBContext.getOBContext();
     final String[] cs = obContext.getReadableClients();
@@ -86,8 +99,12 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
     assertTrue("Current client " + cid + " not found in clienttlist " + sb.toString(), found);
   }
 
+  /**
+   * Checks that writable organization is checked when an invalid update is attempted.
+   */
   public void testUpdateNotAllowed() {
     setUserContext("1000000");
+    addReadWriteAccess(Costing.class);
     final OBCriteria<Costing> obc = OBDal.getInstance().createCriteria(Costing.class);
     obc.add(Expression.eq("id", "1000078"));
     final List<Costing> cs = obc.list();
@@ -98,16 +115,21 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
     // switch usercontext to force exception
     setUserContext("1000002");
     try {
-      SessionHandler.getInstance().commitAndClose();
+      commitTransaction();
       fail("Writable organizations not checked");
-    } catch (final OBSecurityException e) {
+    } catch (final OBException e) {
+      rollback();
       assertTrue("Invalid exception " + e.getMessage(), e.getMessage().indexOf(
           " is not writable by this user") != -1);
     }
   }
 
+  /**
+   * Test if a check is done that an update in an invalid client is not allowed.
+   */
   public void testCheckInvalidClient() {
     setUserContext("1000000");
+    addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
     obc.add(Expression.eq("name", "Standard"));
     final List<Category> bogs = obc.list();
@@ -117,8 +139,9 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
     // switch usercontext to force exception
     setUserContext("1000019");
     try {
-      SessionHandler.getInstance().commitAndClose();
-    } catch (final OBSecurityException e) {
+      commitTransaction();
+    } catch (final OBException e) {
+      rollback();
       assertTrue("Invalid exception " + e.getMessage(), e.getMessage().indexOf(
           "is not present in ClientList") != -1);
     }

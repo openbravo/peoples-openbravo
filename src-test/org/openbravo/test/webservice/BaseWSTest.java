@@ -34,7 +34,7 @@ import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Base class for webservice tests, mainly provides utility methods.
+ * Base class for webservice tests. Provides several methods to do HTTP REST requests.
  * 
  * @author mtaal
  */
@@ -47,6 +47,15 @@ public class BaseWSTest extends BaseTest {
   private static final String LOGIN = "Openbravo";
   private static final String PWD = "openbravo";
 
+  /**
+   * Executes a DELETE HTTP request, the wsPart is appended to the {@link #getOpenbravoURL()}.
+   * 
+   * @param wsPart
+   *          the actual webservice part of the url, is appended to the openbravo url (
+   *          {@link #getOpenbravoURL()}), includes any query parameters
+   * @param expectedResponse
+   *          the expected HTTP response code
+   */
   protected void doDirectDeleteRequest(String wsPart, int expectedResponse) {
     try {
       final HttpURLConnection hc = createConnection(wsPart, "DELETE");
@@ -57,6 +66,22 @@ public class BaseWSTest extends BaseTest {
     }
   }
 
+  /**
+   * Execute a REST webservice HTTP request which posts/puts content and returns a XML result.
+   * 
+   * @param wsPart
+   *          the actual webservice part of the url, is appended to the openbravo url (
+   *          {@link #getOpenbravoURL()}), includes any query parameters
+   * @param content
+   *          the content (XML) to post or put
+   * @param expectedResponse
+   *          the expected HTTP response code
+   * @param expectedContent
+   *          the system check that the returned content contains this expectedContent
+   * @param method
+   *          POST or PUT
+   * @return
+   */
   protected String doContentRequest(String wsPart, String content, int expectedResponse,
       String expectedContent, String method) {
     try {
@@ -87,6 +112,15 @@ public class BaseWSTest extends BaseTest {
     }
   }
 
+  /**
+   * Convenience method to get a value of a specific XML element without parsing the whole xml
+   * 
+   * @param content
+   *          the xml
+   * @param tag
+   *          the element name
+   * @return the value
+   */
   protected String getTagValue(String content, String tag) {
     final int index1 = content.indexOf("<" + tag + ">") + ("<" + tag + ">").length();
     if (index1 == -1) {
@@ -99,6 +133,19 @@ public class BaseWSTest extends BaseTest {
     return content.substring(index1, index2);
   }
 
+  /**
+   * Executes a GET request.
+   * 
+   * @param wsPart
+   *          the actual webservice part of the url, is appended to the openbravo url (
+   *          {@link #getOpenbravoURL()}), includes any query parameters
+   * @param testContent
+   *          the system check that the returned content contains this testContent. if null is
+   *          passed for this parameter then this check is not done.
+   * @param responseCode
+   *          the expected HTTP response code
+   * @return the content returned from the GET request
+   */
   protected String doTestGetRequest(String wsPart, String testContent, int responseCode) {
     try {
       final HttpURLConnection hc = createConnection(wsPart, "GET");
@@ -119,6 +166,15 @@ public class BaseWSTest extends BaseTest {
     }
   }
 
+  /**
+   * Creates a HTTP connection.
+   * 
+   * @param wsPart
+   * @param method
+   *          POST, PUT, GET or DELETE
+   * @return the created connection
+   * @throws Exception
+   */
   protected HttpURLConnection createConnection(String wsPart, String method) throws Exception {
     Authenticator.setDefault(new Authenticator() {
       @Override
@@ -126,8 +182,8 @@ public class BaseWSTest extends BaseTest {
         return new PasswordAuthentication(LOGIN, PWD.toCharArray());
       }
     });
-    log.debug(method + ": " + OB_URL + wsPart);
-    final URL url = new URL(OB_URL + wsPart);
+    log.debug(method + ": " + getOpenbravoURL() + wsPart);
+    final URL url = new URL(getOpenbravoURL() + wsPart);
     final HttpURLConnection hc = (HttpURLConnection) url.openConnection();
     hc.setRequestMethod(method);
     hc.setAllowUserInteraction(false);
@@ -140,4 +196,31 @@ public class BaseWSTest extends BaseTest {
     return hc;
   }
 
+  /**
+   * Returns the url of the Openbravo instance. The default value is: {@link #OB_URL}
+   * 
+   * @return the url of the Openbravo instance.
+   */
+  protected String getOpenbravoURL() {
+    return OB_URL;
+  }
+
+  /**
+   * Returns the login used to login for the webservice. The default value is {@link #LOGIN}.
+   * 
+   * @return the login name used to login for the webservice
+   */
+  protected String getLogin() {
+    return LOGIN;
+  }
+
+  /**
+   * Returns the password used to login into the webservice server. The default value is
+   * {@link #PWD}.
+   * 
+   * @return the password used to login into the webservice, the default is {@link #PWD}
+   */
+  protected String getPassword() {
+    return PWD;
+  }
 }

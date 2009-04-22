@@ -30,6 +30,7 @@ import org.openbravo.test.base.BaseTest;
 
 public class MappingGenerationTest extends BaseTest {
 
+  /** Generate the hibernate mapping */
   public void testMappingGeneration() {
     DalMappingGenerator.getInstance().generateMapping();
   }

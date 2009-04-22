@@ -22,11 +22,13 @@ package org.openbravo.test.dal;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.DynamicOBObject;
 import org.openbravo.base.util.CheckException;
+import org.openbravo.base.validation.NumericPropertyValidator;
+import org.openbravo.base.validation.StringPropertyValidator;
 import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
@@ -39,14 +41,20 @@ import org.openbravo.model.procurement.Requisition;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Test property validations.
+ * Test property validations and validators.
  * 
+ * @see Property#getValidator()
+ * @see Property#checkIsValidValue(Object)
+ * @see NumericPropertyValidator
+ * @see StringPropertyValidator
  * @author mtaal
  */
 
 public class ValidationTest extends BaseTest {
-  private static final Logger log = Logger.getLogger(ValidationTest.class);
 
+  /**
+   * Tests the type checking of primitive {@link Property} values.
+   */
   public void testTypeChecking() {
     setBigBazaarAdminContext();
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
@@ -67,6 +75,9 @@ public class ValidationTest extends BaseTest {
     }
   }
 
+  /**
+   * Performs type checking of property values on a {@link DynamicOBObject}.
+   */
   public void testTypeCheckDynamicObject() {
     final DynamicOBObject bpGroup = new DynamicOBObject();
     bpGroup.setEntityName(Category.ENTITY_NAME);
@@ -91,6 +102,9 @@ public class ValidationTest extends BaseTest {
     }
   }
 
+  /**
+   * Tests the validation of a list value (an enumeration).
+   */
   public void testListValue() {
     setBigBazaarAdminContext();
     final OBCriteria<AlertRule> obc = OBDal.getInstance().createCriteria(AlertRule.class);
@@ -107,6 +121,9 @@ public class ValidationTest extends BaseTest {
     }
   }
 
+  /**
+   * Tests the field length validation on a String.
+   */
   public void testFieldLength() {
     setUserContext("0");
 
@@ -129,9 +146,14 @@ public class ValidationTest extends BaseTest {
     }
   }
 
+  /**
+   * Test the validation of a max value of a numeric property.
+   * 
+   * @see Property#getMaxValue()
+   */
   public void testMaxValue() {
-    addReadWriteAccess(InvoiceSchedule.class);
     setUserContext("1000000");
+    addReadWriteAccess(InvoiceSchedule.class);
     final OBCriteria<InvoiceSchedule> obc = OBDal.getInstance().createCriteria(
         InvoiceSchedule.class);
     for (final InvoiceSchedule is : obc.list()) {
@@ -145,9 +167,14 @@ public class ValidationTest extends BaseTest {
     }
   }
 
+  /**
+   * Test the validation of a min value of a numeric property.
+   * 
+   * @see Property#getMinValue()
+   */
   public void testMinValue() {
-    addReadWriteAccess(InvoiceSchedule.class);
     setUserContext("1000000");
+    addReadWriteAccess(InvoiceSchedule.class);
     final OBCriteria<InvoiceSchedule> obc = OBDal.getInstance().createCriteria(
         InvoiceSchedule.class);
     for (final InvoiceSchedule is : obc.list()) {

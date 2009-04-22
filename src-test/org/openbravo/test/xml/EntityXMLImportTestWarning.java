@@ -19,21 +19,16 @@
 
 package org.openbravo.test.xml;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.Greeting;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
-import org.openbravo.model.common.geography.Location;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 
@@ -45,6 +40,10 @@ import org.openbravo.service.db.ImportResult;
 
 public class EntityXMLImportTestWarning extends XMLBaseTest {
 
+  /**
+   * Test that a warning is given that an object (in this case {@link Greeting} is not writable
+   * because of access definitions for the user.
+   */
   public void testNotWritableUpdate() {
     cleanRefDataLoaded();
     setUserContext("1000000");
@@ -84,7 +83,11 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     rollback();
   }
 
-  public void testNotWritableInsertWarning() {
+  /**
+   * Tests that an error message is given that an object is new but the user is not allowed to write
+   * it (because of access definitions).
+   */
+  public void testNotWritableInsertError() {
     cleanRefDataLoaded();
     setUserContext("1000000");
     addReadWriteAccess(Warehouse.class);
@@ -112,6 +115,11 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     rollback();
   }
 
+  /**
+   * Tests that a warning is given that during an import, an update occured in another organization
+   * then the one passed in during the import. This can happen if an object belongs in organization
+   * * (0), while the update/import is in another organization.
+   */
   public void testUpdatingOtherOrganizationWarning() {
     cleanRefDataLoaded();
     setUserContext("1000000");
@@ -142,39 +150,39 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     rollback();
   }
 
-  // works also but disabled for now
-  public void _testUpdateOtherOrganizationWarning() {
-    cleanRefDataLoaded();
-    setUserContext("1000000");
-    addReadWriteAccess(Location.class);
-
-    final List<Location> cs = getList(Location.class);
-    String xml = getXML(cs);
-
-    // change the xml to force an update
-    xml = xml.replaceAll("</cityName>", "t</cityName>");
-
-    // the following should result in creation of location
-    // xml = xml.replaceAll("location id=\"", "location id=\"new");
-    // xml = xml.replaceAll("CoreLocation id=\"", "CoreLocation id=\"new");
-    setUserContext("0");
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000000"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
-    if (ir.getException() != null) {
-      ir.getException().printStackTrace(System.err);
-      fail(ir.getException().getMessage());
-    } else if (ir.getErrorMessages() != null) {
-      fail(ir.getErrorMessages());
-    } else {
-      assertTrue(ir.getWarningMessages() != null);
-      assertTrue(ir.getWarningMessages().indexOf("Updating entity") != -1);
-      assertTrue(ir.getWarningMessages().indexOf(
-          "eventhough it does not belong to the target organization") != -1);
-    }
-    // force a rollback, so that the db is not changed
-    rollback();
-  }
+  // // works also but disabled for now
+  // public void _testUpdateOtherOrganizationWarning() {
+  // cleanRefDataLoaded();
+  // setUserContext("1000000");
+  // addReadWriteAccess(Location.class);
+  //
+  // final List<Location> cs = getList(Location.class);
+  // String xml = getXML(cs);
+  //
+  // // change the xml to force an update
+  // xml = xml.replaceAll("</cityName>", "t</cityName>");
+  //
+  // // the following should result in creation of location
+  // // xml = xml.replaceAll("location id=\"", "location id=\"new");
+  // // xml = xml.replaceAll("CoreLocation id=\"", "CoreLocation id=\"new");
+  // setUserContext("0");
+  // final ImportResult ir = DataImportService.getInstance().importDataFromXML(
+  // OBDal.getInstance().get(Client.class, "1000000"),
+  // OBDal.getInstance().get(Organization.class, "1000001"), xml);
+  // if (ir.getException() != null) {
+  // ir.getException().printStackTrace(System.err);
+  // fail(ir.getException().getMessage());
+  // } else if (ir.getErrorMessages() != null) {
+  // fail(ir.getErrorMessages());
+  // } else {
+  // assertTrue(ir.getWarningMessages() != null);
+  // assertTrue(ir.getWarningMessages().indexOf("Updating entity") != -1);
+  // assertTrue(ir.getWarningMessages().indexOf(
+  // "eventhough it does not belong to the target organization") != -1);
+  // }
+  // // force a rollback, so that the db is not changed
+  // rollback();
+  // }
 
   // public void testInsertOtherClientWarning() {
   // cleanRefDataLoaded();
@@ -207,27 +215,4 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
   // rollback();
   // }
 
-  public <T extends BaseOBObject> List<T> getList(Class<T> clz) {
-    final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
-    return obc.list();
-  }
-
-  public <T extends BaseOBObject> String getXML(List<T> objs) {
-    final EntityXMLConverter exc = EntityXMLConverter.newInstance();
-    exc.setOptionIncludeReferenced(true);
-    // exc.setOptionEmbedChildren(true);
-    // exc.setOptionIncludeChildren(true);
-    exc.setAddSystemAttributes(false);
-    return exc.toXML(new ArrayList<BaseOBObject>(objs));
-  }
-
-  public <T extends BaseOBObject> String getXML(Class<T> clz) {
-    final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
-    final EntityXMLConverter exc = EntityXMLConverter.newInstance();
-    exc.setOptionIncludeReferenced(true);
-    // exc.setOptionEmbedChildren(true);
-    // exc.setOptionIncludeChildren(true);
-    exc.setAddSystemAttributes(false);
-    return exc.toXML(new ArrayList<BaseOBObject>(obc.list()));
-  }
 }

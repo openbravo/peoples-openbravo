@@ -35,50 +35,62 @@ import org.openbravo.service.db.ClientImportProcessor;
 import org.openbravo.service.db.DataExportService;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
-import org.openbravo.service.db.ReferenceDataTask;
 
 /**
  * Tests export and import of client dataset.
+ * 
+ * <b>NOTE: this test has as side effect that new clients are created in the database with all their
+ * data. These clients are not removed after the tests.</b>
  * 
  * @author mtaal
  */
 public class ClientExportImportTest extends XMLBaseTest {
 
-  public void _testImportReferenceData() throws Exception {
-    setUserContext("0");
+  // public void _testImportReferenceData() throws Exception {
+  // setUserContext("0");
+  //
+  // final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+  // .getProperty("source.path");
+  // final File importDir = new File(sourcePath, ReferenceDataTask.REFERENCE_DATA_DIRECTORY);
+  //
+  // for (final File importFile : importDir.listFiles()) {
+  // if (importFile.isDirectory()) {
+  // continue;
+  // }
+  // final ClientImportProcessor importProcessor = new ClientImportProcessor();
+  // importProcessor.setNewName(null);
+  // final ImportResult ir = DataImportService.getInstance().importClientData(importProcessor,
+  // false, new FileReader(importFile));
+  // if (ir.hasErrorOccured()) {
+  // if (ir.getException() != null) {
+  // throw new OBException(ir.getException());
+  // }
+  // if (ir.getErrorMessages() != null) {
+  // throw new OBException(ir.getErrorMessages());
+  // }
+  // }
+  // }
+  // }
 
-    final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("source.path");
-    final File importDir = new File(sourcePath, ReferenceDataTask.REFERENCE_DATA_DIRECTORY);
-
-    for (final File importFile : importDir.listFiles()) {
-      if (importFile.isDirectory()) {
-        continue;
-      }
-      final ClientImportProcessor importProcessor = new ClientImportProcessor();
-      importProcessor.setNewName(null);
-      final ImportResult ir = DataImportService.getInstance().importClientData(importProcessor,
-          false, new FileReader(importFile));
-      if (ir.hasErrorOccured()) {
-        if (ir.getException() != null) {
-          throw new OBException(ir.getException());
-        }
-        if (ir.getErrorMessages() != null) {
-          throw new OBException(ir.getErrorMessages());
-        }
-      }
-    }
-  }
-
+  /**
+   * Exports the 1000000 client and then imports as a new client. Has as side effect that a
+   * completely new client is added in the database.
+   */
   public void testExportImportClient1000000() {
     exportImport("1000000");
+    // SystemService.getInstance().removeAllClientData(newClientId);
   }
 
+  /**
+   * Exports the 1000001 client and then imports as a new client. Has as side effect that a
+   * completely new client is added in the database.
+   */
   public void testExportImportClient1000001() {
     exportImport("1000001");
+    // SystemService.getInstance().removeAllClientData(newClientId);
   }
 
-  private void exportImport(String clientId) {
+  private String exportImport(String clientId) {
     setUserContext("0");
     final Map<String, Object> parameters = new HashMap<String, Object>();
     parameters.put(DataExportService.CLIENT_ID_PARAMETER_NAME, clientId);
@@ -119,14 +131,21 @@ public class ClientExportImportTest extends XMLBaseTest {
       // none should be updated!
       assertEquals(0, ir.getUpdatedObjects().size());
 
+      String newClientId = null;
+
       // and never insert anything in client 0
       for (final BaseOBObject bob : ir.getInsertedObjects()) {
         if (bob instanceof ClientEnabled) {
           final ClientEnabled ce = (ClientEnabled) bob;
           assertNotNull(ce.getClient());
           assertTrue(!ce.getClient().getId().equals("0"));
+          newClientId = ce.getClient().getId();
         }
       }
+      assertTrue(newClientId != null);
+      assertTrue(!clientId.equals(newClientId));
+      commitTransaction();
+      return newClientId;
     } catch (final Exception e) {
       throw new OBException(e);
     }

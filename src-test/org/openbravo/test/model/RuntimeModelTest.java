@@ -32,8 +32,10 @@ import org.openbravo.base.model.Table;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Tests the in-memory runtime model.
+ * Tests the in-memory runtime model provided by the {@link ModelProvider}.
  * 
+ * @see Entity
+ * @see Property
  * @author iperdomo
  */
 
@@ -48,6 +50,9 @@ public class RuntimeModelTest extends BaseTest {
     super.setUp();
   }
 
+  /**
+   * Iterates over the model and prints it to the log.
+   */
   public void testDumpModel() {
     for (Entity e : ModelProvider.getInstance().getModel()) {
       log.debug(">>>>>>>>>>>>>> " + e.getName() + " (" + e.getTableName() + ") <<<<<<<<<<<<<<<<<");
@@ -57,6 +62,9 @@ public class RuntimeModelTest extends BaseTest {
     }
   }
 
+  /**
+   * Checks if there are tables without a PK in the model.
+   */
   public void testPK() {
     final ArrayList<Table> tablesWithoutPK = new ArrayList<Table>();
     for (final Table t : ModelProvider.getInstance().getTables()) {
@@ -73,6 +81,10 @@ public class RuntimeModelTest extends BaseTest {
     assertEquals(0, tablesWithoutPK.size());
   }
 
+  /**
+   * Just checks that there is a {@link ModelProvider} and that it returns a model (a list of
+   * {@link Entity} objects).
+   */
   public void testModelProvider() {
     for (final Entity e : ModelProvider.getInstance().getModel()) {
       log.debug("tablename: " + e.getTableName() + " -- classname: " + e.getClassName()
@@ -83,6 +95,11 @@ public class RuntimeModelTest extends BaseTest {
     assertNotNull(ModelProvider.getInstance().getModel());
   }
 
+  /**
+   * Checks that entities have a unique name.
+   * 
+   * @see Entity#getName()
+   */
   public void testUniqueTableMapping() {
     final List<String> mappings = new ArrayList<String>();
     boolean duplicated = false;
@@ -97,6 +114,11 @@ public class RuntimeModelTest extends BaseTest {
     assertFalse(duplicated);
   }
 
+  /**
+   * Checks that all names of properties are unique within an Entity.
+   * 
+   * @see Property#getName()
+   */
   public void testUniqueColumnMapping() {
     boolean duplicated = false;
     for (final Entity e : ModelProvider.getInstance().getModel()) {
@@ -113,6 +135,9 @@ public class RuntimeModelTest extends BaseTest {
     assertFalse(duplicated);
   }
 
+  /**
+   * Tests that each entity/table has only one PK.
+   */
   public void testOnePK() {
     int total = 0;
     for (final Table t : ModelProvider.getInstance().getTables()) {
@@ -152,6 +177,12 @@ public class RuntimeModelTest extends BaseTest {
     // assertEquals(0, tables.size());
   }
 
+  /**
+   * Tests that parent references are only allowed for specific reference types.
+   * 
+   * @see Column#getReference()
+   * @see Reference
+   */
   public void testIsParent() {
     final ArrayList<String> columns = new ArrayList<String>();
 
@@ -173,6 +204,9 @@ public class RuntimeModelTest extends BaseTest {
     assertEquals(0, columns.size());
   }
 
+  /**
+   * Tests that columns that has {@link Column#isParent()} on true are not of a primitive type.
+   */
   public void testIsParent2() {
     final ArrayList<String> columns = new ArrayList<String>();
 
@@ -190,6 +224,9 @@ public class RuntimeModelTest extends BaseTest {
     assertEquals(0, columns.size());
   }
 
+  /**
+   * Checks that a column that has {@link Column#isParent()} on true has a table defined.
+   */
   public void testIsParent3() {
     final ArrayList<String> columns = new ArrayList<String>();
     for (final Table t : ModelProvider.getInstance().getTables()) {
@@ -208,6 +245,9 @@ public class RuntimeModelTest extends BaseTest {
     assertEquals(0, columns.size());
   }
 
+  /**
+   * Checks that a column that has {@link Column#isParent()} finishes on _ID.
+   */
   public void testIsParent4() {
     final ArrayList<String> columns = new ArrayList<String>();
     for (final Table t : ModelProvider.getInstance().getTables()) {
@@ -222,8 +262,8 @@ public class RuntimeModelTest extends BaseTest {
     }
 
     if (columns.size() != 0)
-      System.err
-          .println(columns.size()
+      log
+          .debug(columns.size()
               + " columns set as *isParent* with reference *TABLEDIR* and column name don't finish with _ID: "
               + columns.toString());
     assertEquals(0, columns.size());

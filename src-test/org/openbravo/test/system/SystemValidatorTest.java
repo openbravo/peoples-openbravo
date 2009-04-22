@@ -20,10 +20,14 @@
 package org.openbravo.test.system;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.ddlutils.Platform;
+import org.apache.ddlutils.PlatformFactory;
+import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
-import org.openbravo.service.system.ApplicationDictionaryValidator;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.service.system.DatabaseValidator;
 import org.openbravo.service.system.ModuleValidator;
 import org.openbravo.service.system.SystemValidationResult;
@@ -43,20 +47,37 @@ public class SystemValidatorTest extends BaseTest {
 
   private static final Logger log = Logger.getLogger(SystemValidatorTest.class);
 
-  public void _testSystemValidation() {
+  /**
+   * Executes the {@link DatabaseValidator#validate()} method on the current database.
+   */
+  public void testSystemValidation() {
     setUserContext("0");
-    final ApplicationDictionaryValidator adValidator = new ApplicationDictionaryValidator();
-    final Map<String, SystemValidationResult> results = adValidator.validate();
-
-    for (String key : results.keySet()) {
-      log.debug("++++++++++++++++++++++++++++++++++++++++++++++++++");
-      log.debug(key);
-      log.debug("++++++++++++++++++++++++++++++++++++++++++++++++++");
-      final SystemValidationResult result = results.get(key);
-      printResult(result);
-    }
+    final DatabaseValidator databaseValidator = new DatabaseValidator();
+    databaseValidator.setDatabase(createDatabaseObject());
+    final SystemValidationResult result = databaseValidator.validate();
+    printResult(result);
   }
 
+  private Database createDatabaseObject() {
+    final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+
+    final BasicDataSource ds = new BasicDataSource();
+    ds.setDriverClassName(props.getProperty("bbdd.driver"));
+    if (props.getProperty("bbdd.rdbms").equals("POSTGRE")) {
+      ds.setUrl(props.getProperty("bbdd.url") + "/" + props.getProperty("bbdd.sid"));
+    } else {
+      ds.setUrl(props.getProperty("bbdd.url"));
+    }
+    ds.setUsername(props.getProperty("bbdd.user"));
+    ds.setPassword(props.getProperty("bbdd.password"));
+    Platform platform = PlatformFactory.createNewPlatformInstance(ds);
+    platform.getModelLoader().setOnlyLoadTableColumns(true);
+    return platform.loadModelFromDatabase(null);
+  }
+
+  /**
+   * Performs module validation using the {@link ModuleValidator}.
+   */
   public void testModulesValidation() {
     setUserContext("0");
     final ModuleValidator moduleValidator = new ModuleValidator();

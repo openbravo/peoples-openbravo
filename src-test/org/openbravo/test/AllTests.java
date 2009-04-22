@@ -26,7 +26,6 @@ import org.openbravo.test.dal.DalQueryTest;
 import org.openbravo.test.dal.DalTest;
 import org.openbravo.test.dal.DynamicEntityTest;
 import org.openbravo.test.dal.HiddenUpdateTest;
-import org.openbravo.test.dal.HqlTest;
 import org.openbravo.test.dal.MappingGenerationTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.expression.EvaluationTest;
@@ -64,7 +63,6 @@ public class AllTests {
     suite.addTestSuite(DynamicEntityTest.class);
     suite.addTestSuite(DalTest.class);
     suite.addTestSuite(DalQueryTest.class);
-    suite.addTestSuite(HqlTest.class);
 
     // model
     suite.addTestSuite(RuntimeModelTest.class);
