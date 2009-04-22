@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,11 +29,15 @@
     <Sql>
     <![CDATA[
       SELECT C_Order_ID, o.Name as adorgname, COALESCE(dttrl.Name, dt.Name) as cdoctypename, DocumentNo, bp.Name as cbpartnername, DateOrdered,
-      amountlines, TotalLines 
-      FROM C_Invoice_Candidate_v ic, AD_Org o, C_BPartner bp, C_DocType dt left join C_DocType_trl dttrl on dt.C_DocType_ID=dttrl.C_DocType_ID AND dttrl.ad_language=?
+      amountlines, notinvoicedlines, l.Name as TermName, l.Value as TermValue, pendinglines as pendinglines, '' as amountlinesgross, '' as notinvoicedlinesgross, 
+      '' as pendinglinesgross, ic.qtyordered as qtyordered, ic.qtydelivered as qtydelivered
+      FROM C_Invoice_Candidate_v ic, AD_Org o, C_BPartner bp, AD_Ref_List l left join AD_Ref_List_trl ltrl on l.AD_Ref_List_ID=ltrl.AD_Ref_List_ID and ltrl.ad_language=?, 
+      C_DocType dt left join C_DocType_trl dttrl on dt.C_DocType_ID=dttrl.C_DocType_ID AND dttrl.ad_language=?
       WHERE ic.AD_Org_ID=o.AD_Org_ID
       AND ic.C_BPartner_ID=bp.C_BPartner_ID
       AND ic.C_DocType_ID=dt.C_DocType_ID
+      AND l.value = ic.term
+      AND AD_Reference_ID='150'
       AND ic.ad_client_id in ('1')
       AND ic.ad_org_id in ('1')
       AND 1=1
@@ -42,9 +46,40 @@
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="language"/>
+    <Parameter name="language"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND ic.ad_client_id in (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND ic.ad_org_id in (" text="'1'"/>
     <Parameter name="parBPartner" optional="true" after="AND 1=1">AND ic.C_BPartner_ID= ?</Parameter>
+    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND ic.DateOrdered >= TO_DATE(?)]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND ic.DateOrdered < TO_DATE(?)]]></Parameter>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 2=2 AND ic.ad_org_id in (" text="'1'"/>
+  </SqlMethod>
+  <SqlMethod name="selectGross" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT C_Order_ID, o.Name as adorgname, COALESCE(dttrl.Name, dt.Name) as cdoctypename, DocumentNo, bp.Name as cbpartnername, DateOrdered,
+      amountlinesgross as amountlines, notinvoicedlinesgross as notinvoicedlines, l.Name as TermName, l.Value as TermValue, pendinglinesgross as pendinglines,
+      ic.qtyordered as qtyordered, ic.qtydelivered as qtydelivered
+      FROM C_Invoice_Candidate_v ic, AD_Org o, C_BPartner bp, AD_Ref_List l left join AD_Ref_List_trl ltrl on l.AD_Ref_List_ID=ltrl.AD_Ref_List_ID and ltrl.ad_language=?, 
+      C_DocType dt left join C_DocType_trl dttrl on dt.C_DocType_ID=dttrl.C_DocType_ID AND dttrl.ad_language=?
+      WHERE ic.AD_Org_ID=o.AD_Org_ID
+      AND ic.C_BPartner_ID=bp.C_BPartner_ID
+      AND ic.C_DocType_ID=dt.C_DocType_ID
+      AND l.value = ic.term
+      AND AD_Reference_ID='150'
+      AND ic.ad_client_id in ('1')
+      AND ic.ad_org_id in ('1')
+      AND 1=1
+      AND 2=2 AND ic.ad_org_id in ('1')
+      ORDER BY o.Name,bp.Name,DateOrdered
+      ]]></Sql>
+    <Field name="rownum" value="count"/>
+    <Parameter name="language"/>
+    <Parameter name="language"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND ic.ad_client_id in (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="AND ic.ad_org_id in (" text="'1'"/>
+    <Parameter name="parBPartner" optional="true" after="AND 1=1">AND ic.C_BPartner_ID = ?</Parameter>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND ic.DateOrdered >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND ic.DateOrdered < TO_DATE(?)]]></Parameter>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 2=2 AND ic.ad_org_id in (" text="'1'"/>

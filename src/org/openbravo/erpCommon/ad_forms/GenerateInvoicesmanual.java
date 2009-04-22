@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -57,7 +58,10 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
           "GenerateInvoicesmanual|C_BPartner_ID", "");
       String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId",
           "GenerateInvoicesmanual|Ad_Org_ID", vars.getOrg());
-      printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo);
+      String strIncludeTaxes = vars.getGlobalVariable("inpinctaxes",
+          "GenerateInvoicesmanual|withtax", "");
+      printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
+          strIncludeTaxes);
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "GenerateInvoicesmanual|DateFrom");
@@ -67,7 +71,10 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
           "GenerateInvoicesmanual|C_BPartner_ID");
       String strAD_Org_ID = vars.getRequestGlobalVariable("inpadOrgId",
           "GenerateInvoicesmanual|Ad_Org_ID");
-      printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo);
+      String strIncludeTaxes = vars.getRequestGlobalVariable("inpinctaxes",
+          "GenerateInvoicesmanual|withtax");
+      printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
+          strIncludeTaxes);
     } else if (vars.commandIn("GENERATE")) {
       String strCOrderId = vars.getInStringParameter("inpOrder");
       if (strCOrderId.equals(""))
@@ -123,8 +130,8 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
   }
 
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo)
-      throws IOException, ServletException {
+      String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo,
+      String strIncludeTaxes) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -146,10 +153,17 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       // "#User_Org", "GenerateInvoicesmanual"), strC_BPartner_ID,
       // strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"),
       // strTreeOrg, strAD_Org_ID);
-      data = GenerateInvoicesmanualData.select(this, vars.getLanguage(), Utility.getContext(this,
-          vars, "#User_Client", "GenerateInvoicesmanual"), Utility.getContext(this, vars,
-          "#User_Org", "GenerateInvoicesmanual"), strC_BPartner_ID, strDateFrom, DateTimeData
-          .nDaysAfter(this, strDateTo, "1"), Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
+      if (strIncludeTaxes.equals("Y")) {
+        data = GenerateInvoicesmanualData.selectGross(this, vars.getLanguage(), Utility.getContext(
+            this, vars, "#User_Client", "GenerateInvoicesmanual"), Utility.getContext(this, vars,
+            "#User_Org", "GenerateInvoicesmanual"), strC_BPartner_ID, strDateFrom, DateTimeData
+            .nDaysAfter(this, strDateTo, "1"), Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
+      } else
+        data = GenerateInvoicesmanualData.select(this, vars.getLanguage(), Utility.getContext(this,
+            vars, "#User_Client", "GenerateInvoicesmanual"), Utility.getContext(this, vars,
+            "#User_Org", "GenerateInvoicesmanual"), strC_BPartner_ID, strDateFrom, DateTimeData
+            .nDaysAfter(this, strDateTo, "1"), Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
+      data = calcAmountsWithInvoiceTerm(data);
     }
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "GenerateInvoicesmanual", false, "",
@@ -195,6 +209,7 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramBPartnerDescription", GenerateInvoicesmanualData
         .bPartnerDescription(this, strC_BPartner_ID));
+    xmlDocument.setParameter("incTaxes", strIncludeTaxes);
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
@@ -211,6 +226,24 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private GenerateInvoicesmanualData[] calcAmountsWithInvoiceTerm(GenerateInvoicesmanualData[] gData) {
+    for (GenerateInvoicesmanualData gIData : gData) {
+      String strTermValue = gIData.getField("termvalue");
+      if (strTermValue.equals("N")) {
+        gIData.notinvoicedlines = "0";
+        gIData.pendinglines = "0";
+      } else if (strTermValue.equals("I")) {
+        gIData.pendinglines = gIData.notinvoicedlines;
+      } else if (strTermValue.equals("O")) {
+        if ((new BigDecimal(gIData.qtydelivered).compareTo(new BigDecimal(gIData.qtyordered)) < 0)) {
+          gIData.notinvoicedlines = gIData.amountlines;
+          gIData.pendinglines = "0";
+        }
+      }
+    }
+    return gData;
   }
 
   public String getServletInfo() {
