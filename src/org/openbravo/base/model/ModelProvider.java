@@ -164,6 +164,9 @@ public class ModelProvider implements OBSingleton {
       // this map stores the mapped tables
       tablesByTableName = new HashMap<String, Table>();
       for (final Table t : tables) {
+        if (t.isView()) {
+          continue;
+        }
         // tables are stored case insensitive!
         tablesByTableName.put(t.getTableName().toLowerCase(), t);
       }
@@ -630,9 +633,10 @@ public class ModelProvider implements OBSingleton {
     if (model == null)
       getModel();
     final Entity entity = entitiesByTableName.get(tableName.toUpperCase());
-    if (entity == null) {
-      log.warn("Table name: " + tableName + " not found in runtime model");
-    }
+    // is null for views
+    // if (entity == null) {
+    // log.warn("Table name: " + tableName + " not found in runtime model");
+    // }
     return entity;
   }
 

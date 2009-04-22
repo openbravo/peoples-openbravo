@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.util.Check;
@@ -47,7 +46,7 @@ import org.openbravo.base.validation.PropertyValidator;
  */
 
 public class Entity {
-  private static final Logger log = Logger.getLogger(Entity.class);
+  // private static final Logger log = Logger.getLogger(Entity.class);
 
   private List<UniqueConstraint> uniqueConstraints = new ArrayList<UniqueConstraint>();
 
@@ -77,6 +76,7 @@ public class Entity {
   private boolean isClientEnabled;
   private boolean isMutable;
   private boolean isDeletable;
+  private boolean isView;
 
   private EntityValidator entityValidator;
   private AccessLevelChecker accessLevelChecker;
@@ -100,6 +100,7 @@ public class Entity {
     setDeletable(table.isDeletable());
     setMutable(!table.isView());
     setInActive(!table.isActive());
+    setView(table.isView());
 
     properties = new ArrayList<Property>();
     idProperties = new ArrayList<Property>();
@@ -573,5 +574,13 @@ public class Entity {
 
   public void setModule(Module module) {
     this.module = module;
+  }
+
+  public boolean isView() {
+    return isView;
+  }
+
+  public void setView(boolean isView) {
+    this.isView = isView;
   }
 }
