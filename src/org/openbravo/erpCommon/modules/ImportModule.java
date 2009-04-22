@@ -43,8 +43,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.ddlutils.Platform;
-import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.io.DataReader;
 import org.apache.ddlutils.io.DataToArraySink;
 import org.apache.ddlutils.io.DatabaseDataIO;
@@ -773,8 +771,6 @@ public class ImportModule {
 
     final Connection conn = ds.getConnection();
 
-    final Platform platform = PlatformFactory.createNewPlatformInstance(ds);
-
     Integer seqNo = new Integer(ImportModuleData.selectSeqNo(pool));
 
     for (final DynaBean module : dModulesToInstall) {
@@ -798,6 +794,9 @@ public class ImportModule {
           (String) module.get("ISTRANSLATIONMODULE"), (String) module.get("HASREFERENCEDATA"),
           (String) module.get("ISREGISTERED"), (String) module.get("UPDATEINFO"), (String) module
               .get("UPDATE_VER_ID"), (String) module.get("REFERENCEDATAINFO"));
+
+      // Set installed for modules being updated
+      ImportModuleData.setModuleUpdated(pool, (String) module.get("AD_MODULE_ID"));
 
       addLog("@ModuleInstalled@ " + module.get("NAME") + " - " + module.get("VERSION"), MSG_SUCCESS);
     }
