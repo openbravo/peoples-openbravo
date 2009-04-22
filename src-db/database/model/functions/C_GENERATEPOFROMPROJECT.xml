@@ -64,7 +64,7 @@
       v_BPartner_Location_ID VARCHAR2(32);
       v_BillTo_ID VARCHAR2(32);
       v_Size NUMBER;
-      v_UOM NUMBER;
+      v_UOM VARCHAR2(32);
       v_PriceStd NUMBER;
       v_PriceList NUMBER;
       v_PriceLimit NUMBER;
