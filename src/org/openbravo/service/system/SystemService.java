@@ -25,12 +25,20 @@ import java.util.List;
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
@@ -65,6 +73,7 @@ public class SystemService implements OBSingleton {
    */
   public boolean hasChanged(Class<?>[] clzs, Date afterDate) {
     for (Class<?> clz : clzs) {
+      @SuppressWarnings("unchecked")
       final OBCriteria<?> obc = OBDal.getInstance().createCriteria((Class<BaseOBObject>) clz);
       obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
       // todo: count is slower than exists, is exists possible?
@@ -142,5 +151,124 @@ public class SystemService implements OBSingleton {
     }
     log.error(sb.toString());
     return sb.toString();
+  }
+
+  /**
+   * Removes all data of a specific {@link Client}, the client is identified by the clientId
+   * parameter.
+   * 
+   * NOTE: this method does not work yet. It is an initial implementation and not yet complete
+   * 
+   * @param clientId
+   *          the id of the client to delete.
+   * @deprecated Do not use, is a work in progress
+   */
+  public void removeAllClientData(String clientId) {
+    // the idea was/is the following:
+    // 0) compute the order of all entities based on their reference, something like the
+    // low-level code in BOM computations: the entity nobody refers to has number 0, the
+    // rule is that if there are two entities A and B and there is a reference path from A
+    // to B (directly or through other entities) using only non-mandatory many-to-one references
+    // then: A.referenceNumber < B.referenceNumber
+    // Then the entities can be sorted ascending on the referenceNumber
+    // the procedure is then:
+    // 1) nullify all non-mandatory many-to-ones
+    // 2) then remove the objects in order of the entity.referenceNumber
+    // currently this does not work yet because step 1 fails because there are constraints
+    // defined in the database which means that certain fields are conditionally mandatory.
+
+    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      TriggerHandler.getInstance().disable();
+      final Client client = OBDal.getInstance().get(Client.class, clientId);
+      for (Entity e : ModelProvider.getInstance().getModel()) {
+        if (!e.isClientEnabled()) {
+          continue;
+        }
+        nullifyManyToOnes(e, client);
+      }
+      OBDal.getInstance().flush();
+
+      for (Entity e : ModelProvider.getInstance().getModel()) {
+        if (!e.isClientEnabled()) {
+          continue;
+        }
+        final String hql;
+        if (e.getName().equals(ClientInformation.ENTITY_NAME)) {
+          hql = "delete " + e.getName() + " where id=:clientId";
+        } else {
+          hql = "delete " + e.getName() + " where client=:clientId";
+        }
+        SessionHandler.getInstance().getSession().createQuery(hql).setString("clientId", clientId)
+            .executeUpdate();
+      }
+      OBDal.getInstance().flush();
+      TriggerHandler.getInstance().enable();
+      OBDal.getInstance().commitAndClose();
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(prevMode);
+    }
+  }
+
+  private void nullifyManyToOnes(Entity e, Client client) {
+    final String updatePart = createNullifyNonMandatoryQuery(e);
+    if (updatePart == null) {
+      return;
+    }
+    final String hql;
+    if (e.getName().equals(ClientInformation.ENTITY_NAME)) {
+      hql = updatePart + " where id=:clientId";
+    } else {
+      hql = updatePart + " where client=:clientId";
+    }
+    System.err.println(hql);
+    try {
+      SessionHandler.getInstance().getSession().createQuery(hql).setString("clientId",
+          client.getId()).executeUpdate();
+    } catch (IllegalArgumentException ex) {
+      // handle a special case, that the entity name or a property name
+      // is a reserved hql word.
+      System.err.println(ex.getMessage());
+      if (ex.getMessage().indexOf("node to traverse cannot be null") != -1) {
+        // in this case use an inefficient method
+        nullifyPerObject(e, client);
+      } else {
+        throw ex;
+      }
+    }
+  }
+
+  private String createNullifyNonMandatoryQuery(Entity e) {
+    final StringBuilder sb = new StringBuilder("update " + e.getClassName() + " e set ");
+    boolean doNullifyProperty = false;
+    for (Property p : e.getProperties()) {
+      if (!p.isPrimitive() && !p.isOneToMany() && !p.isMandatory()) {
+        if (doNullifyProperty) {
+          sb.append(", ");
+        }
+        sb.append("e." + p.getName() + " = null");
+        doNullifyProperty = true;
+      }
+    }
+    // no property found, don't do update
+    if (!doNullifyProperty) {
+      return null;
+    }
+    return sb.toString();
+  }
+
+  private void nullifyPerObject(Entity e, Client client) {
+    final OBCriteria<BaseOBObject> obc = OBDal.getInstance().createCriteria(e.getName());
+    obc.setFilterOnActive(false);
+    obc.setFilterOnReadableClients(false);
+    obc.setFilterOnReadableOrganization(false);
+    obc.add(Expression.eq(Organization.PROPERTY_CLIENT, client));
+    for (BaseOBObject bob : obc.list()) {
+      for (Property p : e.getProperties()) {
+        if (!p.isPrimitive() && !p.isOneToMany() && !p.isMandatory()) {
+          bob.set(p.getName(), null);
+        }
+      }
+    }
   }
 }
