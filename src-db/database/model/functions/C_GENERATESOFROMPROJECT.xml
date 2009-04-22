@@ -62,7 +62,7 @@
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     DECLARE
       v_Size NUMBER;
-      v_UOM NUMBER;
+      v_UOM VARCHAR2(32);
       v_PriceStd NUMBER;
       v_PriceList NUMBER;
       v_PriceLimit NUMBER;
