@@ -26,7 +26,7 @@
       <Sql>
          SELECT COALESCE(MI.Type, M.Type) as Type, COALESCE(MI.AD_Module_ID, M.AD_Module_ID) as Node_ID, 
                 (CASE WHEN MI.AD_Module_ID IS NOT NULL 
-                         THEN AD_Column_Identifier('AD_Module_Install',MI.AD_Module_ID, ?)
+                         THEN AD_Column_Identifier('AD_Module_Install',MI.AD_Module_Install_ID, ?)
                          ELSE AD_Column_Identifier('AD_Module',M.AD_Module_ID, ?) END) as Name, 
                  (SELECT CASE WHEN COUNT(*)>0 THEN 'block' ELSE 'none' END
                     FROM AD_Module M2
@@ -70,7 +70,7 @@
             AND m.ISACTIVE = 'Y'
           UNION
           SELECT Type, AD_Module_ID as Node_ID, 
-                 AD_Column_Identifier('AD_Module_Install',AD_Module_ID, ?) as Name, 
+                 AD_Column_Identifier('AD_Module_Install',AD_Module_Install_ID, ?) as Name, 
                  (SELECT CASE WHEN COUNT(*)>0 THEN 'block' ELSE 'none' END
                     FROM AD_Module_Dependency_Inst
                    WHERE AD_Module_ID = M.AD_Module_ID
@@ -117,7 +117,7 @@
           SELECT M.Type, M.AD_Module_ID as Node_ID, 
                  (CASE WHEN MI.AD_MODULE_ID IS NULL 
                                       THEN AD_Column_Identifier('AD_Module',m.AD_Module_ID, ?)
-                                      ELSE AD_Column_Identifier('AD_ModuleInst',MI.AD_Module_ID, ?) END )as Name, 
+                                      ELSE AD_Column_Identifier('AD_Module_Install',MI.AD_Module_Install_ID, ?) END )as Name, 
                  (SELECT CASE WHEN COUNT(*)>0 THEN 'block' ELSE 'none' END
                     FROM AD_Module M2
                     WHERE M2.AD_Module_ID = M.AD_Module_ID
@@ -148,7 +148,7 @@
                             AND IsIncluded = 'Y')
              AND M.ISACTIVE = 'Y'
             UNION
-             SELECT Type, AD_Module_ID as Node_ID, AD_Column_Identifier('AD_Module',AD_Module_ID, ?) as Name, 
+             SELECT Type, AD_Module_ID as Node_ID, AD_Column_Identifier('AD_Module_Install',AD_Module_Install_ID, ?) as Name, 
                  (SELECT CASE WHEN COUNT(*)>0 THEN 'block' ELSE 'none' END
                     FROM AD_Module_Dependency
                    WHERE AD_Module_ID = M.AD_Module_ID
