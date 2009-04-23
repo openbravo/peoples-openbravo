@@ -248,11 +248,15 @@ public class DataImportService implements OBSingleton {
           final Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
               tn.getTree().getTypeArea());
           if (entity == null) {
-            ir.setErrorMessages("Imported tree nodes belong to a tree with a tree type "
-                + tn.getTree().getTypeArea() + " which is not related to any entity.");
-            OBDal.getInstance().rollbackAndClose();
-            rolledBack = true;
-            return ir;
+            if (ir.getWarningMessages() == null) {
+              ir.setWarningMessages("Imported tree nodes belong to a tree with a tree type "
+                  + tn.getTree().getTypeArea() + " which is not related to any entity.");
+            } else {
+              ir.setWarningMessages(ir.getWarningMessages()
+                  + "\nImported tree nodes belong to a tree with a tree type "
+                  + tn.getTree().getTypeArea() + " which is not related to any entity.");
+            }
+            continue;
           }
           final BaseOBObject bob = (BaseOBObject) xec.getEntityResolver().resolve(entity.getName(),
               tn.getNode(), true);
@@ -447,11 +451,15 @@ public class DataImportService implements OBSingleton {
         final Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
             tn.getTree().getTypeArea());
         if (entity == null) {
-          ir.setErrorMessages("Imported tree nodes belong to a tree with a tree type "
-              + tn.getTree().getTypeArea() + " which is not related to any entity.");
-          OBDal.getInstance().rollbackAndClose();
-          rolledBack = true;
-          return ir;
+          if (ir.getWarningMessages() == null) {
+            ir.setWarningMessages("Imported tree nodes belong to a tree with a tree type "
+                + tn.getTree().getTypeArea() + " which is not related to any entity.");
+          } else {
+            ir.setWarningMessages(ir.getWarningMessages()
+                + "\nImported tree nodes belong to a tree with a tree type "
+                + tn.getTree().getTypeArea() + " which is not related to any entity.");
+          }
+          continue;
         }
         final BaseOBObject bob = (BaseOBObject) xec.getEntityResolver().resolve(entity.getName(),
             tn.getNode(), true);
