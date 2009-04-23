@@ -474,7 +474,7 @@ build.war: build a war file in the lib directory.
     </copy>
 
     <java classname="org.openbravo.translate.RTLSkin" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="${base.context}/web/skins/rtl ${base.context}/web/skins/ltr ${base.web}/skins" />
+      <arg line="${base.context}/web/skins/rtl ${base.context}/web/skins/ltr" />
       <classpath refid="project.class.path" />
     </java>
     
