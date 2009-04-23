@@ -250,6 +250,7 @@ compare.database.structure: refer to compare.database.structure target of databa
         <istrue value="${local}" />
       </not>
     </condition>
+    <antcall inheritall="true" inheritrefs="true" target="generate.entities.quick" />
     <antcall target="update.database.if.no.local" />
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />

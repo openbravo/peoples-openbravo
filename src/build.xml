@@ -571,7 +571,6 @@ build.war: build a war file in the lib directory.
     <antcall inheritall="true" inheritrefs="true" target="smartbuild.no.new.wad" />
     <antcall inheritall="true" inheritrefs="true" target="compileSqlc" />
     <antcall inheritall="true" inheritrefs="true" target="postsrc" />
-    <antcall inheritall="true" inheritrefs="true" target="generate.entities.quick" />
     <antcall inheritall="true" inheritrefs="true" target="translate" />
     <antcall inheritall="true" inheritrefs="true" target="update.build.timestamp" />
   </target>
