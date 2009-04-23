@@ -2543,7 +2543,7 @@ function formElementValue(form, ElementName, Value) {
   if (ElementName=="MESSAGE") {
     initialize_MessageBox("messageBoxID");
     try {
-      if (Value!="") setValues_MessageBox('messageBoxID', "INFO", "", Value);
+      if (Value!=null && Value!="") setValues_MessageBox('messageBoxID', "INFO", "", Value);
     } catch (err) {
       alert(Value);
     }
