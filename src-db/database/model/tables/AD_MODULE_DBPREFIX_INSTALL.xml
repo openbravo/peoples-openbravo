@@ -51,9 +51,6 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADMODULE_DBPREFIX_INS_ADCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULEVERSION_DBPREFIXINS">
-        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
-      </foreign-key>
       <check name="ADMODULEDBPREFIX_INS_ACTIVE_CK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

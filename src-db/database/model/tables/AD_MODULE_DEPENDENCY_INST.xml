@@ -64,14 +64,8 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADMODULEDEPENDENCYINS_ADCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULEDEPENDENCYINS_ADMODULE" onDelete="cascade">
-        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADMODULEDEPENDENCYINS_ADORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULEDEPENDINS_ADMODULE2">
-        <reference local="AD_DEPENDENT_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
       <check name="AD_MODULE_INST_ISINCLUDED_CHK"><![CDATA[ISINCLUDED IN ('Y', 'N')]]></check>
       <check name="MODULEDEPENDENINST_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
