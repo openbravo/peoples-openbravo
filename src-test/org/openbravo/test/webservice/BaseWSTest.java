@@ -61,6 +61,8 @@ public class BaseWSTest extends BaseTest {
       final HttpURLConnection hc = createConnection(wsPart, "DELETE");
       hc.connect();
       assertEquals(expectedResponse, hc.getResponseCode());
+      assertTrue("Content type not set in delete response", hc.getContentType() != null);
+      assertTrue("Content encoding not set in delete response", hc.getContentEncoding() != null);
     } catch (final Exception e) {
       throw new OBException(e);
     }
