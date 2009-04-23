@@ -231,5 +231,29 @@
        <Parameter name="AD_MODULE_ID"/> <Parameter name="AD_DEPENDENT_MODULE_ID"/> <Parameter name="STARTVERSION"/>
        <Parameter name="ENDVERSION"/> <Parameter name="ISINCLUDED"/> <Parameter name="DEPENDANT_MODULE_NAME"/>
      </SqlMethod>
+     
+     <SqlMethod name="cleanModuleInstall" type="preparedStatement" return="rowcount">
+         <Sql>
+            DELETE FROM AD_MODULE_INSTALL
+              WHERE AD_MODULE_ID = ?
+         </Sql>
+         <Parameter name="mouleId"/> 
+     </SqlMethod>
+     
+     <SqlMethod name="cleanModuleDBPrefixInstall" type="preparedStatement" return="rowcount">
+         <Sql>
+            DELETE FROM AD_MODULE_DBPREFIX_INSTALL
+              WHERE AD_MODULE_ID = ?
+         </Sql>
+         <Parameter name="mouleId"/> 
+     </SqlMethod>
+     
+     <SqlMethod name="cleanModuleDependencyInstall" type="preparedStatement" return="rowcount">
+         <Sql>
+            DELETE FROM AD_MODULE_DEPENDENCY_INST
+              WHERE AD_MODULE_ID = ?
+         </Sql>
+         <Parameter name="mouleId"/> 
+     </SqlMethod>
 </SqlClass>
 
