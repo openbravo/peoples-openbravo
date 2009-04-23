@@ -216,9 +216,9 @@ public class ToolBar {
       return "dijit.byId('grid').goToLastRow();";
     } else {
       return "submitCommandForm('" + (name.equals("REFRESH") ? "DEFAULT" : name) + "', "
-          + (name.equals("NEW") ? "true" : "false") + ", null, '" + servlet_action
-          + (isSrcWindow ? "" : "_Relation") + ".html', '" + (isFrame ? "_parent" : "_self")
-          + "', null, " + (debug ? "true" : "false") + ");";
+          + (name.equals("NEW") && (this.grid_id.equals("")) ? "true" : "false") + ", null, '"
+          + servlet_action + (isSrcWindow ? "" : "_Relation") + ".html', '"
+          + (isFrame ? "_parent" : "_self") + "', null, " + (debug ? "true" : "false") + ");";
     }
   }
 
