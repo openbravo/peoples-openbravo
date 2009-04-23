@@ -65,15 +65,11 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "ReportGeneralLedgerJournal|ShowReg", "");
       String strShowOpening = vars.getGlobalVariable("inpShowOpening",
           "ReportGeneralLedgerJournal|ShowOpening", "");
-      // String strRecord = vars.getGlobalVariable("inpRecord",
-      // "ReportGeneralLedgerJournal|Record");
-      // String strTable = vars.getGlobalVariable("inpTable",
-      // "ReportGeneralLedgerJournal|Table");
+      String strRecord = vars.getGlobalVariable("inpRecord", "ReportGeneralLedgerJournal|Record", "");
+      String strTable = vars.getGlobalVariable("inpTable", "ReportGeneralLedgerJournal|Table", "");
       log4j.debug("********DEFAULT***************  strShowClosing: " + strShowClosing);
       log4j.debug("********DEFAULT***************  strShowReg: " + strShowReg);
       log4j.debug("********DEFAULT***************  strShowOpening: " + strShowOpening);
-      String strTable = vars.getStringParameter("inpTable");
-      String strRecord = vars.getStringParameter("inpRecord");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable,
           strRecord, "", strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening);
     } else if (vars.commandIn("DIRECT")) {
@@ -98,6 +94,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strDocument = vars.getRequestGlobalVariable("inpDocument",
           "ReportGeneralLedgerJournal|Document");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
+      String strRecord = vars.getRequestGlobalVariable("inpRecord", "ReportGeneralLedgerJournal|Record");
+      String strTable = vars.getRequestGlobalVariable("inpTable", "ReportGeneralLedgerJournal|Table");
       String strShowClosing = vars.getRequestGlobalVariable("inpShowClosing",
           "ReportGeneralLedgerJournal|ShowClosing");
       String strShowReg = vars.getRequestGlobalVariable("inpShowReg",
@@ -338,6 +336,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     xmlDocument.setParameter("groupId", strPosition);
     xmlDocument.setParameter("paramRecord", strRecord);
     xmlDocument.setParameter("paramTable", strTable);
+    vars.setSessionValue("ReportGeneralLedgerJournal|Record", strRecord);
+    vars.setSessionValue("ReportGeneralLedgerJournal|Table", strTable);
     xmlDocument.setParameter("showClosing", strShowClosing.equals("") ? "0" : "1");
     xmlDocument.setParameter("showReg", strShowReg.equals("") ? "0" : "1");
     xmlDocument.setParameter("showOpening", strShowOpening.equals("") ? "0" : "1");
