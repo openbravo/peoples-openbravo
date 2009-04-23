@@ -19,10 +19,19 @@
 
 package org.openbravo.test.security;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.AccessLevel;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.ClientEnabled;
+import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.validation.AccessLevelChecker;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -41,6 +50,82 @@ import org.openbravo.test.base.BaseTest;
  */
 
 public class AccessLevelTest extends BaseTest {
+
+  /**
+   * Tests/checks if the current client/org of the all objects in the database is valid for the
+   * access level defined for that entity.
+   */
+  public void testADataAccessLevel() {
+    setUserContext("0");
+    final List<Entity> entities = ModelProvider.getInstance().getModel();
+    final StringBuilder sb = new StringBuilder();
+    final Client clientZero = OBDal.getInstance().get(Client.class, "0");
+    final Organization orgZero = OBDal.getInstance().get(Organization.class, "0");
+    for (Entity e : entities) {
+      final StringBuilder where = new StringBuilder();
+      final List<Object> params = new ArrayList<Object>();
+      if (e.getAccessLevel() == AccessLevel.ALL) {
+        // anything allowed continue
+        continue;
+      } else if (e.getAccessLevel() == AccessLevel.CLIENT) {
+        sb.append("Access Level CLIENT encountered for entity " + e.getName() + "/"
+            + e.getTableName() + ", this AccessLevel is not supported.\n");
+      } else if (e.getAccessLevel() == AccessLevel.CLIENT_ORGANIZATION) {
+        if (!e.isClientEnabled()) {
+          continue;
+        }
+        where.append("where client = ?");
+        params.add(clientZero);
+      } else if (e.getAccessLevel() == AccessLevel.ORGANIZATION) {
+        if (!e.isOrganizationEnabled() || !e.isClientEnabled()) {
+          // ignore these
+          continue;
+        }
+        where.append("where client = ? or organization = ?");
+        params.add(clientZero);
+        params.add(orgZero);
+      } else if (e.getAccessLevel() == AccessLevel.SYSTEM) {
+        if (!e.isOrganizationEnabled()) {
+          where.append("where client != ?");
+          params.add(clientZero);
+        } else {
+          where.append("where client != ? or organization != ?");
+          params.add(clientZero);
+          params.add(orgZero);
+        }
+        if (!e.isClientEnabled()) {
+          // special case happens for AD_SQL_SCRIPT
+          continue;
+        }
+      } else if (e.getAccessLevel() == AccessLevel.SYSTEM_CLIENT) {
+        if (!e.isOrganizationEnabled()) {
+          // ignore these
+          continue;
+        }
+        where.append("where organization != ?");
+        params.add(orgZero);
+      }
+      final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(e.getName(),
+          where.toString());
+      obq.setParameters(params);
+      for (BaseOBObject bob : obq.list()) {
+        String clientId = null;
+        if (bob instanceof ClientEnabled) {
+          clientId = ((ClientEnabled) bob).getClient().getId();
+        }
+        String orgId = null;
+        if (bob instanceof OrganizationEnabled) {
+          orgId = ((OrganizationEnabled) bob).getOrganization().getId();
+        }
+        sb.append("Object " + bob.getIdentifier() + " (" + bob.getEntityName()
+            + ") has an invalid client/org " + clientId + "/" + orgId
+            + " for the accesslevel of the entity/table: " + e.getAccessLevel().name() + ".\n");
+      }
+    }
+    if (sb.length() > 0) {
+      fail(sb.toString());
+    }
+  }
 
   /**
    * Tests the Client Organization access level.

@@ -24,17 +24,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.base.structure.ClientEnabled;
-import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.CategoryAccounts;
 import org.openbravo.model.common.currency.Currency;
@@ -54,47 +49,6 @@ import org.openbravo.test.base.BaseTest;
 
 public class DalTest extends BaseTest {
   private static final Logger log = Logger.getLogger(DalTest.class);
-
-  /**
-   * Tests/checks if the current client/org of the all objects in the database is valid for the
-   * access level defined for that entity.
-   */
-  public void testADataAccessLevel() {
-    setUserContext("0");
-    final List<Entity> entities = ModelProvider.getInstance().getModel();
-    final StringBuilder sb = new StringBuilder();
-    for (Entity e : entities) {
-      // ignore these for now
-      // TODO: check if the accesslevel of the ad_role_orgaccess table should be changed
-      // to all, it is now client-org (3)
-      if (e.getName().equals(RoleOrganization.ENTITY_NAME)) {
-        continue;
-      }
-      final OBCriteria<BaseOBObject> obc = OBDal.getInstance().createCriteria(e.getName());
-      for (BaseOBObject bob : obc.list()) {
-        String clientId = null;
-        if (bob instanceof ClientEnabled) {
-          clientId = ((ClientEnabled) bob).getClient().getId();
-        }
-        String orgId = null;
-        if (bob instanceof OrganizationEnabled) {
-          orgId = ((OrganizationEnabled) bob).getOrganization().getId();
-        }
-        if (orgId != null && clientId != null) {
-          try {
-            e.checkAccessLevel(clientId, orgId);
-          } catch (OBSecurityException exc) {
-            sb.append(exc.getMessage() + ". Object " + bob.getIdentifier() + " ("
-                + bob.getEntityName() + ") has an invalid client/org " + clientId + "/" + orgId
-                + " for the accesslevel of the entity/table.\n");
-          }
-        }
-      }
-    }
-    if (sb.length() > 0) {
-      fail(sb.toString());
-    }
-  }
 
   /**
    * Test creates a {@link Category}, test simple save through {@link OBDal}. The new object is
