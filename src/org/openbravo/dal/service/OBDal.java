@@ -391,6 +391,11 @@ public class OBDal implements OBSingleton {
   }
 
   private void checkReadAccess(String entityName) {
+    // allow read access to those, otherwise it is really
+    // difficult to use querying on these very generic values
+    if (entityName.equals(Client.ENTITY_NAME) || entityName.equals(Organization.ENTITY_NAME)) {
+      return;
+    }
     final Entity e = ModelProvider.getInstance().getEntity(entityName);
     OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
   }

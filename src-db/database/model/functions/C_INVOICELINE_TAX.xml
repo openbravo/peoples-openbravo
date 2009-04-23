@@ -20,8 +20,8 @@
 * All Rights Reserved.
 * Contributor(s):  _______________________________________.
 ************************************************************************/
-v_INVOICELINE_ID NUMBER; 
-  v_Tax_ID NUMBER;
+v_INVOICELINE_ID VARCHAR2(32) ;
+  v_Tax_ID VARCHAR2(32) ;
   v_IsTaxIncluded VARCHAR(1);
   v_LineNet NUMBER;
   v_Rate NUMBER;

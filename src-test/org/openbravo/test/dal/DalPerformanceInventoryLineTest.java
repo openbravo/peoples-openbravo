@@ -21,6 +21,7 @@ package org.openbravo.test.dal;
 
 import java.math.BigDecimal;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
@@ -30,20 +31,33 @@ import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Does some simple performance tests.
+ * Does some simple performance tests by creating sets of {@link InventoryCount} and
+ * {@link InventoryCountLine} objects and then reading and updating them.
  * 
  * @author mtaal
  */
 
 public class DalPerformanceInventoryLineTest extends BaseTest {
 
-  private static final int NO_HEADER = 5000;
+  private static final Logger log = Logger.getLogger(DalPerformanceInventoryLineTest.class);
+
+  // increase this number to make it a real performance test
+  private static final int NO_HEADER = 50;
   private static final int NO_LINE = 10;
   private static String NAME_PREFIX = "" + System.currentTimeMillis();
 
+  /**
+   * Creates {@link #NO_HEADER} {@link InventoryCount} objects and for each of them {@link #NO_LINE}
+   * {@link InventoryCountLine} objects. These objects are stored in the database and the timing is
+   * reported.
+   */
   public void testACreateInventoryLine() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
+
+    // make sure our user can do this
+    addReadWriteAccess(InventoryCount.class);
+    addReadWriteAccess(InventoryCountLine.class);
+
     final OBCriteria<InventoryCount> icObc = OBDal.getInstance().createCriteria(
         InventoryCount.class);
     icObc.setFirstResult(1);
@@ -58,7 +72,7 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
     final InventoryCountLine baseLine = (InventoryCountLine) DalUtil.copy(iclObc.list().get(0),
         false);
     final long time = System.currentTimeMillis();
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
     for (int i = 0; i < NO_HEADER; i++) {
       final InventoryCount ic = (InventoryCount) DalUtil.copy(baseIc, false);
       ic.setPosted("N");
@@ -72,15 +86,20 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
       }
       OBDal.getInstance().save(ic);
     }
-    OBDal.getInstance().commitAndClose();
-    System.err.println("Created " + NO_HEADER + " inventorycounts and " + (NO_HEADER * NO_LINE)
+    commitTransaction();
+    log.debug("Created " + NO_HEADER + " inventorycounts and " + (NO_HEADER * NO_LINE)
         + " inventory lines" + " in " + (System.currentTimeMillis() - time) + " milliseconds");
-    setErrorOccured(false);
   }
 
+  /**
+   * Reads the {@link InventoryCountLine} objects created in the above tests and adds one new line
+   * and updates one line. The timings are reported in the log.
+   */
   public void testBReadAndAddLine() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
+    // make sure our user can do this
+    addReadWriteAccess(InventoryCount.class);
+    addReadWriteAccess(InventoryCountLine.class);
 
     final OBCriteria<InventoryCountLine> iclObc = OBDal.getInstance().createCriteria(
         InventoryCountLine.class);
@@ -89,7 +108,7 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
     final InventoryCountLine baseLine = (InventoryCountLine) DalUtil.copy(iclObc.list().get(0),
         false);
     final long time = System.currentTimeMillis();
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
 
     final OBCriteria<InventoryCount> icObc = OBDal.getInstance().createCriteria(
         InventoryCount.class);
@@ -111,10 +130,23 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
           .getQuantityOrderBook().floatValue() + 1f)));
       OBDal.getInstance().save(ic);
     }
-    OBDal.getInstance().commitAndClose();
-    System.err.println("Read " + cnt + " inventorycounts with each " + cntLine
+    commitTransaction();
+    log.debug("Read " + cnt + " inventorycounts with each " + cntLine
         + " inventory lines and added one new line and updated one line in "
         + (System.currentTimeMillis() - time) + " milliseconds");
-    setErrorOccured(false);
+  }
+
+  /**
+   * Removes the created {@link InventoryCount} and {@link InventoryCountLine} records.
+   */
+  public void testZCleanUp() {
+    addReadWriteAccess(InventoryCount.class);
+    addReadWriteAccess(InventoryCountLine.class);
+    final OBCriteria<InventoryCount> icObc = OBDal.getInstance().createCriteria(
+        InventoryCount.class);
+    icObc.add(Expression.like("name", NAME_PREFIX + "%"));
+    for (InventoryCount ic : icObc.list()) {
+      OBDal.getInstance().remove(ic);
+    }
   }
 }

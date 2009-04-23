@@ -121,7 +121,7 @@
     v_Qty NUMBER;
     --MODIFIED BY F.IRIAZABAL
     v_QtyOrder NUMBER;
-    v_ProductUOM NUMBER;
+    v_ProductUOM VARCHAR2(32);
     v_ActualQty NUMBER;
     v_QtyAux NUMBER;
     --

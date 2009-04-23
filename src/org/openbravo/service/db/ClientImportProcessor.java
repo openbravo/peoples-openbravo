@@ -87,6 +87,7 @@ public class ClientImportProcessor implements EntityXMLProcessor {
       final Client client = (Client) bob;
       client.setName(newName);
       client.setDescription(newName);
+      client.setSearchKey(newName);
     } else if (bob instanceof Role) {
       final Role role = (Role) bob;
       if (role.getName().indexOf(originalName) == -1) {

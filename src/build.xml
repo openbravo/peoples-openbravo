@@ -228,6 +228,30 @@ build.war: build a war file in the lib directory.
     </javac>
   </target>
 
+  <target name="run.tests" depends="compileSqlc,generate.entities.quick">
+    <junit printsummary="yes" haltonfailure="yes">
+      <classpath refid="project.class.path" />
+      <formatter type="plain" usefile="no"/>
+      <test name="org.openbravo.test.AntTaskTests" haltonfailure="no"/>
+    </junit>
+  </target>
+
+  <target name="run.all.tests" depends="compileSqlc,generate.entities.quick">
+    <junit printsummary="yes" haltonfailure="yes">
+      <classpath refid="project.class.path" />
+      <formatter type="plain" usefile="no"/>
+      <test name="org.openbravo.test.AllAntTaskTests" haltonfailure="no"/>
+    </junit>
+  </target>
+
+  <target name="run.quick.tests" depends="compileSqlc,generate.entities.quick">
+    <junit printsummary="yes" haltonfailure="yes">
+      <classpath refid="project.class.path" />
+      <formatter type="plain" usefile="no"/>
+      <test name="org.openbravo.test.AllQuickAntTaskTests" haltonfailure="no"/>
+    </junit>
+  </target>
+  
   <target name="compileSqlc" depends="sqlc">
     <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
       <classpath refid="project.class.path" />
@@ -547,7 +571,6 @@ build.war: build a war file in the lib directory.
     <antcall inheritall="true" inheritrefs="true" target="smartbuild.no.new.wad" />
     <antcall inheritall="true" inheritrefs="true" target="compileSqlc" />
     <antcall inheritall="true" inheritrefs="true" target="postsrc" />
-    <antcall inheritall="true" inheritrefs="true" target="generate.entities.quick" />
     <antcall inheritall="true" inheritrefs="true" target="translate" />
     <antcall inheritall="true" inheritrefs="true" target="update.build.timestamp" />
   </target>

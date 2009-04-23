@@ -34,7 +34,9 @@ BEGIN
   END IF;
   
   IF (UPDATING) THEN
-    v_check := (:new.tableName != :old.tableName) or (:new.Name != :old.Name);
+    v_check := (:new.tableName != :old.tableName) 
+            or (:new.Name != :old.Name) 
+            or (:new.AD_Package_ID != :old.AD_Package_ID);
   END IF;
   
   IF v_check THEN
@@ -43,28 +45,26 @@ BEGIN
       FROM AD_MODULE M, AD_PACKAGE P
      WHERE M.AD_MODULE_ID = P.AD_MODULE_ID
        AND P.AD_PACKAGE_ID = :new.AD_Package_ID;
-    
-    
-    IF (cuerrentModuleID!='0') THEN
-     SELECT COUNT(*)
-       INTO v_Aux
-       FROM (
-        SELECT 1      
-          FROM AD_MODULE_DBPREFIX P
-        WHERE P.AD_MODULE_ID = cuerrentModuleID
-          AND instr(upper(:new.TableName), upper(name)||'_') = 1
-          AND instr(upper(:new.Name), upper(name)||'_') = 1
-        UNION
-         SELECT 1
-           FROM AD_EXCEPTIONS 
-           WHERE TYPE='TABLE'
-           AND UPPER(NAME1)=UPPER(:new.Tablename)) AA;
-        
-       IF v_Aux = 0 THEN
-         RAISE_APPLICATION_ERROR(-20536, 'Names must start with its module''s DB prefix') ;
-       END IF;
-    END IF;
+   
+   SELECT COUNT(*)
+     INTO v_Aux
+     FROM (
+      SELECT 1      
+        FROM AD_MODULE_DBPREFIX P
+      WHERE P.AD_MODULE_ID = cuerrentModuleID
+        AND instr(upper(:new.TableName), upper(name)||'_') = 1
+        AND (instr(upper(:new.Name), upper(name)||'_') = 1 OR cuerrentModuleID = '0')
+      UNION
+       SELECT 1
+         FROM AD_EXCEPTIONS 
+         WHERE TYPE='TABLE'
+         AND UPPER(NAME1)=UPPER(:new.Tablename)) AA;
+      
+     IF v_Aux = 0 THEN
+       RAISE_APPLICATION_ERROR(-20536, 'Names must start with its module''s DB prefix ') ;
+     END IF;
   END IF;
+
 END AD_TABLE_TRG
 ]]></body>
     </trigger>

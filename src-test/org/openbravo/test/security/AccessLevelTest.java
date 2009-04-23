@@ -19,98 +19,191 @@
 
 package org.openbravo.test.security;
 
-import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.dal.core.SessionHandler;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.AccessLevel;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.ClientEnabled;
+import org.openbravo.base.structure.OrganizationEnabled;
+import org.openbravo.base.validation.AccessLevelChecker;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.financialmgmt.cashmgmt.CashJournal;
-import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Tests check of the accesslevel of an entity
+ * Tests/checks the accesslevel of an entity. See the {@link AccessLevelChecker}.
+ * 
+ * @see AccessLevelChecker
+ * @see AccessLevel
  * 
  * @author mtaal
  */
 
 public class AccessLevelTest extends BaseTest {
 
+  /**
+   * Tests/checks if the current client/org of the all objects in the database is valid for the
+   * access level defined for that entity.
+   */
+  public void testADataAccessLevel() {
+    setUserContext("0");
+    final List<Entity> entities = ModelProvider.getInstance().getModel();
+    final StringBuilder sb = new StringBuilder();
+    final Client clientZero = OBDal.getInstance().get(Client.class, "0");
+    final Organization orgZero = OBDal.getInstance().get(Organization.class, "0");
+    for (Entity e : entities) {
+      final StringBuilder where = new StringBuilder();
+      final List<Object> params = new ArrayList<Object>();
+      if (e.getAccessLevel() == AccessLevel.ALL) {
+        // anything allowed continue
+        continue;
+      } else if (e.getAccessLevel() == AccessLevel.CLIENT) {
+        sb.append("Access Level CLIENT encountered for entity " + e.getName() + "/"
+            + e.getTableName() + ", this AccessLevel is not supported.\n");
+      } else if (e.getAccessLevel() == AccessLevel.CLIENT_ORGANIZATION) {
+        if (!e.isClientEnabled()) {
+          continue;
+        }
+        where.append("where client = ?");
+        params.add(clientZero);
+      } else if (e.getAccessLevel() == AccessLevel.ORGANIZATION) {
+        if (!e.isOrganizationEnabled() || !e.isClientEnabled()) {
+          // ignore these
+          continue;
+        }
+        where.append("where client = ? or organization = ?");
+        params.add(clientZero);
+        params.add(orgZero);
+      } else if (e.getAccessLevel() == AccessLevel.SYSTEM) {
+        if (!e.isOrganizationEnabled()) {
+          where.append("where client != ?");
+          params.add(clientZero);
+        } else {
+          where.append("where client != ? or organization != ?");
+          params.add(clientZero);
+          params.add(orgZero);
+        }
+        if (!e.isClientEnabled()) {
+          // special case happens for AD_SQL_SCRIPT
+          continue;
+        }
+      } else if (e.getAccessLevel() == AccessLevel.SYSTEM_CLIENT) {
+        if (!e.isOrganizationEnabled()) {
+          // ignore these
+          continue;
+        }
+        where.append("where organization != ?");
+        params.add(orgZero);
+      }
+      final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(e.getName(),
+          where.toString());
+      obq.setParameters(params);
+      for (BaseOBObject bob : obq.list()) {
+        String clientId = null;
+        if (bob instanceof ClientEnabled) {
+          clientId = ((ClientEnabled) bob).getClient().getId();
+        }
+        String orgId = null;
+        if (bob instanceof OrganizationEnabled) {
+          orgId = ((OrganizationEnabled) bob).getOrganization().getId();
+        }
+        sb.append("Object " + bob.getIdentifier() + " (" + bob.getEntityName()
+            + ") has an invalid client/org " + clientId + "/" + orgId
+            + " for the accesslevel of the entity/table: " + e.getAccessLevel().name() + ".\n");
+      }
+    }
+    if (sb.length() > 0) {
+      fail(sb.toString());
+    }
+  }
+
+  /**
+   * Tests the Client Organization access level.
+   */
   public void testAccessLevelCO() {
-    setErrorOccured(true);
     setBigBazaarAdminContext();
     final Client c = OBDal.getInstance().get(Client.class, "0");
 
     final BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, "1000005");
     bp.setClient(c);
     try {
-      SessionHandler.getInstance().commitAndClose();
+      commitTransaction();
       fail();
-    } catch (final OBSecurityException e) {
+    } catch (final OBException e) {
       // no fail!
       assertTrue(e.getMessage().indexOf("may not have instances with client 0") != -1);
-      SessionHandler.getInstance().rollback();
+      rollback();
     }
-    setErrorOccured(false);
   }
 
+  /**
+   * Test the System access level.
+   */
   public void testAccessLevelSystem() {
-    setErrorOccured(true);
     setUserContext("0");
     final Organization o = OBDal.getInstance().get(Organization.class, "1000002");
     final Table t = OBDal.getInstance().get(Table.class, "100");
     t.setOrganization(o);
 
     try {
-      SessionHandler.getInstance().commitAndClose();
+      commitTransaction();
       fail();
-    } catch (final OBSecurityException e) {
+    } catch (final OBException e) {
       // no fail!
       assertTrue("Invalid exception: " + e.getMessage(), e.getMessage().indexOf(
           " may only have instances with organization *") != -1);
-      SessionHandler.getInstance().rollback();
+      rollback();
     }
-    setErrorOccured(false);
   }
 
+  /**
+   * Tests the Organization Access Level.
+   */
   public void testAccessLevelOrganization() {
-    setErrorOccured(true);
     setUserContext("0");
     final Organization o = OBDal.getInstance().get(Organization.class, "0");
     final CashJournal c = OBDal.getInstance().get(CashJournal.class, "1000000");
     c.setOrganization(o);
 
     try {
-      SessionHandler.getInstance().commitAndClose();
+      commitTransaction();
       fail();
-    } catch (final OBSecurityException e) {
+    } catch (final OBException e) {
       // no fail!
       assertTrue("Invalid exception " + e.getMessage(), e.getMessage().indexOf(
           " may not have instances with organization *") != -1);
-      SessionHandler.getInstance().rollback();
+      rollback();
     }
-    setErrorOccured(false);
   }
 
+  /**
+   * Tests Access Level System Client.
+   */
   public void testAccessLevelSC() {
-    setErrorOccured(true);
     setUserContext("0");
     final Organization o = OBDal.getInstance().get(Organization.class, "1000001");
-    final TaxRate t = OBDal.getInstance().get(TaxRate.class, "1000000");
-    t.setOrganization(o);
+    final Country c = OBDal.getInstance().get(Country.class, "100");
+    c.setOrganization(o);
 
     try {
-      SessionHandler.getInstance().commitAndClose();
-      fail();
-    } catch (final OBSecurityException e) {
+      commitTransaction();
+      fail("The organization of a system client may not be set to a non-zero org.");
+    } catch (final OBException e) {
       // no fail!
       assertTrue("Invalid exception " + e.getMessage(), e.getMessage().indexOf(
           "may only have instances with organization *") != -1);
-      SessionHandler.getInstance().rollback();
+      rollback();
     }
-    setErrorOccured(false);
   }
 
 }

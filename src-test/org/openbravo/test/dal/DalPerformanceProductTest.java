@@ -19,26 +19,30 @@
 
 package org.openbravo.test.dal;
 
-import org.openbravo.dal.core.OBContext;
+import org.apache.log4j.Logger;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Does some simple performance tests.
+ * Does some simple performance tests by reading and updating of all {@link Product} objects, either
+ * directly or in paged mode.
  * 
  * @author mtaal
  */
 
 public class DalPerformanceProductTest extends BaseTest {
-  // tests a paged read of products and print of the identifier.
+  private static final Logger log = Logger.getLogger(DalPerformanceProductTest.class);
+
+  /**
+   * Tests a paged read of products and print of the identifier. The timing is reported in the log.
+   */
   public void testProduct25PageRead() {
-    setErrorOccured(true);
     setUserContext("1000019");
     final OBCriteria<Product> countObc = OBDal.getInstance().createCriteria(Product.class);
     final int count = countObc.count();
-    System.err.println("Number of products " + count);
+    log.debug("Number of products " + count);
     final int pageSize = 25;
     final int pageCount = 1 + (count / pageSize);
     long time = System.currentTimeMillis();
@@ -50,9 +54,9 @@ public class DalPerformanceProductTest extends BaseTest {
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
 
-      System.err.println("PAGE>>> " + (1 + i));
+      log.debug("PAGE>>> " + (1 + i));
       for (final Product t : obc.list()) {
-        System.err.println(t.getIdentifier());
+        log.debug(t.getIdentifier());
       }
       if (avg == 0) {
         avg = System.currentTimeMillis() - time;
@@ -60,21 +64,22 @@ public class DalPerformanceProductTest extends BaseTest {
         avg = (avg + System.currentTimeMillis() - time) / 2;
       }
       time = System.currentTimeMillis();
-      OBDal.getInstance().commitAndClose();
+      commitTransaction();
     }
 
-    System.err.println("Read " + pageCount + " pages with average " + avg
-        + " milliSeconds per page");
-    setErrorOccured(false);
+    log.debug("Read " + pageCount + " pages with average " + avg + " milliSeconds per page");
   }
 
-  // tests a paged read of products and print of the identifier.
+  /**
+   * Tests a paged read of products and print of the identifier. In addition extra information is
+   * read for the {@link Product}, nl. the {@link Product#getProductCategory()} and the
+   * {@link Product#getTaxCategory()}. The timing is reported in the log.
+   */
   public void testProduct25PageReadGetExtra() {
-    setErrorOccured(true);
     setUserContext("1000019");
     final OBCriteria<Product> countObc = OBDal.getInstance().createCriteria(Product.class);
     final int count = countObc.count();
-    System.err.println("Number of products " + count);
+    log.debug("Number of products " + count);
     final int pageSize = 25;
     final int pageCount = 1 + (count / pageSize);
     long time = System.currentTimeMillis();
@@ -86,13 +91,13 @@ public class DalPerformanceProductTest extends BaseTest {
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
 
-      System.err.println("PAGE>>> " + (1 + i));
+      log.debug("PAGE>>> " + (1 + i));
       for (final Product t : obc.list()) {
-        System.err.println(t.toString() + " Product Category "
+        log.debug(t.toString() + " Product Category "
             + (t.getProductCategory() != null ? t.getProductCategory().getIdentifier() : "NULL")
             + " Tax Category "
             + (t.getTaxCategory() != null ? t.getTaxCategory().getIdentifier() : "NULL"));
-        System.err.println(t.toString());
+        log.debug(t.toString());
       }
       if (avg == 0) {
         avg = System.currentTimeMillis() - time;
@@ -100,17 +105,18 @@ public class DalPerformanceProductTest extends BaseTest {
         avg = (avg + System.currentTimeMillis() - time) / 2;
       }
       time = System.currentTimeMillis();
-      OBDal.getInstance().commitAndClose();
+      commitTransaction();
     }
 
-    System.err.println("Read " + pageCount + " pages with average " + avg
+    log.debug("Read " + pageCount + " pages with average " + avg
         + " milliSeconds per page (read extra info)");
-    setErrorOccured(false);
   }
 
-  // tests reading all products
+  /**
+   * Reads all {@link Product} objects sorted by name and also prints related information:
+   * {@link Product#getProductCategory()} and {@link Product#getTaxCategory()}.
+   */
   public void testReadProducts() {
-    setErrorOccured(true);
     setUserContext("1000019");
     final OBCriteria<Product> obc = OBDal.getInstance().createCriteria(Product.class);
     obc.setFilterOnReadableOrganization(false);
@@ -122,45 +128,47 @@ public class DalPerformanceProductTest extends BaseTest {
           + (t.getProductCategory() != null ? t.getProductCategory().getIdentifier() : "NULL")
           + " Tax Category "
           + (t.getTaxCategory() != null ? t.getTaxCategory().getIdentifier() : "NULL");
-      System.err.println(rs);
+      log.debug(rs);
     }
 
-    System.err.println("Read 75000 products in " + (System.currentTimeMillis() - time)
+    log.debug("Read 75000 products in " + (System.currentTimeMillis() - time)
         + " milliSeconds (reading extra info)");
-    setErrorOccured(false);
   }
 
-  // tests a paged read of products and print of the identifier.
+  /**
+   * Reads all {@link Product} objects and updates the name.
+   */
   public void testUpdateAllProducts() {
-    setErrorOccured(true);
     setUserContext("1000019");
     final OBCriteria<Product> countObc = OBDal.getInstance().createCriteria(Product.class);
     final int count = countObc.count();
-    System.err.println("Number of products " + count);
+    log.debug("Number of products " + count);
     final long time = System.currentTimeMillis();
     final OBCriteria<Product> obc = OBDal.getInstance().createCriteria(Product.class);
     obc.setFilterOnReadableOrganization(false);
     obc.addOrderBy(Product.PROPERTY_NAME, true);
 
-    OBContext.getOBContext().setInAdministratorMode(true);
+    // don't be bothered by security exceptions
+    addReadWriteAccess(Product.class);
     for (final Product t : obc.list()) {
-      t.setName(t.getName() + "t");
+      t.setName(t.getName() + "_t");
       OBDal.getInstance().save(t);
     }
     OBDal.getInstance().flush();
-    OBDal.getInstance().commitAndClose();
-    System.err.println("Updated " + count + " products in " + (System.currentTimeMillis() - time)
+    commitTransaction();
+    log.debug("Updated " + count + " products in " + (System.currentTimeMillis() - time)
         + " milliseconds ");
-    setErrorOccured(false);
   }
 
+  /**
+   * Reads all products in a paged manner and updates the name.
+   */
   public void testUpdateAllProductsByPage() {
-    setErrorOccured(true);
     setUserContext("1000019");
-    OBContext.getOBContext().setInAdministratorMode(true);
+    addReadWriteAccess(Product.class);
     final OBCriteria<Product> countObc = OBDal.getInstance().createCriteria(Product.class);
     final int count = countObc.count();
-    System.err.println("Number of products " + count);
+    log.debug("Number of products " + count);
     final int pageSize = 25;
     final int pageCount = 1 + (count / pageSize);
     long time = System.currentTimeMillis();
@@ -172,9 +180,11 @@ public class DalPerformanceProductTest extends BaseTest {
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
 
-      // System.err.println("PAGE>>> " + (1 + i));
+      // log.debug("PAGE>>> " + (1 + i));
       for (final Product t : obc.list()) {
-        t.setName(t.getName() + "t");
+        if (t.getName().endsWith("_t")) {
+          t.setName(t.getName().substring(0, t.getName().length() - 2));
+        }
         OBDal.getInstance().save(t);
       }
       if (avg == 0) {
@@ -183,11 +193,10 @@ public class DalPerformanceProductTest extends BaseTest {
         avg = (avg + System.currentTimeMillis() - time) / 2;
       }
       time = System.currentTimeMillis();
-      OBDal.getInstance().commitAndClose();
+      commitTransaction();
     }
 
-    System.err.println("Updated " + pageCount + " pages of products with average " + avg
+    log.debug("Updated " + pageCount + " pages of products with average " + avg
         + " milliSeconds per page and 25 products per page");
-    setErrorOccured(false);
   }
 }

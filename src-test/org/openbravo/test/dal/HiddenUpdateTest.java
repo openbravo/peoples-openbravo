@@ -27,12 +27,9 @@ import org.hibernate.EmptyInterceptor;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalSessionFactoryController;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLConverter;
@@ -40,24 +37,24 @@ import org.openbravo.test.base.BaseTest;
 
 /**
  * Test for updates which can happen behind the scenes (but should not happen) if properties are
- * accidentally changed.
- * 
- * Note the testcases assume that they are run in the order defined in this class.
+ * accidentally changed. An example of this is that a boolean field has a null in the database, then
+ * when hibernate reads it from the database as a default false is set in that field. Then when
+ * checking for dirty the object has changed as the boolean value has changed from null to false.
  * 
  * @author mtaal
  */
 
 public class HiddenUpdateTest extends BaseTest {
 
-  // Test for hidden updates, these are not allowed!
-  // Hidden updates can occur when a load/read of an entity also
-  // changes the state, or that hibernate detects dirty in another way
+  /**
+   * Tests for hidden updates. Hidden updates can occur when a load/read of an entity also changes
+   * the state, or that hibernate detects dirty in another way. Use the Hibernate Interceptor
+   * concept.
+   */
   public void testHiddenUpdates() {
-    setErrorOccured(true);
     setUserContext("0");
 
     final SessionFactoryController currentSFC = SessionFactoryController.getInstance();
-    OBContext.getOBContext().setInAdministratorMode(true);
     try {
       final SessionFactoryController newSFC = new LocalSessionFactoryController();
       SessionFactoryController.setInstance(newSFC);
@@ -73,12 +70,6 @@ public class HiddenUpdateTest extends BaseTest {
         final PersistentClass pc = (PersistentClass) it.next();
         final String entityName = pc.getEntityName();
 
-        final Entity e = ModelProvider.getInstance().getEntity(entityName);
-
-        if (entityName.startsWith("C_Selection")) {
-          continue;
-        }
-        System.err.println("++++++++ Reading entity " + entityName + " +++++++++++");
         for (final Object o : OBDal.getInstance().createCriteria(entityName).list()) {
           if (o == null) {
             // can occur when reading views which have nullable
@@ -92,19 +83,17 @@ public class HiddenUpdateTest extends BaseTest {
       }
     } finally {
       SessionFactoryController.setInstance(currentSFC);
-      OBContext.getOBContext().setInAdministratorMode(false);
     }
-    setErrorOccured(false);
   }
 
-  class LocalSessionFactoryController extends DalSessionFactoryController {
+  private class LocalSessionFactoryController extends DalSessionFactoryController {
     @Override
     protected void setInterceptor(Configuration configuration) {
       configuration.setInterceptor(new LocalInterceptor());
     }
   }
 
-  class LocalInterceptor extends EmptyInterceptor {
+  private class LocalInterceptor extends EmptyInterceptor {
 
     private static final long serialVersionUID = 1L;
 

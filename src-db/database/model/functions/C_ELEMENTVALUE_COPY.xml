@@ -35,7 +35,7 @@
     v_xAD_Client_ID VARCHAR2(32);
     v_xAD_Org_ID VARCHAR2(32);
     v_xUpdated DATE;
-    v_xUpdatedBy NUMBER;
+    v_xUpdatedBy VARCHAR2(32);
     v_NextNo VARCHAR2(32);
   BEGIN
     --  Get target base info

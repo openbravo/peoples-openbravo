@@ -19,8 +19,6 @@
 
 package org.openbravo.test.xml;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -29,10 +27,9 @@ import org.hibernate.criterion.Expression;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.utility.ReferenceDataStore;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.geography.Location;
@@ -40,53 +37,66 @@ import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 
 /**
- * Test import of data with a business object, adding and removing childs
+ * Test import of data for a business object (in this case {@link Warehouse} and its referenced
+ * information. A warehouse refers to a {@link Location}, the export exports both the warehouses as
+ * their locations. Then the tests check that both are inserted and then when the warehouses are
+ * reimported that the locations previously imported are re-used. Note that this test also tests the
+ * use of the {@link ReferenceDataStore} which is used to map id's used in the xml to the eventual
+ * id of the imported object in the database.
  * 
  * @author mtaal
  */
 
 public class EntityXMLImportTestReference extends XMLBaseTest {
 
-  public void _testPrintReadable() {
-    setUserContext("1000019");
-    System.err.println("User 1000019");
-    OBContext.getOBContext().getEntityAccessChecker().dump();
-  }
-
-  // import greetings in 1000002
+  /**
+   * Exports {@link Warehouse} objects from client/org 1000000 and imports them in 1000001. Also the
+   * referenced {@link Location} objects are imported.
+   */
   public void test1Warehouse() {
     cleanRefDataLoaded();
-    setErrorOccured(true);
-    setUserContext("1000001");
-
+    setUserContext("1000000");
+    addReadWriteAccess(Warehouse.class);
     final String xml = getXML(Warehouse.class);
-    // insert in org 1000002
+    // insert in org 1000001
     setUserContext("1000019");
-    // System.err.println(xml);
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
         OBDal.getInstance().get(Client.class, "1000001"),
         OBDal.getInstance().get(Organization.class, "1000001"), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
+    } else if (ir.getErrorMessages() != null) {
+      fail(ir.getErrorMessages());
     } else {
+      // 2 warehouses, 2 locations
       assertEquals(4, ir.getInsertedObjects().size());
       assertEquals(0, ir.getUpdatedObjects().size());
     }
-    setErrorOccured(ir.hasErrorOccured());
+    if (ir.hasErrorOccured()) {
+      fail(ir.getErrorMessages());
+    }
   }
 
+  /**
+   * Remove the imported {@link Warehouse} objects from the 1000001 client. The imported
+   * {@link Location} objects should still remain.
+   */
   public void test2Warehouse() {
-    setErrorOccured(true);
     setUserContext("1000019");
+    // a warehouse is not deletable, but as we are cleaning up, they should be
+    // deleted, force this by being admin
+    OBContext.getOBContext().setInAdministratorMode(true);
     removeAll(Warehouse.class, 2, Expression.ne("id", "1000002"));
-    setErrorOccured(false);
   }
 
+  /**
+   * Repeat the action of importing the {@link Warehouse} objects from 1000000. Now the
+   * {@link Location} objects are also exported but not imported as they already exist in 1000001.
+   */
   public void test3Warehouse() {
-    setErrorOccured(true);
-    setUserContext("1000001");
-
+    setUserContext("1000000");
+    addReadWriteAccess(Warehouse.class);
     final String xml = getXML(Warehouse.class);
     setUserContext("1000019");
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
@@ -95,58 +105,47 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
+    } else if (ir.getErrorMessages() != null) {
+      fail(ir.getErrorMessages());
     }
     assertEquals(2, ir.getInsertedObjects().size());
     for (final BaseOBObject bob : ir.getInsertedObjects()) {
       assertTrue(bob instanceof Warehouse);
     }
     assertEquals(0, ir.getUpdatedObjects().size());
-    setErrorOccured(ir.hasErrorOccured());
-  }
-
-  public void test4Warehouse() {
-    setErrorOccured(true);
-    setUserContext("1000019");
-    removeAll(Warehouse.class, 2, Expression.gt("created", new Date(
-        System.currentTimeMillis() - 1000 * 3600 * 24)));
-    removeAll(Location.class, 2, Expression.gt("created", new Date(
-        System.currentTimeMillis() - 1000 * 3600 * 24)));
-    setErrorOccured(false);
-  }
-
-  public <T extends BaseOBObject> void removeAll(Class<T> clz, int expectCount, Criterion c) {
-    boolean prevMode = false;
-    try {
-      setErrorOccured(true);
-      setUserContext("1000019");
-      prevMode = OBContext.getOBContext().setInAdministratorMode(true);
-
-      final Criteria criteria = SessionHandler.getInstance().getSession().createCriteria(clz);
-      if (c != null) {
-        criteria.add(c);
-      }
-      criteria.add(Expression.eq("client.id", "1000001"));
-
-      @SuppressWarnings("unchecked")
-      final List<T> list = criteria.list();
-      assertEquals(expectCount, list.size());
-      for (final T t : list) {
-        SessionHandler.getInstance().getSession().delete(t);
-      }
-      setErrorOccured(false);
-    } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+    if (ir.hasErrorOccured()) {
+      fail(ir.getErrorMessages());
     }
   }
 
-  public <T extends BaseOBObject> String getXML(Class<T> clz) {
-    setErrorOccured(true);
-    final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
-    final EntityXMLConverter exc = EntityXMLConverter.newInstance();
-    exc.setOptionIncludeReferenced(true);
-    // exc.setOptionEmbedChildren(true);
-    // exc.setOptionIncludeChildren(true);
-    exc.setAddSystemAttributes(false);
-    return exc.toXML(new ArrayList<BaseOBObject>(obc.list()));
+  /**
+   * Clean up by removing both the imported {@link Warehouse} and {@link Location} objects from
+   * 100001 client.
+   */
+  public void test4Warehouse() {
+    setUserContext("1000019");
+    // a warehouse is not deletable, but as we are cleaning up, they should be
+    // deleted, force this by being admin
+    OBContext.getOBContext().setInAdministratorMode(true);
+    removeAll(Warehouse.class, 2, Expression.ne("id", "1000002"));
+    removeAll(Location.class, 2, Expression.not(Expression.in("id", new String[] { "1000048",
+        "1000049", "1000050" })));
+  }
+
+  private <T extends BaseOBObject> void removeAll(Class<T> clz, int expectCount, Criterion c) {
+    final Criteria criteria = SessionHandler.getInstance().getSession().createCriteria(clz);
+    if (c != null) {
+      criteria.add(c);
+    }
+    criteria.add(Expression.eq("client.id", "1000001"));
+
+    @SuppressWarnings("unchecked")
+    final List<T> list = criteria.list();
+    if (expectCount != -1) {
+      assertEquals(expectCount, list.size());
+    }
+    for (final T t : list) {
+      SessionHandler.getInstance().getSession().delete(t);
+    }
   }
 }

@@ -46,7 +46,7 @@
           <input type="text" class="DataGrid_Table_Dummy_Input" id="genericTree_dummy_input"></input>
         </div>
         <div class="TextArea_FourCells_width Tree_Containerxx" id="genericTree" onclick="gt_focusTreeContainer(this);" onmousedown="gt_focusTreeContainer(this);"> 
-          <div style="padding: 5 5 5 5;">
+          <div style="padding: 5 5 5 5;" id="genericTreeRowContainer">
             <FIELD_TMP id="tree"></FIELD_TMP>
           </div>
         </div>

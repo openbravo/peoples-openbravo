@@ -291,7 +291,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       // Now dataTotal is covered until the first record to show in this screen, so previous amounts
       // are calculated accurately, and saved in previousDebit and previousCredit variables.
       String strOld = "";
-      for (int i = 0; i < data.length && i < dataTotal.length; i++) {
+      for (int i = 0; data.length >= 1 && i < dataTotal.length; i++) {
         if (dataTotal[i].factAcctId.equals(data[0].factAcctId)) {
           if (!strOld.equals(((strcBpartnerId.equals("") && strAll.equals("")) ? ""
               : dataTotal[i].cBpartnerId)

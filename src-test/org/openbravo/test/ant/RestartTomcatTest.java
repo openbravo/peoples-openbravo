@@ -22,13 +22,16 @@ package org.openbravo.test.ant;
 import org.openbravo.service.system.ReloadContext;
 
 /**
- * Tests an ant task.
+ * A restart tomcat test. Uses the {@link ReloadContext} class.
  * 
  * @author mtaal
  */
 
 public class RestartTomcatTest extends BaseAntTest {
 
+  /**
+   * Restart a running tomcat.
+   */
   public void testRestart() {
     ReloadContext.reload();
     // RestartTomcat.restart();

@@ -34,8 +34,8 @@ public class NumericPropertyValidator extends BasePropertyValidator {
 
   static boolean isValidationRequired(Property p) {
     if (p.isPrimitive()
-        && (p.getPrimitiveType() == Float.class || p.getPrimitiveType() == BigDecimal.class || p
-            .getPrimitiveType() == Integer.class)) {
+        && (p.getPrimitiveType() == Float.class || p.getPrimitiveType() == BigDecimal.class
+            || p.getPrimitiveType() == Integer.class || p.getPrimitiveType() == Long.class)) {
       if (p.getMinValue() != null || p.getMaxValue() != null) {
         return true;
       }
@@ -70,6 +70,9 @@ public class NumericPropertyValidator extends BasePropertyValidator {
     } else if (int.class.isAssignableFrom(value.getClass())
         || Integer.class.isAssignableFrom(value.getClass())) {
       localValue = new BigDecimal((Integer) value);
+    } else if (long.class.isAssignableFrom(value.getClass())
+        || Long.class.isAssignableFrom(value.getClass())) {
+      localValue = new BigDecimal((Long) value);
     } else {
       Check.isInstanceOf(value, BigDecimal.class);
       localValue = (BigDecimal) value;

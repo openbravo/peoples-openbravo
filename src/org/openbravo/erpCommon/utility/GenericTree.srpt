@@ -27,7 +27,7 @@
 
            <div id="endLine" class="Tree_LastParent_Spots">
              <FIELD_TMP id="include">
-               <div id="buttonTreexx" class="Tree_Folder_Closed" onclick="gt_updateData('OPENNODE', 'oo');return false;" style="display:none;"></div>
+               <div id="buttonTreexx" class="Tree_Folder_Closed" onclick="gt_updateData('OPENNODE', 'oo'); return false;" style="display:none;"></div>
              </FIELD_TMP>
            </div>
            <div class="Tree_Checkbox_Spots_Closed" id="folderxx">

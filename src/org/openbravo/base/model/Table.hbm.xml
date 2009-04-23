@@ -39,6 +39,8 @@
 		<many-to-one name="thePackage" not-null="true" class="org.openbravo.base.model.Package" column="ad_package_id"/>
 		       
 		<property name="updated"/>
+
+        <property name="treeType" column="treetype"/>
 		       
 	</class>
 </hibernate-mapping>

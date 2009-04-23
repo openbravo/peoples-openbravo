@@ -65,13 +65,13 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
   @Override
   public void execute() {
 
+    if (getBasePath() == null) {
+      setBasePath(super.getProject().getBaseDir().getAbsolutePath());
+    }
+
     if (!hasChanged()) {
       log.info("Model has not changed since last run, not re-generating entities");
       return;
-    }
-
-    if (getBasePath() == null) {
-      setBasePath(super.getProject().getBaseDir().getAbsolutePath());
     }
 
     if (debug) {
@@ -117,11 +117,27 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
       OBConfigFileProvider.getInstance().setFileLocation(getProviderConfigDirectory());
     }
 
+    // check if the logic to generate has changed...
+    final String sourceDir = getBasePath();
+    long lastModifiedPackage = 0;
+    lastModifiedPackage = getLastModifiedPackage("org.openbravo.base.model", sourceDir,
+        lastModifiedPackage);
+    lastModifiedPackage = getLastModifiedPackage("org.openbravo.base.gen", sourceDir,
+        lastModifiedPackage);
+    lastModifiedPackage = getLastModifiedPackage("org.openbravo.base.structure", sourceDir,
+        lastModifiedPackage);
+
     // check if there is a sourcefile which was updated before the last
     // time the model was created. In this case that sourcefile (and
     // all source files need to be regenerated
     final long lastModelUpdateTime = ModelProvider.getInstance().computeLastUpdateModelTime();
-    return isSourceFileUpdatedBeforeModelChange(modelDir, lastModelUpdateTime);
+    final long lastModified;
+    if (lastModelUpdateTime > lastModifiedPackage) {
+      lastModified = lastModelUpdateTime;
+    } else {
+      lastModified = lastModifiedPackage;
+    }
+    return isSourceFileUpdatedBeforeModelChange(modelDir, lastModified);
   }
 
   private boolean isSourceFileUpdatedBeforeModelChange(File file, long modelUpdateTime) {
@@ -134,6 +150,28 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
       return false;
     }
     return file.lastModified() < modelUpdateTime;
+  }
+
+  private long getLastModifiedPackage(String pkg, String baseSourcePath, long prevLastModified) {
+    final File file = new File(baseSourcePath, pkg.replaceAll("\\.", File.separator));
+    final long lastModified = getLastModifiedRecursive(file);
+    if (lastModified > prevLastModified) {
+      return lastModified;
+    }
+    return prevLastModified;
+  }
+
+  private long getLastModifiedRecursive(File file) {
+    long lastModified = file.lastModified();
+    if (file.isDirectory()) {
+      for (File child : file.listFiles()) {
+        final long childLastModified = getLastModifiedRecursive(child);
+        if (lastModified < childLastModified) {
+          lastModified = childLastModified;
+        }
+      }
+    }
+    return lastModified;
   }
 
   public String getProviderConfigDirectory() {

@@ -26,16 +26,16 @@ public class AllTests {
 
   public static Test suite() {
     final TestSuite suite = new TestSuite("Test for org.openbravo.test.dal");
-    // $JUnit-BEGIN$
-    // suite.addTestSuite(CompositeIdTest.class);
+    suite.addTestSuite(DalComplexQueryRequisitionTest.class);
+    suite.addTestSuite(DalComplexQueryTestOrderLine.class);
+    suite.addTestSuite(DalPerformanceInventoryLineTest.class);
+    suite.addTestSuite(DalPerformanceProductTest.class);
+    suite.addTestSuite(DalQueryTest.class);
+    suite.addTestSuite(DalTest.class);
+    suite.addTestSuite(DynamicEntityTest.class);
     suite.addTestSuite(HiddenUpdateTest.class);
     suite.addTestSuite(MappingGenerationTest.class);
     suite.addTestSuite(ValidationTest.class);
-    suite.addTestSuite(DynamicEntityTest.class);
-    suite.addTestSuite(DalTest.class);
-    suite.addTestSuite(DalQueryTest.class);
-    suite.addTestSuite(HqlTest.class);
-    // $JUnit-END$
     return suite;
   }
 

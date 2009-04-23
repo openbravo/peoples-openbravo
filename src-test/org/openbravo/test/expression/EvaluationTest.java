@@ -24,6 +24,7 @@ import java.util.List;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.expression.Evaluator;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
@@ -31,23 +32,24 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Test different parts of the dal api.
- * 
- * Note the testcases assume that they are run in the order defined in this class.
+ * Test the expression processor used in datasets: {@link Evaluator}.
  * 
  * @author mtaal
  */
 
 public class EvaluationTest extends BaseTest {
+  private static final Logger log = Logger.getLogger(EvaluationTest.class);
 
+  /**
+   * Tests the evaluation of a simple java script expression executed on a set of objects.
+   */
   public void testEvaluation() {
-    setErrorOccured(true);
     setUserContext("0");
 
     // as a test print scripting language names
     final ScriptEngineManager manager = new ScriptEngineManager();
     for (final ScriptEngineFactory sef : manager.getEngineFactories()) {
-      System.err.println(sef.getEngineName());
+      log.debug(sef.getEngineName());
     }
 
     final List<Table> tables = OBDal.getInstance().createCriteria(Table.class).list();
@@ -57,10 +59,12 @@ public class EvaluationTest extends BaseTest {
           + Table.PROPERTY_DBTABLENAME + "== 'AD_Client' && " + Table.PROPERTY_DATAACCESSLEVEL
           + " > 5";
       final Boolean result = Evaluator.getInstance().evaluateBoolean(t, script);
-      System.err.println(t.getName() + " : " + result);
+      log.debug(t.getName() + " : " + result);
       found = found || result;
+      if (found) {
+        break;
+      }
     }
     assertTrue(found);
-    setErrorOccured(false);
   }
 }

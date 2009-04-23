@@ -51,7 +51,7 @@
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
 <script language="JavaScript" type="text/javascript">
- function abrirVentana(id, issotrx){
+ function ShipmentOrReceipt(id, issotrx){
   if (issotrx == 'Y')  submitCommandFormParameter('DIRECT', document.frmMain.inpmInoutId, id, false, document.frmMain, '../GoodsShipment/Header_Relation.html', null, false, true);
   else submitCommandFormParameter('DIRECT', document.frmMain.inpmInoutId, id, false, document.frmMain, '../GoodsReceipt/Header_Relation.html', null, false, true)
  }
@@ -472,7 +472,7 @@ function onloadFunctions(){
                     </tr>
                     <div id="sectionDetail"> 
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
-                        <td width="10%" class="DataGrid_Body_Cell"><a href="#" onclick="abrirVentana('xx', 'yy');return false;" onmouseover="window.status='Incoming/Outgoing';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
+                        <td width="10%" class="DataGrid_Body_Cell"><a href="#" onclick="ShipmentOrReceipt('xx', 'yy');return false;" onmouseover="window.status='Incoming/Outgoing';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
                           <span id="fieldDocumentNo">xx850000007</span></a></td>
                         <td width="10%" class="DataGrid_Body_Cell" id="fieldMovementdate">xxfd200</td>
                         <td width="34%" class="DataGrid_Body_Cell" id="fieldName">xx2345</td>
@@ -634,7 +634,7 @@ function onloadFunctions(){
                     <div id="sectionDetail3"> 
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow4xx">
                         <td class="DataGrid_Body_Cell" width="7%" id="fieldMovementdate3">xxfd200</td>
-                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclick="BOMorWorkEffort('xx', 'zz');return false;" onmouseover="window.status='Production Plan';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId4"> 
+                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclick="BOMorWorkEffort('xx', 'yy');return false;" onmouseover="window.status='Production Plan';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId4"> 
                         <span id="fieldProductionPlan">xx850000007</span></a></td>
                         <td class="DataGrid_Body_Cell" width="26%" id="fieldName3">xx2345</td>
                         <td class="DataGrid_Body_Cell" width="4%" id="fieldXOrigin3">xx3</td>

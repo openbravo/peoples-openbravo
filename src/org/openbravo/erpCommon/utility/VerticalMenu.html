@@ -104,6 +104,9 @@
     </script>
     <script language="JavaScript" type="text/javascript">
       function onLoadDo() {
+        if (frames.name.indexOf('appFrame')!=-1) {
+          location.href="../utility/Home.html";
+        }
         enableShortcuts('menu');
         setMenuLoading(false);
         resizeMenu();

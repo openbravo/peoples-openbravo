@@ -48,6 +48,16 @@ public class Table extends ModelObject {
 
   private Package thePackage;
 
+  private String treeType;
+
+  public String getTreeType() {
+    return treeType;
+  }
+
+  public void setTreeType(String treeType) {
+    this.treeType = treeType;
+  }
+
   public String getTableName() {
     return tableName;
   }

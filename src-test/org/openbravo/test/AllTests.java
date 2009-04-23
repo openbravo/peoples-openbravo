@@ -26,7 +26,6 @@ import org.openbravo.test.dal.DalQueryTest;
 import org.openbravo.test.dal.DalTest;
 import org.openbravo.test.dal.DynamicEntityTest;
 import org.openbravo.test.dal.HiddenUpdateTest;
-import org.openbravo.test.dal.HqlTest;
 import org.openbravo.test.dal.MappingGenerationTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.expression.EvaluationTest;
@@ -35,12 +34,14 @@ import org.openbravo.test.model.RuntimeModelTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
-import org.openbravo.test.security.WritableReadableOrganizationTest;
-import org.openbravo.test.xml.EntityXMLExportTest;
+import org.openbravo.test.security.WritableReadableOrganizationClientTest;
+import org.openbravo.test.xml.ClientExportImportTest;
 import org.openbravo.test.xml.EntityXMLImportTestBusinessObject;
 import org.openbravo.test.xml.EntityXMLImportTestReference;
 import org.openbravo.test.xml.EntityXMLImportTestSingle;
 import org.openbravo.test.xml.EntityXMLImportTestWarning;
+import org.openbravo.test.xml.EntityXMLIssues;
+import org.openbravo.test.xml.UniqueConstraintImportTest;
 
 public class AllTests {
 
@@ -53,7 +54,7 @@ public class AllTests {
     suite.addTestSuite(EntityAccessTest.class);
     suite.addTestSuite(AccessLevelTest.class);
     suite.addTestSuite(AllowedOrganizationsTest.class);
-    suite.addTestSuite(WritableReadableOrganizationTest.class);
+    suite.addTestSuite(WritableReadableOrganizationClientTest.class);
 
     // dal
     suite.addTestSuite(HiddenUpdateTest.class);
@@ -62,7 +63,6 @@ public class AllTests {
     suite.addTestSuite(DynamicEntityTest.class);
     suite.addTestSuite(DalTest.class);
     suite.addTestSuite(DalQueryTest.class);
-    suite.addTestSuite(HqlTest.class);
 
     // model
     suite.addTestSuite(RuntimeModelTest.class);
@@ -72,11 +72,13 @@ public class AllTests {
     suite.addTestSuite(EvaluationTest.class);
 
     // xml
-    suite.addTestSuite(EntityXMLExportTest.class);
+    suite.addTestSuite(ClientExportImportTest.class);
     suite.addTestSuite(EntityXMLImportTestBusinessObject.class);
-    suite.addTestSuite(EntityXMLImportTestSingle.class);
     suite.addTestSuite(EntityXMLImportTestReference.class);
+    suite.addTestSuite(EntityXMLImportTestSingle.class);
     suite.addTestSuite(EntityXMLImportTestWarning.class);
+    suite.addTestSuite(EntityXMLIssues.class);
+    suite.addTestSuite(UniqueConstraintImportTest.class);
 
     // $JUnit-END$
     return suite;
