@@ -97,10 +97,6 @@
                      Seqno
            FROM AD_Module_Install M 
           WHERE NOT EXISTS (SELECT 1 
-                              FROM AD_Module_Dependency
-                             WHERE AD_Dependent_Module_ID = M.AD_Module_ID
-                               AND IsIncluded = 'Y') 
-            AND NOT EXISTS (SELECT 1 
                               FROM AD_Module_Dependency_Inst
                              WHERE AD_Dependent_Module_ID = M.AD_Module_ID
                                AND IsIncluded = 'Y') 
@@ -118,21 +114,59 @@
    <SqlMethod name="selectSubTree" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-          SELECT Type, AD_Module_ID as Node_ID, AD_Column_Identifier('AD_Module',AD_Module_ID, ?) as Name, 
+          SELECT M.Type, M.AD_Module_ID as Node_ID, 
+                 (CASE WHEN MI.AD_MODULE_ID IS NULL 
+                                      THEN AD_Column_Identifier('AD_Module',m.AD_Module_ID, ?)
+                                      ELSE AD_Column_Identifier('AD_ModuleInst',MI.AD_Module_ID, ?) END )as Name, 
+                 (SELECT CASE WHEN COUNT(*)>0 THEN 'block' ELSE 'none' END
+                    FROM AD_Module M2
+                    WHERE M2.AD_Module_ID = M.AD_Module_ID
+                    AND EXISTS
+                    (SELECT 1
+                            FROM AD_Module_Dependency
+                           WHERE AD_Module_ID = M2.AD_Module_ID
+                             AND IsIncluded = 'Y'
+                           UNION
+                           SELECT 1
+                            FROM AD_Module_Dependency_Inst
+                           WHERE AD_Module_ID = M2.AD_Module_ID
+                             AND IsIncluded = 'Y'))                as display,
+                     m.Status,
+                     m.Update_Available 
+            FROM AD_MODULE M LEFT JOIN AD_MODULE_INSTALL MI
+                                    ON MI.AD_MODULE_ID = M.AD_MODULE_ID
+           WHERE EXISTS (SELECT 1 
+                           FROM AD_Module_Dependency 
+                          WHERE AD_Module_ID = ?
+                            AND AD_Dependent_Module_ID = M.AD_Module_ID
+                            AND IsIncluded = 'Y'
+                          UNION
+                          SELECT 1 
+                           FROM AD_Module_Dependency_Inst
+                          WHERE AD_Module_ID = ?
+                            AND AD_Dependent_Module_ID = M.AD_Module_ID
+                            AND IsIncluded = 'Y')
+             AND M.ISACTIVE = 'Y'
+            UNION
+             SELECT Type, AD_Module_ID as Node_ID, AD_Column_Identifier('AD_Module',AD_Module_ID, ?) as Name, 
                  (SELECT CASE WHEN COUNT(*)>0 THEN 'block' ELSE 'none' END
                     FROM AD_Module_Dependency
                    WHERE AD_Module_ID = M.AD_Module_ID
                      AND IsIncluded = 'Y')                as display,
                      Status,
                      Update_Available 
-            FROM AD_MODULE M
+            FROM AD_MODULE_Install M
            WHERE EXISTS (SELECT 1 
-                           FROM AD_Module_Dependency 
+                           FROM AD_Module_Dependency_Inst 
                           WHERE AD_Module_ID = ?
                             AND AD_Dependent_Module_ID = M.AD_Module_ID
                             AND IsIncluded = 'Y')
              AND ISACTIVE = 'Y'
      </Sql>
+     <Parameter name="lang"/>
+     <Parameter name="lang"/>
+     <Parameter name="rootNode"/>
+     <Parameter name="rootNode"/>
      <Parameter name="lang"/>
      <Parameter name="rootNode"/>
    </SqlMethod>
@@ -218,7 +252,13 @@
             FROM AD_MODULE_DEPENDENCY
            WHERE AD_Dependent_Module_ID = ?
              AND IsIncluded = 'Y'
+           UNION
+          SELECT MAX(AD_Module_ID) as Node_ID
+            FROM AD_MODULE_DEPENDENCY_INST
+           WHERE AD_Dependent_Module_ID = ?
+             AND IsIncluded = 'Y'
      </Sql>
+     <Parameter name="node"/>
      <Parameter name="node"/>
    </SqlMethod>
 </SqlClass>
