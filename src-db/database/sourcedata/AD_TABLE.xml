@@ -356,6 +356,7 @@ The User identifies a unique user in the system. This could be an internal user 
 <!--116-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--116-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--116-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--116-->  <TREETYPE><![CDATA[MM]]></TREETYPE>
 <!--116--></AD_TABLE>
 
 <!--117--><AD_TABLE>
@@ -843,6 +844,7 @@ Please note that you will not be able to create new entities in this window if y
 <!--155-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--155-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--155-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D54B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--155-->  <TREETYPE><![CDATA[OO]]></TREETYPE>
 <!--155--></AD_TABLE>
 
 <!--156--><AD_TABLE>
@@ -1154,6 +1156,7 @@ The User Assignment Tab displays Users who have been defined for this Role.]]></
 <!--188-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--188-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--188-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DF4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--188-->  <TREETYPE><![CDATA[EV]]></TREETYPE>
 <!--188--></AD_TABLE>
 
 <!--190--><AD_TABLE>
@@ -1338,6 +1341,7 @@ The Workflow Access Tab defines the Roles who have access to this Workflow.]]></
 <!--203-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--203-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--203-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1F94B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--203-->  <TREETYPE><![CDATA[PJ]]></TREETYPE>
 <!--203--></AD_TABLE>
 
 <!--204--><AD_TABLE>
@@ -1406,6 +1410,7 @@ The Accounting Tab is used to define the Asset Account to use when a project is 
 <!--208-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--208-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--208-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--208-->  <TREETYPE><![CDATA[PR]]></TREETYPE>
 <!--208--></AD_TABLE>
 
 <!--209--><AD_TABLE>
@@ -1428,6 +1433,7 @@ The Accounting Tab is used to define the Asset Account to use when a project is 
 <!--209-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--209-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--209-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--209-->  <TREETYPE><![CDATA[PC]]></TREETYPE>
 <!--209--></AD_TABLE>
 
 <!--210--><AD_TABLE>
@@ -1658,8 +1664,7 @@ The Product Details allows you to display and maintain all products for a select
 <!--230-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--230-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--230-->  <NAME><![CDATA[SalesRegion]]></NAME>
-<!--230-->  <DESCRIPTION><![CDATA[Sales Region
-Maintain Sales Region Accounting Dimension Tree]]></DESCRIPTION>
+<!--230-->  <DESCRIPTION><![CDATA[Sales Region<BR>Maintain Sales Region Accounting Dimension Tree]]></DESCRIPTION>
 <!--230-->  <HELP><![CDATA[The Sales Region defines the different regions where you do business.  Sales Regions can be used when generating reports or calculating commissions.]]></HELP>
 <!--230-->  <TABLENAME><![CDATA[C_SalesRegion]]></TABLENAME>
 <!--230-->  <CLASSNAME><![CDATA[SalesRegion]]></CLASSNAME>
@@ -1673,6 +1678,7 @@ Maintain Sales Region Accounting Dimension Tree]]></DESCRIPTION>
 <!--230-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--230-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--230-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FA4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--230-->  <TREETYPE><![CDATA[SR]]></TREETYPE>
 <!--230--></AD_TABLE>
 
 <!--249--><AD_TABLE>
@@ -1995,8 +2001,7 @@ The Pricing Tab displays the List, Standard and Limit prices for each price list
 <!--274-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--274-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--274-->  <NAME><![CDATA[MarketingCampaign]]></NAME>
-<!--274-->  <DESCRIPTION><![CDATA[Marketing Campaign
-Maintain Marketing Campaign Accounting Dimension Tree]]></DESCRIPTION>
+<!--274-->  <DESCRIPTION><![CDATA[Marketing Campaign<BR>Maintain Marketing Campaign Accounting Dimension Tree]]></DESCRIPTION>
 <!--274-->  <HELP><![CDATA[The Marketing Campaign defines the parameters for a Campaign.  These include a start and end date as well as the amount of any invoices that have been processed which reference this campaign.
 Please note that you will not be able to create new entities in this window if you have not default set for all mandatory values!]]></HELP>
 <!--274-->  <TABLENAME><![CDATA[C_Campaign]]></TABLENAME>
@@ -2011,6 +2016,7 @@ Please note that you will not be able to create new entities in this window if y
 <!--274-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--274-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--274-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EE4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--274-->  <TREETYPE><![CDATA[MC]]></TREETYPE>
 <!--274--></AD_TABLE>
 
 <!--275--><AD_TABLE>
@@ -2299,6 +2305,7 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--291-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--291-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--291-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D34B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--291-->  <TREETYPE><![CDATA[BP]]></TREETYPE>
 <!--291--></AD_TABLE>
 
 <!--293--><AD_TABLE>
@@ -2616,8 +2623,7 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--316-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--316-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--316-->  <NAME><![CDATA[MaterialMgmtABCActivity]]></NAME>
-<!--316-->  <DESCRIPTION><![CDATA[Activity for Activity Based Costing
-Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
+<!--316-->  <DESCRIPTION><![CDATA[Activity for Activity Based Costing<BR>Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--316-->  <HELP><![CDATA[Defines tasks that are preformed and in Activity Based Costing.]]></HELP>
 <!--316-->  <TABLENAME><![CDATA[C_Activity]]></TABLENAME>
 <!--316-->  <CLASSNAME><![CDATA[ABCActivity]]></CLASSNAME>
@@ -2631,6 +2637,7 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--316-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--316-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--316-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EF4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--316-->  <TREETYPE><![CDATA[AY]]></TREETYPE>
 <!--316--></AD_TABLE>
 
 <!--318--><AD_TABLE>
@@ -3371,6 +3378,7 @@ Available Quantity:
 <!--383-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--383-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--383-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--383-->  <TREETYPE><![CDATA[BB]]></TREETYPE>
 <!--383--></AD_TABLE>
 
 <!--385--><AD_TABLE>
@@ -3915,7 +3923,7 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--422-->  <TABLENAME><![CDATA[AD_Role_OrgAccess]]></TABLENAME>
 <!--422-->  <CLASSNAME><![CDATA[RoleOrganization]]></CLASSNAME>
 <!--422-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--422-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--422-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--422-->  <AD_WINDOW_ID><![CDATA[111]]></AD_WINDOW_ID>
 <!--422-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--422-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
@@ -9337,6 +9345,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800223-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--800223-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--800223-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1E14B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--800223-->  <TREETYPE><![CDATA[AR]]></TREETYPE>
 <!--800223--></AD_TABLE>
 
 <!--800224--><AD_TABLE>
@@ -9399,6 +9408,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800226-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--800226-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--800226-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1E74B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--800226-->  <TREETYPE><![CDATA[TR]]></TREETYPE>
 <!--800226--></AD_TABLE>
 
 <!--800227--><AD_TABLE>
