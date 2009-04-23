@@ -23,8 +23,18 @@
    <SqlMethod name="selectInstalled" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT AD_MODULE_ID, VERSION, NAME, '' AS TOTAL 
-         FROM AD_MODULE
+        SELECT M.AD_MODULE_ID, 
+               COALESCE(MI.VERSION, M.VERSION) AS VERSION, 
+               COALESCE(MI.NAME, M.NAME) AS NAME, 
+               '' AS TOTAL 
+         FROM AD_MODULE M LEFT JOIN AD_MODULE_INSTALL MI
+                                 ON MI.AD_MODULE_ID = M.AD_MODULE_ID
+        UNION
+        SELECT M.AD_MODULE_ID, 
+               M.VERSION, 
+               M.NAME, 
+               '' AS TOTAL 
+         FROM AD_MODULE_INSTALL M
       </Sql>
    </SqlMethod>
    <SqlMethod name="selectVersion" type="preparedStatement" return="string">
