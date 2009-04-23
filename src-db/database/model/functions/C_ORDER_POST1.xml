@@ -214,6 +214,9 @@
       * Re-activate
       */
       IF(v_DocAction='RE') THEN
+        IF (v_DocSubTypeSO IN ('WR', 'WI')) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
+        END IF;
         --Verify not managed debtPayments added by ALO
 		--Added by P.Sarobe. New messages
         SELECT max(c_debt_payment_id), COUNT(*)

@@ -106,11 +106,13 @@
           ol.Line,
           ol.DirectShip,
           ol.PriceStd
-        FROM M_INOUTLINE sl
+        FROM M_INOUT s, M_INOUTLINE sl
         RIGHT JOIN C_ORDERLINE ol
           ON sl.C_OrderLine_ID=ol.C_OrderLine_ID
         WHERE sl.M_InOut_ID IS NOT NULL -- We need to have a shipment
           AND ol.C_Order_ID=Order_ID -- parameter
+          AND s.M_InOut_ID = sl.M_InOut_ID
+          AND s.DocStatus = 'CO'
           AND(sl.IsInvoiced IS NULL
           OR sl.IsInvoiced='N')
         ORDER BY ol.Line -- single Order
