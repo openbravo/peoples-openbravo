@@ -480,7 +480,7 @@
             AND PL.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
             AND pp.M_Production_ID=v_Record_ID;
           IF v_Count<>0 THEN
-          SELECT P.name INTO v_Product_Name          
+          SELECT max(P.name) INTO v_Product_Name          
           FROM M_PRODUCTIONPLAN PP,
             M_PRODUCTIONLINE PL,
             M_PRODUCT P
@@ -488,7 +488,7 @@
             AND P.M_ATTRIBUTESET_ID IS NOT NULL
             AND COALESCE(PL.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
             AND PL.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
-            AND pp.M_Production_ID=v_Record_ID limit 1;
+            AND pp.M_Production_ID=v_Record_ID;
             v_Message:='@Product@'||' "' ||v_Product_Name ||'" ' || '@ProductWithoutAttributeSet@';
             RAISE_APPLICATION_ERROR(-20000, v_Message);
             FINISH_PROCESS:=true;
