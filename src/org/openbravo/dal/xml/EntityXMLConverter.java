@@ -35,6 +35,8 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
@@ -48,6 +50,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.utility.TreeNode;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -325,6 +328,28 @@ public class EntityXMLConverter implements OBNotSingleton {
 
       // make a difference between a primitive and a reference
       if (p.isPrimitive()) {
+        // handle a special case the tree node
+        // both the parent and the node should be added to the export list
+        if (value != null && obObject instanceof TreeNode) {
+          final boolean isReferingProperty = p.getName().equals(TreeNode.PROPERTY_REPORTSET)
+              || p.getName().equals(TreeNode.PROPERTY_NODE);
+          if (isReferingProperty && value != null && !value.equals("0")) {
+            final String strValue = (String) value;
+            final TreeNode treeNode = (TreeNode) obObject;
+            final Entity referedEntity = ModelProvider.getInstance().getEntityFromTreeType(
+                treeNode.getTree().getTypeArea());
+            final BaseOBObject obValue = OBDal.getInstance().get(referedEntity.getName(), strValue);
+            if (obValue == null) {
+              log.error("TreeNode: The value " + strValue + " used in treeNode " + treeNode.getId()
+                  + " is not valid, there is no " + referedEntity.getName() + " with that id");
+              // Check.isNotNull(obValue, "The value " + strValue + " used in treeNode "
+              // + treeNode.getId() + " is not valid, there is no " + referedEntity.getName()
+              // + " with that id");
+            } else {
+              addToExportList((BaseOBObject) obValue);
+            }
+          }
+        }
         final String txt = XMLTypeConverter.getInstance().toXML(value);
         xmlHandler.startElement("", "", p.getName(), propertyAttrs);
         xmlHandler.characters(txt.toCharArray(), 0, txt.length());
@@ -362,6 +387,7 @@ public class EntityXMLConverter implements OBNotSingleton {
 
         xmlHandler.endElement("", "", p.getName());
       } else if (!p.isOneToMany()) {
+
         // add reference attributes
         addReferenceAttributes(propertyAttrs, (BaseOBObject) value);
 

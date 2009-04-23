@@ -26,11 +26,18 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
+import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.ClientImportProcessor;
 import org.openbravo.service.db.DataExportService;
 import org.openbravo.service.db.DataImportService;
@@ -75,9 +82,12 @@ public class ClientExportImportTest extends XMLBaseTest {
   /**
    * Exports the 1000000 client and then imports as a new client. Has as side effect that a
    * completely new client is added in the database.
+   * 
+   * Also tests mantis 8509: https://issues.openbravo.com/view.php?id=8509
    */
   public void testExportImportClient1000000() {
-    exportImport("1000000");
+    final String newClientId = exportImport("1000000");
+    testMantis8509(newClientId);
     // SystemService.getInstance().removeAllClientData(newClientId);
   }
 
@@ -85,9 +95,33 @@ public class ClientExportImportTest extends XMLBaseTest {
    * Exports the 1000001 client and then imports as a new client. Has as side effect that a
    * completely new client is added in the database.
    */
-  public void testExportImportClient1000001() {
+  public void _testExportImportClient1000001() {
     exportImport("1000001");
     // SystemService.getInstance().removeAllClientData(newClientId);
+  }
+
+  // tests mantis issue 8509 related to import of ad tree node as
+  // part of client import:
+  // 8509: References in the database without using foreign keys can go wrong in import
+  // https://issues.openbravo.com/view.php?id=8509
+  private void testMantis8509(String clientId) {
+    setUserContext("0");
+    final OrganizationStructureProvider osp = new OrganizationStructureProvider();
+    osp.setClientId(clientId);
+    final Client client = OBDal.getInstance().get(Client.class, clientId);
+    final OBCriteria<Organization> os = OBDal.getInstance().createCriteria(Organization.class);
+    os.setFilterOnReadableClients(false);
+    os.setFilterOnReadableOrganization(false);
+    os.setFilterOnActive(false);
+    os.add(Expression.eq("client", client));
+    for (Organization o : os.list()) {
+      final Set<String> naturalTree = osp.getNaturalTree(o.getId());
+      // all the organizations should at least have a tree of size 2
+      if (naturalTree.size() <= 1) {
+        fail("Naturaltree computation fails for organization " + o.getId() + " in imported client "
+            + clientId);
+      }
+    }
   }
 
   private String exportImport(String clientId) {

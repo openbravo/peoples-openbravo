@@ -84,6 +84,16 @@ public class Entity {
 
   private Module module;
 
+  private String treeType;
+
+  public String getTreeType() {
+    return treeType;
+  }
+
+  public void setTreeType(String treeType) {
+    this.treeType = treeType;
+  }
+
   /**
    * Initializes the entity from a table, also creates the properties from the list of Columns of
    * the table.
@@ -101,6 +111,7 @@ public class Entity {
     setMutable(!table.isView());
     setInActive(!table.isActive());
     setView(table.isView());
+    setTreeType(table.getTreeType());
 
     properties = new ArrayList<Property>();
     idProperties = new ArrayList<Property>();
