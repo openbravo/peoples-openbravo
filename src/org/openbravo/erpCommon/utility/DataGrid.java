@@ -372,12 +372,12 @@ public class DataGrid extends HttpSecureAppServlet {
             String value = data[j].getField(columnname);
             if (adReferenceId.equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            //Numeric formats:
-            //Decimal: 12, 22
-            //Qty: 29
-            //Price: 800008
-            //Integer: 11
-            //General: 800019
+            // Numeric formats:
+            // Decimal: 12, 22
+            // Qty: 29
+            // Price: 800008
+            // Integer: 11
+            // General: 800019
             if ((adReferenceId.equals("12") || adReferenceId.equals("22"))
                 && numberFormatDecimal != null) {
               try {
@@ -527,8 +527,9 @@ public class DataGrid extends HttpSecureAppServlet {
       try {
         Vector<String> filter = new Vector<String>();
         filter.addElement(tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " IN " + rows);
-        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "SUM(" + columnname
-            + ") AS TOTAL", filter, new Vector<String>(), 0, 0, false, false);
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "SUM("
+            + tableSQL.getTableName() + "." + columnname + ") AS TOTAL", filter,
+            new Vector<String>(), 0, 0, false, false);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
         data = execquery.select();
       } catch (Exception e) {

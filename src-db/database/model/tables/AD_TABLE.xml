@@ -105,6 +105,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA[SELECT AD_PACKAGE_ID FROM AD_PACKAGE WHERE AD_MODULE_ID<>'0']]></onCreateDefault>
       </column>
+      <column name="TREETYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_PACKAGE" name="AD_PACKAGE_TABLE">
         <reference local="AD_PACKAGE_ID" foreign="AD_PACKAGE_ID"/>
       </foreign-key>
@@ -129,6 +133,9 @@
       <unique name="CLASSNAME_PACKAGE">
         <unique-column name="CLASSNAME"/>
         <unique-column name="AD_PACKAGE_ID"/>
+      </unique>
+      <unique name="TREETYPE">
+        <unique-column name="TREETYPE"/>
       </unique>
       <check name="ADTABLE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="ADTABLE_ISDELETEABLE_CHECK"><![CDATA[ISDELETEABLE IN ('Y', 'N')]]></check>
