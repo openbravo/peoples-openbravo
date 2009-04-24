@@ -161,7 +161,7 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
         resultado.append("null");
       resultado.append("\n),");
     }
-    resultado.append("new Array(\"inpcUomId\", " + (strUOM.equals("") ? "\"\"" : strUOM) + "),\n");
+    resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),\n");
     resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
 
     resultado.append(");");

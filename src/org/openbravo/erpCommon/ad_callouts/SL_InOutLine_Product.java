@@ -132,7 +132,8 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLOrderProduct"),
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "SLOrderProduct"),
             Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
         tld = comboTableData.select(false);
@@ -158,7 +159,8 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLOrderProduct"),
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "SLOrderProduct"),
             Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
         tld = comboTableData.select(false);
@@ -181,7 +183,7 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
         resultado.append("null");
       resultado.append("\n),");
     }
-    resultado.append("new Array(\"inpcUomId\", " + (strUOM.equals("") ? "\"\"" : strUOM) + "),\n");
+    resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),\n");
     resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
 
     resultado.append(");");
