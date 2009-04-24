@@ -118,7 +118,7 @@
     v_C_Activity_ID VARCHAR2(32):=NULL;
     v_User1_ID VARCHAR2(32):=NULL;
     v_User2_ID VARCHAR2(32):=NULL;
-    v_CreatedBy NUMBER:=NULL;
+    v_CreatedBy VARCHAR2(32):=NULL;
     -- Existance Loop - Get first fully qualified matching combination
     --
     FoundValue CHAR(1):='N';
