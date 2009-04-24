@@ -104,6 +104,31 @@ create.database: creates the database from scratch.
     </sql>
   </target>
 
+  <target name="clean.database.DB2">
+    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" autocommit="true">
+      <classpath>
+        <fileset dir="${base.lib}">
+          <include name="**/*.jar">
+          </include>
+        </fileset>
+      </classpath>
+      <transaction>
+        DROP TABLE ERRORSCH.ERRORTB;
+      </transaction>
+    </sql>
+    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" autocommit="true">
+      <classpath>
+        <fileset dir="${base.lib}">
+          <include name="**/*.jar">
+          </include>
+        </fileset>
+      </classpath>
+      <transaction>
+        CALL SYSPROC.ADMIN_DROP_SCHEMA('${bbdd.user}', NULL, 'ERRORSCH', 'ERRORTB');
+      </transaction>
+    </sql>
+  </target>
+
   <target name="ORACLE.structure">
     <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" delimiter="/">
       <classpath>
@@ -196,6 +221,9 @@ create.database: creates the database from scratch.
     </sql>
   </target>
 
+  <target name="DB2.structure">
+  </target>
+  
   <target name="prepare.database">
     <antcall target="${bbdd.rdbms}.structure" />
   </target>
@@ -271,6 +299,9 @@ create.database: creates the database from scratch.
     </sql>
   </target>
 
+  <target name="database.postcreate.DB2">
+  </target>
+  
   <target name="database.preimport.ORACLE">
   </target>
   <target name="database.postimport.ORACLE">
@@ -278,6 +309,10 @@ create.database: creates the database from scratch.
   <target name="database.preimport.POSTGRE">
   </target>
   <target name="database.postimport.POSTGRE">
+  </target>
+  <target name="database.preimport.DB2">
+  </target>
+  <target name="database.postimport.DB2">
   </target>
   <target name="database.poststructure.ORACLE">
     <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
@@ -293,6 +328,8 @@ create.database: creates the database from scratch.
     </sql>
   </target>
   <target name="database.poststructure.POSTGRE">
+  </target>
+  <target name="database.poststructure.DB2">
   </target>
 
   <target name="update.dbupdate.timestamp">
