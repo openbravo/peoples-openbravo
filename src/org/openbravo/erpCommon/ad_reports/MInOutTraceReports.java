@@ -200,11 +200,11 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     total = total.setScale(2, BigDecimal.ROUND_HALF_UP);
     totalPedido = totalPedido.setScale(2, BigDecimal.ROUND_HALF_UP);
     StringBuffer resultado = new StringBuffer();
-    resultado.append("<td class=\"DataGrid_Body_Cell\" width=\"80px\">\n");
+    resultado.append("<td class=\"DataGrid_Body_Cell_Amount\">\n");
     resultado.append(total.toString()).append(" ").append(strUnit);
     resultado.append("</td>\n");
     if (totalPedido.intValue() != 0) {
-      resultado.append("<td class=\"DataGrid_Body_Cell\" width=\"80px\">\n");
+      resultado.append("<td class=\"DataGrid_Body_Cell_Amount\">\n");
       resultado.append(totalPedido.toString()).append(" ").append(strUnitPedido);
       resultado.append("</td>\n");
     }
@@ -307,7 +307,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
               dataProduction[j].movementtypeName).append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">").append(
               dataProduction[j].locatorName).append("</td>\n");
-          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">").append(
+          strHtml.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">").append(
               dataProduction[j].movementqty).append("&nbsp;").append(dataProduction[j].uomName)
               .append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">").append(
@@ -389,7 +389,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
               dataMovement[j].movementtypeName).append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">").append(
               dataMovement[j].locatorName).append("</td>\n");
-          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">").append(
+          strHtml.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">").append(
               dataMovement[j].movementqty).append("&nbsp;").append(dataMovement[j].uomName).append(
               "</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">").append(
@@ -457,7 +457,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
         data.movementtypeName).append("</td>\n");
     resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
         .append(data.locatorName).append("</td>\n");
-    resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">").append(data.movementqty)
+    resultado.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">").append(data.movementqty)
         .append("&nbsp;").append(data.uomName).append("</td>\n");
     if (!data.quantityorder.equals("")) {
       resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">").append(
