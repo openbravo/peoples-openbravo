@@ -57,7 +57,7 @@
 			documenttemplate.c_poc_doctype_template_id as id,			
 			documenttemplate.templatelocation as template_location,
 			documenttemplate.templatefilename as template_filename,
-			documenttemplate.templatefilename as name,
+			documenttemplate.name as name,
 			documenttemplate.reportfilename as report_filename
 		from
 			C_poc_doctype_template documenttemplate
@@ -72,7 +72,7 @@
 			documenttemplate.c_poc_doctype_template_id as id,			
 			documenttemplate.templatelocation as template_location,
 			documenttemplate.templatefilename as template_filename,
-			documenttemplate.templatefilename as name,
+			documenttemplate.name as name,
 			documenttemplate.reportfilename as report_filename
 		from
 			C_poc_doctype_template documenttemplate
