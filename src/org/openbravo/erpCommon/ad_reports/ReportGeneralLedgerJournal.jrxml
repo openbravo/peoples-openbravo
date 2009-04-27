@@ -209,11 +209,11 @@ GROUP BY F.AD_TABLE_ID, F.DATEACCT, F.ACCTDESCRIPTION, F.ACCTVALUE, F.DOCBASETYP
   (CASE F.AMTACCTDR WHEN 0 THEN (CASE SIGN(F.AMTACCTCR) WHEN -1 THEN 1 ELSE 2 END) ELSE (CASE SIGN(F.AMTACCTDR) WHEN -1 THEN 3 ELSE 4 END) END)) AA
 ORDER BY DATEACCT, IDENTIFIER]]></queryString>
 
-	<field name="IDENTIFIER" class="java.math.BigDecimal"/>
+	<field name="IDENTIFIER" class="java.lang.String"/>
 	<field name="DATEACCT" class="java.util.Date"/>
 	<field name="VALUE" class="java.lang.String"/>
 	<field name="NAME" class="java.lang.String"/>
-	<field name="ID" class="java.math.BigDecimal"/>
+	<field name="ID" class="java.lang.String"/>
 	<field name="AD_TABLE_ID" class="java.lang.String"/>
 	<field name="DOCBASETYPE" class="java.lang.String"/>
 	<field name="TOTAL" class="java.lang.String"/>

@@ -136,7 +136,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SE_Expense_Product';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpcUomId\", " + (strUOM.equals("") ? "\"\"" : strUOM) + ")\n");
+    resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\")\n");
 
     if (!priceActual.equals("")) {
       amount = new BigDecimal(priceActual);

@@ -260,7 +260,6 @@ function comboKeyBehaviour(obj, event) {
       activateDefaultAction();
     } else {
       if(obj.tagName == 'SELECT') {
-        isUserChanges = true;
         selectedCombo = obj;
         isSelectedComboOpened = true;
         comboDefaultAction();

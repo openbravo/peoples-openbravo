@@ -26,6 +26,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.PostgreSQLDialect;
+
 import org.openbravo.base.exception.OBException;
 
 /**
@@ -158,6 +159,8 @@ public abstract class SessionFactoryController {
     if (obProps.getProperty("bbdd.rdbms") != null) {
       if (obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
         return getPostgresHbProps(obProps);
+      } else if (obProps.getProperty("bbdd.rdbms").equals("DB2")) {
+        return getDB2HbProps(obProps);
       }
 
       return getOracleHbProps(obProps);
@@ -189,6 +192,21 @@ public abstract class SessionFactoryController {
       setJNDI(obProps, props);
     } else {
       props.setProperty(Environment.DRIVER, "oracle.jdbc.driver.OracleDriver");
+      props.setProperty(Environment.URL, obProps.getProperty("bbdd.url"));
+      props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
+      props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));
+    }
+    return props;
+  }
+
+  private Properties getDB2HbProps(Properties obProps) {
+    isPostgresDatabase = false;
+    final Properties props = new Properties();
+    props.setProperty(Environment.DIALECT, OBDB2v97Dialect.class.getName());
+    if (isJNDIModeOn(obProps)) {
+      setJNDI(obProps, props);
+    } else {
+      props.setProperty(Environment.DRIVER, "com.ibm.db2.jcc.DB2Driver");
       props.setProperty(Environment.URL, obProps.getProperty("bbdd.url"));
       props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
       props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));

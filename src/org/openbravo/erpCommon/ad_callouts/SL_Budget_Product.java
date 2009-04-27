@@ -68,7 +68,7 @@ public class SL_Budget_Product extends HttpSecureAppServlet {
 
     resultado.append("var calloutName='SL_Budget_Product';\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpcUomId\", " + (strUOM.equals("") ? "\"\"" : strUOM) + ")");
+    resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\")");
     resultado.append(");");
 
     if (log4j.isDebugEnabled())

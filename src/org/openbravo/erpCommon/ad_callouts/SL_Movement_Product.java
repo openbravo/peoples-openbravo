@@ -89,7 +89,7 @@ public class SL_Movement_Product extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpmLocatorId_R\", \""
         + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator, vars
             .getLanguage())) + "\"),");
-    resultado.append("new Array(\"inpcUomId\", " + (strUOM.equals("") ? "\"\"" : strUOM) + "),");
+    resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
     if (strAttribute.startsWith("\""))
       strAttribute = strAttribute.substring(1, strAttribute.length() - 1);
     resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strAttribute + "\"),");
@@ -108,8 +108,9 @@ public class SL_Movement_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLMovementProduct"),
-            Utility.getContext(this, vars, "#User_Client", "SLMovementProduct"), 0);
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "SLMovementProduct"), Utility.getContext(this, vars, "#User_Client",
+                "SLMovementProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLMovementProduct", "");
         tld = comboTableData.select(false);
         comboTableData = null;
@@ -134,8 +135,9 @@ public class SL_Movement_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLMovementProduct"),
-            Utility.getContext(this, vars, "#User_Client", "SLMovementProduct"), 0);
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "SLMovementProduct"), Utility.getContext(this, vars, "#User_Client",
+                "SLMovementProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLMovementProduct", "");
         tld = comboTableData.select(false);
         comboTableData = null;

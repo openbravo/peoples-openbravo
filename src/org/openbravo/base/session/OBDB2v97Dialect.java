@@ -1,4 +1,4 @@
-<!--
+/*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -11,27 +11,39 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
--->
-<div>
-  <table WIDTH="100%">
-    <tr>
-      <td WIDTH="10%">&nbsp;</td>
-      <td>
-        <table WIDTH="100%">
-          <tr >
-            <td WIDTH="100%" class="RelationInfoContent"><span >Article</span></td>
-          </tr>
-          <div  id="sectionDetail">
-            <tr >
-              <td class="RelationInfoContainer" id="fieldProductName">xxAlcachofa</td>
-            </tr>
-          </div>
-        </table>
-      </td>
-    </tr>
-  </table>
-</div>
+ */
+
+package org.openbravo.base.session;
+
+import java.sql.Types;
+import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
+import org.hibernate.dialect.DB2Dialect;
+
+/**
+ * Extends the Oracle10Dialect to replace some java-oracle type mappings to support the current rdb
+ * schema of OpenBravo. Is used in the {@link SessionFactoryController}.
+ * 
+ * @author mtaal
+ */
+
+public class OBDB2v97Dialect extends DB2Dialect {
+  private static final Logger log = Logger.getLogger(OBDB2v97Dialect.class);
+
+  public OBDB2v97Dialect() {
+    super();
+
+    registerHibernateType(Types.NUMERIC, Hibernate.LONG.getName());
+
+    // registerColumnType(Types.VARCHAR, 4000, "nvarchar2($l)");
+    registerColumnType(Types.VARCHAR, 100, "varchar2($l)");
+    registerColumnType(Types.VARCHAR, 5, "char($l)");
+
+    log.debug("Created Openbravo specific db2 Dialect");
+  }
+
+}

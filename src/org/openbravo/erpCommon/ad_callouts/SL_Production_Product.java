@@ -80,7 +80,7 @@ public class SL_Production_Product extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Production_Product';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpcUomId\", " + (strUOM.equals("") ? "\"\"" : strUOM) + "),\n");
+    resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),\n");
     if (strPLocator.startsWith("\""))
       strPLocator = strPLocator.substring(1, strPLocator.length() - 1);
     resultado.append("new Array(\"inpmLocatorId\", \"" + strPLocator + "\"),\n");
@@ -105,9 +105,9 @@ public class SL_Production_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "",
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "SLProductionProduct"), Utility.getContext(
-                this, vars, "#User_Client", "SLProductionProduct"), 0);
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "SLProductionProduct"), Utility.getContext(this, vars, "#User_Client",
+                "SLProductionProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLProductionProduct", "");
         tld = comboTableData.select(false);
         comboTableData = null;
@@ -132,9 +132,9 @@ public class SL_Production_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "",
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "SLProductionProduct"), Utility.getContext(
-                this, vars, "#User_Client", "SLProductionProduct"), 0);
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "SLProductionProduct"), Utility.getContext(this, vars, "#User_Client",
+                "SLProductionProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLProductionProduct", "");
         tld = comboTableData.select(false);
         comboTableData = null;

@@ -67,7 +67,7 @@
     v_CanceledNotChargeAmt NUMBER:=0;
     v_GeneratedAmt NUMBER:=0;
     v_ChargedAmt NUMBER:=0;
-    -- For WithHolding 
+    -- For WithHolding
     v_CanceledNotChargeAmt_WH NUMBER:=0;
     v_GeneratedAmt_WH NUMBER:=0;
     v_ChargedAmt_WH NUMBER:=0;
@@ -238,39 +238,39 @@
       IF (v_is_tr_allow='N') THEN
         RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
       END IF;
-      
+
       SELECT AD_ORG_CHK_DOCUMENTS('C_SETTLEMENT', 'C_DEBT_PAYMENT', v_Record_ID, 'C_SETTLEMENT_ID', 'C_SETTLEMENT_GENERATE_ID') INTO v_is_included FROM dual;
       IF (v_is_included=-1) THEN
         RAISE_APPLICATION_ERROR(-20000, '@PaymentsAndHeaderDifferentLEorBU@');
       END IF;
-      
+
       SELECT AD_ORG_CHK_DOCUMENTS('C_SETTLEMENT', 'C_DEBT_PAYMENT', v_Record_ID, 'C_SETTLEMENT_ID', 'C_SETTLEMENT_CANCEL_ID') INTO v_is_included FROM dual;
       IF (v_is_included=-1) THEN
         RAISE_APPLICATION_ERROR(-20000, '@PaymentsAndHeaderDifferentLEorBU@');
       END IF;
-      
+
       -- Check the period control is opened (only if it is legal entity with accounting)
       -- Gets the BU or LE of the document
       SELECT AD_GET_DOC_LE_BU('C_SETTLEMENT', v_Record_ID, 'C_SETTLEMENT_ID', 'LE')
       INTO v_org_bule_id
       FROM DUAL;
-      
+
       SELECT AD_OrgType.IsAcctLegalEntity
       INTO v_isacctle
       FROM AD_OrgType, AD_Org
       WHERE AD_Org.AD_OrgType_ID = AD_OrgType.AD_OrgType_ID
       AND AD_Org.AD_Org_ID=v_org_bule_id;
-      
-      IF (v_isacctle='Y') THEN    	
-        SELECT C_CHK_OPEN_PERIOD(v_AD_Org_ID, v_DateAcct, NULL, v_DocType_ID) 
+
+      IF (v_isacctle='Y') THEN
+        SELECT C_CHK_OPEN_PERIOD(v_AD_Org_ID, v_DateAcct, NULL, v_DocType_ID)
         INTO v_available_period
         FROM DUAL;
-        
+
         IF (v_available_period<>1) THEN
           RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
         END IF;
-      END IF;    
-      
+      END IF;
+
       v_ResultStr:='CheckingRestrictions - C_DEBT_PAYMENT ORG IS IN C_BPARTNER ORG TREE';
       SELECT COUNT(*), AD_COLUMN_IDENTIFIER_STD ('C_Debt_Payment', TO_CHAR(MAX(c.C_Debt_Payment_Id)))
       INTO v_Aux, v_column_identifier
@@ -313,7 +313,12 @@
 	FROM C_DEBT_PAYMENT c
 	WHERE c.C_SETTLEMENT_CANCEL_ID=v_Record_ID
 	AND c.ISMANUAL = 'Y'
-	AND c.ISPAID = 'N';
+	AND c.ISPAID = 'N'
+	AND NOT EXISTS (SELECT 1 FROM C_DEBT_PAYMENT D
+		WHERE C.C_SETTLEMENT_CANCEL_ID = D.C_SETTLEMENT_CANCEL_ID
+		AND C.ISRECEIPT = D.ISRECEIPT
+		AND C.AMOUNT = AMOUNT*-1
+		AND d.ISPAID = 'N');
 	IF v_Aux>0 THEN
 	   RAISE_APPLICATION_ERROR(-20000, '@ManualDebtpayment@'||' "'||v_column_identifier||'" '||'@CanNotBeSplit@') ;
 	   END IF;
@@ -380,7 +385,7 @@
         AND isPaid='N';
       --Calculating the generated amount
       SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(Amount, C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0),
-      COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(coalesce(WithHoldingAmount,0), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0) 
+      COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(coalesce(WithHoldingAmount,0), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
       INTO v_GeneratedAmt,v_GeneratedAmt_WH
       FROM C_Debt_Payment_V
       WHERE C_Settlement_Generate_ID=v_Record_ID

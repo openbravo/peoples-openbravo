@@ -78,7 +78,7 @@
       (SELECT *
       FROM C_Invoice
       WHERE C_Order_ID=v_Record_ID
-        AND DocStatus<>'RE' -- Not the existing reversal trx
+        AND DocStatus='CO' -- Only completed invoices
         FOR UPDATE
       )
     LOOP

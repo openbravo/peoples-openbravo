@@ -135,7 +135,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
 
     resultado.append("var calloutName='SL_Order_Product';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpcUomId\", " + (strUOM.equals("") ? "\"\"" : strUOM) + "),");
+    resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
     resultado.append("new Array(\"inppricelist\", "
         + (strPriceList.equals("") ? "\"0\"" : strPriceList) + "),");
     resultado.append("new Array(\"inppricelimit\", "

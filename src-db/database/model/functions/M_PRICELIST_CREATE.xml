@@ -44,7 +44,7 @@
     v_Currency_ID VARCHAR2(32);
     v_Client_ID VARCHAR2(32);
     v_Org_ID VARCHAR2(32);
-    v_UpdatedBy NUMBER;
+    v_UpdatedBy VARCHAR2(32);
     v_StdPrecision NUMBER;
     v_DiscountSchema_ID VARCHAR2(32);
     v_PriceList_Version_Base_ID VARCHAR2(32);

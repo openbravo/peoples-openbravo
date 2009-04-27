@@ -1409,7 +1409,7 @@ cWithHoldId varchar2(32);
           v_cash VARCHAR2(32) ;
           v_IsoCode C_CURRENCY.ISO_CODE%TYPE;
           v_CashLine VARCHAR2(32) ;
-          v_line VARCHAR2(32) ;
+          v_line NUMBER ;
           v_BPartnerName C_BPARTNER.NAME%TYPE;
           v_GenDP_Org VARCHAR2(32);
         BEGIN

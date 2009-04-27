@@ -22,7 +22,7 @@
 	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-	<PARAMETER id="paramCommand" name="Command" attribute="onclick" replace="xx"/>
+	<PARAMETER id="buttonOK" name="Command" attribute="onclick" replace="xx"/>
 	<structure name="structure1">
 		<FIELD id="fieldCLocationId" attribute="value">cLocationId</FIELD>
 		<FIELD id="fieldAddress1" attribute="value">address1</FIELD>

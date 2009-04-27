@@ -53,7 +53,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
           "ReportValuationStock|Warehouse", "");
       String strCategoryProduct = vars.getGlobalVariable("inpCategoryProduct",
           "ReportValuationStock|CategoryProduct", "");
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "", strUserCurrencyId);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+          "ReportValuationStock|currency", strUserCurrencyId);
       printPageDataSheet(request, response, vars, strDate, strWarehouse, strCategoryProduct,
           strCurrencyId);
     } else if (vars.commandIn("FIND")) {
@@ -88,14 +89,16 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
     String strConvRateErrorMsg = "";
-    try {
-      data = ReportValuationStockData.select(this, vars.getLanguage(), strDate, strBaseCurrencyId,
-          strCurrencyId, DateTimeData.nDaysAfter(this, strDate, "1"), strWarehouse,
-          strCategoryProduct);
-    } catch (ServletException ex) {
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+    if (vars.commandIn("FIND")) {
+      try {
+        data = ReportValuationStockData.select(this, vars.getLanguage(), strDate,
+            strBaseCurrencyId, strCurrencyId, DateTimeData.nDaysAfter(this, strDate, "1"),
+            strWarehouse, strCategoryProduct);
+      } catch (ServletException ex) {
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+      }
+      strConvRateErrorMsg = myMessage.getMessage();
     }
-    strConvRateErrorMsg = myMessage.getMessage();
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
@@ -158,8 +161,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       xmlDocument.setParameter("categoryProduct", strCategoryProduct);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "M_Warehouse_ID",
-            "M_Warehouse of Client", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-                .getContext(this, vars, "#User_Client", ""), 0);
+            "M_Warehouse of Client", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "", "");
         xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
         comboTableData = null;
@@ -168,8 +171,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       }
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), 0);
+            "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                ""), Utility.getContext(this, vars, "#User_Client", ""), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "", strCategoryProduct);
         xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure", comboTableData
             .select(false));
@@ -181,8 +184,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportValuationStock"), Utility
-                .getContext(this, vars, "#User_Client", "ReportValuationStock"), 0);
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportValuationStock"),
+            Utility.getContext(this, vars, "#User_Client", "ReportValuationStock"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportValuationStock",
             strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));

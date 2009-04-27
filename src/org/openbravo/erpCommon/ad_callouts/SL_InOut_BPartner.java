@@ -170,10 +170,13 @@ public class SL_InOut_BPartner extends HttpSecureAppServlet {
       resultado.append("null");
     resultado.append("\n)");
     if (data != null && data.length > 0
-        && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0)
+        && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0) {
       resultado.append(", new Array('MESSAGE', \""
           + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage())
           + data[0].creditavailable + "\")");
+    } else {
+      resultado.append(", new Array('MESSAGE', \"\")");
+    }
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");

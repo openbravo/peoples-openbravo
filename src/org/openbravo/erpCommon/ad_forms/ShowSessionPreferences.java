@@ -160,7 +160,7 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
     xmlDocument.setParameter("recordRange", vars.getSessionValue("#RecordRange"));
     xmlDocument.setParameter("recordRangeInfo", vars.getSessionValue("#RecordRangeInfo"));
     xmlDocument.setParameter("info", getInfo(vars));
-    xmlDocument.setParameter("theme", vars.getTheme().substring(4));
+    xmlDocument.setParameter("Theme", vars.getTheme().substring(4));
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ShowSessionPreferences", false, "",
         "", "", false, "ad_forms", strReplaceWith, false, true);

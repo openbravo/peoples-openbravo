@@ -214,6 +214,9 @@
       * Re-activate
       */
       IF(v_DocAction='RE') THEN
+        IF (v_DocSubTypeSO IN ('WR', 'WI')) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
+        END IF;
         --Verify not managed debtPayments added by ALO
 		--Added by P.Sarobe. New messages
         SELECT max(c_debt_payment_id), COUNT(*)
@@ -1212,7 +1215,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     EXCEPTION
     WHEN OTHERS THEN
       v_ResultStr:= SQLERRM;
-      RAISE_APPLICATION_ERROR(-20000, SUBSTR(SQLERRM,12,2000)) ;
+      RAISE_APPLICATION_ERROR(-20000, SUBSTR(SQLERRM,1,2000)) ;
     END;
     DBMS_OUTPUT.PUT_LINE('  Shipment - ' || InOut_ID) ;
     IF(InOut_ID='0') THEN

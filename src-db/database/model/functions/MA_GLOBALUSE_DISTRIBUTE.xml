@@ -37,7 +37,7 @@
   --  Parameter
   TYPE RECORD IS REF CURSOR;
     --  Record Info
-    v_UpdatedBy NUMBER;
+    v_UpdatedBy VARCHAR2(32);
     --  v_Processing        CHAR;
     --  v_Processed         CHAR;
     v_Count NUMBER;
