@@ -75,7 +75,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strLevel = vars.getGlobalVariable("inpLevel", "GeneralAccountingReports|level", "");
       printPageDataSheet(response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
           strDateFromRef, strDateToRef, strElementValue, strConImporte, strOrg, strLevel,
-          strConCodigo, strcAcctSchemaId, "");
+          strConCodigo, strcAcctSchemaId);
     } else if (vars.commandIn("FIND")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "ReportGeneralLedger|cAcctSchemaId");
@@ -99,18 +99,18 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strOrg = vars.getRequestGlobalVariable("inpOrganizacion",
           "GeneralAccountingReports|organizacion");
       String strLevel = vars.getRequestGlobalVariable("inpLevel", "GeneralAccountingReports|level");
-      printPagePDF(response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo, strDateFromRef,
-          strDateToRef, strElementValue, strConImporte, strOrg, strLevel, strConCodigo,
-          strcAcctSchemaId);
+      printPagePDF(request, response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
+          strDateFromRef, strDateToRef, strElementValue, strConImporte, strOrg, strLevel,
+          strConCodigo, strcAcctSchemaId);
     } else
       pageError(response);
   }
 
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strAgno,
-      String strAgnoRef, String strDateFrom, String strDateTo, String strDateFromRef,
-      String strDateToRef, String strElementValue, String strConImporte, String strOrg,
-      String strLevel, String strConCodigo, String strcAcctSchemaId) throws IOException,
-      ServletException {
+  void printPagePDF(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, String strAgno, String strAgnoRef, String strDateFrom,
+      String strDateTo, String strDateFromRef, String strDateToRef, String strElementValue,
+      String strConImporte, String strOrg, String strLevel, String strConCodigo,
+      String strcAcctSchemaId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -230,9 +230,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       renderFO(strResult, response);
 
     } catch (ArrayIndexOutOfBoundsException e) {
-      printPageDataSheet(response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
-          strDateFromRef, strDateToRef, strElementValue, strConImporte, strOrg, strLevel,
-          strConCodigo, strcAcctSchemaId, "ReportWithoutNodes");
+      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "ReportWithoutNodes", vars
+          .getLanguage()));
+
     }
   }
 
@@ -287,8 +287,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strAgno,
       String strAgnoRef, String strDateFrom, String strDateTo, String strDateFromRef,
       String strDateToRef, String strElementValue, String strConImporte, String strOrg,
-      String strLevel, String strConCodigo, String strcAcctSchemaId, String strError)
-      throws IOException, ServletException {
+      String strLevel, String strConCodigo, String strcAcctSchemaId) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -319,18 +319,6 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     {
       OBError myMessage = vars.getMessage("GeneralAccountingReports");
       vars.removeMessage("GeneralAccountingReports");
-      if (myMessage != null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-    }
-
-    if (!strError.equals("")) {
-      OBError myMessage = new OBError();
-      myMessage.setMessage(Utility.messageBD(this, strError, vars.getLanguage()));
-      myMessage.setType("Error");
-      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       if (myMessage != null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
