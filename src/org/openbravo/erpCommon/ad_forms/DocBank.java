@@ -73,7 +73,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Constructor
-   * 
+   *
    * @param AD_Client_ID
    *          AD_Client_ID
    */
@@ -88,7 +88,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Load Specific Document Details
-   * 
+   *
    * @param rs
    *          result set
    * @return true if loadDocumentType was set
@@ -139,7 +139,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Load Invoice Line. 4 amounts AMTTYPE_Payment AMTTYPE_Statement2 AMTTYPE_Charge AMTTYPE_Interest
-   * 
+   *
    * @return DocLine Array
    */
   private DocLine[] loadLines(ConnectionProvider conn) {
@@ -178,7 +178,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line amounts from total - no rounding
-   * 
+   *
    * @return positive amount, if total invoice is bigger than lines
    */
   public BigDecimal getBalance() {
@@ -201,14 +201,14 @@ public class DocBank extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for CMB.
-   * 
+   *
    * <pre>
    *      BankAsset       DR      CR  (Statement)
    *      BankInTransit   DR      CR              (Payment)
    *      Charge          DR          (Charge)
    *      Interest        DR      CR  (Interest)
    * </pre>
-   * 
+   *
    * @param as
    *          accounting schema
    * @return Fact
@@ -225,7 +225,7 @@ public class DocBank extends AcctServer {
         DocBankTemplate newTemplate = (DocBankTemplate) Class.forName(strClassname).newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        e.printStackTrace();
+    	log4j.error("Error while creating new instance for DocBankTemplate - " + e);
       }
     }
     log4jDocBank.debug("createFact - Inicio");
@@ -313,7 +313,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   * 
+   *
    * @param BankStatementline_Id
    * @param as
    *          accounting schema
@@ -360,7 +360,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Get Document Confirmation
-   * 
+   *
    * @not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {

@@ -36,7 +36,7 @@ public class DocInventory extends AcctServer {
 
   /**
    * Constructor
-   * 
+   *
    * @param AD_Client_ID
    *          client
    */
@@ -51,7 +51,7 @@ public class DocInventory extends AcctServer {
 
   /**
    * Load Document Details
-   * 
+   *
    * @param rs
    *          result
    * @return true if loadDocumentType was set
@@ -69,7 +69,7 @@ public class DocInventory extends AcctServer {
 
   /**
    * Load Invoice Line
-   * 
+   *
    * @return DocLine Array
    */
   private DocLine[] loadLines(ConnectionProvider conn) {
@@ -112,7 +112,7 @@ public class DocInventory extends AcctServer {
 
   /**
    * Get Balance
-   * 
+   *
    * @return Zero (always balanced)
    */
   public BigDecimal getBalance() {
@@ -122,13 +122,13 @@ public class DocInventory extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for MMI.
-   * 
+   *
    * <pre>
    *  Inventory
    *      Inventory       DR      CR
    *      InventoryDiff   DR      CR   (or Charge)
    * </pre>
-   * 
+   *
    * @param as
    *          account schema
    * @return Fact
@@ -146,7 +146,7 @@ public class DocInventory extends AcctServer {
             .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        e.printStackTrace();
+       	log4j.error("Error while creating new instance for DocInventoryTemplate - " + e);
       }
     }
     // Log.trace(Log.l4_Data, "Doc.Inventory.createFact");
@@ -234,7 +234,7 @@ public class DocInventory extends AcctServer {
 
   /**
    * Get Document Confirmation
-   * 
+   *
    * @not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {

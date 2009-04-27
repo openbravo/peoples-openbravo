@@ -37,7 +37,7 @@ public class DocInOut extends AcctServer {
 
   /**
    * Constructor
-   * 
+   *
    * @param AD_Client_ID
    *          AD_Client_ID
    */
@@ -52,7 +52,7 @@ public class DocInOut extends AcctServer {
 
   /**
    * Load Document Details
-   * 
+   *
    * @param rs
    *          result set
    * @return true if loadDocumentType was set
@@ -72,7 +72,7 @@ public class DocInOut extends AcctServer {
 
   /**
    * Load Invoice Line
-   * 
+   *
    * @return DocLine Array
    */
   public DocLine[] loadLines(ConnectionProvider conn) {
@@ -107,7 +107,7 @@ public class DocInOut extends AcctServer {
 
   /**
    * Get Balance
-   * 
+   *
    * @return Zero (always balanced)
    */
   public BigDecimal getBalance() {
@@ -117,7 +117,7 @@ public class DocInOut extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for MMS, MMR.
-   * 
+   *
    * <pre>
    *  Shipment
    *      CoGS            DR
@@ -129,7 +129,7 @@ public class DocInOut extends AcctServer {
    *      Inventory       DR
    *      NotInvoicedReceipt      CR
    * </pre>
-   * 
+   *
    * @param as
    *          accounting schema
    * @return Fact
@@ -146,7 +146,7 @@ public class DocInOut extends AcctServer {
         DocInOutTemplate newTemplate = (DocInOutTemplate) Class.forName(strClassname).newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        e.printStackTrace();
+       	log4j.error("Error while creating new instance for DocInOutTemplate - " + e);
       }
     }
     C_Currency_ID = as.getC_Currency_ID();
@@ -274,7 +274,7 @@ public class DocInOut extends AcctServer {
 
   /**
    * Get Document Confirmation
-   * 
+   *
    * @not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {

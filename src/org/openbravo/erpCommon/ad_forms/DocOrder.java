@@ -36,7 +36,7 @@ public class DocOrder extends AcctServer {
 
   /**
    * Constructor
-   * 
+   *
    * @param AD_Client_ID
    *          client
    */
@@ -51,7 +51,7 @@ public class DocOrder extends AcctServer {
 
   /**
    * Load Specific Document Details
-   * 
+   *
    * @param rs
    *          result set
    * @return true if loadDocumentType was set
@@ -81,7 +81,7 @@ public class DocOrder extends AcctServer {
 
   /**
    * Load Invoice Line
-   * 
+   *
    * @return DocLine Array
    */
   public DocLine[] loadLines(ConnectionProvider conn) {
@@ -115,7 +115,7 @@ public class DocOrder extends AcctServer {
 
   /**
    * Load Invoice Taxes
-   * 
+   *
    * @return DocTax Array
    */
   public DocTax[] loadTaxes(ConnectionProvider conn) {
@@ -147,7 +147,7 @@ public class DocOrder extends AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line and tax amounts from total - no rounding
-   * 
+   *
    * @return positive amount, if total invoice is bigger than lines
    */
   public BigDecimal getBalance() {
@@ -181,10 +181,10 @@ public class DocOrder extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for SOO, POO, POR.
-   * 
+   *
    * <pre>
    * </pre>
-   * 
+   *
    * @param as
    *          accounting schema
    * @return Fact
@@ -201,7 +201,7 @@ public class DocOrder extends AcctServer {
         DocOrderTemplate newTemplate = (DocOrderTemplate) Class.forName(strClassname).newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        e.printStackTrace();
+       	log4j.error("Error while creating new instance for DocOrderTemplate - " + e);
       }
     }
     // Purchase Order
@@ -252,7 +252,7 @@ public class DocOrder extends AcctServer {
 
   /**
    * Update Product Info. - Costing (PriceLastPO) - PO (PriceLastPO)
-   * 
+   *
    * @param C_AcctSchema_ID
    *          accounting schema
    */
@@ -279,7 +279,7 @@ public class DocOrder extends AcctServer {
 
   /**
    * Get Document Confirmation
-   * 
+   *
    * @not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {

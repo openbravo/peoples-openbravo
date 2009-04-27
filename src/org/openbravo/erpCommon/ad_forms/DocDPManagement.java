@@ -75,7 +75,7 @@ public class DocDPManagement extends AcctServer {
 
   /**
    * Constructor
-   * 
+   *
    * @param AD_Client_ID
    *          AD_Client_ID
    */
@@ -91,7 +91,7 @@ public class DocDPManagement extends AcctServer {
 
   /**
    * Load Specific Document Details
-   * 
+   *
    * @param rs
    *          result set
    * @return true if loadDocumentType was set
@@ -108,7 +108,7 @@ public class DocDPManagement extends AcctServer {
 
   /**
    * Load AmortizationLine Line.
-   * 
+   *
    * @return DocLine Array
    */
   private DocLine[] loadLines(ConnectionProvider conn) {
@@ -143,7 +143,7 @@ public class DocDPManagement extends AcctServer {
 
   /**
    * Get Source Currency Balance - always zero
-   * 
+   *
    * @return Zero (always balanced)
    */
   public BigDecimal getBalance() {
@@ -154,7 +154,7 @@ public class DocDPManagement extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for
-   * 
+   *
    * @param as
    *          accounting schema
    * @return Fact
@@ -172,7 +172,7 @@ public class DocDPManagement extends AcctServer {
             .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        e.printStackTrace();
+       	log4j.error("Error while creating new instance for DocDPManagementTemplate - " + e);
       }
     }
     log4j.debug("createFact - Inicio");
@@ -216,7 +216,7 @@ public class DocDPManagement extends AcctServer {
 
   /**
    * Get Document Confirmation
-   * 
+   *
    * @not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
@@ -225,7 +225,7 @@ public class DocDPManagement extends AcctServer {
 
   /**
    * Line Account from Asset
-   * 
+   *
    * @param AcctType
    *          see ACCTTYPE_* (1..8)
    * @param as
