@@ -5097,25 +5097,6 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800192-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800192--></AD_PROCESS>
 
-<!--800193--><AD_PROCESS>
-<!--800193-->  <AD_PROCESS_ID><![CDATA[800193]]></AD_PROCESS_ID>
-<!--800193-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800193-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800193-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800193-->  <VALUE><![CDATA[RV_ReportWarehouseDetailInventoryJR]]></VALUE>
-<!--800193-->  <NAME><![CDATA[Detailed Warehouse Inventory]]></NAME>
-<!--800193-->  <DESCRIPTION><![CDATA[Detailed Warehouse Inventory]]></DESCRIPTION>
-<!--800193-->  <HELP><![CDATA[Detailed Warehouse Inventory JR]]></HELP>
-<!--800193-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800193-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800193-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--800193-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800193-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800193-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800193-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800193-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800193--></AD_PROCESS>
-
 <!--800194--><AD_PROCESS>
 <!--800194-->  <AD_PROCESS_ID><![CDATA[800194]]></AD_PROCESS_ID>
 <!--800194-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
