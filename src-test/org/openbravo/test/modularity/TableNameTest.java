@@ -21,7 +21,9 @@ package org.openbravo.test.modularity;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
+import org.hibernate.exception.GenericJDBCException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -36,8 +38,11 @@ import org.openbravo.test.base.BaseTest;
  * be checkes the table name starts with the db prefix for the module and it is not possible to add
  * tables with non-allowed names.
  * 
+ * @author alostale
  */
 public class TableNameTest extends BaseTest {
+
+  private static final Logger log = Logger.getLogger(TableNameTest.class);
 
   /**
    * Creates a test module to work with it in later tests
@@ -96,16 +101,13 @@ public class TableNameTest extends BaseTest {
 
     table.setDataPackage(getPackage("org.openbravo.test.tablename.data"));
     OBDal.getInstance().save(table);
-    boolean exception = false;
     try {
       // force dal commit to throw exception
-      OBDal.getInstance().commitAndClose();
-    } catch (org.hibernate.exception.GenericJDBCException e) {
-      exception = true;
+      commitTransaction();
+      fail("Saved table but it shouldn't be");
+    } catch (GenericJDBCException e) {
+      rollback();
     }
-    assertTrue("Saved table but it shouldn't be", exception);
-
-    commitTransaction();
   }
 
   /**
@@ -122,16 +124,13 @@ public class TableNameTest extends BaseTest {
 
     table.setDataPackage(getPackage("org.openbravo.model.ad.module"));
     OBDal.getInstance().save(table);
-    boolean exception = false;
     try {
       // force dal commit to throw exception
-      OBDal.getInstance().commitAndClose();
-    } catch (org.hibernate.exception.GenericJDBCException e) {
-      exception = true;
+      commitTransaction();
+      fail("Saved table but it shouldn't be");
+    } catch (GenericJDBCException e) {
+      rollback();
     }
-    assertTrue("Saved table but it shouldn't be", exception);
-
-    commitTransaction();
   }
 
   /**
@@ -146,16 +145,13 @@ public class TableNameTest extends BaseTest {
     Table table = tables.get(0);
     table.setDataPackage(getPackage("org.openbravo.model.ad.module"));
     OBDal.getInstance().save(table);
-    boolean exception = false;
     try {
       // force dal commit to throw exception
-      OBDal.getInstance().commitAndClose();
-    } catch (org.hibernate.exception.GenericJDBCException e) {
-      exception = true;
+      commitTransaction();
+      fail("Saved table but it shouldn't be");
+    } catch (GenericJDBCException e) {
+      rollback();
     }
-    assertTrue("Saved table but it shouldn't be", exception);
-
-    commitTransaction();
   }
 
   /**
@@ -167,32 +163,32 @@ public class TableNameTest extends BaseTest {
     obCriteria.add(Expression.eq(Module.PROPERTY_NAME, "Test-table-names"));
     List<Module> modules = obCriteria.list();
 
-    System.out.println("deleting " + modules.size() + " modules");
+    log.debug("deleting " + modules.size() + " modules");
     for (Module module : modules) {
-      System.out.println("*deleting module:" + module.toString());
+      log.debug("*deleting module:" + module.toString());
 
       OBCriteria<ModuleDBPrefix> obCritPrefix = OBDal.getInstance().createCriteria(
           ModuleDBPrefix.class);
       obCritPrefix.add(Expression.eq(ModuleDBPrefix.PROPERTY_MODULE, module));
       List<ModuleDBPrefix> dbp = obCritPrefix.list();
-      System.out.println("  -deleting " + dbp.size() + " prefixes");
+      log.debug("  -deleting " + dbp.size() + " prefixes");
       for (ModuleDBPrefix p : dbp) {
-        System.out.println("     +deleting dbprefix:" + p.toString());
+        log.debug("     +deleting dbprefix:" + p.toString());
         OBDal.getInstance().remove(p);
       }
 
       OBCriteria<DataPackage> obCritPack = OBDal.getInstance().createCriteria(DataPackage.class);
       obCritPack.add(Expression.eq(ModuleDBPrefix.PROPERTY_MODULE, module));
       List<DataPackage> packs = obCritPack.list();
-      System.out.println("  -deleting " + packs.size() + " packs");
+      log.debug("  -deleting " + packs.size() + " packs");
       for (DataPackage p : packs) {
-        System.out.println("     +deleting pack:" + p.toString());
+        log.debug("     +deleting pack:" + p.toString());
         OBCriteria<Table> obCritTable = OBDal.getInstance().createCriteria(Table.class);
         obCritTable.add(Expression.eq(Table.PROPERTY_DATAPACKAGE, p));
         List<Table> tables = obCritTable.list();
-        System.out.println("     -deleting " + tables.size() + " tables");
+        log.debug("     -deleting " + tables.size() + " tables");
         for (Table t : tables) {
-          System.out.println("        +deleting table:" + t.toString());
+          log.debug("        +deleting table:" + t.toString());
           OBDal.getInstance().remove(t);
         }
 
@@ -210,7 +206,7 @@ public class TableNameTest extends BaseTest {
     obCriteria.add(Expression.eq(DataPackage.PROPERTY_NAME, name));
     List<DataPackage> pack = obCriteria.list();
     DataPackage p = pack.get(0);
-    System.out.println("Package: " + p.getName());
+    log.debug("Package: " + p.getName());
     return p;
   }
 }
