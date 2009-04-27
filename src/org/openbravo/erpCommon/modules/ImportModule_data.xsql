@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,8 +23,18 @@
    <SqlMethod name="selectInstalled" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT AD_MODULE_ID, VERSION, NAME, '' AS TOTAL 
-         FROM AD_MODULE
+        SELECT M.AD_MODULE_ID, 
+               COALESCE(MI.VERSION, M.VERSION) AS VERSION, 
+               COALESCE(MI.NAME, M.NAME) AS NAME, 
+               '' AS TOTAL 
+         FROM AD_MODULE M LEFT JOIN AD_MODULE_INSTALL MI
+                                 ON MI.AD_MODULE_ID = M.AD_MODULE_ID
+        UNION
+        SELECT M.AD_MODULE_ID, 
+               M.VERSION, 
+               M.NAME, 
+               '' AS TOTAL 
+         FROM AD_MODULE_INSTALL M
       </Sql>
    </SqlMethod>
    <SqlMethod name="selectVersion" type="preparedStatement" return="string">
@@ -149,40 +159,6 @@
       <Parameter name="moduleId"/>
    </SqlMethod>
    
-   <SqlMethod name="updateModuleDate" type="preparedStatement" return="rowcount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        UPDATE AD_MODULE
-           SET UPDATED = (SELECT LAST_DBUPDATE FROM AD_SYSTEM_INFO)
-         WHERE AD_MODULE_ID = ?
-           AND UPDATED > (SELECT LAST_DBUPDATE FROM AD_SYSTEM_INFO)
-      </Sql>
-      <Parameter name="moduleId"/>
-   </SqlMethod>
-   
-   <SqlMethod name="updateModulePrefixDate" type="preparedStatement" return="rowcount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        UPDATE AD_MODULE_DBPREFIX
-           SET UPDATED = (SELECT LAST_DBUPDATE FROM AD_SYSTEM_INFO)
-         WHERE AD_MODULE_ID = ?
-         AND UPDATED > (SELECT LAST_DBUPDATE FROM AD_SYSTEM_INFO)
-      </Sql>
-      <Parameter name="moduleId"/>
-   </SqlMethod>
-   
-    <SqlMethod name="updateModuleDependencyDate" type="preparedStatement" return="rowcount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        UPDATE AD_MODULE_DEPENDENCY
-           SET UPDATED = (SELECT LAST_DBUPDATE FROM AD_SYSTEM_INFO)
-         WHERE AD_MODULE_ID = ?
-         AND UPDATED > (SELECT LAST_DBUPDATE FROM AD_SYSTEM_INFO)
-      </Sql>
-      <Parameter name="moduleId"/>
-   </SqlMethod>
-   
-   
    <SqlMethod name="getParentNode" type="preparedStatement" return="string">
      <Sql>
        SELECT AD_MODULE_ID
@@ -192,5 +168,102 @@
      </Sql>
      <Parameter name="moduleId"/>
    </SqlMethod>
+   
+   <SqlMethod name="insertModuleInstall" type="preparedStatement" return="rowcount">
+     <Sql>
+     INSERT INTO AD_Module_Install (
+                AD_MODULE_INSTALL_ID , AD_CLIENT_ID         , AD_ORG_ID            ,                                                                                                                                                                          
+                ISACTIVE             , CREATED              , CREATEDBY            ,                                                                                                                                                                          
+                UPDATED              , UPDATEDBY            , AD_MODULE_ID         ,                                                                                                                                                                          
+                NAME                 , VERSION              , DESCRIPTION          ,                                                                                                                                                                          
+                HELP                 , URL                  , TYPE                 ,                                                                                                                                                                          
+                LICENSE              , ISINDEVELOPMENT      , ISDEFAULT            ,                                                                                                                                                                          
+                SEQNO                , JAVAPACKAGE          , LICENSETYPE          ,                                                                                                                                                                          
+                AUTHOR               , STATUS               , UPDATE_AVAILABLE     ,                                                                                                                                                                          
+                ISTRANSLATIONREQUIRED, AD_LANGUAGE          , HASCHARTOFACCOUNTS   ,                                                                                                                                                                          
+                ISTRANSLATIONMODULE  , HASREFERENCEDATA     , ISREGISTERED         ,                                                                                                                                                                          
+                UPDATEINFO           , UPDATE_VER_ID        , REFERENCEDATAINFO) 
+       VALUES ( get_uuid(), '0', '0',                                                                                                                                                                          
+                'Y', NOW(), '0',                                                                                                                                                                          
+                NOW(), '0', ?,                                                                                                                                                                          
+                ?, ?, ?,                                                                                                                                                                          
+                ?, ?, ?,                                                                                                                                                                          
+                ?, ?, ?,                                                                                                                                                                          
+                to_number(?), ?, ?,                                                                                                                                                                          
+                ?, ?, ?,                                                                                                                                                                          
+                ?, ?, ?,                                                                                                                                                                          
+                ?, ?, ?,                                                                                                                                                                          
+                ?, ?, ?)
+     </Sql>                                                                                                                                                                        
+    <Parameter name="AD_MODULE_ID"/>                                                                                                                                                                          
+    <Parameter name="NAME"/>                 <Parameter name="VERSION"/>      <Parameter name="DESCRIPTION"/>                                                                                                                                                                          
+    <Parameter name="HELP"/>                 <Parameter name="URL"/>          <Parameter name="TYPE"/>                                                                                                                                                                          
+    <Parameter name="LICENSE"/>              <Parameter name="ISINDEVELOPMENT"/> <Parameter name="ISDEFAULT"/>                                                                                                                                                                          
+    <Parameter name="SEQNO"/>                <Parameter name="JAVAPACKAGE"/>  <Parameter name="LICENSETYPE"/>                                                                                                                                                                          
+    <Parameter name="AUTHOR"/>               <Parameter name="STATUS"/>       <Parameter name="UPDATE_AVAILABLE"/>                                                                                                                                                                          
+    <Parameter name="ISTRANSLATIONREQUIRED"/> <Parameter name="AD_LANGUAGE"/> <Parameter name="HASCHARTOFACCOUNTS"/>                                                                                                                                                                          
+    <Parameter name="ISTRANSLATIONMODULE"/>  <Parameter name="HASREFERENCEDATA"/> <Parameter name="ISREGISTERED"/>                                                                                                                                                                          
+    <Parameter name="UPDATEINFO"/>           <Parameter name="UPDATE_VER_ID"/> <Parameter name="REFERENCEDATAINFO"/>
+   </SqlMethod>
+   
+   <SqlMethod name="insertModuleDBPrefixInstall" type="preparedStatement" return="rowcount">
+     <Sql> 
+       INSERT INTO AD_MODULE_DBPREFIX_INSTALL
+              (AD_MODULE_DBPREFIX_INSTALL_ID, AD_CLIENT_ID                 , AD_ORG_ID                    ,                                                                                                                                                                                
+               ISACTIVE                     , CREATED                      , CREATEDBY                    ,                                                                                                                                                                                
+               UPDATED                      , UPDATEDBY                    , AD_MODULE_DBPREFIX_ID        ,                                                                                                                                                                                
+               AD_MODULE_ID                 , NAME)
+      VALUES  (get_uuid(), '0', '0',                                                                                                                                                                                
+               'Y', NOW(), '0',                                                                                                                                                                                
+               NOW(), '0', ?,                                                                                                                                                                                
+               ?, ?)
+      </Sql>
+    <Parameter name="AD_MODULE_DBPREFIX_ID"/>
+    <Parameter name="AD_MODULE_ID"/>         
+    <Parameter name="NAME"/>
+   </SqlMethod>
+    
+    <SqlMethod name="insertModuleDependencyInstall" type="preparedStatement" return="rowcount">
+     <Sql>
+        INSERT INTO AD_MODULE_DEPENDENCY_INST
+                (AD_MODULE_DEPENDENCY_INST_ID, AD_CLIENT_ID                , AD_ORG_ID                   ,
+                ISACTIVE                    , CREATED                     , CREATEDBY                   , 
+                UPDATED                     , UPDATEDBY                   , AD_MODULE_DEPENDENCY_ID     , 
+                AD_MODULE_ID                , AD_DEPENDENT_MODULE_ID      , STARTVERSION                , 
+                ENDVERSION                  , ISINCLUDED                  , DEPENDANT_MODULE_NAME) 
+        VALUES (GET_UUID(), '0', '0',
+                'Y', NOW(), '0', 
+                NOW(), '0', ?, 
+                ?, ?, ?, 
+                ?, ?, ?)
+     </Sql>
+       <Parameter name="AD_MODULE_DEPENDENCY_ID"/> 
+       <Parameter name="AD_MODULE_ID"/> <Parameter name="AD_DEPENDENT_MODULE_ID"/> <Parameter name="STARTVERSION"/>
+       <Parameter name="ENDVERSION"/> <Parameter name="ISINCLUDED"/> <Parameter name="DEPENDANT_MODULE_NAME"/>
+     </SqlMethod>
+     
+     <SqlMethod name="cleanModuleInstall" type="preparedStatement" return="rowcount">
+         <Sql>
+            DELETE FROM AD_MODULE_INSTALL
+              WHERE AD_MODULE_ID = ?
+         </Sql>
+         <Parameter name="mouleId"/> 
+     </SqlMethod>
+     
+     <SqlMethod name="cleanModuleDBPrefixInstall" type="preparedStatement" return="rowcount">
+         <Sql>
+            DELETE FROM AD_MODULE_DBPREFIX_INSTALL
+              WHERE AD_MODULE_ID = ?
+         </Sql>
+         <Parameter name="mouleId"/> 
+     </SqlMethod>
+     
+     <SqlMethod name="cleanModuleDependencyInstall" type="preparedStatement" return="rowcount">
+         <Sql>
+            DELETE FROM AD_MODULE_DEPENDENCY_INST
+              WHERE AD_MODULE_ID = ?
+         </Sql>
+         <Parameter name="mouleId"/> 
+     </SqlMethod>
 </SqlClass>
 
