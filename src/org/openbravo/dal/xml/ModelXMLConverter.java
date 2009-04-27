@@ -83,9 +83,19 @@ public class ModelXMLConverter implements OBSingleton {
    */
   public Document getSchema() {
     final Document doc = XMLUtil.getInstance().createDomDocument();
+    doc
+        .addComment("\n* ***********************************************************************************\n"
+            + "* Copyright (C) 2001-2009 Openbravo S.L. Licensed under the Apache Software\n"
+            + "* License version 2.0 You may obtain a copy of the License at\n"
+            + "* http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law\n"
+            + "* or agreed to in writing, software distributed under the License is\n"
+            + "* distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n"
+            + "* KIND, either express or implied. See the License for the specific language\n"
+            + "* governing permissions and limitations under the License.\n"
+            + "* ***********************************************************************************\n");
     final Element root = doc.addElement("schema");
     root.addAttribute("xmlns", "http://www.w3.org/1999/XMLSchema");
-    root.addAttribute("xmlns:bo", "http://www.openbravo.com");
+    root.addAttribute("xmlns:ob", "http://www.openbravo.com");
 
     final List<String> entityNames = new ArrayList<String>();
     for (final Entity e : ModelProvider.getInstance().getModel()) {
