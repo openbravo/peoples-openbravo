@@ -37,6 +37,7 @@ import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.CheckException;
+import org.openbravo.dal.core.DalMappingGenerator;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -90,6 +91,8 @@ public class DalWebService implements WebService {
       xml = XMLUtil.getInstance().toString(ModelXMLConverter.getInstance().getEntitiesAsXML());
     } else if (segment.equals("schema")) {
       xml = XMLUtil.getInstance().toString(ModelXMLConverter.getInstance().getSchema());
+    } else if (segment.equals("hbm")) {
+      xml = DalMappingGenerator.getInstance().generateMapping();
     } else {
       final String entityName = segment;
 
