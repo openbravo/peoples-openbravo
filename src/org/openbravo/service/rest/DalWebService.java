@@ -307,12 +307,16 @@ public class DalWebService implements WebService {
   protected String doChangeActionXML(String path, HttpServletRequest request,
       HttpServletResponse response, ChangeAction changeAction) {
     // get the resource
-    final String segment = WebServiceUtil.getInstance().getFirstSegment(path);
-    try {
-      ModelProvider.getInstance().getEntity(segment);
-    } catch (final CheckException ce) {
-      throw new ResourceNotFoundException("Resource " + segment + " not found", ce);
-    }
+
+    // Disabled this check as it makes the system much more flexible....
+    // it makes it possible to post xml with multiple entities to a url like
+    // http://localhost:8080/openbravo/ws/dal
+    // final String segment = WebServiceUtil.getInstance().getFirstSegment(path);
+    // try {
+    // ModelProvider.getInstance().getEntity(segment);
+    // } catch (final CheckException ce) {
+    // throw new ResourceNotFoundException("Resource " + segment + " not found", ce);
+    // }
 
     try {
       final SAXReader reader = new SAXReader();
