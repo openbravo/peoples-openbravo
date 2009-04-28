@@ -7930,16 +7930,7 @@
     <organization id="0"/>
     <active>true</active>
     <editableField>true</editableField>
-  </ADProcessAccess>
-  <ADProcessAccess id="5E4DB943A71416CFE040007F01002944">
-    <id>5E4DB943A71416CFE040007F01002944</id>
-    <process id="800193"/>
-    <role id="1000006"/>
-    <client id="1000001"/>
-    <organization id="0"/>
-    <active>true</active>
-    <editableField>true</editableField>
-  </ADProcessAccess>
+  </ADProcessAccess> 
   <ADProcessAccess id="5E4DB943A71516CFE040007F01002944">
     <id>5E4DB943A71516CFE040007F01002944</id>
     <process id="800194"/>
@@ -10531,16 +10522,7 @@
     <organization id="0"/>
     <active>true</active>
     <editableField>true</editableField>
-  </ADProcessAccess>
-  <ADProcessAccess id="5E4DB943AC5A16CFE040007F01002944">
-    <id>5E4DB943AC5A16CFE040007F01002944</id>
-    <process id="800193"/>
-    <role id="1000005"/>
-    <client id="1000001"/>
-    <organization id="0"/>
-    <active>true</active>
-    <editableField>true</editableField>
-  </ADProcessAccess>
+  </ADProcessAccess>  
   <ADProcessAccess id="5E4DB943AC5F16CFE040007F01002944">
     <id>5E4DB943AC5F16CFE040007F01002944</id>
     <process id="800194"/>
