@@ -206,11 +206,16 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
           File myDir = new File(strPath);
           File[] myFiles = myDir.listFiles();
           ArrayList<File> myTargetFiles = new ArrayList<File>();
-          for (int j = 0; j < myFiles.length; j++) {
-            if (myFiles[j].getName().endsWith(".xml"))
-              myTargetFiles.add(myFiles[j]);
+          // if the directory does not exist then it will throw an exception
+          if (myFiles != null) {
+            for (int j = 0; j < myFiles.length; j++) {
+              if (myFiles[j].getName().endsWith(".xml"))
+                myTargetFiles.add(myFiles[j]);
+            }
+            myFiles = myTargetFiles.toArray(myFiles);
+          } else {
+            myFiles = new File[] {};
           }
-          myFiles = myTargetFiles.toArray(myFiles);
           StringBuffer strError = new StringBuffer("");
           for (int j = 0; j < myFiles.length; j++) {
             String strXml = Utility.fileToString(myFiles[j].getPath());
