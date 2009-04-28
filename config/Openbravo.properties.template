@@ -119,3 +119,4 @@ pentahoServer=
 ##############
 
 validate.model=true
+isMinorVersion=false
