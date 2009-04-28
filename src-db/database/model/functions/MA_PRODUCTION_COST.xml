@@ -38,6 +38,7 @@
   v_count                               NUMBER;
   v_countAux                            NUMBER;
   v_count2                              NUMBER;
+  v_count3                              VARCHAR2(32);
   v_ProductionDate                      DATE;
   v_Result NUMBER:= 1;
   v_ProductionCost                      NUMBER;
@@ -522,14 +523,14 @@ BEGIN
       END LOOP;
 
       --Check if there still remain production lines not calculated
-      SELECT COUNT(*), MAX(pl.M_ProductionLine_ID) INTO v_count, v_count2
+      SELECT COUNT(*), MAX(pl.M_ProductionLine_ID) INTO v_count, v_count3
       FROM M_PRODUCTIONLINE pl, M_PRODUCTIONPLAN pp
       WHERE pp.M_PRODUCTION_ID=p_Production_ID
         AND pp.M_PRODUCTIONPLAN_ID = pl.M_PRODUCTIONPLAN_ID
         AND pl.CALCULATED='N';
       IF v_count = v_countAux THEN
         v_Message := '@inProduction@ ' || v_ProductionNo || ' @CircularProduction@';
-        v_ResultStr := 'Exiting loop for production: ' || p_Production_ID || ' ' || v_count2 || ' count: ' || v_count;
+        v_ResultStr := 'Exiting loop for production: ' || p_Production_ID || ' ' || v_count3 || ' count: ' || v_count;
         RAISE_APPLICATION_ERROR(-20000, v_Message) ;
       END IF;
     END LOOP;
