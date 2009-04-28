@@ -257,7 +257,7 @@
 	<field name="PLANREINVOICING" class="java.math.BigDecimal"/>
 	<field name="PLANEXPENSES" class="java.math.BigDecimal"/>
 	<field name="COLLECTED" class="java.math.BigDecimal"/>
-	<field name="ORG" class="java.math.BigDecimal"/>
+	<field name="ORG" class="java.lang.String"/>
 	<field name="PROJECTNAME" class="java.lang.String"/>
 	<field name="CONVISOSYM" class="java.lang.String"/>
 
