@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '3616';
+  var number = '3739';
   return number;
 }
 
@@ -3462,9 +3462,9 @@ function showCalendar(id, value, debug, format, showsTime, showsOtherMonths) {
 function datecmp(date1, date2, fmt) {
   if (date1==null || date1 == "") return null;
   else if (date2==null || date2 == "") return null;
-  fmt = getDateFormat(fmt);
-  var mydate1 = Date.parseDate(date1, fmt);
-  var mydate2 = Date.parseDate(date2, fmt);
+  //fmt = getDateFormat(fmt);
+  var mydate1 = getDate(date1, fmt);
+  var mydate2 = getDate(date2, fmt);
   if (mydate1==null || mydate1=="" || mydate2==null || mydate2=="") return null;
   if (mydate1.getFullYear() > mydate2.getFullYear()) return 1;
   else if (mydate1.getFullYear() == mydate2.getFullYear()) {

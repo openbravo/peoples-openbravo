@@ -87,7 +87,7 @@ getDateBlock= function(/*String*/ str_date, block){
 }
 
 isValidDateTextBox= function(/*String*/ id){
-  var isValid = this.isValidDate(document.getElementById(id).value, getDateFormat(document.getElementById(id).getAttribute("displayformat")));
+  var isValid = this.isValidDate(document.getElementById(id).value, document.getElementById(id).getAttribute("displayformat"));
   var element = document.getElementById(id+"invalidSpan");
   if (isValid)
     element.style.display="none";
@@ -112,12 +112,24 @@ isValidDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
   }
 }
 
+
+purgeDateFormat= function(/*String*/ str_format){
+  str_format = str_format.replace("mm","MM").replace("dd","DD").replace("yyyy","YYYY");
+  str_format = str_format.replace("mm","MM").replace("dd","DD").replace("yy","YY");
+  str_format = str_format.replace("%D","%d").replace("%M","%m").replace("%y","%Y");
+  str_format = str_format.replace("/","-").replace("/","-").replace("/","-");
+  str_format = str_format.replace(".","-").replace(".","-").replace(".","-");
+  str_format = str_format.replace(":","-").replace(":","-").replace(":","-");
+  return str_format;
+}
+
 getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) { 
   var inputDate=new Date(0,0,0); 
   if (str_datetime.length == 0) return inputDate; 
 
 
   var dateBlock = new Array();
+  var fullYear = false;
   dateBlock[1] = getDateBlock(str_datetime, 1);
   dateBlock[2] = getDateBlock(str_datetime, 2);
   dateBlock[3] = getDateBlock(str_datetime, 3);
@@ -126,34 +138,43 @@ getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
     return false;
   }
   if (!str_dateFormat) str_dateFormat = defaultDateFormat; 
+
+  str_dateFormat = purgeDateFormat(str_dateFormat);
+
   switch (str_dateFormat) { 
+    case "MM-DD-YYYY": 
+    case "YY-MM-DDDD": 
+    case "DD-MM-YYYY": 
+      fullYear = true;
+  }
+  switch (str_dateFormat) { 
+    case "MM-DD-YYYY": 
+    case "MM-DD-YY": 
     case "%m-%d-%Y": 
-    case "%m/%d/%Y": 
-    case "%m.%d.%Y": 
-    case "%m:%d:%Y": 
       if (dateBlock[2] < 1 || dateBlock[2] > 31) return false; 
       if (dateBlock[1] < 1 || dateBlock[1] > 12) return false; 
       if (dateBlock[3] < 1 || dateBlock[3] > 9999) return false; 
       inputDate=new Date(parseFloat(dateBlock[3]), parseFloat(dateBlock[1])-1, parseFloat(dateBlock[2])); 
+      if (fullYear) { inputDate.setFullYear(dateBlock[3]); }
       return inputDate; 
+    case "YYYY-MM-DD": 
+    case "YY-MM-DD": 
     case "%Y-%m-%d": 
-    case "%Y/%m/%d": 
-    case "%Y.%m.%d": 
-    case "%Y:%m:%d": 
       if (dateBlock[3] < 1 || dateBlock[3] > 31) return false; 
       if (dateBlock[2] < 1 || dateBlock[2] > 12) return false; 
       if (dateBlock[1] < 1 || dateBlock[1] > 9999) return false; 
       inputDate=new Date(parseFloat(dateBlock[1]), parseFloat(dateBlock[2])-1, parseFloat(dateBlock[3])); 
+      if (fullYear) { inputDate.setFullYear(dateBlock[1]); }
       return inputDate; 
+    case "DD-MM-YYYY": 
+    case "DD-MM-YY": 
     case "%d-%m-%Y": 
-    case "%d/%m/%Y": 
-    case "%d.%m.%Y": 
-    case "%d:%m:%Y": 
     default: 
       if (dateBlock[1] < 1 || dateBlock[1] > 31) return false; 
       if (dateBlock[2] < 1 || dateBlock[2] > 12) return false; 
       if (dateBlock[3] < 1 || dateBlock[3] > 9999) return false; 
       inputDate=new Date(parseFloat(dateBlock[3]), parseFloat(dateBlock[2])-1, parseFloat(dateBlock[1])); 
+      if (fullYear) { inputDate.setFullYear(dateBlock[3]); }
       return inputDate; 
   }
   return false; 
