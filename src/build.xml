@@ -251,6 +251,11 @@ build.war: build a war file in the lib directory.
       <test name="org.openbravo.test.AllQuickAntTaskTests" haltonfailure="no"/>
     </junit>
   </target>
+
+  <target name="run.javascript.tests">
+  	<taskdef name="jstest" classname="org.openbravo.test.javascript.JavaScriptAntTest" classpathref="project.class.path" />
+	<jstest apiDetailsPath="${base.config}" jsPath="${base.web}/js" />
+  </target>
   
   <target name="compileSqlc" depends="sqlc">
     <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
