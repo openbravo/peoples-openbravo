@@ -226,6 +226,8 @@ public class EntityResolver implements OBNotSingleton {
       }
     } else if (al == AccessLevel.CLIENT) {
       result = searchClient(id, entity);
+    } else if (al == AccessLevel.ORGANIZATION) {
+      result = searchClientOrganization(id, entity);
     } else if (al == AccessLevel.CLIENT_ORGANIZATION) {
       // search 2 levels
       result = searchClientOrganization(id, entity);
