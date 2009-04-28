@@ -304,6 +304,9 @@ function checkForChanges(f) {
 		return true;
 	}
 	else {
+		if(typeof top.appFrame == 'undefined'){
+			return true;
+		}		
 		var promptConfirmation = typeof top.appFrame.confirmOnChanges == 'undefined' ? true : top.appFrame.confirmOnChanges;
 		var hasUserChanges = typeof top.appFrame.isUserChanges == 'undefined' ? false : top.appFrame.isUserChanges;
 		if (form.inpLastFieldChanged && (hasUserChanges || isButtonClick || isTabClick)) { // if the inpLastFieldChanged exists and there is a user change
