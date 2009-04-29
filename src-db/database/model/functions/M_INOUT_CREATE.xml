@@ -588,14 +588,7 @@
               WHERE M_INOUT_ID = p_InOut_ID;
             ELSE
               -- Post Shipment
-              DECLARE
-              BEGIN
                 M_INOUT_POST(NULL, p_InOut_ID) ;
-              EXCEPTION
-              WHEN OTHERS THEN
-                v_ResultStr:= SQLERRM;
-                RAISE_APPLICATION_ERROR(-20000, SUBSTR(SQLERRM,12,2000)) ;
-              END;
             END IF;
           END IF;--Next_Order
           --<<Next_Order>>
@@ -718,14 +711,8 @@
             END LOOP; -- InvoiceLines
           END LOOP; -- Invoices
           -- Post Shipment
-          DECLARE
-          BEGIN
             M_INOUT_POST(NULL, p_InOut_ID) ;
-          EXCEPTION
-          WHEN OTHERS THEN
-            v_ResultStr:= SQLERRM;
-            RAISE_APPLICATION_ERROR(-20000, SUBSTR(SQLERRM,12,2000)) ;
-          END;
+
 		  --ADDED BY P.SAROBE
 		  SELECT documentno
 		  INTO v_DocumentNo
