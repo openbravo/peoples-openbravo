@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,8 +74,8 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
             "ReportDebtPayment|C_BPartner_ID", "");
         strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportDebtPayment|DateFrom", "");
         strDateTo = vars.getGlobalVariable("inpDateTo", "ReportDebtPayment|DateTo", "");
-        strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-            "ReportDebtPayment|cBpartnerId", "");
+        strcBpartnerId = vars.getGlobalVariable("inpcBPartnerId_IN",
+            "ReportDebtPayment|inpcBPartnerId_IN", "");
       }
       String strCal1 = vars.getGlobalVariable("inpCal1", "ReportDebtPayment|Cal1", "");
       String strCalc2 = vars.getGlobalVariable("inpCalc2", "ReportDebtPayment|Cal2", "");
@@ -174,10 +174,10 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     ReportDebtPaymentData[] data = null;
     if (!strGroup.equals(""))
       data = ReportDebtPaymentData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-          "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportDebtPayment"), strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(this,
-          strDateTo, "1"), strCal1, strCalc2, strPaymentRule, strReceipt, strStatus, strAux,
-          strcbankaccount);
+          "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars,
+          "#AccessibleOrgTree", "ReportDebtPayment"), strC_BPartner_ID, strDateFrom, DateTimeData
+          .nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strPaymentRule, strReceipt,
+          strStatus, strAux, strcbankaccount);
     else
       data = ReportDebtPaymentData.selectNoBpartner(this, vars.getLanguage(), Utility.getContext(
           this, vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars,
@@ -254,8 +254,8 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
         this, Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility
             .getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment")));
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInOutData.selectBpartner(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
-            "#User_Client", ""), strC_BPartner_ID));
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strC_BPartner_ID));
     // xmlDocument.setParameter("paramBPartnerId", strC_BPartner_ID);
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -281,8 +281,9 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       log4j.debug("ListData.select PaymentRule:" + strPaymentRule);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
-          Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), 0);
+          "All_Payment Rule", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportDebtPayment"), Utility.getContext(this, vars, "#User_Client",
+              "ReportDebtPayment"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportDebtPayment",
           strPaymentRule);
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
