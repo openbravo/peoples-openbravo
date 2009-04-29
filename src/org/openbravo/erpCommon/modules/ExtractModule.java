@@ -205,7 +205,7 @@ public class ExtractModule {
   private void createOBX(File file, ZipOutputStream obx) throws Exception {
     final File[] list = file.listFiles(new FilenameFilter() {
       public boolean accept(File f, String s) {
-        return !s.equals(".svn");
+        return !(s.equals(".svn") || s.equals(".hg"));
       }
     });
     for (int i = 0; i < list.length; i++) {
