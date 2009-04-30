@@ -204,13 +204,13 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           .getClient()));
       xmlDocument.setParameter("date", DateTimeData.today(this));
       if (strDateFrom.equals(""))
-        strDateFrom = "01/01/" + strAgno;
+        strDateFrom = GeneralAccountingReportsData.yearStartDate(this,vars.getSqlDateFormat(),strAgno);
       if (strDateTo.equals(""))
-        strDateTo = "31/12/" + strAgno;
+        strDateTo = GeneralAccountingReportsData.yearEndDate(this,vars.getSqlDateFormat(),strAgno);
       if (strDateFromRef.equals(""))
-        strDateFromRef = "01/01/" + strAgnoRef;
+        strDateFromRef = GeneralAccountingReportsData.yearStartDate(this,vars.getSqlDateFormat(),strAgnoRef);
       if (strDateToRef.equals(""))
-        strDateToRef = "31/12/" + strAgnoRef;
+        strDateToRef = GeneralAccountingReportsData.yearEndDate(this,vars.getSqlDateFormat(),strAgnoRef);
       xmlDocument.setParameter("period", strDateFrom + " - " + strDateTo);
       xmlDocument.setParameter("periodRef", strDateFromRef + " - " + strDateToRef);
       xmlDocument.setParameter("agnoInitial", strAgno);
