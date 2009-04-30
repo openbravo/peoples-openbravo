@@ -143,6 +143,7 @@ public class ClientExportImportTest extends XMLBaseTest {
       if (f.exists()) {
         f.delete();
       }
+      f.createNewFile();
       final FileWriter fw = new FileWriter(f);
       fw.write(xml);
       fw.close();
