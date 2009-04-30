@@ -111,8 +111,13 @@
       if (v_COrder_Id is null) or (Cur_workproposal.C_BPartner_ID!=LastCBPartner_ID) then --new header
         v_Line := 0;
         Ad_Sequence_Next('C_Order', v_Client_ID, v_COrder_ID);
-        Ad_Sequence_Doc('DocumentNo_C_Order', v_Client_ID, 'Y', v_DocumentNo);
+        v_DocumentNo := NULL;
         v_CDocTypeID := AD_Get_DocType(v_Client_ID, v_Org_ID,'POO',NULL);
+        AD_Sequence_DocType(v_CDocTypeID, v_Client_ID, 'Y', v_DocumentNo) ;
+        IF(v_DocumentNo IS NULL) THEN
+          AD_Sequence_Doc('DocumentNo_C_Order', v_Client_ID, 'Y', v_DocumentNo) ;
+        END IF;
+
 
         SELECT MIN(C_BPARTNER_LOCATION_ID)
         INTO v_BPartner_Location_ID
