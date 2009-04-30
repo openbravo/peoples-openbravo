@@ -81,11 +81,8 @@
            FROM AD_Module M LEFT JOIN AD_ORGMODULE ON M.AD_MODULE_ID = AD_ORGMODULE.AD_MODULE_ID
            , AD_DATASET
           WHERE M.ad_module_id = AD_DATASET.ad_module_id
-          AND NOT EXISTS (SELECT 1
-                              FROM AD_Module_Dependency
-                             WHERE AD_Dependent_Module_ID = M.AD_Module_ID
-                               AND IsIncluded = 'Y')
             AND m.ISACTIVE = 'Y'
+            AND m.HASCHARTOFACCOUNTS = 'N'
             AND 1=1
             AND HASREFERENCEDATA = 'Y'
             AND AD_DATASET.ACCESSLEVEL IN ('3','1')
