@@ -20,6 +20,7 @@ config/Openbravo.properties
 config/log4j.lcf
 config/setup*
 config/checksums
+src/result.xml
 
 src-db/database/lib/dbmanager.jar
 src-core/lib/openbravo-core.jar

@@ -240,7 +240,9 @@ build.war: build a war file in the lib directory.
     <junit printsummary="yes" haltonfailure="yes">
       <classpath refid="project.class.path" />
       <formatter type="plain" usefile="no"/>
-      <test name="org.openbravo.test.AllAntTaskTests" haltonfailure="no"/>
+      <test name="org.openbravo.test.AllAntTaskTests" haltonfailure="no" outfile="result">
+	    <formatter type="xml" />
+	  </test>
     </junit>
   </target>
 
