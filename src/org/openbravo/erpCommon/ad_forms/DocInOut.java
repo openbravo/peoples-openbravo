@@ -175,7 +175,7 @@ public class DocInOut extends AcctServer {
         dr.setLocationFromBPartner(C_BPartner_Location_ID, false, conn); // to
         // Loc
         log4jDocInOut.debug("(MatShipment) - CR account: "
-            + getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
+            + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
         log4jDocInOut.debug("(MatShipment) - CR costs: " + costs);
         // Inventory CR
         cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
@@ -206,7 +206,7 @@ public class DocInOut extends AcctServer {
         dr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
         // Loc
         log4jDocInOut.debug("(matReceipt) - CR account: "
-            + getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn));
+            + line.getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn));
         log4jDocInOut.debug("(matReceipt) - CR costs: " + costs);
         // NotInvoicedReceipt CR
         cr = fact.createLine(line, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
