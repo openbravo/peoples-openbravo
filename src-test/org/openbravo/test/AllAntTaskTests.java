@@ -48,6 +48,7 @@ import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.xml.ClientExportImportTest;
+import org.openbravo.test.xml.DatasetExportTest;
 import org.openbravo.test.xml.EntityXMLImportTestBusinessObject;
 import org.openbravo.test.xml.EntityXMLImportTestReference;
 import org.openbravo.test.xml.EntityXMLImportTestSingle;
@@ -114,6 +115,7 @@ public class AllAntTaskTests {
     suite.addTestSuite(EntityXMLImportTestWarning.class);
     suite.addTestSuite(EntityXMLIssues.class);
     suite.addTestSuite(UniqueConstraintImportTest.class);
+    suite.addTestSuite(DatasetExportTest.class);
 
     // $JUnit-END$
     return suite;

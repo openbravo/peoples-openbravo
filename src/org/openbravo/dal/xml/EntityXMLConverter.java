@@ -24,8 +24,10 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
@@ -50,7 +52,10 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.utility.DataSet;
+import org.openbravo.model.ad.utility.DataSetTable;
 import org.openbravo.model.ad.utility.TreeNode;
+import org.openbravo.service.dataset.DataSetService;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -113,6 +118,10 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   private TransformerHandler xmlHandler;
   private Writer output;
+
+  // is set if the export is done on the basis of a dataset
+  private DataSet dataSet;
+  private Map<Entity, DataSetTable> dataSetTablesByEntity;
 
   /**
    * Clear internal data structures, after this call this converter can be used for a new set of
@@ -266,8 +275,18 @@ public class EntityXMLConverter implements OBNotSingleton {
     final boolean onlyIdentifierProps = OBContext.getOBContext().getEntityAccessChecker()
         .isDerivedReadable(obObject.getEntity());
 
+    final List<Property> exportableProperties;
+    // second 'and' is necessary because referenced entities are not part of the dataset
+    if (getDataSet() != null && dataSetTablesByEntity.get(obObject.getEntity()) != null) {
+      final DataSetTable dst = dataSetTablesByEntity.get(obObject.getEntity());
+      exportableProperties = DataSetService.getInstance().getExportableProperties(obObject, dst,
+          dst.getDataSetColumnList(), optionExportTransientInfo);
+    } else {
+      exportableProperties = obObject.getEntity().getProperties();
+    }
+
     // export each property
-    for (final Property p : obObject.getEntity().getProperties()) {
+    for (final Property p : exportableProperties) {
       if (onlyIdentifierProps && !p.isIdentifier()) {
         continue;
       }
@@ -618,4 +637,20 @@ public class EntityXMLConverter implements OBNotSingleton {
   public void setOutput(Writer output) {
     this.output = output;
   }
+
+  public DataSet getDataSet() {
+    return dataSet;
+  }
+
+  public void setDataSet(DataSet dataSet) {
+    this.dataSet = dataSet;
+
+    dataSetTablesByEntity = new HashMap<Entity, DataSetTable>();
+    for (DataSetTable dst : dataSet.getDataSetTableList()) {
+      final Entity entity = ModelProvider.getInstance().getEntityByTableName(
+          dst.getTable().getDBTableName());
+      dataSetTablesByEntity.put(entity, dst);
+    }
+  }
+
 }

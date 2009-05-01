@@ -147,7 +147,6 @@ public class DataExportService implements OBSingleton {
       Collections.sort(dts, new DatasetTableComparator());
 
       final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
-      int i = 0;
       for (final DataSetTable dt : dts) {
         final List<BaseOBObject> list = DataSetService.getInstance().getExportableObjects(dt, null,
             parameters);
@@ -179,10 +178,13 @@ public class DataExportService implements OBSingleton {
     log.debug("Exporting dataset " + dataSet.getName());
 
     final EntityXMLConverter exc = EntityXMLConverter.newInstance();
-    exc.setOptionIncludeReferenced(true);
+    exc.setOptionIncludeReferenced(false);
     exc.setOptionExportTransientInfo(true);
     exc.setOptionExportAuditInfo(true);
     exc.setAddSystemAttributes(true);
+    if (dataSet != null) {
+      exc.setDataSet(dataSet);
+    }
     final StringWriter out = new StringWriter();
     exc.setOutput(out);
 
