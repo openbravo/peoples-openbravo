@@ -72,6 +72,30 @@ public class DataSetService implements OBSingleton {
   }
 
   /**
+   * Returns true if the {@link DataSet} has data. Note that the client/organization of the current
+   * user are used for querying
+   * 
+   * @param dataSet
+   *          the data set to check for content
+   * @return true if there are objects in the data set, false other wise
+   * @see DataSet#getDataSetTableList()
+   * @see DataSetTable
+   */
+  public boolean hasData(DataSet dataSet) {
+    long totalCnt = 0;
+    for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
+      final Entity entity = ModelProvider.getInstance().getEntityByTableName(
+          dataSetTable.getTable().getDBTableName());
+      final OBCriteria<BaseOBObject> obc = OBDal.getInstance().createCriteria(entity.getName());
+      totalCnt += obc.count();
+      if (totalCnt > 0) {
+        return true;
+      }
+    }
+    return totalCnt > 0;
+  }
+
+  /**
    * Checks if objects of a {@link DataSetTable} of the {@link DataSet} have changed since a
    * specific date. Note that this method does not use whereclauses or other filters defined in the
    * dataSetTable. It checks all instances of the table of the DataSetTable.

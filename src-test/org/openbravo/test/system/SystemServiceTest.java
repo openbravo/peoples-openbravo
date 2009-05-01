@@ -51,8 +51,13 @@ public class SystemServiceTest extends BaseTest {
     }
 
     // 600 days in the past
-    final Date past = new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 600));
+    final long oneDay = 1000 * 60 * 60 * 24;
+    final long manyDays = (long) 600 * oneDay;
+    final Date past = new Date(System.currentTimeMillis() - manyDays);
     for (DataSet ds : dss) {
+      if (!DataSetService.getInstance().hasData(ds)) {
+        continue;
+      }
       assertTrue(DataSetService.getInstance().hasChanged(ds, past));
     }
   }
