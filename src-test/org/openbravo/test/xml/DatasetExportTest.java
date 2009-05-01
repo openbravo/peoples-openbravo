@@ -179,7 +179,6 @@ public class DatasetExportTest extends BaseTest {
         Order.PROPERTY_PROJECT, Order.PROPERTY_SELFSERVICE });
 
     String xml = DataExportService.getInstance().exportDataSetToXML(ds);
-    System.err.println(xml);
     checkPropsPresent(ds, xml, false, false, excludeList.toArray(new String[excludeList.size()]));
   }
 
