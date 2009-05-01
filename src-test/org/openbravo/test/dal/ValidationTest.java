@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.DynamicOBObject;
 import org.openbravo.base.util.CheckException;
@@ -36,6 +37,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.alert.AlertRule;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.common.invoice.InvoiceSchedule;
 import org.openbravo.model.procurement.Requisition;
 import org.openbravo.test.base.BaseTest;
@@ -186,5 +188,15 @@ public class ValidationTest extends BaseTest {
         break;
       }
     }
+  }
+
+  /**
+   * Tests Mantis issue: 8624: Validation should not check field length of id/foreign key columns
+   */
+  public void testMantis8624() {
+    final String id = "012345678901234567890123456789";
+    final AcctSchemaTableDocType oi = OBProvider.getInstance().get(AcctSchemaTableDocType.class);
+    // this failed before:
+    oi.setId(id);
   }
 }
