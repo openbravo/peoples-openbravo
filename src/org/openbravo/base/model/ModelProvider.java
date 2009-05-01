@@ -631,6 +631,8 @@ public class ModelProvider implements OBSingleton {
    * Returns an Entity using the table name of the table belonging to the Entity. If no Entity is
    * found then null is returned, no Exception is thrown.
    * 
+   * Note: the AD_Table.tablename should be used here, not the AD_Table.name!
+   * 
    * @param tableName
    *          the name used to search for the Entity
    * @return the Entity or null if not found

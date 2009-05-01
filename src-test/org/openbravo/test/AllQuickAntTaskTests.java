@@ -23,6 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.openbravo.test.dal.DalTest;
+import org.openbravo.test.dal.OBContextTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.model.UniqueConstraintTest;
 import org.openbravo.test.modularity.DBPrefixTest;
@@ -68,6 +69,7 @@ public class AllQuickAntTaskTests {
     // suite.addTestSuite(HqlTest.class);
     // suite.addTestSuite(MappingGenerationTest.class);
     suite.addTestSuite(ValidationTest.class);
+    suite.addTestSuite(OBContextTest.class);
 
     // expression
     // suite.addTestSuite(EvaluationTest.class);

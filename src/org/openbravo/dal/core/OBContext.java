@@ -78,6 +78,8 @@ public class OBContext implements OBNotSingleton {
 
   private static ThreadLocal<OBContext> instance = new ThreadLocal<OBContext>();
 
+  private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<OBContext>();
+
   private static String CONTEXT_PARAM = "#OBContext";
 
   /**
@@ -162,6 +164,9 @@ public class OBContext implements OBNotSingleton {
     // if (obContext != null && instance.get() != null)
     // throw new ArgumentException("OBContext already set");
     instance.set(obContext);
+
+    // nullify the admin context
+    adminModeSet.set(null);
   }
 
   /**
@@ -190,8 +195,6 @@ public class OBContext implements OBNotSingleton {
   private Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
   private EntityAccessChecker entityAccessChecker;
 
-  // disables security checks
-  private boolean inAdministratorMode;
   // the "0" user is the administrator
   private boolean isAdministrator;
   private boolean isInitialized = false;
@@ -387,7 +390,6 @@ public class OBContext implements OBNotSingleton {
     organizationStructureProviderByClient = null;
     entityAccessChecker = null;
 
-    inAdministratorMode = false;
     isAdministrator = false;
     isInitialized = false;
 
@@ -630,12 +632,16 @@ public class OBContext implements OBNotSingleton {
   }
 
   public boolean isInAdministratorMode() {
-    return inAdministratorMode || isAdministrator;
+    return adminModeSet.get() != null || isAdministrator;
   }
 
   public boolean setInAdministratorMode(boolean inAdministratorMode) {
     final boolean prevMode = isInAdministratorMode();
-    this.inAdministratorMode = inAdministratorMode;
+    if (inAdministratorMode) {
+      adminModeSet.set(this);
+    } else {
+      adminModeSet.set(null);
+    }
     return prevMode;
   }
 
