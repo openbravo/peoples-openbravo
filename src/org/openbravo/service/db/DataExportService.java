@@ -189,6 +189,11 @@ public class DataExportService implements OBSingleton {
     final List<DataSetTable> dts = dataSet.getDataSetTableList();
     Collections.sort(dts, new DatasetTableComparator());
 
+    // set the Client ID if not set
+    if (parameters.get(CLIENT_ID_PARAMETER_NAME) == null) {
+      parameters.put(CLIENT_ID_PARAMETER_NAME, OBContext.getOBContext().getCurrentClient().getId());
+    }
+
     final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
     for (final DataSetTable dt : dts) {
       final Boolean isbo = dt.isBusinessObject();
