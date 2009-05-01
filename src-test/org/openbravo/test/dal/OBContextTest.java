@@ -147,7 +147,7 @@ public class OBContextTest extends BaseTest {
     private boolean firstStepDone = false;
     private boolean nextStep = false;
     private boolean nextStepDone = false;
-    private boolean adminMode = true; // start with true
+    private boolean adminMode = false; // start with true
     private boolean prevMode = false;
 
     private OBContext localOBContext;
