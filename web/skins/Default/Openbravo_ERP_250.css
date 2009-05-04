@@ -252,7 +252,7 @@ button.ButtonLink_focus .Button, .Button_focus {
 
 button.ButtonLink_focus table.Button .Button_left, .Button_focus .Button_left {
   background-repeat: no-repeat;
-  background-position: center right;
+  background-position: center right; /*~RTL   background-position: center left; */
   background-image: url(Common/Button/buttonLeft.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
   width: 35px;
   height: 26px;
@@ -284,8 +284,8 @@ button.ButtonLink_default .Button, .Button_default {
 
 button.ButtonLink_default table.Button .Button_left, .Button_default .Button_left {
   background-repeat: no-repeat;
-  background-position: center right;
-  background-image: url(Common/Button/buttonLeft.default.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-position: center right; /*~RTL   background-position: center left; */
+  background-image: url(Common/Button/buttonLeft.default.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
   width: 35px;
   height: 26px;
 }
@@ -317,8 +317,8 @@ button.ButtonLink_disabled table.Button .Button_left, table.ButtonLink_disabled 
   width: 35px;
   height: 26px;
   background-repeat: no-repeat;
-  background-position: center right;
-  background-image: url(Common/Button/buttonLeft.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-position: center right; /*~RTL   background-position: center left; */
+  background-image: url(Common/Button/buttonLeft.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
   text-align: right;
   vertical-align: top;
 }
@@ -603,117 +603,117 @@ a.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled .But
 
 .Button_Icon_process {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconProcess.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconProcess.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_back {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconBack.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconBack.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_next {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconNext.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconNext.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_ok {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconOk.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconOk.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_cancel {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconCancel.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconCancel.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_clear {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconClear.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconClear.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_pdf {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconPdf.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconPdf.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_html {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconHtml.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconHtml.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_search {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconSearch.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconSearch.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_scanUpdates {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconScanUpdates.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconScanUpdates.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 
 .Button_Icon_save {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconSave.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconSave.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_download {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconDownload.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconDownload.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_edit {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconEdit.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconEdit.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_erase {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconErase.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconErase.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_password {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconPassword.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconPassword.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_contract {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconContract.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconContract.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_expand {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconExpand.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconExpand.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_lock {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconLock.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconLock.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 .Button_Icon_unlock {
   background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/iconUnlock.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconUnlock.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
 }
 
 /*
