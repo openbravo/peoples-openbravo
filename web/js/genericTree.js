@@ -465,9 +465,9 @@
   }
 
   function gt_adjustTreeWidth() {
-    if (navigator.userAgent.toUpperCase().indexOf("MSIE")!=-1) {
+    /*if (navigator.userAgent.toUpperCase().indexOf("MSIE")!=-1) {
       return true;
-    }
+    }*/
     var gt_cont = document.getElementById('genericTreeRowContainer');
     var width_old = document.getElementById('genericTree').clientWidth;
     var height_old = gt_cont.clientHeight;
