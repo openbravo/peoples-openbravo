@@ -234,7 +234,7 @@ public class VariablesSecureApp extends VariablesBase {
    * @param inKey1
    *          The string to compare Command parameter to.
    * @return Boolean indicating the equality of the Command and the inKey1 parameter.
-   * @see getCommand
+   * @see #getCommand()
    */
   public boolean commandIn(String inKey1) {
     if (command.equals(inKey1))
@@ -252,7 +252,7 @@ public class VariablesSecureApp extends VariablesBase {
    * @param inKey2
    *          The second string to compare the Command parameter to.
    * @return Boolean indicating the equality of the Command and either of the inKeyX parameters.
-   * @see getCommand
+   * @see #getCommand()
    */
   public boolean commandIn(String inKey1, String inKey2) {
     if (command.equals(inKey1) || command.equals(inKey2))
@@ -272,7 +272,7 @@ public class VariablesSecureApp extends VariablesBase {
    * @param inKey3
    *          The third string to compare the Command parameter to .
    * @return Boolean indicating the equality of the Command and either of the inKeyX parameters.
-   * @see getCommand
+   * @see #getCommand()
    */
   public boolean commandIn(String inKey1, String inKey2, String inKey3) {
     if (command.equals(inKey1) || command.equals(inKey2) || command.equals(inKey3))
@@ -294,7 +294,7 @@ public class VariablesSecureApp extends VariablesBase {
    * @param inKey4
    *          The fourth string to compare the Command parameter to.
    * @return Boolean indicating the equality of the Command and either of the inKeyX parameters.
-   * @see getCommand
+   * @see #getCommand()
    */
   public boolean commandIn(String inKey1, String inKey2, String inKey3, String inKey4) {
     if (command.equals(inKey1) || command.equals(inKey2) || command.equals(inKey3)
@@ -319,7 +319,7 @@ public class VariablesSecureApp extends VariablesBase {
    * @param inKey5
    *          The fifth string to compare the Command parameter to.
    * @return Boolean indicating the equality of the Command and either of the inKeyX parameters.
-   * @see getCommand
+   * @see #getCommand()
    */
   public boolean commandIn(String inKey1, String inKey2, String inKey3, String inKey4, String inKey5) {
     if (command.equals(inKey1) || command.equals(inKey2) || command.equals(inKey3)
@@ -376,8 +376,8 @@ public class VariablesSecureApp extends VariablesBase {
    *          table.
    * @return Deserialized OBError object retrieved from the session. Null if no error message exists
    *         for this tab.
-   * @see setMessage
-   * @see removeMessage
+   * @see #setMessage(String, OBError)
+   * @see #removeMessage(String)
    */
   public OBError getMessage(String AD_Tab_ID) {
     return ((OBError) getSessionObject(AD_Tab_ID + "|message"));
@@ -392,8 +392,8 @@ public class VariablesSecureApp extends VariablesBase {
    *          table.
    * @param error
    *          The OBError object that needs to be set.
-   * @see getMessage
-   * @see removeMessage
+   * @see #setMessage(String, OBError)
+   * @see #removeMessage(String)
    */
   public void setMessage(String AD_Tab_ID, OBError error) {
     setSessionObject(AD_Tab_ID + "|message", error);
@@ -406,8 +406,8 @@ public class VariablesSecureApp extends VariablesBase {
    * @param AD_Tab_ID
    *          String with the primary key (ID) of the tab as entered within the AD_TAB database
    *          table.
-   * @see setMessage
-   * @see getMessage
+   * @see #setMessage(String, OBError)
+   * @see #getMessage(String)
    */
   public void removeMessage(String AD_Tab_ID) {
     removeSessionValue(AD_Tab_ID + "|message");

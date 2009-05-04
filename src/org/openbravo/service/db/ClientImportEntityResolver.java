@@ -46,11 +46,19 @@ public class ClientImportEntityResolver extends EntityResolver {
     return OBProvider.getInstance().get(ClientImportEntityResolver.class);
   }
 
-  // searches for a previous entity with the same id or an id retrieved from
-  // the ad_ref_data_loaded table. The resolving takes into account different
-  // access levels and
   /**
-   * @see @EntityResolver
+   * Searches for a existing entity with the same id. Only searches on system level.
+   * 
+   * @param entityName
+   *          the name of the entity to resolve
+   * @param id
+   *          the id
+   * @param referenced
+   *          is true if the entity needs to be resolved because it is referenced from imported
+   *          data, is false if the entity is part of the main imported dataset
+   * 
+   * @see BaseOBObject#getEntityName()
+   * @see EntityResolver#resolve(String, String, boolean)
    */
   @Override
   public BaseOBObject resolve(String entityName, String id, boolean referenced) {

@@ -244,7 +244,7 @@ public class SystemInfo {
   }
 
   /**
-   * @return
+   * @return the all systemInfo properties
    */
   public static Properties getSystemInfo() {
     Properties props = new Properties();
@@ -265,7 +265,7 @@ public class SystemInfo {
    * return '1.7.0'
    * 
    * @param str
-   * @return
+   * @return the string representation of a numerical version from a longer string.
    */
   public static String getVersion(String str) {
     String version = "";
@@ -281,7 +281,7 @@ public class SystemInfo {
 
   /**
    * @param item
-   * @return
+   * @return the systemInfo of the passed item
    */
   public static String get(Item item) {
     return systemInfo.get(item);

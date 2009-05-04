@@ -207,22 +207,24 @@ public class ProcessMonitor implements SchedulerListener, JobListener, TriggerLi
   }
 
   /**
-   * @return
+   * @return the database Connection Provider
    */
   public ConnectionProvider getConnection() {
     return (ConnectionProvider) context.get(ConnectionProviderContextListener.POOL_ATTRIBUTE);
   }
 
   /**
-   * @return
+   * @return the configuration parameters.
    */
   public ConfigParameters getConfigParameters() {
     return (ConfigParameters) context.get(ConfigParameters.CONFIG_ATTRIBUTE);
   }
 
   /**
+   * Formats a date according to the data time format.
+   * 
    * @param date
-   * @return
+   * @return a formatted date
    */
   public final String format(Date date) {
     final String dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
@@ -230,8 +232,11 @@ public class ProcessMonitor implements SchedulerListener, JobListener, TriggerLi
   }
 
   /**
+   * Converts a duration in millis to a String
+   * 
    * @param duration
-   * @return
+   *          the duration in millis
+   * @return a String representation of the duration
    */
   public static String getDuration(long duration) {
 

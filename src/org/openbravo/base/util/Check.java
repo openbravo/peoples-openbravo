@@ -124,7 +124,7 @@ public class Check {
   /**
    * Checks if the passed object is of the class specified, null values are ignored.
    * 
-   * @param value
+   * @param obj
    *          should be instanceof the expClass
    * @param expClass
    *          the class used for the check

@@ -21,34 +21,43 @@ package org.openbravo.test.model;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.UniqueConstraint;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Tests unique constraints
+ * Tests the api which allows to query for objects which would match a certain object based on the
+ * unique constraints defined: {@link OBDal#findUniqueConstrainedObjects(BaseOBObject)}.
  * 
  * @author mtaal
  */
 
 public class UniqueConstraintTest extends BaseTest {
 
+  private static final Logger log = Logger.getLogger(UniqueConstraintTest.class);
+
+  /**
+   * Check that the unique constraints are loaded ([@link {@link Entity#getUniqueConstraints()}).
+   */
   public void testUniqueConstraintLoad() {
     final Entity entity = ModelProvider.getInstance().getEntityByTableName("C_Country_Trl");
     assertEquals(1, entity.getUniqueConstraints().size());
     dumpUniqueConstraints();
   }
 
+  /**
+   * Tests the {@link OBDal#findUniqueConstrainedObjects(BaseOBObject)} method.
+   */
   public void testUniqueConstraintQuerying() {
     setUserContext("1000001");
-    OBContext.getOBContext().setInAdministratorMode(true);
+    addReadWriteAccess(Country.class);
     final List<Country> countries = OBDal.getInstance().createCriteria(Country.class).list();
     assertTrue(countries.size() > 0);
     for (final Country c : countries) {
@@ -66,13 +75,13 @@ public class UniqueConstraintTest extends BaseTest {
     for (final Entity e : ModelProvider.getInstance().getModel()) {
       if (e.getUniqueConstraints().size() > 0) {
         for (final UniqueConstraint uc : e.getUniqueConstraints()) {
-          System.err.println(">>> Entity " + e);
-          System.err.println("UniqueConstraint " + uc.getName());
+          log.debug(">>> Entity " + e);
+          log.debug("UniqueConstraint " + uc.getName());
           for (final Property p : uc.getProperties()) {
-            System.err.print(p.getName() + " ");
+            log.debug(p.getName() + " ");
           }
         }
-        System.err.println("");
+        log.debug("");
       }
     }
   }

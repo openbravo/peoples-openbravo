@@ -206,11 +206,16 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
           File myDir = new File(strPath);
           File[] myFiles = myDir.listFiles();
           ArrayList<File> myTargetFiles = new ArrayList<File>();
-          for (int j = 0; j < myFiles.length; j++) {
-            if (myFiles[j].getName().endsWith(".xml"))
-              myTargetFiles.add(myFiles[j]);
+          // if the directory does not exist then it will throw an exception
+          if (myFiles != null) {
+            for (int j = 0; j < myFiles.length; j++) {
+              if (myFiles[j].getName().endsWith(".xml"))
+                myTargetFiles.add(myFiles[j]);
+            }
+            myFiles = myTargetFiles.toArray(myFiles);
+          } else {
+            myFiles = new File[] {};
           }
-          myFiles = myTargetFiles.toArray(myFiles);
           StringBuffer strError = new StringBuffer("");
           for (int j = 0; j < myFiles.length; j++) {
             String strXml = Utility.fileToString(myFiles[j].getPath());
@@ -223,17 +228,20 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
             if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
                 && !myResult.getLogMessages().equals("null")) {
               m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(myResult.getLogMessages()).append(SALTO_LINEA);
+              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getLogMessages())).append(
+                  SALTO_LINEA);
             }
             if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
                 && !myResult.getWarningMessages().equals("null")) {
               m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(myResult.getWarningMessages()).append(SALTO_LINEA);
+              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getWarningMessages())).append(
+                  SALTO_LINEA);
             }
             if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
                 && !myResult.getErrorMessages().equals("null")) {
               m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(myResult.getErrorMessages()).append(SALTO_LINEA);
+              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getErrorMessages())).append(
+                  SALTO_LINEA);
             }
             if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
                 && !myResult.getErrorMessages().equals("null"))
@@ -253,6 +261,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
                 Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
                 SALTO_LINEA);
           }
+
           return "";
         }
       } else
@@ -260,6 +269,10 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
     } else
       return "NoModules";
     return "";
+  }
+
+  private String replaceNL(String val) {
+    return val.replaceAll("\n", "<br/>");
   }
 
   /**

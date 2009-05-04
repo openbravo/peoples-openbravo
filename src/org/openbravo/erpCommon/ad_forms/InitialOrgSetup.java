@@ -1036,7 +1036,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
    * @param hasMCampaign
    * @param hasSRegion
    * @param strCreateAccounting
-   * @return
+   * @return the error. "" if there is no error
    */
   public String createReferenceData(VariablesSecureApp vars, String strOrganization,
       String strClient, String strModules, boolean hasProduct, boolean hasBPartner,

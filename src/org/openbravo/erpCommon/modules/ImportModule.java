@@ -43,8 +43,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.ddlutils.Platform;
-import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.io.DataReader;
 import org.apache.ddlutils.io.DataToArraySink;
 import org.apache.ddlutils.io.DatabaseDataIO;
@@ -131,7 +129,7 @@ public class ImportModule {
   }
 
   /**
-   * Check the dependencies for a file name. See {@link checkDependenciesId}
+   * Check the dependencies for a file name. See {@link #checkDependenciesId(String[], String[])}.
    */
   public boolean checkDependenciesFileName(String fileName) throws Exception {
     final File file = new File(fileName);
@@ -178,7 +176,7 @@ public class ImportModule {
   }
 
   /**
-   * Check the dependencies for a file. See {@link checkDependenciesId}
+   * Check the dependencies for a file. See {@link #checkDependenciesId(String[], String[])}.
    */
   public boolean checkDependenciesFile(InputStream file) throws Exception {
     if (installLocally) {
@@ -773,8 +771,6 @@ public class ImportModule {
 
     final Connection conn = ds.getConnection();
 
-    final Platform platform = PlatformFactory.createNewPlatformInstance(ds);
-
     Integer seqNo = new Integer(ImportModuleData.selectSeqNo(pool));
 
     for (final DynaBean module : dModulesToInstall) {
@@ -785,21 +781,46 @@ public class ImportModule {
       module.set("SEQNO", seqNo);
       module.set("UPDATE_AVAILABLE", null);
       log4j.info("Inserting in DB info for module: " + module.get("NAME"));
-      platform.updateinsert(conn, db, module);
+
+      String moduleId = (String) module.get("AD_MODULE_ID");
+
+      // Clean temporary tables
+      ImportModuleData.cleanModuleInstall(pool, moduleId);
+      ImportModuleData.cleanModuleDBPrefixInstall(pool, moduleId);
+      ImportModuleData.cleanModuleDependencyInstall(pool, moduleId);
+
+      // Insert data in temporary tables
+      ImportModuleData.insertModuleInstall(pool, moduleId, (String) module.get("NAME"),
+          (String) module.get("VERSION"), (String) module.get("DESCRIPTION"), (String) module
+              .get("HELP"), (String) module.get("URL"), (String) module.get("TYPE"),
+          (String) module.get("LICENSE"), (String) module.get("ISINDEVELOPMENT"), (String) module
+              .get("ISDEFAULT"), seqNo.toString(), (String) module.get("JAVAPACKAGE"),
+          (String) module.get("LICENSETYPE"), (String) module.get("AUTHOR"), (String) module
+              .get("STATUS"), (String) module.get("UPDATE_AVAILABLE"), (String) module
+              .get("ISTRANSLATIONREQUIRED"), (String) module.get("AD_LANGUAGE"), (String) module
+              .get("HASCHARTOFACCOUNTS"), (String) module.get("ISTRANSLATIONMODULE"),
+          (String) module.get("HASREFERENCEDATA"), (String) module.get("ISREGISTERED"),
+          (String) module.get("UPDATEINFO"), (String) module.get("UPDATE_VER_ID"), (String) module
+              .get("REFERENCEDATAINFO"));
+
+      // Set installed for modules being updated
+      ImportModuleData.setModuleUpdated(pool, (String) module.get("AD_MODULE_ID"));
+
       addLog("@ModuleInstalled@ " + module.get("NAME") + " - " + module.get("VERSION"), MSG_SUCCESS);
     }
     for (final DynaBean module : dependencies1) {
-      platform.updateinsert(conn, db, module);
+      ImportModuleData.insertModuleDependencyInstall(pool, (String) module
+          .get("AD_MODULE_DEPENDENCY_ID"), (String) module.get("AD_MODULE_ID"), (String) module
+          .get("AD_DEPENDENT_MODULE_ID"), (String) module.get("STARTVERSION"), (String) module
+          .get("ENDVERSION"), (String) module.get("ISINCLUDED"), (String) module
+          .get("DEPENDANT_MODULE_NAME"));
     }
     for (final DynaBean module : dbPrefix) {
-      platform.updateinsert(conn, db, module);
+      ImportModuleData.insertModuleDBPrefixInstall(pool, (String) module
+          .get("AD_MODULE_DBPREFIX_ID"), (String) module.get("AD_MODULE_ID"), (String) module
+          .get("NAME"));
     }
-    for (final DynaBean module : dModulesToInstall) {
-      String modID = (String) module.get("AD_MODULE_ID");
-      ImportModuleData.updateModuleDate(pool, modID);
-      ImportModuleData.updateModulePrefixDate(pool, modID);
-      ImportModuleData.updateModuleDependencyDate(pool, modID);
-    }
+
     conn.close();
   }
 
@@ -985,7 +1006,7 @@ public class ImportModule {
    * 
    * @param conn
    * @param vars
-   * @return
+   * @return the list of updates keyed by module id
    */
   public static HashMap<String, String> scanForUpdates(ConnectionProvider conn,
       VariablesSecureApp vars) {
@@ -1118,7 +1139,7 @@ public class ImportModule {
    * Returns the module with the ID that is in the module to install or update.
    * 
    * @param moduleID
-   * @return
+   * @return the module with the moduleID, or null if not found
    */
   public Module getModule(String moduleID) {
     for (int i = 0; i < modulesToInstall.length; i++) {

@@ -226,6 +226,8 @@ public class EntityResolver implements OBNotSingleton {
       }
     } else if (al == AccessLevel.CLIENT) {
       result = searchClient(id, entity);
+    } else if (al == AccessLevel.ORGANIZATION) {
+      result = searchClientOrganization(id, entity);
     } else if (al == AccessLevel.CLIENT_ORGANIZATION) {
       // search 2 levels
       result = searchClientOrganization(id, entity);
@@ -358,8 +360,13 @@ public class EntityResolver implements OBNotSingleton {
     if (clientZero != null) {
       return;
     }
-    clientZero = OBDal.getInstance().get(Client.class, "0");
-    organizationZero = OBDal.getInstance().get(Organization.class, "0");
+    final boolean oldSetting = OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      clientZero = OBDal.getInstance().get(Client.class, "0");
+      organizationZero = OBDal.getInstance().get(Organization.class, "0");
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(oldSetting);
+    }
   }
 
   protected Client getClient() {

@@ -52,8 +52,6 @@ public class DocInventory extends AcctServer {
   /**
    * Load Document Details
    * 
-   * @param rs
-   *          result
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -146,7 +144,7 @@ public class DocInventory extends AcctServer {
             .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        e.printStackTrace();
+        log4j.error("Error while creating new instance for DocInventoryTemplate - " + e);
       }
     }
     // Log.trace(Log.l4_Data, "Doc.Inventory.createFact");
@@ -235,7 +233,7 @@ public class DocInventory extends AcctServer {
   /**
    * Get Document Confirmation
    * 
-   * @not used
+   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;

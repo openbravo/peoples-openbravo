@@ -53,7 +53,7 @@
     <SqlMethodComment>Select for relation</SqlMethodComment>
     <Sql><![CDATA[
       SELECT MAX(C_INVOICE.C_INVOICE_ID) AS C_INVOICE_ID
-      FROM C_INVOICE, C_INVOICELINE
+      FROM C_INVOICE
       WHERE C_INVOICE.AD_CLIENT_ID = ?
       AND C_INVOICE.AD_ORG_ID = ?
       AND C_INVOICE.DATEINVOICED = TO_DATE(?)
@@ -72,13 +72,16 @@
     <Parameter name="cProjectId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="cActivityId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_ACTIVITY_ID = ?]]></Parameter>
     <Parameter name="cCampaignId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_CAMPAIGN_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerLocationId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_BPARTNER_LOCATION_ID = ?]]></Parameter>
+    <Parameter name="paymentrule" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.PAYMENTRULE = ?]]></Parameter>
+    <Parameter name="cPaymentTermId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_PAYMENTTERM_ID = ?]]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="selectInvoiceHeaderNoProject" type="preparedStatement" connection="true" return="String" default="">
     <SqlMethodComment>Select for relation (when project is null)</SqlMethodComment>
     <Sql><![CDATA[
       SELECT MAX(C_INVOICE.C_INVOICE_ID) AS C_INVOICE_ID
-      FROM C_INVOICE, C_INVOICELINE
+      FROM C_INVOICE
       WHERE C_INVOICE.AD_CLIENT_ID = ?
       AND C_INVOICE.AD_ORG_ID = ?
       AND C_INVOICE.DATEINVOICED = TO_DATE(?)
@@ -97,6 +100,9 @@
     <Parameter name="cCurrencyId"/>
     <Parameter name="cActivityId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_ACTIVITY_ID = ?]]></Parameter>
     <Parameter name="cCampaignId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_CAMPAIGN_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerLocationId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_BPARTNER_LOCATION_ID = ?]]></Parameter>
+    <Parameter name="paymentrule" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.PAYMENTRULE = ?]]></Parameter>
+    <Parameter name="cPaymentTermId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_PAYMENTTERM_ID = ?]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectInvoiceLine" type="preparedStatement" connection="true" return="multiple">

@@ -24,8 +24,10 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
@@ -35,6 +37,8 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
@@ -48,6 +52,10 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.utility.DataSet;
+import org.openbravo.model.ad.utility.DataSetTable;
+import org.openbravo.model.ad.utility.TreeNode;
+import org.openbravo.service.dataset.DataSetService;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -111,6 +119,10 @@ public class EntityXMLConverter implements OBNotSingleton {
   private TransformerHandler xmlHandler;
   private Writer output;
 
+  // is set if the export is done on the basis of a dataset
+  private DataSet dataSet;
+  private Map<Entity, DataSetTable> dataSetTablesByEntity;
+
   /**
    * Clear internal data structures, after this call this converter can be used for a new set of
    * objects which need to be exported to a xml representation.
@@ -159,17 +171,19 @@ public class EntityXMLConverter implements OBNotSingleton {
    * @return the resulting xml string
    */
   public String toXML(Collection<BaseOBObject> bobs) {
-    final StringWriter sw = new StringWriter();
-    setOutput(sw);
-    clear();
-    process(bobs);
-    return sw.toString();
+    try {
+      final StringWriter sw = new StringWriter();
+      clear();
+      setOutput(sw);
+      process(bobs);
+      return sw.toString();
+    } catch (Exception e) {
+      throw new EntityXMLException(e);
+    }
   }
 
   /**
-   * Processes one business object and adds it to the dom4j document which is present in the
-   * EntityXMLConverter. After this call the xml can be retrieved by calling the
-   * {@link #getDocument()} or the {@link #getProcessResult()} method.
+   * Processes one business object and outputs it to the writer ({@link #setOutput(Writer)}).
    * 
    * @param bob
    *          the business object to convert to xml (dom4j)
@@ -184,12 +198,11 @@ public class EntityXMLConverter implements OBNotSingleton {
   }
 
   /**
-   * Processes a collection of business objects and adds their xml to the dom4j document which is
-   * present in the EntityXMLConverter. After this call the xml can be retrieved by calling the
-   * {@link #getDocument()} or the {@link #getProcessResult()} method.
+   * Processes a collection of business objects and outputs them to the writer (
+   * {@link #setOutput(Writer)}).
    * 
-   * @param bob
-   *          the business object to convert to xml (dom4j)
+   * @param bobs
+   *          the business objects to convert to xml (dom4j)
    */
   public void process(Collection<BaseOBObject> bobs) {
     // set the export list
@@ -259,8 +272,18 @@ public class EntityXMLConverter implements OBNotSingleton {
     final boolean onlyIdentifierProps = OBContext.getOBContext().getEntityAccessChecker()
         .isDerivedReadable(obObject.getEntity());
 
+    final List<Property> exportableProperties;
+    // second 'and' is necessary because referenced entities are not part of the dataset
+    if (getDataSet() != null && dataSetTablesByEntity.get(obObject.getEntity()) != null) {
+      final DataSetTable dst = dataSetTablesByEntity.get(obObject.getEntity());
+      exportableProperties = DataSetService.getInstance().getExportableProperties(obObject, dst,
+          dst.getDataSetColumnList(), optionExportTransientInfo);
+    } else {
+      exportableProperties = obObject.getEntity().getProperties();
+    }
+
     // export each property
-    for (final Property p : obObject.getEntity().getProperties()) {
+    for (final Property p : exportableProperties) {
       if (onlyIdentifierProps && !p.isIdentifier()) {
         continue;
       }
@@ -321,6 +344,28 @@ public class EntityXMLConverter implements OBNotSingleton {
 
       // make a difference between a primitive and a reference
       if (p.isPrimitive()) {
+        // handle a special case the tree node
+        // both the parent and the node should be added to the export list
+        if (value != null && obObject instanceof TreeNode) {
+          final boolean isReferingProperty = p.getName().equals(TreeNode.PROPERTY_REPORTSET)
+              || p.getName().equals(TreeNode.PROPERTY_NODE);
+          if (isReferingProperty && value != null && !value.equals("0")) {
+            final String strValue = (String) value;
+            final TreeNode treeNode = (TreeNode) obObject;
+            final Entity referedEntity = ModelProvider.getInstance().getEntityFromTreeType(
+                treeNode.getTree().getTypeArea());
+            final BaseOBObject obValue = OBDal.getInstance().get(referedEntity.getName(), strValue);
+            if (obValue == null) {
+              log.error("TreeNode: The value " + strValue + " used in treeNode " + treeNode.getId()
+                  + " is not valid, there is no " + referedEntity.getName() + " with that id");
+              // Check.isNotNull(obValue, "The value " + strValue + " used in treeNode "
+              // + treeNode.getId() + " is not valid, there is no " + referedEntity.getName()
+              // + " with that id");
+            } else {
+              addToExportList((BaseOBObject) obValue);
+            }
+          }
+        }
         final String txt = XMLTypeConverter.getInstance().toXML(value);
         xmlHandler.startElement("", "", p.getName(), propertyAttrs);
         xmlHandler.characters(txt.toCharArray(), 0, txt.length());
@@ -333,7 +378,7 @@ public class EntityXMLConverter implements OBNotSingleton {
         for (final Object o : c) {
           // embed in the parent
           if (isOptionEmbedChildren()) {
-            export((BaseOBObject) o, true);
+            export((BaseOBObject) o, false);
           } else {
             // add the child as a tag, the child entityname is
             // used as the tagname
@@ -358,6 +403,7 @@ public class EntityXMLConverter implements OBNotSingleton {
 
         xmlHandler.endElement("", "", p.getName());
       } else if (!p.isOneToMany()) {
+
         // add reference attributes
         addReferenceAttributes(propertyAttrs, (BaseOBObject) value);
 
@@ -467,9 +513,6 @@ public class EntityXMLConverter implements OBNotSingleton {
   /**
    * This option controls if children are exported within the parent or in the root of the xml. The
    * default is embedded (default value is true).
-   * 
-   * @return true (default) children are embedded in the parent, false children are exported in the
-   *         root of the xml
    */
   public void setOptionEmbedChildren(boolean optionEmbedChildren) {
     this.optionEmbedChildren = optionEmbedChildren;
@@ -588,4 +631,20 @@ public class EntityXMLConverter implements OBNotSingleton {
   public void setOutput(Writer output) {
     this.output = output;
   }
+
+  public DataSet getDataSet() {
+    return dataSet;
+  }
+
+  public void setDataSet(DataSet dataSet) {
+    this.dataSet = dataSet;
+
+    dataSetTablesByEntity = new HashMap<Entity, DataSetTable>();
+    for (DataSetTable dst : dataSet.getDataSetTableList()) {
+      final Entity entity = ModelProvider.getInstance().getEntityByTableName(
+          dst.getTable().getDBTableName());
+      dataSetTablesByEntity.put(entity, dst);
+    }
+  }
+
 }

@@ -1047,7 +1047,7 @@ public class TableSQLData implements Serializable {
    * vector
    * 
    * @param v
-   * @return
+   * @return a cleaned vector of Strings
    */
   public Vector<String> cleanVector(Vector<String> v) {
     Vector<String> result = new Vector<String>();

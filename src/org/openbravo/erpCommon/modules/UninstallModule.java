@@ -199,7 +199,7 @@ public class UninstallModule {
   /**
    * Returns a OBError instance obtained from the current log
    * 
-   * @return
+   * @return a new instance of OBError if the log has messages, null otherwise
    */
   public OBError getOBError() {
     if (log.length() != 0) {

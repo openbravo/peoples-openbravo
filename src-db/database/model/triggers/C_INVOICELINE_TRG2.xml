@@ -47,12 +47,6 @@ BEGIN
 -- This trigger is used for calculate the applied offers f0r the invoice
 
 
-
- IF DELETING THEN
-   DELETE FROM C_INVOICELINE_OFFER
-   WHERE C_InvoiceLine_ID = :OLD.C_InvoiceLine_ID;
- END IF;
-
  IF UPDATING THEN
   IF (    (COALESCE(:NEW.M_Product_ID,'0') != COALESCE(:OLD.M_Product_ID,'0'))
     OR (COALESCE(:NEW.PriceActual,0) != COALESCE(:OLD.PriceActual,0))

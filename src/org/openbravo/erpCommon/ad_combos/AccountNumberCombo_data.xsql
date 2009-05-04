@@ -15,7 +15,7 @@
  * All portions are Copyright (C) 2001-2006 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
- ************************************************************************
+ *************************************************************************
 -->
 
 
@@ -28,7 +28,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT C_BANKACCOUNT_ID AS ID, (C_BANK.NAME || '-' || C_BANK.CODEBANK || '/' || C_BANK.CODEBRANCH || C_BANK.DIGITCONTROL || C_BANKACCOUNT.DIGITCONTROL || C_BANKACCOUNT.CODEACCOUNT ) AS name
+      SELECT C_BANKACCOUNT_ID AS ID, (C_BANK.NAME || '-' || COALESCE(TO_CHAR(C_BANK.CODEBANK),'') || '/' || COALESCE(TO_CHAR(C_BANK.CODEBRANCH),'') || COALESCE(TO_CHAR(C_BANK.DIGITCONTROL),'') || COALESCE(TO_CHAR(C_BANKACCOUNT.DIGITCONTROL),'') || COALESCE(TO_CHAR(C_BANKACCOUNT.CODEACCOUNT),'')) AS name
       FROM C_BANK, C_BANKACCOUNT
       WHERE C_BANK.C_BANK_ID = C_BANKACCOUNT.C_BANK_ID 
       AND C_BANK.AD_CLIENT_ID IN ('1')

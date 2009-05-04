@@ -26,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.openbravo.base.exception.OBException;
@@ -33,33 +34,59 @@ import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Base class for webservice tests, mainly provides utility methods.
+ * Base class for webservice tests. Provides several methods to do HTTP REST requests.
  * 
  * @author mtaal
  */
 
 public class BaseWSTest extends BaseTest {
 
+  private static final Logger log = Logger.getLogger(BaseWSTest.class);
+
   private static final String OB_URL = "http://localhost:8080/openbravo";
   private static final String LOGIN = "Openbravo";
   private static final String PWD = "openbravo";
 
+  /**
+   * Executes a DELETE HTTP request, the wsPart is appended to the {@link #getOpenbravoURL()}.
+   * 
+   * @param wsPart
+   *          the actual webservice part of the url, is appended to the openbravo url (
+   *          {@link #getOpenbravoURL()}), includes any query parameters
+   * @param expectedResponse
+   *          the expected HTTP response code
+   */
   protected void doDirectDeleteRequest(String wsPart, int expectedResponse) {
     try {
-      setErrorOccured(true);
       final HttpURLConnection hc = createConnection(wsPart, "DELETE");
       hc.connect();
       assertEquals(expectedResponse, hc.getResponseCode());
-      setErrorOccured(false);
+      assertTrue("Content type not set in delete response", hc.getContentType() != null);
+      assertTrue("Content encoding not set in delete response", hc.getContentEncoding() != null);
     } catch (final Exception e) {
       throw new OBException(e);
     }
   }
 
+  /**
+   * Execute a REST webservice HTTP request which posts/puts content and returns a XML result.
+   * 
+   * @param wsPart
+   *          the actual webservice part of the url, is appended to the openbravo url (
+   *          {@link #getOpenbravoURL()}), includes any query parameters
+   * @param content
+   *          the content (XML) to post or put
+   * @param expectedResponse
+   *          the expected HTTP response code
+   * @param expectedContent
+   *          the system check that the returned content contains this expectedContent
+   * @param method
+   *          POST or PUT
+   * @return
+   */
   protected String doContentRequest(String wsPart, String content, int expectedResponse,
       String expectedContent, String method) {
     try {
-      setErrorOccured(true);
       final HttpURLConnection hc = createConnection(wsPart, method);
       final OutputStream os = hc.getOutputStream();
       os.write(content.getBytes("UTF-8"));
@@ -78,16 +105,24 @@ public class BaseWSTest extends BaseTest {
       final Document doc = sr.read(is);
       final String retContent = XMLUtil.getInstance().toString(doc);
       if (retContent.indexOf(expectedContent) == -1) {
-        System.err.println(retContent);
+        log.debug(retContent);
         fail();
       }
-      setErrorOccured(false);
       return retContent;
     } catch (final Exception e) {
       throw new OBException(e);
     }
   }
 
+  /**
+   * Convenience method to get a value of a specific XML element without parsing the whole xml
+   * 
+   * @param content
+   *          the xml
+   * @param tag
+   *          the element name
+   * @return the value
+   */
   protected String getTagValue(String content, String tag) {
     final int index1 = content.indexOf("<" + tag + ">") + ("<" + tag + ">").length();
     if (index1 == -1) {
@@ -100,9 +135,21 @@ public class BaseWSTest extends BaseTest {
     return content.substring(index1, index2);
   }
 
+  /**
+   * Executes a GET request.
+   * 
+   * @param wsPart
+   *          the actual webservice part of the url, is appended to the openbravo url (
+   *          {@link #getOpenbravoURL()}), includes any query parameters
+   * @param testContent
+   *          the system check that the returned content contains this testContent. if null is
+   *          passed for this parameter then this check is not done.
+   * @param responseCode
+   *          the expected HTTP response code
+   * @return the content returned from the GET request
+   */
   protected String doTestGetRequest(String wsPart, String testContent, int responseCode) {
     try {
-      setErrorOccured(true);
       final HttpURLConnection hc = createConnection(wsPart, "GET");
       hc.connect();
       final SAXReader sr = new SAXReader();
@@ -110,18 +157,26 @@ public class BaseWSTest extends BaseTest {
       final Document doc = sr.read(is);
       final String content = XMLUtil.getInstance().toString(doc);
       if (testContent != null && content.indexOf(testContent) == -1) {
-        System.err.println(content);
+        log.debug(content);
         fail();
       }
       assertEquals(responseCode, hc.getResponseCode());
       is.close();
-      setErrorOccured(false);
       return content;
     } catch (final Exception e) {
       throw new OBException(e);
     }
   }
 
+  /**
+   * Creates a HTTP connection.
+   * 
+   * @param wsPart
+   * @param method
+   *          POST, PUT, GET or DELETE
+   * @return the created connection
+   * @throws Exception
+   */
   protected HttpURLConnection createConnection(String wsPart, String method) throws Exception {
     Authenticator.setDefault(new Authenticator() {
       @Override
@@ -129,8 +184,8 @@ public class BaseWSTest extends BaseTest {
         return new PasswordAuthentication(LOGIN, PWD.toCharArray());
       }
     });
-    System.err.println(method + ": " + OB_URL + wsPart);
-    final URL url = new URL(OB_URL + wsPart);
+    log.debug(method + ": " + getOpenbravoURL() + wsPart);
+    final URL url = new URL(getOpenbravoURL() + wsPart);
     final HttpURLConnection hc = (HttpURLConnection) url.openConnection();
     hc.setRequestMethod(method);
     hc.setAllowUserInteraction(false);
@@ -143,4 +198,31 @@ public class BaseWSTest extends BaseTest {
     return hc;
   }
 
+  /**
+   * Returns the url of the Openbravo instance. The default value is: {@link #OB_URL}
+   * 
+   * @return the url of the Openbravo instance.
+   */
+  protected String getOpenbravoURL() {
+    return OB_URL;
+  }
+
+  /**
+   * Returns the login used to login for the webservice. The default value is {@link #LOGIN}.
+   * 
+   * @return the login name used to login for the webservice
+   */
+  protected String getLogin() {
+    return LOGIN;
+  }
+
+  /**
+   * Returns the password used to login into the webservice server. The default value is
+   * {@link #PWD}.
+   * 
+   * @return the password used to login into the webservice, the default is {@link #PWD}
+   */
+  protected String getPassword() {
+    return PWD;
+  }
 }

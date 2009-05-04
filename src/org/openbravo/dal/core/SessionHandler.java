@@ -97,7 +97,7 @@ public class SessionHandler implements OBNotSingleton {
   // at the end
   private boolean doRollback = false;
 
-  /** @returns the session */
+  /** @return the session */
   public Session getSession() {
     return session;
   }

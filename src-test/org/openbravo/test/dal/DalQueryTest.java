@@ -22,6 +22,7 @@ package org.openbravo.test.dal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBSecurityException;
@@ -40,7 +41,7 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Test different parts of the dal api.
+ * Test different parts of the dal api: {@link OBDal}, {@link OBCriteria} and {@link OBQuery}.
  * 
  * Note the testcases assume that they are run in the order defined in this class.
  * 
@@ -48,19 +49,23 @@ import org.openbravo.test.base.BaseTest;
  */
 
 public class DalQueryTest extends BaseTest {
+  private static final Logger log = Logger.getLogger(DalQueryTest.class);
 
+  /**
+   * Tests a left join with {@link ModelImplementation} as the main class.
+   */
   public void testDalFirstWhereLeftJoinClause() {
-    setErrorOccured(true);
     setUserContext("100");
-    final String where = "as mo left join mo.callout left join mo.reference left join mo.form left join mo.process left join mo.workflow left join mo.tab where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.form.module.id='0' or mo.process.module.id='0' or mo.workflow.module.id='0' or mo.tab.module.id='0'";
+    final String where = "as mo left join mo.callout left join mo.reference left join mo.specialForm left join mo.process left join mo.workflow left join mo.tab where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.workflow.module.id='0' or mo.tab.module.id='0'";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
     assertTrue(obq.list().size() > 0);
-    setErrorOccured(false);
   }
 
+  /**
+   * Tests a left join with {@link ModelImplementation} as the main class.
+   */
   public void testDalExtraJoinWhereLeftJoinClause() {
-    setErrorOccured(true);
     setUserContext("100");
     final String where = "as mom left join mom."
         + ModelImplementationMapping.PROPERTY_MODELOBJECT
@@ -76,60 +81,67 @@ public class DalQueryTest extends BaseTest {
         + ModelImplementation.PROPERTY_WORKFLOW
         + " left join mo."
         + ModelImplementation.PROPERTY_TAB
-        + " where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.form.module.id='0' or mo.process.module.id='0' or mo.workflow.module.id='0' or mo.tab.module.id='0'";
+        + " where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.workflow.module.id='0' or mo.tab.module.id='0'";
     final OBQuery<ModelImplementationMapping> obq = OBDal.getInstance().createQuery(
         ModelImplementationMapping.class, where);
     assertTrue(obq.list().size() > 0);
-    setErrorOccured(false);
   }
 
+  /**
+   * Tests a left join with {@link ModelImplementation} as the main class.
+   */
   public void testDalWhereLeftJoinClause() {
-    setErrorOccured(true);
     setUserContext("100");
     final String where = "as mo left join mo.callout left join mo.reference where mo.callout.module.id='0' or mo.reference.module.id='0'";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
     assertTrue(obq.list().size() > 0);
-    setErrorOccured(false);
   }
 
+  /**
+   * Tests a left join with {@link ModelImplementation} as the main class.
+   */
   public void testDalOtherWhereLeftJoinClause() {
-    setErrorOccured(true);
     setUserContext("100");
     final String where = "as mo left join mo.callout left join mo.reference where (mo.callout.module.id='0' or mo.reference.module.id='0') and exists(from ADUser where id<>'0')";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
     assertTrue(obq.list().size() > 0);
-    setErrorOccured(false);
   }
 
+  /**
+   * Tests a left join with {@link ModelImplementation} as the main class.
+   */
   public void testDalAnOtherWhereLeftJoinClause() {
-    setErrorOccured(true);
     setUserContext("100");
     final String where = "exists(from ADUser where id<>'0')";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
     assertTrue(obq.list().size() > 0);
-    setErrorOccured(false);
   }
 
-  // creates a new BPGroup, test simple save, BPGroup is removed in next test
+  /**
+   * Test creates a new {@link Category} and saves it. The new object is removed in the next test.
+   */
   public void testCreateBPGroup() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
+    addReadWriteAccess(Category.class);
     final Category bpg = OBProvider.getInstance().get(Category.class);
     bpg.setDefault(true);
     bpg.setDescription("testdescription");
     bpg.setName("testname");
     bpg.setSearchKey("testvalue");
+    bpg.setActive(true);
     OBDal.getInstance().save(bpg);
-    setErrorOccured(false);
   }
 
-  // query for the BPGroup again and remove it
+  /**
+   * Test queries for the created {@link Category} and removes it.
+   */
   public void testRemoveBPGroup() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
+    addReadWriteAccess(Category.class);
+    addReadWriteAccess(CategoryAccounts.class);
     final OBQuery<Category> obQuery = OBDal.getInstance().createQuery(Category.class,
         Category.PROPERTY_NAME + "='testname' or " + Category.PROPERTY_SEARCHKEY + "='testvalue'");
     final List<Category> bpgs = obQuery.list();
@@ -159,24 +171,25 @@ public class DalQueryTest extends BaseTest {
       OBDal.getInstance().remove(bga);
     }
     OBDal.getInstance().remove(bpgs.get(0));
-    setErrorOccured(false);
   }
 
-  // check if the BPGroup was removed
+  /**
+   * Check that the {@link Category} was indeed removed.
+   */
   public void testCheckBPGroupRemoved() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
+    addReadWriteAccess(Category.class);
     final OBQuery<Category> obQuery = OBDal.getInstance().createQuery(Category.class,
         Category.PROPERTY_NAME + "='testname' or " + Category.PROPERTY_SEARCHKEY + "='testvalue'");
     final List<Category> bpgs = obQuery.list();
     assertEquals(0, bpgs.size());
-    setErrorOccured(false);
   }
 
-  // test querying for a specific currency and then updating it
-  // should fail for a user
+  /**
+   * Tests queries for a currency and then updates it. The test should fail as the user does not
+   * have update authorisation.
+   */
   public void testUpdateCurrencyByUser() {
-    setErrorOccured(true);
     setUserContext("1000019");
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
@@ -188,19 +201,19 @@ public class DalQueryTest extends BaseTest {
       OBDal.getInstance().save(c);
       fail("No security check");
     } catch (final OBSecurityException e) {
-      // successfull check
+      // successfull check, do not commit the change
+      rollback();
     }
-    setErrorOccured(false);
   }
 
-  // tests a paged read of transactions and print of the identifier.
-  // the identifier of a transaction has been implemented such that
-  // it reads all the references (which are non-null) and uses their
-  // identifier to create the identifier of the transaction.
-  // test sorting on product.name
+  /**
+   * Tests a paged read of transactions and print of the identifier. The identifier of a transaction
+   * has been implemented such that it reads all the references (which are non-null) and uses their
+   * identifier to create the identifier of the transaction. The test sorts on product.name.
+   */
   public void testTransaction25PageRead() {
-    setErrorOccured(true);
-    setUserContext("1000001");
+    setUserContext("1000000");
+    addReadWriteAccess(MaterialTransaction.class);
     final OBQuery<MaterialTransaction> cq = OBDal.getInstance().createQuery(
         MaterialTransaction.class, " order by product.name");
     final int count = cq.count();
@@ -217,11 +230,10 @@ public class DalQueryTest extends BaseTest {
       qry.setMaxResults(pageSize);
       qry.setFirstResult(i * pageSize);
 
-      System.err.println("PAGE>>> " + (1 + i));
+      log.debug("PAGE>>> " + (1 + i));
       for (final Object o : qry.list()) {
-        System.err.println(((MaterialTransaction) o).getIdentifier());
+        log.debug(((MaterialTransaction) o).getIdentifier());
       }
     }
-    setErrorOccured(false);
   }
 }

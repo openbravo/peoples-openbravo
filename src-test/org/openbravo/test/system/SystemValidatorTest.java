@@ -20,55 +20,79 @@
 package org.openbravo.test.system;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 
-import org.openbravo.service.system.ApplicationDictionaryValidator;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.ddlutils.Platform;
+import org.apache.ddlutils.PlatformFactory;
+import org.apache.ddlutils.model.Database;
+import org.apache.log4j.Logger;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.service.system.DatabaseValidator;
 import org.openbravo.service.system.ModuleValidator;
 import org.openbravo.service.system.SystemValidationResult;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Test the System Validation.
+ * Tests System Validation.
+ * 
+ * @see DatabaseValidator
+ * @see ModuleValidator
  * 
  * @author mtaal
  */
 
 public class SystemValidatorTest extends BaseTest {
 
-  public void _testSystemValidation() {
-    setErrorOccured(true);
-    setUserContext("0");
-    final ApplicationDictionaryValidator adValidator = new ApplicationDictionaryValidator();
-    final Map<String, SystemValidationResult> results = adValidator.validate();
+  private static final Logger log = Logger.getLogger(SystemValidatorTest.class);
 
-    for (String key : results.keySet()) {
-      System.err.println("++++++++++++++++++++++++++++++++++++++++++++++++++");
-      System.err.println(key);
-      System.err.println("++++++++++++++++++++++++++++++++++++++++++++++++++");
-      final SystemValidationResult result = results.get(key);
-      printResult(result);
-    }
-    setErrorOccured(false);
+  /**
+   * Executes the {@link DatabaseValidator#validate()} method on the current database.
+   */
+  public void testSystemValidation() {
+    setUserContext("0");
+    final DatabaseValidator databaseValidator = new DatabaseValidator();
+    databaseValidator.setDatabase(createDatabaseObject());
+    final SystemValidationResult result = databaseValidator.validate();
+    printResult(result);
   }
 
+  private Database createDatabaseObject() {
+    final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+
+    final BasicDataSource ds = new BasicDataSource();
+    ds.setDriverClassName(props.getProperty("bbdd.driver"));
+    if (props.getProperty("bbdd.rdbms").equals("POSTGRE")) {
+      ds.setUrl(props.getProperty("bbdd.url") + "/" + props.getProperty("bbdd.sid"));
+    } else {
+      ds.setUrl(props.getProperty("bbdd.url"));
+    }
+    ds.setUsername(props.getProperty("bbdd.user"));
+    ds.setPassword(props.getProperty("bbdd.password"));
+    Platform platform = PlatformFactory.createNewPlatformInstance(ds);
+    platform.getModelLoader().setOnlyLoadTableColumns(true);
+    return platform.loadModelFromDatabase(null);
+  }
+
+  /**
+   * Performs module validation using the {@link ModuleValidator}.
+   */
   public void testModulesValidation() {
-    setErrorOccured(true);
     setUserContext("0");
     final ModuleValidator moduleValidator = new ModuleValidator();
     final SystemValidationResult result = moduleValidator.validate();
     printResult(result);
-    setErrorOccured(false);
   }
 
   private void printResult(SystemValidationResult result) {
     for (SystemValidationType validationType : result.getWarnings().keySet()) {
-      System.err.println("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
-      System.err.println("Warnings for Validation type: " + validationType);
-      System.err.println("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      log.debug("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      log.debug("Warnings for Validation type: " + validationType);
+      log.debug("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
       final List<String> warnings = result.getWarnings().get(validationType);
       for (String warning : warnings) {
-        System.err.println(warning);
+        log.debug(warning);
       }
     }
 
@@ -84,8 +108,11 @@ public class SystemValidatorTest extends BaseTest {
           sb.append("\n");
         }
       }
+      if (errors.size() > 0) {
+        fail(sb.toString());
+      }
     }
-    System.err.println(sb.toString());
+    log.debug(sb.toString());
   }
 
 }

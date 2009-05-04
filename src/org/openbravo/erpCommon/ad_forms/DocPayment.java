@@ -167,7 +167,7 @@ public class DocPayment extends AcctServer {
             .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        e.printStackTrace();
+        log4j.error("Error while creating new instance for DocPaymentTemplate - " + e);
       }
     }
     if (log4j.isDebugEnabled())
@@ -445,8 +445,8 @@ public class DocPayment extends AcctServer {
   /**
    * Get the account for Accounting Schema
    * 
-   * @param AcctType
-   *          see ACCTTYPE_*
+   * @param cBPartnerId
+   *          business partner id
    * @param as
    *          accounting schema
    * @return Account
@@ -492,7 +492,7 @@ public class DocPayment extends AcctServer {
   /**
    * Get the account for Accounting Schema
    * 
-   * @param BankStatement
+   * @param strcBankstatementlineId
    *          Line
    * @param as
    *          accounting schema
@@ -532,7 +532,7 @@ public class DocPayment extends AcctServer {
   /**
    * Get the account for Accounting Schema
    * 
-   * @param Cash
+   * @param strcCashlineId
    *          Line Id
    * @param as
    *          accounting schema
@@ -581,7 +581,7 @@ public class DocPayment extends AcctServer {
   /**
    * Get Document Confirmation
    * 
-   * @not used
+   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;

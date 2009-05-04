@@ -21,6 +21,7 @@ package org.openbravo.test.xml;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -37,16 +38,23 @@ import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 
 /**
- * Test import of data
+ * Test the influence of unique constraints when importing data. In case of a unique constraint
+ * objects with different id's and the same values for the unique key fields can be matched. So if
+ * the xml contains an object with id A and a value for a unique key field V1 and in the database
+ * there is an object with B which also has the value V1 for the unique key field. Then object A
+ * will overwrite object B in the database.
  * 
  * @author mtaal
  */
 
 public class UniqueConstraintImportTest extends XMLBaseTest {
 
-  // country trl table can be empty, create some test values
+  private static final Logger log = Logger.getLogger(UniqueConstraintImportTest.class);
+
+  /**
+   * Builds the testdata, {@link CountryTrl} objects for a specific {@link Country}.
+   */
   public void testACreateCountryTrl() {
-    setErrorOccured(true);
     setUserContext("0");
     final Country country = getCountry("Norway");
     final OBCriteria<CountryTrl> obc = OBDal.getInstance().createCriteria(CountryTrl.class);
@@ -67,26 +75,29 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
       countryTrl.setDescription(country.getDescription());
       countryTrl.setName(country.getName());
       countryTrl.setRegionName(country.getRegionName());
+      countryTrl.setAddressPrintFormat("test");
+      countryTrl.setActive(true);
       // countryTrl.setDescription(getName())isplaySequence(country.getDisplaySequence());
       OBDal.getInstance().save(countryTrl);
       created++;
     }
-    System.err.println("Created " + created + " countrytrl objects");
-    setErrorOccured(false);
+    log.debug("Created " + created + " countrytrl objects");
   }
 
-  // this test, reads countrytrl from the db and imports them again
-  // after changing the id. This should result in updates of existing
-  // countrytrl because they are found using the unique constraint of country
-  // and language
+  /**
+   * Reads {@link CountryTrl} objects from the db and imports them again after changing the id. This
+   * should result in updates of existing {@link CountryTrl} objeccts because they are found using
+   * the unique constraint of country and language.
+   * 
+   * This method also cleans up the testdata.
+   */
   public void testCountryTrlImport() {
-    setErrorOccured(true);
     setUserContext("100");
 
     // read countrytrl
     String xml = exportClass(CountryTrl.class, "country", getCountry("Norway"));
 
-    // 
+    // change the id
     xml = xml.replaceAll("<CountryTrl id=\"..", "<CountryTrl id=\"1k");
 
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
@@ -94,15 +105,18 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
         OBDal.getInstance().get(Organization.class, "1000001"), xml,
         OBDal.getInstance().get(Module.class, "0"));
 
-    System.err.println("WARNING>>>>");
-    System.err.println(ir.getWarningMessages());
-    assertTrue(ir.getWarningMessages() != null && ir.getWarningMessages().trim().length() != 0);
+    log.debug("WARNING>>>>");
+    log.debug(ir.getWarningMessages());
+    assertTrue(ir.getWarningMessages() != null
+        && ir.getWarningMessages().trim().length() != 0
+        && ir.getWarningMessages().indexOf(
+            "eventhough it does not belong to the target organization") != -1);
 
     for (final BaseOBObject bob : ir.getUpdatedObjects()) {
       assertEquals(CountryTrl.class.getName(), bob.getClass().getName());
+      // and clean up
+      OBDal.getInstance().remove(bob);
     }
-
-    setErrorOccured(false);
   }
 
   private Country getCountry(String name) {
@@ -125,7 +139,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
     @SuppressWarnings("unchecked")
     final List<BaseOBObject> list = (List<BaseOBObject>) obc.list();
     final String xml = exc.toXML(list);
-    System.err.println(xml);
+    log.debug(xml);
     return xml;
   }
 }

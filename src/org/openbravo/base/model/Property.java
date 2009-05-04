@@ -248,9 +248,8 @@ public class Property {
    * which this property refers. Returns null if there is no referenced property this occurs in case
    * of a reference to the primary key of the referenced Entity.
    * 
-   * @return
+   * @return the associated property on the other side of the association.
    */
-  // 
   public Property getReferencedProperty() {
     return referencedProperty;
   }

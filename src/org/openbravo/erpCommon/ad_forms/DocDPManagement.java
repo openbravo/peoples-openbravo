@@ -92,8 +92,6 @@ public class DocDPManagement extends AcctServer {
   /**
    * Load Specific Document Details
    * 
-   * @param rs
-   *          result set
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -172,7 +170,7 @@ public class DocDPManagement extends AcctServer {
             .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        e.printStackTrace();
+        log4j.error("Error while creating new instance for DocDPManagementTemplate - " + e);
       }
     }
     log4j.debug("createFact - Inicio");
@@ -217,7 +215,7 @@ public class DocDPManagement extends AcctServer {
   /**
    * Get Document Confirmation
    * 
-   * @not used
+   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;
@@ -226,10 +224,6 @@ public class DocDPManagement extends AcctServer {
   /**
    * Line Account from Asset
    * 
-   * @param AcctType
-   *          see ACCTTYPE_* (1..8)
-   * @param as
-   *          Accounting Schema
    * @return Requested Asset Account
    */
   public Account getAccount(String Isreceipt, String partnerID, AcctSchema as, String status,

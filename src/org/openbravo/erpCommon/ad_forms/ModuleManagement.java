@@ -76,6 +76,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
       final String searchText = vars.getGlobalVariable("inpSearchText", "ModuleManagemetAdd|text",
           "");
       printPageAdd(request, response, vars, searchText, true);
+    } else if (vars.commandIn("ADD_NOSEARCH")) {
+      final String searchText = vars.getGlobalVariable("inpSearchText", "ModuleManagemetAdd|text",
+          "");
+      printPageAdd(request, response, vars, searchText, false);
     } else if (vars.commandIn("ADD_SEARCH")) {
       final String searchText = vars.getRequestGlobalVariable("inpSearchText",
           "ModuleManagemetAdd|text");
@@ -828,7 +832,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       vars.setMessage("ModuleManagement", message);
       e.printStackTrace();
       try {
-        response.sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD");
+        response.sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
       } catch (final Exception ex) {
         ex.printStackTrace();
       }

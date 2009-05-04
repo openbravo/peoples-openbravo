@@ -46,8 +46,11 @@ public class PrinterReports extends HttpSecureAppServlet {
       String strDirectPrint = vars.getStringParameter("inpdirectprint", "N");
       String strPDFPath = vars.getStringParameter("inppdfpath");
       String strHiddenKey = vars.getStringParameter("inphiddenkey");
-      String strHiddenValue = vars.getStringParameter("inphiddenvalue");
+      String strWindowId = vars.getStringParameter("inpwindowId");
+      String strKeyColumnId = vars.getStringParameter("inpkeyColumnId");
       String inptabId = vars.getStringParameter("inpTabId");
+      String strHiddenValue = vars.getGlobalVariable("inphiddenvalue", strWindowId + "|"
+          + strKeyColumnId);
       printPage(response, vars, strDirectPrint, strPDFPath, strHiddenKey, strHiddenValue, inptabId);
     } else
       pageError(response);

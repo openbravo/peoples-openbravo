@@ -72,6 +72,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <property name="base.config" location="config" />
   <property name="base.src" location="src" />
+  <property name="base.src.test" location="src-test" />
   <property name="base.src.core" location="src-core" />
   <property name="base.src.db" location="src-db" />
   <property name="base.src.trl" location="src-trl" />
@@ -251,6 +252,7 @@ compare.database.structure: refer to compare.database.structure target of databa
       </not>
     </condition>
     <antcall target="update.database.if.no.local" />
+    <antcall inheritall="true" inheritrefs="true" target="generate.entities.quick" />
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
 
@@ -355,12 +357,37 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src}" target="compile.src.gen" inheritAll="true" inheritRefs="true" />
   </target>
 
+  <target name="generate.java.doc">
+    <javadoc sourcepath="${base.src}:${base.src.test}:${base.src.gen}" Windowtitle="Openbravo ERP 2.50" access="public" Header="Openbravo ERP 2.50" Footer="Openbravo ERP 2.50" destdir="${build.docs}" maxmemory="${build.maxmemory}">
+      <classpath>
+        <path refid="project.class.path"/>
+        <pathelement path="lib/build/js.jar" />
+      </classpath>
+    </javadoc>
+  </target>
+
   <target name="generate.entities">
     <ant dir="${base.src}" target="generate.entities" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="generate.entities.quick">
     <ant dir="${base.src}" target="generate.entities.quick" inheritAll="true" inheritRefs="true" />
+  </target>
+
+  <target name="run.tests">
+    <ant dir="${base.src}" target="run.tests" inheritAll="true" inheritRefs="true" />
+  </target>
+
+  <target name="run.all.tests">
+    <ant dir="${base.src}" target="run.all.tests" inheritAll="true" inheritRefs="true" />
+  </target>
+
+  <target name="run.quick.tests">
+    <ant dir="${base.src}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
+  </target>
+
+  <target name="run.javascript.tests">
+    <ant dir="${base.src}" target="run.javascript.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="export.sample.data" depends="code.rev">
@@ -494,7 +521,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="db.apply.modules.sampledata" />
   </target>
 
-  <target name="update.database" depends="init,code.rev,generate.entities.quick">
+  <target name="update.database" depends="init,code.rev">
     <antcall target="database.lib" />
     <antcall target="core.lib" />
     <ant dir="${base.db}" target="update.database" inheritAll="true" inheritRefs="true" />
@@ -507,6 +534,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="core.lib" />
     <ant dir="${base.db}" target="update.database.mod" inheritAll="true" inheritRefs="true" />
     <antcall target="db.apply.modules" />
+    <antcall target="generate.entities.quick" />
   </target>
 
   <target name="update.customized.database" depends="init,code.rev">

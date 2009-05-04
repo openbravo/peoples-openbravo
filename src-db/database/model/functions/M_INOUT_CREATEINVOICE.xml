@@ -238,10 +238,12 @@
               v_ResultStr:='GettingPrice-Order';
               SELECT COALESCE(MAX(PriceList), 0),
                 COALESCE(MAX(PriceActual), 0),
-                COALESCE(MAX(PriceLimit), 0)
+                COALESCE(MAX(PriceLimit), 0),
+                MAX(c_tax_id)
               INTO v_PriceList,
                 v_PriceActual,
-                v_PriceLimit
+                v_PriceLimit,
+                v_c_Tax_ID
               FROM C_ORDERLINE
               WHERE C_OrderLine_ID=CUR_ShipmentLines.C_OrderLine_ID;
             ELSE
@@ -255,6 +257,7 @@
               FROM M_PRODUCTPRICE
               WHERE M_Product_ID=CUR_ShipmentLines.M_Product_ID
                 AND M_PriceList_Version_ID=v_M_PriceList_Version_ID;
+              v_C_Tax_ID:=C_Gettax(CUR_ShipmentLines.M_Product_ID, CUR_Shipment.MovementDate, CUR_Shipment.AD_Org_ID, CUR_Shipment.M_Warehouse_ID, CUR_Shipment.C_BPartner_Location_ID, CUR_Shipment.C_BPartner_Location_ID, CUR_Shipment.C_Project_ID, 'N') ;
             END IF;
             -- Get UOM + Tax -- VERY simplified, but should work in most cases
             v_ResultStr:='NoUOM+Tax';
@@ -262,7 +265,6 @@
             INTO v_C_UOM_ID
             FROM M_PRODUCT
             WHERE M_Product_ID=CUR_ShipmentLines.M_Product_ID;
-            v_C_Tax_ID:=C_Gettax(CUR_ShipmentLines.M_Product_ID, CUR_Shipment.MovementDate, CUR_Shipment.AD_Org_ID, CUR_Shipment.M_Warehouse_ID, CUR_Shipment.C_BPartner_Location_ID, CUR_Shipment.C_BPartner_Location_ID, CUR_Shipment.C_Project_ID, 'N') ;
             -- v_UOM_ID, v_Tax_ID
             v_ResultStr:='InsertInvoiceLine';
             Ad_Sequence_Next('C_InvoiceLine', CUR_Shipment.C_Order_ID, v_NextNo) ;

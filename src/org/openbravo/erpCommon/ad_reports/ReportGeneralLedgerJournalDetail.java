@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,12 +43,14 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strFactAcctGroupId = vars.getStringParameter("inpFactAcctGroupId");
-      printPageDataSheet(response, vars, strFactAcctGroupId, "", null, "");
+      String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId", "ReportGeneralLedgerJournalDetail|FactAcctGroupId", "");
+      String strDateAcct = getValue(strFactAcctGroupId,0);
+      strFactAcctGroupId = getValue(strFactAcctGroupId,1);
+      printPageDataSheet(response, vars, strFactAcctGroupId, strDateAcct,null, "");
     } else if (vars.commandIn("DIRECT")) {
-      String strFactAcctGroupId = vars.getStringParameter("inpFactAcctGroupId");
-      String strDateAcct = getValue(strFactAcctGroupId, 0);
-      strFactAcctGroupId = getValue(strFactAcctGroupId, 1);
+      String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId", "ReportGeneralLedgerJournalDetail|FactAcctGroupId");
+      String strDateAcct = getValue(strFactAcctGroupId,0);
+      strFactAcctGroupId = getValue(strFactAcctGroupId,1);
       printPageDataSheet(response, vars, strFactAcctGroupId, strDateAcct, null, "");
     } else if (vars.commandIn("DP")) {
       String strDPId = vars.getStringParameter("inpDPid");
@@ -103,7 +105,6 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
     ReportGeneralLedgerJournalDetailData[] data = null;
-    // String[] discard = {"withoutPrevious", "withoutNext"};
 
     if (strDPId == null)
       data = ReportGeneralLedgerJournalDetailData.select(this, strFactAcctGroupId, strDateacct,
@@ -111,14 +112,10 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     else
       data = ReportGeneralLedgerJournalDetailData.selectByDP(this, strDPId, strcAcctSchemaId);
 
-    // if (data==null || data.length==0 || initRecordNumber<=1) discard[0] =
-    // new String("hasPrevious");
-    // if (data==null || data.length==0 || data.length<intRecordRange)
-    // discard[1] = new String("hasNext");
 
     boolean hasPrevious = !(data == null || data.length == 0 || initRecordNumber <= 1);
     boolean hasNext = !(data == null || data.length == 0 || data.length < intRecordRange);
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedger", false, "", "",
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedgerJournalDetail", false, "", "",
         "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareRelationBarTemplate(hasPrevious, hasNext);
     xmlDocument = xmlEngine.readXmlTemplate(
@@ -154,6 +151,7 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setData("structure1", data);
+    vars.setSessionValue("ReportGeneralLedgerJournalDetail|FactAcctGroupId", strDateacct + "/" + strFactAcctGroupId);
     out.println(xmlDocument.print());
     out.close();
   }

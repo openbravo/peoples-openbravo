@@ -152,15 +152,26 @@
     <Parameter name="client"/>
   </SqlMethod>
 
-  <SqlMethod name="date" type="preparedStatement" return="string">
+  <SqlMethod name="yearStartDate" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT (CASE TO_NUMBER(TO_CHAR(now(), 'YYYY')) WHEN TO_NUMBER(?) THEN TO_CHAR(now(), to_char(?)) ELSE '31/12/'||? END) AS DATETO
-      FROM DUAL
+        select to_char(min(startdate),?) from c_period
+        inner join c_year on c_period.c_year_id = c_year.c_year_id
+        where c_year.year=?
     </Sql>
-    <Parameter name="agno"/>
     <Parameter name="dateFormat"/>
-    <Parameter name="agno"/>
+    <Parameter name="year"/>
+  </SqlMethod>
+
+  <SqlMethod name="yearEndDate" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+        select to_char(max(enddate),?) from c_period
+        inner join c_year on c_period.c_year_id = c_year.c_year_id
+        where c_year.year=?
+    </Sql>
+    <Parameter name="dateFormat"/>
+    <Parameter name="year"/>
   </SqlMethod>
 
   <SqlMethod name="incomesummary" type="preparedStatement" return="String" default="">

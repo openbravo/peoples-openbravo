@@ -91,8 +91,6 @@ public class DocCash extends AcctServer {
   /**
    * Load Specific Document Details
    * 
-   * @param rs
-   *          result set
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -242,7 +240,7 @@ public class DocCash extends AcctServer {
         DocCashTemplate newTemplate = (DocCashTemplate) Class.forName(strClassname).newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        e.printStackTrace();
+        log4j.error("Error while creating new instance for DocCashTemplate - " + e);
       }
     }
     // create Fact Header
@@ -448,7 +446,7 @@ public class DocCash extends AcctServer {
   /**
    * Get the account for Accounting Schema
    * 
-   * @param Bank
+   * @param strcBankAccountId
    *          Account
    * @param as
    *          accounting schema
@@ -495,7 +493,7 @@ public class DocCash extends AcctServer {
   /**
    * Get Document Confirmation
    * 
-   * @not used
+   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;

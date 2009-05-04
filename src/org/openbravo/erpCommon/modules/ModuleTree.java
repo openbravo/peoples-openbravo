@@ -48,7 +48,7 @@ public class ModuleTree extends GenericTree {
    * Constructor to generate a root tree
    * 
    * @param base
-   * @param small
+   * @param bSmall
    *          Normal size or small size (true)
    */
   public ModuleTree(HttpBaseServlet base, boolean bSmall) {
@@ -99,7 +99,7 @@ public class ModuleTree extends GenericTree {
    * Returns a HTML with the description for the given node
    * 
    * @param node
-   * @return
+   * @return a HTML String with the description for the given node
    */
   public String getHTMLDescription(String node) {
     try {

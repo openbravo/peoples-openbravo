@@ -7930,16 +7930,7 @@
     <organization id="0"/>
     <active>true</active>
     <editableField>true</editableField>
-  </ADProcessAccess>
-  <ADProcessAccess id="5E4DB943A71416CFE040007F01002944">
-    <id>5E4DB943A71416CFE040007F01002944</id>
-    <process id="800193"/>
-    <role id="1000006"/>
-    <client id="1000001"/>
-    <organization id="0"/>
-    <active>true</active>
-    <editableField>true</editableField>
-  </ADProcessAccess>
+  </ADProcessAccess> 
   <ADProcessAccess id="5E4DB943A71516CFE040007F01002944">
     <id>5E4DB943A71516CFE040007F01002944</id>
     <process id="800194"/>
@@ -10531,16 +10522,7 @@
     <organization id="0"/>
     <active>true</active>
     <editableField>true</editableField>
-  </ADProcessAccess>
-  <ADProcessAccess id="5E4DB943AC5A16CFE040007F01002944">
-    <id>5E4DB943AC5A16CFE040007F01002944</id>
-    <process id="800193"/>
-    <role id="1000005"/>
-    <client id="1000001"/>
-    <organization id="0"/>
-    <active>true</active>
-    <editableField>true</editableField>
-  </ADProcessAccess>
+  </ADProcessAccess>  
   <ADProcessAccess id="5E4DB943AC5F16CFE040007F01002944">
     <id>5E4DB943AC5F16CFE040007F01002944</id>
     <process id="800194"/>
@@ -13700,6 +13682,60 @@
     <active>true</active>
     <editableField>true</editableField>
   </ADWindowAccess>
+  <ADWindowAccess id="682565E58CBDD515E040007F01011C04">
+    <id>682565E58CBDD515E040007F01011C04</id>
+    <window id="125"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="682565E58CBED515E040007F01011C04">
+    <id>682565E58CBED515E040007F01011C04</id>
+    <window id="B15DDE526F724EBCB11439BDDB483FA6"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="682565E58CBFD515E040007F01011C04">
+    <id>682565E58CBFD515E040007F01011C04</id>
+    <window id="800081"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="682565E58CC1D515E040007F01011C04">
+    <id>682565E58CC1D515E040007F01011C04</id>
+    <window id="117"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="682565E58CC2D515E040007F01011C04">
+    <id>682565E58CC2D515E040007F01011C04</id>
+    <window id="137"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="682565E58CC3D515E040007F01011C04">
+    <id>682565E58CC3D515E040007F01011C04</id>
+    <window id="138"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
   <ADWindowAccess id="FE58E6DAECCA11DD87CB001D09C4A2FE">
     <id>FE58E6DAECCA11DD87CB001D09C4A2FE</id>
     <window id="48E7EDE7D1104A59B46FC7449D9FB267"/>
@@ -13993,8 +14029,8 @@
     <bOMVerified>false</bOMVerified>
     <productCategory id="1000009"/>
     <classification/>
-    <volume>0</volume>
-    <weight>0</weight>
+    <volume>0.0</volume>
+    <weight>0.0</weight>
     <shelfWidth/>
     <shelfHeight/>
     <shelfDepth/>
@@ -18987,6 +19023,8 @@
     <orderUOM/>
     <priceAdjustment/>
     <standardPrice>50</standardPrice>
+    <cancelPriceAdjustment>false</cancelPriceAdjustment>
+    <orderDiscount/>
   </OrderLine>
   <OrderLine id="1000067">
     <id>1000067</id>
@@ -19029,6 +19067,8 @@
     <orderUOM/>
     <priceAdjustment/>
     <standardPrice>150</standardPrice>
+    <cancelPriceAdjustment>false</cancelPriceAdjustment>
+    <orderDiscount/>
   </OrderLine>
   <OrderLine id="1000068">
     <id>1000068</id>
@@ -19071,6 +19111,8 @@
     <orderUOM/>
     <priceAdjustment/>
     <standardPrice>50</standardPrice>
+    <cancelPriceAdjustment>false</cancelPriceAdjustment>
+    <orderDiscount/>
   </OrderLine>
   <OrderLine id="1000069">
     <id>1000069</id>
@@ -19113,6 +19155,8 @@
     <orderUOM/>
     <priceAdjustment/>
     <standardPrice>50</standardPrice>
+    <cancelPriceAdjustment>false</cancelPriceAdjustment>
+    <orderDiscount/>
   </OrderLine>
   <OrderLine id="1000070">
     <id>1000070</id>
@@ -19155,6 +19199,8 @@
     <orderUOM/>
     <priceAdjustment/>
     <standardPrice>50</standardPrice>
+    <cancelPriceAdjustment>false</cancelPriceAdjustment>
+    <orderDiscount/>
   </OrderLine>
   <FinancialMgmtTaxRate id="1000007">
     <id>1000007</id>
@@ -25663,7 +25709,7 @@
     <cashbook/>
     <formOfPayment>5</formOfPayment>
     <paymentComplete>true</paymentComplete>
-    <amount>6900.0</amount>
+    <amount>6900</amount>
     <writeoffAmount>0</writeoffAmount>
     <dueDate>2007-12-11T00:00:00.0Z</dueDate>
     <manual>false</manual>
@@ -25681,7 +25727,7 @@
     <status>DE</status>
     <initialStatus>DE</initialStatus>
     <withholding/>
-    <withholdingamount>0.0</withholdingamount>
+    <withholdingamount>0</withholdingamount>
   </FinancialMgmtDebtPayment>
   <FinancialMgmtDebtPayment id="19000115">
     <id>19000115</id>
@@ -25700,7 +25746,7 @@
     <cashbook/>
     <formOfPayment>5</formOfPayment>
     <paymentComplete>true</paymentComplete>
-    <amount>34500.0</amount>
+    <amount>34500</amount>
     <writeoffAmount>0</writeoffAmount>
     <dueDate>2007-12-11T00:00:00.0Z</dueDate>
     <manual>false</manual>
@@ -25718,7 +25764,7 @@
     <status>DE</status>
     <initialStatus>DE</initialStatus>
     <withholding/>
-    <withholdingamount>0.0</withholdingamount>
+    <withholdingamount>0</withholdingamount>
   </FinancialMgmtDebtPayment>
   <FinancialMgmtDebtPayment id="19000116">
     <id>19000116</id>
@@ -25737,7 +25783,7 @@
     <cashbook/>
     <formOfPayment>5</formOfPayment>
     <paymentComplete>false</paymentComplete>
-    <amount>1150.0</amount>
+    <amount>1150</amount>
     <writeoffAmount>0</writeoffAmount>
     <dueDate>2007-12-11T00:00:00.0Z</dueDate>
     <manual>false</manual>
@@ -25755,7 +25801,7 @@
     <status>DE</status>
     <initialStatus>DE</initialStatus>
     <withholding/>
-    <withholdingamount>0.0</withholdingamount>
+    <withholdingamount>0</withholdingamount>
   </FinancialMgmtDebtPayment>
   <FinancialMgmtDebtPayment id="19000117">
     <id>19000117</id>
@@ -25774,7 +25820,7 @@
     <cashbook/>
     <formOfPayment>5</formOfPayment>
     <paymentComplete>false</paymentComplete>
-    <amount>1150.0</amount>
+    <amount>1150</amount>
     <writeoffAmount>0</writeoffAmount>
     <dueDate>2007-12-11T00:00:00.0Z</dueDate>
     <manual>false</manual>
@@ -25792,7 +25838,7 @@
     <status>DE</status>
     <initialStatus>DE</initialStatus>
     <withholding/>
-    <withholdingamount>0.0</withholdingamount>
+    <withholdingamount>0</withholdingamount>
   </FinancialMgmtDebtPayment>
   <FinancialMgmtDebtPayment id="19000118">
     <id>19000118</id>
@@ -25811,7 +25857,7 @@
     <cashbook/>
     <formOfPayment>5</formOfPayment>
     <paymentComplete>true</paymentComplete>
-    <amount>2875.0</amount>
+    <amount>2875</amount>
     <writeoffAmount>0</writeoffAmount>
     <dueDate>2007-12-11T00:00:00.0Z</dueDate>
     <manual>false</manual>
@@ -25829,7 +25875,7 @@
     <status>DE</status>
     <initialStatus>DE</initialStatus>
     <withholding/>
-    <withholdingamount>0.0</withholdingamount>
+    <withholdingamount>0</withholdingamount>
   </FinancialMgmtDebtPayment>
   <FinancialMgmtSettlement id="1000051">
     <id>1000051</id>
@@ -25928,6 +25974,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000002">
@@ -25937,6 +25984,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000003">
@@ -25946,6 +25994,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>false</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000004">
@@ -25955,6 +26004,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>false</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000005">
@@ -25964,6 +26014,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>false</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000006">
@@ -25973,6 +26024,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000007">
@@ -25982,6 +26034,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>false</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000008">
@@ -25991,6 +26044,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000009">
@@ -26000,6 +26054,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>false</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000010">
@@ -26009,6 +26064,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>false</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000011">
@@ -26018,6 +26074,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>false</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000012">
@@ -26027,6 +26084,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000013">
@@ -26036,6 +26094,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>false</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000014">
@@ -26045,6 +26104,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000015">
@@ -26054,6 +26114,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>false</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000016">
@@ -26063,6 +26124,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>false</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000017">
@@ -26072,6 +26134,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>false</active>
+    <createfactTemplate/>
     <sQLDescription/>
   </FinancialMgmtAcctSchemaTable>
   <MaterialMgmtStorageDetail id="1000047">

@@ -86,7 +86,7 @@ public class SL_Inventory_Product extends HttpSecureAppServlet {
      * resultado.append("new Array(\"inpcUomId\", " + SLInventoryProductData.select(this,
      * strProduct) + "),");
      */
-    resultado.append("new Array(\"inpcUomId\", " + (strUOM.equals("") ? "\"\"" : strUOM) + "),");
+    resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
     if (strAttribute.startsWith("\""))
       strAttribute = strAttribute.substring(1, strAttribute.length() - 1);
     resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strAttribute + "\"),");

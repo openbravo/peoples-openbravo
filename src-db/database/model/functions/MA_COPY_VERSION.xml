@@ -34,7 +34,7 @@
     v_Client_ID VARCHAR2(32);
     v_Org_ID VARCHAR2(32);
     v_User_ID VARCHAR2(32);
-    v_UpdatedBy NUMBER;
+    v_UpdatedBy VARCHAR2(32);
     v_DocumentNo NUMBER;
     v_Sequence_ID VARCHAR2(32);
     v_Product_ID VARCHAR2(32);

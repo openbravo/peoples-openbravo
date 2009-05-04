@@ -120,7 +120,7 @@ public class XMLTypeConverter implements OBSingleton {
    */
   @SuppressWarnings("unchecked")
   public <T extends Object> T fromXML(Class<T> targetClass, String xml) {
-    if (xml.trim().length() == 0) {
+    if (xml.length() == 0) {
       return null;
     }
     try {

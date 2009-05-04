@@ -73,7 +73,7 @@ public class ClientImportProcessor implements EntityXMLProcessor {
   /**
    * Always returns the importedValue without changing it.
    * 
-   * @see EntityXMLProcessor#replaceValue(BaseOBObject, String, Object)
+   * @see EntityXMLProcessor#replaceValue(BaseOBObject, Property, Object)
    */
   public Object replaceValue(BaseOBObject owner, Property property, Object importedValue) {
     return importedValue;
@@ -87,6 +87,7 @@ public class ClientImportProcessor implements EntityXMLProcessor {
       final Client client = (Client) bob;
       client.setName(newName);
       client.setDescription(newName);
+      client.setSearchKey(newName);
     } else if (bob instanceof Role) {
       final Role role = (Role) bob;
       if (role.getName().indexOf(originalName) == -1) {

@@ -21,9 +21,11 @@ package org.openbravo.test.security;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.security.EntityAccessChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.currency.Currency;
@@ -33,13 +35,19 @@ import org.openbravo.test.base.BaseTest;
 /**
  * Tests access on the basis of window and table definitions. Also tests derived read access.
  * 
+ * @see EntityAccessChecker
+ * 
  * @author mtaal
  */
 
 public class EntityAccessTest extends BaseTest {
 
+  private static final Logger log = Logger.getLogger(EntityAccessTest.class);
+
+  /**
+   * Creates test data, a {@link Currency}.
+   */
   public void testCreateCurrency() {
-    setErrorOccured(true);
     setBigBazaarAdminContext();
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "TE2"));
@@ -54,14 +62,14 @@ public class EntityAccessTest extends BaseTest {
       c.setCostingPrecision((long) 4);
       OBDal.getInstance().save(c);
     }
-    setErrorOccured(false);
   }
 
-  // query for the currency again and remove it
+  /**
+   * Test tries to remove the {@link Currency}. Which should fail as it is not deletable.
+   */
   public void testNonDeletable() {
-    setErrorOccured(true);
-    setBigBazaarAdminContext();
-    setUserContext("1000002");
+    setUserContext("1000000");
+    addReadWriteAccess(Currency.class);
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "TE2"));
     final List<Currency> cs = obc.list();
@@ -69,43 +77,40 @@ public class EntityAccessTest extends BaseTest {
     final Currency c = cs.get(0);
     try {
       OBDal.getInstance().remove(c);
+      OBDal.getInstance().flush();
       fail("Currency should be non-deletable");
     } catch (final OBSecurityException e) {
       assertTrue("Wrong exception thrown:  " + e.getMessage(), e.getMessage().indexOf(
           "is not deletable") != -1);
     }
-    setErrorOccured(false);
   }
 
-  // check if the currency was removed
+  /**
+   * Checks the derived readable concept, only identifier fields of a derived readable object may be
+   * read.
+   */
   public void testCheckDerivedReadableCurrency() {
-    setErrorOccured(true);
-    final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "TE2"));
-    final List<Currency> cs = obc.list();
-    final Currency c = cs.get(0);
-    System.err.println(c.getIdentifier());
-    System.err.println(c.getId());
+    setUserContext("1000020");
+    final Currency c = OBDal.getInstance().get(Currency.class, "100");
+    log.debug(c.getIdentifier());
+    log.debug(c.getId());
     try {
-      System.err.println(c.getSymbol());
+      log.debug(c.getCostingPrecision());
       fail("Derived readable not applied");
     } catch (final OBSecurityException e) {
       assertTrue("Wrong exception thrown:  " + e.getMessage(), e.getMessage().indexOf(
           "is not directly readable") != -1);
     }
-    setErrorOccured(false);
   }
 
-  // test derived readable on a set method and test save action
+  /**
+   * Test derived readable on a set method, also there this check must be done.
+   */
   public void testUpdateCurrencyDerivedRead() {
-    setErrorOccured(true);
-    setUserContext("1000000");
-    final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
-    final List<Currency> cs = obc.list();
-    final Currency c = cs.get(0);
+    setUserContext("1000020");
+    final Currency c = OBDal.getInstance().get(Currency.class, "100");
     try {
-      System.err.println(c.getDescription());
+      c.setCostingPrecision((long) 5);
       fail("Derived readable not checked on set");
     } catch (final OBSecurityException e) {
       assertTrue("Wrong exception thrown:  " + e.getMessage(), e.getMessage().indexOf(
@@ -119,12 +124,13 @@ public class EntityAccessTest extends BaseTest {
       assertTrue("Wrong exception thrown:  " + e.getMessage(), e.getMessage().indexOf(
           "is not writable by this user") != -1);
     }
-    setErrorOccured(false);
   }
 
-  // test non readable
+  /**
+   * Checks non-readable, if an object/entity is not readable then it may not be read through the
+   * {@link OBDal}.
+   */
   public void testNonReadable() {
-    setErrorOccured(true);
     setUserContext("1000002");
     try {
       final OBCriteria<Costing> obc = OBDal.getInstance().createCriteria(Costing.class);
@@ -138,15 +144,16 @@ public class EntityAccessTest extends BaseTest {
     }
   }
 
-  public void testUpdateCurrencySucces() {
-    setErrorOccured(true);
-    setBigBazaarAdminContext();
+  /**
+   * Removes the test data by using the administrator account.
+   */
+  public void testZDeleteTestData() {
+    setUserContext("0");
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
+    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "TE2"));
     final List<Currency> cs = obc.list();
-    final Currency c = cs.get(0);
-    c.setDescription(" a test");
-    OBDal.getInstance().save(c);
-    setErrorOccured(false);
+    assertEquals(1, cs.size());
+    OBDal.getInstance().remove(cs.get(0));
   }
+
 }

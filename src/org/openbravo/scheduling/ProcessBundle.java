@@ -282,7 +282,7 @@ public class ProcessBundle {
    *          VariablesSecureApp to be converted into the ProcessContext
    * @param conn
    *          ConnectionProvider
-   * @return
+   * @return a new instance of this class created from the pInstance record in the db
    * @throws ServletException
    */
   public static final ProcessBundle pinstance(String pinstanceId, VariablesSecureApp vars,

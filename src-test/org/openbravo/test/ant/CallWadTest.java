@@ -19,52 +19,40 @@
 
 package org.openbravo.test.ant;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Vector;
-
+import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.erpCommon.utility.AntExecutor;
+import org.openbravo.wad.Wad;
 
 /**
- * Tests an ant task.
+ * An example test of calling Wad directly with command line arguments.
  * 
  * @author mtaal
  */
+public class CallWadTest extends BaseAntTest {
 
-public class LeakTest extends org.openbravo.test.base.BaseTest {
+  /**
+   * Calls Wad.main(String[]) with a number of commandline arguments.
+   */
+  public void testWad() {
+    PropertyConfigurator.configure(this.getClass().getResource("/log4j.properties"));
 
-  public void testLeak() {
-    setBigBazaarAdminContext();
-    for (int i = 0; i < 20; i++) {
-      doTestLeak();
-    }
-  }
-
-  private void doTestLeak() {
+    final String[] args = new String[5];
+    args[0] = "config"; // ${base.config}'
+    args[1] = "%";// '${tab}'
+    args[2] = "srcAD/org/openbravo/erpWindows"; // '${build.AD}/org/openbravo/erpWindows'
+    args[3] = "srcAD/org/openbravo/erpCommon"; //
+    args[4] = "build/javasqlc/src"; // '${build.sqlc}/src'
+    // args[5] = '${webTab}'
+    // '${build.AD}/org/openbravo/erpCommon/ad_actionButton'
+    // '${base.design}' '${base.translate.structure}' '${client.web.xml}'
+    // '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}'
+    // '${module}'
     try {
-      final AntExecutor ant = new AntExecutor("/home/mtaal/mydata/dev/workspaces/obtrunk/openbravo");
-      final String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())
-          + "-apply.log";
-      // final OBPrintStream obps=new OBPrintStream(new
-      // PrintStream(response.getOutputStream()));
-      // System.setOut(obps);
-
-      // ant.setOBPrintStreamLog(response.getWriter());
-      ant.setOBPrintStreamLog(System.err);
-      // obps.setLogFile(new File(fileName+".db"));
-      ant.setLogFileInOBPrintStream(new File(fileName));
-
-      final Vector<String> tasks = new Vector<String>();
-      // tasks.add("apply.modules");
-      tasks.add("generate.entities");
-
-      ant.runTask(tasks);
-
-      ant.setFinished(true);
+      Wad.main(args);
     } catch (final Exception e) {
       throw new OBException(e);
     }
+
+    // doTest("compile");
   }
 }

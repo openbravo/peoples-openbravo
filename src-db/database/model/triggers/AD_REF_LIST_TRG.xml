@@ -52,7 +52,7 @@ BEGIN
                           AND instr(upper(:new.VALUE), upper(M2.JAVAPACKAGE))=1));
   
   IF v_Aux != 0 THEN
-    RAISE_APPLICATION_ERROR(-20536, 'Names must start with its module''s DB prefix') ;
+    RAISE_APPLICATION_ERROR(-20000, '@ListValueDBPrefix@') ;
   END IF;
   
 

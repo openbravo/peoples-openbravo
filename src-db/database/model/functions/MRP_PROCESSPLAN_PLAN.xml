@@ -41,6 +41,7 @@
   v_Result NUMBER:=1; -- 0=failure
 
   v_Stock NUMBER:= 0;
+  v_AvailableStock NUMBER := 0;
   v_Qty_New NUMBER;
   v_NeededQty_New NUMBER;
   v_PlannedOrderDate_New DATE;
@@ -52,30 +53,30 @@
 BEGIN
   BEGIN --BODY
     FOR Cur_Lines IN (
-      SELECT pl.*,
+      SELECT pl.*,par.qty AS demandqty,
         COALESCE(M_PRODUCT_ORG.CAPACITY, M_PRODUCT.CAPACITY) AS CAPACITY,
         COALESCE(M_PRODUCT_ORG.DELAYMIN, M_PRODUCT.DELAYMIN, 0) AS DELAYMIN,
-        COALESCE(M_PRODUCT_ORG.QTYTYPE, M_PRODUCT_ORG.QTYTYPE, 'E') AS qtytype,
-        COALESCE(M_PRODUCT_ORG.QTYMIN, M_PRODUCT_ORG.QTYMIN, 0) AS qtymin,
-        COALESCE(M_PRODUCT_ORG.QTYSTD, M_PRODUCT_ORG.QTYSTD, 1) AS qtystd,
+        COALESCE(M_PRODUCT_ORG.QTYTYPE, M_PRODUCT.QTYTYPE, 'E') AS qtytype,
+        COALESCE(M_PRODUCT_ORG.QTYMIN, M_PRODUCT.QTYMIN, 0) AS qtymin,
+        COALESCE(M_PRODUCT_ORG.QTYSTD, M_PRODUCT.QTYSTD, 1) AS qtystd,
         (CASE WHEN pl.INOUTTRXTYPE IN ('ST', 'MS') THEN 0
-              WHEN (pl.INOUTTRXTYPE = 'WR' AND pl.QTY < 0) THEN 3
-              WHEN (pl.INOUTTRXTYPE = 'WR' AND pl.QTY >= 0) THEN 4
-              WHEN pl.QTY >= 0 THEN 1
-              ELSE 2 END) AS PRIORITY
+              WHEN (pl.ISFIXED = 'Y' AND pl.QTY >= 0) THEN 1
+              WHEN (pl.ISFIXED = 'N' AND pl.QTY >= 0) THEN 2
+              ELSE 3 END) AS PRIORITY
       FROM
         M_PRODUCT INNER JOIN MRP_RUN_PRODUCTIONLINE pl ON pl.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
                                                       AND pl.M_PRODUCT_ID = p_Product_ID
                                                       AND pl.MRP_RUN_PRODUCTION_ID = p_Run_ID
                   LEFT JOIN M_PRODUCT_ORG ON M_PRODUCT.M_PRODUCT_ID = M_PRODUCT_ORG.M_PRODUCT_ID
                                           AND pl.AD_ORG_ID = M_PRODUCT_ORG.AD_ORG_ID
+                  LEFT JOIN MRP_RUN_PRODUCTIONLINE par ON pl.PARENT_ID = par.MRP_RUN_PRODUCTIONLINE_ID
       ORDER BY pl.planneddate, priority
       ) LOOP
 
       v_Qty_New := Cur_Lines.qty;
       IF (Cur_Lines.ISFIXED = 'N' AND v_Qty_New > 0) THEN
 
-        v_neededQty_New := Cur_Lines.qty - v_Stock;
+        v_neededQty_New := Cur_Lines.qty - v_AvailableStock;
         IF (v_neededQty_New > 0) THEN
           v_Qty_New := GREATEST(v_neededqty_New, Cur_Lines.qtymin);
           IF (Cur_Lines.qtytype = 'M') THEN --Multiple lot qty
@@ -104,6 +105,9 @@ BEGIN
         END IF;
       END IF;
       v_Stock := v_Stock + v_Qty_New;
+      IF (Cur_Lines.INOUTTRXTYPE IN ('ST', 'MS') OR Cur_Lines.qty >=0) THEN
+        v_availablestock := v_AvailableStock + v_qty_new + COALESCE(Cur_Lines.demandqty, 0);
+      END IF;
       UPDATE MRP_RUN_PRODUCTIONLINE
         SET isplanned = 'Y',
             cumqty = v_Stock

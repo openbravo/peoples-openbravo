@@ -19,19 +19,37 @@
 
 package org.openbravo.test.ant;
 
+import org.openbravo.dal.service.OBDal;
+
 /**
- * Tests an ant task.
+ * Several calls to ant tasks present in the build.xml file. Enable the one relevant for the test.
+ * 
+ * NOTE: this test case class is used to debug ant task calls.
  * 
  * @author mtaal
  */
 
 public class AntTasksTest extends BaseAntTest {
 
-  public void _testCompileComplete() {
+  public void testCompileComplete() {
     doTest("compile.complete");
   }
 
   public void testUpdateDatabase() {
     doTest("update.database");
   }
+
+  public void testWad() {
+    doTest("wad", "src");
+  }
+
+  public void testImportReferenceData() {
+    doTest("import.reference.data");
+    OBDal.getInstance().commitAndClose();
+  }
+
+  public void testCreateDatabase() {
+    doTest("create.database");
+  }
+
 }

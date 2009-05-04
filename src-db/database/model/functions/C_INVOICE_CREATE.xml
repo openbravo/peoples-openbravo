@@ -105,12 +105,15 @@
           ol.C_Tax_ID, --ol.IsTaxIncluded,
           ol.Line,
           ol.DirectShip,
-          ol.PriceStd
-        FROM M_INOUTLINE sl
+          ol.PriceStd,
+          ol.m_attributesetinstance_id
+        FROM M_INOUT s, M_INOUTLINE sl
         RIGHT JOIN C_ORDERLINE ol
           ON sl.C_OrderLine_ID=ol.C_OrderLine_ID
         WHERE sl.M_InOut_ID IS NOT NULL -- We need to have a shipment
           AND ol.C_Order_ID=Order_ID -- parameter
+          AND s.M_InOut_ID = sl.M_InOut_ID
+          AND s.DocStatus = 'CO'
           AND(sl.IsInvoiced IS NULL
           OR sl.IsInvoiced='N')
         ORDER BY ol.Line -- single Order
@@ -486,7 +489,8 @@
                         PriceActual, PriceLimit, LineNetAmt, C_Charge_ID,
                         ChargeAmt, C_UOM_ID,
                         C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
-                        QuantityOrder, M_Product_Uom_ID, PriceStd
+                        QuantityOrder, M_Product_Uom_ID, PriceStd,
+                        m_attributesetinstance_id
                       )
                       VALUES
                       (
@@ -497,7 +501,8 @@
                         ptr_ol.PriceActual, ptr_ol.PriceLimit, C_Currency_Round(v_Qty*ptr_ol.PriceActual, Cur_Order.C_Currency_ID, NULL), ptr_ol.C_Charge_ID,
                         ptr_ol.ChargeAmt, ptr_ol.C_UOM_ID,
                         ptr_ol.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
-                        v_QtyOrder, ptr_ol.M_Product_Uom_ID, ptr_ol.PriceStd
+                        v_QtyOrder, ptr_ol.M_Product_Uom_ID, ptr_ol.PriceStd,
+                        ptr_ol.m_attributesetinstance_id
                       )
                       ;
                   END IF;--Next_O_Line
@@ -534,7 +539,8 @@
                         PriceActual, PriceLimit, LineNetAmt, C_Charge_ID,
                         ChargeAmt, C_UOM_ID,
                         C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
-                        QuantityOrder, M_Product_Uom_ID, PriceStd
+                        QuantityOrder, M_Product_Uom_ID, PriceStd,
+                        m_attributesetinstance_id
                       )
                       VALUES
                       (
@@ -545,7 +551,8 @@
                         ptr_sl.PriceActual, ptr_sl.PriceLimit, C_Currency_Round(ptr_sl.MovementQty*ptr_sl.PriceActual, Cur_Order.C_Currency_ID, NULL), ptr_sl.C_Charge_ID,
                         ptr_sl.ChargeAmt, ptr_sl.C_UOM_ID,
                         ptr_sl.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
-                        ptr_sl.QuantityOrder, ptr_sl.M_Product_Uom_ID, ptr_sl.PriceStd
+                        ptr_sl.QuantityOrder, ptr_sl.M_Product_Uom_ID, ptr_sl.PriceStd,
+                        ptr_sl.m_attributesetinstance_id
                       )
                       ;
                   END IF;--Next_S_Line
@@ -666,7 +673,8 @@
                 ol.C_Charge_ID AS Line_C_Charge_ID,
                 COALESCE(ol.ChargeAmt, 0) AS Line_ChargeAmt,
                 sh.movementDate,
-                ol.PriceStd
+                ol.PriceStd,
+                ol.m_attributesetinstance_id
               FROM M_INOUT sh,
                 M_INOUTLINE sl,
                 C_ORDER o,
@@ -995,7 +1003,8 @@
                     PriceActual, PriceLimit, LineNetAmt, C_Charge_ID,
                     ChargeAmt, C_UOM_ID,
                     C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
-                    QuantityOrder, M_Product_Uom_ID, PriceStd
+                    QuantityOrder, M_Product_Uom_ID, PriceStd,
+                    m_attributesetinstance_id
                   )
                   VALUES
                   (
@@ -1006,7 +1015,8 @@
                     Cur_InvoiceSchedule.PriceActual, Cur_InvoiceSchedule.PriceLimit, C_Currency_Round(Cur_InvoiceSchedule.MovementQty*Cur_InvoiceSchedule.PriceActual, Cur_InvoiceSchedule.C_Currency_ID, NULL), Cur_InvoiceSchedule.Line_C_Charge_ID,
                     Cur_InvoiceSchedule.Line_ChargeAmt, Cur_InvoiceSchedule.C_UOM_ID,
                     Cur_InvoiceSchedule.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
-                    Cur_InvoiceSchedule.QuantityOrder, Cur_InvoiceSchedule.M_Product_Uom_ID, Cur_InvoiceSchedule.PriceStd
+                    Cur_InvoiceSchedule.QuantityOrder, Cur_InvoiceSchedule.M_Product_Uom_ID, Cur_InvoiceSchedule.PriceStd,
+                    Cur_InvoiceSchedule.m_attributesetinstance_id
                   )
                   ;
                 v_DateOrdered:=COALESCE(Cur_InvoiceSchedule.movementDate, COALESCE(Cur_InvoiceSchedule.DateOrdered, now())) ;

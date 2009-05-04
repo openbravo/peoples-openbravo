@@ -38,7 +38,6 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.base.structure.Traceable;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -73,6 +72,30 @@ public class DataSetService implements OBSingleton {
   }
 
   /**
+   * Returns true if the {@link DataSet} has data. Note that the client/organization of the current
+   * user are used for querying
+   * 
+   * @param dataSet
+   *          the data set to check for content
+   * @return true if there are objects in the data set, false other wise
+   * @see DataSet#getDataSetTableList()
+   * @see DataSetTable
+   */
+  public boolean hasData(DataSet dataSet) {
+    long totalCnt = 0;
+    for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
+      final Entity entity = ModelProvider.getInstance().getEntityByTableName(
+          dataSetTable.getTable().getDBTableName());
+      final OBCriteria<BaseOBObject> obc = OBDal.getInstance().createCriteria(entity.getName());
+      totalCnt += obc.count();
+      if (totalCnt > 0) {
+        return true;
+      }
+    }
+    return totalCnt > 0;
+  }
+
+  /**
    * Checks if objects of a {@link DataSetTable} of the {@link DataSet} have changed since a
    * specific date. Note that this method does not use whereclauses or other filters defined in the
    * dataSetTable. It checks all instances of the table of the DataSetTable.
@@ -93,20 +116,6 @@ public class DataSetService implements OBSingleton {
       // todo: count is slower than exists, is exists possible?
       if (obc.count() > 0) {
         return true;
-      }
-    }
-    return false;
-  }
-
-  public <T extends BaseOBObject> boolean hasChangedCheck(DataSet dataSet, Date afterDate) {
-    for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
-      final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-          dataSetTable.getTable().getDBTableName());
-      final OBCriteria<T> obc = OBDal.getInstance().createCriteria(entity.getName());
-      obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
-      // todo: count is slower than exists, is exists possible?
-      for (BaseOBObject bob : obc.list()) {
-        System.err.println(bob.getIdentifier() + " " + ((Traceable) bob).getUpdated());
       }
     }
     return false;
@@ -174,7 +183,7 @@ public class DataSetService implements OBSingleton {
   /**
    * Returns a list of DataSet tables instances on the basis of the DataSet
    * 
-   * @param DataSet
+   * @param dataSet
    *          the DataSet for which the list of tables is required
    * @return the DataSetTables of the DataSet
    * @deprecated use dataSet.getDataSetTableList()
@@ -200,7 +209,7 @@ public class DataSetService implements OBSingleton {
   /**
    * Determines which objects are exportable using the DataSetTable whereClause.
    * 
-   * @param DataSetTable
+   * @param dataSetTable
    *          the dataSetTable defines the Entity and the whereClause to use
    * @param moduleId
    *          the moduleId is a parameter in the whereClause

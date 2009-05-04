@@ -158,7 +158,7 @@ public class DalUtil {
   }
 
   /**
-   * Returns the entity name (see {@link Entity@getName()} without loading/resolving the object. If
+   * Returns the entity name (see {@link Entity#getName()} without loading/resolving the object. If
    * the object is a Hibernate proxy then the entity name is retrieved through the proxy and not
    * directly from the object. This prevent unwanted loading of the object.
    * 

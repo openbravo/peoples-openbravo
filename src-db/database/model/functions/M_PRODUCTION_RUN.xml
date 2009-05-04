@@ -216,7 +216,7 @@
           -- For every Production Plan
           FOR CUR_PP IN
             (SELECT M_PRODUCTIONPLAN.*,
-              M_PRODUCT.C_UOM_ID
+              M_PRODUCT.C_UOM_ID,  M_PRODUCT.M_AttributeSetInstance_ID 
             FROM M_PRODUCTIONPLAN,
               M_PRODUCT
             WHERE M_PRODUCTIONPLAN.M_Product_ID=M_PRODUCT.M_Product_ID
@@ -239,14 +239,16 @@
                 M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
                 AD_Org_ID, IsActive, Created, CreatedBy,
                 Updated, UpdatedBy, M_Product_ID, MovementQty,
-                M_Locator_ID, Description, C_UOM_ID
+                M_Locator_ID, Description, C_UOM_ID,
+                M_AttributeSetInstance_ID
               )
               VALUES
               (
                 NextNo, CUR_PP.M_ProductionPlan_ID, v_Line, CUR_PP.AD_Client_ID,
                 CUR_PP.AD_Org_ID, 'Y', now(), '0',
                 now(), '0', CUR_PP.M_Product_ID, CUR_PP.ProductionQty,
-                CUR_PP.M_Locator_ID, CUR_PP.Description, CUR_PP.C_UOM_ID
+                CUR_PP.M_Locator_ID, CUR_PP.Description, CUR_PP.C_UOM_ID,
+                CUR_PP.M_AttributeSetInstance_ID
               )
               ;
           END LOOP;

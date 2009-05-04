@@ -463,9 +463,7 @@ public class VersionUtility {
    * 
    * @param moduleVersionId
    *          In param. An String array with the modules version ids, that we want to install.
-   * @param modulesToInstall
-   *          Out param. New modules that is necessary to install.
-   * @param modulesToUpdate
+   * @param moduleVersionToUpdateId
    *          Out param. Modules that need an update.
    * @param obErrors
    *          Out param. Errors in dependencies. Null if no errors.

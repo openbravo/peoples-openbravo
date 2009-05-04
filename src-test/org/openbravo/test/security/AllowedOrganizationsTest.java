@@ -21,9 +21,8 @@ package org.openbravo.test.security;
 
 import java.util.Set;
 
-import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
@@ -31,15 +30,21 @@ import org.openbravo.model.project.Project;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Tests computation of natural tree of an organization.
+ * Tests computation of natural tree of an organization. This is used to compute the readable
+ * organizations of a user.
+ * 
+ * @see OrganizationStructureProvider
+ * @see OBContext#getReadableOrganizations()
  * 
  * @author mtaal
  */
 
 public class AllowedOrganizationsTest extends BaseTest {
 
+  /**
+   * Tests valid organizations trees for different organizations.
+   */
   public void testOrganizationTree() {
-    setErrorOccured(true);
     setBigBazaarAdminContext();
     final OrganizationStructureProvider osp = new OrganizationStructureProvider();
     osp.setClientId("1000000");
@@ -55,7 +60,6 @@ public class AllowedOrganizationsTest extends BaseTest {
     checkResult("1000007", osp, new String[] { "1000000", "0", "1000005", "1000007" });
     checkResult("1000008", osp, new String[] { "1000000", "1000006", "0", "1000008", "1000005" });
     checkResult("1000009", osp, new String[] { "1000009", "1000006", "0", "1000000", "1000005" });
-    setErrorOccured(false);
   }
 
   private void checkResult(String id, OrganizationStructureProvider osp, String[] values) {
@@ -66,16 +70,11 @@ public class AllowedOrganizationsTest extends BaseTest {
     }
   }
 
-  public void testProjectUpdate() {
-    setErrorOccured(true);
-    setUserContext("1000001");
-    final Project p = OBDal.getInstance().get(Project.class, "1000001");
-    p.setName(p.getName() + "A");
-    setErrorOccured(false);
-  }
-
+  /**
+   * Checks a special case that an object of an organization A may only refer to objects in the
+   * natural tree of A.
+   */
   public void testOrganizationCheck() {
-    setErrorOccured(true);
     setUserContext("0");
     OBContext.getOBContext().getOrganizationStructureProvider().reInitialize();
 
@@ -86,14 +85,13 @@ public class AllowedOrganizationsTest extends BaseTest {
     p.getBusinessPartner().setOrganization(o5);
 
     try {
-      SessionHandler.getInstance().commitAndClose();
+      commitTransaction();
       fail();
-    } catch (final OBSecurityException e) {
+    } catch (final OBException e) {
       assertTrue("Invalid exception " + e.getMessage(), e.getMessage().indexOf(
           "which is not part of the natural tree of") != -1);
       // no fail!
-      SessionHandler.getInstance().rollback();
+      rollback();
     }
-    setErrorOccured(false);
   }
 }

@@ -75,11 +75,6 @@ public class DocLine_Cash extends DocLine {
 
   /**
    * Set References
-   * 
-   * @param C_BankAccount_ID
-   *          bank account
-   * @param C_Invoice_ID
-   *          invoice
    */
   public void setReference(String C_Order_ID, String C_Debt_Payment_ID, ConnectionProvider conn) {
     m_C_Order_Id = C_Order_ID;

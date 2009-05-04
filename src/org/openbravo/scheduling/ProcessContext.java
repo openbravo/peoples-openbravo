@@ -97,7 +97,11 @@ public class ProcessContext {
   }
 
   /**
-   * @return
+   * @return a new instance of {@link VariablesSecureApp} created from the client, organization and
+   *         user.
+   * @see #getClient()
+   * @see #getOrganization()
+   * @see #getUser()
    */
   public VariablesSecureApp toVars() {
     return new VariablesSecureApp(user, client, organization);
@@ -232,7 +236,8 @@ public class ProcessContext {
 
   /**
    * @param arg0
-   * @return
+   *          the xml to create the process context from
+   * @return a new instance created from the string argument (an xml definition)
    */
   public synchronized static ProcessContext newInstance(String arg0) {
     if (arg0 == null || arg0.trim().equals("")) {

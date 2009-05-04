@@ -98,8 +98,8 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
    * {@link #getToInsert()} method and the to-be-updated objects through the {@link #getToUpdate()}
    * method.
    * 
-   * @param xml
-   *          the xml string
+   * @param doc
+   *          the dom4j Document to process
    * @return the list of BaseOBObject present in the root of the xml. This list contains the
    *         to-be-updated, to-be-inserted as well as the unchanged business objects
    */
@@ -164,6 +164,16 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
       final boolean writable = OBContext.getOBContext().isInAdministratorMode()
           || SecurityChecker.getInstance().isWritable(bob);
 
+      // referenced and not new, so already there, don't update
+      if (hasReferenceAttribute && !bob.isNewOBObject()) {
+        return bob;
+      }
+
+      if (!writable && bob.isNewOBObject()) {
+        error("Object " + entityName + "(" + id + ") is new but not writable");
+        return bob;
+      }
+
       // do some checks to determine if this one should be updated
       // a referenced instance should not be updated if it is not new
       // note that embedded children are updated but non-embedded children
@@ -193,11 +203,6 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
         // ignore the id properties as they are already set, or should
         // not be set
         if (p.isId()) {
-          continue;
-        }
-
-        if (p.isOneToMany()) {
-          oneToManyElements.add(childElement);
           continue;
         }
 

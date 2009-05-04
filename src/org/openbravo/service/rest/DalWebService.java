@@ -37,6 +37,7 @@ import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.CheckException;
+import org.openbravo.dal.core.DalMappingGenerator;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -90,6 +91,8 @@ public class DalWebService implements WebService {
       xml = XMLUtil.getInstance().toString(ModelXMLConverter.getInstance().getEntitiesAsXML());
     } else if (segment.equals("schema")) {
       xml = XMLUtil.getInstance().toString(ModelXMLConverter.getInstance().getSchema());
+    } else if (segment.equals("hbm")) {
+      xml = DalMappingGenerator.getInstance().generateMapping();
     } else {
       final String entityName = segment;
 
@@ -150,6 +153,7 @@ public class DalWebService implements WebService {
         if (countOperation) {
           response.setContentType("text/xml");
           response.setCharacterEncoding("utf-8");
+          response.setHeader("Content-Encoding", "UTF-8");
           final String xmlResult = WebServiceUtil.getInstance().createResultXML("" + obq.count());
           final Writer w = response.getWriter();
           w.write(xmlResult);
@@ -194,12 +198,14 @@ public class DalWebService implements WebService {
           this.getClass().getResourceAsStream(request.getParameter("template")), url);
       response.setContentType("text/html");
       response.setCharacterEncoding("utf-8");
+      response.setHeader("Content-Encoding", "UTF-8");
       final Writer w = response.getWriter();
       w.write(templatedXml);
       w.close();
     } else {
       response.setContentType("text/xml");
       response.setCharacterEncoding("utf-8");
+      response.setHeader("Content-Encoding", "UTF-8");
       final Writer w = response.getWriter();
       w.write(xml);
       w.close();
@@ -247,6 +253,11 @@ public class DalWebService implements WebService {
       final String resultXml = WebServiceUtil.getInstance().createResultXMLWithLogWarning(
           "Action performed successfully", "Removed business object " + resIdentifier, null);
       try {
+        response.setContentType("text/xml");
+        // this call does not seem to work:
+        response.setCharacterEncoding("UTF-8");
+        // this one does:
+        response.setHeader("Content-Encoding", "UTF-8");
         final Writer w = response.getWriter();
         w.write(resultXml);
         w.close();
@@ -278,7 +289,10 @@ public class DalWebService implements WebService {
   protected void doChangeAction(String path, HttpServletRequest request,
       HttpServletResponse response, ChangeAction changeAction) {
     response.setContentType("text/xml");
-    response.setCharacterEncoding("utf-8");
+    // this call does not seem to work:
+    response.setCharacterEncoding("UTF-8");
+    // this one does:
+    response.setHeader("Content-Encoding", "UTF-8");
     final String resultXml = doChangeActionXML(path, request, response, changeAction);
     try {
       final Writer w = response.getWriter();
@@ -293,12 +307,16 @@ public class DalWebService implements WebService {
   protected String doChangeActionXML(String path, HttpServletRequest request,
       HttpServletResponse response, ChangeAction changeAction) {
     // get the resource
-    final String segment = WebServiceUtil.getInstance().getFirstSegment(path);
-    try {
-      ModelProvider.getInstance().getEntity(segment);
-    } catch (final CheckException ce) {
-      throw new ResourceNotFoundException("Resource " + segment + " not found", ce);
-    }
+
+    // Disabled this check as it makes the system much more flexible....
+    // it makes it possible to post xml with multiple entities to a url like
+    // http://localhost:8080/openbravo/ws/dal
+    // final String segment = WebServiceUtil.getInstance().getFirstSegment(path);
+    // try {
+    // ModelProvider.getInstance().getEntity(segment);
+    // } catch (final CheckException ce) {
+    // throw new ResourceNotFoundException("Resource " + segment + " not found", ce);
+    // }
 
     try {
       final SAXReader reader = new SAXReader();

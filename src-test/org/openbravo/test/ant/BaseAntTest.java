@@ -31,7 +31,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.erpCommon.utility.AntExecutor;
 
 /**
- * Base test class for ant test cases.
+ * Base test class for ant test cases. It uses the {@link AntExecutor} to execute the ant tasks,
  * 
  * @author mtaal
  */

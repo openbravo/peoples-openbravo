@@ -53,8 +53,6 @@ public class DocInOut extends AcctServer {
   /**
    * Load Document Details
    * 
-   * @param rs
-   *          result set
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -146,7 +144,7 @@ public class DocInOut extends AcctServer {
         DocInOutTemplate newTemplate = (DocInOutTemplate) Class.forName(strClassname).newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        e.printStackTrace();
+        log4j.error("Error while creating new instance for DocInOutTemplate - " + e);
       }
     }
     C_Currency_ID = as.getC_Currency_ID();
@@ -175,7 +173,7 @@ public class DocInOut extends AcctServer {
         dr.setLocationFromBPartner(C_BPartner_Location_ID, false, conn); // to
         // Loc
         log4jDocInOut.debug("(MatShipment) - CR account: "
-            + getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
+            + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
         log4jDocInOut.debug("(MatShipment) - CR costs: " + costs);
         // Inventory CR
         cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
@@ -206,7 +204,7 @@ public class DocInOut extends AcctServer {
         dr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
         // Loc
         log4jDocInOut.debug("(matReceipt) - CR account: "
-            + getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn));
+            + line.getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn));
         log4jDocInOut.debug("(matReceipt) - CR costs: " + costs);
         // NotInvoicedReceipt CR
         cr = fact.createLine(line, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
@@ -275,7 +273,7 @@ public class DocInOut extends AcctServer {
   /**
    * Get Document Confirmation
    * 
-   * @not used
+   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;

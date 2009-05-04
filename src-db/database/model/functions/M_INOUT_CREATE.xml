@@ -110,7 +110,7 @@
       T.C_UOM_ID=p_UOM AND
       COALESCE(T.M_PRODUCT_UOM_ID, '0')=COALESCE(p_Product_UOM, '0') AND
       COALESCE(T.M_ATTRIBUTESETINSTANCE_ID, '0')=COALESCE(p_Attribute, COALESCE(T.M_ATTRIBUTESETINSTANCE_ID, '0')) AND
-      COALESCE(T.QtyOnHand, 0)<>0
+      COALESCE(T.QtyOnHand, 0)>0
     ORDER BY L.PRIORITYNO,
       T.M_ATTRIBUTESETINSTANCE_ID;
     v_storage Cur_Storage%ROWTYPE;
@@ -178,10 +178,23 @@
       DBMS_OUTPUT.PUT_LINE('  v_Record_ID=' || v_Record_ID) ;
     ELSIF(p_Invoice_ID IS NOT NULL) THEN
       CREATE_FROM_INVOICE:=true;
+      SELECT c_invoice.AD_CLIENT_ID, ad_clientinfo.allownegativestock
+      INTO v_ad_client_id, v_allownegativestock
+      FROM ad_clientinfo, c_invoice
+      where ad_clientinfo.ad_client_id = c_invoice.ad_client_id
+      and c_invoice_id = p_invoice_id;
     ELSE
       v_Record_ID:=p_Order_ID;
       DBMS_OUTPUT.PUT_LINE('--<<M_InOut_Create>> Order_ID=' || v_Record_ID);
+      SELECT c_order.AD_CLIENT_ID, ad_clientinfo.allownegativestock
+      INTO v_ad_client_id, v_allownegativestock
+       FROM ad_clientinfo, c_order
+      where ad_clientinfo.ad_client_id = c_order.ad_client_id
+      and c_order_id = v_Record_ID;
+
     END IF;
+
+    
     BEGIN --BODY
       IF(NOT CREATE_FROM_INVOICE) THEN
         -- May be NULL or 0
@@ -481,6 +494,7 @@
                           'N',
                           --MODIFIED BY F.IRIAZABAL
                           v_ActualQty, ol.M_PRODUCT_UOM_ID, ol.M_AttributeSetInstance_ID);
+                        v_lines:=v_lines + 10;
                       ELSIF (v_qty <> 0) THEN
                         IF (cur_order.deliveryrule = 'O') THEN
                           DBMS_OUTPUT.PUT_LINE('Not enough stocked products, delivery type Order');
@@ -574,14 +588,7 @@
               WHERE M_INOUT_ID = p_InOut_ID;
             ELSE
               -- Post Shipment
-              DECLARE
-              BEGIN
                 M_INOUT_POST(NULL, p_InOut_ID) ;
-              EXCEPTION
-              WHEN OTHERS THEN
-                v_ResultStr:= SQLERRM;
-                RAISE_APPLICATION_ERROR(-20000, SUBSTR(SQLERRM,12,2000)) ;
-              END;
             END IF;
           END IF;--Next_Order
           --<<Next_Order>>
@@ -704,14 +711,8 @@
             END LOOP; -- InvoiceLines
           END LOOP; -- Invoices
           -- Post Shipment
-          DECLARE
-          BEGIN
             M_INOUT_POST(NULL, p_InOut_ID) ;
-          EXCEPTION
-          WHEN OTHERS THEN
-            v_ResultStr:= SQLERRM;
-            RAISE_APPLICATION_ERROR(-20000, SUBSTR(SQLERRM,12,2000)) ;
-          END;
+
 		  --ADDED BY P.SAROBE
 		  SELECT documentno
 		  INTO v_DocumentNo

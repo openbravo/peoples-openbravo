@@ -36,7 +36,7 @@
 	<PARAMETER id="paramInfo" name="info"/>
 	<PARAMETER id="RecordRange" name="recordRange" attribute="value"/>
 	<PARAMETER id="RecordRangeInfo" name="recordRangeInfo" attribute="value"/>
-  <PARAMETER id="Theme" name="theme" attribute="value"/>
+  <PARAMETER id="Theme" name="Theme" attribute="value"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
   <PARAMETER id="tdtopButtons" name="navigationBar" default=""/>

@@ -88,7 +88,7 @@ public abstract class GenericTree {
    * 
    * @param node
    *          Node ID to retrieve description
-   * @return: The String with the HTML for the description
+   * @return The String with the HTML for the description
    */
   public abstract String getHTMLDescription(String node);
 
@@ -146,9 +146,7 @@ public abstract class GenericTree {
   }
 
   /**
-   * Returns a String with the HTML with all the structure for the tree.
-   * 
-   * @return
+   * @return a String with the HTML with all the structure for the tree.
    */
   public String toHtml() {
     if (data == null || data.length == 0)
@@ -324,9 +322,7 @@ public abstract class GenericTree {
   }
 
   /**
-   * Returns data
-   * 
-   * @return
+   * @return the data
    */
   public FieldProvider[] getData() {
     return data;

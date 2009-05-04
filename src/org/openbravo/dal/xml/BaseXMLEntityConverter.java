@@ -123,13 +123,17 @@ public class BaseXMLEntityConverter implements OBNotSingleton {
         return;
       }
     } else if (preventRealUpdate) {
-      Check.isTrue(!writable || hasReferenceAttribute && !bob.isNewOBObject(),
+      Check.isTrue(!writable || (hasReferenceAttribute && !bob.isNewOBObject()),
           "This case may only occur for referenced objects which are not new");
       // if the object is referenced then it can not be updated
       if (hasReferenceAttribute && !bob.isNewOBObject()) {
         log.debug("Entity " + bob + " (" + bob.getEntity().getTableName() + ") "
             + " has not been updated because it already exists and "
             + "it is imported as a reference from another object");
+      }
+      if (!writable && !bob.isNewOBObject() && !hasReferenceAttribute) {
+        warn("Not updating entity: " + bob.getIdentifier() + "(" + bob.getEntityName() + ") "
+            + " because it is not writable for this user");
       }
     } else if (bob.isNewOBObject()) {
       if (!checkInsert.contains(bob)) {

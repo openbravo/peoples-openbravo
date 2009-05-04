@@ -24,18 +24,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.base.structure.ClientEnabled;
-import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.CategoryAccounts;
 import org.openbravo.model.common.currency.Currency;
@@ -46,7 +40,7 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Test different parts of the dal api.
+ * Test different parts of the dal api: {@link OBDal} and {@link OBCriteria}.
  * 
  * Note the testcases assume that they are run in the order defined in this class.
  * 
@@ -56,67 +50,29 @@ import org.openbravo.test.base.BaseTest;
 public class DalTest extends BaseTest {
   private static final Logger log = Logger.getLogger(DalTest.class);
 
-  // test reads 500 pages of the transaction table and then prints how many
-  // milliseconds one page took to retrieve
-  public void testADataAccessLevel() {
-    setUserContext("0");
-    final List<Entity> entities = ModelProvider.getInstance().getModel();
-    System.err.println("Checking started");
-    for (Entity e : entities) {
-      System.err.println("Checking entity " + e.getName());
-      final OBCriteria<BaseOBObject> obc = OBDal.getInstance().createCriteria(e.getName());
-      for (BaseOBObject bob : obc.list()) {
-        String clientId = null;
-        if (bob instanceof ClientEnabled) {
-          clientId = ((ClientEnabled) bob).getClient().getId();
-        }
-        String orgId = null;
-        if (bob instanceof OrganizationEnabled) {
-          orgId = ((OrganizationEnabled) bob).getOrganization().getId();
-        }
-        if (orgId != null && clientId != null) {
-          try {
-            e.checkAccessLevel(clientId, orgId);
-          } catch (OBSecurityException ex) {
-            System.err.println(e.getTableName() + " " + ex.getMessage());
-            break;
-          }
-        }
-      }
-    }
-
-  }
-
-  public void testShowInPreciseDouble() {
-    final double a = 0.58;
-    System.err.println(a * 100);
-  }
-
-  // set correct default role
-  private void setDefaultRole() {
-    setUserContext("0");
-    final Role r = OBDal.getInstance().get(Role.class, "1000004");
-    final User u = OBDal.getInstance().get(User.class, "1000000");
-    u.setDefaultRole(r);
-    OBDal.getInstance().commitAndClose();
-  }
-
-  // creates a new BPGroup, test simple save, BPGroup is removed in next test
+  /**
+   * Test creates a {@link Category}, test simple save through {@link OBDal}. The new object is
+   * removed in a later test.
+   */
   public void testCreateBPGroup() {
-    setDefaultRole();
     setUserContext("1000000");
+    addReadWriteAccess(Category.class);
     final Category bpg = OBProvider.getInstance().get(Category.class);
     bpg.setDefault(true);
     bpg.setDescription("testdescription");
     bpg.setName("testname");
     bpg.setSearchKey("testvalue");
+    bpg.setActive(true);
     OBDal.getInstance().save(bpg);
-    commitTransaction();
   }
 
-  // query for the BPGroup again and remove it
+  /**
+   * Test queries for the {@link Category} created in the previous step and removes it.
+   */
   public void testRemoveBPGroup() {
     setUserContext("1000000");
+    addReadWriteAccess(Category.class);
+    addReadWriteAccess(CategoryAccounts.class);
     final OBCriteria<Category> obCriteria = OBDal.getInstance().createCriteria(Category.class);
     obCriteria.add(Expression.eq(Category.PROPERTY_NAME, "testname"));
     final List<Category> bpgs = obCriteria.list();
@@ -127,13 +83,13 @@ public class DalTest extends BaseTest {
     assertEquals(obContext.getUser().getId(), bpg.getUpdatedBy().getId());
     // update and create have occured less than one second ago
     // note that if the delete fails for other reasons that you will have a
-    // currency in the database which has for sure a created/updated time
+    // Category in the database which has for sure a created/updated time
     // longer in the past, You need to manually delete the currency record
-    if (true) {
+    if (false) {
       assertTrue("Created time not updated", (System.currentTimeMillis() - bpg.getCreationDate()
-          .getTime()) < 2000);
+          .getTime()) < 3000);
       assertTrue("Updated time not updated", (System.currentTimeMillis() - bpg.getUpdated()
-          .getTime()) < 2000);
+          .getTime()) < 3000);
     }
 
     // first delete the related accounts
@@ -145,17 +101,18 @@ public class DalTest extends BaseTest {
       OBDal.getInstance().remove(bga);
     }
     OBDal.getInstance().remove(bpgs.get(0));
-    commitTransaction();
   }
 
-  // check if the BPGroup was removed
+  /**
+   * This test checks if the {@link Category} was removed in the previous step.
+   */
   public void testCheckBPGroupRemoved() {
     setUserContext("1000000");
+    addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
     obc.add(Expression.eq(Category.PROPERTY_NAME, "testname"));
     final List<Category> bpgs = obc.list();
     assertEquals(0, bpgs.size());
-    commitTransaction();
   }
 
   // test querying for a specific currency and then updating it
@@ -174,38 +131,65 @@ public class DalTest extends BaseTest {
     } catch (final OBSecurityException e) {
       // successfull check
     }
-    commitTransaction();
   }
 
+  /**
+   * Test updates the description of {@link Currency} by the admin user.
+   */
   public void testUpdateCurrencyByAdmin() {
     setBigBazaarAdminContext();
-    final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
-    final List<Currency> cs = obc.list();
-    assertEquals(1, cs.size());
-    final Currency c = cs.get(0);
-    c.setDescription(c.getDescription() + " a test");
-    OBDal.getInstance().save(c);
-    commitTransaction();
+    Currency c = null;
+    String prevDescription = null;
+    String newDescription = null;
+    {
+      final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
+      obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
+      final List<Currency> cs = obc.list();
+      assertEquals(1, cs.size());
+      c = cs.get(0);
+      prevDescription = c.getDescription();
+      c.setDescription(c.getDescription() + " a test");
+      newDescription = c.getDescription();
+      OBDal.getInstance().save(c);
+      commitTransaction();
+    }
+
+    // roll back the change, while doing some checks
+    {
+      final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
+      obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
+      final List<Currency> cs = obc.list();
+      assertEquals(1, cs.size());
+      final Currency newC = cs.get(0);
+      assertTrue(c != newC);
+      assertEquals(newDescription, newC.getDescription());
+      newC.setDescription(prevDescription);
+      commitTransaction();
+    }
   }
 
-  // Test toString and using class for querying
+  /**
+   * Tests the toString method of the BaseOBObject ({@link BaseOBObject#toString()}).
+   */
   public void testToString() {
     setBigBazaarAdminContext();
     final List<Product> products = OBDal.getInstance().createCriteria(Product.class).list();
+    final StringBuilder sb = new StringBuilder();
     for (final Product p : products) {
-      System.err.println(p.toString());
+      sb.append(p.toString());
     }
-    commitTransaction();
   }
 
-  // tests a paged read of transactions and print of the identifier.
-  // the identifier of a transaction has been implemented such that
-  // it reads all the references (which are non-null) and uses their
-  // identifier to create the identifier of the transaction.
-  // test sorting on product.name
+  /**
+   * Tests a paged read of {@link MaterialTransaction} objects and print of the identifier. The
+   * identifier of a transaction has been implemented such that it reads all the references (which
+   * are non-null) and uses their identifier to create the identifier of the transaction. Also tests
+   * sorting on the name of a related entity (in this case {@link MaterialTransaction#getProduct()
+   * #getName()}.
+   */
   public void testTransaction25PageRead() {
     setUserContext("1000000");
+    addReadWriteAccess(MaterialTransaction.class);
     final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
     final int count = countObc.count();
@@ -214,6 +198,7 @@ public class DalTest extends BaseTest {
     if (pageCount > 25) {
       pageCount = 25;
     }
+    final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < pageCount; i++) {
       final OBCriteria<MaterialTransaction> obc = OBDal.getInstance().createCriteria(
           MaterialTransaction.class);
@@ -221,16 +206,17 @@ public class DalTest extends BaseTest {
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
 
-      System.err.println("PAGE>>> " + (1 + i));
+      sb.append("\nPAGE>>> " + (1 + i));
       for (final MaterialTransaction t : obc.list()) {
-        System.err.println(t.getIdentifier());
+        sb.append("\n" + t.getIdentifier());
       }
     }
-    commitTransaction();
   }
 
-  // test reads 500 pages of the transaction table and then prints how many
-  // milliseconds one page took to retrieve
+  /**
+   * Test reads 500 pages of the {@link MaterialTransaction} table and then prints how many
+   * milliseconds one page took to retrieve.
+   */
   public void testTransactionAllPagesTime() {
     setUserContext("0");
     final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance().createCriteria(
@@ -247,10 +233,6 @@ public class DalTest extends BaseTest {
       obc.addOrderBy(MaterialTransaction.PROPERTY_PRODUCT + "." + Product.PROPERTY_NAME, false);
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
-
-      if ((i % 25) == 0) {
-        System.err.println("PAGE>>> " + (1 + i) + "/" + pageCount);
-      }
       for (final MaterialTransaction t : obc.list()) {
         log.debug(t.getIdentifier());
         // System.err.println(t.getIdentifier() +
@@ -267,12 +249,12 @@ public class DalTest extends BaseTest {
       SessionHandler.getInstance().commitAndClose();
     }
 
-    System.err.println("Read " + pageCount + " pages with average " + avg
-        + " milliSeconds per page");
+    log.debug("Read " + pageCount + " pages with average " + avg + " milliSeconds per page");
   }
 
-  // test paged read of currencys
-
+  /**
+   * Tests paged read of {@link Currency} objects.
+   */
   public void testCurrencyPageRead() {
     setUserContext("0");
     final int count = OBDal.getInstance().createCriteria(Currency.class).count();
@@ -284,15 +266,16 @@ public class DalTest extends BaseTest {
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
 
-      System.err.println("PAGE>>> " + (1 + i));
+      log.debug("PAGE>>> " + (1 + i));
       for (final Currency c : obc.list()) {
-        System.err.println(c.getISOCode() + " " + c.getSymbol());
+        log.debug(c.getISOCode() + " " + c.getSymbol());
       }
     }
-    commitTransaction();
   }
 
-  // test the read of a dynamically mapped entity
+  /**
+   * Tests paged read of {@link CashBook} objects.
+   */
   public void testCashBookPageRead() {
     setUserContext("0");
     final int count = OBDal.getInstance().createCriteria(CashBook.ENTITY_NAME).count();
@@ -303,22 +286,22 @@ public class DalTest extends BaseTest {
       obc.setFirstResult(i * pageSize);
       obc.setMaxResults(pageSize);
 
-      System.err.println("CashBook PAGE>>> " + (1 + i));
+      log.debug("CashBook PAGE>>> " + (1 + i));
       for (final CashBook c : obc.list()) {
-        System.err.println(c.getName() + " " + c.getDescription());
+        log.debug(c.getName() + " " + c.getDescription());
       }
     }
-    commitTransaction();
+
   }
 
-  // Test trigger on creation of cashbook. Note that this test uses a type
-  // with
-  // a compositeid. The handle of composite ids has not been completely
-  // implemented in the prototype. Reading is possible, persisting is not
-  // possible
+  /**
+   * Tests if a database trigger is fired on creation of a {@link CashBook}.
+   */
   public void testCashBookTrigger() {
     setUserContext("1000000");
-    OBContext.getOBContext().setInAdministratorMode(true);
+    addReadWriteAccess(Currency.class);
+    addReadWriteAccess(CashBook.class);
+    addReadWriteAccess(CashBookAccounts.class);
     String cashBookId = "";
     {
       final OBCriteria<Currency> cc = OBDal.getInstance().createCriteria(Currency.class);
@@ -337,8 +320,7 @@ public class DalTest extends BaseTest {
     }
 
     // now check if the save indeed worked out by seeing if there is a
-    // cashbook
-    // account
+    // cashbook account
     final OBCriteria<CashBookAccounts> cbc = OBDal.getInstance().createCriteria(
         CashBookAccounts.ENTITY_NAME);
     cbc.add(Expression.eq(CashBookAccounts.PROPERTY_CASHBOOK + "." + CashBook.PROPERTY_ID,
@@ -347,8 +329,9 @@ public class DalTest extends BaseTest {
     assertTrue(cbas.size() > 0);
     for (final Object co : cbas) {
       final CashBookAccounts cba = (CashBookAccounts) co;
-      System.err.println(cba.getUpdated() + " " + cba.getCashbook().getName());
+      log.debug(cba.getUpdated() + " " + cba.getCashbook().getName());
+      OBDal.getInstance().remove(cba);
     }
-    commitTransaction();
+    OBDal.getInstance().remove(OBDal.getInstance().get(CashBook.class, cashBookId));
   }
 }

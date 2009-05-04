@@ -195,7 +195,7 @@
         v_FieldLength:=Cur_Column.Data_Length;
       ELSIF(Cur_Column.Data_Type IN('NVARCHAR2', 'NCHAR')) THEN
         v_FieldLength:=Cur_Column.Data_Length/2;
-      ELSIF(Cur_Column.Data_Type IN('DATE')) THEN
+      ELSIF(Cur_Column.Data_Type IN('DATE', 'TIMESTAMP')) THEN
         v_FieldLength:=19;
       ELSIF(Cur_Column.Data_Type IN('NUMBER')) THEN
         v_FieldLength:=COALESCE(Cur_Column.Data_Precision, 10) +2;

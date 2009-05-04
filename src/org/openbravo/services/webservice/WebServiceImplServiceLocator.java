@@ -54,6 +54,7 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
         try {
             org.openbravo.services.webservice.WebServiceSoapBindingStub _stub = new org.openbravo.services.webservice.WebServiceSoapBindingStub(portAddress, this);
             _stub.setPortName(getWebServiceWSDDServiceName());
+            _stub.setTimeout(5000);
             return _stub;
         }
         catch (org.apache.axis.AxisFault e) {

@@ -110,8 +110,6 @@ public class DocAmortization extends AcctServer {
   /**
    * Load Specific Document Details
    * 
-   * @param rs
-   *          result set
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -189,7 +187,7 @@ public class DocAmortization extends AcctServer {
             .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        e.printStackTrace();
+        log4j.error("Error while creating new instance for DocAmortizationTemplate - " + e);
       }
     }
     // create Fact Header
@@ -223,7 +221,7 @@ public class DocAmortization extends AcctServer {
   /**
    * Get Document Confirmation
    * 
-   * @not used
+   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;

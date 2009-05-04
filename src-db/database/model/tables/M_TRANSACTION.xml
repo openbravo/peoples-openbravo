@@ -105,8 +105,8 @@
       <foreign-key foreignTable="C_UOM" name="CUOM_MTRANSACTION">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_INTERNAL_CONSUMPTION" name="M_INTL_CONSUMP_MTRANSACTION">
-        <reference local="M_INTERNAL_CONSUMPTIONLINE_ID" foreign="M_INTERNAL_CONSUMPTION_ID"/>
+      <foreign-key foreignTable="M_INTERNAL_CONSUMPTIONLINE" name="M_INTL_CONSUMP_MTRANSACTION">
+        <reference local="M_INTERNAL_CONSUMPTIONLINE_ID" foreign="M_INTERNAL_CONSUMPTIONLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRIBUTESETINSTANCE_MTRANSAC">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>

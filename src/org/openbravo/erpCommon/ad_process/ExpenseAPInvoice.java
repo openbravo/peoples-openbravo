@@ -135,6 +135,31 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       for (int i = 0; i < data.length; i++) {
         String docTargetType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId,
             data[i].adOrgId);
+        
+        // Checks some employee data
+        strEmpl = data[i].bpname;
+        strProd = data[i].prodname;
+
+        strPricelistId = ExpenseAPInvoiceData.pricelistId(this, data[i].cBpartnerId);
+        if (strPricelistId.equals("")) {
+          throw new Exception("PricelistNotdefined");
+        } else {
+          // Selects the currency of the employee price list, that
+          // can be different from the currency of the expense
+          strBPCCurrencyId = ExpenseAPInvoiceData.selectCurrency(this, strPricelistId);
+        }
+
+        strcBpartnerLocationId = ExpenseAPInvoiceData.bPartnerLocation(this, data[i].cBpartnerId);
+        if (strcBpartnerLocationId.equals(""))
+          throw new Exception("ShiptoNotdefined");
+
+        strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
+        if (strPaymentRule.equals(""))
+          throw new Exception("FormofPaymentNotdefined");
+
+        strPaymentterm = ExpenseAPInvoiceData.paymentterm(this, data[i].cBpartnerId);
+        if (strPaymentterm.equals(""))
+          throw new Exception("PaymenttermNotdefined");        
 
         // Checks if there are invoices not processed that full filled
         // the requirements
@@ -144,38 +169,18 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         if (data[i].cProjectId.equals("")) {
           strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeaderNoProject(conn, this,
               data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
-              strBPCCurrencyId, data[i].cActivityId, data[i].cCampaignId);
+              strBPCCurrencyId, data[i].cActivityId, data[i].cCampaignId,
+              strcBpartnerLocationId, strPaymentRule, strPaymentterm);
+          
         } else {
           strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(conn, this,
               data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
-              strBPCCurrencyId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
+              strBPCCurrencyId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId,
+              strcBpartnerLocationId, strPaymentRule, strPaymentterm);
         }
 
         if (strcInvoiceIdOld.equals("")) {
-          // Checks some employee data
-          strEmpl = data[i].bpname;
-          strProd = data[i].prodname;
 
-          strPricelistId = ExpenseAPInvoiceData.pricelistId(this, data[i].cBpartnerId);
-          if (strPricelistId.equals("")) {
-            throw new Exception("PricelistNotdefined");
-          } else {
-            // Selects the currency of the employee price list, that
-            // can be different from the currency of the expense
-            strBPCCurrencyId = ExpenseAPInvoiceData.selectCurrency(this, strPricelistId);
-          }
-
-          strcBpartnerLocationId = ExpenseAPInvoiceData.bPartnerLocation(this, data[i].cBpartnerId);
-          if (strcBpartnerLocationId.equals(""))
-            throw new Exception("ShiptoNotdefined");
-
-          strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
-          if (strPaymentRule.equals(""))
-            throw new Exception("FormofPaymentNotdefined");
-
-          strPaymentterm = ExpenseAPInvoiceData.paymentterm(this, data[i].cBpartnerId);
-          if (strPaymentterm.equals(""))
-            throw new Exception("PaymenttermNotdefined");
 
           // Creates a new purchase invoice header
           strcInvoiceId = SequenceIdData.getUUID();

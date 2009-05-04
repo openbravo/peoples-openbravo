@@ -52,7 +52,8 @@ public class ReportShipper extends HttpSecureAppServlet {
       String strSale = vars.getGlobalVariable("inpSale", "ReportShipper|Sale", "N");
       String strPurchase = vars.getGlobalVariable("inpPurchase", "ReportShipper|Purchase", "N");
       String strDetail = vars.getGlobalVariable("inpDetail", "ReportShipper|Detail", "N");
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "", strUserCurrencyId);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportShipper|currency",
+          strUserCurrencyId);
       printPageDataSheet(request, response, vars, strFrom, strTo, strShipper, strSale, strPurchase,
           strDetail, strCurrencyId);
     } else if (vars.commandIn("FIND")) {
@@ -102,38 +103,41 @@ public class ReportShipper extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("****data passed from: " + strFrom + " to: " + strTo + " shiper: " + strShipper
           + " isso " + strIsSOTrx + " det " + strDetail);
-    // Checks if there is a conversion rate for each of the transactions of
-    // the report
     String strConvRateErrorMsg = "";
     OBError myMessage = null;
     myMessage = new OBError();
-    String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
-    try {
-      data = ReportShipperData.select(this, vars.getLanguage(), strCurrencyId, strBaseCurrencyId,
-          strFrom, strTo, strShipper, strIsSOTrx);
-    } catch (ServletException ex) {
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-    }
-    strConvRateErrorMsg = myMessage.getMessage();
-    // If a conversion rate is missing for a certain transaction, an error
-    // message window pops-up.
-    if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advise(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars
-          .getLanguage()), strConvRateErrorMsg);
-    } else { // Otherwise, the report is launched
-      dataLine = new ReportShipperData[0][0];
-      if (data != null && data.length > 0) {
-        dataLine = new ReportShipperData[data.length][];
+    if (vars.commandIn("FIND")) {
+      // Checks if there is a conversion rate for each of the transactions of
+      // the report
+      String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+      try {
+        data = ReportShipperData.select(this, vars.getLanguage(), strCurrencyId, strBaseCurrencyId,
+            strFrom, strTo, strShipper, strIsSOTrx);
+      } catch (ServletException ex) {
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+      }
+      strConvRateErrorMsg = myMessage.getMessage();
+      // If a conversion rate is missing for a certain transaction, an error
+      // message window pops-up.
+      if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+        advise(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars
+            .getLanguage()), strConvRateErrorMsg);
+      } else { // Otherwise, the report is launched
+        dataLine = new ReportShipperData[0][0];
+        if (data != null && data.length > 0) {
+          dataLine = new ReportShipperData[data.length][];
 
-        for (int i = 0; i < data.length; i++) {
-          if (log4j.isDebugEnabled())
-            log4j.debug("shipment " + data[i].shipmentid);
-          dataLine[i] = ReportShipperData.selectLine(this, vars.getLanguage(), data[i].shipmentid);
-          // if (RawMaterialData[i] == null ||
-          // RawMaterialData[i].length == 0) RawMaterialData[i] =
-          // ReportRawMaterialData.set();
-        }
-      } // else dataLine[0] = ReportShipperData.set();
+          for (int i = 0; i < data.length; i++) {
+            if (log4j.isDebugEnabled())
+              log4j.debug("shipment " + data[i].shipmentid);
+            dataLine[i] = ReportShipperData
+                .selectLine(this, vars.getLanguage(), data[i].shipmentid);
+            // if (RawMaterialData[i] == null ||
+            // RawMaterialData[i].length == 0) RawMaterialData[i] =
+            // ReportRawMaterialData.set();
+          }
+        } // else dataLine[0] = ReportShipperData.set();
+      }
     }
 
     if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {

@@ -112,8 +112,8 @@ public class DataExportService implements OBSingleton {
    *          the parameter name ClientID (note is case sensitive)
    * @param out
    *          the xml is written to this writer
-   * @see CLIENT_DATA_SET_NAME
-   * @see CLIENT_ID_PARAMETER_NAME
+   * @see #CLIENT_DATA_SET_NAME
+   * @see #CLIENT_ID_PARAMETER_NAME
    */
   public void exportClientToXML(Map<String, Object> parameters, boolean exportAuditInfo, Writer out) {
     DataSet dataSet = null;
@@ -147,7 +147,6 @@ public class DataExportService implements OBSingleton {
       Collections.sort(dts, new DatasetTableComparator());
 
       final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
-      int i = 0;
       for (final DataSetTable dt : dts) {
         final List<BaseOBObject> list = DataSetService.getInstance().getExportableObjects(dt, null,
             parameters);
@@ -179,15 +178,23 @@ public class DataExportService implements OBSingleton {
     log.debug("Exporting dataset " + dataSet.getName());
 
     final EntityXMLConverter exc = EntityXMLConverter.newInstance();
-    exc.setOptionIncludeReferenced(true);
+    exc.setOptionIncludeReferenced(false);
     exc.setOptionExportTransientInfo(true);
     exc.setOptionExportAuditInfo(true);
     exc.setAddSystemAttributes(true);
+    if (dataSet != null) {
+      exc.setDataSet(dataSet);
+    }
     final StringWriter out = new StringWriter();
     exc.setOutput(out);
 
     final List<DataSetTable> dts = dataSet.getDataSetTableList();
     Collections.sort(dts, new DatasetTableComparator());
+
+    // set the Client ID if not set
+    if (parameters.get(CLIENT_ID_PARAMETER_NAME) == null) {
+      parameters.put(CLIENT_ID_PARAMETER_NAME, OBContext.getOBContext().getCurrentClient().getId());
+    }
 
     final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
     for (final DataSetTable dt : dts) {

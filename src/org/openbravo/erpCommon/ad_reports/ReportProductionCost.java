@@ -52,7 +52,8 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       String strdateTo = vars.getGlobalVariable("inpDateTo", "ReportProductionCost|dateTo", "");
       String strmProductId = vars.getGlobalVariable("inpmProductId",
           "ReportProductionCost|mProductId", "");
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "", strUserCurrencyId);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+          "ReportProductionCost|currency", strUserCurrencyId);
       printPageDataSheet(request, response, vars, strdateFrom, strdateTo, strmProductId,
           strCurrencyId);
     } else if (vars.commandIn("FIND")) {
@@ -111,27 +112,29 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       data = ReportProductionCostData.set();
       discard[0] = "sectionDetail";
     } else {
-      // Checks if there is a conversion rate for each of the transactions
-      // of the report
-      String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
-      OBError myMessage = null;
-      myMessage = new OBError();
-      try {
-        data = ReportProductionCostData.select(this, strBaseCurrencyId, strCurrencyId, strLevel,
-            strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strmProductId);
-      } catch (ServletException ex) {
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-      }
-      strConvRateErrorMsg = myMessage.getMessage();
-      // If a conversion rate is missing for a certain transaction, an
-      // error message window pops-up.
-      if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-        advise(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars
-            .getLanguage()), strConvRateErrorMsg);
-      } else { // Otherwise, the report is launched
-        if (data == null || data.length == 0) {
-          data = ReportProductionCostData.set();
-          discard[0] = "sectionDetail";
+      if (vars.commandIn("FIND")) {
+        // Checks if there is a conversion rate for each of the transactions
+        // of the report
+        String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+        OBError myMessage = null;
+        myMessage = new OBError();
+        try {
+          data = ReportProductionCostData.select(this, strBaseCurrencyId, strCurrencyId, strLevel,
+              strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strmProductId);
+        } catch (ServletException ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+        }
+        strConvRateErrorMsg = myMessage.getMessage();
+        // If a conversion rate is missing for a certain transaction, an
+        // error message window pops-up.
+        if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+          advise(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars
+              .getLanguage()), strConvRateErrorMsg);
+        } else { // Otherwise, the report is launched
+          if (data == null || data.length == 0) {
+            data = ReportProductionCostData.set();
+            discard[0] = "sectionDetail";
+          }
         }
       }
     }
@@ -160,8 +163,8 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductionCost"), Utility
-                .getContext(this, vars, "#User_Client", "ReportProductionCost"), 0);
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductionCost"),
+            Utility.getContext(this, vars, "#User_Client", "ReportProductionCost"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProductionCost",
             strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -230,8 +233,8 @@ public class ReportProductionCost extends HttpSecureAppServlet {
 
     if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
       try {
-        dataMaterial = ReportProductionCostData.selectMaterial(this, strId, strLevel,
-            strBaseCurrencyId, strCurrencyId, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,
+        dataMaterial = ReportProductionCostData.selectMaterial(this, strBaseCurrencyId,
+            strCurrencyId, strId, strLevel, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,
                 "1"), strmProductId);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -251,8 +254,8 @@ public class ReportProductionCost extends HttpSecureAppServlet {
     }
     if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
       try {
-        dataMachine = ReportProductionCostData.selectMachine(this, strLevel, strBaseCurrencyId,
-            strCurrencyId, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"),
+        dataMachine = ReportProductionCostData.selectMachine(this, strBaseCurrencyId,
+            strCurrencyId, strLevel, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"),
             strmProductId);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -272,8 +275,8 @@ public class ReportProductionCost extends HttpSecureAppServlet {
     }
     if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
       try {
-        dataIndirect = ReportProductionCostData.selectIndirect(this, strLevel, strBaseCurrencyId,
-            strCurrencyId, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"),
+        dataIndirect = ReportProductionCostData.selectIndirect(this, strBaseCurrencyId,
+            strCurrencyId, strLevel, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"),
             strmProductId);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -293,8 +296,8 @@ public class ReportProductionCost extends HttpSecureAppServlet {
     }
     if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
       try {
-        dataEmployee = ReportProductionCostData.selectEmployee(this, strLevel, strBaseCurrencyId,
-            strCurrencyId, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"),
+        dataEmployee = ReportProductionCostData.selectEmployee(this, strBaseCurrencyId,
+            strCurrencyId, strLevel, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"),
             strmProductId);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -314,9 +317,9 @@ public class ReportProductionCost extends HttpSecureAppServlet {
     }
     if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
       try {
-        dataCostCenter = ReportProductionCostData.selectCostCenter(this, strLevel,
-            strBaseCurrencyId, strCurrencyId, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,
-                "1"), strmProductId);
+        dataCostCenter = ReportProductionCostData.selectCostCenter(this, strBaseCurrencyId,
+            strCurrencyId, strLevel, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"),
+            strmProductId);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -334,24 +337,22 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       }
     }
 
-    if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportProductionCostSubreport", discard)
-          .createXmlDocument();
-      // xmlDocument.setData("structure1", data);
-      xmlDocument.setData("structureMaterial", dataMaterial);
-      xmlDocument.setData("structureMachine", dataMachine);
-      xmlDocument.setData("structureIndirect", dataIndirect);
-      xmlDocument.setData("structureEmployee", dataEmployee);
-      xmlDocument.setData("structureCostCenter", dataCostCenter);
+    xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_reports/ReportProductionCostSubreport", discard)
+        .createXmlDocument();
+    // xmlDocument.setData("structure1", data);
+    xmlDocument.setData("structureMaterial", dataMaterial);
+    xmlDocument.setData("structureMachine", dataMachine);
+    xmlDocument.setData("structureIndirect", dataIndirect);
+    xmlDocument.setData("structureEmployee", dataEmployee);
+    xmlDocument.setData("structureCostCenter", dataCostCenter);
 
-      response.setContentType("text/plain");
-      response.setHeader("Cache-Control", "no-cache");
-      PrintWriter out = response.getWriter();
-      // xmlDocument.setData("structure", data);
-      out.println(xmlDocument.print());
-      out.close();
-    }
+    response.setContentType("text/plain");
+    response.setHeader("Cache-Control", "no-cache");
+    PrintWriter out = response.getWriter();
+    // xmlDocument.setData("structure", data);
+    out.println(xmlDocument.print());
+    out.close();
   }
 
   /*

@@ -21,6 +21,7 @@ package org.openbravo.test.webservice;
 
 import java.io.FileNotFoundException;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -30,16 +31,21 @@ import org.openbravo.model.common.geography.Region;
 
 /**
  * Test webservice for reading, updating and posting. The test cases here require a running
- * Openbravo at http://localhost:8080/openbravo
+ * Openbravo at http://localhost:8080/openbravo.
  * 
  * @author mtaal
  */
 
 public class WSUpdateTest extends BaseWSTest {
 
+  private static final Logger log = Logger.getLogger(WSUpdateTest.class);
+
   private static String cityId = null;
 
-  // this test must be run before the others because it sets the cityId
+  /**
+   * Creates a city through a webservice calls. This test must be run before the others because it
+   * sets the cityId member in this class.
+   */
   public void testACreateCity() {
     setUserContext("100");
 
@@ -58,13 +64,18 @@ public class WSUpdateTest extends BaseWSTest {
     city.setCountry(getOneInstance(Country.class));
     city.setRegion(getOneInstance(Region.class));
     OBDal.getInstance().save(city);
-    OBDal.getInstance().commitAndClose();
+    commitTransaction();
     cityId = city.getId();
   }
 
+  /**
+   * Read the created city using a webservice and make a small change and post it back.
+   * 
+   * @throws Exception
+   */
   public void testReadUpdateCity() throws Exception {
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
-    System.err.println(System.currentTimeMillis());
+    log.debug(System.currentTimeMillis());
     String newCity;
     if (city.indexOf("<coordinates>") != -1) { // test already run
       final int index1 = city.indexOf("<coordinates>");
@@ -80,15 +91,26 @@ public class WSUpdateTest extends BaseWSTest {
     assertTrue(content.indexOf("City id=\"" + cityId + "") != -1);
   }
 
+  /**
+   * Test is an error is returned if an incorrect message is posted.
+   * 
+   * @throws Exception
+   */
   public void testIncorrectRootTag() throws Exception {
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
-    System.err.println(city);
-    System.err.println("---");
+    log.debug(city);
+    log.debug("---");
     String newCity = city.replaceAll("ob:Openbravo", "ob:WrongOpenbravo");
-    final String content = doContentRequest("/ws/dal/City/" + cityId, newCity, 500, "<updated>",
-        "POST");
+    doContentRequest("/ws/dal/City/" + cityId, newCity, 500, "<updated>", "POST");
   }
 
+  /**
+   * Test case executes the following steps: 1) get a city, 2) create a city, 3) count the cities,
+   * 4) retrieve the cities through a query, 5) delete the new city, 6) check that it has been
+   * deleted.
+   * 
+   * @throws Exception
+   */
   public void testReadAddDeleteCity() throws Exception {
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
     String newCity = city.replaceAll("</name>", (System.currentTimeMillis() + "").substring(6)
@@ -104,7 +126,7 @@ public class WSUpdateTest extends BaseWSTest {
     newCity = newCity.substring(0, index) + "City id=\"test"
         + newCity.substring(index + "City id=\"test".length());
     final String content = doContentRequest("/ws/dal/City", newCity, 200, "<inserted>", "POST");
-    // System.err.println(content);
+    // log.debug(content);
     // get the id and check if it is there
     final int index1 = content.indexOf("City id=\"") + "City id=\"".length();
     final int index2 = content.indexOf("\"", index1);
@@ -151,6 +173,11 @@ public class WSUpdateTest extends BaseWSTest {
     }
   }
 
+  /**
+   * Add a new city using the wrong HTTP method.
+   * 
+   * @throws Exception
+   */
   public void testReadAddCityWrongMethodError() throws Exception {
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
     String newCity = city.replaceAll("</name>", (System.currentTimeMillis() + "").substring(6)
@@ -163,6 +190,14 @@ public class WSUpdateTest extends BaseWSTest {
     } catch (final Exception e) {
       assertTrue(e.getMessage().indexOf("500") != -1);
     }
+  }
+
+  /**
+   * Cleans up the database by removing the city. Is run as last therefore the use of the Z
+   * character in the name.
+   */
+  public void testZRemoveCity() {
+    doDirectDeleteRequest("/ws/dal/City/" + cityId, 200);
   }
 
 }

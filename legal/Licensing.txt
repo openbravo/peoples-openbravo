@@ -162,6 +162,9 @@ Under the ANTLR license (available at http://www.antlr.org/license.html)
 # junit.jar
 Under the CPL license (available at http://www.opensource.org/licenses/cpl1.0.php)
 
+# js.jar
+Under MPL/GPL License (available at https://developer.mozilla.org/en/Rhino_License)
+
 In addition, the distribution includes 
 - lam-client.jar (see lam_licenses.txt in lam-client.jar in this release
   for specific licensing information)

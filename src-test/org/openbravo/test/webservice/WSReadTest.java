@@ -24,25 +24,42 @@ import java.util.Iterator;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.session.SessionFactoryController;
+import org.openbravo.model.ad.datamodel.Table;
 
 /**
- * Test webservice. Note some of the test cases here require a running Openbravo at
- * http://localhost:8080/openbravo
+ * Test the DAL rest webservices in read-mode. The test cases here require that there is a running
+ * Openbravo at http://localhost:8080/openbravo
  * 
  * @author mtaal
  */
 
 public class WSReadTest extends BaseWSTest {
 
+  /**
+   * Tests retrieval of the XML Schema defining the REST webservice.
+   * 
+   * @throws Exception
+   */
   public void testSchemaWebService() throws Exception {
     doTestGetRequest("/ws/dal/schema", "<element name=\"Openbravo\">", 200);
   }
 
+  /**
+   * Tests a special web service which lists all Entities (types) in the system.
+   * 
+   * @throws Exception
+   */
   public void testTypesWebService() throws Exception {
     doTestGetRequest("/ws/dal", "<Types>", 200);
   }
 
+  /**
+   * Queries for a few {@link Table} objects using a REST call with a whereclause.
+   * 
+   * @throws Exception
+   */
   public void testWhereClause() throws Exception {
     String whereClause = "(table.id='104' or table.id='105') and isKey='Y'";
     whereClause = URLEncoder.encode(whereClause, "UTF-8");
@@ -57,6 +74,11 @@ public class WSReadTest extends BaseWSTest {
     assertTrue(index3 == -1);
   }
 
+  /**
+   * Performs a number of paged queries.
+   * 
+   * @throws Exception
+   */
   public void testPagedWhereClause() throws Exception {
     requestColumnPage(1, 10, 10);
     requestColumnPage(1, 5, 5);
@@ -81,8 +103,11 @@ public class WSReadTest extends BaseWSTest {
     assertEquals(expectedCount, cnt);
   }
 
+  /**
+   * Calls the webservice for every {@link Entity} in the system. The test can take some time to run
+   * (about 5 minutes).
+   */
   public void testAllToXML() {
-    setErrorOccured(true);
     setBigBazaarAdminContext();
     final Configuration cfg = SessionFactoryController.getInstance().getConfiguration();
 
@@ -91,7 +116,6 @@ public class WSReadTest extends BaseWSTest {
       final String entityName = pc.getEntityName();
       doTestGetRequest("/ws/dal/" + entityName, "<ob:Openbravo", 200);
     }
-    setErrorOccured(false);
   }
 
 }

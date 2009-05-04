@@ -117,8 +117,8 @@ public class WindowTabs {
    *          Object with the database connection methods.
    * @param _vars
    *          Object with the session information.
-   * @param _className
-   *          String with the form's classname.
+   * @param adProcessId
+   *          the id of the process.
    * @throws Exception
    */
   public WindowTabs(ConnectionProvider _conn, VariablesSecureApp _vars, int adProcessId)

@@ -52,8 +52,6 @@ public class DocOrder extends AcctServer {
   /**
    * Load Specific Document Details
    * 
-   * @param rs
-   *          result set
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -201,7 +199,7 @@ public class DocOrder extends AcctServer {
         DocOrderTemplate newTemplate = (DocOrderTemplate) Class.forName(strClassname).newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        e.printStackTrace();
+        log4j.error("Error while creating new instance for DocOrderTemplate - " + e);
       }
     }
     // Purchase Order
@@ -280,7 +278,7 @@ public class DocOrder extends AcctServer {
   /**
    * Get Document Confirmation
    * 
-   * @not used
+   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;

@@ -76,7 +76,8 @@
         SUM(auxSeq.ComponentCost*auxSeq.ConsumedQty)/SUM(auxSeq.ProducedQty) AS ConsumedPerUnit, 
         SUM(auxSeq.TotalRealCost)/SUM(auxSeq.ConsumedQty) AS CostPerUnit,
         SUM(auxSeq.ComponentCost*sp.Quantity)/SUM(sp.Quantity) AS ConsumedPerUnitStd, 
-        MAX(sp.Cost) AS CostPerUnitStd, to_char(?)||to_char(auxSeq.M_Product_ID) as identifier, to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, case when M_Product.MA_ProcessPlan_ID is null then '' else 'datawarehouseclose' end as button_class, to_char(to_number(?)+1) as levelid
+        MAX(C_CURRENCY_CONVERT(sp.Cost, ?, ?, TO_DATE(sp.Updated), null, sp.ad_client_id, sp.ad_org_id)) AS CostPerUnitStd, 
+            to_char(?)||to_char(auxSeq.M_Product_ID) as identifier, to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, case when M_Product.MA_ProcessPlan_ID is null then '' else 'datawarehouseclose' end as button_class, to_char(to_number(?)+1) as levelid
         FROM 
           (SELECT rpn.M_Product_ID, rpp.ComponentCost, SUM(rpn.ConsumedQty) AS ConsumedQty, 
            SUM(rpp.ProducedQty) AS ProducedQty, SUM(rpn.ConsumedQty*rpn.CalcCost) AS TotalRealCost, rpp.MA_Sequence_ID
@@ -115,6 +116,8 @@
         WHERE pr.levelid = AD_Ref_List.value
         AND Ad_Ref_List.AD_Reference_ID = '800097'
         ]]></Sql>
+      <Parameter name="cCurrencyBase"/>
+      <Parameter name="cCurrencyConv"/>
       <Parameter name="id"/>
       <Parameter name="level"/>
       <Parameter name="level"/>
@@ -136,7 +139,8 @@
        FROM (
        SELECT auxSeq.MA_Machine_ID AS ID, MA_Machine.name,  
         SUM(auxSeq.TotalRealCost*auxSeq.ComponentCost)/SUM(auxSeq.ProducedQty) AS CostPerUnit,
-        SUM(sm.CalcCost*auxSeq.ComponentCost*auxSeq.ProducedQty)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
+        SUM(C_CURRENCY_CONVERT(sm.CalcCost, ?, ?, TO_DATE(sm.Updated), null, sm.ad_client_id, sm.ad_org_id)*auxSeq.ComponentCost*auxSeq.ProducedQty)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, 
+            to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
         FROM 
           (SELECT rmc.MA_Machine_ID, rpp.ComponentCost, SUM(rpp.ProducedQty) AS ProducedQty,
            SUM(rmc.CalcCost) AS TotalRealCost, rpp.MA_Sequence_ID
@@ -173,6 +177,8 @@
         WHERE pr.levelid = AD_Ref_List.value
         AND AD_Ref_List.AD_Reference_ID = '800097'
         ]]></Sql>
+     <Parameter name="cCurrencyBase"/>
+     <Parameter name="cCurrencyConv"/>
      <Parameter name="level"/>
      <Parameter name="level"/>
      <Parameter name="level"/>
@@ -193,7 +199,8 @@
        FROM (
        SELECT auxSeq.MA_Indirect_Cost_ID AS ID, MA_Indirect_Cost.name,  
         SUM(auxSeq.TotalRealCost*auxSeq.ComponentCost)/SUM(auxSeq.ProducedQty) AS CostPerUnit,
-        SUM(si.CalcCost*auxSeq.ComponentCost*auxSeq.ProducedQty)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
+        SUM(C_CURRENCY_CONVERT(si.CalcCost, ?, ?, TO_DATE(si.Updated), null, si.ad_client_id, si.ad_org_id)*auxSeq.ComponentCost*auxSeq.ProducedQty)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, 
+            to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
         FROM 
           (SELECT rmi.MA_Indirect_Cost_ID, rpp.ComponentCost, SUM(rpp.ProducedQty) AS ProducedQty,
            SUM(rmi.CalcCost) AS TotalRealCost, rpp.MA_Sequence_ID
@@ -230,6 +237,8 @@
         WHERE pr.levelid = AD_Ref_List.value
         AND AD_Ref_List.AD_Reference_ID = '800097'
         ]]></Sql>
+     <Parameter name="cCurrencyBase"/>
+     <Parameter name="cCurrencyConv"/>
      <Parameter name="level"/>
      <Parameter name="level"/>
      <Parameter name="level"/>
@@ -250,7 +259,7 @@
        FROM (
        SELECT auxSeq.C_Salary_Category_ID AS ID, C_Salary_Category.name,
         SUM(auxSeq.TotalRealCost*auxSeq.ComponentCost)/SUM(auxSeq.ProducedQty) AS CostPerUnit,
-        SUM(se.CalcCost*auxSeq.ComponentCost*auxSeq.ProducedQty)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
+        SUM(C_CURRENCY_CONVERT(se.CalcCost, ?, ?, TO_DATE(se.Updated), null, se.ad_client_id, se.ad_org_id)*auxSeq.ComponentCost*auxSeq.ProducedQty)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
         FROM 
           (SELECT rme.C_Salary_Category_ID, rpp.ComponentCost, SUM(rpp.ProducedQty) AS ProducedQty,
            SUM(rme.CalcCost) AS TotalRealCost, rpp.MA_Sequence_ID
@@ -287,6 +296,8 @@
         WHERE pr.levelid =AD_Ref_List.value
         AND AD_Ref_List.AD_Reference_ID = '800097'
         ]]></Sql>
+     <Parameter name="cCurrencyBase"/>
+     <Parameter name="cCurrencyConv"/>
      <Parameter name="level"/>
      <Parameter name="level"/>
      <Parameter name="level"/>
@@ -307,7 +318,8 @@
        FROM (
        SELECT auxSeq.MA_CostCenter_Version_ID AS ID, MA_CostCenter.name,
         SUM(auxSeq.TotalRealCost*auxSeq.ComponentCost)/SUM(auxSeq.ProducedQty) AS CostPerUnit,
-        SUM(se.CostCenterCost*auxSeq.ComponentCost*auxSeq.ProducedQty)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
+        SUM(C_CURRENCY_CONVERT(se.CostCenterCost, ?, ?, TO_DATE(se.Updated), null, se.ad_client_id, se.ad_org_id)*auxSeq.ComponentCost*auxSeq.ProducedQty)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, 
+            to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
         FROM 
           (SELECT rpp.MA_CostCenter_Version_ID, rpp.ComponentCost, SUM(rpp.ProducedQty) AS ProducedQty,
            SUM(rpp.CalcCost) AS TotalRealCost, rpp.MA_Sequence_ID
@@ -339,6 +351,8 @@
         WHERE pr.levelid =AD_Ref_List.value
         AND AD_Ref_List.AD_Reference_ID = '800097'
         ]]></Sql>
+     <Parameter name="cCurrencyBase"/>
+     <Parameter name="cCurrencyConv"/>
      <Parameter name="level"/>
      <Parameter name="level"/>
      <Parameter name="level"/>

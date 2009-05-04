@@ -69,6 +69,8 @@ public class ModelProvider implements OBSingleton {
   private HashMap<String, Entity> entitiesByClassName = null;
   private HashMap<String, Entity> entitiesByTableName = null;
   private HashMap<String, Entity> entitiesByTableId = null;
+  // a list because for small numbers a list is faster than a hashmap
+  private List<Entity> entitiesWithTreeType = null;
   private List<Module> modules;
 
   /**
@@ -164,6 +166,9 @@ public class ModelProvider implements OBSingleton {
       // this map stores the mapped tables
       tablesByTableName = new HashMap<String, Table>();
       for (final Table t : tables) {
+        if (t.isView()) {
+          continue;
+        }
         // tables are stored case insensitive!
         tablesByTableName.put(t.getTableName().toLowerCase(), t);
       }
@@ -183,6 +188,7 @@ public class ModelProvider implements OBSingleton {
       entitiesByClassName = new HashMap<String, Entity>();
       entitiesByTableName = new HashMap<String, Entity>();
       entitiesByTableId = new HashMap<String, Entity>();
+      entitiesWithTreeType = new ArrayList<Entity>();
       for (final Table t : tablesByTableName.values()) {
         log.debug("Building model for table " + t.getTableName());
         final Entity e = new Entity();
@@ -192,6 +198,9 @@ public class ModelProvider implements OBSingleton {
         entitiesByName.put(e.getName(), e);
         entitiesByTableName.put(t.getTableName().toUpperCase(), e);
         entitiesByTableId.put(t.getId(), e);
+        if (e.getTreeType() != null) {
+          entitiesWithTreeType.add(e);
+        }
       }
 
       // in the second pass set all the referenceProperties
@@ -622,6 +631,8 @@ public class ModelProvider implements OBSingleton {
    * Returns an Entity using the table name of the table belonging to the Entity. If no Entity is
    * found then null is returned, no Exception is thrown.
    * 
+   * Note: the AD_Table.tablename should be used here, not the AD_Table.name!
+   * 
    * @param tableName
    *          the name used to search for the Entity
    * @return the Entity or null if not found
@@ -630,9 +641,10 @@ public class ModelProvider implements OBSingleton {
     if (model == null)
       getModel();
     final Entity entity = entitiesByTableName.get(tableName.toUpperCase());
-    if (entity == null) {
-      log.warn("Table name: " + tableName + " not found in runtime model");
-    }
+    // is null for views
+    // if (entity == null) {
+    // log.warn("Table name: " + tableName + " not found in runtime model");
+    // }
     return entity;
   }
 
@@ -718,5 +730,23 @@ public class ModelProvider implements OBSingleton {
       Check.fail("Reference column for " + columnName + " not found in runtime model [ref: "
           + reference + ", refval: " + referenceValue + "]");
     return c;
+  }
+
+  /**
+   * Returns the entity for a specific tree type. The tree type is used to link an entity to a tree
+   * (see the AD_Tree table).
+   * 
+   * @param treeType
+   *          the tree type
+   * @return Entity or null if none found
+   */
+  public Entity getEntityFromTreeType(String treeType) {
+    for (Entity entity : entitiesWithTreeType) {
+      if (entity.getTreeType().equals(treeType)) {
+        return entity;
+      }
+    }
+    log.warn("No entity for tree type " + treeType);
+    return null;
   }
 }

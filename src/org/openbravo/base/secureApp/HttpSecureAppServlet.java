@@ -1097,6 +1097,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       exportParameters.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
       exportParameters.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
           Boolean.TRUE);
+      exportParameters.put(JExcelApiExporterParameter.IS_DETECT_CELL_TYPE, true);
       exporter.setParameters(exportParameters);
       exporter.exportReport();
     } else {

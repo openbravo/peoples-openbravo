@@ -45,8 +45,6 @@ public class DocLine_Bank extends DocLine {
    * 
    * @param StmtAmt
    *          statement amt
-   * @param InterestAmt
-   *          interest amount
    * @param TrxAmt
    *          transaction amount
    */

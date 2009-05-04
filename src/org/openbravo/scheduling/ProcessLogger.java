@@ -21,23 +21,37 @@ public class ProcessLogger {
   }
 
   /**
+   * Returns an i18n-ed message String from the database.
+   * 
    * @param msgKey
-   * @return
+   *          the message id
+   * @param language
+   *          the language to be used to query for the message
+   * @return the message retrieved from the db, using the msgKey and language
    */
   public String messageDb(String msgKey, String language) {
     return Utility.messageBD(connection, msgKey, language);
   }
 
   /**
+   * Log a message.
+   * 
    * @param msg
-   * @param log
+   *          the message to log
+   * 
+   * @see #getLog()
    */
   public void log(String msg) {
     log.append(new Timestamp(System.currentTimeMillis()).toString() + " - " + msg);
   }
 
   /**
+   * Log a message with an additional newline character.
+   * 
    * @param msg
+   *          the message to log
+   * 
+   * @see #getLog()
    */
   public void logln(String msg) {
     log(msg + "\n");

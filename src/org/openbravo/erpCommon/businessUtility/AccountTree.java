@@ -59,7 +59,6 @@ public class AccountTree {
    *          Array of accounts.
    * @param _elementValueParent
    *          String with the value of the parent element to evaluate.
-   * @var forms: Array of accounts with its operands.
    * @throws ServletException
    */
   public AccountTree(VariablesSecureApp _vars, ConnectionProvider _conn,
@@ -76,6 +75,7 @@ public class AccountTree {
     resultantAccounts = updateTreeQuantitiesSign(null, 0, "D");
     // Calculating forms for every elements
     if (resultantAccounts != null && resultantAccounts.length > 0) {
+      // forms: Array of accounts with its operands.
       AccountTreeData[] forms = AccountTreeData.selectForms(conn, Utility.getContext(conn, vars,
           "#User_Org", "AccountTree"), Utility
           .getContext(conn, vars, "#User_Client", "AccountTree"));
@@ -97,7 +97,6 @@ public class AccountTree {
    * @param _elementValueParent
    *          Array with the value of the parent elements to evaluate (For example, first expenses
    *          then revenues) Objective tree.
-   * @var forms: Array of accounts with its operands.
    * @throws ServletException
    */
   public AccountTree(VariablesSecureApp _vars, ConnectionProvider _conn,
@@ -115,6 +114,7 @@ public class AccountTree {
     resultantAccounts = updateTreeQuantitiesSign(null, 0, "D");
 
     if (resultantAccounts != null && resultantAccounts.length > 0) {
+      // Array of accounts with its operands.
       // Calculating forms for every elements
       AccountTreeData[] forms = AccountTreeData.selectForms(conn, Utility.getContext(conn, vars,
           "#User_Org", "AccountTree"), Utility
@@ -690,8 +690,6 @@ public class AccountTree {
 
   /**
    * Resets amounts of subaccounts which parents have been reset because of show value condition
-   * 
-   * @return
    */
   public void filterSVC() {
     if (log4j.isDebugEnabled())

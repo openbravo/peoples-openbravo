@@ -35,6 +35,12 @@ public class StringPropertyValidator extends BasePropertyValidator {
   static boolean isValidationRequired(Property p) {
     if (p.isPrimitive() && p.getPrimitiveType() == String.class) {
       if (p.getFieldLength() > 0 || p.doCheckAllowedValue()) {
+        // TODO special case, repair in next release
+        // https://issues.openbravo.com/view.php?id=8624
+        // Validation should not check field length of id/foreign key columns
+        if (p.getFieldLength() != 32 && p.isId()) {
+          return false;
+        }
         return true;
       }
     }

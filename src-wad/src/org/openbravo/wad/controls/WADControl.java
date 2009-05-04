@@ -347,9 +347,7 @@ public class WADControl {
   }
 
   private void createWADLabelControl() {
-    String column = getData("ColumnNameLabel");
-    if (column == null || column.equals(""))
-      column = getData("ColumnName");
+    String column = getData("ColumnName");
     String labelText = getData("ColumnLabelText");
     if (labelText.trim().equals(""))
       labelText = column;
