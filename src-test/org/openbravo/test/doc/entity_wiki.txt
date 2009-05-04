@@ -1,0 +1,25 @@
+== ENTITY_NAME ==
+
+ENTITY_HELP
+
+TABLE_LINK
+
+[[BACK_TO_ENTITY_MODEL | Back to Entity Model]]
+
+=== Properties ===
+
+{| class="prettytable sortable" border="1"
+|-
+| class="tittle" |Property
+| class="tittle" |Column
+| class="tittle" |Mandatory
+| class="tittle" |Type
+| class="tittle" |Description
+CONTENT
+|}
+
+=== Java Entity Class ===
+
+<source lang="java">
+SOURCE
+</source>
