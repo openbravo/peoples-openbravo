@@ -88,6 +88,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
             throw new OBException(myError.getMessage());
         }
         vars.setSessionValue(request.getParameter("mappingName") +"|hash", vars.getPostDataHash());
+        vars.setSessionValue(tabId + "|Header.view", "EDIT");
         
         return;
     }

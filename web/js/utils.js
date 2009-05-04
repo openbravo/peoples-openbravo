@@ -267,6 +267,24 @@ function logClick(hiddenInput) {
 }
 
 /**
+ * Helper function to reload the opener window. Used on NEW documents when closing a pop-pup.
+ * @return
+ */
+function reloadOpener() {
+ if(top.opener) {
+   var f = top.opener.top.frames['appFrame'];
+   if(f == null) {
+     f = top.opener;
+   }
+   var buttonRefresh = f.document.getElementById('buttonRefresh');
+   var commandType = f.document.getElementById('paramCommandType');
+   if(buttonRefresh && commandType && commandType.value === "NEW") {
+     buttonRefresh.onclick();
+   }
+ }
+}
+
+/**
 * Check for changes in a Form. This function requires the inpLastFieldChanged field. Is a complementary function to {@link #setChangedField}
 * @param {Form} f Reference to a form where the inpLastFieldChanged is located.
 * @returns True if the inpLastFieldChanged has data and the user confirm the pop-up message. False if the field has no data or the user no confirm the pop-up message.
