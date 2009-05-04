@@ -38,6 +38,13 @@
   <script language="JavaScript" type="text/javascript" id="paramLanguage">  defaultLang = "en_US";</script>
 
   <script language="JavaScript" type="text/javascript" id="fieldWindowIDArray">
+  if(top.opener) {
+    var commandType = top.opener.document.getElementById('paramCommandType');
+    if(commandType && commandType.value === "NEW") {
+      window.onunload = reloadOpener;
+    }
+  }
+
   function closeThisPage() {
     window.close();
     return true;
