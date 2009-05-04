@@ -26,6 +26,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.session.SessionFactoryController;
+import org.openbravo.model.ad.datamodel.Table;
 
 /**
  * Test the DAL rest webservices in read-mode. The test cases here require that there is a running

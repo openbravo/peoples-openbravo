@@ -125,7 +125,7 @@ public class OrgTree implements Serializable {
    * 
    * @param conn
    * @param strRole
-   * @return
+   * @return the created {@link OrgTree}
    */
   public OrgTree getAccessibleTree(ConnectionProvider conn, String strRole, boolean withZero) {
     // TODO: this method with boolean should be removed.

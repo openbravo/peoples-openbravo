@@ -72,6 +72,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <property name="base.config" location="config" />
   <property name="base.src" location="src" />
+  <property name="base.src.test" location="src-test" />
   <property name="base.src.core" location="src-core" />
   <property name="base.src.db" location="src-db" />
   <property name="base.src.trl" location="src-trl" />
@@ -354,6 +355,15 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="compile.src.gen" depends="init">
     <ant dir="${base.src}" target="compile.src.gen" inheritAll="true" inheritRefs="true" />
+  </target>
+
+  <target name="generate.java.doc">
+    <javadoc sourcepath="${base.src}:${base.src.test}:${base.src.gen}" Windowtitle="Openbravo ERP 2.50" access="public" Header="Openbravo ERP 2.50" Footer="Openbravo ERP 2.50" destdir="${build.docs}" maxmemory="${build.maxmemory}">
+      <classpath>
+        <path refid="project.class.path"/>
+        <pathelement path="lib/build/js.jar" />
+      </classpath>
+    </javadoc>
   </target>
 
   <target name="generate.entities">

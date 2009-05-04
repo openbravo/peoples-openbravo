@@ -183,7 +183,7 @@ public class DataSetService implements OBSingleton {
   /**
    * Returns a list of DataSet tables instances on the basis of the DataSet
    * 
-   * @param DataSet
+   * @param dataSet
    *          the DataSet for which the list of tables is required
    * @return the DataSetTables of the DataSet
    * @deprecated use dataSet.getDataSetTableList()
@@ -209,7 +209,7 @@ public class DataSetService implements OBSingleton {
   /**
    * Determines which objects are exportable using the DataSetTable whereClause.
    * 
-   * @param DataSetTable
+   * @param dataSetTable
    *          the dataSetTable defines the Entity and the whereClause to use
    * @param moduleId
    *          the moduleId is a parameter in the whereClause

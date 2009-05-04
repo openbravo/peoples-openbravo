@@ -1429,7 +1429,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
    * @param hasMCampaign
    * @param hasSRegion
    * @param bCreateAccounting
-   * @return
+   * @return the error. "" if there is no error
    */
 
   public String createReferenceData(Connection conn, VariablesSecureApp vars, String strClient,

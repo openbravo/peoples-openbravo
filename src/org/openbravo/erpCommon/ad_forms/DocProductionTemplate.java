@@ -30,9 +30,6 @@ public abstract class DocProductionTemplate {
 
   /**
    * Constructor
-   * 
-   * @param AD_Client_ID
-   *          AD_Client_ID
    */
   public DocProductionTemplate() {
   }

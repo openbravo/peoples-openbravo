@@ -33,9 +33,6 @@ import org.xml.sax.helpers.DefaultHandler;
 public class TranslationHandler extends DefaultHandler {
   /**
    * Translation Handler
-   * 
-   * @param AD_Client_ID
-   *          only certain client if id >= 0
    */
 
   public TranslationHandler(ConnectionProvider cDB) {

@@ -57,12 +57,13 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
    * Constructor to generate a root tree
    * 
    * @param base
-   * @param bSmall
-   *          Normal size or small size (true)
    * @param strClient
    *          Client ID
    * @param strOrg
    *          Org ID
+   * @param bAddLinks
+   *          if true then adds links to the current sets of nodes, these links can be Update or
+   *          Apply
    */
   public ModuleReferenceDataOrgTree(HttpBaseServlet base, String strClient, String strOrg,
       boolean bAddLinks) {
@@ -88,7 +89,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
   }
 
   /**
-   * sets to data the root tree
+   * Sets to data the root tree.
    */
   public void setRootTree(String strClient, String strOrg, boolean bAddLinks) {
     try {
@@ -105,7 +106,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
   }
 
   /**
-   * Adds links to the current sets of nodes, these links can be Update or Apply
+   * Adds links to the current sets of nodes, these links can be Update or Apply.
    */
   private void addLinks() {
     addLinks((ModuleReferenceDataOrgTreeData[]) data, false);
@@ -141,7 +142,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
    * Returns a HTML with the description for the given node
    * 
    * @param node
-   * @return
+   * @return a HTML String with the description for the given node
    */
   public String getHTMLDescription(String node) {
     try {

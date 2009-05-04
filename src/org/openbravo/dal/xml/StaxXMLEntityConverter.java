@@ -78,8 +78,8 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
   }
 
   /**
-   * The main entry point. This method creates a Dom4j Document and then calls
-   * {@link #process(Document)}.
+   * The main entry point. This method creates a XMLStreamReader and then calls
+   * process(XMLStreamReader).
    * 
    * @param reader
    *          the xml

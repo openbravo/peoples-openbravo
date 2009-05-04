@@ -375,7 +375,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
    * 
    * @param vars
    * @param open
-   * @return
+   * @return the search folder and entries in case there is at least one accessible entrie, other
+   *         case it returns an empty string
    * @throws ServletException
    */
   public String generateMenuSearchs(VariablesSecureApp vars, boolean open) throws ServletException {
@@ -428,13 +429,13 @@ public class VerticalMenu extends HttpSecureAppServlet {
   }
 
   /**
-   * Generates a table of entries for all the accessible search entries
+   * Generates a table of entries for all the accessible search entries.
    * 
    * @param vars
    * @param direccion
    * @param open
    * @param data
-   * @return
+   * @return the table of entries for all accessible search entries
    * @throws ServletException
    */
   public String generateMenuSearchEntries(VariablesSecureApp vars, String direccion, boolean open,

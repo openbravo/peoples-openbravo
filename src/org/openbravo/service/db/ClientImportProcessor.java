@@ -73,7 +73,7 @@ public class ClientImportProcessor implements EntityXMLProcessor {
   /**
    * Always returns the importedValue without changing it.
    * 
-   * @see EntityXMLProcessor#replaceValue(BaseOBObject, String, Object)
+   * @see EntityXMLProcessor#replaceValue(BaseOBObject, Property, Object)
    */
   public Object replaceValue(BaseOBObject owner, Property property, Object importedValue) {
     return importedValue;

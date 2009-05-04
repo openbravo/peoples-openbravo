@@ -37,7 +37,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Constructor
-   *
+   * 
    * @param AD_Client_ID
    *          AD_Client_ID
    */
@@ -217,7 +217,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for ARI, ARC, ARF, API, APC.
-   *
+   * 
    * <pre>
    *  ARI, ARF
    *      Receivables     DR
@@ -240,7 +240,7 @@ public class DocInvoice extends AcctServer {
    *      TaxCredit               CR
    *      Expense                 CR
    * </pre>
-   *
+   * 
    * @param as
    *          accounting schema
    * @return Fact
@@ -258,7 +258,7 @@ public class DocInvoice extends AcctServer {
             .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-       	log4j.error("Error while creating new instance for DocInvoiceTemplate - " + e);
+        log4j.error("Error while creating new instance for DocInvoiceTemplate - " + e);
       }
     }
     log4jDocInvoice.debug("Starting create fact");
@@ -469,7 +469,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Update Product Info. - Costing (PriceLastInv) - PO (PriceLastInv)
-   *
+   * 
    * @param C_AcctSchema_ID
    *          accounting schema
    */
@@ -496,7 +496,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line and tax amounts from total - no rounding
-   *
+   * 
    * @return positive amount, if total invoice is bigger than lines
    */
   public BigDecimal getBalance() {
@@ -535,9 +535,9 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   *
-   * @param AcctType
-   *          see ACCTTYPE_*
+   * 
+   * @param cBPartnerId
+   *          business partner id
    * @param as
    *          accounting schema
    * @return Account
@@ -582,8 +582,8 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Get Document Confirmation
-   *
-   * @not used
+   * 
+   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;

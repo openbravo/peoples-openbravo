@@ -127,11 +127,10 @@ public class DataImportService implements OBSingleton {
    * client and organization of the data in the import file itself. In addition no unique-constraint
    * checking is done.
    * 
-   * @param xml
-   *          the xml string containing the objects to import
    * @param importProcessor
-   *          the importProcessor is called after the xml has been parsed and before the new/updated
-   *          objects are persisted in the database, is allowed to be null
+   *          the import processor which is called for each object after the import
+   * @param importAuditInfo
+   *          if true then the auditInfo (updated, updatedBy etc.) is also imported.
    * @param reader
    *          the xml stream
    * 

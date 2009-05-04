@@ -24,17 +24,14 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.wad.Wad;
 
 /**
- * An example of calling Wad directly with command line arguments.
- * 
- * @see Wad
+ * An example test of calling Wad directly with command line arguments.
  * 
  * @author mtaal
  */
-
 public class CallWadTest extends BaseAntTest {
 
   /**
-   * Calls {@link Wad#main(String[])} with a number of commandline arguments.
+   * Calls Wad.main(String[]) with a number of commandline arguments.
    */
   public void testWad() {
     PropertyConfigurator.configure(this.getClass().getResource("/log4j.properties"));

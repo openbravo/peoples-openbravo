@@ -38,7 +38,7 @@ public class DefaultJob implements Job {
   static Logger log = Logger.getLogger(DefaultJob.class);
 
   /**
-   * {@inheritDoc}
+   * See the execute method of the Quartz Job class.
    */
   public void execute(JobExecutionContext jec) throws JobExecutionException {
     final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);

@@ -134,14 +134,19 @@ public class AcctServerProcess extends DalBaseProcess {
   }
 
   /**
-   * @param texto
+   * Adds a message to the log.
+   * 
+   * @param msg
+   *          to add to the log
    */
   public void addLog(String msg) {
     addLog(msg, true);
   }
 
   /**
-   * @param texto
+   * Add a message to the log.
+   * 
+   * @param msg
    * @param generalLog
    */
   public void addLog(String msg, boolean generalLog) {
@@ -159,9 +164,12 @@ public class AcctServerProcess extends DalBaseProcess {
   }
 
   /**
+   * Saves the log as a note.
+   * 
    * @param adNoteId
+   *          the note id, if passed as null then a new one is created
    * @param adClientId
-   * @return
+   * @return the id of the note if a new one is created (if passed as null)
    */
   public String saveLog(String adNoteId, String adClientId) {
     String strMessage = "", strNewMessage = "";

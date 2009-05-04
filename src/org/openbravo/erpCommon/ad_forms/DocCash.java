@@ -74,7 +74,7 @@ public class DocCash extends AcctServer {
 
   /**
    * Constructor
-   *
+   * 
    * @param AD_Client_ID
    *          AD_Client_ID
    */
@@ -90,9 +90,7 @@ public class DocCash extends AcctServer {
 
   /**
    * Load Specific Document Details
-   *
-   * @param rs
-   *          result set
+   * 
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -137,7 +135,7 @@ public class DocCash extends AcctServer {
 
   /**
    * Load Cash Line
-   *
+   * 
    * @return DocLine Array
    */
   private DocLine[] loadLines(ConnectionProvider conn) {
@@ -172,7 +170,7 @@ public class DocCash extends AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line amounts from total - no rounding
-   *
+   * 
    * @return positive amount, if total invoice is bigger than lines
    */
   public BigDecimal getBalance() {
@@ -195,7 +193,7 @@ public class DocCash extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for CMC.
-   *
+   * 
    * <pre>
    *  Expense
    *          CashExpense     DR
@@ -220,7 +218,7 @@ public class DocCash extends AcctServer {
    *          BankInTransit   DR
    *          CashAsset               CR
    * </pre>
-   *
+   * 
    * @param as
    *          account schema
    * @return Fact
@@ -242,7 +240,7 @@ public class DocCash extends AcctServer {
         DocCashTemplate newTemplate = (DocCashTemplate) Class.forName(strClassname).newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-      	log4j.error("Error while creating new instance for DocCashTemplate - " + e);
+        log4j.error("Error while creating new instance for DocCashTemplate - " + e);
       }
     }
     // create Fact Header
@@ -426,13 +424,13 @@ public class DocCash extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   *
+   * 
    * @param AcctType
    *          see ACCTTYPE_*
    * @param as
    *          accounting schema
    * @return Account
-   *
+   * 
    *         public final Account getAccountCashInTransit(String strcCashlineId, AcctSchema as,
    *         ConnectionProvider conn){ DocCashData [] data=null; try{ data =
    *         DocCashData.selectCashLineAcct(conn, strcCashlineId, as.getC_AcctSchema_ID());
@@ -447,8 +445,8 @@ public class DocCash extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   *
-   * @param Bank
+   * 
+   * @param strcBankAccountId
    *          Account
    * @param as
    *          accounting schema
@@ -494,8 +492,8 @@ public class DocCash extends AcctServer {
 
   /**
    * Get Document Confirmation
-   *
-   * @not used
+   * 
+   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;

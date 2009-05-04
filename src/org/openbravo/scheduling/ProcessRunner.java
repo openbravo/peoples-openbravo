@@ -47,9 +47,10 @@ public class ProcessRunner {
   }
 
   /**
-   * @param process
-   * @param vars
+   * Execute this process.
+   * 
    * @param conn
+   *          the database connection
    * @throws ServletException
    */
   public String execute(ConnectionProvider conn) throws ServletException {

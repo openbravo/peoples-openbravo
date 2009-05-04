@@ -24,6 +24,7 @@ import java.io.Serializable;
 import org.apache.log4j.Logger;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.tuple.Instantiator;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.DynamicOBObject;
 import org.openbravo.base.structure.Identifiable;

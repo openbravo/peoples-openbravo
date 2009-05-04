@@ -34,8 +34,11 @@ import org.openbravo.dal.core.SessionHandler;
 /**
  * This class combines all security checks which are performed on entity level:
  * <ul>
- * <li>Delete: is the entity deletable (@see {@link Entity#isDeletable()) and does the user have write access to the entity.</li>
- * <li>Write: is done in case of create and update actions. The following checks are performed: is the organization writable, is the client of the object the same as  is the entity writable (@see EntityAccessChecker#isWritable(Entity)) 
+ * <li>Delete: is the entity deletable (@see {@link Entity#isDeletable()}) and does the user have
+ * write access to the entity.</li>
+ * <li>Write: is done in case of create and update actions. The following checks are performed: is
+ * the organization writable, is the client of the object the same as is the entity writable (@see
+ * EntityAccessChecker#isWritable(Entity))
  * 
  * @author mtaal
  */

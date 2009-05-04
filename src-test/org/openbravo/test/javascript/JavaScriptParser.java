@@ -56,9 +56,7 @@ public class JavaScriptParser {
   }
 
   /**
-   * Returns a tree representation of the parsed JavaScript file
-   * 
-   * @return
+   * @return a tree representation of the parsed JavaScript file
    * @throws IOException
    */
   public ScriptOrFnNode parse() throws IOException {
@@ -85,9 +83,7 @@ public class JavaScriptParser {
   }
 
   /**
-   * Returns a string with the global variables and function definitions
-   * 
-   * @return
+   * @return a string with the global variables and function definitions
    */
   public String getStringDetails() {
     if (jsFile == null) {
@@ -126,13 +122,14 @@ public class JavaScriptParser {
   /**
    * Write the details of the js file into a file
    * 
-   * @param f
+   * @param file
+   *          the file to write to
    */
-  public void toFile(File fileName) throws IOException {
+  public void toFile(File file) throws IOException {
     if (jsFile == null) {
       throw new RuntimeException("You need to specify the file to parse");
     }
-    BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+    BufferedWriter out = new BufferedWriter(new FileWriter(file));
     out.write(getStringDetails());
     out.close();
   }

@@ -36,7 +36,7 @@ public class DocMovement extends AcctServer {
 
   /**
    * Constructor
-   *
+   * 
    * @param AD_Client_ID
    *          client
    */
@@ -51,9 +51,7 @@ public class DocMovement extends AcctServer {
 
   /**
    * Load Document Details
-   *
-   * @param rs
-   *          result set
+   * 
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -70,7 +68,7 @@ public class DocMovement extends AcctServer {
 
   /**
    * Load Invoice Line
-   *
+   * 
    * @return document lines (DocLine_Material)
    */
   public DocLine[] loadLines(ConnectionProvider conn) {
@@ -100,7 +98,7 @@ public class DocMovement extends AcctServer {
 
   /**
    * Get Balance
-   *
+   * 
    * @return balance (ZERO) - always balanced
    */
   public BigDecimal getBalance() {
@@ -110,13 +108,13 @@ public class DocMovement extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for MMM.
-   *
+   * 
    * <pre>
    *  Movement
    *      Inventory       DR      CR
    *      InventoryTo     DR      CR
    * </pre>
-   *
+   * 
    * @param as
    *          account schema
    * @return Fact
@@ -135,7 +133,7 @@ public class DocMovement extends AcctServer {
             .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-       	log4j.error("Error while creating new instance for DocInvoiceTemplate - " + e);
+        log4j.error("Error while creating new instance for DocInvoiceTemplate - " + e);
       }
     }
     // create Fact Header
@@ -217,8 +215,8 @@ public class DocMovement extends AcctServer {
 
   /**
    * Get Document Confirmation
-   *
-   * @not used
+   * 
+   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;

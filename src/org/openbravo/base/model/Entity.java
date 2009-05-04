@@ -218,7 +218,7 @@ public class Entity {
   /**
    * Validates the passed object using the property validators of this Entity.
    * 
-   * @param o
+   * @param obj
    *          the object to validate
    * @see EntityValidator
    * @see PropertyValidator

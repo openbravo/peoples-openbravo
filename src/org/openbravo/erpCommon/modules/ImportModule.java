@@ -129,7 +129,7 @@ public class ImportModule {
   }
 
   /**
-   * Check the dependencies for a file name. See {@link checkDependenciesId}
+   * Check the dependencies for a file name. See {@link #checkDependenciesId(String[], String[])}.
    */
   public boolean checkDependenciesFileName(String fileName) throws Exception {
     final File file = new File(fileName);
@@ -176,7 +176,7 @@ public class ImportModule {
   }
 
   /**
-   * Check the dependencies for a file. See {@link checkDependenciesId}
+   * Check the dependencies for a file. See {@link #checkDependenciesId(String[], String[])}.
    */
   public boolean checkDependenciesFile(InputStream file) throws Exception {
     if (installLocally) {
@@ -1006,7 +1006,7 @@ public class ImportModule {
    * 
    * @param conn
    * @param vars
-   * @return
+   * @return the list of updates keyed by module id
    */
   public static HashMap<String, String> scanForUpdates(ConnectionProvider conn,
       VariablesSecureApp vars) {
@@ -1139,7 +1139,7 @@ public class ImportModule {
    * Returns the module with the ID that is in the module to install or update.
    * 
    * @param moduleID
-   * @return
+   * @return the module with the moduleID, or null if not found
    */
   public Module getModule(String moduleID) {
     for (int i = 0; i < modulesToInstall.length; i++) {

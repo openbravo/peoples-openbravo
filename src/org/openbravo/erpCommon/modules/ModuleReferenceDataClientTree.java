@@ -41,7 +41,7 @@ public class ModuleReferenceDataClientTree extends ModuleTree {
    * Constructor to generate a root tree
    * 
    * @param base
-   * @param small
+   * @param bSmall
    *          Normal size or small size (true)
    */
   public ModuleReferenceDataClientTree(HttpBaseServlet base, boolean bSmall) {
@@ -87,7 +87,7 @@ public class ModuleReferenceDataClientTree extends ModuleTree {
    * Returns a HTML with the description for the given node
    * 
    * @param node
-   * @return
+   * @return a HTML String with the description for the given node
    */
   public String getHTMLDescription(String node) {
     try {

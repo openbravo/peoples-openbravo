@@ -40,7 +40,7 @@ public class DocPayment extends AcctServer {
 
   /**
    * Constructor
-   *
+   * 
    * @param AD_Client_ID
    *          AD_Client_ID
    */
@@ -55,7 +55,7 @@ public class DocPayment extends AcctServer {
 
   /**
    * Load Specific Document Details
-   *
+   * 
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -71,7 +71,7 @@ public class DocPayment extends AcctServer {
 
   /**
    * Load Payment Line. Settlement Cancel
-   *
+   * 
    * @return DocLine Array
    */
   private DocLine[] loadLines(ConnectionProvider conn) {
@@ -124,7 +124,7 @@ public class DocPayment extends AcctServer {
 
   /**
    * Get Source Currency Balance - always zero
-   *
+   * 
    * @return Zero (always balanced)
    */
   public BigDecimal getBalance() {
@@ -134,9 +134,9 @@ public class DocPayment extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for STT, APP.
-   *
+   * 
    * <pre>
-   *
+   * 
    *  Flow:
    *    1. Currency conversion variations
    *    2. Non manual DPs in settlement
@@ -147,9 +147,9 @@ public class DocPayment extends AcctServer {
    *    4. Conceptos contables (manual sett and cancelation DP)
    *    5. Writeoff
    *    6. Bank in transit
-   *
+   * 
    * </pre>
-   *
+   * 
    * @param as
    *          accounting schema
    * @return Fact
@@ -167,7 +167,7 @@ public class DocPayment extends AcctServer {
             .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-       	log4j.error("Error while creating new instance for DocPaymentTemplate - " + e);
+        log4j.error("Error while creating new instance for DocPaymentTemplate - " + e);
       }
     }
     if (log4j.isDebugEnabled())
@@ -444,9 +444,9 @@ public class DocPayment extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   *
-   * @param AcctType
-   *          see ACCTTYPE_*
+   * 
+   * @param cBPartnerId
+   *          business partner id
    * @param as
    *          accounting schema
    * @return Account
@@ -491,8 +491,8 @@ public class DocPayment extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   *
-   * @param BankStatement
+   * 
+   * @param strcBankstatementlineId
    *          Line
    * @param as
    *          accounting schema
@@ -531,8 +531,8 @@ public class DocPayment extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   *
-   * @param Cash
+   * 
+   * @param strcCashlineId
    *          Line Id
    * @param as
    *          accounting schema
@@ -580,8 +580,8 @@ public class DocPayment extends AcctServer {
 
   /**
    * Get Document Confirmation
-   *
-   * @not used
+   * 
+   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;

@@ -69,7 +69,7 @@ public class OBScheduler {
   }
 
   /**
-   * @return
+   * @return the singleton instance of this class
    */
   public static final OBScheduler getInstance() {
     return INSTANCE;
@@ -151,8 +151,9 @@ public class OBScheduler {
    * saved to AD_PROCESS_REQUEST before reaching this method.
    * 
    * @param requestId
+   *          the id of the request, the Quartz jobDetail name
    * @param bundle
-   * @param jobClass
+   *          the context bundle
    * @throws SchedulerException
    */
   public void schedule(String requestId, ProcessBundle bundle) throws SchedulerException,
@@ -218,7 +219,7 @@ public class OBScheduler {
 
   /**
    * @param date
-   * @return
+   * @return the date as a formatted string
    */
   public static final String format(Date date) {
     return date == null ? null : new SimpleDateFormat(dateTimeFormat).format(date);

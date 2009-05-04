@@ -112,8 +112,8 @@ public class DataExportService implements OBSingleton {
    *          the parameter name ClientID (note is case sensitive)
    * @param out
    *          the xml is written to this writer
-   * @see CLIENT_DATA_SET_NAME
-   * @see CLIENT_ID_PARAMETER_NAME
+   * @see #CLIENT_DATA_SET_NAME
+   * @see #CLIENT_ID_PARAMETER_NAME
    */
   public void exportClientToXML(Map<String, Object> parameters, boolean exportAuditInfo, Writer out) {
     DataSet dataSet = null;

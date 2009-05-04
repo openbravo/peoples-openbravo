@@ -75,7 +75,7 @@ public class HeartbeatProcess implements Process {
   }
 
   /**
-   * @return
+   * @return true if heart beat is enabled, false otherwise
    */
   public boolean isHeartbeatActive() {
     String isheartbeatactive = SystemInfo.get(SystemInfo.Item.ISHEARTBEATACTIVE);
@@ -85,7 +85,7 @@ public class HeartbeatProcess implements Process {
 
   /**
    * @param connection
-   * @return
+   * @return true if there is a connection to the internet, false otherwise
    * @throws ServletException
    */
   public static boolean isInternetAvailable(ConnectionProvider connection) throws ServletException {
@@ -107,7 +107,7 @@ public class HeartbeatProcess implements Process {
 
   /**
    * @param connection
-   * @return
+   * @return the system info as properties
    * @throws ServletException
    */
   public Properties getSystemInfo(ConnectionProvider connection) throws ServletException {
@@ -119,7 +119,7 @@ public class HeartbeatProcess implements Process {
    * Converts properties into a UTF-8 encoded query string.
    * 
    * @param props
-   * @return
+   * @return the UTF-8 encoded query string
    */
   public String createQueryStr(Properties props) {
     logger.logln(logger.messageDb("HB_QUERY", ctx.getLanguage()));
@@ -140,7 +140,7 @@ public class HeartbeatProcess implements Process {
    * Sends a query string to the heartbeat server. Returns the https response as a string.
    * 
    * @param queryStr
-   * @return
+   * @return the result of sending the info
    * @throws IOException
    * @throws GeneralSecurityException
    */
@@ -192,7 +192,7 @@ public class HeartbeatProcess implements Process {
 
   /**
    * @param response
-   * @return
+   * @return the list of updates
    */
   public List<Alert> parseUpdates(String response) {
     logger.logln(logger.messageDb("HB_UPDATES", ctx.getLanguage()));

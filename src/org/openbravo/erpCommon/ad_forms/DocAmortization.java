@@ -56,7 +56,7 @@ public class DocAmortization extends AcctServer {
 
   /**
    * Constructor
-   *
+   * 
    * @param AD_Client_ID
    *          AD_Client_ID
    */
@@ -109,9 +109,7 @@ public class DocAmortization extends AcctServer {
 
   /**
    * Load Specific Document Details
-   *
-   * @param rs
-   *          result set
+   * 
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -126,7 +124,7 @@ public class DocAmortization extends AcctServer {
 
   /**
    * Load AmortizationLine Line.
-   *
+   * 
    * @return DocLine Array
    */
   private DocLine[] loadLines(ConnectionProvider conn) {
@@ -159,7 +157,7 @@ public class DocAmortization extends AcctServer {
 
   /**
    * Get Source Currency Balance - always zero
-   *
+   * 
    * @return Zero (always balanced)
    */
   public BigDecimal getBalance() {
@@ -170,7 +168,7 @@ public class DocAmortization extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for
-   *
+   * 
    * @param as
    *          accounting schema
    * @return Fact
@@ -189,7 +187,7 @@ public class DocAmortization extends AcctServer {
             .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-      	log4j.error("Error while creating new instance for DocAmortizationTemplate - " + e);
+        log4j.error("Error while creating new instance for DocAmortizationTemplate - " + e);
       }
     }
     // create Fact Header
@@ -222,8 +220,8 @@ public class DocAmortization extends AcctServer {
 
   /**
    * Get Document Confirmation
-   *
-   * @not used
+   * 
+   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;
@@ -231,7 +229,7 @@ public class DocAmortization extends AcctServer {
 
   /**
    * Line Account from Asset
-   *
+   * 
    * @param AcctType
    *          see ACCTTYPE_* (1..8)
    * @param as

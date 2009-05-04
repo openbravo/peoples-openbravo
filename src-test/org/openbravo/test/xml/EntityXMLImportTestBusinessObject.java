@@ -40,8 +40,8 @@ import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 
 /**
- * Test import of data with a business object ({@link PaymentTerm) and {@link PaymentTermLine},
- * adding and removing childs
+ * Test import of data with a business object ({@link PaymentTerm} and {@link PaymentTermLine}),
+ * adding and removing childs.
  * 
  * @author mtaal
  */

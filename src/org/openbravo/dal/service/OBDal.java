@@ -244,7 +244,7 @@ public class OBDal implements OBSingleton {
    *          the HQL where and orderby clause
    * @param parameters
    *          the parameters to use in the query
-   * @return
+   * @return a new instance of {@link OBQuery}.
    */
   public OBQuery<BaseOBObject> createQuery(String entityName, String whereOrderByClause,
       List<Object> parameters) {

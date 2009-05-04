@@ -31,7 +31,7 @@ public class DefaultValidationException extends Exception {
   /**
    * Method used to determine the field for which the default setting failed
    * 
-   * @return
+   * @return the field for which the default setting failed.
    */
   public String getDefaultField() {
     return defaultField;

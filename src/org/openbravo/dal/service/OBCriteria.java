@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -80,7 +79,9 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   }
 
   /**
-   * @see Criteria#list()
+   * See the list() method of the Hibernate Criteria class.
+   * 
+   * @return the list of Objects retrieved through this Criteria object
    */
   @SuppressWarnings("unchecked")
   public List<E> list() throws HibernateException {
@@ -102,7 +103,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   }
 
   /**
-   * @see Criteria#scroll()
+   * See the scroll method on the Hibernate Criteria class.
    */
   public ScrollableResults scroll() throws HibernateException {
     initialize();
@@ -110,7 +111,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   }
 
   /**
-   * @see Criteria#scroll(ScrollMode)
+   * See the scroll method on the Hibernate Criteria class.
    */
   public ScrollableResults scroll(ScrollMode scrollMode) throws HibernateException {
     initialize();
@@ -118,7 +119,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   }
 
   /**
-   * @see Criteria#uniqueResult()
+   * See the uniqueResult() method on the Hibernate Criteria class.
    */
   public Object uniqueResult() throws HibernateException {
     initialize();

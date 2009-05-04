@@ -98,8 +98,8 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
    * {@link #getToInsert()} method and the to-be-updated objects through the {@link #getToUpdate()}
    * method.
    * 
-   * @param xml
-   *          the xml string
+   * @param doc
+   *          the dom4j Document to process
    * @return the list of BaseOBObject present in the root of the xml. This list contains the
    *         to-be-updated, to-be-inserted as well as the unchanged business objects
    */

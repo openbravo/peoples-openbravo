@@ -183,9 +183,7 @@ public class EntityXMLConverter implements OBNotSingleton {
   }
 
   /**
-   * Processes one business object and adds it to the dom4j document which is present in the
-   * EntityXMLConverter. After this call the xml can be retrieved by calling the
-   * {@link #getDocument()} or the {@link #getProcessResult()} method.
+   * Processes one business object and outputs it to the writer ({@link #setOutput(Writer)}).
    * 
    * @param bob
    *          the business object to convert to xml (dom4j)
@@ -200,12 +198,11 @@ public class EntityXMLConverter implements OBNotSingleton {
   }
 
   /**
-   * Processes a collection of business objects and adds their xml to the dom4j document which is
-   * present in the EntityXMLConverter. After this call the xml can be retrieved by calling the
-   * {@link #getDocument()} or the {@link #getProcessResult()} method.
+   * Processes a collection of business objects and outputs them to the writer (
+   * {@link #setOutput(Writer)}).
    * 
-   * @param bob
-   *          the business object to convert to xml (dom4j)
+   * @param bobs
+   *          the business objects to convert to xml (dom4j)
    */
   public void process(Collection<BaseOBObject> bobs) {
     // set the export list
@@ -516,9 +513,6 @@ public class EntityXMLConverter implements OBNotSingleton {
   /**
    * This option controls if children are exported within the parent or in the root of the xml. The
    * default is embedded (default value is true).
-   * 
-   * @return true (default) children are embedded in the parent, false children are exported in the
-   *         root of the xml
    */
   public void setOptionEmbedChildren(boolean optionEmbedChildren) {
     this.optionEmbedChildren = optionEmbedChildren;

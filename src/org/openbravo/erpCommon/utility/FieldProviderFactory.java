@@ -88,7 +88,7 @@ public class FieldProviderFactory implements FieldProvider {
    * Returns a FieldProvider for the getter methods of object
    * 
    * @param obj
-   * @return
+   * @return the FieldProvider for the passed obj.
    */
   public static FieldProvider getFieldProvider(Object obj) {
     return new FieldProviderFactory(obj);
@@ -98,7 +98,7 @@ public class FieldProviderFactory implements FieldProvider {
    * Returns an array of FieldProvider objects for the getter methods of the objects
    * 
    * @param obj
-   * @return
+   * @return an array of FieldProviders for each of the objects in the passed array
    */
   public static FieldProvider[] getFieldProviderArray(Object[] obj) {
     FieldProvider[] rt = new FieldProviderFactory[obj.length];

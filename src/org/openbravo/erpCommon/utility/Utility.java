@@ -387,7 +387,7 @@ public class Utility {
    *          Handler for the session info.
    * @param context
    *          String with the parameter to search.
-   * @param window
+   * @param strWindow
    *          String with the window id.
    * @param accessLevel
    * @return String with the value.
@@ -501,7 +501,7 @@ public class Utility {
    * 
    * @param vars
    * @param currentOrg
-   * @return
+   * @return comma delimited Stirng of referenceable organizations.
    */
   public static String getReferenceableOrg(VariablesSecureApp vars, String currentOrg) {
     final OrgTree tree = (OrgTree) vars.getSessionObject("#CompleteOrgTree");
@@ -518,7 +518,7 @@ public class Utility {
    * @param currentOrg
    * @param window
    * @param accessLevel
-   * @return
+   * @return the list of referenceable organizations, comma delimited
    */
   public static String getReferenceableOrg(ConnectionProvider conn, VariablesSecureApp vars,
       String currentOrg, String window, int accessLevel) {
@@ -541,7 +541,7 @@ public class Utility {
    *          Handler for the database connection
    * @param vars
    * @param currentOrg
-   * @return
+   * @return the organization list for selectors
    */
   public static String getSelectorOrgs(ConnectionProvider conn, VariablesSecureApp vars,
       String currentOrg) {
@@ -564,7 +564,7 @@ public class Utility {
    *          String with the parameter.
    * @param window
    *          String with the window id.
-   * @param defaultValueString
+   * @param defaultValue
    *          with the default value.
    * @param sessionData
    *          FieldProvider with the data stored in session
@@ -623,7 +623,7 @@ public class Utility {
    * Returns a Vector<String> composed by the comma separated elements in String s
    * 
    * @param s
-   * @return
+   * @return the list of String obtained by converting the comma delimited String
    */
   public static Vector<String> getStringVector(String s) {
     final Vector<String> v = new Vector<String>();
@@ -641,7 +641,7 @@ public class Utility {
    * 
    * @param v1
    * @param v2
-   * @return
+   * @return the combination of v1 and v2 without duplicates
    */
   public static Vector<String> getIntersectionVector(Vector<String> v1, Vector<String> v2) {
     final Vector<String> v = new Vector<String>();
@@ -656,7 +656,7 @@ public class Utility {
    * Returns the elements in Vector v as an String separating with commas the elements
    * 
    * @param v
-   * @return
+   * @return a comma delimited String
    */
   public static String getVectorToString(Vector<String> v) {
     final StringBuffer s = new StringBuffer();
@@ -1027,7 +1027,6 @@ public class Utility {
    * @deprecated
    * @param SQL
    * @param fields
-   * @return
    */
   @Deprecated
   public static String getOrderByFromSELECT(String[] SQL, Vector<String> fields) {
@@ -1450,7 +1449,7 @@ public class Utility {
    * 
    * @param strList
    *          List to check in
-   * @param strClient
+   * @param strElement
    *          Element to check in the list
    * @return true in case the element is in the list
    */
@@ -1482,13 +1481,13 @@ public class Utility {
   }
 
   /**
-   * Write the output to a file
+   * Write the output to a file. It creates a file in the file location writing the content of the
+   * outputstream.
    * 
    * @param fileLocation
    *          the file where you are going to write
    * @param outputstream
    *          the data source
-   * @return nothing. It creates a file in the file location writing the content of the outputstream
    */
   public static void dumpFile(String fileLocation, OutputStream outputstream) {
     final byte dataPart[] = new byte[4096];
@@ -1507,7 +1506,7 @@ public class Utility {
    * Returns a string list comma separated as SQL strings.
    * 
    * @param list
-   * @return
+   * @return comma delimited quoted string
    */
   public static String stringList(String list) {
     String ret = "";
@@ -1779,10 +1778,10 @@ public class Utility {
   }
 
   /**
-   * Trasnforms an ArrayList to a String comma separated
+   * Transforms an ArrayList to a String comma separated.
    * 
    * @param list
-   * @return
+   * @return a comma separated String containing the contents of the array.
    */
   public static String arrayListToString(ArrayList<String> list, boolean addQuotes) {
     String rt = "";
@@ -1797,7 +1796,7 @@ public class Utility {
    * Transforms a comma separated String into an ArrayList
    * 
    * @param list
-   * @return
+   * @return the list representation of the comma delimited String
    */
   public static ArrayList<String> stringToArrayList(String list) {
     final ArrayList<String> rt = new ArrayList<String>();
@@ -1813,7 +1812,7 @@ public class Utility {
    * Transforms a String[] into an ArrayList
    * 
    * @param list
-   * @return
+   * @return the list representation of the array
    */
   public static ArrayList<String> stringToArrayList(String[] list) {
     final ArrayList<String> rt = new ArrayList<String>();
@@ -2156,7 +2155,7 @@ public class Utility {
    *          Id for the tab to obtain the url for
    * @param type
    *          "R" -> Relation, "E" -> Edition, "X" -> Excel
-   * @return
+   * @return the complete URL for a tab.
    */
   public static String getTabURL(HttpSecureAppServlet servlet, String tabId, String type) {
     if (!(type.equals("R") || type.equals("E") || type.equals("X")))
