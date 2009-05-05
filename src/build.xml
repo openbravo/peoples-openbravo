@@ -254,9 +254,9 @@ build.war: build a war file in the lib directory.
     </junit>
   </target>
 
-  <target name="run.javascript.tests">
+  <target name="run.api.test.javascript">
   	<taskdef name="jstest" classname="org.openbravo.test.javascript.JavaScriptAntTest" classpathref="project.class.path" />
-	<jstest apiDetailsPath="${base.config}" jsPath="${base.web}/js" />
+	<jstest apiDetailsPath="${api.test.javascript.details}" jsPath="${base.web}/js" />
   </target>
   
   <target name="compileSqlc" depends="sqlc">
