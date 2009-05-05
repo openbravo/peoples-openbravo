@@ -189,4 +189,11 @@
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>
+  <SqlMethod name="selectLocator" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      SELECT VALUE FROM M_LOCATOR WHERE M_LOCATOR_ID=?
+    </Sql>
+    <Parameter name="mLocatorId"/>
+  </SqlMethod>  
 </SqlClass>

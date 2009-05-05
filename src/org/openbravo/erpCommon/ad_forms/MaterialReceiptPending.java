@@ -35,6 +35,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.businessUtility.WindowTabsData;
+import org.openbravo.erpCommon.info.LocatorData;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -67,7 +68,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           "MaterialReceiptPending|AD_Org_ID", vars.getOrg());
       vars.setSessionValue("MaterialReceiptPending|isSOTrx", "Y");
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
-          strDocumentNo);
+          strDocumentNo, "DEFAULT");
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "MaterialReceiptPending|DateFrom");
@@ -80,21 +81,30 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       String strAD_Org_ID = vars
           .getGlobalVariable("inpadOrgId", "MaterialReceiptPending|AD_Org_ID");
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
-          strDocumentNo);
+          strDocumentNo, "FIND");
     } else if (vars.commandIn("GENERATE")) {
       String strcOrderLineId = vars.getRequiredInStringParameter("inpOrder");
-
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+    		  "MaterialReceiptPending|DateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", 
+    		  "MaterialReceiptPending|DateTo");
+      String strDocumentNo = vars.getRequestGlobalVariable("inpDocumentNo",
+    		  "MaterialReceiptPending|DocumentNo");
+      String strC_BPartner_ID = vars.getRequestGlobalVariable("inpcBpartnerId",
+    		  "MaterialReceiptPending|C_BPartner_ID");
+      String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId", 
+    		  "MaterialReceiptPending|AD_Org_ID");
       OBError myMessage = processPurchaseOrder(vars, strcOrderLineId);
-      vars.setMessage("MaterialReceiptPending", myMessage);
-
-      response.sendRedirect(strDireccion + request.getServletPath());
+      vars.setMessage("MaterialReceiptPending", myMessage);      
+      printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
+      strDocumentNo, "GENERATE");
     } else
       pageError(response);
   }
 
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo,
-      String strDocumentNo) throws IOException, ServletException {
+      String strDocumentNo, String commandIn) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -182,6 +192,39 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("displayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    
+    if (commandIn.equals("GENERATE")){
+    	String strcOrderLineId = vars.getRequiredInStringParameter("inpOrder");
+    	StringBuffer html = new StringBuffer();
+        if (strcOrderLineId.startsWith("("))
+            strcOrderLineId = strcOrderLineId.substring(1, strcOrderLineId.length() - 1);
+          if (!strcOrderLineId.equals("")) {
+            strcOrderLineId = Replace.replace(strcOrderLineId, "'", "");
+            StringTokenizer st = new StringTokenizer(strcOrderLineId, ",", false);
+            html.append("\nfunction insertData() {\n");
+            while (st.hasMoreTokens()) {
+                String strOrderlineId = st.nextToken().trim();
+                int i = 0;
+                for (i = 0; i < data.length; i++) {
+                  if (data[i].id.equals(strOrderlineId)) {
+                      String strLocator = vars.getStringParameter("inpmLocatorId" + strOrderlineId);
+                      String strDateReceipt = vars.getStringParameter("inpDateReceipt" + data[0].cBpartnerId);
+                      html.append("document.getElementsByName(\""+"inpQtyordered"+strOrderlineId+"\""+")[0].value = "+"'"+
+                    		  vars.getStringParameter("inpQtyordered" + strOrderlineId)+"';\n");
+               	      html.append("document.getElementsByName(\""+"inpmLocatorId"+strOrderlineId+"\""+")[0].value = "+"'"+strLocator+"';\n");
+            	      html.append("document.getElementsByName(\""+"inpmLocatorId_D"+strOrderlineId+"\""+")[0].value = '"+ 
+            	    		  MaterialReceiptPendingData.selectLocator(this, strLocator)+"';\n");
+            	      html.append("document.getElementsByName(\""+"inpDateReceipt"+data[0].cBpartnerId+"\""+")[0].value = '"+ 
+            	    		  strDateReceipt+"';\n");
+            	      html.append("setCheckedValue(document.frmMain.inpOrder, '"+strOrderlineId+"');\n");
+                      break;
+                  }
+                }
+            }
+            html.append("}\n");
+          }
+    	 xmlDocument.setParameter("script", html.toString());
+    }
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();
