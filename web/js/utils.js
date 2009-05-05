@@ -294,8 +294,10 @@ function checkForChanges(f) {
 	var form = f;
 	
 	if (form == null) {
-		if(top.opener != null) { // is a pop-up window
-			form = top.opener.top.appFrame.document.forms[0];
+		if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
+			if(top.opener != null) { // is a pop-up window
+				form = top.opener.top.appFrame.document.forms[0];
+			}
 		}
 		else {
 			form = top.appFrame.document.forms[0];
@@ -303,9 +305,10 @@ function checkForChanges(f) {
 	}	
 	
 	var autosave = null;
-	
-	if(top.opener != null) { // is a pop-up window
-	  autosave = top.opener.top.frameMenu.autosave;
+	if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
+		if(top.opener != null) { // is a pop-up window
+		  autosave = top.opener.top.frameMenu.autosave;
+		}
 	}
 	else {
 	  autosave = top.frameMenu.autosave;
