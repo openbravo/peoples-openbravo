@@ -74,8 +74,12 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
          SELECT COUNT(*) AS TOTAL
-           FROM AD_MODULE 
-          WHERE STATUS IN ('I','U')
+           FROM (SELECT 1 
+                   FROM AD_MODULE 
+                  WHERE STATUS IN ('I','U')
+                  UNION
+                 SELECT 1
+                   FROM AD_MODULE_INSTALL) A
       </Sql>
    </SqlMethod>
    <SqlMethod name="selectUpdate" type="preparedStatement" return="string">
