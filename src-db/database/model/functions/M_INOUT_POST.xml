@@ -181,11 +181,13 @@
 	  -- check inout line instance location
       SELECT COUNT(*), MAX(M.line)
       INTO v_Count, v_Line
-      FROM M_InOut I,
-        M_InOutLine M
-      WHERE I.M_InOut_ID=M.M_InOut_ID
-        AND I.M_INOUT_ID=v_Record_ID
-		AND M.M_Locator_ID IS NULL;
+      FROM M_InOutLine M,
+        M_Product P
+      WHERE M.M_InOut_ID=v_Record_ID
+		    AND M.M_Locator_ID IS NULL
+        AND p.m_product_id = m.m_product_id
+        AND p.isstocked = 'Y'
+        AND p.producttype = 'I';
       IF v_Count <> 0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@InoutLineWithoutLocator@') ;
       END IF;	  
