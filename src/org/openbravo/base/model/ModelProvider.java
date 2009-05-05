@@ -746,7 +746,16 @@ public class ModelProvider implements OBSingleton {
         return entity;
       }
     }
-    log.warn("No entity for tree type " + treeType);
+    // prevent the warning in this case
+    // note from email:
+    // Martin, tree type II was used for a project we did 3 years ago to automate
+    // functional testing, but it was not finished and deprecated. So you can just
+    // ignore that entry. Stefan will remove it in the clean up project.
+    //
+    // Ismael
+    if (treeType != null && !treeType.equals("II")) {
+      log.warn("No entity for tree type " + treeType);
+    }
     return null;
   }
 }
