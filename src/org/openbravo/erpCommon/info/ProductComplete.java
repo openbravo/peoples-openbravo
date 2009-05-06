@@ -129,7 +129,7 @@ public class ProductComplete extends HttpSecureAppServlet {
           data = ProductCompleteData.select(this, "1", strKeyValue, "", strWarehouse,
               isCalledFromProduction, vars.getRole(), strBpartner, strClients, "1", "", "");
         else
-          data = ProductCompleteData.selecttrl(this, "1", vars.getLanguage(), strKeyValue, "",
+          data = ProductCompleteData.selecttrl(this, vars.getLanguage(), "1", strKeyValue, "",
               strWarehouse, isCalledFromProduction, vars.getRole(), strBpartner, strClients, "1",
               "", "");
       } else {
