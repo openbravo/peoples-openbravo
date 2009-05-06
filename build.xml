@@ -758,7 +758,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <condition property="osname" value="linux">
       <equals arg1="${os.name}" arg2="Linux" />
     </condition>
-    <condition property="osname" value="freebsd">
+    <condition property="osname" value="freebsd6">
       <equals arg1="${os.name}" arg2="FreeBSD" />
     </condition>
     <condition property="osname" value="windows">
