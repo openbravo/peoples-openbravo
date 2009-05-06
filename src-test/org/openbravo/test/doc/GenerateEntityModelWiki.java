@@ -65,12 +65,23 @@ public class GenerateEntityModelWiki extends BaseTest {
   private static final String WIKI_URL = "http://wiki.openbravo.com/wiki/index.php";
   private static final String ENTITY_MODEL_PATH = "ERP/2.50/Developers_Guide/Reference/Entity_Model";
   // TODO: obtain cookies and token in a proper way
-  private static final String COOKIE = "__utma=233079192.658990777.1221427045.1241436813.1241441942.342; __utmz=233079192.1241076544.337.76.utmccn=(organic)|utmcsr=google|utmctr=openbravo+wiki+data+access+layer+performance|utmcmd=organic; __utma=112434266.233451159.1222677175.1236249553.1237214839.22; __utmz=112434266.1236249553.21.12.utmccn=(referral)|utmcsr=surveymonkey.com|utmcct=/s.aspx|utmcmd=referral; mediawikicas_mw_UserID=2084; mediawikicas_mw_UserName=Mtaal; __utmb=233079192; __utmc=233079192; mediawikicas_mw__session=ah0jull4q00m00v1lc3vdivej1";
-  private static final String TOKEN = "f9f56e9b5f249d70132c7fa793aa0419+\\";
+  private static final String COOKIE = "__utma=233079192.658990777.1221427045.1241542285.1241594940.349; __utmz=233079192.1241076544.337.76.utmccn=(organic)|utmcsr=google|utmctr=openbravo+wiki+data+access+layer+performance|utmcmd=organic; __utma=112434266.233451159.1222677175.1236249553.1237214839.22; __utmz=112434266.1236249553.21.12.utmccn=(referral)|utmcsr=surveymonkey.com|utmcct=/s.aspx|utmcmd=referral; mediawikicas_mw_UserID=2084; mediawikicas_mw_UserName=Mtaal; __utmc=233079192; mediawikicas_mw__session=g4eur5j3egraer06kur7fveeu4; __utmb=233079192";
+  // note that the \ at the end needs to be escaped (so there should be two: \)
+  private static final String TOKEN = "f89d091d50dbd8816cb80d2a56e486e3+\\";
 
-  private static final String OUTPUT = "/tmp";
+  // private static final String OUTPUT = "/tmp";
 
   private final Map<String, String> cachedTemplates = new HashMap<String, String>();
+
+  public void _testPrint() {
+    // ERP/2.50/Developers_Guide/Database_Model/org.openbravo.model.ad.datamodel/AD_Table
+    final List<Entity> entities = new ArrayList<Entity>(ModelProvider.getInstance().getModel());
+    Collections.sort(entities, new EntityComparator());
+    for (Entity entity : entities) {
+      System.err.println("[[ERP/2.50/Developers_Guide/Database_Model/" + entity.getPackageName()
+          + "/" + entity.getTableName() + " |" + entity.getTableName() + "]]");
+    }
+  }
 
   /**
    * Generates the entity model wiki pages and uploads them to the openbravo wiki.
@@ -100,7 +111,7 @@ public class GenerateEntityModelWiki extends BaseTest {
       content.put("BACK_TO_ENTITY_MODEL", "ERP/2.50/Developers_Guide/Reference/Entity_Model#"
           + entity.getName());
       content.put("TABLE_LINK", getLink("ERP/2.50/Developers_Guide/Database_Model/"
-          + entity.getPackageName() + "/" + entity.getTableName(), "Link to the Database Table ("
+          + entity.getPackageName() + "/" + entity.getTableName(), "To the database table ("
           + entity.getTableName() + ") of this entity."));
 
       final String result = readApplyTemplate("entity_wiki.txt", content);
@@ -126,7 +137,11 @@ public class GenerateEntityModelWiki extends BaseTest {
       sb.append("|-");
       sb.append("\n|");
       // property name
-      sb.append(property.getName());
+      sb.append(property.getName() + (property.isId() ? "<sup>*</sup>" : "")
+          + (property.isIdentifier() ? "<sup>#</sup>" : ""));
+      if (property.isInactive()) {
+        sb.append(" '''(inactive)'''");
+      }
 
       sb.append(" || ");
 
@@ -141,8 +156,35 @@ public class GenerateEntityModelWiki extends BaseTest {
       sb.append(" || ");
 
       // mandatory
-      sb.append(property.isMandatory() + "");
-
+      {
+        final StringBuilder constraints = new StringBuilder();
+        if (property.isMandatory()) {
+          if (constraints.length() > 0) {
+            constraints.append("<br/>");
+          }
+          constraints.append("Mandatory");
+        }
+        if (property.getMinValue() != null) {
+          if (constraints.length() > 0) {
+            constraints.append("<br/>");
+          }
+          constraints.append("Min: " + property.getMinValue());
+        }
+        if (property.getMaxValue() != null) {
+          if (constraints.length() > 0) {
+            constraints.append("<br/>");
+          }
+          System.err.println("Property " + property);
+          constraints.append("Max: " + property.getMaxValue());
+        }
+        if (property.getFieldLength() > 0 && property.getPrimitiveType() == String.class) {
+          if (constraints.length() > 0) {
+            constraints.append("<br/>");
+          }
+          constraints.append("Max Length: " + property.getFieldLength());
+        }
+        sb.append(constraints.toString());
+      }
       sb.append(" || ");
 
       // the type
@@ -272,6 +314,14 @@ public class GenerateEntityModelWiki extends BaseTest {
     @Override
     public int compare(Entity o1, Entity o2) {
       return o1.getName().compareTo(o2.getName());
+    }
+  }
+
+  private class EntityTableNameComparator implements Comparator<Entity> {
+
+    @Override
+    public int compare(Entity o1, Entity o2) {
+      return o1.getTableName().compareTo(o2.getTableName());
     }
   }
 

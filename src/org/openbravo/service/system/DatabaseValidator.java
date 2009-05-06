@@ -129,16 +129,22 @@ public class DatabaseValidator implements SystemValidator {
 
     // only check this one if the global validate check is done
     for (org.apache.ddlutils.model.Table dbTable : tmpDBTablesByName.values()) {
-      result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
-          + dbTable.getName() + " present in the database "
-          + " but not defined in the Application Dictionary");
+      // ignore errors related to C_TEMP_SELECTION
+      if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")) {
+        result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
+            + dbTable.getName() + " present in the database "
+            + " but not defined in the Application Dictionary");
+      }
     }
 
     if (getValidateModule() == null) {
       for (View view : dbViews.values()) {
-        result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "View "
-            + view.getName() + " present in the database "
-            + " but not defined in the Application Dictionary");
+        // ignore errors related to C_TEMP_SELECTION
+        if (!view.getName().toUpperCase().startsWith("C_TEMP_SELECTION")) {
+          result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "View "
+              + view.getName() + " present in the database "
+              + " but not defined in the Application Dictionary");
+        }
       }
     }
 
@@ -261,7 +267,7 @@ public class DatabaseValidator implements SystemValidator {
       if (dbColumn == null) {
         result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_DB, "Column "
             + adTable.getDBTableName() + "." + column.getDBColumnName()
-            + " defined in the Application Dictionary " + " but not present in the database.");
+            + " defined in the Application Dictionary but not present in the database.");
       } else {
         checkDataType(column, dbColumn, result, dbTable);
 
@@ -347,6 +353,8 @@ public class DatabaseValidator implements SystemValidator {
       if (prim == String.class) {
         checkType(dbColumn, dbTable, result,
             new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR" });
+      } else if (prim == Long.class) {
+        checkType(dbColumn, dbTable, result, "DECIMAL");
       } else if (prim == Integer.class) {
         checkType(dbColumn, dbTable, result, "DECIMAL");
       } else if (prim == BigDecimal.class) {
