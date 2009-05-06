@@ -6,9 +6,9 @@
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
-		 pageWidth="595"
+		 pageWidth="630"
 		 pageHeight="842"
-		 columnWidth="483"
+		 columnWidth="518"
 		 columnSpacing="0"
 		 leftMargin="56"
 		 rightMargin="56"
@@ -886,9 +886,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Field"
-						x="178"
+						x="177"
 						y="2"
-						width="75"
+						width="85"
 						height="16"
 						key="textField-21"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -905,7 +905,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<staticText>
 					<reportElement
 						style="Report_Data_Label"
-						x="100"
+						x="99"
 						y="2"
 						width="78"
 						height="16"
@@ -1032,9 +1032,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Field"
-						x="253"
+						x="262"
 						y="2"
-						width="180"
+						width="200"
 						height="16"
 						key="textField-204"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -1052,7 +1052,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 					<reportElement
 						x="0"
 						y="0"
-						width="483"
+						width="518"
 						height="0"
 						key="line-5"/>
 					<graphicElement stretchType="NoStretch"/>
@@ -1089,7 +1089,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level1_Line"
 						x="203"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-155"
 						stretchType="RelativeToBandHeight"/>
@@ -1106,9 +1106,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="253"
+						x="264"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-154"
 						stretchType="RelativeToBandHeight"/>
@@ -1125,9 +1125,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="303"
+						x="325"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-153"
 						stretchType="RelativeToBandHeight"/>
@@ -1144,7 +1144,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="353"
+						x="386"
 						y="0"
 						width="30"
 						height="18"
@@ -1163,7 +1163,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="383"
+						x="416"
 						y="0"
 						width="45"
 						height="18"
@@ -1182,9 +1182,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="428"
+						x="461"
 						y="0"
-						width="55"
+						width="57"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1256,7 +1256,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level2_Line"
 						x="203"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
@@ -1273,9 +1273,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="428"
+						x="461"
 						y="0"
-						width="55"
+						width="57"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1294,9 +1294,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="253"
+						x="264"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-156"
 						stretchType="RelativeToBandHeight"/>
@@ -1313,9 +1313,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="303"
+						x="325"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-157"
 						stretchType="RelativeToBandHeight"/>
@@ -1332,7 +1332,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="353"
+						x="386"
 						y="0"
 						width="30"
 						height="18"
@@ -1351,7 +1351,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="383"
+						x="416"
 						y="0"
 						width="45"
 						height="18"
@@ -1442,7 +1442,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level3_Line"
 						x="203"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
@@ -1459,9 +1459,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="428"
+						x="461"
 						y="0"
-						width="55"
+						width="57"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1480,9 +1480,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="253"
+						x="264"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-160"
 						stretchType="RelativeToBandHeight"/>
@@ -1499,9 +1499,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="303"
+						x="325"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-161"
 						stretchType="RelativeToBandHeight"/>
@@ -1518,7 +1518,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="353"
+						x="386"
 						y="0"
 						width="30"
 						height="18"
@@ -1537,7 +1537,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="383"
+						x="416"
 						y="0"
 						width="45"
 						height="18"
@@ -1647,7 +1647,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level4_Line"
 						x="203"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
@@ -1664,9 +1664,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="428"
+						x="461"
 						y="0"
-						width="55"
+						width="57"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1685,9 +1685,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="253"
+						x="264"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-164"
 						stretchType="RelativeToBandHeight"/>
@@ -1704,9 +1704,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="303"
+						x="325"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-165"
 						stretchType="RelativeToBandHeight"/>
@@ -1723,7 +1723,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="353"
+						x="386"
 						y="0"
 						width="30"
 						height="18"
@@ -1742,7 +1742,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="383"
+						x="416"
 						y="0"
 						width="45"
 						height="18"
@@ -1871,7 +1871,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level5_Line"
 						x="203"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
@@ -1888,9 +1888,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="428"
+						x="461"
 						y="0"
-						width="55"
+						width="57"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1909,9 +1909,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="253"
+						x="264"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-168"
 						stretchType="RelativeToBandHeight"/>
@@ -1928,9 +1928,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="303"
+						x="325"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-169"
 						stretchType="RelativeToBandHeight"/>
@@ -1947,7 +1947,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="353"
+						x="386"
 						y="0"
 						width="30"
 						height="18"
@@ -1966,7 +1966,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="383"
+						x="416"
 						y="0"
 						width="45"
 						height="18"
@@ -2114,7 +2114,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level6_Line"
 						x="203"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-69"
 						stretchType="RelativeToBandHeight"/>
@@ -2131,9 +2131,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="428"
+						x="461"
 						y="0"
-						width="55"
+						width="57"
 						height="18"
 						key="textField-68"
 						stretchType="RelativeToBandHeight">
@@ -2152,9 +2152,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="253"
+						x="264"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-172"
 						stretchType="RelativeToBandHeight"/>
@@ -2171,9 +2171,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="303"
+						x="325"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-173"
 						stretchType="RelativeToBandHeight"/>
@@ -2190,7 +2190,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="353"
+						x="386"
 						y="0"
 						width="30"
 						height="18"
@@ -2209,7 +2209,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="383"
+						x="416"
 						y="0"
 						width="45"
 						height="18"
@@ -2376,7 +2376,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level7_Line"
 						x="203"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-176"
 						stretchType="RelativeToBandHeight"/>
@@ -2393,9 +2393,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="428"
+						x="461"
 						y="0"
-						width="55"
+						width="57"
 						height="18"
 						key="textField-177"
 						stretchType="RelativeToBandHeight">
@@ -2414,9 +2414,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="253"
+						x="264"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-179"
 						stretchType="RelativeToBandHeight"/>
@@ -2433,9 +2433,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="303"
+						x="325"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-180"
 						stretchType="RelativeToBandHeight"/>
@@ -2452,7 +2452,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="353"
+						x="386"
 						y="0"
 						width="30"
 						height="18"
@@ -2471,7 +2471,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="383"
+						x="416"
 						y="0"
 						width="45"
 						height="18"
@@ -2657,7 +2657,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level8_Line"
 						x="203"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-183"
 						stretchType="RelativeToBandHeight"/>
@@ -2674,9 +2674,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="253"
+						x="264"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-186"
 						stretchType="RelativeToBandHeight"/>
@@ -2693,9 +2693,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="303"
+						x="325"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-187"
 						stretchType="RelativeToBandHeight"/>
@@ -2712,7 +2712,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="353"
+						x="386"
 						y="0"
 						width="30"
 						height="18"
@@ -2731,7 +2731,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="383"
+						x="416"
 						y="0"
 						width="45"
 						height="18"
@@ -2750,9 +2750,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="428"
+						x="461"
 						y="0"
-						width="55"
+						width="57"
 						height="18"
 						key="textField-184"
 						stretchType="RelativeToBandHeight">
@@ -2957,7 +2957,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level9_Line"
 						x="203"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-190"
 						stretchType="RelativeToBandHeight"/>
@@ -2974,9 +2974,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="253"
+						x="264"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-191"
 						stretchType="RelativeToBandHeight"/>
@@ -2993,9 +2993,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="303"
+						x="325"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-192"
 						stretchType="RelativeToBandHeight"/>
@@ -3012,7 +3012,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="353"
+						x="386"
 						y="0"
 						width="30"
 						height="18"
@@ -3031,7 +3031,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="383"
+						x="416"
 						y="0"
 						width="45"
 						height="18"
@@ -3050,9 +3050,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="428"
+						x="461"
 						y="0"
-						width="55"
+						width="57"
 						height="18"
 						key="textField-196"
 						stretchType="RelativeToBandHeight">
@@ -3276,7 +3276,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level10_Line"
 						x="203"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-197"
 						stretchType="RelativeToBandHeight"/>
@@ -3293,9 +3293,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="253"
+						x="264"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-198"
 						stretchType="RelativeToBandHeight"/>
@@ -3312,9 +3312,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="303"
+						x="325"
 						y="0"
-						width="50"
+						width="61"
 						height="18"
 						key="textField-199"
 						stretchType="RelativeToBandHeight"/>
@@ -3331,7 +3331,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="353"
+						x="386"
 						y="0"
 						width="30"
 						height="18"
@@ -3350,7 +3350,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="383"
+						x="416"
 						y="0"
 						width="45"
 						height="18"
@@ -3369,9 +3369,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="428"
+						x="461"
 						y="0"
-						width="55"
+						width="57"
 						height="18"
 						key="textField-202"
 						stretchType="RelativeToBandHeight">
@@ -3405,7 +3405,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						mode="Opaque"
 						x="0"
 						y="85"
-						width="483"
+						width="518"
 						height="19"
 						backcolor="#5D5D5D"
 						key="frame-1"
@@ -3519,7 +3519,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="353"
+						x="386"
 						y="0"
 						width="30"
 						height="19"
@@ -3540,9 +3540,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="428"
+						x="461"
 						y="0"
-						width="55"
+						width="57"
 						height="19"
 						key="staticText-10"
 						positionType="Float"/>
@@ -3561,7 +3561,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="383"
+						x="416"
 						y="0"
 						width="45"
 						height="19"
@@ -3582,9 +3582,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="303"
+						x="325"
 						y="0"
-						width="50"
+						width="61"
 						height="19"
 						key="staticText-12"
 						positionType="Float"/>
@@ -3603,9 +3603,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="253"
+						x="264"
 						y="0"
-						width="50"
+						width="61"
 						height="19"
 						key="staticText-13"
 						positionType="Float"/>
@@ -3626,7 +3626,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						mode="Opaque"
 						x="203"
 						y="0"
-						width="50"
+						width="61"
 						height="19"
 						key="staticText-14"
 						positionType="Float"/>
@@ -3766,7 +3766,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Report_Title"
 						x="0"
 						y="0"
-						width="483"
+						width="518"
 						height="26"
 						key="textField"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -3785,7 +3785,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Report_Subtitle"
 						x="0"
 						y="31"
-						width="483"
+						width="518"
 						height="18"
 						key="textField"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -3839,7 +3839,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 					<reportElement
 						x="0"
 						y="26"
-						width="483"
+						width="518"
 						height="0"
 						key="line-1"/>
 					<graphicElement stretchType="NoStretch"/>
@@ -3848,7 +3848,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 					<reportElement
 						x="0"
 						y="49"
-						width="483"
+						width="518"
 						height="0"
 						key="line-2"/>
 					<graphicElement stretchType="NoStretch"/>
@@ -3951,7 +3951,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 					<reportElement
 						x="0"
 						y="2"
-						width="483"
+						width="518"
 						height="0"
 						key="line-4"/>
 					<graphicElement stretchType="NoStretch"/>

@@ -6,9 +6,9 @@
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Landscape"
-		 pageWidth="842"
+		 pageWidth="1108"
 		 pageHeight="595"
-		 columnWidth="814"
+		 columnWidth="970"
 		 columnSpacing="0"
 		 leftMargin="14"
 		 rightMargin="14"
@@ -1195,7 +1195,7 @@
 						style="Total_Field"
 						x="224"
 						y="1"
-						width="60"
+						width="70"
 						height="16"
 						key="textField-21"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -1231,7 +1231,7 @@
 					<reportElement
 						x="0"
 						y="0"
-						width="814"
+						width="970"
 						height="0"
 						key="line-3"/>
 					<graphicElement stretchType="NoStretch"/>
@@ -1348,7 +1348,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Field"
-						x="594"
+						x="697"
 						y="1"
 						width="70"
 						height="16"
@@ -1367,9 +1367,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Field"
-						x="664"
+						x="767"
 						y="1"
-						width="40"
+						width="45"
 						height="16"
 						key="textField-300"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -1386,9 +1386,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Field"
-						x="284"
+						x="294"
 						y="1"
-						width="160"
+						width="223"
 						height="16"
 						key="textField-301"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -1405,9 +1405,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Field"
-						x="444"
+						x="517"
 						y="1"
-						width="150"
+						width="180"
 						height="16"
 						key="textField-302"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -1563,7 +1563,7 @@
 						style="Level1_Line"
 						x="224"
 						y="0"
-						width="55"
+						width="71"
 						height="18"
 						key="textField-155"
 						stretchType="RelativeToBandHeight"/>
@@ -1580,9 +1580,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="279"
+						x="295"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-154"
 						stretchType="RelativeToBandHeight"/>
@@ -1599,9 +1599,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="324"
+						x="356"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-153"
 						stretchType="RelativeToBandHeight"/>
@@ -1618,7 +1618,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="369"
+						x="417"
 						y="0"
 						width="30"
 						height="18"
@@ -1637,7 +1637,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="624"
+						x="730"
 						y="0"
 						width="40"
 						height="18"
@@ -1656,9 +1656,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="704"
+						x="810"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1677,9 +1677,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="784"
+						x="932"
 						y="0"
-						width="30"
+						width="38"
 						height="18"
 						key="textField-210"
 						stretchType="RelativeToBandHeight">
@@ -1698,9 +1698,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="744"
+						x="871"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-220"
 						stretchType="RelativeToBandHeight">
@@ -1719,7 +1719,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="664"
+						x="770"
 						y="0"
 						width="40"
 						height="18"
@@ -1738,7 +1738,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="594"
+						x="700"
 						y="0"
 						width="30"
 						height="18"
@@ -1757,7 +1757,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="564"
+						x="670"
 						y="0"
 						width="30"
 						height="18"
@@ -1776,7 +1776,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="534"
+						x="640"
 						y="0"
 						width="30"
 						height="18"
@@ -1795,9 +1795,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="489"
+						x="579"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-270"
 						stretchType="RelativeToBandHeight"/>
@@ -1814,9 +1814,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="444"
+						x="518"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-280"
 						stretchType="RelativeToBandHeight"/>
@@ -1833,9 +1833,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
-						x="399"
+						x="447"
 						y="0"
-						width="45"
+						width="71"
 						height="18"
 						key="textField-290"
 						stretchType="RelativeToBandHeight"/>
@@ -1905,7 +1905,7 @@
 						style="Level2_Line"
 						x="224"
 						y="0"
-						width="55"
+						width="71"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
@@ -1922,9 +1922,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="704"
+						x="810"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1943,9 +1943,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="279"
+						x="295"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-156"
 						stretchType="RelativeToBandHeight"/>
@@ -1962,9 +1962,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="324"
+						x="356"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-157"
 						stretchType="RelativeToBandHeight"/>
@@ -1981,7 +1981,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="369"
+						x="417"
 						y="0"
 						width="30"
 						height="18"
@@ -2000,7 +2000,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="624"
+						x="730"
 						y="0"
 						width="40"
 						height="18"
@@ -2019,9 +2019,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="784"
+						x="932"
 						y="0"
-						width="30"
+						width="38"
 						height="18"
 						key="textField-211"
 						stretchType="RelativeToBandHeight">
@@ -2040,9 +2040,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="744"
+						x="871"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-221"
 						stretchType="RelativeToBandHeight">
@@ -2061,7 +2061,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="664"
+						x="770"
 						y="0"
 						width="40"
 						height="18"
@@ -2080,7 +2080,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="594"
+						x="700"
 						y="0"
 						width="30"
 						height="18"
@@ -2099,7 +2099,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="564"
+						x="670"
 						y="0"
 						width="30"
 						height="18"
@@ -2118,7 +2118,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="534"
+						x="640"
 						y="0"
 						width="30"
 						height="18"
@@ -2137,9 +2137,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="489"
+						x="579"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-271"
 						stretchType="RelativeToBandHeight"/>
@@ -2156,9 +2156,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="444"
+						x="518"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-281"
 						stretchType="RelativeToBandHeight"/>
@@ -2175,9 +2175,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
-						x="399"
+						x="447"
 						y="0"
-						width="45"
+						width="71"
 						height="18"
 						key="textField-291"
 						stretchType="RelativeToBandHeight"/>
@@ -2266,7 +2266,7 @@
 						style="Level3_Line"
 						x="224"
 						y="0"
-						width="55"
+						width="71"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
@@ -2283,9 +2283,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="704"
+						x="810"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -2304,9 +2304,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="279"
+						x="295"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-160"
 						stretchType="RelativeToBandHeight"/>
@@ -2323,9 +2323,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="324"
+						x="356"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-161"
 						stretchType="RelativeToBandHeight"/>
@@ -2342,7 +2342,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="369"
+						x="417"
 						y="0"
 						width="30"
 						height="18"
@@ -2361,7 +2361,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="624"
+						x="730"
 						y="0"
 						width="40"
 						height="18"
@@ -2380,9 +2380,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="784"
+						x="932"
 						y="0"
-						width="30"
+						width="38"
 						height="18"
 						key="textField-212"
 						stretchType="RelativeToBandHeight">
@@ -2401,9 +2401,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="744"
+						x="871"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-222"
 						stretchType="RelativeToBandHeight">
@@ -2422,7 +2422,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="664"
+						x="770"
 						y="0"
 						width="40"
 						height="18"
@@ -2441,7 +2441,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="594"
+						x="700"
 						y="0"
 						width="30"
 						height="18"
@@ -2460,7 +2460,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="564"
+						x="670"
 						y="0"
 						width="30"
 						height="18"
@@ -2479,7 +2479,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="534"
+						x="640"
 						y="0"
 						width="30"
 						height="18"
@@ -2498,9 +2498,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="489"
+						x="579"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-272"
 						stretchType="RelativeToBandHeight"/>
@@ -2517,9 +2517,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="444"
+						x="518"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-282"
 						stretchType="RelativeToBandHeight"/>
@@ -2536,9 +2536,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
-						x="399"
+						x="447"
 						y="0"
-						width="45"
+						width="71"
 						height="18"
 						key="textField-292"
 						stretchType="RelativeToBandHeight"/>
@@ -2646,7 +2646,7 @@
 						style="Level4_Line"
 						x="224"
 						y="0"
-						width="55"
+						width="71"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
@@ -2663,9 +2663,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="704"
+						x="810"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -2684,9 +2684,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="279"
+						x="295"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-164"
 						stretchType="RelativeToBandHeight"/>
@@ -2703,9 +2703,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="324"
+						x="356"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-165"
 						stretchType="RelativeToBandHeight"/>
@@ -2722,7 +2722,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="369"
+						x="417"
 						y="0"
 						width="30"
 						height="18"
@@ -2741,7 +2741,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="624"
+						x="730"
 						y="0"
 						width="40"
 						height="18"
@@ -2760,9 +2760,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="784"
+						x="932"
 						y="0"
-						width="30"
+						width="38"
 						height="18"
 						key="textField-213"
 						stretchType="RelativeToBandHeight">
@@ -2781,9 +2781,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="744"
+						x="871"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-223"
 						stretchType="RelativeToBandHeight">
@@ -2802,7 +2802,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="664"
+						x="770"
 						y="0"
 						width="40"
 						height="18"
@@ -2821,7 +2821,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="594"
+						x="700"
 						y="0"
 						width="30"
 						height="18"
@@ -2840,7 +2840,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="564"
+						x="670"
 						y="0"
 						width="30"
 						height="18"
@@ -2859,7 +2859,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="534"
+						x="640"
 						y="0"
 						width="30"
 						height="18"
@@ -2878,9 +2878,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="489"
+						x="579"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-273"
 						stretchType="RelativeToBandHeight"/>
@@ -2897,9 +2897,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="444"
+						x="518"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-283"
 						stretchType="RelativeToBandHeight"/>
@@ -2916,9 +2916,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
-						x="399"
+						x="447"
 						y="0"
-						width="45"
+						width="71"
 						height="18"
 						key="textField-293"
 						stretchType="RelativeToBandHeight"/>
@@ -3045,7 +3045,7 @@
 						style="Level5_Line"
 						x="224"
 						y="0"
-						width="55"
+						width="71"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
@@ -3062,9 +3062,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="704"
+						x="810"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -3083,9 +3083,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="279"
+						x="295"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-168"
 						stretchType="RelativeToBandHeight"/>
@@ -3102,9 +3102,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="324"
+						x="356"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-169"
 						stretchType="RelativeToBandHeight"/>
@@ -3121,7 +3121,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="369"
+						x="417"
 						y="0"
 						width="30"
 						height="18"
@@ -3140,7 +3140,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="624"
+						x="730"
 						y="0"
 						width="40"
 						height="18"
@@ -3159,9 +3159,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="784"
+						x="932"
 						y="0"
-						width="30"
+						width="38"
 						height="18"
 						key="textField-214"
 						stretchType="RelativeToBandHeight">
@@ -3180,9 +3180,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="744"
+						x="871"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-224"
 						stretchType="RelativeToBandHeight">
@@ -3201,7 +3201,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="664"
+						x="770"
 						y="0"
 						width="40"
 						height="18"
@@ -3220,7 +3220,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="594"
+						x="700"
 						y="0"
 						width="30"
 						height="18"
@@ -3239,7 +3239,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="564"
+						x="670"
 						y="0"
 						width="30"
 						height="18"
@@ -3258,7 +3258,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="534"
+						x="640"
 						y="0"
 						width="30"
 						height="18"
@@ -3277,9 +3277,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="489"
+						x="579"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-274"
 						stretchType="RelativeToBandHeight"/>
@@ -3296,9 +3296,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="444"
+						x="518"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-284"
 						stretchType="RelativeToBandHeight"/>
@@ -3315,9 +3315,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
-						x="399"
+						x="447"
 						y="0"
-						width="45"
+						width="71"
 						height="18"
 						key="textField-294"
 						stretchType="RelativeToBandHeight"/>
@@ -3463,7 +3463,7 @@
 						style="Level6_Line"
 						x="224"
 						y="0"
-						width="55"
+						width="71"
 						height="18"
 						key="textField-69"
 						stretchType="RelativeToBandHeight"/>
@@ -3480,9 +3480,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="704"
+						x="810"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-68"
 						stretchType="RelativeToBandHeight">
@@ -3501,9 +3501,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="279"
+						x="295"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-172"
 						stretchType="RelativeToBandHeight"/>
@@ -3520,9 +3520,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="324"
+						x="356"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-173"
 						stretchType="RelativeToBandHeight"/>
@@ -3539,7 +3539,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="369"
+						x="417"
 						y="0"
 						width="30"
 						height="18"
@@ -3558,7 +3558,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="624"
+						x="730"
 						y="0"
 						width="40"
 						height="18"
@@ -3577,9 +3577,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="784"
+						x="932"
 						y="0"
-						width="30"
+						width="38"
 						height="18"
 						key="textField-215"
 						stretchType="RelativeToBandHeight">
@@ -3598,9 +3598,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="744"
+						x="871"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-225"
 						stretchType="RelativeToBandHeight">
@@ -3619,7 +3619,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="664"
+						x="770"
 						y="0"
 						width="40"
 						height="18"
@@ -3638,7 +3638,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="594"
+						x="700"
 						y="0"
 						width="30"
 						height="18"
@@ -3657,7 +3657,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="564"
+						x="670"
 						y="0"
 						width="30"
 						height="18"
@@ -3676,7 +3676,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="534"
+						x="640"
 						y="0"
 						width="30"
 						height="18"
@@ -3695,9 +3695,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="489"
+						x="579"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-275"
 						stretchType="RelativeToBandHeight"/>
@@ -3714,9 +3714,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="444"
+						x="518"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-285"
 						stretchType="RelativeToBandHeight"/>
@@ -3733,9 +3733,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
-						x="399"
+						x="447"
 						y="0"
-						width="45"
+						width="71"
 						height="18"
 						key="textField-295"
 						stretchType="RelativeToBandHeight"/>
@@ -3900,7 +3900,7 @@
 						style="Level7_Line"
 						x="224"
 						y="0"
-						width="55"
+						width="71"
 						height="18"
 						key="textField-176"
 						stretchType="RelativeToBandHeight"/>
@@ -3917,9 +3917,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="704"
+						x="810"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-177"
 						stretchType="RelativeToBandHeight">
@@ -3938,9 +3938,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="279"
+						x="295"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-179"
 						stretchType="RelativeToBandHeight"/>
@@ -3957,9 +3957,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="324"
+						x="356"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-180"
 						stretchType="RelativeToBandHeight"/>
@@ -3976,7 +3976,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="369"
+						x="417"
 						y="0"
 						width="30"
 						height="18"
@@ -3995,7 +3995,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="624"
+						x="730"
 						y="0"
 						width="40"
 						height="18"
@@ -4014,9 +4014,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="784"
+						x="932"
 						y="0"
-						width="30"
+						width="38"
 						height="18"
 						key="textField-216"
 						stretchType="RelativeToBandHeight">
@@ -4035,9 +4035,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="744"
+						x="871"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-226"
 						stretchType="RelativeToBandHeight">
@@ -4056,7 +4056,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="664"
+						x="770"
 						y="0"
 						width="40"
 						height="18"
@@ -4075,7 +4075,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="594"
+						x="700"
 						y="0"
 						width="30"
 						height="18"
@@ -4094,7 +4094,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="564"
+						x="670"
 						y="0"
 						width="30"
 						height="18"
@@ -4113,7 +4113,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="534"
+						x="640"
 						y="0"
 						width="30"
 						height="18"
@@ -4132,9 +4132,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="489"
+						x="579"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-276"
 						stretchType="RelativeToBandHeight"/>
@@ -4151,9 +4151,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="444"
+						x="518"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-286"
 						stretchType="RelativeToBandHeight"/>
@@ -4170,9 +4170,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
-						x="399"
+						x="447"
 						y="0"
-						width="45"
+						width="71"
 						height="18"
 						key="textField-296"
 						stretchType="RelativeToBandHeight"/>
@@ -4356,7 +4356,7 @@
 						style="Level8_Line"
 						x="224"
 						y="0"
-						width="55"
+						width="71"
 						height="18"
 						key="textField-183"
 						stretchType="RelativeToBandHeight"/>
@@ -4373,9 +4373,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="279"
+						x="295"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-186"
 						stretchType="RelativeToBandHeight"/>
@@ -4392,9 +4392,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="324"
+						x="356"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-187"
 						stretchType="RelativeToBandHeight"/>
@@ -4411,7 +4411,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="369"
+						x="417"
 						y="0"
 						width="30"
 						height="18"
@@ -4430,7 +4430,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="624"
+						x="730"
 						y="0"
 						width="40"
 						height="18"
@@ -4449,9 +4449,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="704"
+						x="810"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-184"
 						stretchType="RelativeToBandHeight">
@@ -4470,9 +4470,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="784"
+						x="932"
 						y="0"
-						width="30"
+						width="38"
 						height="18"
 						key="textField-217"
 						stretchType="RelativeToBandHeight">
@@ -4491,9 +4491,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="744"
+						x="871"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-227"
 						stretchType="RelativeToBandHeight">
@@ -4512,7 +4512,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="664"
+						x="770"
 						y="0"
 						width="40"
 						height="18"
@@ -4531,7 +4531,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="594"
+						x="700"
 						y="0"
 						width="30"
 						height="18"
@@ -4550,7 +4550,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="564"
+						x="670"
 						y="0"
 						width="30"
 						height="18"
@@ -4569,7 +4569,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="534"
+						x="640"
 						y="0"
 						width="30"
 						height="18"
@@ -4588,9 +4588,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="489"
+						x="579"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-277"
 						stretchType="RelativeToBandHeight"/>
@@ -4607,9 +4607,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="444"
+						x="518"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-287"
 						stretchType="RelativeToBandHeight"/>
@@ -4626,9 +4626,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="399"
+						x="447"
 						y="0"
-						width="45"
+						width="71"
 						height="18"
 						key="textField-297"
 						stretchType="RelativeToBandHeight"/>
@@ -4831,7 +4831,7 @@
 						style="Level9_Line"
 						x="224"
 						y="0"
-						width="55"
+						width="71"
 						height="18"
 						key="textField-190"
 						stretchType="RelativeToBandHeight"/>
@@ -4848,9 +4848,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="279"
+						x="295"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-191"
 						stretchType="RelativeToBandHeight"/>
@@ -4867,9 +4867,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="324"
+						x="356"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-192"
 						stretchType="RelativeToBandHeight"/>
@@ -4886,7 +4886,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="369"
+						x="417"
 						y="0"
 						width="30"
 						height="18"
@@ -4905,7 +4905,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="624"
+						x="730"
 						y="0"
 						width="40"
 						height="18"
@@ -4924,9 +4924,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="704"
+						x="810"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-196"
 						stretchType="RelativeToBandHeight">
@@ -4945,9 +4945,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="784"
+						x="932"
 						y="0"
-						width="30"
+						width="38"
 						height="18"
 						key="textField-218"
 						stretchType="RelativeToBandHeight">
@@ -4966,9 +4966,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="744"
+						x="871"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-228"
 						stretchType="RelativeToBandHeight">
@@ -4987,7 +4987,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="664"
+						x="770"
 						y="0"
 						width="40"
 						height="18"
@@ -5006,7 +5006,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="594"
+						x="700"
 						y="0"
 						width="30"
 						height="18"
@@ -5025,7 +5025,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="564"
+						x="670"
 						y="0"
 						width="30"
 						height="18"
@@ -5044,7 +5044,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="534"
+						x="640"
 						y="0"
 						width="30"
 						height="18"
@@ -5063,9 +5063,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="489"
+						x="579"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-278"
 						stretchType="RelativeToBandHeight"/>
@@ -5082,9 +5082,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="444"
+						x="518"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-288"
 						stretchType="RelativeToBandHeight"/>
@@ -5101,9 +5101,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
-						x="399"
+						x="447"
 						y="0"
-						width="45"
+						width="71"
 						height="18"
 						key="textField-298"
 						stretchType="RelativeToBandHeight"/>
@@ -5325,7 +5325,7 @@
 						style="Level10_Line"
 						x="224"
 						y="0"
-						width="55"
+						width="71"
 						height="18"
 						key="textField-197"
 						stretchType="RelativeToBandHeight"/>
@@ -5342,9 +5342,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="279"
+						x="295"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-198"
 						stretchType="RelativeToBandHeight"/>
@@ -5361,9 +5361,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="324"
+						x="356"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-199"
 						stretchType="RelativeToBandHeight"/>
@@ -5380,7 +5380,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="369"
+						x="417"
 						y="0"
 						width="30"
 						height="18"
@@ -5399,7 +5399,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="624"
+						x="730"
 						y="0"
 						width="40"
 						height="18"
@@ -5418,9 +5418,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="704"
+						x="810"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-202"
 						stretchType="RelativeToBandHeight">
@@ -5439,9 +5439,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="784"
+						x="932"
 						y="0"
-						width="30"
+						width="38"
 						height="18"
 						key="textField-219"
 						stretchType="RelativeToBandHeight">
@@ -5460,9 +5460,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="744"
+						x="871"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="textField-229"
 						stretchType="RelativeToBandHeight">
@@ -5481,7 +5481,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="664"
+						x="700"
 						y="0"
 						width="40"
 						height="18"
@@ -5500,7 +5500,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="594"
+						x="700"
 						y="0"
 						width="30"
 						height="18"
@@ -5519,7 +5519,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="564"
+						x="670"
 						y="0"
 						width="30"
 						height="18"
@@ -5538,7 +5538,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="534"
+						x="640"
 						y="0"
 						width="30"
 						height="18"
@@ -5557,9 +5557,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="489"
+						x="579"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-279"
 						stretchType="RelativeToBandHeight"/>
@@ -5576,9 +5576,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="444"
+						x="518"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="textField-289"
 						stretchType="RelativeToBandHeight"/>
@@ -5595,9 +5595,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level10_Line"
-						x="399"
+						x="447"
 						y="0"
-						width="45"
+						width="71"
 						height="18"
 						key="textField-299"
 						stretchType="RelativeToBandHeight"/>
@@ -5629,7 +5629,7 @@
 						mode="Opaque"
 						x="0"
 						y="85"
-						width="814"
+						width="970"
 						height="18"
 						backcolor="#5D5D5D"
 						key="frame-1"
@@ -5753,7 +5753,7 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="369"
+						x="420"
 						y="0"
 						width="30"
 						height="18"
@@ -5774,9 +5774,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="704"
+						x="816"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="staticText-10"
 						positionType="Float"/>
@@ -5795,7 +5795,7 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="624"
+						x="736"
 						y="0"
 						width="40"
 						height="18"
@@ -5816,9 +5816,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="324"
+						x="359"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="staticText-12"
 						positionType="Float"/>
@@ -5837,9 +5837,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="279"
+						x="298"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="staticText-13"
 						positionType="Float"/>
@@ -5860,7 +5860,7 @@
 						mode="Opaque"
 						x="224"
 						y="0"
-						width="55"
+						width="74"
 						height="18"
 						key="staticText-14"
 						positionType="Float"/>
@@ -5989,9 +5989,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="399"
+						x="450"
 						y="0"
-						width="45"
+						width="74"
 						height="18"
 						key="staticText-15"
 						positionType="Float"/>
@@ -6010,9 +6010,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="444"
+						x="524"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="staticText-16"
 						positionType="Float"/>
@@ -6031,9 +6031,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="489"
+						x="585"
 						y="0"
-						width="45"
+						width="61"
 						height="18"
 						key="staticText-17"
 						positionType="Float"/>
@@ -6052,7 +6052,7 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="534"
+						x="646"
 						y="0"
 						width="30"
 						height="18"
@@ -6073,7 +6073,7 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="564"
+						x="676"
 						y="0"
 						width="30"
 						height="18"
@@ -6094,7 +6094,7 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="594"
+						x="706"
 						y="0"
 						width="30"
 						height="18"
@@ -6115,7 +6115,7 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="664"
+						x="776"
 						y="0"
 						width="40"
 						height="18"
@@ -6136,9 +6136,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="784"
+						x="938"
 						y="0"
-						width="30"
+						width="32"
 						height="18"
 						key="staticText-22"
 						positionType="Float"/>
@@ -6157,9 +6157,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="744"
+						x="877"
 						y="0"
-						width="40"
+						width="61"
 						height="18"
 						key="staticText-23"
 						positionType="Float"/>
@@ -6199,7 +6199,7 @@
 						style="Report_Title"
 						x="0"
 						y="0"
-						width="814"
+						width="970"
 						height="26"
 						key="textField"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -6218,7 +6218,7 @@
 						style="Report_Subtitle"
 						x="0"
 						y="31"
-						width="814"
+						width="970"
 						height="18"
 						key="textField"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -6272,7 +6272,7 @@
 					<reportElement
 						x="0"
 						y="26"
-						width="814"
+						width="970"
 						height="0"
 						key="line-1"/>
 					<graphicElement stretchType="NoStretch"/>
@@ -6281,7 +6281,7 @@
 					<reportElement
 						x="0"
 						y="49"
-						width="814"
+						width="970"
 						height="0"
 						key="line-2"/>
 					<graphicElement stretchType="NoStretch"/>
@@ -6384,7 +6384,7 @@
 					<reportElement
 						x="0"
 						y="2"
-						width="814"
+						width="970"
 						height="0"
 						key="line-4"/>
 					<graphicElement stretchType="NoStretch"/>
