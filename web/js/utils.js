@@ -300,9 +300,13 @@ function checkForChanges(f) {
 			}
 		}
 		else {
-			form = top.appFrame.document.forms[0];
+			form = top.appFrame.document.forms[0];			
 		}
-	}	
+	}
+	
+	if(typeof form == 'undefined') {
+		return true;
+	}
 	
 	var autosave = null;
 	if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
@@ -2147,7 +2151,7 @@ function getMenuExpandCollapse_status() {
 }
 
 function menuUserOptions() {
-  openServletNewWindow('DEFAULT', false, '../ad_forms/Role.html', 'ROLE', null, null, '460', '800');
+  openServletNewWindow('DEFAULT', false, '../ad_forms/Role.html', 'ROLE', null, true, '460', '800');
   return true;
 }
 
@@ -2157,7 +2161,7 @@ function menuQuit() {
 }
 
 function menuAlerts() {
-  openLink('../ad_forms/AlertManagement.html', 'appFrame');
+  submitCommandForm('DEFAULT', true, getForm(), '../ad_forms/AlertManagement.html', 'appFrame', false, true);
   return true;
 }
 
