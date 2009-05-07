@@ -132,7 +132,9 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
 
     if (strChanged.equals("inpmProductId")) {
       resultado
-          .append("new Array(\"inpcUomId\", " + (strUOM.equals("") ? "\"\"" : strUOM) + "),\n");
+          .append("new Array(\"inpcUomId\", "
+          + (strUOM.equals("") ? "\"\"" : "\"" + strUOM + "\"")
+          + "),\n");
       if (strAttribute.startsWith("\""))
         strAttribute = strAttribute.substring(1, strAttribute.length() - 1);
       resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strAttribute + "\"),\n");
