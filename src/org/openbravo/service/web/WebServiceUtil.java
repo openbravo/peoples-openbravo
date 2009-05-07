@@ -21,6 +21,7 @@ package org.openbravo.service.web;
 
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.sql.BatchUpdateException;
 import java.util.List;
 
 import javax.xml.transform.Transformer;
@@ -71,8 +72,17 @@ public class WebServiceUtil implements OBSingleton {
     final StringBuilder sb = new StringBuilder(t.getMessage());
 
     // prevent infinite cycling
-    while (x.getCause() != null && x.getCause() != t) {
-      x = x.getCause();
+    while (x.getCause() != null
+        || (x instanceof BatchUpdateException && ((BatchUpdateException) x).getNextException() != null)) {
+      final Throwable prevX = x;
+      if (x instanceof BatchUpdateException) {
+        x = ((BatchUpdateException) x).getNextException();
+      } else {
+        x = x.getCause();
+      }
+      if (x == prevX) {
+        break;
+      }
       sb.append("\nCaused by: " + x.getMessage());
     }
 
