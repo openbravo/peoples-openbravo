@@ -88,6 +88,7 @@ function onloadFunctions(){
 	    	showJSMessage(7);
 	    	return false;
 		}
+		return true;
 	}
 		
 	</script>
@@ -291,7 +292,7 @@ function onloadFunctions(){
                         <button type="button" 
                           id="buttonHTML" 
                           class="ButtonLink" 
-                          onclick="openServletNewWindow('FIND', false, 'ReportStandardCostJR.html', 'ReportStandardCostJR', null, false, '700', '1000', true);return false;" 
+                          onclick="openServletNewWindow('FIND', true, 'ReportStandardCostJR.html', 'ReportStandardCostJR', null, false, '700', '1000', true);return false;" 
                           onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
                           onblur="buttonEvent('onblur', this);" 
                           onkeyup="buttonEvent('onkeyup', this);" 
