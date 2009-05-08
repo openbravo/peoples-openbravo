@@ -208,7 +208,7 @@ public class ExtractModule {
         return !(s.equals(".svn") || s.equals(".hg"));
       }
     });
-    for (int i = 0; i < list.length; i++) {
+    for (int i = 0; list != null && i < list.length; i++) {
       if (list[i].isDirectory()) {
         // add entry for directory
         obx.putNextEntry(new ZipEntry(new ZipEntry(list[i].toString().replace(relativeDir, ""))
