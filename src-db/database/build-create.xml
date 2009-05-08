@@ -249,7 +249,7 @@ create.database: creates the database from scratch.
           VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100,  1, 'Default');
           DELETE FROM AD_SYSTEM_INFO;
           INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_VERSION, OB_INSTALLMODE, CODE_REVISION)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', '${application.version}', 'From Sources', ${code.revision});
+          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', '${application.version}', 'From Sources', '${code.revision}');
           DELETE FROM AD_REGISTRATION_INFO;
           INSERT INTO AD_REGISTRATION_INFO(AD_REGISTRATION_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
           VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0');
@@ -287,7 +287,7 @@ create.database: creates the database from scratch.
           VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
           DELETE FROM AD_SYSTEM_INFO;
           INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_VERSION, OB_INSTALLMODE, CODE_REVISION)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', '${application.version}', 'From Sources', ${code.revision});
+          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', '${application.version}', 'From Sources', '${code.revision}');
           DELETE FROM AD_REGISTRATION_INFO;
           INSERT INTO AD_REGISTRATION_INFO(AD_REGISTRATION_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
           VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0');
