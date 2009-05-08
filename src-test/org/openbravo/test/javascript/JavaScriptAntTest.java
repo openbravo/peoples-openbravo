@@ -20,38 +20,67 @@ package org.openbravo.test.javascript;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 /**
- * @author iperdomo
+ * JavaScript Ant task to check the JavaScript API
  * 
+ * @author iperdomo
  */
 public class JavaScriptAntTest extends Task {
+  private static final Logger log = Logger.getLogger(JavaScriptAntTest.class);
   private JavaScriptAPIChecker jsAPIChecker = null;
   private String apiDetailsPath = null;
   private String jsPath = null;
 
+  /**
+   * Gets the folder path of the .details files
+   * 
+   * @return the string folder
+   */
   public String getApiDetailsPath() {
     return apiDetailsPath;
   }
 
+  /**
+   * Sets the folder path of the .details files
+   * 
+   * @param apiDetailsPath
+   *          a String folder path
+   */
   public void setApiDetailsPath(String apiDetailsPath) {
     this.apiDetailsPath = apiDetailsPath;
   }
 
+  /**
+   * Gets the folder path of the .js files
+   * 
+   * @return
+   */
   public String getJsPath() {
     return jsPath;
   }
 
+  /**
+   * Sets the folder path of the .js files to check
+   * 
+   * @param jsPath
+   *          a String folder path
+   */
   public void setJsPath(String jsPath) {
     this.jsPath = jsPath;
   }
 
+  /**
+   * Overloaded execute Task method. Processes all the files in the js folder and checks them
+   * against the API one. It fails if the resultant API Map is not empty.
+   */
   @Override
   public void execute() throws BuildException {
-    System.out.println("JS API details folder: " + this.apiDetailsPath);
-    System.out.println("JS folder:" + this.jsPath);
+    log.debug("JS API details folder: " + this.apiDetailsPath);
+    log.debug("JS folder:" + this.jsPath);
     jsAPIChecker = new JavaScriptAPIChecker();
     jsAPIChecker.setDetailsFolder(new File(this.apiDetailsPath));
     jsAPIChecker.setJSFolder(new File(this.jsPath));

@@ -34,12 +34,21 @@ import org.mozilla.javascript.Parser;
 import org.mozilla.javascript.ScriptOrFnNode;
 import org.mozilla.javascript.Token;
 
+/**
+ * Parses a JavaScript file and gets a tree representation of it. Used by
+ * {@link JavaScriptAPIChecker}
+ * 
+ * @author iperdomo
+ */
 public class JavaScriptParser {
 
   private File jsFile = null;
   private ScriptOrFnNode nodeTree = null;
   private StringBuffer details = null;
 
+  /**
+   * Class constructor
+   */
   public JavaScriptParser() {
   }
 

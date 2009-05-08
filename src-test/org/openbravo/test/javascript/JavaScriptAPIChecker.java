@@ -31,29 +31,55 @@ import org.mozilla.javascript.Node;
 import org.mozilla.javascript.ScriptOrFnNode;
 import org.mozilla.javascript.Token;
 
+/**
+ * Checks the API of all .js files on a specific folder. This check verifies that your current
+ * JavaScript API matches the ones specified in the .details files
+ * 
+ * @author iperdomo
+ */
 public class JavaScriptAPIChecker {
   private HashMap<String, String> apiMap = new HashMap<String, String>();
   private File apiDetailsFolder = null;
   private File jsFolder = null;
 
+  /**
+   * Sets the folder where the .details file are located
+   * 
+   * @param details
+   */
   public void setDetailsFolder(File details) {
     if (!details.isDirectory()) {
-      throw new RuntimeException("A folder path must be passed as parameter");
+      throw new RuntimeException("A API (.details) folder path must be passed as parameter");
     }
     apiDetailsFolder = details;
   }
 
+  /**
+   * Sets the folder that contains the .js files we want to check
+   * 
+   * @param jsFolder
+   */
   public void setJSFolder(File jsFolder) {
     if (!jsFolder.isDirectory()) {
-      throw new RuntimeException("A folder path must be passed as parameter");
+      throw new RuntimeException("A JavaScript folder path must be passed as parameter");
     }
     this.jsFolder = jsFolder;
   }
 
+  /**
+   * Returns a Map with all the broken entries on the API. This map must be empty after running the
+   * check process
+   * 
+   * @return a Map containing the broken API
+   */
   public HashMap<String, String> getAPIMap() {
     return apiMap;
   }
 
+  /**
+   * Process all the files defined in the js folder, and checks them against the files in the API
+   * (.details) folder
+   */
   public void process() {
     if (apiDetailsFolder == null) {
       throw new RuntimeException("A JavaScript API details folder must be set");
@@ -111,6 +137,15 @@ public class JavaScriptAPIChecker {
     }
   }
 
+  /**
+   * Checks the parsed file against the API Map.
+   * 
+   * @param p
+   *          an instance of {@link JavaScriptParser} to get the tree representation of it
+   * @param jsFileName
+   *          the JavaScript file name that is being checked
+   * @throws IOException
+   */
   private void checkJS(JavaScriptParser p, String jsFileName) throws IOException {
     ScriptOrFnNode nodeTree = p.parse();
     for (Node cursor = nodeTree.getFirstChild(); cursor != null; cursor = cursor.getNext()) {
