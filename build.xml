@@ -103,10 +103,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="force" value="false" />
   <property name="local" value="true" />
 
-  <available file=".svn/entries" property="is.svn" />
-
-
-
+  <available file=".hg" property="is.hg" />
 
 
   <condition property="deploy.mode" value="class">
@@ -206,23 +203,16 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="code.rev" depends="set.code.rev">
-    <condition property="code.revision" value="${svn.entries}" else="0">
-      <isset property="svn.entries" />
+    <condition property="code.revision" value="${hg.id}" else="0">
+      <isset property="hg.id" />
     </condition>
   </target>
 
-  <target name="set.code.rev" if="is.svn">
-    <loadfile property="svn.entries" srcFile=".svn/entries" failonerror="false">
-      <filterchain>
-        <filterreader classname="org.apache.tools.ant.filters.HeadFilter">
-          <param name="skip" value="3" />
-          <param name="lines" value="1" />
-        </filterreader>
-      </filterchain>
-      <filterchain>
-        <filterreader classname="org.apache.tools.ant.filters.StripLineBreaks" />
-      </filterchain>
-    </loadfile>
+  <target name="set.code.rev" if="is.hg">
+    <exec executable="hg" outputproperty="hg.id" failifexecutionfails="false">
+      <arg value="id"/>
+      <arg value="-i"/>
+    </exec>
   </target>
 
   <target name="compile.complete" depends="init">

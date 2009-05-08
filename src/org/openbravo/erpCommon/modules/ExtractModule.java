@@ -174,23 +174,28 @@ public class ExtractModule {
   private void extractPackage(String moduleID, ZipOutputStream obx) throws Exception {
     final ExtractModuleData modules[] = ExtractModuleData.selectContainedModules(pool, moduleID);
     for (int i = 0; i < modules.length; i++) {
-      obx.putNextEntry(new ZipEntry(modules[i].javapackage + "-" + modules[i].version + ".obx"));
-      final ByteArrayOutputStream ba = new ByteArrayOutputStream();
-      final ZipOutputStream moduleObx = new ZipOutputStream(ba);
-      final String moduleDirectory = modulesBaseDir + "/modules/" + modules[i].javapackage;
-      relativeDir = modulesBaseDir + File.separator + "modules" + File.separator;
-      log4j.info("Extracting module: " + modules[i].javapackage);
-      extractModule(modules[i].adModuleId, moduleDirectory, moduleObx);
-      if (modules[i].type.equals("P") || modules[i].type.equals("T")) {
-        // If it is Package or Template it can contain other modules
-        log4j.info(modules[i].javapackage + " is a package/template looking for inner modules...");
-        extractPackage(modules[i].adModuleId, moduleObx);
-      }
-      moduleObx.close();
-      ba.flush();
-      obx.write(ba.toByteArray());
+      if (modules[i].adModuleId.equals("0")) {
+        log4j.warn("Core is included! It is not going to be packaged...");
+      } else {
+        obx.putNextEntry(new ZipEntry(modules[i].javapackage + "-" + modules[i].version + ".obx"));
+        final ByteArrayOutputStream ba = new ByteArrayOutputStream();
+        final ZipOutputStream moduleObx = new ZipOutputStream(ba);
+        final String moduleDirectory = modulesBaseDir + "/modules/" + modules[i].javapackage;
+        relativeDir = modulesBaseDir + File.separator + "modules" + File.separator;
+        log4j.info("Extracting module: " + modules[i].javapackage);
+        extractModule(modules[i].adModuleId, moduleDirectory, moduleObx);
+        if (modules[i].type.equals("P") || modules[i].type.equals("T")) {
+          // If it is Package or Template it can contain other modules
+          log4j
+              .info(modules[i].javapackage + " is a package/template looking for inner modules...");
+          extractPackage(modules[i].adModuleId, moduleObx);
+        }
+        moduleObx.close();
+        ba.flush();
+        obx.write(ba.toByteArray());
 
-      obx.closeEntry();
+        obx.closeEntry();
+      }
     }
   }
 
@@ -208,7 +213,7 @@ public class ExtractModule {
         return !(s.equals(".svn") || s.equals(".hg"));
       }
     });
-    for (int i = 0; i < list.length; i++) {
+    for (int i = 0; list != null && i < list.length; i++) {
       if (list[i].isDirectory()) {
         // add entry for directory
         obx.putNextEntry(new ZipEntry(new ZipEntry(list[i].toString().replace(relativeDir, ""))

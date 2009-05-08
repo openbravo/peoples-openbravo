@@ -103,15 +103,14 @@ public class ModuleValidator implements SystemValidator {
     if (module.getType().equals("T")) {
       boolean found = false;
       for (ModuleDependency md : module.getModuleDependencyList()) {
-        if (md.getDependentModule().getId().equals("0") && md.isIncluded()) {
+        if (md.getDependentModule().getId().equals("0") && !md.isIncluded()) {
           found = true;
           break;
         }
       }
       if (!found) {
         result.addError(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
-            + " is an Industry Template must depend " + "on Core and the dependency relation "
-            + "must have isIncluded set to true");
+            + " is an Industry Template must depend on Core");
       }
     }
   }

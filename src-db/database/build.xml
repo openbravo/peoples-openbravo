@@ -322,7 +322,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
           VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
           DELETE FROM AD_SYSTEM_INFO;
           INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_VERSION, OB_INSTALLMODE, CODE_REVISION)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', '${application.version}', 'From Sources', ${code.revision});
+          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', '${application.version}', 'From Sources', '${code.revision}');
           DELETE FROM AD_REGISTRATION_INFO;
           INSERT INTO AD_REGISTRATION_INFO(AD_REGISTRATION_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
           VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0');
@@ -347,7 +347,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
           VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
           DELETE FROM AD_SYSTEM_INFO;
           INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_VERSION, OB_INSTALLMODE, CODE_REVISION)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', '${application.version}', 'From Sources', ${code.revision});
+          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', '${application.version}', 'From Sources', '${code.revision}');
           DELETE FROM AD_REGISTRATION_INFO;
           INSERT INTO AD_REGISTRATION_INFO(AD_REGISTRATION_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
           VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0');
@@ -371,7 +371,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
           DELETE FROM AD_SYSTEM;
           INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_TRANSACTIONALRANGE, TAD_THEME)
           VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
-        	UPDATE AD_SYSTEM_INFO SET CODE_REVISION=${code.revision};
+        	UPDATE AD_SYSTEM_INFO SET CODE_REVISION='${code.revision}';
         	CALL AD_UPDATE_SEQUENCE();
           CALL AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
@@ -391,7 +391,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
           DELETE FROM AD_SYSTEM;
           INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_TRANSACTIONALRANGE, TAD_THEME)
           VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
-          UPDATE AD_SYSTEM_INFO SET CODE_REVISION=${code.revision};
+          UPDATE AD_SYSTEM_INFO SET CODE_REVISION='${code.revision}';
           SELECT AD_UPDATE_SEQUENCE();
           SELECT AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
