@@ -153,7 +153,7 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
   }
 
   private long getLastModifiedPackage(String pkg, String baseSourcePath, long prevLastModified) {
-    final File file = new File(baseSourcePath, pkg.replaceAll("\\.", File.separator));
+    final File file = new File(baseSourcePath, pkg.replaceAll("\\.", "/"));
     final long lastModified = getLastModifiedRecursive(file);
     if (lastModified > prevLastModified) {
       return lastModified;
