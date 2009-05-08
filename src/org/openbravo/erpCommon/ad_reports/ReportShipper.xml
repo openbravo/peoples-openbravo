@@ -30,10 +30,14 @@
   <PARAMETER id="paramTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
   <PARAMETER id="paramTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramShipper" name="paramShipper" default=""/>
-  <PARAMETER id="parameterBooleano" name="constantDetalle" default="Y"/>
+  <PARAMETER id="parameterBooleano" name="constantDetalle" default="Y"/>       
+  <PARAMETER id="paramCheckSale" name="checkSale" default="sale"/>
+  <PARAMETER id="paramCheckPurchase" name="checkPurchase" default="purchase"/>
+  <PARAMETER id="paramSelectAll" name="checkAll" default="all"/>   
+  <PARAMETER id="fieldSale" name="sale" boolean="checked" withId="paramCheckSale"/>
+  <PARAMETER id="fieldPurchase" name="purchase" boolean="checked" withId="paramCheckPurchase"/>
+  <PARAMETER id="fieldAll" name="all" boolean="checked" withId="paramSelectAll"/>  
   <PARAMETER id="paramDetalle" name="paramDetalle" boolean="checked" withId="parameterBooleano"/>
-  <PARAMETER id="paramSale" name="paramSale" boolean="checked" withId="parameterBooleano"/>
-  <PARAMETER id="paramPurchase" name="paramPurchase" boolean="checked" withId="parameterBooleano"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
   <PARAMETER id="paramParentTabContainer" name="parentTabContainer" default=" "/>

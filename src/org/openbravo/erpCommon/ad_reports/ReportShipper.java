@@ -49,31 +49,32 @@ public class ReportShipper extends HttpSecureAppServlet {
       String strFrom = vars.getGlobalVariable("inpFrom", "ReportShipper|From", "");
       String strTo = vars.getGlobalVariable("inpTo", "ReportShipper|To", "");
       String strShipper = vars.getGlobalVariable("inpShipper", "ReportShipper|Shipper", "");
-      String strSale = vars.getGlobalVariable("inpSale", "ReportShipper|Sale", "N");
-      String strPurchase = vars.getGlobalVariable("inpPurchase", "ReportShipper|Purchase", "N");
+      String strShipperReport = vars.getGlobalVariable("inpShipperReport", "ReportShipper|all",
+          "all");
       String strDetail = vars.getGlobalVariable("inpDetail", "ReportShipper|Detail", "N");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportShipper|currency",
           strUserCurrencyId);
-      printPageDataSheet(request, response, vars, strFrom, strTo, strShipper, strSale, strPurchase,
+      printPageDataSheet(request, response, vars, strFrom, strTo, strShipper, strShipperReport,
           strDetail, strCurrencyId);
+
     } else if (vars.commandIn("FIND")) {
       String strFrom = vars.getRequestGlobalVariable("inpFrom", "ReportShipper|From");
       String strTo = vars.getRequestGlobalVariable("inpTo", "ReportShipper|To");
       String strShipper = vars.getRequestGlobalVariable("inpShipper", "ReportShipper|Shipper");
-      String strSale = vars.getRequestGlobalVariable("inpSale", "ReportShipper|Sale");
-      String strPurchase = vars.getRequestGlobalVariable("inpPurchase", "ReportShipper|Purchase");
+      String strShipperReport = vars.getStringParameter("inpShipperReport");
       String strDetail = vars.getRequestGlobalVariable("inpDetail", "ReportShipper|Detail");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportShipper|currency",
           strUserCurrencyId);
-      printPageDataSheet(request, response, vars, strFrom, strTo, strShipper, strSale, strPurchase,
+      printPageDataSheet(request, response, vars, strFrom, strTo, strShipper, strShipperReport,
           strDetail, strCurrencyId);
+
     } else
       pageError(response);
   }
 
   void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, String strFrom, String strTo, String strShipper, String strSale,
-      String strPurchase, String strDetail, String strCurrencyId) throws IOException,
+      VariablesSecureApp vars, String strFrom, String strTo, String strShipper,
+      String strShipperReport, String strDetail, String strCurrencyId) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -93,12 +94,12 @@ public class ReportShipper extends HttpSecureAppServlet {
         discard).createXmlDocument();
 
     String strIsSOTrx = "";
-    if (strSale.equals("Y") && !strPurchase.equals("Y"))
+    if (strShipperReport.equalsIgnoreCase("sale"))
       strIsSOTrx = "Y";
-    else if (!strSale.equals("Y") && strPurchase.equals("Y"))
+    else if (strShipperReport.equalsIgnoreCase("purchase"))
       strIsSOTrx = "N";
-    else if (!strSale.equals("Y") && !strPurchase.equals("Y"))
-      strIsSOTrx = "D";
+    else if (strShipperReport.equalsIgnoreCase("all"))
+      strIsSOTrx = "";
 
     if (log4j.isDebugEnabled())
       log4j.debug("****data passed from: " + strFrom + " to: " + strTo + " shiper: " + strShipper
@@ -181,8 +182,9 @@ public class ReportShipper extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramTo", strTo);
       xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-      xmlDocument.setParameter("paramSale", strSale);
-      xmlDocument.setParameter("paramPurchase", strPurchase);
+      xmlDocument.setParameter("sale", strShipperReport);
+      xmlDocument.setParameter("purchase", strShipperReport);
+      xmlDocument.setParameter("all", strShipperReport);
       xmlDocument.setParameter("paramDetalle", strDetail);
 
       xmlDocument.setParameter("paramShipper", strShipper);
