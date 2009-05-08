@@ -49,7 +49,10 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       String strWindow = vars.getRequiredStringParameter("inpwindowId");
       String strTab = vars.getRequiredStringParameter("inpTabId");
-      String strKey = vars.getRequiredStringParameter("inpglJournalbatchId");
+      String strWindowId = vars.getStringParameter("inpwindowId");
+      String strKeyColumnId = vars.getStringParameter("inpkeyColumnId");
+      String strKey = vars.getGlobalVariable("inpglJournalbatchId", strWindowId + "|"
+          + strKeyColumnId);
       String strDescription = vars.getStringParameter("inpDescription", "");
       String strDocumentNo = vars.getStringParameter("inpDocumentNo", "");
       printPage(response, vars, strDescription, strDocumentNo, strWindow, strTab, strKey);
