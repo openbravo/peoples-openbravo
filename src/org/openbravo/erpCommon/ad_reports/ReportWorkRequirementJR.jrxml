@@ -361,9 +361,9 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Group_Data_Field"
-						x="101"
+						x="131"
 						y="28"
-						width="103"
+						width="121"
 						height="18"
 						key="textField"/>
 					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -381,7 +381,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 						style="Group_Data_Label"
 						x="10"
 						y="28"
-						width="91"
+						width="121"
 						height="18"
 						key="element-90"/>
 					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -392,12 +392,12 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Initial Date:]]></text>
+				<text><![CDATA[Starting Date:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Group_Data_Field"
-						x="325"
+						x="381"
 						y="28"
 						width="103"
 						height="18"
@@ -415,9 +415,9 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<staticText>
 					<reportElement
 						style="Group_Data_Label"
-						x="243"
+						x="265"
 						y="28"
-						width="82"
+						width="116"
 						height="18"
 						key="element-90"/>
 					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -428,7 +428,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Final Date:]]></text>
+				<text><![CDATA[Ending Date:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
