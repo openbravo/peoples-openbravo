@@ -463,7 +463,7 @@ cWithHoldId varchar2(32);
           C_INVOICE_POST(NULL, v_RInvoice_ID) ;
           -- Reversal Transaction is closed
           UPDATE C_INVOICE
-            SET DocStatus='CL', -- the reversal transaction
+            SET DocStatus='VO', -- the reversal transaction
             DocAction='--',
             Processed='Y'
           WHERE C_Invoice_ID=v_RInvoice_ID;
