@@ -507,7 +507,7 @@
                           v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockDeliveryRuleLine@.' ;
                           v_hasPartial := true;
                           DELETE FROM M_INOUTLINE
-                          WHERE M_INOUT_ID = v_documentno
+                          WHERE M_INOUT_ID = p_InOut_ID
                             AND C_ORDERLINE_ID = ol.C_ORDERLINE_ID;
                         ELSE
                           v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockPartial@' || '.' ;
