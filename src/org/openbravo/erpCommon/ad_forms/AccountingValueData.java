@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -87,7 +87,7 @@ public class AccountingValueData extends MultipartRequest implements FieldProvid
     else if (fieldName.equalsIgnoreCase("ELEMENT_LEVEL") || fieldName.equals("elementLevel"))
       return elementLevel;
     else if (fieldName.equalsIgnoreCase("OPERANDS") || fieldName.equals("operands"))
-      return operands;
+      return operands.trim();
     else if (fieldName.equalsIgnoreCase("BALANCE_SHEET") || fieldName.equals("balanceSheet"))
       return balanceSheet;
     else if (fieldName.equalsIgnoreCase("BALANCE_SHEET_NAME")
