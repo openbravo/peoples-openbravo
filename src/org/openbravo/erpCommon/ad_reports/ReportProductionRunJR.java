@@ -61,7 +61,7 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
           "ReportProductionRunJR|maWorkRequirement", "");
       printPageDataSheet(response, vars, strLaunchDateFrom, strLaunchDateTo, strStartDateFrom,
           strStartDateTo, strEndDateFrom, strEndDateTo, strmaWorkRequirement);
-    } else if (vars.commandIn("FIND")) {
+    } else if (vars.commandIn("PRINT_HTML")) {
       String strLaunchDateFrom = vars.getRequestGlobalVariable("inpLaunchDateFrom",
           "ReportProductionRunJR|LaunchDateFrom");
       String strLaunchDateTo = vars.getRequestGlobalVariable("inpLaunchDateTo",
@@ -77,23 +77,40 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
       String strmaWorkRequirement = vars.getRequestGlobalVariable("inpmaWorkRequirementId",
           "ReportProductionRunJR|maWorkRequirement");
       printPageDataHtml(response, vars, strLaunchDateFrom, strLaunchDateTo, strStartDateFrom,
-          strStartDateTo, strEndDateFrom, strEndDateTo, strmaWorkRequirement);
+          strStartDateTo, strEndDateFrom, strEndDateTo, strmaWorkRequirement, "html");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strLaunchDateFrom = vars.getRequestGlobalVariable("inpLaunchDateFrom",
+          "ReportProductionRunJR|LaunchDateFrom");
+      String strLaunchDateTo = vars.getRequestGlobalVariable("inpLaunchDateTo",
+          "ReportProductionRunJR|LaunchDateTo");
+      String strStartDateFrom = vars.getRequestGlobalVariable("inpStartDateFrom",
+          "ReportProductionRunJR|StartDateFrom");
+      String strStartDateTo = vars.getRequestGlobalVariable("inpStartDateTo",
+          "ReportProductionRunJR|StartDateTo");
+      String strEndDateFrom = vars.getRequestGlobalVariable("inpEndDateFrom",
+          "ReportProductionRunJR|EndDateFrom");
+      String strEndDateTo = vars.getRequestGlobalVariable("inpEndDateTo",
+          "ReportProductionRunJR|EndDateTo");
+      String strmaWorkRequirement = vars.getRequestGlobalVariable("inpmaWorkRequirementId",
+          "ReportProductionRunJR|maWorkRequirement");
+      printPageDataHtml(response, vars, strLaunchDateFrom, strLaunchDateTo, strStartDateFrom,
+          strStartDateTo, strEndDateFrom, strEndDateTo, strmaWorkRequirement, "pdf");
     } else
       pageError(response);
   }
 
   void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strLaunchDateFrom, String strLaunchDateTo, String strStartDateFrom,
-      String strStartDateTo, String strEndDateFrom, String strEndDateTo, String strmaWorkRequirement)
-      throws IOException, ServletException {
+      String strStartDateTo, String strEndDateFrom, String strEndDateTo,
+      String strmaWorkRequirement, String strOutput) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataHtmlJR");
 
     ReportProductionRunData[] data = null;
     data = ReportProductionRunData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-        "#User_Client", "ReportProductionRunJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        "ReportProductionRunJR"), strLaunchDateFrom, strLaunchDateTo, strStartDateFrom,
-        strStartDateTo, strEndDateFrom, strEndDateTo, strmaWorkRequirement);
+        "#User_Client", "ReportProductionRunJR"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportProductionRunJR"), strLaunchDateFrom, strLaunchDateTo,
+        strStartDateFrom, strStartDateTo, strEndDateFrom, strEndDateTo, strmaWorkRequirement);
 
     String strSubtitle = "";
     if (!strLaunchDateFrom.equals(""))
@@ -116,7 +133,6 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
           + Utility.messageBD(this, "WorkRequirement", vars.getLanguage()) + ":"
           + strmaWorkRequirement;
 
-    String strOutput = "html";
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportProductionRun.jrxml";
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
@@ -222,9 +238,9 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
    * data=null; xmlDocument = xmlEngine
    * .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProductionRun"
    * ).createXmlDocument(); data = ReportProductionRunData.select(this, Utility.getContext(this,
-   * vars, "#User_Client", "ReportProductionRun"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-   * "ReportProductionRun"), strLaunchDateFrom, strLaunchDateTo, strStartDateFrom, strStartDateTo,
-   * strEndDateFrom, strEndDateTo, strmaWorkRequirement);
+   * vars, "#User_Client", "ReportProductionRun"), Utility.getContext(this, vars,
+   * "#AccessibleOrgTree", "ReportProductionRun"), strLaunchDateFrom, strLaunchDateTo,
+   * strStartDateFrom, strStartDateTo, strEndDateFrom, strEndDateTo, strmaWorkRequirement);
    * 
    * ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportProductionRun", false, "", "",
    * "",false, "ad_reports", strReplaceWith, false, true); toolbar.prepareSimpleToolBarTemplate();
@@ -256,8 +272,9 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
    * xmlDocument.setParameter("endDateFrom", strEndDateFrom); xmlDocument.setParameter("endDateTo",
    * strEndDateTo); xmlDocument.setData("reportMA_WORKREQUIREMENT", "liststructure",
    * WorkRequirementComboData.select(this, Utility.getContext(this, vars, "#User_Client",
-   * "ReportProductionRun"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductionRun")));
-   * xmlDocument.setData("structure1", data); out.println(xmlDocument.print()); out.close(); }
+   * "ReportProductionRun"), Utility.getContext(this, vars, "#AccessibleOrgTree",
+   * "ReportProductionRun"))); xmlDocument.setData("structure1", data);
+   * out.println(xmlDocument.print()); out.close(); }
    */
   public String getServletInfo() {
     return "Servlet ReportProductionRunJR.";

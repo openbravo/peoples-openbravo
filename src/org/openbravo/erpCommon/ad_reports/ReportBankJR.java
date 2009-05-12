@@ -51,12 +51,18 @@ public class ReportBankJR extends HttpSecureAppServlet {
       String strcbankaccount = vars.getGlobalVariable("inpmProductId",
           "ReportBankJR|C_Bankaccount_ID", "");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcbankaccount);
-    } else if (vars.commandIn("FIND")) {
+    } else if (vars.commandIn("PRINT_HTML")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportBankJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportBankJR|DateTo");
       String strcbankaccount = vars.getRequestGlobalVariable("inpcBankAccountId",
           "ReportBankJR|C_Bankaccount_ID");
-      printPageDataHtml(response, vars, strDateFrom, strDateTo, strcbankaccount);
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strcbankaccount, "html");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportBankJR|DateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportBankJR|DateTo");
+      String strcbankaccount = vars.getRequestGlobalVariable("inpcBankAccountId",
+          "ReportBankJR|C_Bankaccount_ID");
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strcbankaccount, "pdf");
     } else
       pageError(response);
   }
@@ -126,7 +132,7 @@ public class ReportBankJR extends HttpSecureAppServlet {
   }
 
   void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strcbankaccount) throws IOException, ServletException {
+      String strDateTo, String strcbankaccount, String strOutput) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -181,7 +187,7 @@ public class ReportBankJR extends HttpSecureAppServlet {
     parameters.put("USER_ORG", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR"));
     parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client", "ReportBankJR"));
     String strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportBankJR.jrxml";
-    renderJR(vars, response, strReportPath, "html", parameters, data, null);
+    renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
   }
 
   public String getServletInfo() {

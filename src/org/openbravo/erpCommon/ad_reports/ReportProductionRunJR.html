@@ -419,7 +419,7 @@ function validate()
                         <button type="button" 
                           id="buttonHTML" 
                           class="ButtonLink" 
-                          onclick="openServletNewWindow('FIND', false, 'ReportProductionRunJR.html', 'ReportProductionRunJR', null, false, '700', '1000', true);return false;" 
+                          onclick="openServletNewWindow('PRINT_HTML', false, 'ReportProductionRunJR.html', 'ReportProductionRunJR', null, false, '700', '1000', true);return false;" 
                           onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
                           onblur="buttonEvent('onblur', this);" 
                           onkeyup="buttonEvent('onkeyup', this);" 
@@ -433,6 +433,31 @@ function validate()
                             <tr>
                               <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border="0" /></td>
                               <td class="Button_text">HTML Format</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
+                      </div>
+                    </td>
+                    <td class="Button_CenterAlign_ContentCell">
+                      <div>
+                        <button type="button" 
+                          id="buttonHTML" 
+                          class="ButtonLink" 
+                          onclick="openServletNewWindow('PRINT_PDF', false, 'ReportProductionRunJR.html', 'ReportProductionRunJR', null, false, '700', '1000', true);return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='View Results in a New Window'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_pdf" alt="Export Results to PDF Format" title="Export Results to PDF Format" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">PDF Format</td>
                               <td class="Button_right"></td>
                             </tr>
                           </table>

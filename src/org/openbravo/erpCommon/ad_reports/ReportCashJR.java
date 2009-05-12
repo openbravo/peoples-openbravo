@@ -50,17 +50,22 @@ public class ReportCashJR extends HttpSecureAppServlet {
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportCashJR|DateTo", "");
       String strCashbook = vars.getGlobalVariable("inpcCashbookId", "ReportCashJR|Cashbook", "");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strCashbook);
-    } else if (vars.commandIn("FIND")) {
+    } else if (vars.commandIn("PRINT_HTML")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportCashJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportCashJR|DateTo");
       String strCashbook = vars.getRequestGlobalVariable("inpcCashbookId", "ReportCashJR|Cashbook");
-      printPageHtml(response, vars, strDateFrom, strDateTo, strCashbook);
+      printPageHtml(response, vars, strDateFrom, strDateTo, strCashbook, "html");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportCashJR|DateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportCashJR|DateTo");
+      String strCashbook = vars.getRequestGlobalVariable("inpcCashbookId", "ReportCashJR|Cashbook");
+      printPageHtml(response, vars, strDateFrom, strDateTo, strCashbook, "pdf");
     } else
       pageError(response);
   }
 
   void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strCashbook) throws IOException, ServletException {
+      String strDateTo, String strCashbook, String strOutput) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -76,9 +81,10 @@ public class ReportCashJR extends HttpSecureAppServlet {
           + "/org/openbravo/erpCommon/ad_reports/ReportCashJR.jrxml";
       HashMap<String, Object> parameters = new HashMap<String, Object>();
       parameters.put("DATE_FROM", strDateFrom);
-      parameters.put("USER_ORG", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR"));
+      parameters.put("USER_ORG", Utility.getContext(this, vars, "#AccessibleOrgTree",
+          "ReportBankJR"));
       parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client", "ReportBankJR"));
-      renderJR(vars, response, strReportPath, "html", parameters, data, null);
+      renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
     }
 
   }
@@ -138,8 +144,8 @@ public class ReportCashJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_CashBook_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashJR"), Utility.getContext(
-              this, vars, "#User_Client", "ReportCashJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashJR"), Utility
+              .getContext(this, vars, "#User_Client", "ReportCashJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashJR", strCashbook);
       xmlDocument.setData("reportC_CASHBOOK", "liststructure", comboTableData.select(false));
       comboTableData = null;

@@ -84,8 +84,50 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strAmtFrom,
           strAmtTo, strInvoice, strDPCNA, strDPCA, strDPGNA, strDPGA, strDPM, strDPC, strDPB);
       // setHistoryCommand(request, "FIND");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+          "ReportDebtPaymentTrack|DateFrom");
+      String strDateTo = vars
+          .getRequestGlobalVariable("inpDateTo", "ReportDebtPaymentTrack|DateTo");
+      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
+          "ReportDebtPaymentTrack|cBpartnerId");
+      String strAmtFrom = vars.getRequestGlobalVariable("inpAmtFrom",
+          "ReportDebtPaymentTrack|AmtFrom");
+      String strAmtTo = vars.getRequestGlobalVariable("inpAmtTo", "ReportDebtPaymentTrack|AmtTo");
+      String strInvoice = vars.getRequestGlobalVariable("inpInvoice",
+          "ReportDebtPaymentTrack|Invoice");
+      String strDPCNA = vars.getRequestGlobalVariable("inpDPCNA", "ReportDebtPaymentTrack|DPCNA");
+      String strDPCA = vars.getRequestGlobalVariable("inpDPCA", "ReportDebtPaymentTrack|DPCA");
+      String strDPGNA = vars.getRequestGlobalVariable("inpDPGNA", "ReportDebtPaymentTrack|DPGNA");
+      String strDPGA = vars.getRequestGlobalVariable("inpDPGA", "ReportDebtPaymentTrack|DPGA");
+      String strDPM = vars.getRequestGlobalVariable("inpDPM", "ReportDebtPaymentTrack|DPM");
+      String strDPC = vars.getRequestGlobalVariable("inpDPC", "ReportDebtPaymentTrack|DPC");
+      String strDPB = vars.getRequestGlobalVariable("inpDPB", "ReportDebtPaymentTrack|DPB");
+      printPageDataPdf(response, vars, strDateFrom, strDateTo, strcBpartnerId, strAmtFrom,
+          strAmtTo, strInvoice, strDPCNA, strDPCA, strDPGNA, strDPGA, strDPM, strDPC, strDPB);
+      // setHistoryCommand(request, "FIND");
     } else
       pageError(response);
+  }
+
+  void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
+      String strDateTo, String strcBpartnerId, String strAmtFrom, String strAmtTo,
+      String strInvoice, String strDPCNA, String strDPCA, String strDPGNA, String strDPGA,
+      String strDPM, String strDPC, String strDPB) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    response.setContentType("text/html; charset=UTF-8");
+    ReportDebtPaymentTrackData[] data = null;
+
+    String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','" + strDPGNA
+        + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
+    data = ReportDebtPaymentTrackData.select(this, vars.getLanguage(), Utility.getContext(this,
+        vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId, strDateFrom, strDateTo,
+        strAmtFrom, strAmtTo, strDocTypes);
+    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTracker.jrxml";
+    renderJR(vars, response, strReportName, "pdf", null, data, null);
+
   }
 
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,

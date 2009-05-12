@@ -57,7 +57,7 @@ public class ReportWorkRequirementJR extends HttpSecureAppServlet {
           "ReportWorkRequirementJR|MA_ProcessPlan_ID", "");
       printPageDataSheet(response, vars, strStartDateFrom, strStartDateTo, strEndDateFrom,
           strEndDateTo, strmaProcessPlan);
-    } else if (vars.commandIn("FIND")) {
+    } else if (vars.commandIn("PRINT_HTML")) {
       String strStartDateFrom = vars.getRequestGlobalVariable("inpStartDateFrom",
           "ReportWorkRequirementJR|StartDateFrom");
       String strStartDateTo = vars.getRequestGlobalVariable("inpStartDateTo",
@@ -69,22 +69,35 @@ public class ReportWorkRequirementJR extends HttpSecureAppServlet {
       String strmaProcessPlan = vars.getRequestGlobalVariable("inpmaProcessPlanId",
           "ReportWorkRequirementJR|MA_ProcessPlan_ID");
       printPageDataHtml(response, vars, strStartDateFrom, strStartDateTo, strEndDateFrom,
-          strEndDateTo, strmaProcessPlan);
+          strEndDateTo, strmaProcessPlan, "html");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strStartDateFrom = vars.getRequestGlobalVariable("inpStartDateFrom",
+          "ReportWorkRequirementJR|StartDateFrom");
+      String strStartDateTo = vars.getRequestGlobalVariable("inpStartDateTo",
+          "ReportWorkRequirementJR|StartDateTo");
+      String strEndDateFrom = vars.getRequestGlobalVariable("inpEndDateFrom",
+          "ReportWorkRequirementJR|EndDateFrom");
+      String strEndDateTo = vars.getRequestGlobalVariable("inpEndDateTo",
+          "ReportWorkRequirementJR|EndDateTo");
+      String strmaProcessPlan = vars.getRequestGlobalVariable("inpmaProcessPlanId",
+          "ReportWorkRequirementJR|MA_ProcessPlan_ID");
+      printPageDataHtml(response, vars, strStartDateFrom, strStartDateTo, strEndDateFrom,
+          strEndDateTo, strmaProcessPlan, "pdf");
     } else
       pageError(response);
   }
 
   void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strStartDateFrom, String strStartDateTo, String strEndDateFrom, String strEndDateTo,
-      String strmaProcessPlan) throws IOException, ServletException {
+      String strmaProcessPlan, String strOutput) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
     ReportWorkRequirementJRData[] data = null;
     data = ReportWorkRequirementJRData.select(this, vars.getLanguage(), Utility.getContext(this,
         vars, "#User_Client", "ReportWorkRequirementJR"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportWorkRequirementJR"), strStartDateFrom, strStartDateTo, strEndDateFrom,
-        strEndDateTo, strmaProcessPlan);
+        "#AccessibleOrgTree", "ReportWorkRequirementJR"), strStartDateFrom, strStartDateTo,
+        strEndDateFrom, strEndDateTo, strmaProcessPlan);
     for (int i = 0; i < data.length; i++) {
       String strqty = ReportWorkRequirementJRData.inprocess(this, data[i].wrid, data[i].productid);
       if (strqty == null || strqty.equals(""))
@@ -93,7 +106,7 @@ public class ReportWorkRequirementJR extends HttpSecureAppServlet {
     }
     String strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportWorkRequirementJR.jrxml";
     HashMap<String, Object> parameters = new HashMap<String, Object>();
-    renderJR(vars, response, strReportPath, "html", parameters, data, null);
+    renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
   }
 
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,

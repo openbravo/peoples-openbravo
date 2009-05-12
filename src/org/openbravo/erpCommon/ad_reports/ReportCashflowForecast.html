@@ -51,7 +51,20 @@
       <script type="text/javascript">
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
-<script language="JavaScript" type="text/javascript">
+<SCRIPT language="JavaScript" type="text/javascript">
+
+function depurar() {
+    var frm = document.frmMain;
+    seleccionarListCompleto(frm.inpcBPartnerId_IN);
+    if (frm.inpDateFrom.value==null || frm.inpDateFrom.value=="") {
+        setWindowElementFocus(frm.inpDateFrom);
+        mensaje(7);
+        return false;
+    }
+   return true;
+}
+</SCRIPT>      
+<SCRIPT language="JavaScript" type="text/javascript">
 
 function onloadFunctions() {
 }
@@ -279,23 +292,24 @@ function onloadFunctions() {
                     <td class="TitleCell"></td>
                     <td class="Button_CenterAlign_ContentCell">
                       <div>
-                        <button type="button" 
-                          id="buttonHTML" 
-                          class="ButtonLink" 
-                          onclick="submitCommandForm('FIND');return false;" 
-                          onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
-                          onblur="buttonEvent('onblur', this);" 
-                          onkeyup="buttonEvent('onkeyup', this);" 
-                          onkeydown="buttonEvent('onkeydown', this);" 
-                          onkeypress="buttonEvent('onkeypress', this);" 
-                          onmouseup="buttonEvent('onmouseup', this);" 
-                          onmousedown="buttonEvent('onmousedown', this);" 
-                          onmouseover="buttonEvent('onmouseover', this); window.status='View Results in a New Window'; return true;" 
-                          onmouseout="buttonEvent('onmouseout', this);">
-                          <table class="Button">
-                            <tr>
-                              <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border="0" /></td>
-                              <td class="Button_text">HTML Format</td>
+                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND', true, null , null, '_self');return false;" id="buttonHTML">
+                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
+                            <td class="Button_text">HTML Format</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                        </a>
+                      </div>
+                    </TD>
+                    <TD class="Button_LeftAlign_ContentCell">
+                      <div>
+                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('PRINT_PDF', true, 'ReportCashflowForecast.html', 'ReportCashflowForecast', null, false, '700', '1000', true);return false;" id="buttonHTML">
+                        <table class="Button"onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_pdf" alt="Export Results to PDF Format" title="Export Results to PDF Format" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">PDF Format</td>
                               <td class="Button_right"></td>
                             </tr>
                           </table>

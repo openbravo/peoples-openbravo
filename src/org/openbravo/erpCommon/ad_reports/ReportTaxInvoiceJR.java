@@ -61,7 +61,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
       String strDetail = vars.getStringParameter("inpDetalle", "-1");
       String strSales = vars.getStringParameter("inpSales", "S");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales);
-    } else if (vars.commandIn("FIND")) {
+    } else if (vars.commandIn("PRINT_HTML")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportTaxInvoiceJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTaxInvoiceJR|DateTo");
@@ -69,6 +69,16 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
       String strDetail = vars.getStringParameter("inpDetalle");
       String strSales = vars.getStringParameter("inpSales");
       printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "html");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+          "ReportTaxInvoiceJR|DateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTaxInvoiceJR|DateTo");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTaxInvoiceJR|Org");
+      if (strOrg.equals(""))
+        strOrg = "0";
+      String strDetail = vars.getStringParameter("inpDetalle");
+      String strSales = vars.getStringParameter("inpSales");
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "pdf");
     } else if (vars.commandIn("RELATION_XLS")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportTaxInvoiceJR|DateFrom");

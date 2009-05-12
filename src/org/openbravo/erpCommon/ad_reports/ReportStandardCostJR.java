@@ -63,7 +63,7 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportStandardCostJR|currency", Utility.stringBaseCurrencyId(this, vars.getClient()));
       printPageDataSheet(response, vars, strdate, strProcessPlan, strVersion, strCurrencyId);
-    } else if (vars.commandIn("FIND")) {
+    } else if (vars.commandIn("PRINT_HTML")) {
       String strdate = vars.getRequestGlobalVariable("inpDateFrom", "ReportStandardCostJR|date");
       String strProcessPlan = vars.getRequestGlobalVariable("inpmaProcessPlanId",
           "ReportStandardCostJR|ProcessPlanID");
@@ -71,7 +71,16 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
           "ReportStandardCostJR|versionID");
       String strCurrencyId = vars.getRequiredGlobalVariable("inpCurrencyId",
           "ReportStandardCostJR|currency");
-      printPageHtml(response, vars, strdate, strProcessPlan, strVersion, strCurrencyId);
+      printPageHtml(response, vars, strdate, strProcessPlan, strVersion, strCurrencyId, "html");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strdate = vars.getRequestGlobalVariable("inpDateFrom", "ReportStandardCostJR|date");
+      String strProcessPlan = vars.getRequestGlobalVariable("inpmaProcessPlanId",
+          "ReportStandardCostJR|ProcessPlanID");
+      String strVersion = vars.getRequestGlobalVariable("inpmaProcessPlanVersionId",
+          "ReportStandardCostJR|versionID");
+      String strCurrencyId = vars.getRequiredGlobalVariable("inpCurrencyId",
+          "ReportStandardCostJR|currency");
+      printPageHtml(response, vars, strdate, strProcessPlan, strVersion, strCurrencyId, "pdf");
     } else
       pageError(response);
   }
@@ -110,8 +119,9 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesDimensionalAnalyzeJR"),
-          Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
+              "ReportSalesDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportSalesDimensionalAnalyzeJR", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -149,8 +159,8 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
   }
 
   void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdate,
-      String strProcessPlan, String strVersion, String strCurrencyId) throws IOException,
-      ServletException {
+      String strProcessPlan, String strVersion, String strCurrencyId, String strOutput)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     String strLanguage = vars.getLanguage();
@@ -190,7 +200,7 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
       parameters.put("DATETO", date);
     }
     String strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportStandardCostsJR.jrxml";
-    renderJR(vars, response, strReportPath, "html", parameters, null, null);
+    renderJR(vars, response, strReportPath, strOutput, parameters, null, null);
   }
 
   public String getServletInfo() {
