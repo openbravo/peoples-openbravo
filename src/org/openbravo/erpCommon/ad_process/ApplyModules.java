@@ -201,6 +201,9 @@ public class ApplyModules extends HttpSecureAppServlet {
       ant.setLogFileInOBPrintStream(new File(fileName));
       vars.setSessionObject("ApplyModules|Log", ant);
 
+      // do not execute tranlsation process (all entries should be already in the module)
+      ant.setProperty("tr", "no");
+
       final Vector<String> tasks = new Vector<String>();
 
       final String unnappliedModules = getUnnapliedModules();
