@@ -112,7 +112,7 @@ build.war: build a war file in the lib directory.
 
   <target name="trl.clean" if="translation">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="clean ${base.config}/Openbravo.properties" />
+      <arg line="clean '${base.config}/Openbravo.properties'" />
       <classpath refid="project.class.path" />
     </java>
   </target>
@@ -618,7 +618,7 @@ build.war: build a war file in the lib directory.
 
   <target name="compile.translate.modules">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}'/Openbravo.properties ${extension} ${base.modules} '*/src'" />
+      <arg line="'${base.config}/Openbravo.properties' ${extension} '${base.modules}' '*/src'" />
       <classpath refid="project.class.path" />
     </java>
   </target>
@@ -633,7 +633,7 @@ build.war: build a war file in the lib directory.
 
   <target name="compile.translate">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}'/Openbravo.properties ${extension} ${basedir}" />
+      <arg line="'${base.config}/Openbravo.properties' ${extension} '${basedir}'" />
       <classpath refid="project.class.path" />
     </java>
   </target>
