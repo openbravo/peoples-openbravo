@@ -266,9 +266,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       return;
     } catch (final Exception e) {
       // Re-login
-      if (log4j.isDebugEnabled())
-        log4j.debug("HTTPSecureAppServlet.service() - exception caught: " + e.getMessage());
-      log4j.error(e);
+      log4j.error("HTTPSecureAppServlet.service() - exception caught: ", e);
       logout(request, response);
       return;
     }
@@ -338,7 +336,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           bdError(request, response, "AccessTableNoView", vars1.getLanguage());
       }
     } catch (final ServletException ex) {
-      log4j.error("Error captured: " + ex, ex);
+      log4j.error("Error captured: ", ex);
       final VariablesSecureApp vars1 = new VariablesSecureApp(request, false);
       final OBError myError = Utility.translateError(this, vars1, variables.getLanguage(), ex
           .getMessage());
@@ -359,15 +357,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         request.removeAttribute("popupWindow");
         throw e;
       } else {
-        log4j.error("Error captured: " + e);
+        log4j.error("Error captured: ", e);
         if (strPopUp != null && !strPopUp.equals(""))
           bdErrorGeneralPopUp(request, response, "Error", e.toString());
         else
           bdErrorGeneral(request, response, "Error", e.toString());
       }
     } catch (final Exception e) {
-      log4j.error("Error captured: " + e);
-      e.printStackTrace();
+      log4j.error("Error captured: ", e);
       if (strPopUp != null && !strPopUp.equals(""))
         bdErrorGeneralPopUp(request, response, "Error", e.toString());
       else
@@ -401,7 +398,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         return hasLevelAccess(vars, accessLevel)
             && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
     } catch (final Exception e) {
-      log4j.error("Error checking access: " + e.toString());
+      log4j.error("Error checking access: ", e);
       return false;
     }
 
@@ -417,7 +414,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       return hasGeneralAccess(vars, classInfo.type, classInfo.id);
 
     } catch (final Exception e) {
-      log4j.error("Error checking access: " + e.toString());
+      log4j.error("Error checking access: ", e);
       return false;
     }
   }
@@ -891,7 +888,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       vars.setSessionValue("#sourcePath", sourcePath);
     } catch (final IOException e) {
       // catch possible io errors from readLine()
-      log4j.error(e);
+      log4j.error("Error reading properties", e);
     }
   }
 
@@ -930,7 +927,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         }
       }
     } catch (final Exception e) {
-      log4j.error(e.getMessage());
+      log4j.error("error reading number format", e);
     }
     vars.setSessionValue("#AD_ReportNumberFormat", strNumberFormat);
     vars.setSessionValue("#AD_ReportGroupingSeparator", strGroupingSeparator);
@@ -1048,8 +1045,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         throw new ServletException("Output format no supported");
       }
     } catch (final JRException e) {
-      if (log4j.isDebugEnabled())
-        log4j.debug("JR: Error: " + e);
+      log4j.error("JR: Error: ", e);
       throw new ServletException(e.getMessage());
     } catch (IOException ioe) {
       try {
