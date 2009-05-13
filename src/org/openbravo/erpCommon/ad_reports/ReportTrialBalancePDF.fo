@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,7 @@
 				<fo:table-body>
 					<fo:table-row>
 						<fo:table-cell border-bottom-width="0.5pt" border-bottom-style="solid" number-columns-spanned="2">
-							<fo:block font-size="14pt" text-align="center" padding-bottom="4pt" font-weight="bold">REPORT TRIAL BALANCE</fo:block>
+							<fo:block font-size="14pt" text-align="center" padding-bottom="4pt" font-weight="bold">TRIAL BALANCE REPORT</fo:block>
 						</fo:table-cell>
 					</fo:table-row>
 					<fo:table-row>
@@ -40,6 +40,8 @@
 							<fo:block font-size="10pt" text-align="left" padding-top="2pt">
 								<fo:inline font-weight="bold">Enterprise:&#160;&#160;</fo:inline>
 								<fo:inline id="fieldCompanyName">xx</fo:inline>
+                                <fo:inline font-weight="bold">Organization:&#160;&#160;</fo:inline>
+                                <fo:inline id="fieldOrgName">xx</fo:inline>
 							</fo:block>
 						</fo:table-cell>
 						<fo:table-cell>
@@ -55,6 +57,8 @@
 								<fo:inline font-weight="bold">Conditions:&#160;&#160;</fo:inline>
 								<fo:inline>Period:&#160;&#160;</fo:inline>
 								<fo:inline id="fieldPeriod">xx</fo:inline>
+                                <fo:inline>&#160;&#160;Accounting schema:&#160;&#160;</fo:inline>
+                                <fo:inline id="fieldAccountingSchema">xx</fo:inline>
 							</fo:block>
 						</fo:table-cell>
 					</fo:table-row>
@@ -133,7 +137,7 @@
             </fo:table-row>
             <fo:table-row>
               <fo:table-cell number-columns-spanned="2">
-                <fo:block font-weight="bold" text-align="end" end-indent="2pt" padding-top="2pt">CONTINUE ........</fo:block>
+                <fo:block font-weight="bold" text-align="end" end-indent="2pt" padding-top="2pt">ADD AND KEEP GOING...</fo:block>
               </fo:table-cell>
               <fo:table-cell>
                 <fo:block font-weight="bold" text-align="end" end-indent="2pt" padding-top="2pt" id="fieldTotalSaldoInicial"/>
@@ -235,7 +239,7 @@
             </fo:table-row>
             <fo:table-row>
               <fo:table-cell number-columns-spanned="2">
-                <fo:block font-weight="bold" text-align="end" end-indent="2pt" padding-top="2pt">CONTINUE ........</fo:block>
+                <fo:block font-weight="bold" text-align="end" end-indent="2pt" padding-top="2pt">ADD AND KEEP GOING...</fo:block>
               </fo:table-cell>
               <fo:table-cell>
                 <fo:block font-weight="bold" text-align="end" end-indent="2pt" padding-top="2pt" id="fieldTotalSaldoInicial2"/>

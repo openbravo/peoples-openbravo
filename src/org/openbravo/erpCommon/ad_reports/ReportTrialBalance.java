@@ -387,11 +387,14 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_reports/ReportTrialBalancePDF", discard).createXmlDocument();
     xmlDocument.setParameter("companyName", ReportTrialBalanceData.selectCompany(this, vars
         .getClient()));
+    xmlDocument.setParameter("orgName", ReportTrialBalanceData.selectOrgName(this, strOrg));
     xmlDocument.setParameter("date", DateTimeData.today(this));
     xmlDocument.setParameter("period", strDateFrom + " - " + strDateTo);
+    xmlDocument.setParameter("accountingSchema", ReportTrialBalanceData.selectAcctSchemaName(this,
+        strcAcctSchemaId));
     if (strLevel.equals("S"))
-      xmlDocument.setParameter("accounting", "Cuenta inicio: "
-          + ReportTrialBalanceData.selectAccountingName(this, strAccountFrom) + " - Cuenta fin: "
+      xmlDocument.setParameter("accounting", "From Account: "
+          + ReportTrialBalanceData.selectAccountingName(this, strAccountFrom) + " - To Account: "
           + ReportTrialBalanceData.selectAccountingName(this, strAccountTo));
     else
       xmlDocument.setParameter("accounting", "");
