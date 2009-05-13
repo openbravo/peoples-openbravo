@@ -82,7 +82,8 @@ public class BaseWSTest extends BaseTest {
    *          the system check that the returned content contains this expectedContent
    * @param method
    *          POST or PUT
-   * @return
+   * @return the result from the rest request (i.e. the content of the response), most of the time
+   *         an xml string
    */
   protected String doContentRequest(String wsPart, String content, int expectedResponse,
       String expectedContent, String method) {

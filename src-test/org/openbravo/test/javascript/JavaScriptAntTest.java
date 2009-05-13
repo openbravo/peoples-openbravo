@@ -57,7 +57,7 @@ public class JavaScriptAntTest extends Task {
   /**
    * Gets the folder path of the .js files
    * 
-   * @return
+   * @return the folder path of the .js files
    */
   public String getJsPath() {
     return jsPath;
