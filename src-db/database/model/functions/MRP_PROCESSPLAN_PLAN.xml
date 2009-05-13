@@ -41,7 +41,7 @@
   v_Result NUMBER:=1; -- 0=failure
 
   v_Stock NUMBER:= 0;
-  v_AvailableStock NUMBER := 0;
+  v_AvailableStock NUMBER:= 0;
   v_Qty_New NUMBER;
   v_NeededQty_New NUMBER;
   v_PlannedOrderDate_New DATE;
