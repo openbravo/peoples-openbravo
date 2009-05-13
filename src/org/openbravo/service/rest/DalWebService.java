@@ -31,11 +31,7 @@ import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.base.structure.ClientEnabled;
-import org.openbravo.base.structure.OrganizationEnabled;
-import org.openbravo.base.util.Check;
 import org.openbravo.base.util.CheckException;
 import org.openbravo.dal.core.DalMappingGenerator;
 import org.openbravo.dal.core.OBContext;
@@ -46,8 +42,8 @@ import org.openbravo.dal.xml.ModelXMLConverter;
 import org.openbravo.dal.xml.XMLEntityConverter;
 import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.dal.xml.EntityResolver.ResolvingMode;
-import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.model.ad.utility.ReferenceDataStore;
+import org.openbravo.service.db.DataImportService;
+import org.openbravo.service.db.ImportResult;
 import org.openbravo.service.web.InvalidContentException;
 import org.openbravo.service.web.InvalidRequestException;
 import org.openbravo.service.web.ResourceNotFoundException;
@@ -402,59 +398,11 @@ public class DalWebService implements WebService {
   }
 
   protected String doCreateUpdate(XMLEntityConverter xec) {
-    // now save and update
-    // do inserts and updates in opposite order, this is important
-    // so that the objects on which other depend are inserted first
-    final List<BaseOBObject> toInsert = xec.getToInsert();
-    int done = 0;
-    for (int i = toInsert.size() - 1; i > -1; i--) {
-      final BaseOBObject ins = toInsert.get(i);
-      OBDal.getInstance().save(ins);
-      done++;
-    }
-    Check.isTrue(done == toInsert.size(), "Not all objects have been inserted, check for loop: "
-        + done + "/" + toInsert.size());
+    final ImportResult ir = new ImportResult();
 
-    // flush to set the ids in the objects
-    OBDal.getInstance().flush();
-
-    // do the updates the other way around also
-    done = 0;
-    final List<BaseOBObject> toUpdate = xec.getToUpdate();
-    for (int i = toUpdate.size() - 1; i > -1; i--) {
-      final BaseOBObject upd = toUpdate.get(i);
-      OBDal.getInstance().save(upd);
-      done++;
-    }
-    Check.isTrue(done == toUpdate.size(), "Not all objects have been inserted, check for loop: "
-        + done + "/" + toUpdate.size());
-
-    // flush to set the ids in the objects
-    OBDal.getInstance().flush();
-
-    // store the ad_ref_data_loaded
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
-    try {
-      for (final BaseOBObject ins : xec.getToInsert()) {
-        final String originalId = xec.getEntityResolver().getOriginalId(ins);
-        // completely new object, manually added to the xml
-        if (originalId == null) {
-          continue;
-        }
-        final ReferenceDataStore rdl = OBProvider.getInstance().get(ReferenceDataStore.class);
-        if (ins instanceof ClientEnabled) {
-          rdl.setClient(((ClientEnabled) ins).getClient());
-        }
-        if (ins instanceof OrganizationEnabled) {
-          rdl.setOrganization(((OrganizationEnabled) ins).getOrganization());
-        }
-        rdl.setGeneric(originalId);
-        rdl.setSpecific((String) ins.getId());
-        rdl.setTable(OBDal.getInstance().get(Table.class, ins.getEntity().getTableId()));
-        OBDal.getInstance().save(rdl);
-      }
-    } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+    DataImportService.getInstance().saveUpdateConvertedObjects(xec, ir, false, null);
+    if (ir.getErrorMessages() != null) {
+      throw new InvalidContentException(ir.getErrorMessages());
     }
     final String log = (xec.getLogMessages() != null ? xec.getLogMessages() : "")
         + (xec.getLogMessages() != null ? "\n" : "") + "Updated " + xec.getToUpdate().size()

@@ -218,19 +218,32 @@ public class ModelProvider implements OBSingleton {
       setVirtualPropertiesForReferenceId();
 
       buildUniqueConstraints(session, sessionFactoryController);
+
+      final Map<String, Boolean> colMandatories = getColumnMandatories(session,
+          sessionFactoryController);
+
+      // initialize the name and also set the mandatory value on the basis
+      // of the real not-null in the database!
+      for (final Entity e : model) {
+        for (final Property p : e.getProperties()) {
+          p.initializeName();
+          if (p.getColumnName() != null) {
+            final Boolean mandatory = colMandatories.get(createColumnMandatoryKey(e.getTableName(),
+                p.getColumnName()));
+            if (mandatory != null) {
+              // TODO log warning if mandatory is null?
+              p.setMandatory(mandatory);
+            }
+          }
+        }
+
+        // dumpPropertyNames(e);
+      }
     } finally {
       log.debug("Closing session and sessionfactory used during model read");
       tx.commit();
       session.close();
       sessionFactoryController.getSessionFactory().close();
-    }
-
-    // now initialize the names of the properties
-    for (final Entity e : model) {
-      for (final Property p : e.getProperties()) {
-        p.initializeName();
-      }
-      // dumpPropertyNames(e);
     }
     clearLists();
   }
@@ -400,6 +413,29 @@ public class ModelProvider implements OBSingleton {
     }
     allTables.removeAll(toRemove);
     return tables;
+  }
+
+  private Map<String, Boolean> getColumnMandatories(Session session,
+      SessionFactoryController sfController) {
+    final String columnQry = sfController.getColumnMetadataQuery();
+
+    final Map<String, Boolean> result = new HashMap<String, Boolean>();
+    final SQLQuery sqlQuery = session.createSQLQuery(columnQry);
+    for (final Object row : sqlQuery.list()) {
+      final Object[] vals = (Object[]) row;
+      final String key = createColumnMandatoryKey(vals[0], vals[1]);
+      if (vals[2] instanceof String) {
+        // note the string contains Y or N
+        result.put(key, ((String) vals[2]).toUpperCase().equals("N"));
+      } else {
+        result.put(key, (Boolean) vals[2]);
+      }
+    }
+    return result;
+  }
+
+  private String createColumnMandatoryKey(Object tableName, Object columnName) {
+    return tableName.toString().toUpperCase() + ";" + columnName.toString().toUpperCase();
   }
 
   // Build unique constraints

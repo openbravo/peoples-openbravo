@@ -398,129 +398,14 @@ public class DataImportService implements OBSingleton {
         }
       }
 
-      // now save and update
-      // do inserts and updates in opposite order, this is important
-      // so that the objects on which other depend are inserted first
-      final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
-      final List<BaseOBObject> toInsert = xec.getToInsert();
-      int done = 0;
-      final Set<BaseOBObject> inserted = new HashSet<BaseOBObject>();
-      for (int i = toInsert.size() - 1; i > -1; i--) {
-        final BaseOBObject ins = toInsert.get(i);
-        // for (final BaseOBObject ins : toInsert) {
-        insertObjectGraph(ins, inserted);
-        ir.getInsertedObjects().add(ins);
-        done++;
+      // note the ir object is adapted in this call
+      saveUpdateConvertedObjects(xec, ir, isClientImport, module);
 
-        if (ins instanceof TreeNode) {
-          final TreeNode tn = (TreeNode) ins;
-          treeNodes.add(tn);
-        }
-      }
-      Check.isTrue(done == toInsert.size(), "Not all objects have been inserted, check for loop: "
-          + done + "/" + toInsert.size());
-
-      // flush to set the ids in the objects
-      OBDal.getInstance().flush();
-
-      // do the updates the other way around also
-      done = 0;
-      final List<BaseOBObject> toUpdate = xec.getToUpdate();
-      for (int i = toUpdate.size() - 1; i > -1; i--) {
-        final BaseOBObject upd = toUpdate.get(i);
-        OBDal.getInstance().save(upd);
-        ir.getUpdatedObjects().add(upd);
-        done++;
-
-        if (upd instanceof TreeNode) {
-          final TreeNode tn = (TreeNode) upd;
-          treeNodes.add(tn);
-        }
-      }
-      Check.isTrue(done == toUpdate.size(), "Not all objects have been inserted, check for loop: "
-          + done + "/" + toUpdate.size());
-
-      // flush to set the ids in the objects
-      OBDal.getInstance().flush();
-
-      // now walk through the treenodes to repair id's
-
-      // now walk through the treenodes to repair id's
-      for (TreeNode tn : treeNodes) {
-        final Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
-            tn.getTree().getTypeArea());
-        if (entity == null) {
-          if (ir.getWarningMessages() == null) {
-            ir.setWarningMessages("Imported tree nodes belong to a tree with a tree type "
-                + tn.getTree().getTypeArea() + " which is not related to any entity.");
-          } else {
-            ir.setWarningMessages(ir.getWarningMessages()
-                + "\nImported tree nodes belong to a tree with a tree type "
-                + tn.getTree().getTypeArea() + " which is not related to any entity.");
-          }
-          continue;
-        }
-        final BaseOBObject bob = (BaseOBObject) xec.getEntityResolver().resolve(entity.getName(),
-            tn.getNode(), true);
-        if (bob == null) {
-          ir.setErrorMessages("The tree node " + tn + " points to an object with id "
-              + tn.getNode() + " which does not exist in the database or in the import set.");
-          OBDal.getInstance().rollbackAndClose();
-          rolledBack = true;
-          return ir;
-        }
-        if (!bob.getId().equals(tn.getNode())) {
-          tn.setNode((String) bob.getId());
-        }
-        // and also correct the parent
-        if (tn.getReportSet() != null) {
-          final BaseOBObject parent = (BaseOBObject) xec.getEntityResolver().resolve(
-              entity.getName(), tn.getReportSet(), true);
-          if (parent == null) {
-            ir
-                .setErrorMessages("The tree node " + tn + " points to an object with id "
-                    + tn.getReportSet()
-                    + " which does not exist in the database or in the import set.");
-            OBDal.getInstance().rollbackAndClose();
-            rolledBack = true;
-            return ir;
-          }
-          if (!parent.getId().equals(tn.getReportSet())) {
-            tn.setReportSet((String) parent.getId());
-          }
-        }
-      }
-      OBDal.getInstance().flush();
-
-      // store the ad_ref_data_loaded
-      if (!isClientImport) {
-        final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
-        try {
-          for (final BaseOBObject ins : xec.getToInsert()) {
-            final String originalId = xec.getEntityResolver().getOriginalId(ins);
-            // completely new object, manually added to the xml
-            if (originalId == null) {
-              continue;
-            }
-            final ReferenceDataStore rdl = OBProvider.getInstance().get(ReferenceDataStore.class);
-            if (ins instanceof ClientEnabled) {
-              rdl.setClient(((ClientEnabled) ins).getClient());
-            }
-            if (ins instanceof OrganizationEnabled) {
-              rdl.setOrganization(((OrganizationEnabled) ins).getOrganization());
-            }
-            rdl.setGeneric(originalId);
-            rdl.setSpecific((String) ins.getId());
-            rdl.setTable(OBDal.getInstance().get(Table.class, ins.getEntity().getTableId()));
-            if (module != null) {
-              rdl.setModule(module);
-            }
-            OBDal.getInstance().save(rdl);
-          }
-          OBDal.getInstance().flush();
-        } finally {
-          OBContext.getOBContext().setInAdministratorMode(prevMode);
-        }
+      // did an error occur during the saveUpdate
+      if (ir.hasErrorOccured()) {
+        OBDal.getInstance().rollbackAndClose();
+        rolledBack = true;
+        return ir;
       }
     } catch (final Throwable t) {
       OBDal.getInstance().rollbackAndClose();
@@ -540,6 +425,144 @@ public class DataImportService implements OBSingleton {
     }
 
     return ir;
+  }
+
+  /**
+   * Performs the actual update/insert of objects in the correct order in the database. Also sets
+   * the {@link ReferenceDataStore} if required.
+   * 
+   * @param xec
+   *          the converter containing the to-be-inserted and to-be-updated objects
+   * @param ir
+   *          the ImportResult, warning and error messages are added to this object, also its
+   *          {@link ImportResult#getUpdatedObjects()} and {@link ImportResult#getInsertedObjects()}
+   *          is set
+   * @param isClientImport
+   *          is true if the import is for a client, in that case the {@link ReferenceDataStore}
+   *          data is not set
+   * @param module
+   *          is set if the import is for a module, null is allowed
+   */
+  public void saveUpdateConvertedObjects(XMLEntityConverter xec, ImportResult ir,
+      boolean isClientImport, Module module) {
+    // now save and update
+    // do inserts and updates in opposite order, this is important
+    // so that the objects on which other depend are inserted first
+    final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+    final List<BaseOBObject> toInsert = xec.getToInsert();
+    int done = 0;
+    final Set<BaseOBObject> inserted = new HashSet<BaseOBObject>();
+    for (int i = toInsert.size() - 1; i > -1; i--) {
+      final BaseOBObject ins = toInsert.get(i);
+      // for (final BaseOBObject ins : toInsert) {
+      insertObjectGraph(ins, inserted);
+      ir.getInsertedObjects().add(ins);
+      done++;
+
+      if (ins instanceof TreeNode) {
+        final TreeNode tn = (TreeNode) ins;
+        treeNodes.add(tn);
+      }
+    }
+    Check.isTrue(done == toInsert.size(), "Not all objects have been inserted, check for loop: "
+        + done + "/" + toInsert.size());
+
+    // flush to set the ids in the objects
+    OBDal.getInstance().flush();
+
+    // do the updates the other way around also
+    done = 0;
+    final List<BaseOBObject> toUpdate = xec.getToUpdate();
+    for (int i = toUpdate.size() - 1; i > -1; i--) {
+      final BaseOBObject upd = toUpdate.get(i);
+      OBDal.getInstance().save(upd);
+      ir.getUpdatedObjects().add(upd);
+      done++;
+
+      if (upd instanceof TreeNode) {
+        final TreeNode tn = (TreeNode) upd;
+        treeNodes.add(tn);
+      }
+    }
+    Check.isTrue(done == toUpdate.size(), "Not all objects have been inserted, check for loop: "
+        + done + "/" + toUpdate.size());
+
+    // flush to set the ids in the objects
+    OBDal.getInstance().flush();
+
+    // now walk through the treenodes to repair id's
+
+    // now walk through the treenodes to repair id's
+    for (TreeNode tn : treeNodes) {
+      final Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
+          tn.getTree().getTypeArea());
+      if (entity == null) {
+        if (ir.getWarningMessages() == null) {
+          ir.setWarningMessages("Imported tree nodes belong to a tree with a tree type "
+              + tn.getTree().getTypeArea() + " which is not related to any entity.");
+        } else {
+          ir.setWarningMessages(ir.getWarningMessages()
+              + "\nImported tree nodes belong to a tree with a tree type "
+              + tn.getTree().getTypeArea() + " which is not related to any entity.");
+        }
+        continue;
+      }
+      final BaseOBObject bob = (BaseOBObject) xec.getEntityResolver().resolve(entity.getName(),
+          tn.getNode(), true);
+      if (bob == null) {
+        ir.setErrorMessages("The tree node " + tn + " points to an object with id " + tn.getNode()
+            + " which does not exist in the database or in the import set.");
+        return;
+      }
+      if (!bob.getId().equals(tn.getNode())) {
+        tn.setNode((String) bob.getId());
+      }
+      // and also correct the parent
+      if (tn.getReportSet() != null) {
+        final BaseOBObject parent = (BaseOBObject) xec.getEntityResolver().resolve(
+            entity.getName(), tn.getReportSet(), true);
+        if (parent == null) {
+          ir.setErrorMessages("The tree node " + tn + " points to an object with id "
+              + tn.getReportSet() + " which does not exist in the database or in the import set.");
+          return;
+        }
+        if (!parent.getId().equals(tn.getReportSet())) {
+          tn.setReportSet((String) parent.getId());
+        }
+      }
+    }
+    OBDal.getInstance().flush();
+
+    // store the ad_ref_data_loaded
+    if (!isClientImport) {
+      final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+      try {
+        for (final BaseOBObject ins : xec.getToInsert()) {
+          final String originalId = xec.getEntityResolver().getOriginalId(ins);
+          // completely new object, manually added to the xml
+          if (originalId == null) {
+            continue;
+          }
+          final ReferenceDataStore rdl = OBProvider.getInstance().get(ReferenceDataStore.class);
+          if (ins instanceof ClientEnabled) {
+            rdl.setClient(((ClientEnabled) ins).getClient());
+          }
+          if (ins instanceof OrganizationEnabled) {
+            rdl.setOrganization(((OrganizationEnabled) ins).getOrganization());
+          }
+          rdl.setGeneric(originalId);
+          rdl.setSpecific((String) ins.getId());
+          rdl.setTable(OBDal.getInstance().get(Table.class, ins.getEntity().getTableId()));
+          if (module != null) {
+            rdl.setModule(module);
+          }
+          OBDal.getInstance().save(rdl);
+        }
+        OBDal.getInstance().flush();
+      } finally {
+        OBContext.getOBContext().setInAdministratorMode(prevMode);
+      }
+    }
   }
 
   // insert an object and all its many-to-one dependencies
