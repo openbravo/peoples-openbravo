@@ -134,15 +134,15 @@ dojo.fx = {
 	});
 	d.extend(_chain, _baseObj);
 
-	dojo.fx.chain = function(/*dojo._Animation[]*/ animations){
-		// summary: Chain a list of dojo._Animation s to run in sequence
+	dojo.fx.chain = function(/*dojo.Animation[]*/ animations){
+		// summary: Chain a list of dojo.Animation s to run in sequence
 		// example:
 		//	|	dojo.fx.chain([
 		//	|		dojo.fadeIn({ node:node }),
 		//	|		dojo.fadeOut({ node:otherNode })
 		//	|	]).play();
 		//
-		return new _chain(animations) // dojo._Animation
+		return new _chain(animations) // dojo.Animation
 	};
 
 	var _combine = function(animations){
@@ -158,7 +158,7 @@ dojo.fx = {
 			this._connects.push(d.connect(a, "onEnd", this, "_onEnd"));
 		}, this);
 		
-		this._pseudoAnimation = new d._Animation({curve: [0, 1], duration: this.duration});
+		this._pseudoAnimation = new d.Animation({curve: [0, 1], duration: this.duration});
 		var self = this;
 		d.forEach(["beforeBegin", "onBegin", "onPlay", "onAnimate", "onPause", "onStop"], 
 			function(evt){
@@ -217,12 +217,12 @@ dojo.fx = {
 	});
 	d.extend(_combine, _baseObj);
 
-	dojo.fx.combine = function(/*dojo._Animation[]*/ animations){
-		// summary: Combine an array of `dojo._Animation`s to run in parallel
+	dojo.fx.combine = function(/*dojo.Animation[]*/ animations){
+		// summary: Combine an array of `dojo.Animation`s to run in parallel
 		//
 		// description:
-		//		Combine an array of `dojo._Animation`s to run in parallel, 
-		//		providing a new `dojo._Animation` instance encompasing each
+		//		Combine an array of `dojo.Animation`s to run in parallel, 
+		//		providing a new `dojo.Animation` instance encompasing each
 		//		animation, firing standard animation events.
 		//
 		// example:
@@ -242,7 +242,7 @@ dojo.fx = {
 		//	|	});
 		//	|	anim.play(); // play the animation
 		//
-		return new _combine(animations); // dojo._Animation
+		return new _combine(animations); // dojo.Animation
 	};
 
 	dojo.fx.wipeIn = function(/*Object*/ args){
@@ -285,7 +285,7 @@ dojo.fx = {
 			s.overflow = o;
 		});
 
-		return anim; // dojo._Animation
+		return anim; // dojo.Animation
 	}
 
 	dojo.fx.wipeOut = function(/*Object*/ args){
@@ -313,7 +313,7 @@ dojo.fx = {
 			s.display = "none";
 		});
 
-		return anim; // dojo._Animation
+		return anim; // dojo.Animation
 	}
 
 	dojo.fx.slideTo = function(/*Object?*/ args){
@@ -322,7 +322,7 @@ dojo.fx = {
 		//		defined in args Object from its current position to
 		//		the position defined by (args.left, args.top).
 		// example:
-		//	|	dojo.fx.slideTo({ node: node, left:"40", top:"50", unit:"px" }).play()
+		//	|	dojo.fx.slideTo({ node: node, left:"40", top:"50", units:"px" }).play()
 
 		var node = args.node = d.byId(args.node), 
 			top = null, left = null;
@@ -353,7 +353,7 @@ dojo.fx = {
 		}, args));
 		d.connect(anim, "beforeBegin", anim, init);
 
-		return anim; // dojo._Animation
+		return anim; // dojo.Animation
 	}
 
 })();

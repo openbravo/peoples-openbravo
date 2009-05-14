@@ -5,18 +5,18 @@
 */
 
 
-if(!dojo._hasResource["dijit._tree.dndContainer"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dijit._tree.dndContainer"] = true;
-dojo.provide("dijit._tree.dndContainer");
+if(!dojo._hasResource["dijit.tree._dndContainer"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dijit.tree._dndContainer"] = true;
+dojo.provide("dijit.tree._dndContainer");
 dojo.require("dojo.dnd.common");
 dojo.require("dojo.dnd.Container");
 
-dojo.declare("dijit._tree.dndContainer",
+dojo.declare("dijit.tree._dndContainer",
 	null, 
 	{
 
 		// summary:
-		//		This is a base class for `dijit._tree.dndSelector`, and isn't meant to be used directly.
+		//		This is a base class for `dijit.tree._dndSelector`, and isn't meant to be used directly.
 		//		It's modeled after `dojo.dnd.Container`.
 		// tags:
 		//		protected
@@ -26,7 +26,7 @@ dojo.declare("dijit._tree.dndContainer",
 			//		A constructor of the Container
 			// tree: Node
 			//		Node or node's id to build the container on
-			// params: dijit._tree.__SourceArgs
+			// params: dijit.tree.__SourceArgs
 			//		A dict of parameters, which gets mixed into the object
 			// tags:
 			//		private
@@ -42,11 +42,6 @@ dojo.declare("dijit._tree.dndContainer",
 			this.containerState = "";
 			dojo.addClass(this.node, "dojoDndContainer");
 			
-			// mark up children
-			if(!(params && params._skipStartup)){
-				this.startup();
-			}
-
 			// set up events
 			this.events = [
 			    // container level events
@@ -63,19 +58,14 @@ dojo.declare("dijit._tree.dndContainer",
 			];
 		},
 
-
-		// abstract access to the map
 		getItem: function(/*String*/ key){
 			// summary:
-			//		Returns a data item by its key (id)
+			//		Returns a data item by it's key (id).
+			//		Called by dojo.dnd.Source.checkAcceptance()
 			// tags:
-			//		private
+			//		protected
 
-			// TODO: this appears to be unused.   remove.
-
-			//console.log("Container getItem()", arguments,this.map, this.map[key], this.selection[key]);
 			return this.selection[key];
-			//return this.map[key];	// Object
 		},
 
 		destroy: function(){

@@ -282,6 +282,7 @@ dojo.declare(
 		dijit.setWaiState(this.focusNode, "valuemax", this.maximum);
 
 		this.inherited(arguments);
+		this._layoutHackIE7();
 	},
 
 	destroy: function(){

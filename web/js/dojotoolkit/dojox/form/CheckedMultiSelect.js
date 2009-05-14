@@ -194,6 +194,7 @@ dojo.declare("dojox.form.CheckedMultiSelect", dojox.form._FormSelectWidget, {
 		dojo.forEach(this._getChildren(), function(child){
 			child.destroyRecursive();
 		});
+		this.inherited(arguments);
 	}
 });
 

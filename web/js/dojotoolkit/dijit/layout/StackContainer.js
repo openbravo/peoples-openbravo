@@ -40,16 +40,10 @@ dojo.declare(
 	
 	baseClass: "dijitStackContainer",
 
-	// _started: Boolean
-	//		startup() has completed.
-	//	TODO: comment this section out, it's just needed for documentation.
-	//	Plus, move it to _Widget
-	_started: false,
-
 /*=====
-	// selectedChildWidget: Widget
-	//		References the currently selected child widget, if any
-	//
+	// selectedChildWidget: [readonly] dijit._Widget
+	//		References the currently selected child widget, if any.
+	//		Adjust selected child with selectChild() method.
 	selectedChildWidget: null,
 =====*/
 
@@ -113,8 +107,6 @@ dojo.declare(
 		// remove the title attribute so it doesn't show up when i hover
 		// over a node
 		child.domNode.title = "";
-
-		return child; // dijit._Widget		(TODO: remove this, return code is unused)
 	},
 
 	addChild: function(/*Widget*/ child, /*Integer?*/ insertIndex){
@@ -245,11 +237,7 @@ dojo.declare(
 		dojo.removeClass(page.domNode, "dijitHidden");
 		dojo.addClass(page.domNode, "dijitVisible");
 
-		if(page._onShow){
-			page._onShow(); // trigger load in ContentPane
-		}else if(page.onShow){
-			page.onShow();
-		}
+		page._onShow();
 	},
 
 	_hideChild: function(/*Widget*/ page){
@@ -260,9 +248,7 @@ dojo.declare(
 		dojo.removeClass(page.domNode, "dijitVisible");
 		dojo.addClass(page.domNode, "dijitHidden");
 
-		if(page.onHide){
-			page.onHide();
-		}
+		page.onHide();
 	},
 
 	closeChild: function(/*Widget*/ page){
@@ -293,18 +279,23 @@ dojo.require("dijit.layout.StackController");
 // Since any widget can be specified as a StackContainer child, mix them
 // into the base widget class.  (This is a hack, but it's effective.)
 dojo.extend(dijit._Widget, {
-	// title: String
-	//		Title of this widget.  Used by TabContainer to the name the tab, etc.
-	// TODO: remove this, it's in _Widget already.
-	title: "",
-
 	// selected: Boolean
 	//		Is this child currently selected?
+	//		Can be specified at initialization time, but then to change selected child use `dijit.layout.StackContainer.selectChild`
 	selected: false,
 
 	// closable: Boolean
 	//		True if user can close (destroy) this child, such as (for example) clicking the X on the tab.
-	closable: false,	// true if user can close this tab pane
+	closable: false,
+
+	// iconClass: String
+	//		CSS Class specifying icon to use in tab label etc. associated with this pane.
+	iconClass: "",
+
+	// showTitle: Boolean
+	//		Display title of pane as label in TabContainer/AccordionContainer, rather than just using
+	//		icon specified in iconClass
+	showTitle: true,
 
 	onClose: function(){
 		// summary:

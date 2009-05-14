@@ -57,12 +57,6 @@ dojo.declare("dijit.form._FormWidget", [dijit._Widget, dijit._Templated],
 	//		In markup, this is specified as "disabled='disabled'", or just "disabled".
 	disabled: false,
 
-	// readOnly: Boolean
-	//		Should this widget respond to user input?
-	//		In markup, this is specified as "readOnly".
-	//		Similar to disabled except readOnly form values are submitted.
-	readOnly: false,
-
 	// intermediateChanges: Boolean
 	//		Fires onChange for each value change or only on demand
 	intermediateChanges: false,
@@ -75,7 +69,6 @@ dojo.declare("dijit.form._FormWidget", [dijit._Widget, dijit._Templated],
 	attributeMap: dojo.delegate(dijit._Widget.prototype.attributeMap, {
 		value: "focusNode",
 		disabled: "focusNode",
-		readOnly: "focusNode",
 		id: "focusNode",
 		tabIndex: "focusNode",
 		alt: "focusNode"
@@ -93,17 +86,17 @@ dojo.declare("dijit.form._FormWidget", [dijit._Widget, dijit._Templated],
 		dojo.attr(this.focusNode, 'disabled', value);
 		dijit.setWaiState(this.focusNode, "disabled", value);
 
-				if(value){
-					//reset those, because after the domNode is disabled, we can no longer receive
-					//mouse related events, see #4200
-					this._hovering = false;
-					this._active = false;
-					// remove the tabIndex, especially for FF
-					this.focusNode.removeAttribute('tabIndex');
-				}else{
-					this.focusNode.setAttribute('tabIndex', this.tabIndex);
-				}
-				this._setStateClass();
+		if(value){
+			//reset those, because after the domNode is disabled, we can no longer receive
+			//mouse related events, see #4200
+			this._hovering = false;
+			this._active = false;
+			// remove the tabIndex, especially for FF
+			this.focusNode.removeAttribute('tabIndex');
+		}else{
+			this.focusNode.setAttribute('tabIndex', this.tabIndex);
+		}
+		this._setStateClass();
 	},
 
 	setDisabled: function(/*Boolean*/ disabled){
@@ -271,11 +264,15 @@ dojo.declare("dijit.form._FormWidget", [dijit._Widget, dijit._Templated],
 		//		Compare 2 values (as returned by attr('value') for this widget).
 		// tags:
 		//		protected
-		if((typeof val1 == "number") && (typeof val2 == "number")){
-			return (isNaN(val1) && isNaN(val2))? 0 : (val1-val2);
-		}else if(val1 > val2){ return 1; }
-		else if(val1 < val2){ return -1; }
-		else { return 0; }
+		if(typeof val1 == "number" && typeof val2 == "number"){
+			return (isNaN(val1) && isNaN(val2))? 0 : val1 - val2;
+		}else if(val1 > val2){
+			return 1;
+		}else if(val1 < val2){
+			return -1;
+		}else{
+			return 0;
+		}
 	},
 
 	onChange: function(newValue){
@@ -376,7 +373,24 @@ dojo.declare("dijit.form._FormValueWidget", dijit.form._FormWidget,
 	// so maybe {value: ""} is so the value *doesn't* get copied to focusNode?
 	// Seems like we really want value removed from attributeMap altogether
 	// (although there's no easy way to do that now)
-	attributeMap: dojo.delegate(dijit.form._FormWidget.prototype.attributeMap, { value: "" }),
+
+	// readOnly: Boolean
+	//		Should this widget respond to user input?
+	//		In markup, this is specified as "readOnly".
+	//		Similar to disabled except readOnly form values are submitted.
+	readOnly: false,
+
+	attributeMap: dojo.delegate(dijit.form._FormWidget.prototype.attributeMap, {
+		value: "",
+		readOnly: "focusNode"
+	}),
+
+	_setReadOnlyAttr: function(/*Boolean*/ value){
+		this.readOnly = value;
+		dojo.attr(this.focusNode, 'readOnly', value);
+		dijit.setWaiState(this.focusNode, "readonly", value);
+		this._setStateClass();
+	},
 
 	postCreate: function(){
 		if(dojo.isIE || dojo.isWebKit){ // IE won't stop the event with keypress and Safari won't send an ESCAPE to keypress at all
@@ -400,7 +414,7 @@ dojo.declare("dijit.form._FormValueWidget", dijit.form._FormWidget,
 		this._handleOnChange(newValue, priorityChange);
 	},
 
-	_getValueAttr: function(/*String*/ value){
+	_getValueAttr: function(){
 		// summary:
 		//		Hook so attr('value') works.
 		return this._lastValue;
@@ -434,6 +448,27 @@ dojo.declare("dijit.form._FormValueWidget", dijit.form._FormWidget,
 				te.keyCode = dojo.keys.ESCAPE;
 				te.shiftKey = e.shiftKey;
 				e.target.dispatchEvent(te);
+			}
+		}
+	},
+
+	_layoutHackIE7: function(){
+		// summary:
+		//		Work around table sizing bugs on IE7 by forcing redraw
+
+		if(dojo.isIE == 7){ // fix IE7 layout bug when the widget is scrolled out of sight
+			var domNode = this.domNode;
+			var parent = domNode.parentNode;
+			var pingNode = domNode.firstChild || domNode; // target node most unlikely to have a custom filter
+			var origFilter = pingNode.style.filter; // save custom filter, most likely nothing
+			while(parent && parent.clientHeight == 0){ // search for parents that haven't rendered yet
+				parent._disconnectHandle = this.connect(parent, "onscroll", dojo.hitch(this, function(e){
+					this.disconnect(parent._disconnectHandle); // only call once
+					parent.removeAttribute("_disconnectHandle"); // clean up DOM node
+					pingNode.style.filter = (new Date()).getMilliseconds(); // set to anything that's unique
+					setTimeout(function(){ pingNode.style.filter = origFilter }, 0); // restore custom filter, if any
+				}));
+				parent = parent.parentNode;
 			}
 		}
 	}

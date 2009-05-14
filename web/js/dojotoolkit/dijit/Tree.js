@@ -68,9 +68,6 @@ dojo.declare(
 
 		if(this.isExpandable){
 			dijit.setWaiState(this.labelNode, "expanded", this.isExpanded);
-			if(this == this.tree.rootNode){
-				dijit.setWaitState(this.tree.domNode, "expanded", this.isExpanded);
-			}
 		}		
 	},
 
@@ -443,21 +440,13 @@ dojo.declare(
 
 	templateString:"<div class=\"dijitTreeContainer\" waiRole=\"tree\"\n\tdojoAttachEvent=\"onclick:_onClick,onkeypress:_onKeyPress,ondblclick:_onDblClick\">\n</div>\n",
 
-	// isExpandable: [private deprecated] Boolean
-	//		TODO: this appears to be vestigal, back from when Tree extended TreeNode.  Remove.
-	isExpandable: true,
-
-	// isTree: [private deprecated] Boolean
-	//		TODO: this appears to be vestigal.  Remove.
-	isTree: true,
-
 	// persist: Boolean
 	//		Enables/disables use of cookies for state saving.
 	persist: true,
 	
 	// dndController: [protected] String
 	//		Class name to use as as the dnd controller.  Specifying this class enables DnD.
-	//		Generally you should specify this as "dijit._tree.dndSource".
+	//		Generally you should specify this as "dijit.tree.dndSource".
 	dndController: null,
 
 	// parameters to pull off of the tree and pass on to the dndController as its params
@@ -466,17 +455,17 @@ dojo.declare(
 	//declare the above items so they can be pulled from the tree's markup
 
 	// onDndDrop: [protected] Function
-	//		Parameter to dndController, see `dijit._tree.dndSource.onDndDrop`.
+	//		Parameter to dndController, see `dijit.tree.dndSource.onDndDrop`.
 	//		Generally this doesn't need to be set.
 	onDndDrop: null,
 
 	// itemCreator: [protected] Function
-	//		Parameter to dndController, see `dijit._tree.dndSource.itemCreator`.
+	//		Parameter to dndController, see `dijit.tree.dndSource.itemCreator`.
 	//		Generally this doesn't need to be set.
 	itemCreator: null,
 
 	// onDndCancel: [protected] Function
-	//		Parameter to dndController, see `dijit._tree.dndSource.onDndCancel`.
+	//		Parameter to dndController, see `dijit.tree.dndSource.onDndCancel`.
 	//		Generally this doesn't need to be set.
 	onDndCancel: null,
 
@@ -507,7 +496,7 @@ dojo.declare(
 		// target: DOMNode
 		//		The dijitTreeRoot DOM node inside of the TreeNode that we are dropping on to
 		//		Use dijit.getEnclosingWidget(target) to get the TreeNode.
-		// source: dijit._tree.dndSource
+		// source: dijit.tree.dndSource
 		//		The (set of) nodes we are dropping
 		// position: String
 		//		"over", "before", or "after"
@@ -549,7 +538,7 @@ dojo.declare(
 			this.cookieName = this.id + "SaveStateCookie";
 		}
 
-		// TODO: this.inherited(arguments)
+		this.inherited(arguments)
 	},
 
 	postCreate: function(){

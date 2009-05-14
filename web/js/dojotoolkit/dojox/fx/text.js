@@ -29,7 +29,7 @@ dojox.fx.text._split = function(/*Object*/ args){
 	//		args.text: String - Text to place inside the node (otherwise node.innerHTML is used)
 	//		args.words: Boolean - If true, the text will be split into words rather than characters
 	//		args.pieceAnimation: Function(piece, pieceCoords, nodeCoords, number, numPieces)
-	//			- Returns either the dojo._Animation or an array of dojo._Animation objects for the piece;
+	//			- Returns either the dojo.Animation or an array of dojo.Animation objects for the piece;
 	//			pieceCoords is the result of dojo.coords(piece, true);
 	//			nodeCoords is the result of dojo.coords(args.node, true);
 	//			number is the piece's position in the array of pieces, and numPieces is the array.length
@@ -123,7 +123,7 @@ dojox.fx.text._split = function(/*Object*/ args){
 	if(args.onEnd){
 		dojo.connect(anim, "onEnd", anim, args.onEnd);
 	}
-	return anim; // dojo._Animation
+	return anim; // dojo.Animation
 };
 
 dojox.fx.text.explode = function(/*Object*/ args){
@@ -230,7 +230,7 @@ dojox.fx.text.explode = function(/*Object*/ args){
 	};
 
 	var anim = dojox.fx.text._split(args);
-	return anim; // dojo._Animation
+	return anim; // dojo.Animation
 };
 
 dojox.fx.text.converge = function(/*Object*/ args){
@@ -317,7 +317,7 @@ dojox.fx.text.disintegrate = function(/*Object*/ args){
 	};
 
 	var anim = dojox.fx.text._split(args);
-	return anim; // dojo._Animation
+	return anim; // dojo.Animation
 };
 
 dojox.fx.text.build = function(/*Object*/ args){
@@ -374,7 +374,7 @@ dojox.fx.text.blockFadeOut = function(/*Object*/ args){
 	};
 
 	var anim = dojox.fx.text._split(args);
-	return anim; // dojo._Animation
+	return anim; // dojo.Animation
 };
 
 dojox.fx.text.blockFadeIn = function(/*Object*/ args){
@@ -463,7 +463,7 @@ dojox.fx.text.backspace = function(/*Object*/ args){
 	};
 
 	var anim = dojox.fx.text._split(args);
-	return anim; // dojo._Animation
+	return anim; // dojo.Animation
 };
 
 dojox.fx.text.type = function(/*Object*/ args){

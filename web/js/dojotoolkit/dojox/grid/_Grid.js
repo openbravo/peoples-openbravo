@@ -29,29 +29,6 @@ dojo.require("dojox.grid._Events");
 dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 (function(){
-	var jobs = {
-		cancel: function(inHandle){
-			if(inHandle){
-				clearTimeout(inHandle);
-			}
-		},
-
-		jobs: [],
-
-		job: function(inName, inDelay, inJob){
-			jobs.cancelJob(inName);
-			var job = function(){
-				delete jobs.jobs[inName];
-				inJob();
-			}
-			jobs.jobs[inName] = setTimeout(job, inDelay);
-		},
-
-		cancelJob: function(inName){
-			jobs.cancel(jobs.jobs[inName]);
-		}
-	};
-
 	/*=====
 	dojox.grid.__CellDef = function(){
 		//	name: String?
@@ -318,11 +295,15 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		//  span with class 'dojoxGridNoData' if you want it to be
 		//  styled similar to the loading and error messages
 		noDataMessage: "",
-
+		
 		// private
 		sortInfo: 0,
 		themeable: true,
 		_placeholders: null,
+
+		// _layoutClass: Object
+		//	The class to use for our layout - can be overridden by grid subclasses
+		_layoutClass: dojox.grid._Layout,
 
 		// initialization
 		buildRendering: function(){
@@ -348,7 +329,6 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			dojox.html.metrics.initOnFontResize();
 			this.connect(dojox.html.metrics, "onFontResize", "textSizeChanged");
 			dojox.grid.util.funnelEvents(this.domNode, this, 'doKeyEvent', dojox.grid.util.keyEvents);
-			this.connect(this, "onShow", "renderOnIdle");
 		},
 		
 		postMixInProperties: function(){
@@ -364,8 +344,6 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		},
 		
 		postCreate: function(){
-			// replace stock styleChanged with one that triggers an update
-			this.styleChanged = this._styleChanged;
 			this._placeholders = [];
 			this._setHeaderMenuAttr(this.headerMenu);
 			this._setStructureAttr(this.structure);
@@ -441,34 +419,12 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 				this.invalidated.rowCount : this.rowCount;
 		},
 		
-		styleChanged: function(){
-			this.setStyledClass(this.domNode, '');
-		},
-
-		_styleChanged: function(){
-			this.styleChanged();
-			this.update();
-		},
-
 		textSizeChanged: function(){
-			setTimeout(dojo.hitch(this, "_textSizeChanged"), 1);
-		},
-
-		_textSizeChanged: function(){
-			if(this.domNode){
-				this.views.forEach(function(v){
-					v.content.update();
-				});
-				this.render();
-			}
+			this.render();
 		},
 
 		sizeChange: function(){
-			jobs.job(this.id + 'SizeChange', 50, dojo.hitch(this, "update"));
-		},
-
-		renderOnIdle: function() {
-			setTimeout(dojo.hitch(this, "render"), 1);
+			this.update();
 		},
 
 		createManagers: function(){
@@ -501,13 +457,12 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 
 		createLayout: function(){
 			// summary: Creates a new Grid layout
-			this.layout = new dojox.grid._Layout(this);
+			this.layout = new this._layoutClass(this);
 			this.connect(this.layout, "moveColumn", "onMoveColumn");
 		},
 
 		onMoveColumn: function(){
 			this.render();
-			this._resize();
 		},
 
 		// views
@@ -674,7 +629,13 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		resize: function(changeSize, resultSize){
 			// summary:
 			//		Update the grid's rendering dimensions and resize it
-			this._resize(changeSize, resultSize);
+			
+			// Calling sizeChange calls update() which calls _resize...so let's
+			// save our input values, if any, and use them there when it gets 
+			// called.  This saves us an extra call to _resize(), which can
+			// get kind of heavy.
+			this._pendingChangeSize = changeSize;
+			this._pendingResultSize = resultSize;
 			this.sizeChange();
 		},
 
@@ -692,6 +653,11 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		},
 		
 		_resize: function(changeSize, resultSize){
+			// Restore our pending values, if any
+			changeSize = changeSize || this._pendingChangeSize;
+			resultSize = resultSize || this._pendingResultSize;
+			delete this._pendingChangeSize;
+			delete this._pendingResultSize;
 			// if we have set up everything except the DOM, we cannot resize
 			var pn = this.domNode.parentNode;
 			if(!pn || pn.nodeType != 1 || !this.hasLayout() || pn.style.visibility == "hidden" || pn.style.display == "none"){
@@ -699,7 +665,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			}
 			// useful measurement
 			var padBorder = this._getPadBorder();
-			var hh = 0;
+			var hh = undefined;
 			// grid height
 			if(this._autoHeight){
 				this.domNode.style.height = 'auto';
@@ -708,7 +674,6 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 				var h = hh = this._getHeaderHeight();
 				h += (this.scroller.averageRowHeight * this.autoHeight);
 				this.domNode.style.height = h + "px";
-			}else if(this.flex > 0){
 			}else if(this.domNode.clientHeight <= padBorder.h){
 				if(pn == document.body){
 					this.domNode.style.height = this.defaultHeight;
@@ -730,15 +695,21 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 				var h = dojo._getContentBox(pn).h;
 				dojo.marginBox(this.domNode, { h: Math.max(0, h) });
 			}
+			
+			var hasFlex = dojo.some(this.views.views, function(v){ return v.flexCells; });
 
-			var h = dojo._getContentBox(this.domNode).h;
-			if(h == 0 && !this._autoHeight){
+			if(!this._autoHeight && dojo._getContentBox(this.domNode).h === 0){
 				// We need to hide the header, since the Grid is essentially hidden.
 				this.viewsHeaderNode.style.display = "none";
 			}else{
 				// Otherwise, show the header and give it an appropriate height.
 				this.viewsHeaderNode.style.display = "block";
-				hh = this._getHeaderHeight();
+				if(!hasFlex && hh === undefined){
+					hh = this._getHeaderHeight();
+				}
+			}
+			if(hasFlex){
+				hh = undefined;
 			}
 
 			// NOTE: it is essential that width be applied before height
@@ -764,7 +735,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		adaptHeight: function(inHeaderHeight){
 			// private: measures and normalizes header height, then sets view heights, and then updates scroller
 			// content extent
-			var t = inHeaderHeight || this._getHeaderHeight();
+			var t = inHeaderHeight === undefined ? this._getHeaderHeight() : inHeaderHeight;
 			var h = (this._autoHeight ? -1 : Math.max(this.domNode.clientHeight - t, 0) || 0);
 			this.views.onEach('setSize', [0, h]);
 			this.views.onEach('adaptHeight');
@@ -791,9 +762,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		// startup
 		startup: function(){
 			if(this._started){return;}
-			
 			this.inherited(arguments);
-
 			if(this.autoRender){
 				this.render();
 			}
@@ -843,6 +812,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			// views are position absolute, so they do not inflate the parent
 			if(this._autoHeight){
 				var size = Math.max(this.views.measureContent()) + 'px';
+				
 				this.viewsNode.style.height = size;
 			}
 		},
@@ -1008,7 +978,14 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 				this.delayScroll = true;
 				this.scrollTop = inTop;
 				this.views.setScrollTop(inTop);
-				jobs.job('dojoxGridScroll', 200, dojo.hitch(this, "finishScrollJob"));
+				if(this._pendingScroll){
+					window.clearTimeout(this._pendingScroll);
+				}
+				var _this = this;
+				this._pendingScroll = window.setTimeout(function(){
+					delete _this._pendingScroll;
+					_this.finishScrollJob();
+				}, 200);
 			}else{
 				this.setScrollTop(inTop);
 			}

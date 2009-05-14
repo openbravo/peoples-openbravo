@@ -44,6 +44,7 @@ dojo.declare("dojox.grid.DataGrid", dojox.grid._Grid, {
 	query: null,
 	queryOptions: null,
 	fetchText: '...',
+	sortFields: null,
 
 /*=====
 	// structure: dojox.grid.__DataViewDef|dojox.grid.__DataViewDef[]|dojox.grid.__DataCellDef[]|Array[dojox.grid.__DataCellDef[]]
@@ -183,6 +184,7 @@ dojo.declare("dojox.grid.DataGrid", dojox.grid._Grid, {
 	},
 
 	_onFetchBegin: function(size, req){
+		if(!this.scroller){ return; }
 		if(this.rowCount != size){
 			if(req.isRender){
 				this.scroller.init(size, this.keepRows, this.rowsPerPage);
@@ -196,6 +198,7 @@ dojo.declare("dojox.grid.DataGrid", dojox.grid._Grid, {
 	},
 
 	_onFetchComplete: function(items, req){
+		if(!this.scroller){ return; }
 		if(items && items.length > 0){
 			//console.log(items);
 			dojo.forEach(items, function(item, idx){
@@ -421,6 +424,9 @@ dojo.declare("dojox.grid.DataGrid", dojox.grid._Grid, {
 	getSortProps: function(){
 		var c = this.getCell(this.getSortIndex());
 		if(!c){
+			if(this.sortFields){
+				return this.sortFields;
+			}
 			return null;
 		}else{
 			var desc = c["sortDesc"];

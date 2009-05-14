@@ -382,6 +382,10 @@ dojo.require("dojo.dnd.Moveable");
 		},
 
 		overLeftResizeArea: function(e){
+			// We are never over a resize area if we are in the process of moving
+			if(dojo.hasClass(dojo.body(), "dojoDndMove")){
+				return false;
+			}
 			//Bugfix for crazy IE problem (#8807).  IE returns position information for the icon and text arrow divs
 			//as if they were still on the left instead of returning the position they were 'float: right' to.
 			//So, the resize check ends up checking the wrong adjacent cell.  This checks to see if the hover was over 
@@ -402,6 +406,10 @@ dojo.require("dojo.dnd.Moveable");
 		},
 
 		overRightResizeArea: function(e){
+			// We are never over a resize area if we are in the process of moving
+			if(dojo.hasClass(dojo.body(), "dojoDndMove")){
+				return false;
+			}
 			//Bugfix for crazy IE problem (#8807).  IE returns position information for the icon and text arrow divs
 			//as if they were still on the left instead of returning the position they were 'float: right' to.
 			//So, the resize check ends up checking the wrong adjacent cell.  This checks to see if the hover was over 
@@ -423,7 +431,7 @@ dojo.require("dojo.dnd.Moveable");
 		domousemove: function(e){
 			//console.log(e.cellIndex, e.cellX, e.cellNode.offsetWidth);
 			if(!this.moveable){
-				var c = (this.overRightResizeArea(e) ? 'e-resize' : (this.overLeftResizeArea(e) ? 'w-resize' : ''));
+				var c = (this.overRightResizeArea(e) ? 'col-resize' : (this.overLeftResizeArea(e) ? 'col-resize' : ''));
 				if(c && !this.canResize(e)){
 					c = 'not-allowed';
 				}
@@ -462,12 +470,26 @@ dojo.require("dojo.dnd.Moveable");
 		},
 
 		// column resizing
-		beginColumnResize: function(e){
-			this.moverDiv = document.createElement("div");
-			dojo.style(this.moverDiv,{position: "absolute", left:0}); // to make DnD work with dir=rtl
-			dojo.body().appendChild(this.moverDiv);
-			var m = this.moveable = new dojo.dnd.Moveable(this.moverDiv);
-
+		colResizeSetup: function(/*Event Object*/e, /*boolean*/ isMouse ){
+			//Set up the drag object for column resizing
+			// Called with mouse event in case of drag and drop,
+			// Also called from keyboard shift-arrow event when focus is on a header
+			var headContentBox = dojo.contentBox(e.sourceView.headerNode);
+			
+			if (isMouse) {  //IE draws line even with no mouse down so separate from keyboard 
+				this.lineDiv = document.createElement('div');
+				
+				var vw = dojo._abs(e.sourceView.headerNode, true);
+				var bodyContentBox = dojo.contentBox(e.sourceView.domNode);
+				dojo.style(this.lineDiv, {
+					top: vw.y + "px",
+					left: e.clientX + "px",
+					height: (bodyContentBox.h + headContentBox.h) + "px"
+				});
+				dojo.addClass(this.lineDiv, "dojoxGridResizeColLine")
+				this.lineDiv._origLeft = e.clientX;
+				dojo.body().appendChild(this.lineDiv);
+			}
 			var spanners = [], nodes = this.tableMap.findOverlappingNodes(e.cellNode);
 			for(var i=0, cell; (cell=nodes[i]); i++){
 				spanners.push({ node: cell, index: this.getCellNodeIndex(cell), width: cell.offsetWidth });
@@ -488,12 +510,21 @@ dojo.require("dojo.dnd.Moveable");
 				node: e.cellNode,
 				index: e.cellIndex,
 				w: dojo.contentBox(e.cellNode).w,
-				vw: dojo.contentBox(view.headerNode).w,
+				vw: headContentBox.w,
 				table: table,
 				tw: dojo.contentBox(table).w,
 				spanners: spanners,
 				followers: followers
 			};
+			return drag;
+		},
+		beginColumnResize: function(e){
+			this.moverDiv = document.createElement("div");
+			dojo.style(this.moverDiv,{position: "absolute", left:0}); // to make DnD work with dir=rtl
+			dojo.body().appendChild(this.moverDiv);
+			var m = this.moveable = new dojo.dnd.Moveable(this.moverDiv);
+
+			drag =this.colResizeSetup(e,true);
 
 			m.onMove = dojo.hitch(this, "doResizeColumn", drag);
 
@@ -507,8 +538,6 @@ dojo.require("dojo.dnd.Moveable");
 				this.moveable = null;
 			}));
 
-			view.convertColPctToFixed();
-
 			if(e.cellNode.setCapture){
 				e.cellNode.setCapture();
 			}
@@ -516,45 +545,75 @@ dojo.require("dojo.dnd.Moveable");
 		},
 
 		doResizeColumn: function(inDrag, mover, leftTop){
-			var isLtr = dojo._isBodyLtr();
-			var deltaX = isLtr ? leftTop.l : -leftTop.l;
-			var w = inDrag.w + deltaX;
-			var vw = inDrag.vw + deltaX;
-			var tw = inDrag.tw + deltaX;
-			if(w >= this.minColWidth){
-				for(var i=0, s, sw; (s=inDrag.spanners[i]); i++){
-					sw = s.width + deltaX;
-					s.node.style.width = sw + 'px';
-					inDrag.view.setColWidth(s.index, sw);
-					//console.log('setColWidth', '#' + s.index, sw + 'px');
+			var isL2r = dojo._isBodyLtr();
+			var changeX = isL2r ? leftTop.l : -leftTop.l;
+			var data = {
+				isLtr: isL2r,
+				deltaX: changeX,
+				w: inDrag.w + changeX,
+				vw: inDrag.vw + changeX,
+				tw: inDrag.tw + changeX
+			};
+			
+			this.dragRecord = {inDrag: inDrag, mover: mover, leftTop:leftTop};
+			
+			if(data.w >= this.minColWidth){
+				if (mover == null) { // we are using keyboard do immediate resize
+					this.doResizeNow(inDrag, data);
 				}
-				for(var i=0, f, fl; (f=inDrag.followers[i]); i++){
-					fl = f.left + deltaX;
-					f.node.style.left = fl + 'px';
+				else{
+					dojo.style(this.lineDiv, "left", (this.lineDiv._origLeft + data.deltaX) + "px");
 				}
-				inDrag.node.style.width = w + 'px';
-				inDrag.view.setColWidth(inDrag.index, w);
-				inDrag.view.headerNode.style.width = vw + 'px';
-				inDrag.view.setColumnsWidth(tw);
-				if(!isLtr){
-					inDrag.view.headerNode.scrollLeft = inDrag.scrollLeft + deltaX;
-				}
-			}
-			if(inDrag.view.flexCells && !inDrag.view.testFlexCells()){
-				var t = findTable(inDrag.node);
-				t && (t.style.width = '');
 			}
 		},
 
 		endResizeColumn: function(inDrag){
+			if(this.dragRecord){
+				var leftTop = this.dragRecord.leftTop;
+				var isL2r = dojo._isBodyLtr();
+				var changeX = isL2r ? leftTop.l : -leftTop.l;
+				var data = {
+					isLtr: isL2r,
+					deltaX: changeX,
+					w: inDrag.w + changeX,
+					vw: inDrag.vw + changeX,
+					tw: inDrag.tw + changeX
+				};			
+				
+				// Only resize the columns when the drag has finished
+				this.doResizeNow(inDrag, data);
+			}
+			
+			dojo.destroy(this.lineDiv);
+ 			dojo.destroy(this.moverDiv);
 			dojo.destroy(this.moverDiv);
 			delete this.moverDiv;
 			this._skipBogusClicks = true;
-			var conn = dojo.connect(inDrag.view, "update", this, function(){
-				dojo.disconnect(conn);
-				this._skipBogusClicks = false;
-			});
-			setTimeout(dojo.hitch(inDrag.view, "update"), 50);
+			inDrag.view.update();
+			this._skipBogusClicks = false;
+		},
+		doResizeNow: function(inDrag, data){
+			inDrag.view.convertColPctToFixed();
+			if(inDrag.view.flexCells && !inDrag.view.testFlexCells()){
+				var t = findTable(inDrag.node);
+				t && (t.style.width = '');
+			}
+			for(var i=0, s, sw; (s=inDrag.spanners[i]); i++){
+				sw = s.width + data.deltaX;
+				s.node.style.width = sw + 'px';
+				inDrag.view.setColWidth(s.index, sw);
+			}
+			for(var i=0, f, fl; (f=inDrag.followers[i]); i++){
+				fl = f.left + data.deltaX;
+				f.node.style.left = fl + 'px';
+			}
+			inDrag.node.style.width = data.w + 'px';
+			inDrag.view.setColWidth(inDrag.index, data.w);
+			inDrag.view.headerNode.style.width = data.vw + 'px';
+			inDrag.view.setColumnsWidth(data.tw);
+			if(!data.isLtr){
+				inDrag.view.headerNode.scrollLeft = inDrag.scrollLeft + data.deltaX;
+			}
 		}
 	});
 
@@ -601,7 +660,6 @@ dojo.require("dojo.dnd.Moveable");
 				for(var i=0, cell; (cell=row[i]); i++){
 					h += cell.r + ',' + cell.c + '   ';
 				}
-				//console.log(h);
 			}
 		},
 

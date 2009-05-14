@@ -15,7 +15,7 @@ dojo.require("dijit._Templated");
 dojo.require("dijit._Container");
 dojo.require("dijit.layout.ContentPane");
 dojo.require("dojox.atom.io.Connection");
-dojo.requireLocalization("dojox.atom.widget", "FeedEntryViewer", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
+dojo.requireLocalization("dojox.atom.widget", "FeedEntryViewer", null, "ROOT,ar,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sv,tr,zh,zh-tw");
 
 dojo.experimental("dojox.atom.widget.FeedEntryViewer");
 

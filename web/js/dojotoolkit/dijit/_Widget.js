@@ -11,7 +11,7 @@ dojo.provide("dijit._Widget");
 
 dojo.require( "dijit._base" );
 
-dojo.connect(dojo, "connect", 
+dojo.connect(dojo, "_connect", 
 	function(/*Widget*/ widget, /*String*/ event){
 		if(widget && dojo.isFunction(widget._onConnect)){
 			widget._onConnect(event);
@@ -110,6 +110,12 @@ dojo.declare("dijit._Widget", null, {
 	//		(like ContentPane or BorderContainer or even Button), and conversely
 	//		is null for widgets that don't, like TextBox.
 	containerNode: null,
+
+/*=====
+	// _started: Boolean
+	//		startup() has completed.
+	_started: false,
+=====*/
 
 	// attributeMap: [protected] Object
 	//		attributeMap sets up a "binding" between attributes (aka properties)
@@ -296,9 +302,10 @@ dojo.declare("dijit._Widget", null, {
 
 	// Constants used in templates
 	
-	// _blankGif: [protected] URL
-	//		Used by <img> nodes in templates that really get there image via CSS background-image
-	_blankGif: (dojo.config.blankGif || dojo.moduleUrl("dojo", "resources/blank.gif")),
+	// _blankGif: [protected] String
+	//		Path to a blank 1x1 image.
+	//		Used by <img> nodes in templates that really get their image via CSS background-image.
+	_blankGif: (dojo.config.blankGif || dojo.moduleUrl("dojo", "resources/blank.gif")).toString(),
 
 	//////////// INITIALIZATION METHODS ///////////////////////////////////////
 
@@ -884,7 +891,7 @@ dojo.declare("dijit._Widget", null, {
 		//		protected
 
 		var d = dojo;
-		var dc = dojo.connect;
+		var dc = dojo._connect;
 		var handles =[];
 		if(event == "ondijitclick"){
 			// add key based click activation for unsupported nodes.
@@ -1008,8 +1015,36 @@ dojo.declare("dijit._Widget", null, {
 			dojo.place(this.domNode, reference, position);
 		}
 		return this;
-	}
+	},
 
+	_onShow: function(){
+		// summary:
+		//		Internal method called when this widget is made visible.
+		//		See `onShow` for details.
+		this.onShow();
+	},
+	
+	onShow: function(){
+		// summary:
+		//		Called when this widget becomes the selected pane in a
+		//		`dijit.layout.TabContainer`, `dijit.layout.StackContainer`,
+		//		`dijit.layout.AccordionContainer`, etc.
+		//
+		//		Also called to indicate display of a `dijit.Dialog`, `dijit.TooltipDialog`, or `dijit.TitlePane`.
+		// tags:
+		//		callback
+	},
+
+	onHide: function(){
+		// summary:
+			//		Called when another widget becomes the selected pane in a
+			//		`dijit.layout.TabContainer`, `dijit.layout.StackContainer`,
+			//		`dijit.layout.AccordionContainer`, etc.
+			//
+			//		Also called to indicate hide of a `dijit.Dialog`, `dijit.TooltipDialog`, or `dijit.TitlePane`.
+			// tags:
+			//		callback
+	}
 });
 
 })();

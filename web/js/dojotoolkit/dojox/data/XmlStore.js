@@ -546,8 +546,10 @@ dojo.declare("dojox.data.XmlStore", null, {
 			}
 			items.push(item);
 		}
-		dojo.forEach(items,function(item){ 
-			item.element.parentNode.removeChild(item.element); // make it root
+		dojo.forEach(items,function(item){
+			if(item.element.parentNode){
+				item.element.parentNode.removeChild(item.element); // make it root
+			}
 		},this);
 		return items;
 	},
@@ -1295,6 +1297,7 @@ dojo.declare("dojox.data.XmlStore", null, {
 						var request = {};
 						request.query={};
 						request.query[self.keyAttribute] = keywordArgs.identity;
+						request.queryOptions = {deep: true};
 						var items = self._getItems(data,request);
 						scope = keywordArgs.scope || dojo.global;
 						if(items.length === 1){
@@ -1359,7 +1362,9 @@ dojo.declare("dojox.data.XmlStore", null, {
 						var item = null;
 						if(node){
 							item = self._getItem(node);
-							item.element.parentNode.removeChild(item.element);
+							if(item.element.parentNode){
+								item.element.parentNode.removeChild(item.element);
+							}
 						}
 						if(keywordArgs.onItem){
 							scope = keywordArgs.scope || dojo.global;
