@@ -13,7 +13,6 @@ package org.openbravo.xmlEngine;
 
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -47,7 +46,7 @@ public class XmlVectorValue extends Vector<Object> {
     for (Enumeration<Object> e = elements(); e.hasMoreElements();) {
       XmlComponentValue xmlComponentValue = (XmlComponentValue) e.nextElement();
       String result = "";
-      if (textMap != null) {
+      if (getTextMap() != null) {
         if (xmlComponentValue.print() != null && !xmlComponentValue.print().startsWith("<")
             && !xmlComponentValue.print().equals("")) {
           boolean isTranslated = false;
@@ -55,66 +54,11 @@ public class XmlVectorValue extends Vector<Object> {
           log4jXmlVectorValue.debug("printStringBuffer(HashMap<String, String> textMap) - result: "
               + result);
           log4jXmlVectorValue.debug("checking for existence of text in textdata: " + result);
-          String translation = textMap.get(result);
+          String translation = getTextMap().get(result);
           if (translation != null && !translation.equals("")) {
             log4jXmlVectorValue.debug("printStringBuffer() appending xmlComponentValue: "
                 + xmlComponentValue.print() + ", translation: " + translation);
             result = translation;
-            isTranslated = true;
-          }
-          if (!isTranslated) {
-            if (DataValue.class.isInstance(xmlComponentValue)) {
-              DataValue dataValue = (DataValue) xmlComponentValue;
-              if (dataValue.dataTemplate != null) {
-                DataTemplate dataTemplate = dataValue.dataTemplate;
-                if (dataTemplate.vecSectionTemplate != null) {
-                  Vector<Object> vecSectionTemplate = dataTemplate.vecSectionTemplate;
-                  for (Iterator iterator = vecSectionTemplate.iterator(); iterator.hasNext();) {
-                    SectionTemplate sectionTemplate = (SectionTemplate) iterator.next();
-                    if (sectionTemplate.vecHeadTemplate != null) {
-                      XmlVectorTemplate xmlTemplate = sectionTemplate.vecHeadTemplate;
-                      for (Iterator iterator2 = xmlTemplate.iterator(); iterator2.hasNext();) {
-                        Object componentTemplate = (Object) iterator2.next();
-                        if (CharacterComponent.class.isInstance(componentTemplate)) {
-                          CharacterComponent charComponent = (CharacterComponent) componentTemplate;
-                          if (charComponent.character != null && !charComponent.equals("")) {
-                            String original = charComponent.character;
-                            String trl = textMap.get(original);
-                            if (trl != null && !trl.equals(""))
-                              charComponent.character = trl;
-                          }
-                          componentTemplate = charComponent;
-                        }
-                      }
-                      sectionTemplate.vecHeadTemplate = xmlTemplate;
-                    }
-
-                    if (sectionTemplate.vecFootTemplate != null) {
-                      XmlVectorTemplate xmlFootTemplate = sectionTemplate.vecFootTemplate;
-                      for (Iterator iterator2 = xmlFootTemplate.iterator(); iterator2.hasNext();) {
-                        Object componentTemplate = (Object) iterator2.next();
-                        if (CharacterComponent.class.isInstance(componentTemplate)) {
-                          CharacterComponent charComponent = (CharacterComponent) componentTemplate;
-                          if (charComponent.character != null && !charComponent.equals("")) {
-                            String original = charComponent.character;
-                            String trl = textMap.get(original);
-                            if (trl != null && !trl.equals(""))
-                              charComponent.character = trl;
-                          }
-                          componentTemplate = charComponent;
-                        }
-                      }
-                      sectionTemplate.vecFootTemplate = xmlFootTemplate;
-                    }
-                  }
-                  dataTemplate.vecSectionTemplate = vecSectionTemplate;
-                }
-                dataValue.dataTemplate = dataTemplate;
-              }
-              dataValue.printGenerated();
-              xmlComponentValue = dataValue;
-            }
-            result = xmlComponentValue.print();
           }
         }
       }
@@ -144,8 +88,8 @@ public class XmlVectorValue extends Vector<Object> {
                 }
                 index = start + index + 1;
               }
-            } else if (textMap != null) {
-              result = replaceString(result, prefix, suffix, textMap);
+            } else if (getTextMap() != null) {
+              result = replaceString(result, prefix, suffix, getTextMap());
             }
           }
           prefix = "title=\"";
@@ -166,8 +110,8 @@ public class XmlVectorValue extends Vector<Object> {
                 }
                 index = start + index + 1;
               }
-            } else if (textMap != null) {
-              result = replaceString(result, prefix, suffix, textMap);
+            } else if (getTextMap() != null) {
+              result = replaceString(result, prefix, suffix, getTextMap());
             }
           }
         }
@@ -284,5 +228,9 @@ public class XmlVectorValue extends Vector<Object> {
 
   public void setTextMap(HashMap<String, String> textMap) {
     this.textMap = textMap;
+  }
+
+  public HashMap<String, String> getTextMap() {
+    return textMap;
   }
 }
