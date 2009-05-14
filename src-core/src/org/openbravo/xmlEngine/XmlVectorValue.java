@@ -13,6 +13,7 @@ package org.openbravo.xmlEngine;
 
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -46,7 +47,7 @@ public class XmlVectorValue extends Vector<Object> {
     for (Enumeration<Object> e = elements(); e.hasMoreElements();) {
       XmlComponentValue xmlComponentValue = (XmlComponentValue) e.nextElement();
       String result = "";
-      if (getTextMap() != null) {
+      if (textMap != null) {
         if (xmlComponentValue.print() != null && !xmlComponentValue.print().startsWith("<")
             && !xmlComponentValue.print().equals("")) {
           boolean isTranslated = false;
@@ -54,7 +55,7 @@ public class XmlVectorValue extends Vector<Object> {
           log4jXmlVectorValue.debug("printStringBuffer(HashMap<String, String> textMap) - result: "
               + result);
           log4jXmlVectorValue.debug("checking for existence of text in textdata: " + result);
-          String translation = getTextMap().get(result);
+          String translation = textMap.get(result);
           if (translation != null && !translation.equals("")) {
             log4jXmlVectorValue.debug("printStringBuffer() appending xmlComponentValue: "
                 + xmlComponentValue.print() + ", translation: " + translation);
@@ -88,8 +89,8 @@ public class XmlVectorValue extends Vector<Object> {
                 }
                 index = start + index + 1;
               }
-            } else if (getTextMap() != null) {
-              result = replaceString(result, prefix, suffix, getTextMap());
+            } else if (textMap != null) {
+              result = replaceString(result, prefix, suffix, textMap);
             }
           }
           prefix = "title=\"";
@@ -110,8 +111,8 @@ public class XmlVectorValue extends Vector<Object> {
                 }
                 index = start + index + 1;
               }
-            } else if (getTextMap() != null) {
-              result = replaceString(result, prefix, suffix, getTextMap());
+            } else if (textMap != null) {
+              result = replaceString(result, prefix, suffix, textMap);
             }
           }
         }
@@ -226,11 +227,11 @@ public class XmlVectorValue extends Vector<Object> {
     return printStringBuffer().toString();
   }
 
-  public void setTextMap(HashMap<String, String> textMap) {
+  void setTextMap(HashMap<String, String> textMap) {
     this.textMap = textMap;
   }
 
-  public HashMap<String, String> getTextMap() {
+  Map<String, String> getTextMap() {
     return textMap;
   }
 }
