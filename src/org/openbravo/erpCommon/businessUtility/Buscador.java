@@ -471,8 +471,8 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("checked");
         strHtml.append("></input></span>\n");
       } else if (fields[i].reference.equals("30") || fields[i].reference.equals("21")
-          || fields[i].reference.equals("31") || fields[i].reference.equals("35")
-          || fields[i].reference.equals("25") || fields[i].reference.equals("800011")) { // Search
+          || fields[i].reference.equals("31") || fields[i].reference.equals("25")
+          || fields[i].reference.equals("800011")) { // Search
         strHtml.append("<td class=\"TextBox_btn_ContentCell\" colspan=\"3\">\n");
         strHtml.append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\">\n");
         scriptSearch = true;

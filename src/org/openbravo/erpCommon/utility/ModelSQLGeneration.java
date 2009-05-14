@@ -132,8 +132,9 @@ public class ModelSQLGeneration {
         if (!aux.equals("")) {
           if (!aux.equals("%")
               || (!prop.getProperty("AD_Reference_ID").equals("10")
-                  && !prop.getProperty("AD_Reference_ID").equals("14") && !prop.getProperty(
-                  "AD_Reference_ID").equals("34"))) {
+                  && !prop.getProperty("AD_Reference_ID").equals("14")
+                  && !prop.getProperty("AD_Reference_ID").equals("34") || !prop.getProperty(
+                  "AD_Reference_ID").equals("35"))) {
             filter.addElement(formatFilter(tableSQL.getTableName(), prop.getProperty("ColumnName"),
                 prop.getProperty("AD_Reference_ID"), true));
             filterParams.addElement("Param" + prop.getProperty("ColumnName"));
@@ -241,6 +242,11 @@ public class ModelSQLGeneration {
       text.append(aux).append("(");
       text.append(tablename).append(".").append(columnname).append(") LIKE ");
       text.append(aux).append("(?)");
+    } else if (reference.equals("35")) {
+      text
+          .append(
+              "(SELECT UPPER(DESCRIPTION) FROM M_ATTRIBUTESETINSTANCE WHERE M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID = ")
+          .append(tablename).append(".").append(columnname).append(") LIKE C_IGNORE_ACCENT(?)");
     } else {
       text.append(tablename).append(".").append(columnname).append(" = ?");
     }
