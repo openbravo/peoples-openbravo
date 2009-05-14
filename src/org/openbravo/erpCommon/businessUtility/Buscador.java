@@ -20,8 +20,8 @@ package org.openbravo.erpCommon.businessUtility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Vector;
 import java.util.Random;
+import java.util.Vector;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -557,11 +557,13 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("value=\"").append(fields[i].value).append("\" ");
         if (Utility.isDecimalNumber(fields[i].reference))
           strHtml
-              .append("onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, true, true, event);return true;\" ")
+              .append(
+                  "onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, true, true, event);return true;\" ")
               .append("id=\"").append(randomId4Num1).append("\" ");
         else if (Utility.isIntegerNumber(fields[i].reference))
           strHtml
-              .append("onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, false, false, event);return true;\" ")
+              .append(
+                  "onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, false, false, event);return true;\" ")
               .append("id=\"").append(randomId4Num1).append("\" ");
         strHtml.append(">");
         if (Utility.isDecimalNumber(fields[i].reference)
@@ -584,10 +586,10 @@ public class Buscador extends HttpSecureAppServlet {
                   "<img alt=\"Calculator\" class=\"FieldButton_Icon FieldButton_Icon_Calc\" title=\"Calculator\" src=\"")
               .append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></img>\n");
           strHtml.append("</td>\n</tr>\n</table>\n</td>\n</tr>\n</table>\n</a>\n");
-          strHtml
-              .append("<span class=\"invalid\" style=\"display: none;\" id=\"").append(randomId4Num1).append("invalidSpan\">* The value entered is not valid.</span>");
-          strHtml
-              .append("<span class=\"missing\" style=\"display: none;\" id=\"").append(randomId4Num1).append("missingSpan\">* This value is required.</span>");
+          strHtml.append("<span class=\"invalid\" style=\"display: none;\" id=\"").append(
+              randomId4Num1).append("invalidSpan\">* The value entered is not valid.</span>");
+          strHtml.append("<span class=\"missing\" style=\"display: none;\" id=\"").append(
+              randomId4Num1).append("missingSpan\">* This value is required.</span>");
           strHtml
               .append("<span class=\"range\" style=\"display: none;\">* This value is out of range.</span>");
           strHtml.append("</td>");
@@ -628,7 +630,8 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         } else if (Utility.isIntegerNumber(fields[i].reference)) {
           scriptCalculator = true;
-          strHtml.append("onkeydown=\"autoCompleteNumber(this, false, false, event);return true;\" ");
+          strHtml
+              .append("onkeydown=\"autoCompleteNumber(this, false, false, event);return true;\" ");
           strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         }
         strHtml.append(">");
@@ -659,11 +662,13 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("value=\"").append(value).append("\" ");
           if (Utility.isDecimalNumber(fields[i].reference))
             strHtml
-                .append("onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, true, true, event);return true;\" ")
+                .append(
+                    "onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, true, true, event);return true;\" ")
                 .append("id=\"").append(randomId4Num3).append("\" ");
           else if (Utility.isIntegerNumber(fields[i].reference))
             strHtml
-                .append("onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, false, false, event);return true;\" ")
+                .append(
+                    "onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, false, false, event);return true;\" ")
                 .append("id=\"").append(randomId4Num3).append("\" ");
           strHtml.append(">");
 
@@ -682,10 +687,10 @@ public class Buscador extends HttpSecureAppServlet {
                   "<img alt=\"Calculator\" class=\"FieldButton_Icon FieldButton_Icon_Calc\" title=\"Calculator\" src=\"")
               .append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></img>\n");
           strHtml.append("</td>\n</tr>\n</table>\n</td>\n</tr>\n</table>\n");
-          strHtml
-              .append("<span class=\"invalid\" style=\"display: none;\" id=\"").append(randomId4Num3).append("invalidSpan\">* The value entered is not valid.</span>");
-          strHtml
-              .append("<span class=\"missing\" style=\"display: none;\" id=\"").append(randomId4Num3).append("missingSpan\">* This value is required.</span>");
+          strHtml.append("<span class=\"invalid\" style=\"display: none;\" id=\"").append(
+              randomId4Num3).append("invalidSpan\">* The value entered is not valid.</span>");
+          strHtml.append("<span class=\"missing\" style=\"display: none;\" id=\"").append(
+              randomId4Num3).append("missingSpan\">* This value is required.</span>");
           strHtml
               .append("<span class=\"range\" style=\"display: none;\">* This value is out of range.</span>");
           strHtml.append("</td>");
@@ -750,16 +755,16 @@ public class Buscador extends HttpSecureAppServlet {
       // strHtml.append("</td></tr></table>\n");
       strHtml.append("</td></tr>\n");
     }
-    //vecKeys.addElement("new keyArrayItem(\"B\", \"aceptar()\", null, \"ctrlKey\")");
-    //vecKeys.addElement("new keyArrayItem(\"ESCAPE\", \"window.close()\", null, null)");
+    // vecKeys.addElement("new keyArrayItem(\"B\", \"aceptar()\", null, \"ctrlKey\")");
+    // vecKeys.addElement("new keyArrayItem(\"ESCAPE\", \"window.close()\", null, null)");
     script.append("\nfunction enableLocalShortcuts() {\n");
     if (vecKeys.size() > 0) {
-      //script.append("var keyArray = new Array();\n");
+      // script.append("var keyArray = new Array();\n");
       for (int i = 0; i < vecKeys.size(); i++) {
         script.append("  keyArray[keyArray.length] = ").append(vecKeys.elementAt(i).toString())
             .append(";\n");
       }
-      //script.append("enableShortcuts();\n");
+      // script.append("enableShortcuts();\n");
     } else {
       script.append("\n");
     }
@@ -785,10 +790,8 @@ public class Buscador extends HttpSecureAppServlet {
           "/js/default/DateTextBox.js\" type=\"text/javascript\"></script>");
     }
     if (scriptCalculator) {
-      scrScr
-          .append("<script language=\"JavaScript\" src=\"")
-          .append(strReplaceWith)
-          .append("/js/default/ValidationNumberBox.js\" type=\"text/javascript\"></script>");
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append(
+          "/js/default/ValidationNumberBox.js\" type=\"text/javascript\"></script>");
       scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append(
           "/js/calculator.js\" type=\"text/javascript\"></script>");
     }
