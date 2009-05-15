@@ -74,6 +74,41 @@ public class VariablesSecureApp extends VariablesBase {
   }
 
   /**
+   * Constructor used to make an empty/manual instance of this class.
+   * 
+   * @param strUser
+   * @param strUser
+   *          ID of the user as specified by the AD_USER_ID column within the AD_USER database
+   *          table.
+   * @param strClient
+   *          ID of the client as specified by the AD_CLIENT_ID column within the AD_CLIENT database
+   *          table.
+   * @param strOrganization
+   *          ID of the organization as specified by the AD_ORG_ID column within the AD_ORG database
+   *          table.
+   * @param strRole
+   *          ID of the role as specified by the AD_ROLE_ID column within the AD_ROLE database
+   *          table.
+   */
+  public VariablesSecureApp(String strUser, String strClient, String strOrganization, String strRole) {
+    this.user = strUser;
+    this.role = strRole;
+    this.language = System.getProperty("user.language") + "_" + System.getProperty("user.country");
+    this.theme = "";
+    this.client = strClient;
+    this.organization = strOrganization;
+    this.userClient = "";
+    this.userOrganization = "";
+    this.warehouse = "";
+    this.dbSessionID = "";
+    this.command = "DEFAULT";
+    this.javaDateFormat = "";
+    this.jsDateFormat = "";
+    this.sqlDateFormat = "";
+    this.accessLevel = "";
+  }
+
+  /**
    * Constructor that parses the session variables to initialize the class' internal variables.
    * 
    * @param request
