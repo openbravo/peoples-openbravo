@@ -30,10 +30,9 @@ BEGIN
     END IF;
 
 
-  SELECT count(*)
-    INTO v_Aux
-    FROM (
-      SELECT 1 
+
+      SELECT count(*) 
+        INTO v_Aux
         FROM AD_TABLE T, 
              AD_PACKAGE M
        WHERE T.AD_TABLE_ID = :new.AD_Table_ID
@@ -43,14 +42,12 @@ BEGIN
                           FROM AD_MODULE_DBPREFIX P
                           WHERE P.AD_MODULE_ID = :new.AD_Module_ID 
                           AND instr(upper(:new.columnname), 'EM_'||upper(P.name)||'_') = 1)
-      UNION
-      SELECT 1
-         FROM AD_EXCEPTIONS, ad_table t
-         WHERE TYPE='TABLE'
-         AND t.AD_Table_ID = :new.AD_Table_ID
-         AND UPPER(NAME2)=UPPER(T.Tablename)
-         AND UPPER(NAME1)=UPPER(:new.Columnname)
-      ) AA;                  
+         AND NOT EXISTS( SELECT 1
+                             FROM AD_EXCEPTIONS, ad_table t
+                             WHERE TYPE='COLUMN'
+                             AND t.AD_Table_ID = :new.AD_Table_ID
+                             AND UPPER(NAME2)=UPPER(T.Tablename)
+                             AND UPPER(NAME1)=UPPER(:new.Columnname));
   
   IF v_Aux != 0 THEN
     RAISE_APPLICATION_ERROR(-20536, 'Names must start with its module''s DB prefix') ;
