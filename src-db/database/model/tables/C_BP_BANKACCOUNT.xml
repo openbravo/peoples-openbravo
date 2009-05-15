@@ -133,6 +133,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SWIFTCODE" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPBANKACCOUNT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
