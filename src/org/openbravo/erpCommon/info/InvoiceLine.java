@@ -281,6 +281,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     if (headers != null) {
       try {
@@ -311,17 +313,14 @@ public class InvoiceLine extends HttpSecureAppServlet {
         }
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = InvoiceLineData.select(this, "ROWNUM", Utility.getContext(this, vars,
               "#User_Client", "InvoiceLine"), Utility.getSelectorOrgs(this, vars, strOrg),
               strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
                   .nDaysAfter(this, strDateTo, "1"), strCal1, strCal2, strProduct, strOrderBy,
               oraLimit, "");
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           data = InvoiceLineData.select(this, "1", Utility.getContext(this, vars, "#User_Client",
               "InvoiceLine"), Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo,
               strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,

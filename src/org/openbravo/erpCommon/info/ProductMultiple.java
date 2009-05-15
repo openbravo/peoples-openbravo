@@ -230,6 +230,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     if (headers != null) {
       try {
@@ -249,15 +251,12 @@ public class ProductMultiple extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = ProductMultipleData.select(this, "ROWNUM", strKey, strName, strProductCategory,
               Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), Utility
                   .getSelectorOrgs(this, vars, strOrg), strOrderBy, oraLimit, "");
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory, Utility
               .getContext(this, vars, "#User_Client", "ProductMultiple"), Utility.getSelectorOrgs(
               this, vars, strOrg), strOrderBy, "", pgLimit);

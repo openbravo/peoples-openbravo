@@ -336,6 +336,8 @@ public class ProductComplete extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     // strip out single '%' parameters used with like
     strKey = strKey.equals("%") ? "" : strKey;
@@ -369,10 +371,7 @@ public class ProductComplete extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           // data = BusinessPartnerData.select(this, "ROWNUM",
           // Utility.getContext(this, vars, "#User_Client",
           // "BusinessPartner"), Utility.getSelectorOrgs(this, vars,
@@ -402,7 +401,7 @@ public class ProductComplete extends HttpSecureAppServlet {
                   strOrderBy, oraLimit, "");
           }
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           // data = BusinessPartnerData.select(this, "1",
           // Utility.getContext(this, vars, "#User_Client",
           // "BusinessPartner"), Utility.getSelectorOrgs(this, vars,

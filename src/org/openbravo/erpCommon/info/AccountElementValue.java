@@ -269,6 +269,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     if (headers != null) {
       try {
@@ -291,16 +293,13 @@ public class AccountElementValue extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = AccountElementValueData.select(this, "ROWNUM", strAcctSchema, strValue, strName,
               strOrganization, strAccountElementValue, Utility.getContext(this, vars,
                   "#User_Client", "AccountElementValue"), Utility.getContext(this, vars,
                   "#User_Org", "AccountElementValue"), strOrderBy, oraLimit, "");
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           data = AccountElementValueData.select(this, "1", strAcctSchema, strValue, strName,
               strOrganization, strAccountElementValue, Utility.getContext(this, vars,
                   "#User_Client", "AccountElementValue"), Utility.getContext(this, vars,

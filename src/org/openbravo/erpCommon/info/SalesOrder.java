@@ -233,6 +233,8 @@ public class SalesOrder extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     if (headers != null) {
       try {
@@ -264,16 +266,13 @@ public class SalesOrder extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = SalesOrderData.select(this, "ROWNUM", Utility.getContext(this, vars,
               "#User_Client", "SalesOrder"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
               strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,
                   strDateTo, "1"), strCal1, strCalc2, strOrderBy, oraLimit, "");
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           data = SalesOrderData.select(this, "1", Utility.getContext(this, vars, "#User_Client",
               "SalesOrder"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription,
               strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),

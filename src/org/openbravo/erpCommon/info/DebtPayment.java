@@ -213,6 +213,8 @@ public class DebtPayment extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     // adjust to either pending or any other state then pending
     strIsPending = strIsPending.equals("P") ? "= 'P'" : "<> 'P'";
@@ -235,17 +237,14 @@ public class DebtPayment extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = DebtPaymentData.select(this, vars.getLanguage(), "ROWNUM", Utility.getContext(
               this, vars, "#User_Client", "DebtPayment"), Utility.getSelectorOrgs(this, vars,
               strOrg), strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
               strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder,
               strIsPending, strOrderBy, oraLimit, "");
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           data = DebtPaymentData.select(this, vars.getLanguage(), "1", Utility.getContext(this,
               vars, "#User_Client", "DebtPayment"), Utility.getSelectorOrgs(this, vars, strOrg),
               strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,

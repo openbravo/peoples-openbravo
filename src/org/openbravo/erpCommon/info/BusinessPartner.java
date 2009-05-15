@@ -276,6 +276,8 @@ public class BusinessPartner extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     final String locKey = strKey.equals("%") ? "" : strKey;
     final String locName = strName.equals("%") ? "" : strName;
@@ -300,17 +302,14 @@ public class BusinessPartner extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          final String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          final String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = BusinessPartnerData.select(this, "ROWNUM", Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
               locKey, locName, locContact, locZIP, locProvince,
               (strBpartners.equals("customer") ? "clients" : ""),
               (strBpartners.equals("vendor") ? "vendors" : ""), locCity, strOrderBy, oraLimit, "");
         } else {
-          final String pgLimit = strPageSize + " OFFSET " + strOffset;
+          final String pgLimit = pageSize + " OFFSET " + offset;
           data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
               locKey, locName, locContact, locZIP, locProvince,

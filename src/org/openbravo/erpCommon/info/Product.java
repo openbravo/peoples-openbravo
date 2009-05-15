@@ -345,6 +345,8 @@ public class Product extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     if (headers != null) {
       try {
@@ -363,15 +365,12 @@ public class Product extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = ProductData.select(this, strWarehouse, "ROWNUM", strKey, strName, Utility
               .getContext(this, vars, "#User_Client", "Product"), Utility.getSelectorOrgs(this,
               vars, strOrg), strPriceListVersion, strOrderBy, oraLimit, "");
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           data = ProductData.select(this, strWarehouse, "1", strKey, strName, Utility.getContext(
               this, vars, "#User_Client", "Product"), Utility.getSelectorOrgs(this, vars, strOrg),
               strPriceListVersion, strOrderBy, "", pgLimit);
