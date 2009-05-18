@@ -20,6 +20,7 @@
 package org.openbravo.service.db;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 import org.apache.log4j.Logger;
@@ -61,8 +62,9 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
             throw new OBException(ir.getErrorMessages());
           }
         }
-      } catch (Exception e) {
-        throw new OBException("Exception while importing from file " + importFile);
+      } catch (FileNotFoundException e) {
+        throw new OBException("Exception (" + e.getMessage() + ") while importing from file "
+            + importFile, e);
       }
     }
     OBDal.getInstance().commitAndClose();
