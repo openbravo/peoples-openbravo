@@ -28,12 +28,12 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-
   SELECT COUNT(*)
     INTO devTemplate
     FROM AD_MODULE
    WHERE IsInDevelopment = 'Y'
      AND Type = 'T';
+         
      
   IF (UPDATING OR INSERTING) THEN
     cuerrentID := :new.AD_Process_ID;
