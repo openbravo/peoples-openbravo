@@ -30,14 +30,21 @@ import java.util.Set;
 
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.financialmgmt.accounting.AccountingFact;
+import org.openbravo.model.financialmgmt.payment.DebtPayment;
+import org.openbravo.model.project.Project;
 import org.openbravo.service.db.ClientImportProcessor;
 import org.openbravo.service.db.DataExportService;
 import org.openbravo.service.db.DataImportService;
@@ -84,11 +91,104 @@ public class ClientExportImportTest extends XMLBaseTest {
    * completely new client is added in the database.
    * 
    * Also tests mantis 8509: https://issues.openbravo.com/view.php?id=8509
+   * 
+   * Also tests mantis 9000: https://issues.openbravo.com/view.php?id=9000
    */
   public void testExportImportClient1000000() {
+
     final String newClientId = exportImport("1000000");
     testMantis8509(newClientId);
+    testAccountingFactMantis9000(newClientId);
+    testTreeNodesMantis9000(newClientId);
     // SystemService.getInstance().removeAllClientData(newClientId);
+  }
+
+  private void testTreeNodesMantis9000(String newClientID) {
+    final OBQuery<TreeNode> nodes = OBDal.getInstance().createQuery(TreeNode.class,
+        "client.id='" + newClientID + "'");
+    nodes.setFilterOnReadableClients(false);
+    nodes.setFilterOnReadableOrganization(false);
+    assertTrue(nodes.list().size() > 0);
+    final Client newClient = OBDal.getInstance().get(Client.class, newClientID);
+
+    boolean testDoneAtLeastOnce = false;
+    for (TreeNode node : nodes.list()) {
+      assertEquals(newClient, node.getClient());
+      // also ignore 0 as there is a business partner/sales region tree node with 0
+      if (node.getNode() != null && !node.getNode().equals("0")) {
+        final Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
+            node.getTree().getTypeArea());
+        if (entity.getName().equals(Project.ENTITY_NAME)) {
+          // can be removed when this issue:
+          // https://issues.openbravo.com/view.php?id=8745
+          // is solved
+          continue;
+        }
+
+        final BaseOBObject bob = OBDal.getInstance().get(entity.getName(), node.getNode());
+        assertTrue("Entity instance not found " + entity.getName() + " " + node.getNode(),
+            bob != null);
+        if (bob instanceof ClientEnabled) {
+          assertEquals(newClient, ((ClientEnabled) bob).getClient());
+          testDoneAtLeastOnce = true;
+        }
+      }
+      // also ignore 0 as there is a business partner/sales region tree node with 0
+      if (node.getReportSet() != null && !node.getReportSet().equals("0")) {
+        final Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
+            node.getTree().getTypeArea());
+        if (entity.getName().equals(Project.ENTITY_NAME)) {
+          // can be removed when this issue:
+          // https://issues.openbravo.com/view.php?id=8745
+          // is solved
+          continue;
+        }
+
+        final BaseOBObject bob = OBDal.getInstance().get(entity.getName(), node.getReportSet());
+        assertTrue("Entity instance not found " + entity.getName() + " " + node.getReportSet(),
+            bob != null);
+        if (bob instanceof ClientEnabled) {
+          assertEquals(newClient, ((ClientEnabled) bob).getClient());
+          testDoneAtLeastOnce = true;
+        }
+      }
+    }
+    assertTrue(testDoneAtLeastOnce);
+
+  }
+
+  private void testAccountingFactMantis9000(String newClientID) {
+    final OBQuery<AccountingFact> facts = OBDal.getInstance().createQuery(AccountingFact.class,
+        "client.id='" + newClientID + "'");
+    facts.setFilterOnReadableClients(false);
+    facts.setFilterOnReadableOrganization(false);
+    assertTrue(facts.list().size() > 0);
+    final Client newClient = OBDal.getInstance().get(Client.class, newClientID);
+    boolean testDoneAtLeastOnce = false;
+    for (AccountingFact fact : facts.list()) {
+      assertEquals(newClient, fact.getClient());
+      if (fact.getRecordID() != null) {
+        final BaseOBObject bob = OBDal.getInstance().get(fact.getTable().getName(),
+            fact.getRecordID());
+        assertTrue("Entity instance not found " + fact.getTable().getName() + " "
+            + fact.getRecordID(), bob != null);
+        if (bob instanceof ClientEnabled) {
+          assertEquals(newClient, ((ClientEnabled) bob).getClient());
+          testDoneAtLeastOnce = true;
+        }
+      }
+      if (fact.getRecordID2() != null) {
+        final BaseOBObject bob = OBDal.getInstance().get(DebtPayment.ENTITY_NAME,
+            fact.getRecordID2());
+        assertTrue("Entity instance not found " + DebtPayment.ENTITY_NAME + " "
+            + fact.getRecordID2(), bob != null);
+        if (bob instanceof ClientEnabled) {
+          assertEquals(newClient, ((ClientEnabled) bob).getClient());
+          testDoneAtLeastOnce = true;
+        }
+      }
+    }
+    assertTrue(testDoneAtLeastOnce);
   }
 
   /**

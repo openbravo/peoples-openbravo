@@ -43,9 +43,12 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.xml.EntityResolver;
 import org.openbravo.dal.xml.EntityXMLProcessor;
+import org.openbravo.dal.xml.PrimitiveReferenceHandler;
 import org.openbravo.dal.xml.StaxXMLEntityConverter;
 import org.openbravo.dal.xml.XMLEntityConverter;
+import org.openbravo.dal.xml.EntityResolver.ResolvingMode;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
@@ -200,7 +203,6 @@ public class DataImportService implements OBSingleton {
         // now save and update
         // do inserts and updates in opposite order, this is important
         // so that the objects on which other depend are inserted first
-        final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         final List<BaseOBObject> toInsert = xec.getToInsert();
         int done = 0;
         final Set<BaseOBObject> inserted = new HashSet<BaseOBObject>();
@@ -210,11 +212,6 @@ public class DataImportService implements OBSingleton {
           insertObjectGraph(ins, inserted);
           ir.getInsertedObjects().add(ins);
           done++;
-
-          if (ins instanceof TreeNode) {
-            final TreeNode tn = (TreeNode) ins;
-            treeNodes.add(tn);
-          }
         }
         Check.isTrue(done == toInsert.size(),
             "Not all objects have been inserted, check for loop: " + done + "/" + toInsert.size());
@@ -230,11 +227,6 @@ public class DataImportService implements OBSingleton {
           OBDal.getInstance().save(upd);
           ir.getUpdatedObjects().add(upd);
           done++;
-
-          if (upd instanceof TreeNode) {
-            final TreeNode tn = (TreeNode) upd;
-            treeNodes.add(tn);
-          }
         }
         Check.isTrue(done == toUpdate.size(),
             "Not all objects have been inserted, check for loop: " + done + "/" + toUpdate.size());
@@ -242,50 +234,16 @@ public class DataImportService implements OBSingleton {
         // flush to set the ids in the objects
         OBDal.getInstance().flush();
 
-        // now walk through the treenodes to repair id's
-        for (TreeNode tn : treeNodes) {
-          final Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
-              tn.getTree().getTypeArea());
-          if (entity == null) {
-            if (ir.getWarningMessages() == null) {
-              ir.setWarningMessages("Imported tree nodes belong to a tree with a tree type "
-                  + tn.getTree().getTypeArea() + " which is not related to any entity.");
-            } else {
-              ir.setWarningMessages(ir.getWarningMessages()
-                  + "\nImported tree nodes belong to a tree with a tree type "
-                  + tn.getTree().getTypeArea() + " which is not related to any entity.");
-            }
-            continue;
-          }
-          final BaseOBObject bob = (BaseOBObject) xec.getEntityResolver().resolve(entity.getName(),
-              tn.getNode(), true);
-          if (bob == null) {
-            ir.setErrorMessages("The tree node " + tn + " points to an object with id "
-                + tn.getNode() + " which does not exist in the database or in the import set.");
-            OBDal.getInstance().rollbackAndClose();
-            rolledBack = true;
-            return ir;
-          }
-          if (!bob.getId().equals(tn.getNode())) {
-            tn.setNode((String) bob.getId());
-          }
-          // and also correct the parent
-          if (tn.getReportSet() != null) {
-            final BaseOBObject parent = (BaseOBObject) xec.getEntityResolver().resolve(
-                entity.getName(), tn.getReportSet(), true);
-            if (parent == null) {
-              ir.setErrorMessages("The tree node " + tn + " points to an object with id "
-                  + tn.getReportSet()
-                  + " which does not exist in the database or in the import set.");
-              OBDal.getInstance().rollbackAndClose();
-              rolledBack = true;
-              return ir;
-            }
-            if (!parent.getId().equals(tn.getReportSet())) {
-              tn.setReportSet((String) parent.getId());
-            }
-          }
+        // now walk through the objects to repair primitive reference id's
+        // note updates both the ir and changes the entityresolver
+        repairPrimitiveReferences(ir, xec.getEntityResolver());
+
+        if (ir.hasErrorOccured()) {
+          OBDal.getInstance().rollbackAndClose();
+          rolledBack = true;
+          return ir;
         }
+
         OBDal.getInstance().flush();
       } catch (final Throwable t) {
         OBDal.getInstance().rollbackAndClose();
@@ -311,6 +269,73 @@ public class DataImportService implements OBSingleton {
     } catch (final Exception e) {
       throw new OBException(e);
     }
+  }
+
+  // the id's which are repaired are so-called primitive references
+  // (for example AD_Tree_Node.node_id
+  // these are references without foreign key which are modeled as a
+  // string/varchar. During the import the id of an object may change, thereby
+  // invalidating the primitive reference (which still uses the old id). This
+  // method repairs those ids.
+  // see the methods in XMLUtil related to primitive references
+  private void repairPrimitiveReferences(ImportResult ir, EntityResolver entityResolver) {
+
+    // at this point all references must exist
+    entityResolver.setResolvingMode(ResolvingMode.MUST_EXIST);
+    final List<BaseOBObject> repairReferences = new ArrayList<BaseOBObject>();
+    for (BaseOBObject bob : ir.getUpdatedObjects()) {
+      if (PrimitiveReferenceHandler.getInstance().hasObjectPrimitiveReference(bob)) {
+        repairReferences.add(bob);
+      }
+    }
+    for (BaseOBObject bob : ir.getInsertedObjects()) {
+      if (PrimitiveReferenceHandler.getInstance().hasObjectPrimitiveReference(bob)) {
+        repairReferences.add(bob);
+      }
+    }
+    for (BaseOBObject objectToRepair : repairReferences) {
+      if (objectToRepair instanceof TreeNode) {
+        final TreeNode tn = (TreeNode) objectToRepair;
+        final Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
+            tn.getTree().getTypeArea());
+        if (entity == null) {
+          if (ir.getWarningMessages() == null) {
+            ir.setWarningMessages("Imported tree nodes belong to a tree with a tree type "
+                + tn.getTree().getTypeArea() + " which is not related to any entity.");
+          } else {
+            ir.setWarningMessages(ir.getWarningMessages()
+                + "\nImported tree nodes belong to a tree with a tree type "
+                + tn.getTree().getTypeArea() + " which is not related to any entity.");
+          }
+          continue;
+        }
+      }
+      for (Property p : PrimitiveReferenceHandler.getInstance().getPrimitiveReferences(
+          objectToRepair.getEntity())) {
+        final String value = (String) objectToRepair.get(p.getName());
+        // also ignore 0 as there is a business partner tree node with 0
+        if (value != null && !value.equals("0")) {
+          final Entity entity = PrimitiveReferenceHandler.getInstance()
+              .getPrimitiveReferencedEntity(objectToRepair, p);
+          final BaseOBObject referencedBob = (BaseOBObject) entityResolver.resolve(
+              entity.getName(), value, true);
+          if (referencedBob == null) {
+            if (ir.getErrorMessages() == null) {
+              ir.setErrorMessages("The object " + objectToRepair
+                  + " references an object (entity: " + entity + ") with id " + value
+                  + " which does not exist in the database or in the import set.");
+            } else {
+              ir.setErrorMessages(ir.getErrorMessages() + "\nThe object " + objectToRepair
+                  + " references an object (entity: " + entity + ") with id " + value
+                  + " which does not exist in the database or in the import set.");
+            }
+          } else if (!referencedBob.getId().equals(value)) {
+            objectToRepair.set(p.getName(), referencedBob.getId());
+          }
+        }
+      }
+    }
+
   }
 
   private void validateObject(BaseOBObject bob, ImportResult ir) {
@@ -448,7 +473,6 @@ public class DataImportService implements OBSingleton {
     // now save and update
     // do inserts and updates in opposite order, this is important
     // so that the objects on which other depend are inserted first
-    final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
     final List<BaseOBObject> toInsert = xec.getToInsert();
     int done = 0;
     final Set<BaseOBObject> inserted = new HashSet<BaseOBObject>();
@@ -458,11 +482,6 @@ public class DataImportService implements OBSingleton {
       insertObjectGraph(ins, inserted);
       ir.getInsertedObjects().add(ins);
       done++;
-
-      if (ins instanceof TreeNode) {
-        final TreeNode tn = (TreeNode) ins;
-        treeNodes.add(tn);
-      }
     }
     Check.isTrue(done == toInsert.size(), "Not all objects have been inserted, check for loop: "
         + done + "/" + toInsert.size());
@@ -478,11 +497,6 @@ public class DataImportService implements OBSingleton {
       OBDal.getInstance().save(upd);
       ir.getUpdatedObjects().add(upd);
       done++;
-
-      if (upd instanceof TreeNode) {
-        final TreeNode tn = (TreeNode) upd;
-        treeNodes.add(tn);
-      }
     }
     Check.isTrue(done == toUpdate.size(), "Not all objects have been inserted, check for loop: "
         + done + "/" + toUpdate.size());
@@ -490,47 +504,10 @@ public class DataImportService implements OBSingleton {
     // flush to set the ids in the objects
     OBDal.getInstance().flush();
 
-    // now walk through the treenodes to repair id's
+    // now walk through the objects to repair primitive reference id's
+    // note updates both the ir and changes the entityresolver
+    repairPrimitiveReferences(ir, xec.getEntityResolver());
 
-    // now walk through the treenodes to repair id's
-    for (TreeNode tn : treeNodes) {
-      final Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
-          tn.getTree().getTypeArea());
-      if (entity == null) {
-        if (ir.getWarningMessages() == null) {
-          ir.setWarningMessages("Imported tree nodes belong to a tree with a tree type "
-              + tn.getTree().getTypeArea() + " which is not related to any entity.");
-        } else {
-          ir.setWarningMessages(ir.getWarningMessages()
-              + "\nImported tree nodes belong to a tree with a tree type "
-              + tn.getTree().getTypeArea() + " which is not related to any entity.");
-        }
-        continue;
-      }
-      final BaseOBObject bob = (BaseOBObject) xec.getEntityResolver().resolve(entity.getName(),
-          tn.getNode(), true);
-      if (bob == null) {
-        ir.setErrorMessages("The tree node " + tn + " points to an object with id " + tn.getNode()
-            + " which does not exist in the database or in the import set.");
-        return;
-      }
-      if (!bob.getId().equals(tn.getNode())) {
-        tn.setNode((String) bob.getId());
-      }
-      // and also correct the parent
-      if (tn.getReportSet() != null) {
-        final BaseOBObject parent = (BaseOBObject) xec.getEntityResolver().resolve(
-            entity.getName(), tn.getReportSet(), true);
-        if (parent == null) {
-          ir.setErrorMessages("The tree node " + tn + " points to an object with id "
-              + tn.getReportSet() + " which does not exist in the database or in the import set.");
-          return;
-        }
-        if (!parent.getId().equals(tn.getReportSet())) {
-          tn.setReportSet((String) parent.getId());
-        }
-      }
-    }
     OBDal.getInstance().flush();
 
     // store the ad_ref_data_loaded

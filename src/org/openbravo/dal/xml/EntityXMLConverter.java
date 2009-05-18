@@ -347,18 +347,16 @@ public class EntityXMLConverter implements OBNotSingleton {
         // handle a special case the tree node
         // both the parent and the node should be added to the export list
         if (value != null && obObject instanceof TreeNode) {
-          final boolean isReferingProperty = p.getName().equals(TreeNode.PROPERTY_REPORTSET)
-              || p.getName().equals(TreeNode.PROPERTY_NODE);
-          if (isReferingProperty && value != null && !value.equals("0")) {
+          if (PrimitiveReferenceHandler.getInstance().isPrimitiveReference(p) && value != null
+              && !value.equals("0")) {
             final String strValue = (String) value;
-            final TreeNode treeNode = (TreeNode) obObject;
-            final Entity referedEntity = ModelProvider.getInstance().getEntityFromTreeType(
-                treeNode.getTree().getTypeArea());
+            final Entity referedEntity = PrimitiveReferenceHandler.getInstance()
+                .getPrimitiveReferencedEntity(obObject, p);
             final BaseOBObject obValue = OBDal.getInstance().get(referedEntity.getName(), strValue);
             if (obValue == null) {
-              log.error("TreeNode (with id:" + obObject.getId() + "): The value " + strValue
-                  + " used in treeNode " + treeNode.getId() + " is not valid, there is no "
-                  + referedEntity.getName() + " with that id");
+              log.error("Object (with id:" + obObject.getId() + "): The value " + strValue
+                  + " used in this object is not valid, there is no " + referedEntity.getName()
+                  + " with that id");
               // Check.isNotNull(obValue, "The value " + strValue + " used in treeNode "
               // + treeNode.getId() + " is not valid, there is no " + referedEntity.getName()
               // + " with that id");
