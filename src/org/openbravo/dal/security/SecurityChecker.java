@@ -174,7 +174,7 @@ public class SecurityChecker implements OBSingleton {
       // actually changed...
       obContext.getEntityAccessChecker().checkWritable(entity);
 
-      if (obj instanceof OrganizationEnabled && orgId.length() > 0) {
+      if (obj instanceof OrganizationEnabled && orgId != null && orgId.length() > 0) {
         // todo as only the id is required this can be made much more
         // efficient
         // by
