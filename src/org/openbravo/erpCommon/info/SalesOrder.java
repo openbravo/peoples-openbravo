@@ -89,10 +89,10 @@ public class SalesOrder extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols");
+      String strSortDirs = vars.getInStringParameter("sort_dirs");
       printGridData(response, vars, strName, strBpartnerId, strDateFrom, strDateTo, strDescription,
-          strCal1, strCal2, strOrder, strSortCols + " " + strSortDirs, strOffset, strPageSize,
+          strCal1, strCal2, strOrder, strSortCols, strSortDirs, strOffset, strPageSize,
           strNewFilter, strOrg);
     } else
       pageError(response);
@@ -222,8 +222,9 @@ public class SalesOrder extends HttpSecureAppServlet {
 
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
       String strBpartnerId, String strDateFrom, String strDateTo, String strDescription,
-      String strCal1, String strCalc2, String strOrder, String strOrderBy, String strOffset,
-      String strPageSize, String strNewFilter, String strOrg) throws IOException, ServletException {
+      String strCal1, String strCalc2, String strOrder, String strOrderCols, String strOrderDirs,
+      String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -238,6 +239,8 @@ public class SalesOrder extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
+        // validate orderby parameters and build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
 
         // remove single % in parameters used in like upper(parameter)
         if (strName.equals("%")) {

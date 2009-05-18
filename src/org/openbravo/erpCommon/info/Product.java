@@ -166,10 +166,10 @@ public class Product extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols");
+      String strSortDirs = vars.getInStringParameter("sort_dirs");
       printGridData(response, vars, strKey, strName, strOrg, strWarehouse, strPriceListVersion,
-          strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter);
+          strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter);
     } else
       pageError(response);
   }
@@ -334,8 +334,8 @@ public class Product extends HttpSecureAppServlet {
 
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strName, String strOrg, String strWarehouse, String strPriceListVersion,
-      String strOrderBy, String strOffset, String strPageSize, String strNewFilter)
-      throws IOException, ServletException {
+      String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
+      String strNewFilter) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -350,6 +350,9 @@ public class Product extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
+        // validate orderby parameters and build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or

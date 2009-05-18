@@ -134,11 +134,10 @@ public class BusinessPartner extends HttpSecureAppServlet {
       final String strNewFilter = vars.getStringParameter("newFilter");
       final String strOffset = vars.getStringParameter("offset");
       final String strPageSize = vars.getStringParameter("page_size");
-      final String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      final String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      final String strSortCols = vars.getInStringParameter("sort_cols");
+      final String strSortDirs = vars.getInStringParameter("sort_dirs");
       printGridData(response, vars, strKey, strName, strOrg, strContact, strZIP, strProvincia,
-          strBpartners, strCity, strSortCols + " " + strSortDirs, strOffset, strPageSize,
-          strNewFilter);
+          strBpartners, strCity, strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter);
     } else
       pageError(response);
   }
@@ -265,8 +264,9 @@ public class BusinessPartner extends HttpSecureAppServlet {
 
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strName, String strOrg, String strContact, String strZIP, String strProvincia,
-      String strBpartners, String strCity, String strOrderBy, String strOffset, String strPageSize,
-      String strNewFilter) throws IOException, ServletException {
+      String strBpartners, String strCity, String strOrderCols, String strOrderDirs,
+      String strOffset, String strPageSize, String strNewFilter) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -288,6 +288,9 @@ public class BusinessPartner extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
+        // validate orderby parameters and build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
           strNumRows = BusinessPartnerData.countRows(this, Utility.getContext(this, vars,

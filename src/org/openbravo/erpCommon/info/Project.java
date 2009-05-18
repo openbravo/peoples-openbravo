@@ -95,9 +95,9 @@ public class Project extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
-      printGridData(response, vars, strKey, strName, strBpartners, strSortCols + " " + strSortDirs,
+      String strSortCols = vars.getInStringParameter("sort_cols");
+      String strSortDirs = vars.getInStringParameter("sort_dirs");
+      printGridData(response, vars, strKey, strName, strBpartners, strSortCols, strSortDirs,
           strOffset, strPageSize, strNewFilter, strOrg);
     } else
       pageError(response);
@@ -225,8 +225,9 @@ public class Project extends HttpSecureAppServlet {
   }
 
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String strName, String strBpartners, String strOrderBy, String strOffset, String strPageSize,
-      String strNewFilter, String strOrg) throws IOException, ServletException {
+      String strName, String strBpartners, String strOrderCols, String strOrderDirs,
+      String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -241,6 +242,9 @@ public class Project extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
+        // validate orderby parameters and build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or

@@ -79,12 +79,12 @@ public class DebtPayment extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols");
+      String strSortDirs = vars.getInStringParameter("sort_dirs");
 
       printGridData(response, vars, strBpartnerId, strDateFrom, strDateTo, strCal1, strCal2,
-          strPaymentRule, strIsReceipt, strIsPaid, strIsPending, strOrder, strInvoice, strSortCols
-              + " " + strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
+          strPaymentRule, strIsReceipt, strIsPaid, strIsPending, strOrder, strInvoice, strSortCols,
+          strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
     } else
       pageError(response);
   }
@@ -202,8 +202,8 @@ public class DebtPayment extends HttpSecureAppServlet {
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strBpartnerId,
       String strDateFrom, String strDateTo, String strCal1, String strCal2, String strPaymentRule,
       String strIsReceipt, String strIsPaid, String strIsPending, String strOrder,
-      String strInvoice, String strOrderBy, String strOffset, String strPageSize,
-      String strNewFilter, String strOrg) throws IOException, ServletException {
+      String strInvoice, String strOrderCols, String strOrderDirs, String strOffset,
+      String strPageSize, String strNewFilter, String strOrg) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -221,6 +221,9 @@ public class DebtPayment extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
+        // validate orderby parameters and build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or

@@ -79,16 +79,16 @@ public class ProductMultiple extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols");
+      String strSortDirs = vars.getInStringParameter("sort_dirs");
 
       if (action.equalsIgnoreCase("getRows")) { // Asking for data rows
-        printGridData(response, vars, strKey, strName, strProductCategory, strOrg, strSortCols
-            + " " + strSortDirs, strOffset, strPageSize, strNewFilter);
+        printGridData(response, vars, strKey, strName, strProductCategory, strOrg, strSortCols,
+            strSortDirs, strOffset, strPageSize, strNewFilter);
       } else if (action.equalsIgnoreCase("getIdsInRange")) {
         // asking for selected rows
         printGridDataSelectedRows(response, vars, strKey, strName, strProductCategory, strOrg,
-            strSortCols + " " + strSortDirs);
+            strSortCols, strSortDirs);
       } else {
         throw new ServletException("Unimplemented action in DATA request: " + action);
       }
@@ -218,9 +218,9 @@ public class ProductMultiple extends HttpSecureAppServlet {
   }
 
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String strName, String strProductCategory, String strOrg, String strOrderBy,
-      String strOffset, String strPageSize, String strNewFilter) throws IOException,
-      ServletException {
+      String strName, String strProductCategory, String strOrg, String strOrderCols,
+      String strOrderDirs, String strOffset, String strPageSize, String strNewFilter)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -235,6 +235,9 @@ public class ProductMultiple extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
+        // validate orderby parameters and build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or
@@ -347,8 +350,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
    * 
    */
   private void printGridDataSelectedRows(HttpServletResponse response, VariablesSecureApp vars,
-      String strKey, String strName, String strProductCategory, String strOrg, String strOrderBy)
-      throws IOException, ServletException {
+      String strKey, String strName, String strProductCategory, String strOrg, String strOrderCols,
+      String strOrderDirs) throws IOException, ServletException {
     int minOffset = new Integer(vars.getStringParameter("minOffset")).intValue();
     int maxOffset = new Integer(vars.getStringParameter("maxOffset")).intValue();
     log4j.debug("Output: print page ids, minOffset: " + minOffset + ", maxOffset: " + maxOffset);
@@ -358,6 +361,10 @@ public class ProductMultiple extends HttpSecureAppServlet {
     FieldProvider[] data = null;
     FieldProvider[] res = null;
     try {
+      SQLReturnObject[] headers = getHeaders(vars);
+      // validate orderby parameters and build sql orderBy clause
+      String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+
       // Filtering result
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         String oraLimit = (minOffset + 1) + " AND " + maxOffset;

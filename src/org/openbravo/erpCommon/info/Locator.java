@@ -84,11 +84,11 @@ public class Locator extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols");
+      String strSortDirs = vars.getInStringParameter("sort_dirs");
       String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Locator.adorgid", "");
       printGridData(response, vars, strName, strWarehousename, strAisle, strBin, strLevel,
-          strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
+          strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
     } else
       pageError(response);
   }
@@ -207,9 +207,9 @@ public class Locator extends HttpSecureAppServlet {
   }
 
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
-      String strWarehousename, String strAisle, String strBin, String strLevel, String strOrderBy,
-      String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,
-      ServletException {
+      String strWarehousename, String strAisle, String strBin, String strLevel,
+      String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
+      String strNewFilter, String strOrg) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -224,6 +224,9 @@ public class Locator extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
+        // validate orderby parameters and build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or

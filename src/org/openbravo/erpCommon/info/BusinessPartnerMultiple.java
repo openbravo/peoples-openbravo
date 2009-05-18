@@ -86,19 +86,19 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols");
+      String strSortDirs = vars.getInStringParameter("sort_dirs");
       String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Invoice.adorgid", "");
 
       if (action.equalsIgnoreCase("getRows")) { // Asking for data rows
         printGridData(response, vars, strKey, strName, strContact, strZIP, strProvincia,
-            strBpartners, strCity, strSortCols + " " + strSortDirs, strOffset, strPageSize,
-            strNewFilter, strOrg);
+            strBpartners, strCity, strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter,
+            strOrg);
 
       } else if (action.equalsIgnoreCase("getIdsInRange")) {
         // asking for selected rows
         printGridDataSelectedRows(response, vars, strKey, strName, strContact, strZIP,
-            strProvincia, strBpartners, strCity, strSortCols + " " + strSortDirs);
+            strProvincia, strBpartners, strCity, strSortCols, strSortDirs);
       } else {
         throw new ServletException("Unimplemented action in DATA request: " + action);
       }
@@ -186,8 +186,8 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
 
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strName, String strContact, String strZIP, String strProvincia, String strBpartners,
-      String strCity, String strOrderBy, String strOffset, String strPageSize, String strNewFilter,
-      String strOrg) throws IOException, ServletException {
+      String strCity, String strOrderCols, String strOrderDirs, String strOffset,
+      String strPageSize, String strNewFilter, String strOrg) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -202,6 +202,9 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
+        // validate orderby parameters and build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or
@@ -321,7 +324,8 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
    */
   void printGridDataSelectedRows(HttpServletResponse response, VariablesSecureApp vars,
       String strKey, String strName, String strContact, String strZIP, String strProvincia,
-      String strBpartners, String strCity, String strOrderBy) throws IOException, ServletException {
+      String strBpartners, String strCity, String strOrderCols, String strOrderDirs)
+      throws IOException, ServletException {
     int minOffset = new Integer(vars.getStringParameter("minOffset")).intValue();
     int maxOffset = new Integer(vars.getStringParameter("maxOffset")).intValue();
     log4j.debug("Output: print page ids, minOffset: " + minOffset + ", maxOffset: " + maxOffset);
@@ -331,6 +335,10 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     FieldProvider[] data = null;
     FieldProvider[] res = null;
     try {
+      SQLReturnObject[] headers = getHeaders(vars);
+      // validate orderby parameters and build sql orderBy clause
+      String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+
       // Filtering result
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         String oraLimit = (minOffset + 1) + " AND " + maxOffset;

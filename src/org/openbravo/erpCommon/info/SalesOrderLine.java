@@ -155,11 +155,11 @@ public class SalesOrderLine extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols");
+      String strSortDirs = vars.getInStringParameter("sort_dirs");
       printGridData(response, vars, strDocumentNo, strDescription, strOrder, strBpartnerId,
           strDateFrom, strDateTo, strCal1, strCal2, strProduct, strDelivered, strInvoiced,
-          strSOTrx, strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
+          strSOTrx, strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
     } else
       pageError(response);
   }
@@ -311,8 +311,9 @@ public class SalesOrderLine extends HttpSecureAppServlet {
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strDocumentNo,
       String strDescription, String strOrder, String strBpartnerId, String strDateFrom,
       String strDateTo, String strCal1, String strCalc2, String strProduct, String strDelivered,
-      String strInvoiced, String strSOTrx, String strOrderBy, String strOffset, String strPageSize,
-      String strNewFilter, String strOrg) throws IOException, ServletException {
+      String strInvoiced, String strSOTrx, String strOrderCols, String strOrderDirs,
+      String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -327,6 +328,8 @@ public class SalesOrderLine extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
+        // validate orderby parameters and build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
 
         // remove single % in parameters used in like upper(parameter)
         if (strDocumentNo.equals("%")) {

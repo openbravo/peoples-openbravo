@@ -93,10 +93,10 @@ public class AccountElementValue extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols");
+      String strSortDirs = vars.getInStringParameter("sort_dirs");
       printGridData(response, vars, strValue, strName, strOrganization, strAccountElementValue,
-          strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter, strAcctSchema);
+          strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter, strAcctSchema);
     } else if (vars.commandIn("KEY")) {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue",
           "AccountElementValue.value");
@@ -257,9 +257,9 @@ public class AccountElementValue extends HttpSecureAppServlet {
   }
 
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strValue,
-      String strName, String strOrganization, String strAccountElementValue, String strOrderBy,
-      String strOffset, String strPageSize, String strNewFilter, String strAcctSchema)
-      throws IOException, ServletException {
+      String strName, String strOrganization, String strAccountElementValue, String strOrderCols,
+      String strOrderDirs, String strOffset, String strPageSize, String strNewFilter,
+      String strAcctSchema) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -274,6 +274,9 @@ public class AccountElementValue extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
+        // validate orderby parameters and build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+
         strAcctSchema = (strAcctSchema.equals("%") ? "" : strAcctSchema);
         strValue = (strValue.equals("%") ? "" : strValue);
         strName = (strName.equals("%") ? "" : strName);

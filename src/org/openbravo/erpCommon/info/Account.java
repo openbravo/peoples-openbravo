@@ -94,11 +94,11 @@ public class Account extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols");
+      String strSortDirs = vars.getInStringParameter("sort_dirs");
       printGridData(response, vars, strAlias, strCombination, strOrganization, strAccount,
-          strProduct, strBPartner, strProject, strCampaign, strSortCols + " " + strSortDirs,
-          strOffset, strPageSize, strNewFilter, strAcctSchema);
+          strProduct, strBPartner, strProject, strCampaign, strSortCols, strSortDirs, strOffset,
+          strPageSize, strNewFilter, strAcctSchema);
     } else if (vars.commandIn("KEY")) {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Account.alias");
       String strAcctSchema = vars
@@ -319,9 +319,9 @@ public class Account extends HttpSecureAppServlet {
 
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strAlias,
       String strCombination, String strOrganization, String strAccount, String strProduct,
-      String strBPartner, String strProject, String strCampaign, String strOrderBy,
-      String strOffset, String strPageSize, String strNewFilter, String strAcctSchema)
-      throws IOException, ServletException {
+      String strBPartner, String strProject, String strCampaign, String strOrderCols,
+      String strOrderDirs, String strOffset, String strPageSize, String strNewFilter,
+      String strAcctSchema) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -336,6 +336,9 @@ public class Account extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
+        // validate orderby parameters and build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+
         strAcctSchema = (strAcctSchema.equals("%") ? "" : strAcctSchema);
         strAlias = (strAlias.equals("%") ? "" : strAlias);
         strCombination = (strCombination.equals("%") ? "" : strCombination);

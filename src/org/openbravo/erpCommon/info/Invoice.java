@@ -109,12 +109,12 @@ public class Invoice extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols");
+      String strSortDirs = vars.getInStringParameter("sort_dirs");
 
       printGridData(response, vars, strName, strBpartnerId, strDateFrom, strFechaTo,
-          strDescription, strCal1, strCalc2, strOrder, strSOTrx, strOrg, strSortCols + " "
-              + strSortDirs, strOffset, strPageSize, strNewFilter);
+          strDescription, strCal1, strCalc2, strOrder, strSOTrx, strOrg, strSortCols, strSortDirs,
+          strOffset, strPageSize, strNewFilter);
 
     } else
       pageError(response);
@@ -254,8 +254,8 @@ public class Invoice extends HttpSecureAppServlet {
   void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
       String strBpartnerId, String strDateFrom, String strFechaTo, String strDescription,
       String strCal1, String strCalc2, String strOrder, String strSOTrx, String strOrg,
-      String strOrderBy, String strOffset, String strPageSize, String strNewFilter)
-      throws IOException, ServletException {
+      String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
+      String strNewFilter) throws IOException, ServletException {
 
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pint page rows");
@@ -271,6 +271,8 @@ public class Invoice extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
+        // validate orderby parameters and build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
 
         // remove single % in parameters used in like upper(parameter)
         if (strName.equals("%")) {
