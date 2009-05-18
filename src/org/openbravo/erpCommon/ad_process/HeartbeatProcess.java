@@ -69,6 +69,7 @@ public class HeartbeatProcess implements Process {
       saveUpdateAlerts(connection, updates);
 
     } catch (Exception e) {
+      logger.logln(e.getMessage());
       log.error(e.getMessage(), e);
       throw new Exception(e.getMessage());
     }

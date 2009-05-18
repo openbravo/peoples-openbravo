@@ -87,16 +87,15 @@ public class ProcessRunner {
       status = SUCCESS;
 
     } catch (final Exception e) {
-      log.error(e.getMessage(), e);
       endTime = System.currentTimeMillis();
       status = ERROR;
-      log.info("Process " + requestId + " threw an Exception: ", e);
+      log.error("Process " + requestId + " threw an Exception: " + e.getMessage(), e);
     }
 
     final String duration = ProcessMonitor.getDuration(endTime - startTime);
     ProcessRequestData.update(conn, COMPLETE, requestId);
     final String end = OBScheduler.format(new Date(endTime));
-    ProcessRunData.update(conn, ctx.getUser(), SUCCESS, end, duration, bundle.getLog().toString(),
+    ProcessRunData.update(conn, ctx.getUser(), status, end, duration, bundle.getLog().toString(),
         executionId);
 
     return executionId;

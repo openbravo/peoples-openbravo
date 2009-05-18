@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,37 +20,168 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.criterion.Expression;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.ad.ui.ProcessRequest;
+import org.openbravo.model.ad.ui.ProcessRun;
+import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.scheduling.ProcessContext;
 import org.openbravo.scheduling.ProcessRunner;
+import org.openbravo.scheduling.ProcessBundle.Channel;
 
 public class TestHeartbeat extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
+  private static final String HB_Process_ID = "1005800000";
+  private static final String WEEKLY = "5";
+  private static final String SCHEDULE = "S";
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
+    final boolean isHearbeatEnabled = vars.getRequiredStringParameter("inptestproxy").equals("Y");
 
-    try {
-      ProcessBundle bundle = new ProcessBundle("1005800000", vars).init(this);
-      new ProcessRunner(bundle).execute(this);
+    if (isHearbeatEnabled) { // Disable
+      try {
 
-      String msg = Utility.messageBD(this, "HB_SUCCESS", vars.getLanguage());
-      advisePopUp(request, response, "SUCCESS", "Heartbeat Configuration", msg);
+        // Getting the process
+        final OBCriteria<Process> obCriteria = OBDal.getInstance().createCriteria(Process.class);
+        obCriteria.add(Expression.eq(Process.PROPERTY_ID, HB_Process_ID));
+        final List<Process> processList = obCriteria.list();
+        final Process HBProcess = processList.get(0);
 
-    } catch (Exception e) {
-      e.printStackTrace();
-      advisePopUp(request, response, "ERROR", "Heartbeat Configuration", e.getMessage());
+        // Deactivating the process at SystemInfo
+        final OBCriteria<SystemInformation> sysInfoCriteria = OBDal.getInstance().createCriteria(
+            SystemInformation.class);
+        final List<SystemInformation> sysInfoList = sysInfoCriteria.list();
+        final SystemInformation sysInfo = sysInfoList.get(0);
+        sysInfo.setEnableHeartbeat(false);
+        sysInfo.setTestHeartbeat("N");
+        OBDal.getInstance().save(sysInfo);
+
+        // Un-scheduling the process
+        final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
+            ProcessRequest.class);
+        prCriteria.add(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess));
+        prCriteria
+            .add(Expression.eq(ProcessRequest.PROPERTY_CHANNEL, Channel.SCHEDULED.toString()));
+        final List<ProcessRequest> requestList = prCriteria.list();
+
+        if (requestList.size() != 0) {
+
+          final ProcessRequest pr = requestList.get(0);
+
+          OBDal.getInstance().save(pr);
+          OBDal.getInstance().commitAndClose();
+
+          final ProcessBundle bundle = ProcessBundle.request(pr.getId(), vars, this);
+
+          OBScheduler.getInstance().unschedule(pr.getId(), bundle.getContext());
+        }
+
+        String msg = Utility.messageBD(this, "HB_SUCCESS", vars.getLanguage());
+        advisePopUp(request, response, "SUCCESS", "Heartbeat Configuration", msg);
+
+      } catch (Exception e) {
+        log4j.error(e.getMessage(), e);
+        advisePopUp(request, response, "ERROR", "Heartbeat Configuration", e.getMessage());
+      }
+
+    } else { // Enable
+
+      try {
+
+        // Activating the process
+        final OBCriteria<Process> obCriteria = OBDal.getInstance().createCriteria(Process.class);
+        obCriteria.add(Expression.eq(Process.PROPERTY_ID, HB_Process_ID));
+        final List<Process> processList = obCriteria.list();
+        final Process HBProcess = processList.get(0);
+        HBProcess.setActive(true);
+        OBDal.getInstance().save(HBProcess);
+
+        // Activating the process at SystemInfo
+        final OBCriteria<SystemInformation> sysInfoCriteria = OBDal.getInstance().createCriteria(
+            SystemInformation.class);
+        final List<SystemInformation> sysInfoList = sysInfoCriteria.list();
+        final SystemInformation sysInfo = sysInfoList.get(0);
+        sysInfo.setEnableHeartbeat(true);
+        sysInfo.setTestHeartbeat("Y");
+        OBDal.getInstance().save(sysInfo);
+
+        // Making the first beat
+        ProcessBundle bundle = new ProcessBundle(HB_Process_ID, vars).init(this);
+        final String beatExecutionId = new ProcessRunner(bundle).execute(this);
+
+        // Getting beat result
+        final OBCriteria<ProcessRun> runCriteria = OBDal.getInstance().createCriteria(
+            ProcessRun.class);
+        runCriteria.add(Expression.eq(ProcessRun.PROPERTY_ID, beatExecutionId));
+        final List<ProcessRun> prl = runCriteria.list();
+        final ProcessRun processRunResult = prl.get(0);
+
+        if (processRunResult.getStatus().equals("ERR")) {
+          advisePopUp(request, response, "ERROR", "Heartbeat Configuration");
+          return;
+        }
+
+        // Scheduling the process
+        final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
+            ProcessRequest.class);
+        prCriteria.add(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess));
+        prCriteria
+            .add(Expression.eq(ProcessRequest.PROPERTY_CHANNEL, Channel.SCHEDULED.toString()));
+        final List<ProcessRequest> requestList = prCriteria.list();
+
+        ProcessRequest pr = null;
+
+        if (requestList.size() == 0) {
+          pr = OBProvider.getInstance().get(ProcessRequest.class);
+          pr.setProcess(HBProcess);
+          pr.setActive(true);
+          pr.setSecurityBasedOnRole(true);
+          pr.setFrequency(WEEKLY);
+          pr.setFriday(true);
+          pr.setTiming(SCHEDULE);
+          final ProcessContext context = new ProcessContext(vars);
+          pr.setOpenbravoContext(context.toString());
+
+        } else {
+          pr = requestList.get(0);
+        }
+
+        OBDal.getInstance().save(pr);
+
+        OBDal.getInstance().commitAndClose();
+
+        final ProcessBundle bundle2 = ProcessBundle.request(pr.getId(), vars, this);
+        if (requestList.size() == 0) {
+          OBScheduler.getInstance().schedule(pr.getId(), bundle2);
+        } else {
+          OBScheduler.getInstance().reschedule(pr.getId(), bundle2);
+        }
+
+        String msg = Utility.messageBD(this, "HB_SUCCESS", vars.getLanguage());
+        advisePopUp(request, response, "SUCCESS", "Heartbeat Configuration", msg);
+
+      } catch (Exception e) {
+        log4j.error(e.getMessage(), e);
+        advisePopUp(request, response, "ERROR", "Heartbeat Configuration", e.getMessage());
+      }
     }
   }
-
 }
