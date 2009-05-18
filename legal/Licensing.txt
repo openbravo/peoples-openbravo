@@ -168,7 +168,7 @@ Under MPL/GPL License (available at https://developer.mozilla.org/en/Rhino_Licen
 In addition, the distribution includes 
 - lam-client.jar (see lam_licenses.txt in lam-client.jar in this release
   for specific licensing information)
-- ojdbc14.jar under the OTN Development and Distribution
+- ojdbc6.jar under the OTN Development and Distribution
   License Agreement (in /legal folder and available at
   http://www.oracle.com/technology/software/popup-license/distribution-license.html)
 - xml-apis.jar (see xml-apis license folder for licensing information)
