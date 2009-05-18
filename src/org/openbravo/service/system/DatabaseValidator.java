@@ -274,6 +274,8 @@ public class DatabaseValidator implements SystemValidator {
         checkNameLength("(table: " + dbTable.getName() + ") Column ", dbColumn.getName(), result);
 
         dbColumnsByName.remove(column.getDBColumnName().toUpperCase());
+
+        checkDefaultValue(column, dbColumn, result);
       }
     }
 
@@ -285,6 +287,35 @@ public class DatabaseValidator implements SystemValidator {
             + dbTable.getName() + "." + dbColumn.getName() + " present in the database "
             + " but not defined in the Application Dictionary.");
       }
+    }
+  }
+
+  private void checkDefaultValue(Column adColumn, org.apache.ddlutils.model.Column dbColumn,
+      SystemValidationResult result) {
+    if (true) {
+      // disable this test until the following issues are all solved:
+      // https://issues.openbravo.com/view.php?id=9054
+      // https://issues.openbravo.com/view.php?id=9053
+      // https://issues.openbravo.com/view.php?id=9052
+      // https://issues.openbravo.com/view.php?id=9051
+      // https://issues.openbravo.com/view.php?id=9050
+      // these cover the differences in default values
+      return;
+    }
+    if (adColumn.getDefaultValue() == null || adColumn.getDefaultValue().startsWith("@")) {
+      return;
+    } else if (false && dbColumn.getDefaultValue() == null) {
+      // this check is disabled for now
+      result.addWarning(SystemValidationType.UNEQUAL_DEFAULTVALUE, "Column "
+          + adColumn.getTable().getName() + "." + adColumn.getName() + " has default value "
+          + adColumn.getDefaultValue()
+          + " in the Application Dictionary but no default value in the database");
+    } else if (dbColumn.getDefaultValue() != null
+        && !dbColumn.getDefaultValue().equals(adColumn.getDefaultValue())) {
+      result.addWarning(SystemValidationType.UNEQUAL_DEFAULTVALUE, "Column "
+          + adColumn.getTable().getName() + "." + adColumn.getName()
+          + ": the Application Dictionary and the database have differing default values,"
+          + " AD: " + adColumn.getDefaultValue() + " DB: " + dbColumn.getDefaultValue());
     }
   }
 
