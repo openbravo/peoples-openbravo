@@ -171,7 +171,7 @@
     		FROM M_DISCOUNTSCHEMA 
     		WHERE ISACTIVE='Y' 
     		AND AD_CLIENT_ID=v_AD_Client_ID
-    		AND AD_ORG_ID IN ((SELECT '0' AS org)
+    		AND AD_ORG_ID IN ((SELECT '0' AS org FROM dual)
                 UNION (SELECT AD_ORG_ID AS org
     			FROM AD_ORG
     			WHERE AD_CLIENT_ID=v_AD_Client_ID
@@ -181,7 +181,7 @@
         		FROM M_DISCOUNTSCHEMA 
         		WHERE ISACTIVE='Y' 
         		AND AD_CLIENT_ID=v_AD_Client_ID
-        		AND AD_ORG_ID IN ((SELECT '0' AS org)
+        		AND AD_ORG_ID IN ((SELECT '0' AS org FROM dual)
                     UNION (SELECT AD_ORG_ID AS org
         			FROM AD_ORG
         			WHERE AD_CLIENT_ID=v_AD_Client_ID
@@ -271,7 +271,7 @@
         		FROM M_DISCOUNTSCHEMA 
         		WHERE ISACTIVE='Y' 
         		AND AD_CLIENT_ID=v_AD_Client_ID
-        		AND AD_ORG_ID IN ((SELECT '0' AS org)
+        		AND AD_ORG_ID IN ((SELECT '0' AS org FROM dual)
                     UNION (SELECT AD_ORG_ID AS org
         			FROM AD_ORG
         			WHERE AD_CLIENT_ID=v_AD_Client_ID
@@ -281,7 +281,7 @@
             		FROM M_DISCOUNTSCHEMA 
             		WHERE ISACTIVE='Y' 
             		AND AD_CLIENT_ID=v_AD_Client_ID
-            		AND AD_ORG_ID IN ((SELECT '0' AS org)
+            		AND AD_ORG_ID IN ((SELECT '0' AS org FROM dual)
                         UNION (SELECT AD_ORG_ID AS org
             			FROM AD_ORG
             			WHERE AD_CLIENT_ID=v_AD_Client_ID
