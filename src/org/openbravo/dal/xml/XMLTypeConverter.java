@@ -161,32 +161,32 @@ public class XMLTypeConverter implements OBSingleton {
    */
   public String toXMLSchemaType(Class<?> targetClass) {
     if (Date.class == targetClass) {
-      return "dateTime";
+      return "xs:dateTime";
     }
     if (Timestamp.class == targetClass) {
-      return "dateTime";
+      return "xs:dateTime";
     }
     if (String.class == targetClass) {
-      return "string";
+      return "xs:string";
     }
     if (BigDecimal.class == targetClass) {
-      return "decimal";
+      return "xs:decimal";
     }
     if (Long.class == targetClass) {
-      return "long";
+      return "xs:long";
     }
     if (boolean.class == targetClass) {
-      return "boolean";
+      return "xs:boolean";
     }
     if (Boolean.class == targetClass) {
-      return "boolean";
+      return "xs:boolean";
     }
     if (Float.class == targetClass) {
-      return "float";
+      return "xs:float";
     }
     if (Object.class == targetClass) {
       // TODO catch this
-      return "OBJECT";
+      return "xs:anyType";
     }
     if (targetClass == null) {
       // TODO catch this
