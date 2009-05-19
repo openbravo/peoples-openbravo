@@ -23,7 +23,7 @@
   devModule   CHAR(1);
   cuerrentID  VARCHAR2(32);
   cuerrentModuleID  VARCHAR2(32);
-  vAux number;
+  vAux NUMBER;
     
 BEGIN
     
