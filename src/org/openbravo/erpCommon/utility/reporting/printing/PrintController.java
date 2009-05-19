@@ -187,6 +187,7 @@ public class PrintController extends HttpSecureAppServlet {
         globalParameters.strDefaultDesignPath, globalParameters.prefix, classInfo, multiReports);
 
     if (vars.commandIn("PRINT")) {
+      archivedReports = false;
       // Order documents by Document No.
       if (multiReports)
         documentIds = orderByDocumentNo(documentType, documentIds);
