@@ -89,7 +89,7 @@
       <Parameter name="status" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.status=? ]]></Parameter>
       <Parameter name="isSettle" optional="true" type="argument" after="DP.IsValid='Y'" text="AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.CANCEL_PROCESSED, DP.GENERATE_PROCESSED, DP.ISPAID, DP.ISVALID, 
       DP.C_CASHLINE_ID, DP.C_BANKSTATEMENTLINE_ID) IN"/>
-      <Parameter name="cbankaccount" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND DP.C_BANKACCOUNT_ID = TO_NUMBER(?) ]]></Parameter>
+      <Parameter name="cbankaccount" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND DP.C_BANKACCOUNT_ID = ? ]]></Parameter>
         <Parameter name="ord" type="replace" optional="true" after="ORDER BY " text="1"></Parameter>
   </SqlMethod>
   <SqlMethod name="selectNoBpartner" type="preparedStatement" return="multiple">
@@ -157,7 +157,7 @@
       <Parameter name="status" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.status=? ]]></Parameter>
       <Parameter name="isSettle" optional="true" type="argument" after="DP.IsValid='Y'" text="AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.CANCEL_PROCESSED, DP.GENERATE_PROCESSED, DP.ISPAID, DP.ISVALID, 
       DP.C_CASHLINE_ID, DP.C_BANKSTATEMENTLINE_ID) IN"/>
-      <Parameter name="cbankaccount" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND DP.C_BANKACCOUNT_ID = TO_NUMBER(?) ]]></Parameter>
+      <Parameter name="cbankaccount" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND DP.C_BANKACCOUNT_ID = ? ]]></Parameter>
       <Parameter name="ord" type="replace" optional="true" after="ORDER BY " text="1"></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
