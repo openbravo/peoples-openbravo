@@ -227,7 +227,7 @@ public class XmlVectorValue extends Vector<Object> {
     return printStringBuffer().toString();
   }
 
-  void setTextMap(HashMap<String, String> textMap) {
+  public void setTextMap(HashMap<String, String> textMap) {
     this.textMap = textMap;
   }
 
