@@ -97,7 +97,7 @@ public class ExportReferenceData extends HttpSecureAppServlet {
       if (!myFolder.exists())
         myFolder.mkdirs();
       FileOutputStream myOutputStream = new FileOutputStream(myFile);
-      myOutputStream.write(xml.getBytes());
+      myOutputStream.write(xml.getBytes("UTF-8"));
       myOutputStream.close();
       myError = new OBError();
       myError.setType("Success");

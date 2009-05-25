@@ -20,7 +20,8 @@
 package org.openbravo.service.db;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
@@ -53,8 +54,11 @@ public class ImportClientProcess implements org.openbravo.scheduling.Process {
 
       final ClientImportProcessor importProcessor = new ClientImportProcessor();
       importProcessor.setNewName((newName != null ? newName.trim() : newName));
+      final InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(
+          getImportFile()), "UTF-8");
       final ImportResult ir = DataImportService.getInstance().importClientData(importProcessor,
-          importAuditInfo, new FileReader(getImportFile()));
+          importAuditInfo, inputStreamReader);
+      inputStreamReader.close();
       if (ir.hasErrorOccured()) {
         final StringBuilder sb = new StringBuilder();
         if (ir.getException() != null) {
