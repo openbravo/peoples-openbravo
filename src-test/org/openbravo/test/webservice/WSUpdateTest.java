@@ -136,11 +136,13 @@ public class WSUpdateTest extends BaseWSTest {
     doTestGetRequest("/ws/dal/City/" + id, "<City", 200);
 
     // count the cities
-    doTestGetRequest("/ws/dal/City/count", "<result>2</result>", 200);
+    doTestGetRequest("/ws/dal/City/count",
+        "<ob:result xmlns:ob=\"http://www.openbravo.com\">2</ob:result>", 200);
 
     // test a simple whereclause
     // first count
-    doTestGetRequest("/ws/dal/City/count?where=name='" + newName + "'", "<result>1</result>", 200);
+    doTestGetRequest("/ws/dal/City/count?where=name='" + newName + "'",
+        "<ob:result xmlns:ob=\"http://www.openbravo.com\">1</ob:result>", 200);
 
     // and then get a result, should only be one City
     final String queriedCities = doTestGetRequest("/ws/dal/City?where=name='" + newName + "'",

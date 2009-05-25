@@ -43,7 +43,7 @@ public class WSReadTest extends BaseWSTest {
    * @throws Exception
    */
   public void testSchemaWebService() throws Exception {
-    doTestGetRequest("/ws/dal/schema", "<element name=\"Openbravo\">", 200);
+    doTestGetRequest("/ws/dal/schema", "<xs:element name=\"Openbravo\">", 200);
   }
 
   /**
@@ -65,6 +65,7 @@ public class WSReadTest extends BaseWSTest {
     whereClause = URLEncoder.encode(whereClause, "UTF-8");
     final String content = doTestGetRequest("/ws/dal/ADColumn?where=" + whereClause, "<ADColumn",
         200);
+
     // there should be two columns
     final int index1 = content.indexOf("<ADColumn");
     assertTrue(index1 != -1);
@@ -93,6 +94,7 @@ public class WSReadTest extends BaseWSTest {
     whereClause = URLEncoder.encode(whereClause, "UTF-8");
     String content = doTestGetRequest("/ws/dal/ADColumn?where=" + whereClause + "&firstResult="
         + firstResult + "&maxResult=" + maxResult, "<ADColumn", 200);
+
     // count the columns
     int index = content.indexOf("<ADColumn");
     int cnt = 0;
@@ -111,6 +113,7 @@ public class WSReadTest extends BaseWSTest {
     setBigBazaarAdminContext();
     final Configuration cfg = SessionFactoryController.getInstance().getConfiguration();
 
+    int i = 0;
     for (final Iterator<?> it = cfg.getClassMappings(); it.hasNext();) {
       final PersistentClass pc = (PersistentClass) it.next();
       final String entityName = pc.getEntityName();
