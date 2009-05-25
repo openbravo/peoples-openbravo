@@ -86,4 +86,14 @@ public class XMLConstants {
    * Is added to the root tag to administer the export time
    */
   public static final String DATE_TIME_ATTRIBUTE = "created";
+
+  /**
+   * Openbravo namespace
+   */
+  public static final String OPENBRAVO_NAMESPACE = "http://www.openbravo.com";
+
+  /**
+   * XSI namespace
+   */
+  public static final String XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
 }
