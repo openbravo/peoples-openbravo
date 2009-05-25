@@ -231,8 +231,9 @@ public class ModelProvider implements OBSingleton {
             final Boolean mandatory = colMandatories.get(createColumnMandatoryKey(e.getTableName(),
                 p.getColumnName()));
             if (mandatory != null) {
-              // TODO log warning if mandatory is null?
               p.setMandatory(mandatory);
+            } else {
+              log.warn("Column " + p + " mandatory is null");
             }
           }
         }
