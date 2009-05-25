@@ -2235,6 +2235,16 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structure16", abrd);
     }
 
+    {
+      // process standard UI java implemented buttons
+      final ActionButtonRelationData[] abrd = WadActionButton.buildActionButtonCallJava(pool,
+          strTab, tabName, keyColumnName, isSOTrx, strWindow);
+      xmlDocument.setData("structure14java", abrd);
+      xmlDocument.setData("structure15java", abrd);
+      xmlDocument.setData("structure16java", abrd);
+
+    }
+
     xmlDocument.setData("structure18", selCol);
     xmlDocument.setData("structure20", selCol);
     xmlDocument.setData("structure22", selCol);

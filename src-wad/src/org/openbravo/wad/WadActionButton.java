@@ -148,6 +148,71 @@ public class WadActionButton {
   }
 
   /**
+   * Generates the action button call for java processes of the window.
+   * 
+   * @param conn
+   *          Object with the database connection implementation.
+   * @param strTab
+   *          Id of the tab
+   * @param tabName
+   *          The tab name.
+   * @param keyName
+   *          The name of the key.
+   * @param isSOTrx
+   *          If is a sales tab.
+   * @param window
+   *          The id of the window.
+   * @return Array of ActionButtonRelationData with the info to build the source.
+   */
+  public static ActionButtonRelationData[] buildActionButtonCallJava(ConnectionProvider conn,
+      String strTab, String tabName, String keyName, String isSOTrx, String window) {
+    ActionButtonRelationData[] fab = null;
+    try {
+      fab = ActionButtonRelationData.selectJava(conn, strTab);
+    } catch (final ServletException e) {
+      return null;
+    }
+    if (fab != null) {
+      for (int i = 0; i < fab.length; i++) {
+        final Vector<Object> vecFields = new Vector<Object>();
+        final Vector<Object> vecParams = new Vector<Object>();
+        final Vector<Object> vecTotalFields = new Vector<Object>();
+        if (fab[i].realname.equalsIgnoreCase("DocAction")
+            || fab[i].realname.equalsIgnoreCase("PaymentRule")
+            || (fab[i].realname.equalsIgnoreCase("Posted") && fab[i].adProcessId.equals(""))
+            || (fab[i].realname.equalsIgnoreCase("CreateFrom") && fab[i].adProcessId.equals(""))
+            || fab[i].realname.equalsIgnoreCase("ChangeProjectStatus"))
+          fab[i].xmlid = "";
+        fab[i].realname = FormatUtilities.replace(fab[i].realname);
+        fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
+        fab[i].htmltext = getFieldsLoad(fab[i], vecFields, vecTotalFields);
+        fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, isSOTrx, window,
+            tabName);
+        final StringBuffer fields = new StringBuffer();
+        final StringBuffer fieldsHeader = new StringBuffer();
+        for (int j = 0; j < vecFields.size(); j++) {
+          fields.append(", " + vecFields.elementAt(j));
+          fieldsHeader.append(", String " + vecFields.elementAt(j));
+        }
+        fab[i].htmlfields = fields.toString();
+        fab[i].htmlfieldsHeader = fieldsHeader.toString();
+        ProcessRelationData[] data = null;
+        if (!fab[i].adProcessId.equals("") && !fab[i].adProcessId.equals("177")) {
+          try {
+            data = ProcessRelationData.selectParameters(conn, "", fab[i].adProcessId);
+          } catch (final ServletException e) {
+          }
+
+          fab[i].processParams = "";
+          fab[i].processParams += getProcessParamsJava(data, fab[i], vecParams, true);
+          fab[i].processCode = "new " + fab[i].classname + "().execute(pb);";
+        }
+      }
+    }
+    return fab;
+  }
+
+  /**
    * Generates the action button call for the java of the menu processes.
    * 
    * @param conn
@@ -1088,7 +1153,7 @@ public class WadActionButton {
       }
       html.append("\"");
       if (efd.isdisplayed.equals("Y") && isupdateable && WadUtility.isDateField(efd.adReferenceId)) { // Date.
-                                                                                                      // Put
+        // Put
         // a
         // calendar
         html.append(" onkeyup=\"auto_completar_fecha(this);return true;\"");

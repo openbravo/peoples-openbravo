@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -165,6 +165,16 @@
   <SECTION id="sectionActionButtons1"/>
 </structure>
 
+<structure name="structure14java">
+  <FIELD id="ProcessID4">adProcessId</FIELD>
+  <FIELD id="ButtonName4">columnname</FIELD>
+  <FIELD id="ButtonRealName4">realname</FIELD>
+  <FIELD id="ButtonMapping4">mappingname</FIELD>
+  <FIELD id="FieldsLoad4">htmltext</FIELD>
+  <FIELD id="FieldsLoadName4">htmlfields</FIELD>
+  <SECTION id="sectionActionButtonsJava1"/>
+</structure>
+
 <structure name="structure15">
   <FIELD id="ProcessID2">adProcessId</FIELD>
   <FIELD id="ButtonName2">columnname</FIELD>
@@ -174,6 +184,17 @@
   <FIELD id="FieldsLoadName2">htmlfieldsHeader</FIELD>
   <FIELD id="JavaCode2">javacode</FIELD>
   <SECTION id="sectionActionButtons2"/>
+</structure>
+
+<structure name="structure15java">
+  <FIELD id="ProcessID2j">adProcessId</FIELD>
+  <FIELD id="ButtonName2j">columnname</FIELD>
+  <FIELD id="ButtonRealName2j">realname</FIELD>
+  <FIELD id="ButtonProcessId2j">xmlid</FIELD>
+  <FIELD id="ButtonMapping2j">mappingname</FIELD>
+  <FIELD id="FieldsLoadName2j">htmlfieldsHeader</FIELD>
+  <FIELD id="JavaCode2j">javacode</FIELD>
+  <SECTION id="sectionActionButtons2java"/>
 </structure>
 
 <structure name="structure16">
@@ -186,6 +207,15 @@
   <FIELD id="ProcessCode3">processCode</FIELD>
   <FIELD id="AdditionalCode3">additionalCode</FIELD>
   <SECTION id="sectionActionButtons3"/>
+</structure>
+
+<structure name="structure16java">
+  <FIELD id="ProcessID3j">adProcessId</FIELD>
+  <FIELD id="ButtonName3j">columnname</FIELD>
+  <FIELD id="ButtonRealName3j">realname</FIELD>
+  <FIELD id="FieldsLoadParams3j">processParams</FIELD>
+  <FIELD id="ProcessCode3j">processCode</FIELD>
+  <SECTION id="sectionActionButtons3java"/>
 </structure>
 
 

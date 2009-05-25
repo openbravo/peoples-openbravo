@@ -55,6 +55,38 @@
     </Sql>
     <Parameter name="tabId"/>
   </SqlMethod>
+  
+  <SqlMethod name="selectJava" type="preparedStatement" return="multiple">
+    <SqlMethodComment>The table references in dictionary</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT AD_COLUMN.columnname AS realname, AD_COLUMN.columnname, AD_COLUMN.AD_PROCESS_ID, 
+      AD_COLUMN.AD_TABLE_ID,  AD_COLUMN.ad_reference_value_id, 
+      AD_COLUMN.AD_PROCESS_ID AS xmlid, mo.classname
+      FROM AD_FIELD, AD_COLUMN, ad_model_object mo,
+      AD_TABLE, AD_PROCESS
+      WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id
+      AND AD_COLUMN.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
+      AND ad_field.ad_tab_id = ? 
+      AND AD_PROCESS.AD_PROCESS_ID = AD_COLUMN.AD_PROCESS_ID
+      AND AD_PROCESS.PROCEDURENAME IS NULL
+      AND UIPattern='S' 
+      AND ad_column.ad_process_id = mo.ad_process_id 
+      and mo.isactive = 'Y' 
+      and mo.action = 'P' 
+      and mo.isdefault = 'Y'
+      AND AD_COLUMN.ad_reference_id = '28'
+      AND (AD_COLUMN.COLUMNNAME <> 'CreateFrom' 
+      OR AD_COLUMN.AD_PROCESS_ID IS NOT NULL )
+      AND (AD_COLUMN.COLUMNNAME <> 'Posted' 
+      OR AD_COLUMN.AD_PROCESS_ID IS NOT NULL )
+      AND AD_FIELD.ISDISPLAYED = 'Y'
+      ORDER BY AD_FIELD.SEQNO
+      ]]>
+    </Sql>
+    <Parameter name="tabId"/>
+  </SqlMethod>
+  
   <SqlMethod name="selectGenerics" type="preparedStatement" return="multiple">
     <SqlMethodComment>The table references in dictionary</SqlMethodComment>
     <Sql>

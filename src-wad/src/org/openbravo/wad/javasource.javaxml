@@ -402,6 +402,21 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
           printPageButton<FIELD_TMP id="ButtonRealName1">name</FIELD_TMP><FIELD_TMP id="ProcessID1">xx</FIELD_TMP>(response, vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, str<FIELD_TMP id="ButtonName1">name</FIELD_TMP>, strProcessing<FIELD_TMP id="FieldsLoadName1">, strFields</FIELD_TMP>);
         }
 </FIELDS_TMP>
+<FIELDS_TMP id="sectionActionButtonsJava1">    } else if (vars.commandIn("BUTTON<FIELD_TMP id="ButtonRealName4">button</FIELD_TMP><FIELD_TMP id="ProcessID4">button</FIELD_TMP>")) {
+        String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
+        String str<FIELD_TMP id="ButtonName4">name</FIELD_TMP> = vars.getStringParameter("inp<FIELD_TMP id="ButtonName4">name</FIELD_TMP>");
+        String strProcessing = vars.getStringParameter("inpprocessing", "Y");
+        String strOrg = vars.getStringParameter("inpadOrgId");
+        String strClient = vars.getStringParameter("inpadClientId");
+        <FIELD_TMP id="FieldsLoad4">String strField = vars.getStringParameter("inpFields");</FIELD_TMP>
+        if ((org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId)) || !(Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),strClient)  &amp;&amp; Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),strOrg))){
+          OBError myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
+          vars.setMessage(tabId, myError);
+          printPageClosePopUp(response, vars);
+        }else{       
+          printPageButton<FIELD_TMP id="ButtonRealName4">name</FIELD_TMP><FIELD_TMP id="ProcessID4">xx</FIELD_TMP>(response, vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, str<FIELD_TMP id="ButtonName4">name</FIELD_TMP>, strProcessing<FIELD_TMP id="FieldsLoadName4">, strFields</FIELD_TMP>);
+        }
+</FIELDS_TMP>
 <FIELDS_TMP id="sectionActionButtons3">    } else if (vars.commandIn("SAVE_BUTTON<FIELD_TMP id="ButtonRealName3">button</FIELD_TMP><FIELD_TMP id="ProcessID3">button</FIELD_TMP>")) {
         String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inpKey", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
         @SuppressWarnings("unused")
@@ -425,6 +440,40 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
             return;
           } else vars.setMessage(tabId, myMessage);
         }
+        //close popup
+        if (myMessage!=null) {
+          if (log4j.isDebugEnabled()) log4j.debug(myMessage.getMessage());
+          vars.setMessage(tabId, myMessage);
+        }
+        printPageClosePopUp(response, vars);
+</FIELDS_TMP>
+<FIELDS_TMP id="sectionActionButtons3java">    } else if (vars.commandIn("SAVE_BUTTON<FIELD_TMP id="ButtonRealName3j">button</FIELD_TMP><FIELD_TMP id="ProcessID3j">button</FIELD_TMP>")) {
+        String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inpKey", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
+        @SuppressWarnings("unused")
+        
+        ProcessBundle pb = new ProcessBundle("<FIELD_TMP id="ProcessID3j"/>", vars);
+        HashMap&lt;String, Object&gt; params= new HashMap&lt;String, Object&gt;();
+       
+        params.put("<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
+        params.put("adOrgId", vars.getStringParameter("inpadOrgId"));
+        params.put("adClientId", vars.getStringParameter("inpadClientId"));
+        <FIELD_TMP id="FieldsLoadParams3j">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>
+        
+        pb.setParams(params);
+        OBError myMessage = null;
+        try {
+          <FIELD_TMP id="ProcessCode3j">execute process</FIELD_TMP>
+          myMessage = (OBError) pb.getResult();
+          myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), myMessage.getMessage()));
+        } catch (Exception ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          log4j.error(ex);
+          if (!myMessage.isConnectionAvailable()) {
+            bdErrorConnection(response);
+            return;
+          } else vars.setMessage(tabId, myMessage);
+        }
+        //close popup
         if (myMessage!=null) {
           if (log4j.isDebugEnabled()) log4j.debug(myMessage.getMessage());
           vars.setMessage(tabId, myMessage);
@@ -1042,6 +1091,41 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       }
 
       <FIELD_TMP id="JavaCode2">javaCode</FIELD_TMP>
+      
+      out.println(xmlDocument.print());
+      out.close();
+    }
+</FIELDS_TMP>
+
+<FIELDS_TMP id="sectionActionButtons2java">    void printPageButton<FIELD_TMP id="ButtonRealName2j">name</FIELD_TMP><FIELD_TMP id="ProcessID2j">xx</FIELD_TMP>(HttpServletResponse response, VariablesSecureApp vars, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, String str<FIELD_TMP id="ButtonName2j">name</FIELD_TMP>, String strProcessing<FIELD_TMP id="FieldsLoadName2j">, strFields</FIELD_TMP>)
+    throws IOException, ServletException {
+      log4j.debug("Output: Button process <FIELD_TMP id="ProcessID2j">xx</FIELD_TMP>");
+      String[] discard = {"newDiscard"};
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/<FIELD_TMP id="ButtonRealName2j">name</FIELD_TMP><FIELD_TMP id="ButtonProcessId2j">name</FIELD_TMP>", discard).createXmlDocument();
+      xmlDocument.setParameter("key", str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
+      xmlDocument.setParameter("processing", strProcessing);
+      xmlDocument.setParameter("form", "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Edition.html");
+      xmlDocument.setParameter("window", windowId);
+      xmlDocument.setParameter("css", vars.getTheme());
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("processId", "<FIELD_TMP id="ProcessID2j">xx</FIELD_TMP>");
+      xmlDocument.setParameter("cancel", Utility.messageBD(this, "Cancel", vars.getLanguage()));
+      xmlDocument.setParameter("ok", Utility.messageBD(this, "OK", vars.getLanguage()));
+      
+      {
+        OBError myMessage = vars.getMessage("<FIELD_TMP id="ProcessID2j">xx</FIELD_TMP>");
+        vars.removeMessage("<FIELD_TMP id="ProcessID2j">xx</FIELD_TMP>");
+        if (myMessage!=null) {
+          xmlDocument.setParameter("messageType", myMessage.getType());
+          xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+          xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+        }
+      }
+
+      <FIELD_TMP id="JavaCode2j">javaCode</FIELD_TMP>
       
       out.println(xmlDocument.print());
       out.close();

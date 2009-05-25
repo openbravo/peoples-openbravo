@@ -478,9 +478,10 @@
       ad_process.description as tablename, ad_process.help as xmltext, ad_column.ad_reference_value_id, ad_process.isjasper 
       FROM ad_column, ad_process, ad_field
       where ad_column.ad_process_id = ad_process.ad_process_id 
-      and ad_column.ad_column_id = ad_field.ad_column_id 
-      and (ad_process.procedurename is not null
-      OR ad_process.isjasper = 'Y') 
+      and ad_column.ad_column_id = ad_field.ad_column_id  
+      AND (ad_process.procedurename is null 
+           or ad_process.isjasper = 'Y'
+           or (UIPattern='S' AND EXISTS (SELECT 1 FROM AD_MODEL_OBJECT WHERE AD_PROCESS_ID = AD_PROCESS.AD_PROCESS_ID))) 
       and ad_column.columnname not in('DocAction', 'PaymentRule') 
       and (ad_column.columnname <> 'CreateFrom'
       or ad_column.ad_process_id is not null)
@@ -501,8 +502,9 @@
       FROM ad_column, ad_process, ad_field, ad_system_info si
       where ad_column.ad_process_id = ad_process.ad_process_id 
       and ad_column.ad_column_id = ad_field.ad_column_id 
-      and (ad_process.procedurename is not null
-      OR ad_process.isjasper = 'Y') 
+      AND (ad_process.procedurename is null 
+           or ad_process.isjasper = 'Y'
+           or (UIPattern='S' AND EXISTS (SELECT 1 FROM AD_MODEL_OBJECT WHERE AD_PROCESS_ID = AD_PROCESS.AD_PROCESS_ID)))
       and ad_column.columnname not in('DocAction', 'PaymentRule') 
       and (ad_column.columnname <> 'CreateFrom'
       or ad_column.ad_process_id is not null)
