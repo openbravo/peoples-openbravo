@@ -71,7 +71,7 @@ v_gl_journallineid varchar2(32);
 v_line NUMBER;
 v_validcombination_ID VARCHAR2(32);
 
-v_glitem_acct NUMBER;
+v_glitem_acct VARCHAR2(32);
 v_glitem_ID VARCHAR2(32);
 
 v_debit NUMBER;
