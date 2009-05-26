@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -213,8 +213,9 @@ public class ModelSQLGeneration {
       return "";
     StringBuffer text = new StringBuffer();
     if (reference.equals("15") || reference.equals("16") || reference.equals("24")) {
-      text.append("TO_DATE(").append(tablename).append(".").append(columnname).append(
-          (reference.equals("24") ? ", 'HH24:MI:SS'" : "")).append(") ");
+      text.append("TO_DATE(").append(reference.equals("24") ? "TO_CHAR(" : "").append(tablename)
+          .append(".").append(columnname).append(
+              (reference.equals("24") ? ", 'HH24:MI:SS'), 'HH24:MI:SS'" : "")).append(") ");
       if (first)
         text.append(">= ");
       else {
