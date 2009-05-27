@@ -1025,7 +1025,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the error. "" if there is no error
-   * 
+   *
    * @param vars
    * @param strOrganization
    * @param strClient
@@ -1079,6 +1079,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             if (myFiles[j].getName().endsWith(".xml"))
               myTargetFiles.add(myFiles[j]);
           }
+          myFiles = new File [myTargetFiles.size()];
           myFiles = myTargetFiles.toArray(myFiles);
           StringBuffer strError = new StringBuffer("");
           for (int j = 0; j < myFiles.length; j++) {
@@ -1129,7 +1130,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   * 
+   *
    * @param modules
    * @return
    */

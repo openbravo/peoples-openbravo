@@ -212,6 +212,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
               if (myFiles[j].getName().endsWith(".xml"))
                 myTargetFiles.add(myFiles[j]);
             }
+            myFiles = new File [myTargetFiles.size()];
             myFiles = myTargetFiles.toArray(myFiles);
           } else {
             myFiles = new File[] {};
@@ -277,7 +278,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
 
   /**
    * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   * 
+   *
    * @param modules
    * @return
    */
