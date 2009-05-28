@@ -40,7 +40,6 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
-import org.openbravo.base.secureApp.ClassInfoData;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.TabAttachmentsData;
@@ -58,20 +57,18 @@ public class ReportManager {
   private String _strDefaultDesignPath;
   private String language;
   private String _strBaseWeb; // BASE WEB!!!!!!
-  private ClassInfoData _classInfo;
   private String _prefix;
   private String _strAttachmentPath;
   private boolean multiReports = false;
 
   public ReportManager(ConnectionProvider connectionProvider, String ftpDirectory,
       String replaceWithFull, String baseDesignPath, String defaultDesignPath, String prefix,
-      ClassInfoData classInfo, boolean multiReport) {
+      boolean multiReport) {
     _connectionProvider = connectionProvider;
     _strBaseWeb = replaceWithFull;
     _strBaseDesignPath = baseDesignPath;
     _strDefaultDesignPath = defaultDesignPath;
     _strAttachmentPath = ftpDirectory;
-    _classInfo = classInfo;
     _prefix = prefix;
     multiReports = multiReport;
 

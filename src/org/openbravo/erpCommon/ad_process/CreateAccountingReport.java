@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
-import org.openbravo.erpCommon.ad_reports.ReportGeneralLedgerData;
+import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -145,7 +145,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
         CreateAccountingReportData.selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this,
             vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars,
             "#User_Client", "CreateAccountingReport"), strcAcctSchemaId, ""));
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client",
             "CreateAccountingReport"), strcAcctSchemaId));

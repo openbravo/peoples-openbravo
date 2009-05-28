@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 
-<SqlClass name="EmailData" package="org.openbravo.erpCommon.utility.poc">
+<SqlClass name="EmailData" package="org.openbravo.erpCommon.utility.reporting.printing">
    <SqlClassComment></SqlClassComment>
    
    <SqlMethod name="getEmail" type="preparedStatement" return="multiple">
@@ -164,5 +164,23 @@
         <Parameter name="bmPocEmailId"/>
         <Parameter name="email_adUserId"/>
    </SqlMethod>   
+
+   <SqlMethod name="getSenderAddress" type="preparedStatement" return="String">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+        select
+            C_poc_configuration.smtpServerSenderAddress
+        from
+            C_poc_configuration
+        where
+            C_poc_configuration.ad_client_id = ? AND
+            (C_poc_configuration.ad_org_id = ? OR C_poc_configuration.ad_org_id = '0') AND
+            C_poc_configuration.isActive = 'Y'
+        ]]>
+        </Sql>
+        <Parameter name="adClientId" />
+        <Parameter name="adOrgId" />
+   </SqlMethod>
 
 </SqlClass>

@@ -38,6 +38,7 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -514,7 +515,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(
             this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
             ""), strcBpartnerIdAux));
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
             "ReportGeneralLedger"), strcAcctSchemaId));

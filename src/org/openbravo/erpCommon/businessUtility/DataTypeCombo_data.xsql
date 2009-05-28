@@ -22,37 +22,19 @@
 
 
 
-<SqlClass name="PrintJRData" package="org.openbravo.erpCommon.utility" accessModifier="public">
+<SqlClass name="DataTypeComboData" package="org.openbravo.erpCommon.businessUtility">
    <SqlClassComment></SqlClassComment>
-    <SqlMethod name="getProcessParams" type="preparedStatement" return="multiple">
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        select columnname AS paramname, AD_Reference_ID AS reference 
-        FROM AD_Process_Para 
-        WHERE AD_Process_ID = ? 
+      SELECT AD_DataType_ID as id, Name as name 
+      FROM AD_DataType
+      WHERE isActive = 'Y' 
+      AND AD_CLIENT_ID IN ('1') 
+      AND AD_ORG_ID IN ('1')
+      ORDER BY Name
       </Sql>
-      <Parameter name="adProcessId"/>
+      <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
+      <Parameter name="adUserOrg" type="replace" optional="true" after="AND AD_ORG_ID IN (" text="'1'"/>
    </SqlMethod>
-   <SqlMethod name="getReportName" type="preparedStatement" return="String">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        select JRName AS paramname
-        FROM AD_Process 
-        WHERE AD_Process_ID = ? 
-      </Sql>
-      <Parameter name="adProcessId"/>
-    </SqlMethod>
-    
-    <SqlMethod name="getReportTitle" type="preparedStatement" return="String">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        select COALESCE(t.name, m.name) AS paramname
-        FROM AD_Menu M LEFT JOIN AD_Menu_Trl t ON m.AD_Menu_ID  = t.AD_Menu_ID
-                                              AND t.AD_Language = ?   
-        WHERE M.AD_Process_ID = ? 
-      </Sql>
-      <Parameter name="adLanguage"/>
-      <Parameter name="adProcessId"/>
-    </SqlMethod>
-    
 </SqlClass>

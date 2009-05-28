@@ -39,7 +39,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.ad_combos.MonedaComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
@@ -350,7 +349,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       }
     }
 
-    // ==========================================================================================================================================
+    //==============================================================================================
 
     if (strModules != null && !strModules.equals("")) {
       try {
@@ -391,7 +390,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
         }
       }
     }
-    // ==========================================================================================================================================
+    //==============================================================================================
     log4j.debug("InitialOrgSetup - after createEntities");
     if (isOK)
       strError = Utility.messageBD(this, "Success", vars.getLanguage());

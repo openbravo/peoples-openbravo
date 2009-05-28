@@ -329,19 +329,6 @@
     <Parameter name="cElementvalueId"/>
   </SqlMethod>
 
-  <SqlMethod name="selectC_ACCTSCHEMA_ID" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT C_ACCTSCHEMA_ID as id, ((CASE C_ACCTSCHEMA.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ACCTSCHEMA.Name) as name FROM C_ACCTSCHEMA
-      WHERE C_ACCTSCHEMA.AD_Org_ID IN('1') AND C_ACCTSCHEMA.AD_Client_ID IN('1')  AND (C_ACCTSCHEMA.isActive = 'Y' OR C_ACCTSCHEMA.C_ACCTSCHEMA_ID = ? )
-      ORDER BY name
-    ]]></Sql>
-
-    <Parameter name="adOrgClient" type="replace" optional="true" after="C_ACCTSCHEMA.AD_Org_ID IN(" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="C_ACCTSCHEMA.AD_Client_ID IN(" text="'1'"/>
-    <Parameter name="cAcctschemaId"/>
-  </SqlMethod>
-
   <SqlMethod name="selectCompany" type="preparedStatement" return="string" default="0">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

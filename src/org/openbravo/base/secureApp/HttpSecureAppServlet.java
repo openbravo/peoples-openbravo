@@ -52,9 +52,7 @@ import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.security.AccessData;
 import org.openbravo.erpCommon.security.SessionLogin;
-import org.openbravo.erpCommon.security.SessionLoginData;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBError;
@@ -384,19 +382,19 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    */
   protected boolean hasGeneralAccess(VariablesSecureApp vars, String type, String id) {
     try {
-      final String accessLevel = AccessData.selectAccessLevel(this, type, id);
+      final String accessLevel = SeguridadData.selectAccessLevel(this, type, id);
       vars.setSessionValue("#CurrentAccessLevel", accessLevel);
       if (type.equals("W")) {
         return hasLevelAccess(vars, accessLevel)
-            && AccessData.selectAccess(this, vars.getRole(), "TABLE", id).equals("0")
-            && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
+            && SeguridadData.selectAccess(this, vars.getRole(), "TABLE", id).equals("0")
+            && !SeguridadData.selectAccess(this, vars.getRole(), type, id).equals("0");
       } else if (type.equals("S")) {
-        return !AccessData.selectAccessSearch(this, vars.getRole(), id).equals("0");
+        return !SeguridadData.selectAccessSearch(this, vars.getRole(), id).equals("0");
       } else if (type.equals("C"))
         return true;
       else
         return hasLevelAccess(vars, accessLevel)
-            && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
+            && !SeguridadData.selectAccess(this, vars.getRole(), type, id).equals("0");
     } catch (final Exception e) {
       log4j.error("Error checking access: ", e);
       return false;
@@ -467,7 +465,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Clearing session");
     if (!dbSession.equals(""))
-      SessionLoginData.saveProcessed(this, user, dbSession);
+      SeguridadData.saveProcessed(this, user, dbSession);
 
     m_AuthManager.logout(request, response);
   }

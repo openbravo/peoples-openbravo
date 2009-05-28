@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.ProcessPlanComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -79,8 +78,8 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnvEdit").createXmlDocument();
     data = ReportWorkRequirementDailyEnvData.select(this, vars.getLanguage(), Utility.getContext(
         this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"), Utility.getContext(this,
-        vars, "#AccessibleOrgTree", "ReportWorkRequirementDailyEnv"), strStartDateFrom, strStartDateTo,
-        strmaProcessPlan);
+        vars, "#AccessibleOrgTree", "ReportWorkRequirementDailyEnv"), strStartDateFrom,
+        strStartDateTo, strmaProcessPlan);
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");

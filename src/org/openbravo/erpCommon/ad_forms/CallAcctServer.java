@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_process.AcctServerProcessData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -40,7 +39,6 @@ import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
-import org.openbravo.scheduling.ProcessRequestData;
 import org.openbravo.scheduling.ProcessRunner;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.quartz.SchedulerException;
@@ -52,7 +50,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String adProcessId = CallAcctServerData.processID(this);
-    ProcessRequestData[] data = ProcessRequestData.selectByProcessId(this, adProcessId);
+    CallAcctServerData[] data = CallAcctServerData.selectByProcessId(this, adProcessId);
 
     // PeriodicBackground acctServer = getBackgroundProcess(adProcessId);
     if (vars.commandIn("DEFAULT")) {
@@ -168,7 +166,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
     myMessage.setTitle("");
     boolean scheduled = false;
     try {
-      ProcessRequestData[] data = ProcessRequestData.selectByProcessId(this, adProcessId);
+      CallAcctServerData[] data = CallAcctServerData.selectByProcessId(this, adProcessId);
       if (data.length > 0) {
         for (int i = 0; i < data.length; i++) {
           if (data[i].status.equals(Process.SCHEDULED)) {
@@ -192,7 +190,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
         bundle.getParams().put(ProcessBundle.PINSTANCE, adPinstanceId);
         String executionId = new ProcessRunner(bundle).execute(this);
 
-        String log = AcctServerProcessData.selectLog(this, executionId);
+        String log = CallAcctServerData.selectLog(this, executionId);
         myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), log));
         myMessage.setType("Info");
       } else {

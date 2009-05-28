@@ -30,7 +30,6 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
-import org.openbravo.erpCommon.info.OrganizationData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -203,7 +202,9 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
         "", "imprimir();return false;", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     // toolbar.prepareRelationBarTemplate(false,
-    // false,"submitCommandForm('XLS', false, frmMain, 'ReportAnnualCertification.xls', 'EXCEL');return false;");
+    // false,
+    // "submitCommandForm('XLS', false, frmMain, 'ReportAnnualCertification.xls', 'EXCEL');return false;"
+    // );
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
       // GESTIONE TABS
@@ -250,9 +251,9 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
       data = ReportAnnualCertificationData.set();
     } else {
       data = ReportAnnualCertificationData.select(this, Utility.getContext(this, vars,
-          "#User_Client", "ReportAnnualCertification"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportAnnualCertification"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-          strcBpartnerId, initRecordNumber, intRecordRange);
+          "#User_Client", "ReportAnnualCertification"), Utility.getContext(this, vars,
+          "#AccessibleOrgTree", "ReportAnnualCertification"), strDateFrom, DateTimeData.nDaysAfter(
+          this, strDateTo, "1"), strcBpartnerId, initRecordNumber, intRecordRange);
     }
     xmlDocument.setData("structure1", data);
 
@@ -280,9 +281,9 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
       log4j.debug("Output: PDF");
     ReportAnnualCertificationData[] data = null;
     data = ReportAnnualCertificationData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "ReportAnnualCertification"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        "ReportAnnualCertification"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-        strcBpartnerId);
+        "#User_Client", "ReportAnnualCertification"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportAnnualCertification"), strDateFrom, DateTimeData.nDaysAfter(
+        this, strDateTo, "1"), strcBpartnerId);
 
     String sClientID = vars.getClient();
     String sOrganID = vars.getOrg();

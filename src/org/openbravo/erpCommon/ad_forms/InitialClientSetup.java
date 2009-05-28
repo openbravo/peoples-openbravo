@@ -35,7 +35,6 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.ad_combos.MonedaComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataClientTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
@@ -365,7 +364,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
     }
 
-    // ==========================================================================================================================================
+    //==============================================================================================
     if (!strModules.equals("")) {
       try {
         m_info.append(SALTO_LINEA).append("*****************************************************")
@@ -411,7 +410,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
     }
 
-    // ==========================================================================================================================================
+    //==============================================================================================
 
     log4j.debug("InitialClientSetup - after createEntities");
     if (isOK)

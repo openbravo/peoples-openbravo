@@ -50,6 +50,7 @@ public class Sqlc extends DefaultHandler {
   public static final String VERSION = "V1.O00-1";
   String sqlcName;
   String sqlcPackage = null;
+  String sqlcAccessModifier = ""; // i.e. "" or public
   Stack<String> stcElement; // Stack of Elements
   String strElement;
   String strDriver;
@@ -91,7 +92,7 @@ public class Sqlc extends DefaultHandler {
     first = true;
     sqlcPackage = null;
     strComments = null;
-
+    sqlcAccessModifier = "";
   }
 
   public static void main(String argv[]) throws Exception {
@@ -433,6 +434,8 @@ public class Sqlc extends DefaultHandler {
           sqlcName = amap.getValue(i);
         } else if (amap.getQName(i).equals("package")) {
           sqlcPackage = amap.getValue(i);
+        } else if (amap.getQName(i).equals("accessModifier")) {
+          sqlcAccessModifier = amap.getValue(i);
         }
       }
     } else if (name.equals("Parameter")) {
@@ -684,7 +687,11 @@ public class Sqlc extends DefaultHandler {
     if (!javaFileName.equals(sqlcName))
       throw new IOException("File name for xsql class " + javaFileName
           + " is different than the class name defined inside the file: " + sqlcName);
-    out2.append("public class " + sqlcName + " implements FieldProvider {\n");
+    if (sqlcAccessModifier.length() > 0) {
+      out2.append(sqlcAccessModifier);
+      out2.append(" ");
+    }
+    out2.append("class " + sqlcName + " implements FieldProvider {\n");
     out2.append("static Logger log4j = Logger.getLogger(" + sqlcName + ".class);\n");
     try {
       // Display column headings

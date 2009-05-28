@@ -36,8 +36,6 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.ProcessPlanComboData;
-import org.openbravo.erpCommon.ad_combos.ProcessPlanVersionComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;

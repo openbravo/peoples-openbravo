@@ -29,15 +29,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.DefaultOptionsData;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.LanguageComboData;
-import org.openbravo.erpCommon.ad_combos.RoleComboData;
-import org.openbravo.erpCommon.security.ClientData;
-import org.openbravo.erpCommon.security.OrganizationData;
-import org.openbravo.erpCommon.security.WarehouseData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
@@ -136,8 +130,8 @@ public class Role extends HttpSecureAppServlet {
     }
 
     if (strSetDefault.equals("Y"))
-      DefaultOptionsData.saveDefaultOptions(this, strLanguage, strRol, strClient, strOrg,
-          strWarehouse, strUserAuth);
+      RoleData.saveDefaultOptions(this, strLanguage, strRol, strClient, strOrg, strWarehouse,
+          strUserAuth);
 
     if (strClient.equals("") || strOrg.equals("") || strRol.equals(""))
       return false;

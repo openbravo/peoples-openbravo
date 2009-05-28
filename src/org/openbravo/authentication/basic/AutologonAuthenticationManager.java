@@ -19,11 +19,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.authentication.AuthenticationData;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.HttpBaseUtils;
-import org.openbravo.base.secureApp.SeguridadData;
 import org.openbravo.database.ConnectionProvider;
 
 /**
@@ -46,7 +46,7 @@ public class AutologonAuthenticationManager implements AuthenticationManager {
       m_sAutologonUsername = ConfigParameters.retrieveFrom(s.getServletContext()).getOBProperty(
           "authentication.autologon.username");
       try {
-        m_sUserId = SeguridadData.getUserId(conn, m_sAutologonUsername);
+        m_sUserId = AuthenticationData.getUserId(conn, m_sAutologonUsername);
       } catch (ServletException e) {
         throw new AuthenticationException("Cannot authenticate user: " + m_sAutologonUsername, e);
       }

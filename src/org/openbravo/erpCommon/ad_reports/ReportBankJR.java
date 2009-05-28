@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.AccountNumberComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -132,7 +131,8 @@ public class ReportBankJR extends HttpSecureAppServlet {
   }
 
   void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strcbankaccount, String strOutput) throws IOException, ServletException {
+      String strDateTo, String strcbankaccount, String strOutput) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -184,7 +184,8 @@ public class ReportBankJR extends HttpSecureAppServlet {
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("DATE_FROM", strDateFrom);
-    parameters.put("USER_ORG", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR"));
+    parameters
+        .put("USER_ORG", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR"));
     parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client", "ReportBankJR"));
     String strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportBankJR.jrxml";
     renderJR(vars, response, strReportPath, strOutput, parameters, data, null);

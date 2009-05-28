@@ -12,41 +12,22 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
 
+<SqlClass name="HeartbeatData" package="org.openbravo.erpCommon.businessUtility" accessModifier="public">
 
-
-
-
-<SqlClass name="RoleComboData" package="org.openbravo.erpCommon.ad_combos">
-   <SqlClassComment></SqlClassComment>
-   <SqlMethod name="select" type="preparedStatement" return="multiple">
+   <SqlMethod name="selectSystemProperties" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT A_R.AD_ROLE_ID, A_R.NAME, A_R.AD_CLIENT_ID, A_R.CLIENTLIST 
-        FROM AD_ROLE A_R, AD_USER_ROLES A_U_R 
-        WHERE A_R.AD_ROLE_ID = A_U_R.AD_ROLE_ID 
-        AND A_U_R.ISACTIVE = 'Y' 
-        AND A_R.ISACTIVE = 'Y' 
-        AND A_U_R.AD_USER_ID = ?
-        ORDER BY A_R.NAME
-      </Sql>
-        <Parameter name="user"/>
+      <Sql><![CDATA[
+      	SELECT System_Identifier, Isheartbeatactive, Isproxyrequired, Proxy_Server, Proxy_Port, 
+      	Servlet_Container, Servlet_Container_Version, Webserver, Webserver_Version, 
+      	Ant_Version, OB_Version, OB_InstallMode, Code_Revision, Postpone_Date
+      	FROM AD_System_Info
+    ]]></Sql>
    </SqlMethod>
-   <SqlMethod name="isUserRole" type="preparedStatement" return="Boolean" default="false">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT COUNT(*) AS TOTAL 
-        FROM AD_USER_ROLES A_U_R 
-        WHERE A_U_R.ISACTIVE = 'Y' 
-        AND A_U_R.AD_USER_ID = ?
-        AND A_U_R.AD_ROLE_ID = ?
-      </Sql>
-        <Parameter name="user"/>
-        <Parameter name="role"/>
-   </SqlMethod>
+
 </SqlClass>

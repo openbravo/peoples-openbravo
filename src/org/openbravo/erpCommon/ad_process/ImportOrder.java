@@ -26,8 +26,7 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.ad_actionButton.ExpenseSOrderData;
-import org.openbravo.erpCommon.ad_callouts.SEOrderBPartnerData;
+import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -479,7 +478,7 @@ public class ImportOrder extends ImportProcess {
               corder.datepromised = data[i].datepromised;
             if (log4j.isDebugEnabled())
               log4j.debug("getting bp values as default");
-            SEOrderBPartnerData[] data1 = SEOrderBPartnerData.select(conn, data[i].cBpartnerId);
+            BpartnerMiscData[] data1 = BpartnerMiscData.select(conn, data[i].cBpartnerId);
             String tmpCurrency = COrderData.selectCurrency(conn, vars.getUser(),
                 data[i].cBpartnerId);
             corder.isdiscountprinted = "N";
@@ -643,8 +642,8 @@ public class ImportOrder extends ImportProcess {
           try {
             line.cTaxId = Tax.get(conn, data[i].mProductId, DateTimeData.today(conn),
                 data[i].adOrgId, data[i].mWarehouseId.equals("") ? vars.getWarehouse()
-                    : data[i].mWarehouseId, ExpenseSOrderData.cBPartnerLocationId(conn,
-                    data[i].cBpartnerId), ExpenseSOrderData.cBPartnerLocationId(conn,
+                    : data[i].mWarehouseId, ImportOrderData.cBPartnerLocationId(conn,
+                    data[i].cBpartnerId), ImportOrderData.cBPartnerLocationId(conn,
                     data[i].cBpartnerId), data[i].cProjectId, true);
           } catch (IOException ioe) {
             if (log4j.isDebugEnabled())

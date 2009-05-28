@@ -28,8 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_process.HeartbeatProcessData;
-import org.openbravo.erpCommon.ad_process.RegisterData;
+import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -43,7 +42,8 @@ public class Heartbeat extends HttpSecureAppServlet {
 
     removeFromPageHistory(request);
 
-    final HeartbeatProcessData[] data = HeartbeatProcessData.selectSystemProperties(this);
+    final org.openbravo.erpCommon.businessUtility.HeartbeatData[] data = org.openbravo.erpCommon.businessUtility.HeartbeatData
+        .selectSystemProperties(this);
     if (data.length > 0) {
       String servletContainer = data[0].servletContainer;
       String servletContainerVersion = data[0].servletContainerVersion;
@@ -54,8 +54,7 @@ public class Heartbeat extends HttpSecureAppServlet {
           servletContainer = serverInfo.split("/")[0];
           servletContainerVersion = serverInfo.split("/")[1];
 
-          HeartbeatProcessData.updateServletContainer(this, servletContainer,
-              servletContainerVersion);
+          HeartbeatData.updateServletContainer(this, servletContainer, servletContainerVersion);
         }
       }
     }
@@ -63,12 +62,12 @@ public class Heartbeat extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       printPageDataSheet(response, vars);
     } else if (vars.commandIn("DISABLE")) {
-      HeartbeatProcessData.disableHeartbeat(myPool);
+      HeartbeatData.disableHeartbeat(myPool);
     } else if (vars.commandIn("POSTPONE")) {
       final Calendar cal = Calendar.getInstance();
       cal.add(Calendar.DATE, 2);
       final String date = new SimpleDateFormat(vars.getJavaDateFormat()).format(cal.getTime());
-      HeartbeatProcessData.postpone(myPool, date);
+      HeartbeatData.postpone(myPool, date);
     } else
       pageError(response);
   }
@@ -106,7 +105,7 @@ public class Heartbeat extends HttpSecureAppServlet {
     xmlDocument.setParameter("welcome", Utility.formatMessageBDToHtml(Utility.messageBD(this,
         "HB_WELCOME", vars.getLanguage())));
 
-    final RegisterData[] rData = RegisterData.select(this);
+    final RegistrationData[] rData = RegistrationData.select(this);
     if (rData.length > 0) {
       final String isregistrationactive = rData[0].isregistrationactive;
       final String rPostponeDate = rData[0].postponeDate;

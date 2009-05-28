@@ -19,7 +19,7 @@
 -->
 
 
-    <SqlClass name="LocatorComboData" package="org.openbravo.erpCommon.ad_combos">
+    <SqlClass name="LocatorComboData" package="org.openbravo.erpCommon.ad_callouts">
        <SqlClassComment>Clase LocatorComboData</SqlClassComment>
        <SqlMethod name="select" type="preparedStatement" return="multiple">
           <SqlMethodComment>Relación de pasillos de un almacen de la aplicacion</SqlMethodComment>

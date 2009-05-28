@@ -18,22 +18,13 @@
  ************************************************************************
 -->
 
-
-
-<SqlClass name="ActionButtonData" package="org.openbravo.erpCommon.reference" accessModifier="public">
-  <SqlMethod name="select" type="preparedStatement" return="multiple">
-    <SqlMethodComment>empty select</SqlMethodComment>
-    <Sql>
-      SELECT * FROM DUAL
-    </Sql>
-  </SqlMethod>
-<METHODS_TMP id="sectionDetail">
-  <SqlMethod id="fieldReferenceId" name="processxx" type="callableStatement" return="object" object="ActionButtonData">
-      <SqlMethodComment>procedure <TABLE_TMP id="fieldProcessName">table</TABLE_TMP></SqlMethodComment>
-      <Sql>&#60;&#33;[CDATA[
-        CALL <TABLE_TMP id="fieldProcessName">table</TABLE_TMP>(?)
-      ]]&#62;</Sql>
-      <Parameter name="adPinstanceId"/>
+<SqlClass name="RegistrationData" package="org.openbravo.erpCommon.businessUtility" accessModifier="public">
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+      	SELECT Registration_Id, Isregistrationactive, Postpone_Date
+        FROM Ad_Registration_Info
+    ]]></Sql>
    </SqlMethod>
-</METHODS_TMP>
+
 </SqlClass>

@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -259,7 +260,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Client", "Account"), "", strcAcctSchemaId));
     xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData
         .selectCombo(this, vars.getRole()));
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Client",
             "ReportTrialBalance"), strcAcctSchemaId));

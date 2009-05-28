@@ -22,48 +22,18 @@
 
 
 
-<SqlClass name="WarehouseComboData" package="org.openbravo.erpCommon.ad_combos">
+<SqlClass name="WarehouseData" package="org.openbravo.erpCommon.ad_forms">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT M_Warehouse.M_Warehouse_ID, M_Warehouse.Name AS Name 
+        SELECT AD_ROLE_ORGACCESS.AD_ROLE_ID || '-' || M_Warehouse.AD_Client_ID as PADRE, M_Warehouse.M_WAREHOUSE_ID AS ID, 
+        M_Warehouse.Name AS Name 
         FROM M_Warehouse, AD_ORG , AD_ROLE_ORGACCESS
         WHERE M_Warehouse.AD_ORG_ID = AD_ORG.AD_ORG_ID
         AND AD_ORG.AD_ORG_ID = AD_ROLE_ORGACCESS.AD_ORG_ID
         AND M_Warehouse.IsActive='Y' 
-        AND AD_ROLE_ORGACCESS.AD_ROLE_ID = ? 
-        AND M_Warehouse.AD_Client_ID = ? 
-        ORDER BY M_Warehouse.Value
+        ORDER BY AD_ROLE_ORGACCESS.AD_ROLE_ID, M_Warehouse.Name
       </Sql>
-      <Parameter name="rol"/>
-      <Parameter name="client"/>
-   </SqlMethod>
-   <SqlMethod name="selectFilter" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT M_Warehouse_ID, Name AS Name 
-        FROM M_Warehouse 
-        WHERE IsActive='Y' 
-        AND AD_Client_ID IN ('1') 
-        ORDER BY Value
-      </Sql>
-      <Parameter name="adUserClient" type="replace" optional="true" after="AD_Client_ID IN (" text="'1'"/>
-   </SqlMethod>
-   <SqlMethod name="isRoleClientWarehouse" type="preparedStatement" return="Boolean" default="false">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT COUNT(*) AS TOTAL
-        FROM M_Warehouse, AD_ORG , AD_ROLE_ORGACCESS
-        WHERE M_Warehouse.AD_ORG_ID = AD_ORG.AD_ORG_ID
-        AND AD_ORG.AD_ORG_ID = AD_ROLE_ORGACCESS.AD_ORG_ID
-        AND M_Warehouse.IsActive='Y' 
-        AND AD_ROLE_ORGACCESS.AD_ROLE_ID = ? 
-        AND M_Warehouse.AD_Client_ID = ? 
-        AND M_Warehouse.M_Warehouse_ID = ?
-      </Sql>
-      <Parameter name="rol"/>
-      <Parameter name="client"/>
-      <Parameter name="warehouse"/>
    </SqlMethod>
 </SqlClass>

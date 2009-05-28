@@ -31,9 +31,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_reports.ReportTrialBalanceData;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.Tree;
+import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -1162,7 +1162,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     // String strStatusTo = vars.getStringParameter("inpStatusTo");
 
     final String strMarcarTodos = vars.getStringParameter("inpTodos", "N");
-    final String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    final String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     final String strOrgFamily = Tree.getMembers(this, strTreeOrg, strOrg);
 
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(

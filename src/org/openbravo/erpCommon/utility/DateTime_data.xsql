@@ -22,7 +22,7 @@
 
 
 
-<SqlClass name="DateTimeData" package="org.openbravo.erpCommon.utility">
+<SqlClass name="DateTimeData" package="org.openbravo.erpCommon.utility" accessModifier="public">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="today" type="preparedStatement" return="date">
       <SqlMethodComment></SqlMethodComment>

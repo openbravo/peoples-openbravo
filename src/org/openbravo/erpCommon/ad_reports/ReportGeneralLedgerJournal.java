@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -65,7 +66,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "ReportGeneralLedgerJournal|ShowReg", "");
       String strShowOpening = vars.getGlobalVariable("inpShowOpening",
           "ReportGeneralLedgerJournal|ShowOpening", "");
-      String strRecord = vars.getGlobalVariable("inpRecord", "ReportGeneralLedgerJournal|Record", "");
+      String strRecord = vars.getGlobalVariable("inpRecord", "ReportGeneralLedgerJournal|Record",
+          "");
       String strTable = vars.getGlobalVariable("inpTable", "ReportGeneralLedgerJournal|Table", "");
       log4j.debug("********DEFAULT***************  strShowClosing: " + strShowClosing);
       log4j.debug("********DEFAULT***************  strShowReg: " + strShowReg);
@@ -94,8 +96,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strDocument = vars.getRequestGlobalVariable("inpDocument",
           "ReportGeneralLedgerJournal|Document");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
-      String strRecord = vars.getRequestGlobalVariable("inpRecord", "ReportGeneralLedgerJournal|Record");
-      String strTable = vars.getRequestGlobalVariable("inpTable", "ReportGeneralLedgerJournal|Table");
+      String strRecord = vars.getRequestGlobalVariable("inpRecord",
+          "ReportGeneralLedgerJournal|Record");
+      String strTable = vars.getRequestGlobalVariable("inpTable",
+          "ReportGeneralLedgerJournal|Table");
       String strShowClosing = vars.getRequestGlobalVariable("inpShowClosing",
           "ReportGeneralLedgerJournal|ShowClosing");
       String strShowReg = vars.getRequestGlobalVariable("inpShowReg",
@@ -320,7 +324,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
     xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData
         .selectCombo(this, vars.getRole()));
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
             "ReportGeneralLedger"), strcAcctSchemaId));

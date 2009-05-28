@@ -70,14 +70,6 @@
       <Parameter name="adClientId"/>
       <Parameter name="text"/>
    </SqlMethod>
-   <SqlMethod name="selectLog" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-      SELECT LOG FROM AD_PROCESS_RUN 
-      WHERE AD_PROCESS_RUN_ID = ?
-    ]]></Sql>
-    <Parameter name="adProcessRunId"/>
-   </SqlMethod>
    <SqlMethod name="update" type="preparedStatement" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

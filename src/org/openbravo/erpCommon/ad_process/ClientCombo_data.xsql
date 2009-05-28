@@ -22,7 +22,7 @@
 
 
 
-<SqlClass name="ClientComboData" package="org.openbravo.erpCommon.ad_combos">
+<SqlClass name="ClientComboData" package="org.openbravo.erpCommon.ad_process">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -33,17 +33,6 @@
         ORDER BY A_C.NAME
       </Sql>
         <Parameter name="rol"/>
-   </SqlMethod>
-   <SqlMethod name="isRoleClient" type="preparedStatement" return="Boolean" default="false">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT COUNT(*) AS TOTAL
-        FROM AD_CLIENT A_C
-        WHERE A_C.AD_CLIENT_ID IN (SELECT CLIENTLIST FROM AD_ROLE WHERE AD_ROLE_ID = ?) 
-        AND A_C.AD_CLIENT_ID = ?
-      </Sql>
-        <Parameter name="rol"/>
-        <Parameter name="client"/>
    </SqlMethod>
 
       <SqlMethod name="selectAllClients" type="preparedStatement" return="multiple">

@@ -20,7 +20,7 @@
 
 
 
-<SqlClass name="PInstanceProcessData" package="org.openbravo.erpCommon.reference">
+<SqlClass name="PInstanceProcessData" package="org.openbravo.erpCommon.reference" accessModifier="public">
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

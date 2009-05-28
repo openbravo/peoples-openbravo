@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.AccountNumberComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -162,8 +161,8 @@ public class ReportBank extends HttpSecureAppServlet {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBankEdit")
           .createXmlDocument();
       data = ReportBankData.select(this, Utility.getContext(this, vars, "#User_Client",
-          "ReportBank"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"), strDateFrom,
-          DateTimeData.nDaysAfter(this, strDateTo, "1"), strcbankaccount);
+          "ReportBank"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"),
+          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcbankaccount);
       xmlDocument.setParameter("sumAmount", ReportBankData.BeginningBalance(this, Utility
           .getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this, vars,
           "#AccessibleOrgTree", "ReportBank"), strDateFrom, strcbankaccount));

@@ -22,39 +22,36 @@
 
 
 
-<SqlClass name="RequestActionData" package="org.openbravo.erpCommon.ad_actionButton">
-  <SqlMethod name="select" type="preparedStatement" connection="true" return="multiple">
+<SqlClass name="EmailData" package="org.openbravo.erpCommon.businessUtility" accessModifier="public">
+
+
+  <SqlMethod name="selectEmail" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT AD_Client_ID, DocumentNo, ActionType, Summary, MailSubject,MailText, 
-        C_BPartner_ID,AD_User_ID, SalesRep_ID, UpdatedBy, '' AS EMail, '' AS EMailUser, '' AS EMailUserPw, '' AS NAME 
-        FROM R_Request 
-        WHERE R_Request_ID = ? 
+        SELECT EMail, EMailUser, EMailUserPw, Name FROM AD_User WHERE AD_User_ID=?
       ]]>
     </Sql>
-    <Parameter name="rRequestId"/>
+    <Parameter name="adUserId"/>
   </SqlMethod>
-  <SqlMethod name="selectEmailTo" type="preparedStatement" connection="true" return="String" default="">
+  <SqlMethod name="selectEmailRequest" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT bpc.EMail AS NAME 
-        FROM C_BPartner bp INNER JOIN AD_User bpc ON (bp.C_BPartner_ID=bpc.C_BPartner_ID) 
-        WHERE bp.C_BPartner_ID = ? 
+        SELECT RequestEMail AS EMail, RequestUser AS EMailUser, RequestUserPw AS EMailUserPw FROM AD_Client WHERE AD_Client_ID=?
       ]]>
     </Sql>
-    <Parameter name="adUserId" optional="true" after="WHERE " text=" bpc.AD_User_ID = ? AND "/>
-    <Parameter name="cBpartnerId"/>
+    <Parameter name="adClientId"/>
   </SqlMethod>
-  <SqlMethod name="update" type="preparedStatement" connection="true" return="rowCount">
+
+  <SqlMethod name="selectSMTPHost" type="preparedStatement" connection="true" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE R_Request SET Result=? WHERE R_Request_ID=?
+        SELECT SMTPHost AS NAME FROM AD_Client WHERE AD_Client_ID=?
       ]]>
     </Sql>
-    <Parameter name="resulttxt"/>
-    <Parameter name="rRequestId"/>
+    <Parameter name="adClientId"/>
   </SqlMethod>
+
 </SqlClass>

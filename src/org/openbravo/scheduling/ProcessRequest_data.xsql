@@ -41,17 +41,6 @@
     ]]></Sql>
     <Parameter name="status"/>
    </SqlMethod>
-   <SqlMethod name="selectByProcessId" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-      	SELECT AD_Process_Request_ID AS Id, AD_Process_ID AS Process_Id,
-      	AD_Client_ID AS Client, AD_Org_Id AS Organization, AD_User_ID AS UserId,
-      	IsRoleSecurity, Status, Channel, Ob_Context, Params, AD_Process_Set_Id 
-      	FROM AD_Process_Request
-      	WHERE AD_Process_Id = ?
-    ]]></Sql>
-    <Parameter name="processId"/>
-   </SqlMethod>
    <SqlMethod name="insert" type="preparedStatement" return="rowcount">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
