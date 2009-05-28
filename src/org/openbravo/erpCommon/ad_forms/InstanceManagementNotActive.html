@@ -46,8 +46,19 @@ var baseDirectory = "../../../../../web/";
 
 <script language="JavaScript" type="text/javascript">
   
-  function validate(action, form, value) {
+  function validate(action, frm, value) {
+    if (inputValue(frm.publicKey)==null || inputValue(frm.publicKey)=="") {
+      setWindowElementFocus(frm.publicKey);
+      showJSMessage(1);
+      return false;
+    }
+    setProcessingMode('window',true);           
     return true;
+  }
+
+  function submitActivate(action) {
+    submitCommandForm(action, true, null, 'InstanceManagement.html', '_self', null, true);
+    return false;
   }
   
   function onloadFunctions() {
@@ -274,7 +285,7 @@ var baseDirectory = "../../../../../web/";
                       <button type="button" 
                         id="buttonSearch" 
                         class="ButtonLink" 
-                        onclick="setProcessingMode('window',true); submitCommandForm('ACTIVATE', false, null, 'InstanceManagement.html', '_self', null, true);return false;" 
+                        onclick="submitActivate('ACTIVATE'); return false;" 
                         onfocus="buttonEvent('onfocus', this); window.status='Search'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
@@ -299,7 +310,7 @@ var baseDirectory = "../../../../../web/";
                       <button type="button" 
                         id="buttonScan" 
                         class="ButtonLink" 
-                        onclick="openServletNewWindow('LOCAL', false, 'ModuleManagement.html', 'BUTTON', null, true, 600, 900);return false;" 
+                        onclick="openServletNewWindow('ACTIVATE_LOCAL', false, 'InstanceManagement.html', 'BUTTON', null, true, 600, 900);return false;" 
                         onfocus="buttonEvent('onfocus', this); window.status='Browse File System'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
@@ -321,37 +332,7 @@ var baseDirectory = "../../../../../web/";
                   </td>
                   <td/>
                 </tr>
-                <tr>
-                  <td colspan="4">
-                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td class="TitleCell" style="text-align: left;">
-                          <span class="PlainText_normal">Search Results</span>
-                          <span class="PlainText_normal" style="color: transparent; _color: #E8E8E8;">..</span>
-                          <a class="PlainText_normal LabelLink_noicon" href="#" onclick="viewAll();">View All</a>                        
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      <tr><td style="height: 5px;"/></tr>
-                      <tr>
-                        <td>
-                          <div class="TextArea_FourCells_width AddModule_Container" id="searchResults">
-                        
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td/>
-                  <td/>
-                </tr>
 
-
-                
-               
               </table>
                       <!-- USER CONTROLS -->
                 </td>
