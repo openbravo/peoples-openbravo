@@ -239,7 +239,14 @@ var baseDirectory = "../../../../../web/";
                   <td class="TableEdition_OneCell_width"></td>
                 </tr>
                 
-                
+                <tr>
+                    <td class="TitleCell"><span class="LabelText">Instance Purpose</span></td>
+                    <td class="Combo_ContentCell" colspan="2">
+                        <select name="purpose" id="purpose" class="ComboKey Combo_TwoCells_width" required="true" onchange="displayLogic();return true;">
+                          <div id="reportPurpose"></div>
+                        </select>
+                    </td>
+                </tr>
                 
                 <tr>
                   <td class="TitleCell">
@@ -252,7 +259,7 @@ var baseDirectory = "../../../../../web/";
                             <table style="border:0px;border-collapse:collapse;">
                               <tr>
                                 <td style="padding-top: 0px;">
-                                  <textarea id="publicKey" class="dojoValidateValid required TextArea_FiveCells_width TextArea_Medium_height" required="true" maxlength="2000" name="publicKey" onkeyup="" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onchange="validateTextArea(this.id);logChanges(this);return true;"></textarea>
+                                  <textarea id="publicKey" class="dojoValidateValid required TextArea_FiveCells_width TextArea_Medium_height" required="true" maxlength="2000" name="publicKey" onkeyup="" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');"></textarea>
                                 </td>
                               </tr>
                             </table>

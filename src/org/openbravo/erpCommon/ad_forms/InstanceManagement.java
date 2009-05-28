@@ -29,10 +29,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class InstanceManagement extends HttpSecureAppServlet {
@@ -80,6 +82,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
     } catch (final Exception ex) {
       throw new ServletException(ex);
     }
+
+    // Message
     {
       final OBError myMessage = vars.getMessage("InstanceManagement");
       vars.removeMessage("InstanceManagement");
@@ -89,7 +93,19 @@ public class InstanceManagement extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    // ----
+
+    // Purpose combo
+    try {
+      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "InstanceManagement"), Utility
+              .getContext(this, vars, "#User_Client", "InstanceManagement"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement", null);
+      xmlDocument.setData("reportPurpose", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      throw new ServletException(ex);
+    }
 
     out.println(xmlDocument.print());
     out.close();
