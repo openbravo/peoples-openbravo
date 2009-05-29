@@ -22,7 +22,6 @@ import javax.servlet.ServletException;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.GenericTree;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -171,11 +170,11 @@ public class ModuleTree extends GenericTree {
       return;
     for (int i = 0; i < modules.length; i++) {
       if (modules[i].getField("type").equals("M"))
-        FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Module");
+        ((ModuleTreeData) modules[i]).icon = "Tree_Icon_Module";
       if (modules[i].getField("type").equals("P"))
-        FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Pack");
+        ((ModuleTreeData) modules[i]).icon = "Tree_Icon_Pack";
       if (modules[i].getField("type").equals("T"))
-        FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Template");
+        ((ModuleTreeData) modules[i]).icon = "Tree_Icon_Template";
 
       boolean updateAvailable = modules[i].getField("updateAvailable") != null
           && !modules[i].getField("updateAvailable").equals("");
@@ -183,7 +182,7 @@ public class ModuleTree extends GenericTree {
           && hasChildUpdate(modules[i].getField("nodeId"));
 
       if (updateAvailable || updateAvailableInChildNode)
-        FieldProviderFactory.setField(modules[i], "icon2", "Tree_Icon_Update");
+        ((ModuleTreeData) modules[i]).icon2 = "Tree_Icon_Update";
     }
   }
 
@@ -208,6 +207,67 @@ public class ModuleTree extends GenericTree {
     } catch (Exception e) {
       e.printStackTrace();
       return false;
+    }
+  }
+
+  protected String getNodePosition(String nodeID) {
+    try {
+      String parentNodeID = getParent(nodeID);
+      ModuleTreeData[] tree;
+      if (parentNodeID.equals(""))
+        tree = ModuleTreeData.select(conn, (lang.equals("") ? "en_US" : lang)); // Root
+      else
+        tree = ModuleTreeData.selectSubTree(conn, (lang.equals("") ? "en_US" : lang), parentNodeID); // Subtree
+
+      if (tree == null || tree.length == 0)
+        return "0";
+      for (int i = 0; i < tree.length; i++) {
+        if (tree[i].nodeId.equals(nodeID)) {
+          return new Integer(i + 1).toString();
+        }
+      }
+      return "0";
+    } catch (Exception e) {
+      e.printStackTrace();
+      return "0";
+    }
+  }
+
+  /**
+   * Returns the node id for the parent of the passed node
+   * 
+   * @param node
+   * @return
+   */
+  protected String getParent(String node) {
+    try {
+      return ModuleTreeData.selectParent(conn, node);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return "";
+    }
+  }
+
+  protected boolean isLastLevelNode(String nodeID) {
+    try {
+      String parentNodeID = getParent(nodeID);
+      ModuleTreeData[] tree;
+      if (parentNodeID.equals(""))
+        tree = ModuleTreeData.select(conn, (lang.equals("") ? "en_US" : lang)); // Root
+      else
+        tree = ModuleTreeData.selectSubTree(conn, (lang.equals("") ? "en_US" : lang), parentNodeID); // Subtree
+
+      if (tree == null || tree.length == 0)
+        return true;
+      for (int i = 0; i < tree.length; i++) {
+        if (tree[i].nodeId.equals(nodeID)) {
+          return i == (tree.length - 1);
+        }
+      }
+      return true;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return true;
     }
   }
 

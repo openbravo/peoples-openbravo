@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.utility;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.modules.ModuleTreeData;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
 
@@ -91,6 +90,30 @@ public abstract class GenericTree {
    * @return The String with the HTML for the description
    */
   public abstract String getHTMLDescription(String node);
+
+  /**
+   * Returns true in case the node is the last one at its level
+   * 
+   * @param nodeID
+   * @return
+   */
+  protected abstract boolean isLastLevelNode(String nodeID);
+
+  /**
+   * Returns the position relative to the rest of nodes at the same level
+   * 
+   * @param nodeID
+   * @return
+   */
+  protected abstract String getNodePosition(String nodeID);
+
+  /**
+   * Returns the node id for the parent of the passed node
+   * 
+   * @param node
+   * @return
+   */
+  protected abstract String getParent(String node);
 
   /**
    * Default constructor without parameters. It is needed to be able to create instances by
@@ -246,79 +269,6 @@ public abstract class GenericTree {
    */
   public void setNotifications(String notifications) {
     HTMLNotifications = notifications;
-  }
-
-  /**
-   * Returns true in case the node is the last one at its level
-   * 
-   * @param nodeID
-   * @return
-   */
-  private boolean isLastLevelNode(String nodeID) {
-    try {
-      String parentNodeID = getParent(nodeID);
-      ModuleTreeData[] tree;
-      if (parentNodeID.equals(""))
-        tree = ModuleTreeData.select(conn, (lang.equals("") ? "en_US" : lang)); // Root
-      else
-        tree = ModuleTreeData.selectSubTree(conn, (lang.equals("") ? "en_US" : lang), parentNodeID); // Subtree
-
-      if (tree == null || tree.length == 0)
-        return true;
-      for (int i = 0; i < tree.length; i++) {
-        if (tree[i].nodeId.equals(nodeID)) {
-          return i == (tree.length - 1);
-        }
-      }
-      return true;
-    } catch (Exception e) {
-      e.printStackTrace();
-      return true;
-    }
-  }
-
-  /**
-   * Returns the position relative to the rest of nodes at the same level
-   * 
-   * @param nodeID
-   * @return
-   */
-  private String getNodePosition(String nodeID) {
-    try {
-      String parentNodeID = getParent(nodeID);
-      ModuleTreeData[] tree;
-      if (parentNodeID.equals(""))
-        tree = ModuleTreeData.select(conn, (lang.equals("") ? "en_US" : lang)); // Root
-      else
-        tree = ModuleTreeData.selectSubTree(conn, (lang.equals("") ? "en_US" : lang), parentNodeID); // Subtree
-
-      if (tree == null || tree.length == 0)
-        return "0";
-      for (int i = 0; i < tree.length; i++) {
-        if (tree[i].nodeId.equals(nodeID)) {
-          return new Integer(i + 1).toString();
-        }
-      }
-      return "0";
-    } catch (Exception e) {
-      e.printStackTrace();
-      return "0";
-    }
-  }
-
-  /**
-   * Returns the node id for the parent of the passed node
-   * 
-   * @param node
-   * @return
-   */
-  private String getParent(String node) {
-    try {
-      return ModuleTreeData.selectParent(conn, node);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return "";
-    }
   }
 
   /**
