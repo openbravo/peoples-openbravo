@@ -1,9 +1,13 @@
 package org.openbravo.erpCommon.ops;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.crypto.Cipher;
@@ -15,6 +19,7 @@ import org.openbravo.erpCommon.utility.Utility;
 public class ActivationKey {
 
   private boolean isActive = false;
+  private boolean hasActivationKey = false;
   private String errorMessage = "";
   private Properties instanceProperties;
 
@@ -26,36 +31,75 @@ public class ActivationKey {
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
-      isActive = false;
+      hasActivationKey = false;
       errorMessage = "@NoKeyAvailable@";
       return;
     }
 
     PublicKey pk = getPublicKey(strPublicKey);
     if (pk == null) {
-      isActive = false;
+      hasActivationKey = false;
       errorMessage = "@NotAValidKey";
       return;
     }
+    hasActivationKey = true;
     try {
       Cipher cipher = Cipher.getInstance("RSA");
 
-      cipher.init(Cipher.DECRYPT_MODE, pk);
-      byte[] props = cipher.doFinal(org.apache.commons.codec.binary.Base64
+      ByteArrayInputStream bis = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64
           .decodeBase64(activationKey.getBytes()));
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+      // Encryptation only accepts 128B size, it must be chuncked
+      final byte[] buf = new byte[128];
+      while ((bis.read(buf)) > 0) {
+        cipher.init(Cipher.DECRYPT_MODE, pk);
+        bos.write(cipher.doFinal(buf));
+      }
+      byte[] props = bos.toByteArray();
+
       System.out.println("prop:" + new String(props));
       ByteArrayInputStream isProps = new ByteArrayInputStream(props);
       instanceProperties = new Properties();
 
       instanceProperties.load(isProps);
       System.out.println("customer:" + instanceProperties.getProperty("customer"));
-      isActive = true;
-
     } catch (Exception e) {
       isActive = false;
-      errorMessage = "@NotAValidKey";
+      errorMessage = "@NotAValidKey@";
       e.printStackTrace();
+      return;
     }
+
+    // Check for dates to know if the instance is active
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+    Date startDate = null;
+    Date endDate = null;
+    try {
+      startDate = sd.parse(getProperty("startdate"));
+
+      if (getProperty("enddate") != null)
+        endDate = sd.parse(getProperty("enddate"));
+
+      System.out.println("sd:" + startDate);
+      System.out.println("ed:" + endDate);
+    } catch (ParseException e) {
+      errorMessage = "@ErrorReadingDates@";
+      isActive = false;
+      e.printStackTrace();
+      return;
+    }
+
+    Date now = new Date();
+    if (startDate == null || now.before(startDate)) {
+      isActive = false;
+      errorMessage = "@NotActiveTill@ " + startDate;
+    }
+    if (endDate != null && now.after(endDate)) {
+      isActive = false;
+      errorMessage = "@ActivationExpired@ " + endDate;
+    }
+    isActive = true;
 
   }
 
@@ -73,7 +117,11 @@ public class ActivationKey {
     }
   }
 
-  public boolean isInstanceActive() {
+  public boolean hasActivationKey() {
+    return hasActivationKey;
+  }
+
+  public boolean isActive() {
     return isActive;
   }
 
