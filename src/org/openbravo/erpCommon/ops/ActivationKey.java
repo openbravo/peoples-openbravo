@@ -89,6 +89,12 @@ public class ActivationKey {
         getProperty("instanceno")).append("\n");
     sb.append(Utility.messageBD(conn, "LicenseType", lang)).append(": ").append(
         getProperty("lincensetype")).append("\n");
+    sb.append(Utility.messageBD(conn, "InstancePurpose", lang)).append(": ").append(
+        getProperty("purpose")).append("\n");
+    sb.append(Utility.messageBD(conn, "StartDate", lang)).append(": ").append(
+        getProperty("startdate")).append("\n");
+    sb.append(Utility.messageBD(conn, "EndDate", lang)).append(": ").append(getProperty("enddate"))
+        .append("\n");
     return sb.toString();
   }
 
