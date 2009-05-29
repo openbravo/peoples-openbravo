@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.ops.ActivationKey;
 import org.openbravo.erpCommon.ops.ActiveInstanceProcess;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -49,19 +49,30 @@ public class InstanceManagement extends HttpSecureAppServlet {
       ServletException {
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    boolean activeInstance = false;
+
     if (vars.commandIn("DEFAULT")) {
-      if (!activeInstance)
+      ActivationKey activationKey = new ActivationKey();
+      if (!activationKey.isInstanceActive())
         printPageNotActive(response, vars);
+      else
+        printPageActive(response, vars, activationKey);
     } else if (vars.commandIn("ACTIVATE")) {
-      activateRemote(vars);
-      org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-          org.openbravo.model.ad.system.System.class, "0");
-      System.out.println("ak:" + sys.getActivationKey());
-      if (!activeInstance)
+      if (activateRemote(vars)) {
+        ActivationKey activationKey = new ActivationKey();
+        if (!activationKey.isInstanceActive())
+          printPageNotActive(response, vars);
+        else
+          printPageActive(response, vars, activationKey);
+      } else
         printPageNotActive(response, vars);
     } else
       pageError(response);
+
+  }
+
+  private void printPageActive(HttpServletResponse response, VariablesSecureApp vars,
+      ActivationKey activationKey) throws IOException, ServletException {
+    // TODO Auto-generated method stub
 
   }
 
@@ -122,7 +133,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void activateRemote(VariablesSecureApp vars) {
+  private boolean activateRemote(VariablesSecureApp vars) {
+    boolean result = false;
     ProcessBundle pb = new ProcessBundle(null, vars);
 
     HashMap<String, Object> params = new HashMap<String, Object>();
@@ -134,15 +146,18 @@ public class InstanceManagement extends HttpSecureAppServlet {
     try {
       new ActiveInstanceProcess().execute(pb);
       msg = (OBError) pb.getResult();
+      result = msg.getType().equals("Success");
     } catch (Exception e) {
       log4j.error(e);
       msg.setType("Error");
       msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
       e.printStackTrace();
+      result = false;
     }
 
     msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), msg.getMessage()));
     vars.setMessage("InstanceManagement", msg);
+    return result;
 
   }
 }
