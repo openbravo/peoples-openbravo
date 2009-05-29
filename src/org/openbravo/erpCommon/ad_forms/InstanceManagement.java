@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,13 +29,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.ops.ActiveInstanceProcess;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class InstanceManagement extends HttpSecureAppServlet {
@@ -45,8 +49,15 @@ public class InstanceManagement extends HttpSecureAppServlet {
       ServletException {
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
+    boolean activeInstance = false;
     if (vars.commandIn("DEFAULT")) {
-      boolean activeInstance = false;
+      if (!activeInstance)
+        printPageNotActive(response, vars);
+    } else if (vars.commandIn("ACTIVATE")) {
+      activateRemote(vars);
+      org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+          org.openbravo.model.ad.system.System.class, "0");
+      System.out.println("ak:" + sys.getActivationKey());
       if (!activeInstance)
         printPageNotActive(response, vars);
     } else
@@ -109,6 +120,29 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private void activateRemote(VariablesSecureApp vars) {
+    ProcessBundle pb = new ProcessBundle(null, vars);
+
+    HashMap<String, Object> params = new HashMap<String, Object>();
+    params.put("publicKey", vars.getStringParameter("publicKey"));
+    params.put("purpose", vars.getStringParameter("purpose"));
+    pb.setParams(params);
+
+    OBError msg = null;
+    try {
+      new ActiveInstanceProcess().execute(pb);
+      msg = (OBError) pb.getResult();
+    } catch (Exception e) {
+      log4j.error(e);
+      msg.setType("Error");
+      msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
+      e.printStackTrace();
+    }
+
+    msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), msg.getMessage()));
+    vars.setMessage("InstanceManagement", msg);
 
   }
 }
