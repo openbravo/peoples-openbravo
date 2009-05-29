@@ -240,17 +240,8 @@ var baseDirectory = "../../../../../web/";
                 </tr>
                 
                 <tr>
-                    <td class="TitleCell"><span class="LabelText">Instance Purpose</span></td>
-                    <td class="Combo_ContentCell" colspan="2">
-                        <select name="purpose" id="purpose" class="ComboKey Combo_TwoCells_width" required="true" onchange="displayLogic();return true;">
-                          <div id="reportPurpose"></div>
-                        </select>
-                    </td>
-                </tr>
-                
-                <tr>
                   <td class="TitleCell">
-                    <span class="LabelText">Public Key</span>
+                    <span class="LabelText">Instance Info</span>
                   </td>
                   <td colspan="5" class="TextArea_ContentCell" id="License_inp_td">
                       <table border="0" cellpadding="0" cellspacing="0">
@@ -259,20 +250,10 @@ var baseDirectory = "../../../../../web/";
                             <table style="border:0px;border-collapse:collapse;">
                               <tr>
                                 <td style="padding-top: 0px;">
-                                  <textarea id="publicKey" class="dojoValidateValid required TextArea_FiveCells_width TextArea_Medium_height" required="true" maxlength="2000" name="publicKey" onkeyup="" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');"></textarea>
+                                  <textarea id="instanceInfo" class="dojoValidateValid TextArea_FiveCells_width TextArea_Medium_height" required="true" maxlength="2000" name="instanceInfo" onkeyup="" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');"></textarea>
                                 </td>
                               </tr>
                             </table>
-                            <span class="TextBox_MsgContainer_span" style="display: none;" id="LicensemissingSpan">
-                              <table class="TextBox_MsgContainer_table">
-                                <tr class="TextBox_MsgContainer_tr">
-                                  <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
-                                </tr>
-                                <tr>
-                                  <td colspan="2" class="missing"><div class="TextBox_MsgContainer_div2" id="LicensemissingSpanText">* This value is required.</div></td>
-                                </tr>
-                              </table>
-                            </span>
                           </td>
                         </tr>
                       </table>
@@ -292,7 +273,7 @@ var baseDirectory = "../../../../../web/";
                       <button type="button" 
                         id="buttonSearch" 
                         class="ButtonLink" 
-                        onclick="submitActivate('ACTIVATE'); return false;" 
+                        onclick="submitCommandForm('SHOW_ACTIVATE', false, null, 'InstanceManagement.html', '_self', null, true); return false;" 
                         onfocus="buttonEvent('onfocus', this); window.status='Search'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
@@ -312,32 +293,8 @@ var baseDirectory = "../../../../../web/";
                       </button>
                     </div>
                   </td>
-                  <td class="Button_RightAlign_ContentCell" colspan="2">
-                    <div>
-                      <button type="button" 
-                        id="buttonScan" 
-                        class="ButtonLink" 
-                        onclick="openServletNewWindow('ACTIVATE_LOCAL', false, 'InstanceManagement.html', 'BUTTON', null, true, 600, 900);return false;" 
-                        onfocus="buttonEvent('onfocus', this); window.status='Browse File System'; return true;" 
-                        onblur="buttonEvent('onblur', this);" 
-                        onkeyup="buttonEvent('onkeyup', this);" 
-                        onkeydown="buttonEvent('onkeydown', this);" 
-                        onkeypress="buttonEvent('onkeypress', this);" 
-                        onmouseup="buttonEvent('onmouseup', this);" 
-                        onmousedown="buttonEvent('onmousedown', this);" 
-                        onmouseover="buttonEvent('onmouseover', this); window.status='Browse File System'; return true;" 
-                        onmouseout="buttonEvent('onmouseout', this);">
-                        <table class="Button">
-                          <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Browse File System" title="Browse File System" src="../../../../../web/images/blank.gif" border="0" /></td>
-                            <td class="Button_text">Browse File System</td>
-                            <td class="Button_right"></td>
-                          </tr>
-                        </table>
-                      </button>
-                    </div>
-                  </td>
-                  <td/>
+                  <td colspan="2"/>
+                   
                 </tr>
 
               </table>

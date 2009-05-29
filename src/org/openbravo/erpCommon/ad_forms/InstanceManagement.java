@@ -65,6 +65,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
           printPageActive(response, vars, activationKey);
       } else
         printPageNotActive(response, vars);
+    } else if (vars.commandIn("SHOW_ACTIVATE")) {
+      printPageNotActive(response, vars);
     } else
       pageError(response);
 
@@ -72,7 +74,46 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
   private void printPageActive(HttpServletResponse response, VariablesSecureApp vars,
       ActivationKey activationKey) throws IOException, ServletException {
-    // TODO Auto-generated method stub
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_forms/InstanceManagementActive").createXmlDocument();
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    // Interface parameters
+    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "",
+        "", "", false, "ad_forms", strReplaceWith, false, true);
+    toolbar.prepareSimpleToolBarTemplate();
+    xmlDocument.setParameter("toolbar", toolbar.toString());
+
+    try {
+      final WindowTabs tabs = new WindowTabs(this, vars,
+          "org.openbravo.erpCommon.ad_forms.InstanceManagement");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+          "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      xmlDocument.setParameter("navigationBar", nav.toString());
+      final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "InstanceManagement.html",
+          strReplaceWith);
+      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+    } catch (final Exception ex) {
+      throw new ServletException(ex);
+    }
+
+    // Message
+    {
+      final OBError myMessage = vars.getMessage("InstanceManagement");
+      vars.removeMessage("InstanceManagement");
+      if (myMessage != null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
+    }
+    xmlDocument.setParameter("instanceInfo", activationKey.toString(this, vars.getLanguage()));
+
+    out.println(xmlDocument.print());
+    out.close();
 
   }
 

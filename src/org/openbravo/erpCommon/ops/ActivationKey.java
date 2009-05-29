@@ -9,6 +9,8 @@ import java.util.Properties;
 import javax.crypto.Cipher;
 
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.Utility;
 
 public class ActivationKey {
 
@@ -77,6 +79,21 @@ public class ActivationKey {
 
   public String getErrorMessage() {
     return errorMessage;
+  }
+
+  public String toString(ConnectionProvider conn, String lang) {
+    StringBuffer sb = new StringBuffer();
+    sb.append(Utility.messageBD(conn, "Customer", lang)).append(": ").append(
+        getProperty("customer")).append("\n");
+    sb.append(Utility.messageBD(conn, "InstanceNo", lang)).append(": ").append(
+        getProperty("instanceno")).append("\n");
+    sb.append(Utility.messageBD(conn, "LicenseType", lang)).append(": ").append(
+        getProperty("lincensetype")).append("\n");
+    return sb.toString();
+  }
+
+  public String getProperty(String propName) {
+    return instanceProperties.getProperty(propName);
   }
 
 }
