@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.WarehouseComboData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -188,9 +187,10 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    WarehouseComboData[] dataW = WarehouseComboData.select(this, vars.getRole(), vars.getClient());
+    CreateFromMultipleReceiptData[] dataW = CreateFromMultipleReceiptData
+        .selectAccessibleWarehouses(this, vars.getRole(), vars.getClient());
     if (strmWarehouseId.equals("") && dataW != null && dataW.length > 0)
-      strmWarehouseId = dataW[0].mWarehouseId;
+      strmWarehouseId = dataW[0].id;
     xmlDocument.setData("reportM_LOCATOR_X", "liststructure", CreateFromMultipleReceiptData
         .selectM_Locator_X(this, strmWarehouseId));
 

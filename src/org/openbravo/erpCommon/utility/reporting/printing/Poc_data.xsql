@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 
-<SqlClass name="PocData" package="org.openbravo.erpCommon.utility.poc">
+<SqlClass name="PocData" package="org.openbravo.erpCommon.utility.reporting.printing">
    <SqlClassComment></SqlClassComment>
    
    <!-- 

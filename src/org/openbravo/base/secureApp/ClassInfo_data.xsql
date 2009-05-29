@@ -13,7 +13,7 @@
 
 
 
-<SqlClass name="ClassInfoData" package="org.openbravo.base.secureApp">
+<SqlClass name="ClassInfoData" package="org.openbravo.base.secureApp" accessModifier="public">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

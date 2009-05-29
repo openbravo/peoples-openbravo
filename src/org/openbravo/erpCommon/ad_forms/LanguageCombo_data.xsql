@@ -22,15 +22,37 @@
 
 
 
-<SqlClass name="ClientData" package="org.openbravo.erpCommon.security">
+<SqlClass name="LanguageComboData" package="org.openbravo.erpCommon.ad_forms">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT '' AS PADRE, A_C.AD_CLIENT_ID AS ID, A_C.NAME 
-        FROM AD_CLIENT A_C
-        WHERE A_C.ISACTIVE = 'Y' 
-        ORDER BY A_C.NAME
+        SELECT AD_LANGUAGE, NAME 
+        FROM AD_LANGUAGE 
+        WHERE ISACTIVE='Y'
+        AND (ISSYSTEMLANGUAGE = 'Y' 
+        OR ISBASELANGUAGE = 'Y')
+        ORDER BY NAME
       </Sql>
+   </SqlMethod>
+
+   <SqlMethod name="defaultLanguage" type="preparedStatement" return="String" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE ISACTIVE='Y' AND ISBASELANGUAGE='Y'
+      </Sql>
+   </SqlMethod>
+
+   <SqlMethod name="selectOthers" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT AD_LANGUAGE 
+        FROM AD_LANGUAGE 
+        WHERE ISACTIVE='Y'
+        AND ISSYSTEMLANGUAGE = 'Y' 
+        AND ISBASELANGUAGE = 'N' 
+        ORDER BY NAME
+      </Sql>
+      <Parameter name="language" optional="true" after="WHERE " text=" AD_LANGUAGE = ? AND "/>
    </SqlMethod>
 </SqlClass>

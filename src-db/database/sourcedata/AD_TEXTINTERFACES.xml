@@ -4036,7 +4036,7 @@
 <!--803458-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--803458-->  <TEXT><![CDATA[CONTINUE ........]]></TEXT>
 <!--803458-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportTrialBalancePDF.fo]]></FILENAME>
-<!--803458-->  <ISUSED><![CDATA[Y]]></ISUSED>
+<!--803458-->  <ISUSED><![CDATA[N]]></ISUSED>
 <!--803458-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--803458--></AD_TEXTINTERFACES>
 
@@ -4261,7 +4261,7 @@
 <!--803558-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--803558-->  <TEXT><![CDATA[REPORT TRIAL BALANCE]]></TEXT>
 <!--803558-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportTrialBalancePDF.fo]]></FILENAME>
-<!--803558-->  <ISUSED><![CDATA[Y]]></ISUSED>
+<!--803558-->  <ISUSED><![CDATA[N]]></ISUSED>
 <!--803558-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--803558--></AD_TEXTINTERFACES>
 

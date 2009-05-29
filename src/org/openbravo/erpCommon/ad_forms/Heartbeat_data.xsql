@@ -18,39 +18,40 @@
  ************************************************************************
 -->
 
-<SqlClass name="RegisterData" package="org.openbravo.erpCommon.ad_process">
-   <SqlMethod name="select" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-      	SELECT Registration_Id, Isregistrationactive, Postpone_Date
-        FROM Ad_Registration_Info
-    ]]></Sql>
+<SqlClass name="HeartbeatData" package="org.openbravo.erpCommon.ad_forms">
+
+   <SqlMethod name="dummy" type="preparedStatement" return="String">
+      <Sql>select 1 as dummy from dual</Sql>
    </SqlMethod>
-   <SqlMethod name="updateRegistrationId" type="preparedStatement" return="rowCount">
+
+   <SqlMethod name="disableHeartbeat" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        update AD_REGISTRATION_INFO set REGISTRATION_ID = ?
+        update AD_SYSTEM_INFO set ISHEARTBEATACTIVE = 'N'
      ]]>
      </Sql>
-     <Parameter name="registrationId"/>
    </SqlMethod>
+
    <SqlMethod name="postpone" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        update AD_REGISTRATION_INFO set POSTPONE_DATE = TO_DATE(?)
+        update AD_SYSTEM_INFO set POSTPONE_DATE = TO_DATE(?)
      ]]>
      </Sql>
      <Parameter name="postponeDate"/>
    </SqlMethod>
-   <SqlMethod name="updateIsRegistrationActive" type="preparedStatement" return="rowCount">
+
+   <SqlMethod name="updateServletContainer" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        update AD_REGISTRATION_INFO set ISREGISTRATIONACTIVE = TO_CHAR(?)
+        update AD_SYSTEM_INFO set SERVLET_CONTAINER = ?, SERVLET_CONTAINER_VERSION = ?
      ]]>
      </Sql>
-     <Parameter name="isregistrationactive"/>
+     <Parameter name="servletContainer"/>
+     <Parameter name="servletContainerVersion"/>
    </SqlMethod>
+
 </SqlClass>

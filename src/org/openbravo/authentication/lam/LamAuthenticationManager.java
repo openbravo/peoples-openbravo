@@ -22,10 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlrpc.XmlRpcException;
+import org.openbravo.authentication.AuthenticationData;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
-import org.openbravo.base.secureApp.SeguridadData;
 import org.openbravo.database.ConnectionProvider;
 
 import com.spikesource.lam.bindings.LamClient;
@@ -62,7 +62,7 @@ public class LamAuthenticationManager implements AuthenticationManager {
       if (sUserName == null || sUserName.equals("")) {
         return null;
       } else {
-        String sUserId = SeguridadData.getUserId(conn, sUserName);
+        String sUserId = AuthenticationData.getUserId(conn, sUserName);
         if ("-1".equals(sUserId)) {
           throw new AuthenticationException("Authenticated user is not an Openbravo ERP user: "
               + sUserName);

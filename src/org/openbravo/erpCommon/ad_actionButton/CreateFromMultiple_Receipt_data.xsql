@@ -97,4 +97,21 @@
     <Parameter name="quantityorder"/>
     <Parameter name="mProductUomId"/>
   </SqlMethod>
+
+   <SqlMethod name="selectAccessibleWarehouses" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT M_Warehouse.M_Warehouse_ID as id, M_Warehouse.Name AS Name 
+        FROM M_Warehouse, AD_ORG , AD_ROLE_ORGACCESS
+        WHERE M_Warehouse.AD_ORG_ID = AD_ORG.AD_ORG_ID
+        AND AD_ORG.AD_ORG_ID = AD_ROLE_ORGACCESS.AD_ORG_ID
+        AND M_Warehouse.IsActive='Y' 
+        AND AD_ROLE_ORGACCESS.AD_ROLE_ID = ? 
+        AND M_Warehouse.AD_Client_ID = ? 
+        ORDER BY M_Warehouse.Value
+      </Sql>
+      <Parameter name="rol"/>
+      <Parameter name="client"/>
+   </SqlMethod>
+
   </SqlClass>

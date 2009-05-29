@@ -22,7 +22,7 @@
 
 
 
-<SqlClass name="PriceListVersionComboData" package="org.openbravo.erpCommon.ad_combos">
+<SqlClass name="PriceListVersionComboData" package="org.openbravo.erpCommon.info">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

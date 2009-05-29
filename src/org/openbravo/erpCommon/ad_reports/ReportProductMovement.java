@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.AttributeSetInstanceComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -129,8 +128,8 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       if (strInout.equals("-1")) {
         data = ReportProductMovementData.select(this, vars.getLanguage(), Utility.getContext(this,
             vars, "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(this,
-            strDateTo, "1"), strcBpartnerId, strmProductId, strmAttributesetinstanceId);
+            "#AccessibleOrgTree", "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(
+            this, strDateTo, "1"), strcBpartnerId, strmProductId, strmAttributesetinstanceId);
         if (data == null || data.length == 0) {
           discard[0] = "selEliminar1";
           data = ReportProductMovementData.set();
@@ -141,9 +140,9 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       }
       if (strInventory.equals("-1")) {
         data1 = ReportProductMovementData.selectInventory(this, Utility.getContext(this, vars,
-            "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-            strcBpartnerId, strmProductId);
+            "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars,
+            "#AccessibleOrgTree", "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(
+            this, strDateTo, "1"), strcBpartnerId, strmProductId);
         if (data1 == null || data1.length == 0) {
           discard[1] = "selEliminar2";
           data1 = ReportProductMovementData.set();
@@ -154,9 +153,9 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       }
       if (strMovement.equals("-1")) {
         data2 = ReportProductMovementData.selectMovement(this, Utility.getContext(this, vars,
-            "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-            strcBpartnerId, strmProductId);
+            "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars,
+            "#AccessibleOrgTree", "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(
+            this, strDateTo, "1"), strcBpartnerId, strmProductId);
         if (data2 == null || data2.length == 0) {
           discard[2] = "selEliminar3";
           data2 = ReportProductMovementData.set();
@@ -167,9 +166,9 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       }
       if (strProduction.equals("-1")) {
         data3 = ReportProductMovementData.selectProduction(this, Utility.getContext(this, vars,
-            "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-            strcBpartnerId, strmProductId);
+            "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars,
+            "#AccessibleOrgTree", "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(
+            this, strDateTo, "1"), strcBpartnerId, strmProductId);
         if (data3 == null || data3.length == 0) {
           discard[3] = "selEliminar4";
           data3 = ReportProductMovementData.set();

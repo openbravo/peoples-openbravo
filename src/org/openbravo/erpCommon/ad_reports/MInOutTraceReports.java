@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.AttributeSetInstanceComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -457,8 +456,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
         data.movementtypeName).append("</td>\n");
     resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
         .append(data.locatorName).append("</td>\n");
-    resultado.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">").append(data.movementqty)
-        .append("&nbsp;").append(data.uomName).append("</td>\n");
+    resultado.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">").append(
+        data.movementqty).append("&nbsp;").append(data.uomName).append("</td>\n");
     if (!data.quantityorder.equals("")) {
       resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">").append(
           data.quantityorder).append("&nbsp;").append(data.productUomName).append("</td>\n");

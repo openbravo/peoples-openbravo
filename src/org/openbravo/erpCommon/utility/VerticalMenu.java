@@ -32,9 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_process.HeartbeatProcessData;
-import org.openbravo.erpCommon.ad_process.RegisterData;
-import org.openbravo.erpCommon.security.AccessData;
+import org.openbravo.erpCommon.businessUtility.HeartbeatData;
+import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -494,7 +493,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
 
     if (vars.getRole() != null && vars.getRole().equals("0")) {
       // Check if the heartbeat popup needs to be displayed
-      final HeartbeatProcessData[] hbData = HeartbeatProcessData.selectSystemProperties(myPool);
+      final HeartbeatData[] hbData = HeartbeatData.selectSystemProperties(myPool);
       if (hbData.length > 0) {
         final String isheartbeatactive = hbData[0].isheartbeatactive;
         final String postponeDate = hbData[0].postponeDate;
@@ -519,7 +518,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
 
       // If the heartbeat doesn't need to be displayed, check the
       // registration popup
-      final RegisterData[] rData = RegisterData.select(myPool);
+      final RegistrationData[] rData = RegistrationData.select(myPool);
       if (rData.length > 0) {
         final String isregistrationactive = rData[0].isregistrationactive;
         final String rPostponeDate = rData[0].postponeDate;

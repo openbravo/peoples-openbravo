@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
@@ -77,7 +78,7 @@ public class SL_InOut_BPartner extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-    SEOrderBPartnerData[] data = SEOrderBPartnerData.select(this, strBPartner);
+    BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
 
     String strUserRep = "";
     if (data != null && data.length > 0)
@@ -91,8 +92,8 @@ public class SL_InOut_BPartner extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this,
-              vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars, "#User_Client",
-              strWindowId), 0);
+              vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars,
+              "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       tdv = comboTableData.select(false);
       comboTableData = null;
@@ -119,7 +120,8 @@ public class SL_InOut_BPartner extends HttpSecureAppServlet {
     FieldProvider[] tld = null;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "SalesRep_ID",
-          "AD_User SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SEOrderBPartner"),
+          "AD_User SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "SEOrderBPartner"),
           Utility.getContext(this, vars, "#User_Client", "SEOrderBPartner"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SEOrderBPartner", "");
       tld = comboTableData.select(false);

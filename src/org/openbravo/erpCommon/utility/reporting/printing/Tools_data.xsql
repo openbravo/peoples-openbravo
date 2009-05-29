@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 
-<SqlClass name="ToolsData" package="org.openbravo.erpCommon.utility.reporting">
+<SqlClass name="ToolsData" package="org.openbravo.erpCommon.utility.reporting.printing">
    <SqlClassComment></SqlClassComment>
    
    <SqlMethod name="getTableId" type="preparedStatement" return="String">

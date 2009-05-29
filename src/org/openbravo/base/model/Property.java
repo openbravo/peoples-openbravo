@@ -377,6 +377,18 @@ public class Property {
   }
 
   /**
+   * @return true if the class of the primitive type ({@link #getPrimitiveObjectType()}) is a number
+   *         (extends {@link Number}).
+   */
+  public boolean isNumericType() {
+    final Class<?> typeClass = getPrimitiveObjectType();
+    if (typeClass == null) {
+      return false;
+    }
+    return Number.class.isAssignableFrom(typeClass);
+  }
+
+  /**
    * Returns the Object value of the default, for example a Date property with default value of
    * today will return a new Date() object.
    * 
@@ -536,7 +548,7 @@ public class Property {
 
   /**
    * Returns the class of the type of this property, will translate primitive type classes (int) to
-   * their object type (java.lang.Integer). Used by the entity code generation.
+   * their object type (java.lang.Long for example). Used by the entity code generation.
    * 
    * @return the Object class for the primitive type
    */

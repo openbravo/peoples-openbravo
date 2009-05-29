@@ -22,7 +22,7 @@
 
 
 
-<SqlClass name="InvoicingScheduleData" package="org.openbravo.erpCommon.ad_actionButton">
+<SqlClass name="InvoicingScheduleData" package="org.openbravo.erpCommon.ad_callouts">
   <SqlMethod name="selectPeriods" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[

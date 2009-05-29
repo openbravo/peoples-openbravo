@@ -433,8 +433,7 @@ function validate() {
             </tr>
 
             <tr>
-              <td class="TitleCell"></td>
-              <td class="Button_CenterAlign_ContentCell">
+              <td class="Button_RightAlign_ContentCell" colspan="2">
                 <div>
                   <button type="button" 
                     id="buttonHTML" 
@@ -458,30 +457,39 @@ function validate() {
                     </table>
                   </button>
                 </div>
-              </TD>
-              <TD class="Button_LeftAlign_ContentCell">
-                      <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('PRINT_PDF', true, 'ReportDebtPaymentTrack.html', 'ReportDebtPaymentTrack', null, false, '700', '1000', true);return false;" id="buttonHTML">
-                        <table class="Button"onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                          <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_pdf" alt="Export Results to PDF Format" title="Export Results to PDF Format" src="../../../../../web/images/blank.gif" border="0" /></td>
-                              <td class="Button_text">PDF Format</td>
-                              <td class="Button_right"></td>
-                          </tr>
-                        </table>
-                        </a>
-                      </div>
-                    </TD>
-              <TD class="ContentCell"></INPUT>
-              </TD>
-              <TD class="TitleCell"></TD>
-              <TD class="ContentCell"></TD>
-              <TD class="ContentCell"></TD>
-            </TR>
-          </TABLE>
-          <TABLE class="Main_Client_TableEdition">
-            <TR>
-              <TD colspan="6">
+              </td>
+              <td class="Button_LeftAlign_ContentCell" colspan="2">
+                <div>
+                  <button type="button" 
+                    class="ButtonLink" 
+                    onclick="openServletNewWindow('PRINT_PDF', true, 'ReportDebtPaymentTrack.html', 'ReportDebtPaymentTrack', null, false, '700', '1000', true);return false;" 
+                    onfocus="buttonEvent('onfocus', this); window.status='Export Results to PDF Format'; return true;" 
+                    onblur="buttonEvent('onblur', this);" 
+                    onkeyup="buttonEvent('onkeyup', this);" 
+                    onkeydown="buttonEvent('onkeydown', this);" 
+                    onkeypress="buttonEvent('onkeypress', this);" 
+                    onmouseup="buttonEvent('onmouseup', this);" 
+                    onmousedown="buttonEvent('onmousedown', this);" 
+                    onmouseover="buttonEvent('onmouseover', this); window.status='Export Results to PDF Format'; return true;" 
+                    onmouseout="buttonEvent('onmouseout', this);">
+                    <table class="Button">
+                      <tr>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_pdf" alt="Export Results to PDF Format" title="Export Results to PDF Format" src="../../../../../web/images/blank.gif" border="0" /></td>
+                        <td class="Button_text">PDF Format</td>
+                        <td class="Button_right"></td>
+                      </tr>
+                    </table>
+                  </button>
+                </div>
+              </td>
+              <td class="ContentCell"></input>
+              </td>
+              <td class="ContentCell"></td>
+            </tr>
+          </table>
+          <table class="Main_Client_TableEdition">
+            <tr>
+              <td colspan="6">
                 <div style="height:25px;" />
 
                 <div id="sectionPartner">

@@ -60,11 +60,8 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.erpCommon.utility.poc.EmailData;
 import org.openbravo.erpCommon.utility.poc.EmailManager;
 import org.openbravo.erpCommon.utility.poc.EmailType;
-import org.openbravo.erpCommon.utility.poc.PocConfigurationData;
-import org.openbravo.erpCommon.utility.poc.PocData;
 import org.openbravo.erpCommon.utility.poc.PocException;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 import org.openbravo.erpCommon.utility.reporting.Report;
@@ -72,7 +69,6 @@ import org.openbravo.erpCommon.utility.reporting.ReportManager;
 import org.openbravo.erpCommon.utility.reporting.ReportingException;
 import org.openbravo.erpCommon.utility.reporting.TemplateData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
-import org.openbravo.erpCommon.utility.reporting.ToolsData;
 import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -184,7 +180,7 @@ public class PrintController extends HttpSecureAppServlet {
     reports = (Map<String, Report>) vars.getSessionObject(sessionValuePrefix + ".Documents");
     final ReportManager reportManager = new ReportManager(this, globalParameters.strFTPDirectory,
         strReplaceWithFull, globalParameters.strBaseDesignPath,
-        globalParameters.strDefaultDesignPath, globalParameters.prefix, classInfo, multiReports);
+        globalParameters.strDefaultDesignPath, globalParameters.prefix, multiReports);
 
     if (vars.commandIn("PRINT")) {
       archivedReports = false;
@@ -261,8 +257,8 @@ public class PrintController extends HttpSecureAppServlet {
                 "default", multiReports, OutputTypeEnum.DEFAULT);
             reports.put(documentId, report);
 
-            final String senderAddress = PocConfigurationData.getSenderAddress(this, vars
-                .getClient(), report.getOrgId());
+            final String senderAddress = EmailData.getSenderAddress(this, vars.getClient(), report
+                .getOrgId());
             boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep").booleanValue();
 
             if (request.getServletPath().toLowerCase().indexOf("print.html") == -1) {
@@ -374,8 +370,8 @@ public class PrintController extends HttpSecureAppServlet {
               if (log4j.isDebugEnabled())
                 log4j.debug("Document is not attached.");
             }
-            final String senderAddress = PocConfigurationData.getSenderAddress(this, vars
-                .getClient(), report.getOrgId());
+            final String senderAddress = EmailData.getSenderAddress(this, vars.getClient(), report
+                .getOrgId());
             sendDocumentEmail(report, vars, request.getSession().getAttribute("files"),
                 documentData, senderAddress, checks);
             nrOfEmailsSend++;

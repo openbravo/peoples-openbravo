@@ -22,20 +22,19 @@
 
 
 
-<SqlClass name="ProcessPlanComboData" package="org.openbravo.erpCommon.ad_combos">
+<SqlClass name="TyperemittanceComboData" package="org.openbravo.erpCommon.ad_actionButton">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
-     <SqlMethodComment></SqlMethodComment>
-     <Sql>
-     <![CDATA[
-       SELECT MA_ProcessPlan_ID AS CLAVE, NAME AS NAME,  MA_ProcessPlan_ID AS id 
-       FROM MA_ProcessPlan
-       WHERE ISACTIVE = 'Y'
-        AND AD_CLIENT_ID IN ('1')
-        AND AD_ORG_ID IN ('1')
-       ORDER BY NAME
-       ]]></Sql>
-     <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
-     <Parameter name="adUserOrg" type="replace" optional="true" after="AND AD_ORG_ID IN (" text="'1'"/>
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT C_Remittance_Type_ID as id, Name AS name 
+        FROM C_Remittance_Type 
+        WHERE IsActive='Y' 
+        AND AD_Client_ID IN ('1') 
+        AND AD_Org_ID IN ('1')
+        ORDER BY NAME
+      </Sql>
+      <Parameter name="adUserClient" type="replace" optional="true" after="AD_Client_ID IN (" text="'1'"/>
+      <Parameter name="adUserOrg" type="replace" optional="true" after="AD_Org_ID IN (" text="'1'"/>
    </SqlMethod>
 </SqlClass>

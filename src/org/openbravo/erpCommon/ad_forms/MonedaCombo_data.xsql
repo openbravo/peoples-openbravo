@@ -22,7 +22,7 @@
 
 
 
-<SqlClass name="MonedaComboData" package="org.openbravo.erpCommon.ad_combos">
+<SqlClass name="MonedaComboData" package="org.openbravo.erpCommon.ad_forms">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

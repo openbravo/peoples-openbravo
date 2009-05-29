@@ -35,7 +35,6 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.ad_combos.MonedaComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataClientTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
@@ -365,7 +364,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
     }
 
-    // ==========================================================================================================================================
+    //==============================================================================================
     if (!strModules.equals("")) {
       try {
         m_info.append(SALTO_LINEA).append("*****************************************************")
@@ -411,7 +410,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
     }
 
-    // ==========================================================================================================================================
+    //==============================================================================================
 
     log4j.debug("InitialClientSetup - after createEntities");
     if (isOK)
@@ -1417,7 +1416,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the error. "" if there is no error
-   * 
+   *
    * @param conn
    * @param vars
    * @param strClient
@@ -1475,6 +1474,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
             if (myFiles[j].getName().endsWith(".xml"))
               myTargetFiles.add(myFiles[j]);
           }
+          myFiles = new File [myTargetFiles.size()];
           myFiles = myTargetFiles.toArray(myFiles);
           StringBuffer strError = new StringBuffer("");
           for (int j = 0; j < myFiles.length; j++) {
@@ -1525,7 +1525,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   * 
+   *
    * @param modules
    * @return
    */

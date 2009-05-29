@@ -39,7 +39,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.ad_combos.MonedaComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
@@ -350,7 +349,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       }
     }
 
-    // ==========================================================================================================================================
+    //==============================================================================================
 
     if (strModules != null && !strModules.equals("")) {
       try {
@@ -391,7 +390,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
         }
       }
     }
-    // ==========================================================================================================================================
+    //==============================================================================================
     log4j.debug("InitialOrgSetup - after createEntities");
     if (isOK)
       strError = Utility.messageBD(this, "Success", vars.getLanguage());
@@ -1025,7 +1024,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the error. "" if there is no error
-   * 
+   *
    * @param vars
    * @param strOrganization
    * @param strClient
@@ -1079,6 +1078,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             if (myFiles[j].getName().endsWith(".xml"))
               myTargetFiles.add(myFiles[j]);
           }
+          myFiles = new File [myTargetFiles.size()];
           myFiles = myTargetFiles.toArray(myFiles);
           StringBuffer strError = new StringBuffer("");
           for (int j = 0; j < myFiles.length; j++) {
@@ -1129,7 +1129,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   * 
+   *
    * @param modules
    * @return
    */

@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
-import org.openbravo.erpCommon.ad_actionButton.RequestActionData;
 import org.openbravo.erpCommon.businessUtility.EMail;
+import org.openbravo.erpCommon.businessUtility.EmailData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -221,7 +221,7 @@ public class SendMailText extends HttpSecureAppServlet {
       if (client.equals("0"))
         return (Utility.messageBD(this, "NotFound", language) + " - " + Utility.messageBD(this,
             "AD_Client_ID", language));
-      String smtpHost = RequestActionData.selectSMTPHost(conn, this, client);
+      String smtpHost = EmailData.selectSMTPHost(conn, this, client);
       if (log4j.isDebugEnabled())
         log4j.debug("processSend - SMTP Host=" + smtpHost);
       if (smtpHost.equals(""))
@@ -237,9 +237,9 @@ public class SendMailText extends HttpSecureAppServlet {
             + Utility.messageBD(this, "R_MailText_ID", language) + ": " + strMailTemplate);
       String subject = mailTextData[0].mailheader;
       String message = mailTextData[0].mailtext;
-      RequestActionData[] mails = null;
+      EmailData[] mails = null;
       if (!strUser.equals("")) {
-        mails = RequestActionData.selectEmail(conn, this, strUser);
+        mails = EmailData.selectEmail(conn, this, strUser);
         if (mails == null || mails.length == 0)
           return ("From EMail not complete - " + from + "(" + fromID + "/" + fromPW + ")");
         from = mails[0].email;
@@ -250,7 +250,7 @@ public class SendMailText extends HttpSecureAppServlet {
         fromID = mails[0].emailuser;
         fromPW = FormatUtilities.encryptDecrypt(mails[0].emailuserpw, false);
       } else {
-        mails = RequestActionData.selectEmailRequest(conn, this, client);
+        mails = EmailData.selectEmailRequest(conn, this, client);
         if (mails == null || mails.length == 0)
           return ("From EMail not complete - " + from + "(" + fromID + "/" + fromPW + ")" + " - selectEmailRequest");
         from = mails[0].email;

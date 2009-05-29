@@ -20,7 +20,7 @@
 
   
  
-<SqlClass name="WindowAccessData" package="org.openbravo.erpCommon.utility">
+<SqlClass name="WindowAccessData" package="org.openbravo.erpCommon.utility" accessModifier="public">
   <SqlClassComment></SqlClassComment>
   
 	<SqlMethod name="hasWindowAccess" type="preparedStatement" return="boolean">

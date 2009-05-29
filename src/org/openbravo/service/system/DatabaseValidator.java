@@ -382,8 +382,8 @@ public class DatabaseValidator implements SystemValidator {
     } else if (property != null && property.getPrimitiveObjectType() != null) {
       final Class<?> prim = property.getPrimitiveObjectType();
       if (prim == String.class) {
-        checkType(dbColumn, dbTable, result,
-            new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR" });
+        checkType(dbColumn, dbTable, result, new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR",
+            "CLOB" });
       } else if (prim == Long.class) {
         checkType(dbColumn, dbTable, result, "DECIMAL");
       } else if (prim == Integer.class) {

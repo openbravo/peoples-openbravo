@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -347,6 +347,7 @@ public class Buscador extends HttpSecureAppServlet {
     boolean scriptCalendar = false;
     boolean scriptClock = false;
     boolean scriptCalculator = false;
+    boolean scriptTime = false;
     boolean scriptKeyboard = false;
     boolean scriptSearch = false;
     boolean scriptSelect = false;
@@ -457,6 +458,33 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("</tr>\n");
         strHtml.append("</table>\n");
         strHtml.append("</a>\n");
+        strHtml.append("</td>\n");
+        strHtml.append("</tr>\n");
+        strHtml.append("</table>\n");
+        strHtml.append("</td>\n");
+      } else if (fields[i].reference.equals("24")) { // time
+        scriptTime = true;
+        strHtml.append("<td class=\"TextBox_btn_ContentCell\">\n");
+        strHtml
+            .append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\"  style=\"padding-top: 0px;\">\n");
+        strHtml.append("<tr>\n");
+        strHtml.append("<td class=\"TextBox_ContentCell\">\n");
+        strHtml
+            .append("<input type=\"text\" class=\"dojoValidateValid TextBox_btn_OneCell_width\" ");
+        strHtml.append("displayFormat=\"%H:%M:%S\" ");
+        strHtml.append("saveFormat=\"%H:%M:%S\" ");
+        strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname))
+            .append("\" ");
+        strHtml.append("maxlength=\"19\" ");
+        strHtml.append("value=\"").append(fields[i].value).append("\" ");
+        strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields[i].columnname))
+            .append("\" ");
+
+        strHtml
+            .append("onkeyup=\"autoCompleteTime(this);\" onchange=\"validateTimeTextBox(this);logChanges(this);return true;\"></input> ");
+        strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam").append(
+            FormatUtilities.replace(fields[i].columnname)).append("\") </script>");
+        strHtml.append("</td>\n");
         strHtml.append("</td>\n");
         strHtml.append("</tr>\n");
         strHtml.append("</table>\n");
@@ -742,13 +770,32 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("</tr>\n");
           strHtml.append("</table>\n");
           strHtml.append("</td>\n");
-        } else {
-          strHtml.append("<input type=\"text\" ");
+        } else { // time
+          strHtml.append("<td class=\"TextBox_btn_ContentCell\">\n");
+          strHtml
+              .append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\"  style=\"padding-top: 0px;\">\n");
+          strHtml.append("<tr>\n");
+          strHtml.append("<td class=\"TextBox_ContentCell\">\n");
+          strHtml
+              .append("<input type=\"text\" class=\"dojoValidateValid TextBox_btn_OneCell_width\" ");
+          strHtml.append("displayFormat=\"%H:%M:%S\" ");
+          strHtml.append("saveFormat=\"%H:%M:%S\" ");
           strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append("_f\" ");
-          strHtml.append(fields[i].fieldlength).append("\" ");
+          strHtml.append("maxlength=\"19\" ");
           strHtml.append("value=\"").append(value).append("\" ");
-          strHtml.append(">");
+          strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields[i].columnname))
+              .append("_f\" ");
+
+          strHtml
+              .append("onkeyup=\"autoCompleteTime(this);\" onchange=\"validateTimeTextBox(this);logChanges(this);return true;\"></input> ");
+          strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam").append(
+              FormatUtilities.replace(fields[i].columnname)).append("\") </script>");
+          strHtml.append("</td>\n");
+          strHtml.append("</td>\n");
+          strHtml.append("</tr>\n");
+          strHtml.append("</table>\n");
+          strHtml.append("</td>\n");
         }
         // strHtml.append("</td></tr></table>\n");
       }
@@ -798,6 +845,10 @@ public class Buscador extends HttpSecureAppServlet {
     if (scriptSearch) {
       scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append(
           "/js/searchs.js\" type=\"text/javascript\"></script>");
+    }
+    if (scriptTime) {
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append(
+          "/js/default/TimeTextBox.js\" type=\"text/javascript\"></script>");
     }
     if (scriptSelect) {
     }

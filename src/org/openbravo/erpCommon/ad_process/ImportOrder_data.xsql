@@ -1452,4 +1452,17 @@
       ]]></Sql>
       <Parameter name="adPinstanceId"></Parameter>
    </SqlMethod>
+
+  <SqlMethod name="cBPartnerLocationId" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT MAX(C_BPARTNER_LOCATION_ID) FROM C_BPARTNER_LOCATION
+        WHERE C_BPARTNER_ID = ?
+        AND C_BPartner_Location.IsActive='Y'
+      ]]>
+    </Sql>
+    <Parameter name="cBpartnerId"/>
+  </SqlMethod>
+
 </SqlClass>

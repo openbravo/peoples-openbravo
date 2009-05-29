@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.ad_forms.AcctServerData;
 import org.openbravo.erpCommon.businessUtility.AccountTree;
 import org.openbravo.erpCommon.businessUtility.AccountTreeData;
+import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -197,20 +197,24 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       xmlDocument.setParameter("agno2", strAgno);
       xmlDocument.setParameter("column", strAgno);
       xmlDocument.setParameter("columnRef", strAgnoRef);
-      xmlDocument.setParameter("org", AcctServerData.selectOrgName(this, strOrg));
+      xmlDocument.setParameter("org", OrganizationData.selectOrgName(this, strOrg));
       xmlDocument.setParameter("column1", strAgno);
       xmlDocument.setParameter("columnRef1", strAgnoRef);
       xmlDocument.setParameter("companyName", GeneralAccountingReportsData.companyName(this, vars
           .getClient()));
       xmlDocument.setParameter("date", DateTimeData.today(this));
       if (strDateFrom.equals(""))
-        strDateFrom = GeneralAccountingReportsData.yearStartDate(this,vars.getSqlDateFormat(),strAgno);
+        strDateFrom = GeneralAccountingReportsData.yearStartDate(this, vars.getSqlDateFormat(),
+            strAgno);
       if (strDateTo.equals(""))
-        strDateTo = GeneralAccountingReportsData.yearEndDate(this,vars.getSqlDateFormat(),strAgno);
+        strDateTo = GeneralAccountingReportsData
+            .yearEndDate(this, vars.getSqlDateFormat(), strAgno);
       if (strDateFromRef.equals(""))
-        strDateFromRef = GeneralAccountingReportsData.yearStartDate(this,vars.getSqlDateFormat(),strAgnoRef);
+        strDateFromRef = GeneralAccountingReportsData.yearStartDate(this, vars.getSqlDateFormat(),
+            strAgnoRef);
       if (strDateToRef.equals(""))
-        strDateToRef = GeneralAccountingReportsData.yearEndDate(this,vars.getSqlDateFormat(),strAgnoRef);
+        strDateToRef = GeneralAccountingReportsData.yearEndDate(this, vars.getSqlDateFormat(),
+            strAgnoRef);
       xmlDocument.setParameter("period", strDateFrom + " - " + strDateTo);
       xmlDocument.setParameter("periodRef", strDateFromRef + " - " + strDateToRef);
       xmlDocument.setParameter("agnoInitial", strAgno);
@@ -348,7 +352,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("C_ElementValue_ID", strElementValue);
     xmlDocument.setParameter("level", strLevel);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client",
             "GeneralAccountingReports"), strcAcctSchemaId));

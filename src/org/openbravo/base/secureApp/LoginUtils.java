@@ -16,10 +16,6 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.ad_combos.ClientComboData;
-import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
-import org.openbravo.erpCommon.ad_combos.RoleComboData;
-import org.openbravo.erpCommon.reference.PreferencesData;
 import org.openbravo.erpCommon.utility.Utility;
 
 public class LoginUtils {
@@ -35,17 +31,17 @@ public class LoginUtils {
       String strOrg, String strAlmacen) throws ServletException {
 
     // Check session options
-    if (!RoleComboData.isUserRole(conn, strUserAuth, strRol)) {
+    if (!SeguridadData.isUserRole(conn, strUserAuth, strRol)) {
       log4j.error("Login role is not in user roles list");
       log4j.error("User: " + strUserAuth);
       log4j.error("Role: " + strRol);
       return false;
     }
-    if (!ClientComboData.isRoleClient(conn, strRol, strCliente)) {
+    if (!SeguridadData.isRoleClient(conn, strRol, strCliente)) {
       log4j.error("Login client is not in role clients list");
       return false;
     }
-    if (!OrganizationComboData.isLoginRoleOrg(conn, strRol, strOrg)) {
+    if (!SeguridadData.isLoginRoleOrg(conn, strRol, strOrg)) {
       log4j.error("Login organization is not in role organizations list");
       return false;
     }

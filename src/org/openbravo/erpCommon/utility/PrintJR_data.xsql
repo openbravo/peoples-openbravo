@@ -22,7 +22,7 @@
 
 
 
-<SqlClass name="PrintJRData" package="org.openbravo.erpCommon.utility">
+<SqlClass name="PrintJRData" package="org.openbravo.erpCommon.utility" accessModifier="public">
    <SqlClassComment></SqlClassComment>
     <SqlMethod name="getProcessParams" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

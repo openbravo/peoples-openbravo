@@ -15,27 +15,36 @@
  * All portions are Copyright (C) 2001-2006 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
- *************************************************************************
+ ************************************************************************
 -->
 
 
 
 
 
-<SqlClass name="AccountNumberComboData" package="org.openbravo.erpCommon.ad_combos">
+<SqlClass name="RemittanceComboData" package="org.openbravo.erpCommon.ad_forms">
   <SqlClassComment></SqlClassComment>
-    <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethod name="selectNoCanceled" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT C_BANKACCOUNT_ID AS ID, (C_BANK.NAME || '-' || COALESCE(TO_CHAR(C_BANK.CODEBANK),'') || '/' || COALESCE(TO_CHAR(C_BANK.CODEBRANCH),'') || COALESCE(TO_CHAR(C_BANK.DIGITCONTROL),'') || COALESCE(TO_CHAR(C_BANKACCOUNT.DIGITCONTROL),'') || COALESCE(TO_CHAR(C_BANKACCOUNT.CODEACCOUNT),'')) AS name
-      FROM C_BANK, C_BANKACCOUNT
-      WHERE C_BANK.C_BANK_ID = C_BANKACCOUNT.C_BANK_ID 
-      AND C_BANK.AD_CLIENT_ID IN ('1')
-      AND C_BANK.AD_ORG_ID IN ('1')
+				select distinct r.C_Remittance_ID as id,
+               ad_column_identifier('C_Remittance',to_char(r.C_Remittance_Id),?) as name
+          from c_debt_payment    dp,
+               c_remittanceLine  rl,
+               c_Remittance			 r
+         where rl.c_debt_payment_id = dp.c_debt_payment_id
+           and coalesce(rl.returned,'N') = 'N'
+           and dp.C_SETTLEMENT_CANCEL_ID is null
+           and r.processed = 'Y'
+           and r.C_Remittance_ID    = rl.C_Remittance_ID
+           AND r.AD_CLIENT_ID IN ('1') 
+           AND r.AD_ORG_ID IN ('1') 
+           AND 1=1 
      ]]></Sql>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_BANK.AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_BANK.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="lang"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND r.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="AND r.AD_ORG_ID IN (" text="'1'"/>
   </SqlMethod>
 
 </SqlClass>

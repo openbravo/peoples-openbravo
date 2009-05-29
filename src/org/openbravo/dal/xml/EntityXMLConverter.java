@@ -219,7 +219,9 @@ public class EntityXMLConverter implements OBNotSingleton {
       xmlHandler.startDocument();
 
       final AttributesImpl rootAttrs = new AttributesImpl();
-      xmlHandler.startElement("http://www.openbravo.com", XMLConstants.OB_ROOT_ELEMENT, "ob:"
+      rootAttrs.addAttribute("", "", "xmlns:xsi", "CDATA", XMLConstants.XSI_NAMESPACE);
+
+      xmlHandler.startElement(XMLConstants.OPENBRAVO_NAMESPACE, XMLConstants.OB_ROOT_ELEMENT, "ob:"
           + XMLConstants.OB_ROOT_ELEMENT, rootAttrs);
 
       boolean firstRound = true;
@@ -329,6 +331,7 @@ public class EntityXMLConverter implements OBNotSingleton {
 
       // will result in an empty tag if null
       if (value == null) {
+        propertyAttrs.addAttribute("", "", "xsi:nil", "CDATA", "true");
         xmlHandler.startElement("", "", p.getName(), propertyAttrs);
         xmlHandler.endElement("", "", p.getName());
         continue;

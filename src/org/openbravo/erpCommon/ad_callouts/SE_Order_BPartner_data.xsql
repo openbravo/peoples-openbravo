@@ -23,6 +23,8 @@
 
 
 <SqlClass name="SEOrderBPartnerData" package="org.openbravo.erpCommon.ad_callouts">
+
+<!--not used anymore -->
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -39,6 +41,8 @@
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
+<!--not used anymore -->
+
   <SqlMethod name="mWarehouse" type="preparedStatement" return="string" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

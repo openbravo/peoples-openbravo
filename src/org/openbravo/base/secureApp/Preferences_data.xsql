@@ -20,7 +20,7 @@
 
 
 
-<SqlClass name="PreferencesData" package="org.openbravo.erpCommon.reference">
+<SqlClass name="PreferencesData" package="org.openbravo.base.secureApp">
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

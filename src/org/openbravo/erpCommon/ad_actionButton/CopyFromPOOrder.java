@@ -30,8 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_callouts.SEExpenseProductData;
-import org.openbravo.erpCommon.ad_callouts.SLOrderAmtData;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
@@ -92,9 +90,9 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       CopyFromPOOrderData[] data = CopyFromPOOrderData.selectLines(this, strOrder);
       CopyFromPOOrderData[] order = CopyFromPOOrderData.select(this, strKey);
       for (i = 0; data != null && i < data.length; i++) {
-        SEExpenseProductData[] data3 = SEExpenseProductData.select(this, data[i].mProductId,
-            order[0].mPricelistId.equals("") ? CopyFromPOOrderData.defaultPriceList(this)
-                : order[0].mPricelistId);
+        CopyFromPOOrderData[] data3 = CopyFromPOOrderData.selectPriceForProduct(this,
+            data[i].mProductId, order[0].mPricelistId.equals("") ? CopyFromPOOrderData
+                .defaultPriceList(this) : order[0].mPricelistId);
         for (int j = 0; data3 != null && j < data3.length; j++) {
           if (data3[j].validfrom == null
               || data3[j].validfrom.equals("")
@@ -103,7 +101,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
             priceactual = data3[j].pricestd;
             pricelist = data3[j].pricelist;
             pricelimit = data3[j].pricelimit;
-            SLOrderAmtData[] data4 = SLOrderAmtData.select(this, strKey);
+            CopyFromPOOrderData[] data4 = CopyFromPOOrderData.selectOrderPricelist(this, strKey);
             if (data4 != null && data4.length > 0) {
               strPrecision = data4[0].stdprecision.equals("") ? "0" : data4[0].stdprecision;
               strPricePrecision = data4[0].priceprecision.equals("") ? "0"

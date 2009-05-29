@@ -30,7 +30,6 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.ad_combos.AccountNumberComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.KeyMap;
@@ -173,7 +172,7 @@ public class ReportTaxPaymentJR extends HttpSecureAppServlet {
 }
 
 class TypeReportPayment implements FieldProvider {
-  static Logger log4j = Logger.getLogger(AccountNumberComboData.class);
+  static Logger log4j = Logger.getLogger(TypeReportPayment.class);
   // private String InitRecordNumber = "0";
   public String id;
   public String name;

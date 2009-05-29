@@ -12,28 +12,33 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
 
+<SqlClass name="RegisterData" package="org.openbravo.erpCommon.ad_forms">
+   <SqlMethod name="dummy" type="preparedStatement" return="String">
+    <Sql>select 1 as dummy from dual</Sql>
+   </SqlMethod>
 
-
-
-
-<SqlClass name="ModuleComboData" package="org.openbravo.erpCommon.ad_combos">
-   <SqlClassComment></SqlClassComment>
-   <SqlMethod name="select" type="preparedStatement" return="multiple">
-     <SqlMethodComment></SqlMethodComment>
-     <Sql>
-     <![CDATA[
-       SELECT DISTINCT tn.Node_ID AS CLAVE, menuData.NAME AS NAME, tn.Node_ID AS id
-        FROM AD_TREENODE tn, AD_MENU menuData 
-        WHERE tn.node_id = menuData.ad_menu_id 
-        AND tn.ad_tree_id = '10' 
-        AND tn.IsActive='Y' 
-        AND PARENT_ID='0' 
-       ]]></Sql>
+   <SqlMethod name="postpone" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update AD_REGISTRATION_INFO set POSTPONE_DATE = TO_DATE(?)
+     ]]>
+     </Sql>
+     <Parameter name="postponeDate"/>
+   </SqlMethod>
+   <SqlMethod name="updateIsRegistrationActive" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update AD_REGISTRATION_INFO set ISREGISTRATIONACTIVE = TO_CHAR(?)
+     ]]>
+     </Sql>
+     <Parameter name="isregistrationactive"/>
    </SqlMethod>
 </SqlClass>
