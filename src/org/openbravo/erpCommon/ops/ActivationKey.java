@@ -12,6 +12,7 @@ import java.util.Properties;
 
 import javax.crypto.Cipher;
 
+import org.apache.log4j.Logger;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
@@ -22,6 +23,7 @@ public class ActivationKey {
   private boolean hasActivationKey = false;
   private String errorMessage = "";
   private Properties instanceProperties;
+  private static final Logger log = Logger.getLogger(ActivationKey.class);
 
   public ActivationKey() {
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
@@ -38,7 +40,7 @@ public class ActivationKey {
 
     PublicKey pk = getPublicKey(strPublicKey);
     if (pk == null) {
-      hasActivationKey = false;
+      hasActivationKey = true;
       errorMessage = "@NotAValidKey";
       return;
     }
@@ -86,7 +88,7 @@ public class ActivationKey {
     } catch (ParseException e) {
       errorMessage = "@ErrorReadingDates@";
       isActive = false;
-      e.printStackTrace();
+      log.error(e);
       return;
     }
 
@@ -94,10 +96,12 @@ public class ActivationKey {
     if (startDate == null || now.before(startDate)) {
       isActive = false;
       errorMessage = "@NotActiveTill@ " + startDate;
+      return;
     }
     if (endDate != null && now.after(endDate)) {
       isActive = false;
       errorMessage = "@ActivationExpired@ " + endDate;
+      return;
     }
     isActive = true;
 
@@ -112,7 +116,7 @@ public class ActivationKey {
       X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(rawPublicKey);
       return keyFactory.generatePublic(publicKeySpec);
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e);
       return null;
     }
   }
@@ -131,18 +135,24 @@ public class ActivationKey {
 
   public String toString(ConnectionProvider conn, String lang) {
     StringBuffer sb = new StringBuffer();
-    sb.append(Utility.messageBD(conn, "Customer", lang)).append(": ").append(
-        getProperty("customer")).append("\n");
-    sb.append(Utility.messageBD(conn, "InstanceNo", lang)).append(": ").append(
-        getProperty("instanceno")).append("\n");
-    sb.append(Utility.messageBD(conn, "LicenseType", lang)).append(": ").append(
-        getProperty("lincensetype")).append("\n");
-    sb.append(Utility.messageBD(conn, "InstancePurpose", lang)).append(": ").append(
-        getProperty("purpose")).append("\n");
-    sb.append(Utility.messageBD(conn, "StartDate", lang)).append(": ").append(
-        getProperty("startdate")).append("\n");
-    sb.append(Utility.messageBD(conn, "EndDate", lang)).append(": ").append(getProperty("enddate"))
-        .append("\n");
+    if (instanceProperties != null) {
+      sb.append(Utility.messageBD(conn, "Customer", lang)).append(": ").append(
+          getProperty("customer")).append("\n");
+      sb.append(Utility.messageBD(conn, "InstanceNo", lang)).append(": ").append(
+          getProperty("instanceno")).append("\n");
+      sb.append(Utility.messageBD(conn, "LicenseType", lang)).append(": ").append(
+          getProperty("lincensetype")).append("\n");
+      sb.append(Utility.messageBD(conn, "InstancePurpose", lang)).append(": ").append(
+          getProperty("purpose")).append("\n");
+      sb.append(Utility.messageBD(conn, "StartDate", lang)).append(": ").append(
+          getProperty("startdate")).append("\n");
+      sb.append(Utility.messageBD(conn, "EndDate", lang)).append(": ").append(
+          getProperty("enddate")).append("\n");
+      sb.append(Utility.messageBD(conn, "ConcurrentUsers", lang)).append(": ").append(
+          getProperty("limitusers")).append("\n");
+    } else {
+      sb.append(Utility.messageBD(conn, "NonActiveInstance", lang));
+    }
     return sb.toString();
   }
 

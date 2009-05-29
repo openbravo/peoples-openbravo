@@ -52,14 +52,14 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       ActivationKey activationKey = new ActivationKey();
-      if (!activationKey.isInstanceActive())
+      if (!activationKey.hasActivationKey())
         printPageNotActive(response, vars);
       else
         printPageActive(response, vars, activationKey);
     } else if (vars.commandIn("ACTIVATE")) {
       if (activateRemote(vars)) {
         ActivationKey activationKey = new ActivationKey();
-        if (!activationKey.isInstanceActive())
+        if (!activationKey.hasActivationKey())
           printPageNotActive(response, vars);
         else
           printPageActive(response, vars, activationKey);
@@ -102,7 +102,16 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     // Message
     {
-      final OBError myMessage = vars.getMessage("InstanceManagement");
+      OBError myMessage = null;
+      if (activationKey.isActive()) {
+        myMessage = vars.getMessage("InstanceManagement");
+      } else {
+        myMessage = new OBError();
+        myMessage.setType("Error");
+        myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), activationKey
+            .getErrorMessage()));
+      }
+
       vars.removeMessage("InstanceManagement");
       if (myMessage != null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
