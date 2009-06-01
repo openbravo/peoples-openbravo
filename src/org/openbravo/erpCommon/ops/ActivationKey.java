@@ -24,11 +24,12 @@ public class ActivationKey {
   private String errorMessage = "";
   private Properties instanceProperties;
   private static final Logger log = Logger.getLogger(ActivationKey.class);
+  private String strPublicKey;
 
   public ActivationKey() {
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
         org.openbravo.model.ad.system.System.class, "0");
-    String strPublicKey = sys.getInstanceKey();
+    strPublicKey = sys.getInstanceKey();
     String activationKey = sys.getActivationKey();
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
@@ -121,6 +122,10 @@ public class ActivationKey {
     }
   }
 
+  public String getPublicKey() {
+    return strPublicKey;
+  }
+
   public boolean hasActivationKey() {
     return hasActivationKey;
   }
@@ -131,6 +136,10 @@ public class ActivationKey {
 
   public String getErrorMessage() {
     return errorMessage;
+  }
+
+  public boolean hasActivationProperties() {
+    return instanceProperties != null;
   }
 
   public String toString(ConnectionProvider conn, String lang) {

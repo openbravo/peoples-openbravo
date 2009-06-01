@@ -43,6 +43,7 @@ public class ActiveInstanceProcess implements Process {
   public void execute(ProcessBundle bundle) throws Exception {
     String publicKey = (String) bundle.getParams().get("publicKey");
     String purpose = (String) bundle.getParams().get("purpose");
+    String instanceNo = (String) bundle.getParams().get("instanceNo");
     OBError msg = new OBError();
 
     bundle.setResult(msg);
@@ -60,7 +61,7 @@ public class ActiveInstanceProcess implements Process {
     //
     // System.out.println("r:" + HttpsUtils.sendSecure(url, "oo", CERT_ALIAS, "changeit"));
     // TODO: once actual machine is ready do ssl call
-    String[] result = send(publicKey, purpose);
+    String[] result = send(publicKey, purpose, instanceNo);
 
     if (result.length == 2 && result[0] != null && result[1] != null
         && result[0].equals("@Success@")) {
@@ -78,10 +79,12 @@ public class ActiveInstanceProcess implements Process {
 
   }
 
-  private String[] send(String publickey, String purpose) throws Exception {
+  private String[] send(String publickey, String purpose, String instanceNo) throws Exception {
     log.debug("Sending request");
     String content = "publickey=" + URLEncoder.encode(publickey, "utf-8");
     content += "&purpose=" + purpose;
+    if (instanceNo != null && !instanceNo.equals(""))
+      content += "&instanceNo=" + instanceNo;
 
     URL url = new URL(BUTLER_URL);
     HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();

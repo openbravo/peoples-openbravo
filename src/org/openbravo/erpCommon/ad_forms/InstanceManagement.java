@@ -52,10 +52,10 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       ActivationKey activationKey = new ActivationKey();
-      if (!activationKey.hasActivationKey())
-        printPageNotActive(response, vars);
-      else
-        printPageActive(response, vars, activationKey);
+      // if (!activationKey.hasActivationKey())
+      // printPageNotActive(response, vars);
+      // else
+      printPageActive(response, vars, activationKey);
     } else if (vars.commandIn("ACTIVATE")) {
       if (activateRemote(vars)) {
         ActivationKey activationKey = new ActivationKey();
@@ -66,6 +66,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       } else
         printPageNotActive(response, vars);
     } else if (vars.commandIn("SHOW_ACTIVATE")) {
+
       printPageNotActive(response, vars);
     } else
       pageError(response);
@@ -81,7 +82,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     // Interface parameters
-    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "",
+    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InstanceManagement", false, "",
         "", "", false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
@@ -129,6 +130,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageNotActive(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
 
+    ActivationKey activationKey = new ActivationKey();
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -171,12 +173,22 @@ public class InstanceManagement extends HttpSecureAppServlet {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose", "",
           Utility.getContext(this, vars, "#AccessibleOrgTree", "InstanceManagement"), Utility
               .getContext(this, vars, "#User_Client", "InstanceManagement"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement", null);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement",
+          activationKey.hasActivationProperties() ? activationKey.getProperty("purpose") : null);
       xmlDocument.setData("reportPurpose", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       ex.printStackTrace();
       throw new ServletException(ex);
+    }
+
+    if (activationKey.hasActivationKey()) {
+      xmlDocument.setParameter("publicKey", activationKey.getPublicKey());
+    }
+
+    if (activationKey.hasActivationProperties()) {
+      xmlDocument.setParameter("paramSelPurpose", activationKey.getProperty("purpose"));
+      xmlDocument.setParameter("instanceNo", activationKey.getProperty("instanceno"));
     }
 
     out.println(xmlDocument.print());
@@ -190,6 +202,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
     HashMap<String, Object> params = new HashMap<String, Object>();
     params.put("publicKey", vars.getStringParameter("publicKey"));
     params.put("purpose", vars.getStringParameter("purpose"));
+    params.put("instanceNo", vars.getStringParameter("instanceNo"));
     pb.setParams(params);
 
     OBError msg = null;
