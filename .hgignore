@@ -7,7 +7,6 @@ bin
 build
 docs
 log
-modules
 src-gen
 src-loc
 srcAD
@@ -34,3 +33,7 @@ lib/*.war
 *.bak
 *.swp
 Thumbs.db
+
+syntax: regexp
+
+^modules
