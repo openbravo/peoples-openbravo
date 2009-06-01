@@ -52,9 +52,6 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       ActivationKey activationKey = new ActivationKey();
-      // if (!activationKey.hasActivationKey())
-      // printPageNotActive(response, vars);
-      // else
       printPageActive(response, vars, activationKey);
     } else if (vars.commandIn("ACTIVATE")) {
       if (activateRemote(vars)) {
@@ -104,7 +101,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
     // Message
     {
       OBError myMessage = null;
-      if (activationKey.isActive()) {
+      if (activationKey.isActive() || activationKey.getErrorMessage() == null
+          || activationKey.getErrorMessage().equals("")) {
         myMessage = vars.getMessage("InstanceManagement");
       } else {
         myMessage = new OBError();
@@ -120,7 +118,11 @@ public class InstanceManagement extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    xmlDocument.setParameter("instanceInfo", activationKey.toString(this, vars.getLanguage()));
+    if (!activationKey.hasActivationProperties())
+      xmlDocument.setParameter("instanceInfo", Utility.messageBD(this, "CoummintyInstance", vars
+          .getLanguage()));
+    else
+      xmlDocument.setParameter("instanceInfo", activationKey.toString(this, vars.getLanguage()));
 
     out.println(xmlDocument.print());
     out.close();

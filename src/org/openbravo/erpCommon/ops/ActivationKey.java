@@ -35,7 +35,6 @@ public class ActivationKey {
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
       hasActivationKey = false;
-      errorMessage = "@NoKeyAvailable@";
       return;
     }
 
