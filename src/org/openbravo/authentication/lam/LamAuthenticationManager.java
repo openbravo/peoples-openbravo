@@ -20,13 +20,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.openbravo.authentication.AuthenticationData;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.dal.core.OBContext;
 
 import com.spikesource.lam.bindings.LamClient;
 
@@ -37,6 +40,7 @@ import com.spikesource.lam.bindings.LamClient;
 public class LamAuthenticationManager implements AuthenticationManager {
 
   private ConnectionProvider conn = null;
+  public static final String AUTHENTICATED_USER_ATTRIBUTE = "#Authenticated_user";
 
   /** Creates a new instance of LamAuthenticationManager */
   public LamAuthenticationManager() {
@@ -66,9 +70,17 @@ public class LamAuthenticationManager implements AuthenticationManager {
         if ("-1".equals(sUserId)) {
           throw new AuthenticationException("Authenticated user is not an Openbravo ERP user: "
               + sUserName);
-        } else {
-          return sUserId;
         }
+        try {
+          OBContext.setOBContext(request);
+        } catch (final OBSecurityException e) {
+          // login failed, no roles specified
+          // remove authenticated user
+          request.getSession(true).setAttribute(AUTHENTICATED_USER_ATTRIBUTE, null);
+          return null;
+        }
+        request.getSession(true).setAttribute(AUTHENTICATED_USER_ATTRIBUTE, sUserId);
+        return sUserId;
       }
     } catch (XmlRpcException e) {
       throw new ServletException("Cannot authenticate user.", e);
@@ -85,6 +97,11 @@ public class LamAuthenticationManager implements AuthenticationManager {
     try {
       LamClient LC = new LamClient(); // TODO: configure LamClient
       LC.logout(request, response, HttpBaseUtils.getLocalAddress(request) + "/security/Menu.html");
+
+      HttpSession session = request.getSession(false);
+      if (session != null && session.getAttribute(AUTHENTICATED_USER_ATTRIBUTE) != null) {
+        request.getSession(true).removeAttribute(AUTHENTICATED_USER_ATTRIBUTE);
+      }
     } catch (XmlRpcException e) {
       throw new ServletException("Cannot close user session.", e);
     }
