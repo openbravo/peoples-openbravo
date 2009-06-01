@@ -95,12 +95,12 @@ public class ActivationKey {
     Date now = new Date();
     if (startDate == null || now.before(startDate)) {
       isActive = false;
-      errorMessage = "@NotActiveTill@ " + startDate;
+      errorMessage = "@OPSNotActiveTill@ " + startDate;
       return;
     }
     if (endDate != null && now.after(endDate)) {
       isActive = false;
-      errorMessage = "@ActivationExpired@ " + endDate;
+      errorMessage = "@OPSActivationExpired@ " + endDate;
       return;
     }
     isActive = true;
@@ -144,22 +144,22 @@ public class ActivationKey {
   public String toString(ConnectionProvider conn, String lang) {
     StringBuffer sb = new StringBuffer();
     if (instanceProperties != null) {
-      sb.append(Utility.messageBD(conn, "Customer", lang)).append(": ").append(
+      sb.append(Utility.messageBD(conn, "OPSCustomer", lang)).append(": ").append(
           getProperty("customer")).append("\n");
-      sb.append(Utility.messageBD(conn, "InstanceNo", lang)).append(": ").append(
+      sb.append(Utility.messageBD(conn, "OPSInstanceNo", lang)).append(": ").append(
           getProperty("instanceno")).append("\n");
-      sb.append(Utility.messageBD(conn, "LicenseType", lang)).append(": ").append(
+      sb.append(Utility.messageBD(conn, "OPSLicenseType", lang)).append(": ").append(
           getProperty("lincensetype")).append("\n");
-      sb.append(Utility.messageBD(conn, "InstancePurpose", lang)).append(": ").append(
+      sb.append(Utility.messageBD(conn, "OPSInstancePurpose", lang)).append(": ").append(
           getProperty("purpose")).append("\n");
-      sb.append(Utility.messageBD(conn, "StartDate", lang)).append(": ").append(
+      sb.append(Utility.messageBD(conn, "OPSStartDate", lang)).append(": ").append(
           getProperty("startdate")).append("\n");
-      sb.append(Utility.messageBD(conn, "EndDate", lang)).append(": ").append(
+      sb.append(Utility.messageBD(conn, "OPSEndDate", lang)).append(": ").append(
           getProperty("enddate")).append("\n");
-      sb.append(Utility.messageBD(conn, "ConcurrentUsers", lang)).append(": ").append(
+      sb.append(Utility.messageBD(conn, "OPSConcurrentUsers", lang)).append(": ").append(
           getProperty("limitusers")).append("\n");
     } else {
-      sb.append(Utility.messageBD(conn, "NonActiveInstance", lang));
+      sb.append(Utility.messageBD(conn, "OPSNonActiveInstance", lang));
     }
     return sb.toString();
   }

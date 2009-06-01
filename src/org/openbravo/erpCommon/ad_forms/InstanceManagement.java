@@ -119,8 +119,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
       }
     }
     if (!activationKey.hasActivationProperties())
-      xmlDocument.setParameter("instanceInfo", Utility.messageBD(this, "CoummintyInstance", vars
-          .getLanguage()));
+      xmlDocument.setParameter("instanceInfo", Utility.messageBD(this, "OPSCoummintyInstance",
+          vars.getLanguage()).replace("\\n", "\n"));
     else
       xmlDocument.setParameter("instanceInfo", activationKey.toString(this, vars.getLanguage()));
 
