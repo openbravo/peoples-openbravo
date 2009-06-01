@@ -28,8 +28,11 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+  <PARAMETER id="paramSelPurpose" name="paramSelPurpose" default=""/>
+  <PARAMETER id="instanceNo" name="instanceNo" attribute="value" default=""/>
+  <PARAMETER id="publicKey" name="publicKey" replaceCharacters="html" default=""/>
   <SUBREPORT id="reportPurpose" name="reportPurpose" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected"/>
+    <ARGUMENT name="parameterListSelected" withId="paramSelPurpose"/>
   </SUBREPORT>
 
 </REPORT>
