@@ -15967,7 +15967,7 @@
 <!--1005100000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005100000-->  <ACTION><![CDATA[W]]></ACTION>
 <!--1005100000-->  <AD_TAB_ID><![CDATA[1005100000]]></AD_TAB_ID>
-<!--1005100000-->  <CLASSNAME><![CDATA[org.openbravo.erpWindows.BusinessPartner.Salarycategory]]></CLASSNAME>
+<!--1005100000-->  <CLASSNAME><![CDATA[org.openbravo.erpWindows.BusinessPartner.CostSalaryCategory]]></CLASSNAME>
 <!--1005100000-->  <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1005100000-->  <OBJECT_TYPE><![CDATA[S]]></OBJECT_TYPE>
 <!--1005100000--></AD_MODEL_OBJECT>
