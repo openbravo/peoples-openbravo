@@ -305,13 +305,15 @@ function columnChange() {
                   <td class="Radio_Check_ContentCell"> <input type="radio" name="inpReceipt" value="Y" checked="" id="paramReceipt"></input> </td>
                   <td class="TitleCell"> <span class="LabelText">Payable</span></td>
                   <td class="Radio_Check_ContentCell"> <input type="radio" name="inpReceipt" value="N" checked="" id="paramPayable"></input></td>
-                  <td class="TitleCell">
-                    <input dojotype="openbravo:RealNumberTextbox" type="hidden" name="inpColumn0" id="paramColumn0" value="0" />
-							      <script>djConfig.searchIds.push("paramColumn0");</script>
-                    <span class="LabelText">0</span> - </td>
-							    <td class="TitleCell">
-							      <input dojotype="openbravo:RealNumberTextbox" class="required TextBox_btn_OneCell_width" greaterThan="paramColumn0" type="text" name="inpColumn1" id="paramColumn1" maxlength="4" size=4 onchange="columnChange();" value="xxx7" width="4"/>
-							      <script>djConfig.searchIds.push("paramColumn1");</script></td></tr>
+                  <td class="TitleCell"> <span class="LabelText">0</span> -
+                    <div style="display: none;">
+                      <input dojotype="openbravo:RealNumberTextbox" type="hidden" name="inpColumn0" id="paramColumn0" value="0" /><script>djConfig.searchIds.push("paramColumn0");</script>
+                    </div>
+                  </td>
+                  <td class="TextBox_ContentCell">
+                    <input dojotype="openbravo:RealNumberTextbox" class="required TextBox_OneCell_width" greaterThan="paramColumn0" type="text" name="inpColumn1" id="paramColumn1" maxlength="4" size="4" onchange="columnChange();" value="xxx7" width="4"/><script>djConfig.searchIds.push("paramColumn1");</script>
+                  </td>
+                </tr>
 
 						  	<tr>
                   <td class="TitleCell"><span class="LabelText">
@@ -407,27 +409,24 @@ function columnChange() {
 							  <td class="TitleCell"></td>
 						  	  <td class="TitleCell">
 						  	  <span id="spanCol2" class="LabelText" name="inpLabelColumn2">xx7</span> - </td>
-                              <td class="TitleCell">
-                              <input dojoType="openbravo:RealNumberTextbox" class="required TextBox_btn_OneCell_width" greaterThan="paramColumn1" lowerThan="paramColumn3" type="text" name="inpColumn2" id="paramColumn2" maxlength="4" size=4 onchange="columnChange();" value="xxx7"  width="4"/>
-							  <script>djConfig.searchIds.push("paramColumn2");</script></td></tr>
+                <td class="TextBox_ContentCell">
+                  <input dojoType="openbravo:RealNumberTextbox" class="required TextBox_OneCell_width" greaterThan="paramColumn1" lowerThan="paramColumn3" type="text" name="inpColumn2" id="paramColumn2" maxlength="4" size="4" onchange="columnChange();" value="xxx7"  width="4"/><script>djConfig.searchIds.push("paramColumn2");</script></td></tr>
 
 						    <tr>
 							  <td class="TitleCell"></td>
 							  <td class="TitleCell"></td>
 						      <td class="TitleCell">
 						  	  <span class="LabelText" id="spanCol3" name="inpLabelColumn3">xx7</span> - </td>
-							 <td class="TitleCell">
-							  <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramColumn2" lowerThan="paramColumn4" class="required TextBox_btn_OneCell_width" type="text" name="inpColumn3" id="paramColumn3" maxlength="4"  size=4 onchange="columnChange();" value="xxx7" width="4"/>
-							  <script>djConfig.searchIds.push("paramColumn3");</script></td></tr>
+							 <td class="TextBox_ContentCell">
+							  <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramColumn2" lowerThan="paramColumn4" class="required TextBox_OneCell_width" type="text" name="inpColumn3" id="paramColumn3" maxlength="4"  size="4" onchange="columnChange();" value="xxx7" width="4"/><script>djConfig.searchIds.push("paramColumn3");</script></td></tr>
 
 						    <tr>
 							  <td class="TitleCell"></td>
 							  <td class="TitleCell"></td>
 						      <td class="TitleCell">
 						  	  <span class="LabelText" id="spanCol4" name="inpLabelColumn4">xx7</span> - </td>
-							  <td class="TitleCell">
-							  <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramColumn3" class="required TextBox_btn_OneCell_width" type="text" name="inpColumn4" id="paramColumn4" maxlength="4"  size=4 onchange="columnChange();" value="xxx7" width="4"/>
-							  <script>djConfig.searchIds.push("paramColumn4");</script></td></tr>
+							  <td class="TextBox_ContentCell">
+							  <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramColumn3" class="required TextBox_OneCell_width" type="text" name="inpColumn4" id="paramColumn4" maxlength="4"  size="4" onchange="columnChange();" value="xxx7" width="4"/><script>djConfig.searchIds.push("paramColumn4");</script></td></tr>
 
 						    <tr>
 							  <td class="TitleCell"></td>
