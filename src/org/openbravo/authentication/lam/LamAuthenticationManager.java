@@ -71,15 +71,15 @@ public class LamAuthenticationManager implements AuthenticationManager {
           throw new AuthenticationException("Authenticated user is not an Openbravo ERP user: "
               + sUserName);
         }
+        request.getSession(true).setAttribute(AUTHENTICATED_USER_ATTRIBUTE, sUserId);
         try {
           OBContext.setOBContext(request);
         } catch (final OBSecurityException e) {
           // login failed, no roles specified
           // remove authenticated user
-          request.getSession(true).setAttribute(AUTHENTICATED_USER_ATTRIBUTE, null);
+          request.getSession(true).removeAttribute(AUTHENTICATED_USER_ATTRIBUTE);
           return null;
         }
-        request.getSession(true).setAttribute(AUTHENTICATED_USER_ATTRIBUTE, sUserId);
         return sUserId;
       }
     } catch (XmlRpcException e) {
