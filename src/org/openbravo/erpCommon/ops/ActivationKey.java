@@ -155,8 +155,10 @@ public class ActivationKey {
           Utility.getListValueName("InstancePurpose", getProperty("purpose"), lang)).append("\n");
       sb.append(Utility.messageBD(conn, "OPSStartDate", lang)).append(": ").append(
           getProperty("startdate")).append("\n");
-      sb.append(Utility.messageBD(conn, "OPSEndDate", lang)).append(": ").append(
-          getProperty("enddate")).append("\n");
+      if (getProperty("enddate") != null) {
+        sb.append(Utility.messageBD(conn, "OPSEndDate", lang)).append(": ").append(
+            getProperty("enddate")).append("\n");
+      }
       sb.append(Utility.messageBD(conn, "OPSConcurrentUsers", lang)).append(": ").append(
           getProperty("limitusers")).append("\n");
     } else {
