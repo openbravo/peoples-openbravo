@@ -60,12 +60,10 @@ public class ActivationKey {
       }
       byte[] props = bos.toByteArray();
 
-      System.out.println("prop:" + new String(props));
       ByteArrayInputStream isProps = new ByteArrayInputStream(props);
       instanceProperties = new Properties();
 
       instanceProperties.load(isProps);
-      System.out.println("customer:" + instanceProperties.getProperty("customer"));
     } catch (Exception e) {
       isActive = false;
       errorMessage = "@NotAValidKey@";
@@ -83,8 +81,6 @@ public class ActivationKey {
       if (getProperty("enddate") != null)
         endDate = sd.parse(getProperty("enddate"));
 
-      System.out.println("sd:" + startDate);
-      System.out.println("ed:" + endDate);
     } catch (ParseException e) {
       errorMessage = "@ErrorReadingDates@";
       isActive = false;
