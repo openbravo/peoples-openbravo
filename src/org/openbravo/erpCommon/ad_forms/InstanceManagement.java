@@ -20,6 +20,7 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
@@ -27,8 +28,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.ops.ActivationKey;
 import org.openbravo.erpCommon.ops.ActiveInstanceProcess;
@@ -38,6 +41,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.System;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -63,10 +67,54 @@ public class InstanceManagement extends HttpSecureAppServlet {
       } else
         printPageNotActive(response, vars);
     } else if (vars.commandIn("SHOW_ACTIVATE")) {
-
       printPageNotActive(response, vars);
-    } else
+    } else if (vars.commandIn("ACTIVATE_LOCAL")) {
+      printPageActivateLocal(response, vars);
+    } else if (vars.commandIn("INSTALLFILE")) {
+      printPageInstallFile(response, vars);
+    } else {
       pageError(response);
+    }
+
+  }
+
+  private void printPageInstallFile(HttpServletResponse response, VariablesSecureApp vars)
+      throws ServletException {
+    FileItem fi = vars.getMultiFile("inpFile");
+    try {
+      InputStream is = fi.getInputStream();
+
+      // read the file in a String
+      StringBuffer buf = new StringBuffer();
+      byte[] b = new byte[1024];
+      for (int n; (n = is.read(b)) != -1;) {
+        buf.append(new String(b, 0, n));
+      }
+
+      System sys = OBDal.getInstance().get(System.class, "0");
+      sys.setActivationKey(buf.toString());
+      sys.setInstanceKey(vars.getStringParameter("publicKey"));
+      printPageClosePopUp(response, vars, "");
+
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+
+  private void printPageActivateLocal(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException {
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_forms/ActivationKey_InstallLocal").createXmlDocument();
+    response.setContentType("text/html; charset=UTF-8");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("publicKey", vars.getStringParameter("publicKey"));
+    final PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
 
   }
 

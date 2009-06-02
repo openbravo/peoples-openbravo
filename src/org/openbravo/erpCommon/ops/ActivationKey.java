@@ -41,7 +41,7 @@ public class ActivationKey {
     PublicKey pk = getPublicKey(strPublicKey);
     if (pk == null) {
       hasActivationKey = true;
-      errorMessage = "@NotAValidKey";
+      errorMessage = "@NotAValidKey@";
       return;
     }
     hasActivationKey = true;
