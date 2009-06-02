@@ -8,20 +8,14 @@ import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Properties;
 
 import javax.crypto.Cipher;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.domain.ListTrl;
-import org.openbravo.model.ad.domain.Reference;
-import org.openbravo.model.ad.system.Language;
 
 public class ActivationKey {
 
@@ -155,9 +149,10 @@ public class ActivationKey {
       sb.append(Utility.messageBD(conn, "OPSInstanceNo", lang)).append(": ").append(
           getProperty("instanceno")).append("\n");
       sb.append(Utility.messageBD(conn, "OPSLicenseType", lang)).append(": ").append(
-          getListValueName("OPSLicenseType", getProperty("lincensetype"), lang)).append("\n");
+          Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang)).append(
+          "\n");
       sb.append(Utility.messageBD(conn, "OPSInstancePurpose", lang)).append(": ").append(
-          getListValueName("InstancePurpose", getProperty("purpose"), lang)).append("\n");
+          Utility.getListValueName("InstancePurpose", getProperty("purpose"), lang)).append("\n");
       sb.append(Utility.messageBD(conn, "OPSStartDate", lang)).append(": ").append(
           getProperty("startdate")).append("\n");
       sb.append(Utility.messageBD(conn, "OPSEndDate", lang)).append(": ").append(
@@ -172,46 +167,6 @@ public class ActivationKey {
 
   public String getProperty(String propName) {
     return instanceProperties.getProperty(propName);
-  }
-
-  private String getListValueName(String ListName, String value, String lang) {
-    OBCriteria<Reference> obCriteria = OBDal.getInstance().createCriteria(Reference.class);
-    obCriteria.add(Expression.eq(Reference.PROPERTY_NAME, ListName));
-    obCriteria.add(Expression.eq(Reference.PROPERTY_VALIDATIONTYPE, "L"));
-    List<Reference> lRef = obCriteria.list();
-    if (lRef == null || lRef.size() != 1)
-      return ""; // reference not found
-    Reference reference = lRef.get(0);
-
-    // check for value
-    OBCriteria<org.openbravo.model.ad.domain.List> obCriteria2 = OBDal.getInstance()
-        .createCriteria(org.openbravo.model.ad.domain.List.class);
-    obCriteria2
-        .add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, reference));
-    obCriteria2.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, value));
-    List<org.openbravo.model.ad.domain.List> lVal = obCriteria2.list();
-    if (lVal == null || lVal.size() != 1)
-      return ""; // value not found
-    org.openbravo.model.ad.domain.List val = lVal.get(0);
-
-    // check for translation
-    if (lang == null || lang.equals(""))
-      return val.getName();
-
-    OBCriteria<Language> obCriteriaL = OBDal.getInstance().createCriteria(Language.class);
-    obCriteriaL.add(Expression.eq(Language.PROPERTY_NAME, lang));
-    List<Language> lLang = obCriteriaL.list();
-    if (lLang == null || lLang.size() != 1)
-      return val.getName();
-
-    OBCriteria<ListTrl> obCriteria3 = OBDal.getInstance().createCriteria(ListTrl.class);
-    obCriteria3.add(Expression.eq(ListTrl.PROPERTY_LISTREFERENCE, val));
-    obCriteria3.add(Expression.eq(ListTrl.PROPERTY_LANGUAGE, lLang.get(0)));
-    List<ListTrl> lValTrl = obCriteria3.list();
-    if (lVal == null || lVal.size() != 1)
-      return val.getName();
-    return lValTrl.get(0).getName();
-
   }
 
 }
