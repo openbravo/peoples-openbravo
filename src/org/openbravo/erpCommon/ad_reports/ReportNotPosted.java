@@ -72,8 +72,8 @@ public class ReportNotPosted extends HttpSecureAppServlet {
     } else {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportNotPosted")
           .createXmlDocument();
-      data = ReportNotPostedData.select(this, vars.getLanguage(), strDateFrom, strDateTo, vars
-          .getClient());
+      data = ReportNotPostedData.select(this, vars.getLanguage(), vars.getClient(), strDateFrom,
+          strDateTo);
     }// DateTimeData.nDaysAfter
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportNotPosted", false, "", "", "",
