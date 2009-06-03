@@ -1560,7 +1560,7 @@ cWithHoldId varchar2(32);
                   (
                     v_debtPaymentID, v_Client_ID, v_Org_ID, 'Y',
                     now(), v_UpdatedBy, now(), v_UpdatedBy,
-                    v_IsSOTrx, NULL, NULL, '* ' || v_DocumentNo || ' * (' || v_BPartnerName ||( CASE WHEN v_POReference IS NULL THEN '' ELSE ' .Ref:'||TO_CHAR(v_POReference) END) || ' )',
+                    v_IsSOTrx, NULL, NULL, '* ' || v_DocumentNo || ' * (' || COALESCE('' ,v_BPartnerName) ||( CASE WHEN v_POReference IS NULL THEN '' ELSE ' .Ref:'||TO_CHAR(v_POReference) END) || ' )',
                     v_Record_ID, v_BPartner_ID, v_Currency_ID, NULL,
                     v_bankAccount, v_cashBook, CUR_PAYMENTS.PaymentRule, 'N',
                     C_Currency_Round((v_paymentamount *v_multiplierarc) -withholdamount *(v_paymentamount *v_multiplierarc / v_grandtotal), v_Currency_ID, NULL), 0, v_plannedDate, 'N',
