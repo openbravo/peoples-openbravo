@@ -98,7 +98,7 @@ public class RegisterModule extends HttpSecureAppServlet {
           OBError message = new OBError();
           message.setType("Error");
           message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-          message.setMessage(e.getMessage());
+          message.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
           vars.setMessage("RegisterModule", message);
           error = true;
           e.printStackTrace();
