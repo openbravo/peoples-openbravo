@@ -122,10 +122,10 @@ public class ActivationKey {
 
   }
 
-  private PublicKey getPublicKey(String strPublicKey) {
+  private PublicKey getPublicKey(String strPublickey) {
     try {
       KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-      byte[] rawPublicKey = org.apache.commons.codec.binary.Base64.decodeBase64(strPublicKey
+      byte[] rawPublicKey = org.apache.commons.codec.binary.Base64.decodeBase64(strPublickey
           .getBytes());
 
       X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(rawPublicKey);
@@ -176,6 +176,10 @@ public class ActivationKey {
       }
       sb.append(Utility.messageBD(conn, "OPSConcurrentUsers", lang)).append(": ").append(
           getProperty("limitusers")).append("\n");
+      if (getProperty("limituserswarn") != null) {
+        sb.append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang)).append(": ").append(
+            getProperty("limituserswarn")).append("\n");
+      }
     } else {
       sb.append(Utility.messageBD(conn, "OPSNonActiveInstance", lang));
     }
