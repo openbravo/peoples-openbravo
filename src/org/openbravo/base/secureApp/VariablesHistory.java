@@ -26,7 +26,7 @@ public class VariablesHistory {
   static Logger log4j = Logger.getLogger(VariablesHistory.class);
 
   public VariablesHistory(HttpServletRequest request) {
-    this.session = request.getSession(true);
+    this.session = request.getSession(false);
     this.currentHistoryIndex = getSessionValue("reqHistory.current", "0");
     this.role = getSessionValue("#AD_Role_ID");
     this.language = getSessionValue("#AD_Language");
