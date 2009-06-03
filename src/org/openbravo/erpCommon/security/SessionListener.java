@@ -103,7 +103,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
       org.openbravo.model.ad.access.Session dalSession = OBDal.getInstance().get(
           org.openbravo.model.ad.access.Session.class, sessionId);
       if (dalSession != null) {
-        dalSession.setProcessed(true);
+        dalSession.setSessionActive(false);
       }
       log.info("Clossed session:" + sessionId);
 
