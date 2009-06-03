@@ -19,21 +19,24 @@
 
 package org.openbravo.erpCommon.security;
 
+import java.util.Vector;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.apache.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 
-public class SessionListener implements HttpSessionListener {
+public class SessionListener implements HttpSessionListener, ServletContextListener {
 
   private static final Logger log = Logger.getLogger(SessionListener.class);
 
-  @Override
-  public void sessionCreated(HttpSessionEvent event) {
-    // do nothing
-  }
+  private static Vector<String> sessionsInContext = new Vector<String>();
 
   /**
    * This method is called whenever the session is destroyed because of user action or time out.
@@ -42,18 +45,68 @@ public class SessionListener implements HttpSessionListener {
    */
   @Override
   public void sessionDestroyed(HttpSessionEvent event) {
-    String sessionId = "";
-    try {
-      sessionId = (String) event.getSession().getAttribute("#AD_SESSION_ID");
-      if (sessionId != null) {
-        OBContext.getOBContext().setInAdministratorMode(true);
-        org.openbravo.model.ad.access.Session dalSession = OBDal.getInstance().get(
-            org.openbravo.model.ad.access.Session.class, sessionId);
-        if (dalSession != null) {
-          dalSession.setProcessed(true);
-        }
-        log.info("Clossed session:" + sessionId);
+    log.debug("Destroying session");
+    String sessionId = (String) event.getSession().getAttribute("#AD_SESSION_ID");
+    if (sessionId != null) {
+      deactivateSession(sessionId);
+
+    }
+  }
+
+  /**
+   * This method is invoked when the server is shot down, it deactivates all sessions in this
+   * context
+   */
+  @Override
+  public void contextDestroyed(ServletContextEvent event) {
+    log.info("Destroy context");
+
+    for (String sessionId : sessionsInContext) {
+      try {
+        // cannot use dal at this point, use sqlc
+        SessionLoginData.deactivate((ConnectionProvider) event.getServletContext().getAttribute(
+            "openbravoPool"), sessionId);
+        log.info("Deactivated session:" + sessionId);
+      } catch (ServletException e1) {
+        log.error(e1);
       }
+    }
+
+  }
+
+  /**
+   * Add a session to session tracking. This will be used when shut dowing the server
+   * 
+   * @param sessionId
+   *          db id for the session to keep track
+   */
+  public static void addSession(String sessionId) {
+    sessionsInContext.add(sessionId);
+  }
+
+  @Override
+  public void contextInitialized(ServletContextEvent arg0) {
+    // do nothing
+  }
+
+  @Override
+  public void sessionCreated(HttpSessionEvent event) {
+    // do nothing
+  }
+
+  private void deactivateSession(String sessionId) {
+    try {
+
+      sessionsInContext.remove(sessionId);
+
+      OBContext.getOBContext().setInAdministratorMode(true);
+      org.openbravo.model.ad.access.Session dalSession = OBDal.getInstance().get(
+          org.openbravo.model.ad.access.Session.class, sessionId);
+      if (dalSession != null) {
+        dalSession.setProcessed(true);
+      }
+      log.info("Clossed session:" + sessionId);
+
     } catch (Exception e) {
       log.error("Error closing session:" + sessionId);
       e.printStackTrace();

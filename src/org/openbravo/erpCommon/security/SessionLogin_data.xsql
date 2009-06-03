@@ -64,4 +64,13 @@
       <Parameter name="processed"/>
       <Parameter name="adSessionId"/>
    </SqlMethod>
+   
+    <SqlMethod name="deactivate" type="preparedStatement" return="rowCount">
+    <Sql><![CDATA[
+        UPDATE AD_Session
+        SET Processed = 'Y'  
+        WHERE AD_Session.AD_Session_ID = ? 
+    ]]></Sql>
+    <Parameter name="adSessionId"/>
+  </SqlMethod>
 </SqlClass>
