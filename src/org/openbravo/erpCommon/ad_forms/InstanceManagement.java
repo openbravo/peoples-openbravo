@@ -166,7 +166,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    if (!activationKey.hasActivationProperties())
+    if (!activationKey.isOPSInstance())
       xmlDocument.setParameter("instanceInfo", Utility.messageBD(this, "OPSCoummintyInstance",
           vars.getLanguage()).replace("\\n", "\n"));
     else
@@ -224,7 +224,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#AccessibleOrgTree", "InstanceManagement"), Utility
               .getContext(this, vars, "#User_Client", "InstanceManagement"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement",
-          activationKey.hasActivationProperties() ? activationKey.getProperty("purpose") : null);
+          activationKey.isOPSInstance() ? activationKey.getProperty("purpose") : null);
       xmlDocument.setData("reportPurpose", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -236,7 +236,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("publicKey", activationKey.getPublicKey());
     }
 
-    if (activationKey.hasActivationProperties()) {
+    if (activationKey.isOPSInstance()) {
       xmlDocument.setParameter("paramSelPurpose", activationKey.getProperty("purpose"));
       xmlDocument.setParameter("instanceNo", activationKey.getProperty("instanceno"));
     }

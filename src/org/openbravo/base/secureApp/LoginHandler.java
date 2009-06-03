@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.ops.ActivationKey;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -60,16 +61,33 @@ public class LoginHandler extends HttpBaseServlet {
           // login failed, no roles specified
           // remove authenticated user
           req.getSession(true).setAttribute("#Authenticated_user", null);
-          goToRetry(res, vars, e.getMessage());
+          goToRetry(res, vars, e.getMessage(), "Identification failure. Try again.");
           return;
         }
 
-        goToTarget(res, vars);
-
+        checkLicenseAndGo(res, vars);
       } else {
-        goToRetry(res, vars, null);
+        goToRetry(res, vars, null, "Identification failure. Try again.");
       }
     }
+  }
+
+  private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars)
+      throws IOException {
+    ActivationKey ak = new ActivationKey();
+
+    switch (ak.checkOPSLimitations()) {
+    case NUMBER_OF_CONCURRENT_USERS_REACHED:
+      goToRetry(res, vars, "Number of concurrent users reached", "OPS License error");
+      break;
+    case NUMBER_OF_SOFT_USERS_REACHED:
+      // do nothing by the moment
+    case OPS_INSTANCE_NOT_ACTIVE:
+      // do nothing by the moment
+    default:
+      goToTarget(res, vars);
+    }
+
   }
 
   private void goToTarget(HttpServletResponse response, VariablesSecureApp vars) throws IOException {
@@ -82,15 +100,15 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
-  private void goToRetry(HttpServletResponse response, VariablesSecureApp vars, String message)
-      throws IOException {
+  private void goToRetry(HttpServletResponse response, VariablesSecureApp vars, String message,
+      String title) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
 
     // pass relevant mesasge to show inside the error page
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("messageType", "Error");
-    xmlDocument.setParameter("messageTitle", "Identification failure. Try again.");
+    xmlDocument.setParameter("messageTitle", title);
     xmlDocument
         .setParameter(
             "messageMessage",

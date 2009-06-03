@@ -32,9 +32,13 @@ import java.util.Properties;
 import javax.crypto.Cipher;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Expression;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.Session;
 
 public class ActivationKey {
 
@@ -44,6 +48,10 @@ public class ActivationKey {
   private Properties instanceProperties;
   private static final Logger log = Logger.getLogger(ActivationKey.class);
   private String strPublicKey;
+
+  public enum LicenseRestriction {
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED
+  }
 
   public ActivationKey() {
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
@@ -152,8 +160,45 @@ public class ActivationKey {
     return errorMessage;
   }
 
-  public boolean hasActivationProperties() {
+  public boolean isOPSInstance() {
     return instanceProperties != null;
+  }
+
+  /**
+   * Checks the current activation key
+   * 
+   * @return {@link LicenseRestriction} with the status of the restrictions
+   */
+  public LicenseRestriction checkOPSLimitations() {
+    if (!isOPSInstance())
+      return LicenseRestriction.NO_RESTRICTION;
+
+    if (!isActive)
+      return LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE;
+
+    if (getProperty("lincensetype").equals("USR")) {
+      OBContext.getOBContext().setInAdministratorMode(true);
+
+      OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
+      obCriteria.add(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true));
+      int currentSessions = obCriteria.list().size();
+
+      Long softUsers = null;
+      if (getProperty("limituserswarn") != null) {
+        softUsers = new Long(getProperty("limituserswarn"));
+      }
+
+      Long maxUsers = new Long(getProperty("limitusers"));
+
+      if (currentSessions >= maxUsers) {
+        return LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED;
+      }
+
+      if (softUsers != null && currentSessions >= softUsers) {
+        return LicenseRestriction.NUMBER_OF_SOFT_USERS_REACHED;
+      }
+    }
+    return LicenseRestriction.NO_RESTRICTION;
   }
 
   public String toString(ConnectionProvider conn, String lang) {
