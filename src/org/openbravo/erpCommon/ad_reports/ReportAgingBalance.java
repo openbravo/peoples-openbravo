@@ -89,7 +89,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars, String strisReceipt,
+  private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars, String strisReceipt,
       String strcolumn1, String strcolumn2, String strcolumn3, String strcolumn4,
       String strcBpartnerId, String strOrgTrx, String strfirstPrint) throws IOException,
       ServletException {
@@ -121,7 +121,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
 
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strisReceipt, String strcolumn1, String strcolumn2, String strcolumn3,
       String strcolumn4, String strcBpartnerId, String strOrgTrx, String strfirstPrint)
       throws IOException, ServletException {
@@ -250,7 +250,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     out.close();
   }
 
-  public String getFamily(String strTree, String strChild) throws IOException, ServletException {
+  private  String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, strChild);
     /*
      * ReportGeneralLedgerData [] data = ReportGeneralLedgerData.selectChildren(this, strTree,

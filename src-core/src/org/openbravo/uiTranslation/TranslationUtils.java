@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
-public class TranslationUtils {
+class TranslationUtils {
 
   private static final Logger log4j = Logger.getLogger(TranslationUtils.class);
 

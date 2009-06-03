@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -81,7 +81,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strProductCategory, String strPricelistversionId, String strmProductId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -97,8 +97,8 @@ public class ReportPricelist extends HttpSecureAppServlet {
       data = ReportPricelistData.set();
     } else {
       data = ReportPricelistData.select(this, Utility.getContext(this, vars, "#User_Client",
-          "ReportPricelist"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportPricelist"),
-          strPricelistversionId, strProductCategory, strmProductId);
+          "ReportPricelist"), Utility.getContext(this, vars, "#AccessibleOrgTree",
+          "ReportPricelist"), strPricelistversionId, strProductCategory, strmProductId);
     }
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportPricelist",
         discard).createXmlDocument();
@@ -141,8 +141,8 @@ public class ReportPricelist extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "MProductId_IN",
-          "null", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-              vars, "#User_Client", ""), 0);
+          "null", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
+              this, vars, "#User_Client", ""), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "", strmProductId);
       xmlDocument.setData("reportMProductId_IN", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -184,7 +184,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
       String strProductCategory, String strPricelistversionId, String strmProductId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -193,8 +193,9 @@ public class ReportPricelist extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportPricelist_Pdf").createXmlDocument();
     xmlDocument.setData("structure1", ReportPricelistData.selectPDF(this, Utility.getContext(this,
-        vars, "#User_Client", "ReportPricelist"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        "ReportPricelist"), strPricelistversionId, strProductCategory, strmProductId));
+        vars, "#User_Client", "ReportPricelist"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportPricelist"), strPricelistversionId, strProductCategory,
+        strmProductId));
     String strResult = xmlDocument.print();
     if (log4j.isDebugEnabled())
       log4j.debug(strResult);

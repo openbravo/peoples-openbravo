@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,7 +75,7 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletRequest request, HttpServletResponse response,
+  private void printPageDataHtml(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId,
       String strDiscount, String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -97,9 +97,9 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     myMessage = new OBError();
     try {
       data = ReportInvoiceDiscountData.select(this, strCurrencyId, Utility.getContext(this, vars,
-          "#User_Client", "ReportInvoiceDiscountJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportInvoiceDiscountJR"), strDateFrom, strDateTo, strcBpartnerId, (strDiscount
-          .equals("N")) ? "" : "discount");
+          "#User_Client", "ReportInvoiceDiscountJR"), Utility.getContext(this, vars,
+          "#AccessibleOrgTree", "ReportInvoiceDiscountJR"), strDateFrom, strDateTo, strcBpartnerId,
+          (strDiscount.equals("N")) ? "" : "discount");
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
@@ -119,7 +119,7 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     }
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strcBpartnerId, String strCurrencyId,
       String strDiscount) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -174,15 +174,15 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("discount", strDiscount);
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInvoiceDiscountData
-        .selectBpartner(this, Utility
-            .getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"), Utility.getContext(
-            this, vars, "#User_Client", "ReportInvoiceDiscountJR"), strcBpartnerId));
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
+            "ReportInvoiceDiscountJR"), Utility.getContext(this, vars, "#User_Client",
+            "ReportInvoiceDiscountJR"), strcBpartnerId));
 
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"), Utility
-              .getContext(this, vars, "#User_Client", "ReportInvoiceDiscountJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscountJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceDiscountJR",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,7 +63,7 @@ public class SL_Inventory_Product extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strProduct, String strLocator, String strAttribute, String strQty, String strUOM,
       String strQtyOrder, String strPUOM, String strTabId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -109,8 +109,9 @@ public class SL_Inventory_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLInventoryProduct"),
-            Utility.getContext(this, vars, "#User_Client", "SLInventoryProduct"), 0);
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "SLInventoryProduct"), Utility.getContext(this, vars, "#User_Client",
+                "SLInventoryProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLInventoryProduct", "");
         tld = comboTableData.select(false);
         comboTableData = null;
@@ -135,8 +136,9 @@ public class SL_Inventory_Product extends HttpSecureAppServlet {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLInventoryProduct"),
-            Utility.getContext(this, vars, "#User_Client", "SLInventoryProduct"), 0);
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "SLInventoryProduct"), Utility.getContext(this, vars, "#User_Client",
+                "SLInventoryProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLInventoryProduct", "");
         tld = comboTableData.select(false);
         comboTableData = null;

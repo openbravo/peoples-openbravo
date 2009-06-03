@@ -65,6 +65,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.uiTranslation.TranslationHandler;
+import org.openbravo.utils.FormatUtilities;
 import org.openbravo.utils.Replace;
 
 /**
@@ -235,8 +236,7 @@ public class Utility {
   /**
    * 
    * Formats a message String into a String for html presentation. Escapes the &, <, >, " and ®, and
-   * replace the \n by <br/>
-   * and \r for space.
+   * replace the \n by <br/> and \r for space.
    * 
    * IMPORTANT! : this method is designed to transform the output of Utility.messageBD method, and
    * this method replaces \n by \\n and \" by &quote. Because of that, the first replacements revert
@@ -2225,4 +2225,64 @@ public class Utility {
     }
     return modified;
   }
+
+  /**
+   * Constructs and returns a two dimensional array of the data passed. Array definition is
+   * constructed according to Javascript syntax. Used to generate data storage of lists or trees
+   * within some manual windows/reports.
+   * 
+   * @param strArrayName
+   *          String with the name of the array to be defined.
+   * @param data
+   *          FieldProvider object with the data to be included in the array with the following
+   *          three columns mandatory: padre | id | name.
+   * @return String containing array definition according to Javascript syntax.
+   */
+  public static String arrayDobleEntrada(String strArrayName, FieldProvider[] data) {
+    String strArray = "var " + strArrayName + " = ";
+    if (data.length == 0) {
+      strArray = strArray + "null";
+      return strArray;
+    }
+    strArray = strArray + "new Array(";
+    for (int i = 0; i < data.length; i++) {
+      strArray = strArray + "\nnew Array(\"" + data[i].getField("padre") + "\", \""
+          + data[i].getField("id") + "\", \"" + FormatUtilities.replaceJS(data[i].getField("name"))
+          + "\")";
+      if (i < data.length - 1)
+        strArray = strArray + ", ";
+    }
+    strArray = strArray + ");";
+    return strArray;
+  }
+
+  /**
+   * Constructs and returns a two dimensional array of the data passed. Array definition is
+   * constructed according to Javascript syntax. Used to generate data storage of lists or trees
+   * within some manual windows/reports.
+   * 
+   * @param strArrayName
+   *          String with the name of the array to be defined.
+   * @param data
+   *          FieldProvider object with the data to be included in the array with the following two
+   *          columns mandatory: id | name.
+   * @return String containing array definition according to Javascript syntax.
+   */
+  public static String arrayEntradaSimple(String strArrayName, FieldProvider[] data) {
+    String strArray = "var " + strArrayName + " = ";
+    if (data.length == 0) {
+      strArray = strArray + "null";
+      return strArray;
+    }
+    strArray = strArray + "new Array(";
+    for (int i = 0; i < data.length; i++) {
+      strArray = strArray + "\nnew Array(\"" + data[i].getField("id") + "\", \""
+          + FormatUtilities.replaceJS(data[i].getField("name")) + "\")";
+      if (i < data.length - 1)
+        strArray = strArray + ", ";
+    }
+    strArray = strArray + ");";
+    return strArray;
+  }
+
 }

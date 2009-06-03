@@ -41,7 +41,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class MInOutTraceReports extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  static final BigDecimal ZERO = new BigDecimal(0.0);
+  private static final BigDecimal ZERO = new BigDecimal(0.0);
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -89,8 +89,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strIn,
-      String strmProductIdGlobal, String strmAttributesetinstanceIdGlobal,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strIn, String strmProductIdGlobal, String strmAttributesetinstanceIdGlobal,
       Hashtable<String, Integer> calculated, Vector<Integer> count) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())

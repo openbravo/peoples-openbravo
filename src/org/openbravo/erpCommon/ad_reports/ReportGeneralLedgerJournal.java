@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -177,7 +177,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable,
       String strRecord, String strFactAcctGroupId, String strcAcctSchemaId, String strShowClosing,
       String strShowReg, String strShowOpening) throws IOException, ServletException {
@@ -350,10 +350,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strDocument, String strOrg, String strTable, String strRecord,
-      String strFactAcctGroupId, String strcAcctSchemaId, String strShowClosing, String strShowReg,
-      String strShowOpening) throws IOException, ServletException {
+  private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable,
+      String strRecord, String strFactAcctGroupId, String strcAcctSchemaId, String strShowClosing,
+      String strShowReg, String strShowOpening) throws IOException, ServletException {
 
     ReportGeneralLedgerJournalData[] data = null;
 
@@ -386,7 +386,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
-  public String getFamily(String strTree, String strChild) throws IOException, ServletException {
+  private String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, (strChild == null || strChild.equals("")) ? "0"
         : strChild);
     /*
@@ -397,7 +397,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
      */
   }
 
-  public String buildCheck(String strShowClosing, String strShowReg, String strShowOpening) {
+  private String buildCheck(String strShowClosing, String strShowReg, String strShowOpening) {
     if (strShowClosing.equals("") && strShowReg.equals("") && strShowOpening.equals(""))
       return "'C','N','O','R'";
     String[] strElements = { strShowClosing.equals("") ? "" : "'C'",

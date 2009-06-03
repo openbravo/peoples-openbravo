@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -90,7 +90,7 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletRequest request, HttpServletResponse response,
+  private void printPageDataHtml(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strC_BPartner_ID, String strM_Product_ID, String strDateFrom,
       String strDateTo, String strDocumentNo, String strOrder, String strC_BpGroup_ID,
       String strM_Product_Category_ID, String strCurrencyId) throws IOException, ServletException {
@@ -137,7 +137,7 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
     }
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strM_Product_ID, String strDateFrom, String strDateTo,
       String strDocumentNo, String strOrder, String strC_BpGroup_ID,
       String strM_Product_Category_ID, String strCurrencyId) throws IOException, ServletException {

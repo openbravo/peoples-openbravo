@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,7 @@ import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
 
-public class Task extends Thread {
+class Task extends Thread {
 
   private String m_cmd;
   private Process m_child;

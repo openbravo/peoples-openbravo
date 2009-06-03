@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,7 +64,7 @@ public class ReportToInvoiceConsignment extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strWarehouse) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -130,8 +130,9 @@ public class ReportToInvoiceConsignment extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strWarehouse) throws IOException, ServletException {
+  private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strWarehouse) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PDF");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -141,8 +142,8 @@ public class ReportToInvoiceConsignment extends HttpSecureAppServlet {
     ReportToInvoiceConsignmentData[] data = ReportToInvoiceConsignmentData.select(this,
         strCurrencyId,
         Utility.getContext(this, vars, "#User_Client", "ReportToInvoiceConsignment"), Utility
-            .getContext(this, vars, "#AccessibleOrgTree", "ReportToInvoiceConsignment"), strDateFrom,
-        DateTimeData.nDaysAfter(this, strDateTo, "1"), strWarehouse);
+            .getContext(this, vars, "#AccessibleOrgTree", "ReportToInvoiceConsignment"),
+        strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strWarehouse);
     String strTitle = "";
     if (!strDateFrom.equals("")) {
       strTitle = strTitle + " desde " + strDateFrom;

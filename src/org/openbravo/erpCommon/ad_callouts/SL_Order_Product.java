@@ -83,7 +83,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strUOM,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strUOM,
       String strPriceList, String strPriceStd, String strPriceLimit, String strCurrency,
       String strMProductID, String strCBPartnerLocationID, String strDateOrdered,
       String strADOrgID, String strMWarehouseID, String strCOrderId, String strWindowId,

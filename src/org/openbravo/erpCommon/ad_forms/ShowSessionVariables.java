@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo S.L.
+ * All portions are Copyright (C) 2001-2009 Openbravo S.L.
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,8 +39,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class ShowSessionVariables extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  protected static final String windowId = "0";
-  protected static final String tableLevel = "2";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -96,7 +94,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
     }
   }
 
-  boolean existsWindow(Vector<Object> windows, String windowId) {
+  private boolean existsWindow(Vector<Object> windows, String windowId) {
     if (windows.size() == 0)
       return false;
     for (int i = 0; i < windows.size(); i++) {
@@ -107,7 +105,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
     return false;
   }
 
-  String windowName(ShowSessionVariablesData[] windows, String windowId) {
+  private String windowName(ShowSessionVariablesData[] windows, String windowId) {
     if (windows == null || windowId == null || windowId.equals(""))
       return "";
     for (int i = 0; i < windows.length; i++) {
@@ -117,9 +115,9 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
     return "";
   }
 
-  ShowSessionVariablesStructureData[] orderStructure(ShowSessionVariablesStructureData[] data,
-      ShowSessionVariablesData[] windows, boolean preferences, boolean global, boolean accounting,
-      boolean windowGlobal, String window) {
+  private ShowSessionVariablesStructureData[] orderStructure(
+      ShowSessionVariablesStructureData[] data, ShowSessionVariablesData[] windows,
+      boolean preferences, boolean global, boolean accounting, boolean windowGlobal, String window) {
     ShowSessionVariablesStructureData[] resData = null;
     try {
       Vector<Object> vecPreferences = new Vector<Object>();
@@ -303,7 +301,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
     return resData;
   }
 
-  ShowSessionVariablesStructureData[] compoundSession(HttpServletRequest request,
+  private ShowSessionVariablesStructureData[] compoundSession(HttpServletRequest request,
       VariablesSecureApp vars, Vector<Object> windows) {
     if (log4j.isDebugEnabled())
       log4j.debug("ShowSession - compoundSession - view session");
@@ -352,7 +350,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
     return data;
   }
 
-  void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
+  private void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String preferences, String global, String accounting,
       String windowG, String window) throws IOException, ServletException {
     if (log4j.isDebugEnabled())

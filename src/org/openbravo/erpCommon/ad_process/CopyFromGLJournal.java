@@ -82,7 +82,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError processButton(VariablesSecureApp vars, String strKey, String strGLJournalBatch,
+  private OBError processButton(VariablesSecureApp vars, String strKey, String strGLJournalBatch,
       String windowId) {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: GLJournal");
@@ -151,7 +151,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
     return myError;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDescription,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDescription,
       String strDocumentNo, String strWindow, String strTab, String strKey) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())

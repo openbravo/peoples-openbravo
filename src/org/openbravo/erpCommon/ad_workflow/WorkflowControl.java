@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class WorkflowControl extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final int increment = 30;
 
   @Override
   public void init(ServletConfig config) {
@@ -71,8 +70,8 @@ public class WorkflowControl extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageRedirect(HttpServletResponse response, VariablesSecureApp vars, String strPath)
-      throws IOException, ServletException {
+  private void printPageRedirect(HttpServletResponse response, VariablesSecureApp vars,
+      String strPath) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page redirect");
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -86,7 +85,7 @@ public class WorkflowControl extends HttpSecureAppServlet {
     out.close();
   }
 
-  public String windowIcon(String action) {
+  private String windowIcon(String action) {
     String strIcon = "";
     if (action.equals("W"))
       strIcon = "Popup_Workflow_Button_Icon Popup_Workflow_Button_Icon_childWindows";// Window
@@ -105,7 +104,7 @@ public class WorkflowControl extends HttpSecureAppServlet {
     return strIcon;
   }
 
-  public String getUrlPath(String language, String action, String clave) throws ServletException {
+  private String getUrlPath(String language, String action, String clave) throws ServletException {
     String strWindow = "", strForm = "", strProcess = "", strTask = "", strWorkflow = "";
     if (action.equals("W"))
       strWindow = clave;
@@ -132,8 +131,8 @@ public class WorkflowControl extends HttpSecureAppServlet {
         menuData[0].adTaskId, menuData[0].adProcessId, "N", "");
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAD_Workflow_ID)
-      throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strAD_Workflow_ID) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page");
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -149,7 +148,7 @@ public class WorkflowControl extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strAD_Workflow_ID) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -181,7 +180,8 @@ public class WorkflowControl extends HttpSecureAppServlet {
     out.close();
   }
 
-  String buildHtml(VariablesSecureApp vars, String strAD_Workflow_ID) throws ServletException {
+  private String buildHtml(VariablesSecureApp vars, String strAD_Workflow_ID)
+      throws ServletException {
     final String firstNode = WorkflowControlData.selectFirstNode(this, strAD_Workflow_ID);
     if (firstNode.equals("")) {
       log4j.warn("WorkflowControl.buildHtml() - There're no first node defined for workflow: "
@@ -200,7 +200,7 @@ public class WorkflowControl extends HttpSecureAppServlet {
     return sb.toString();
   }
 
-  String buildLevel(VariablesSecureApp vars, String node) throws ServletException {
+  private String buildLevel(VariablesSecureApp vars, String node) throws ServletException {
     WorkflowControlData[] data = null;
     if (vars.getLanguage().equals("en_US"))
       data = WorkflowControlData.select(this, Utility.getContext(this, vars, "#User_Client",
@@ -240,7 +240,7 @@ public class WorkflowControl extends HttpSecureAppServlet {
     return sb.toString();
   }
 
-  public String claveWindow(WorkflowControlData data) {
+  private String claveWindow(WorkflowControlData data) {
     if (data.action.equals("W"))
       return data.adWindowId;
     else if (data.action.equals("X"))
@@ -257,7 +257,8 @@ public class WorkflowControl extends HttpSecureAppServlet {
       return "";
   }
 
-  String buildButton(VariablesSecureApp vars, WorkflowControlData data) throws ServletException {
+  private String buildButton(VariablesSecureApp vars, WorkflowControlData data)
+      throws ServletException {
     final StringBuffer html = new StringBuffer();
     final String strClave = claveWindow(data);
     html.append("<tr>\n");
@@ -283,7 +284,7 @@ public class WorkflowControl extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  String line() {
+  private String line() {
     final StringBuffer html = new StringBuffer();
     html.append("<tr>");
     html

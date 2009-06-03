@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,8 +49,8 @@ public class ReportPendingProductionJr extends HttpSecureAppServlet {
       printPageDataSheet(response, vars);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -58,10 +58,11 @@ public class ReportPendingProductionJr extends HttpSecureAppServlet {
     // XmlDocument xmlDocument=null;
     ReportPendingProductionJrData[] data = null;
     // xmlDocument =
-    // xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportPendingProductionEdit").createXmlDocument();
+    // xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportPendingProductionEdit").
+    // createXmlDocument();
     data = ReportPendingProductionJrData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "ReportPendingProductionJr"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        "ReportPendingProductionJr"));
+        "#User_Client", "ReportPendingProductionJr"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportPendingProductionJr"));
 
     String strOutput = "html";
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportPendingProductionJr.jrxml";
@@ -73,7 +74,7 @@ public class ReportPendingProductionJr extends HttpSecureAppServlet {
 
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");

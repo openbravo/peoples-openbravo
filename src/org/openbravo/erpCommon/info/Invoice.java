@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -120,8 +120,8 @@ public class Invoice extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strNameValue,
-      String strWindow) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strNameValue, String strWindow) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: business partners seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Invoice")
@@ -159,21 +159,8 @@ public class Invoice extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: business partners seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Invoice_FS")
-        .createXmlDocument();
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars, InvoiceData[] data)
-      throws IOException, ServletException {
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+      InvoiceData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Invoice seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -186,7 +173,7 @@ public class Invoice extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -240,7 +227,7 @@ public class Invoice extends HttpSecureAppServlet {
     return data;
   }
 
-  String generateResult(InvoiceData[] data) throws IOException, ServletException {
+  private String generateResult(InvoiceData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -251,7 +238,7 @@ public class Invoice extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
       String strBpartnerId, String strDateFrom, String strFechaTo, String strDescription,
       String strCal1, String strCalc2, String strOrder, String strSOTrx, String strOrg,
       String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,

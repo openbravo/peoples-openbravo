@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -96,7 +96,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void PrintPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
+  private void PrintPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
       String strNameValue) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Multiple products seeker Frame Set");
@@ -132,8 +132,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
-      String strNameValue) throws IOException, ServletException {
+  private void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars,
+      String strKeyValue, String strNameValue) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of the multiple products seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -166,7 +166,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -217,7 +217,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strName, String strProductCategory, String strOrg, String strOrderCols,
       String strOrderDirs, String strOffset, String strPageSize, String strNewFilter)
       throws IOException, ServletException {

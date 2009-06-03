@@ -174,7 +174,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strAmtFrom, String strAmtTo,
       String strcelementvaluefrom, String strcelementvalueto, String strOrg, String strcBpartnerId,
       String strAll, String strHide, String strcAcctSchemaId, String strcelementvaluefromdes,
@@ -540,7 +540,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
+  private void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
       String strDateTo, String strAmtFrom, String strAmtTo, String strcelementvaluefrom,
       String strcelementvalueto, String strOrg, String strcBpartnerId, String strAll,
       String strHide, String strcAcctSchemaId) throws IOException, ServletException {
@@ -716,11 +716,11 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
-  public String getFamily(String strTree, String strChild) throws IOException, ServletException {
+  private String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, strChild);
   }
 
-  public String getRange(String accountfrom, String accountto) throws IOException, ServletException {
+  private String getRange(String accountfrom, String accountto) throws IOException, ServletException {
 
     ReportGeneralLedgerData[] data = ReportGeneralLedgerData.selectRange(this, accountfrom,
         accountto);

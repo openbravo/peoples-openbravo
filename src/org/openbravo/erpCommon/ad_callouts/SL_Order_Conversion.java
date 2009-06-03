@@ -62,7 +62,7 @@ public class SL_Order_Conversion extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strUOM,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strUOM,
       String strMProductUOMID, String strQuantityOrder, String strChanged, String strTabId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())

@@ -119,7 +119,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strRefDate,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strRefDate,
       String strOlderFirst, String strStartDateFrom, String strStartDateTo,
       String strContractDateFrom, String strContractDateTo, String strEndingDateFrom,
       String strEndingDateTo, String strProject, String strProjectStatus, String strBPartner,
@@ -255,7 +255,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strRefDate,
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strRefDate,
       String strOlderFirst, String strStartDateFrom, String strStartDateTo,
       String strContractDateFrom, String strContractDateTo, String strEndingDateFrom,
       String strEndingDateTo, String strProject, String strProjectStatus, String strBPartner,

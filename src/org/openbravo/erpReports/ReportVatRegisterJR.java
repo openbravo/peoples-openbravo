@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -86,7 +86,7 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -152,7 +152,7 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printReportJRRegisterLine(HttpServletResponse response, VariablesSecureApp vars,
+  private void printReportJRRegisterLine(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String TaxPayId, String TaxRegId, String strTypeReport)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -220,7 +220,7 @@ class TypeReportRegister implements FieldProvider {
     }
   }
 
-  public static TypeReportRegister[] set() throws ServletException {
+  static TypeReportRegister[] set() throws ServletException {
     TypeReportRegister objectTypeReport[] = new TypeReportRegister[1];
     // first
     objectTypeReport[0] = new TypeReportRegister();

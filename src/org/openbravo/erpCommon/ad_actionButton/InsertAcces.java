@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,7 +75,7 @@ public class InsertAcces extends HttpSecureAppServlet {
 
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String windowId, String strProcessId, String strMessage, String strTab) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -123,8 +123,8 @@ public class InsertAcces extends HttpSecureAppServlet {
     out.close();
   }
 
-  OBError getPrintPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String strModule, String strType) throws IOException, ServletException {
+  private OBError getPrintPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strKey, String strModule, String strType) throws IOException, ServletException {
     OBError myMessage = null;
     myMessage = new OBError();
     myMessage.setTitle("");
@@ -145,7 +145,7 @@ public class InsertAcces extends HttpSecureAppServlet {
     }
   }
 
-  public void generateAcces(VariablesSecureApp vars, InsertAccesData[] accesData, String roleid,
+  private void generateAcces(VariablesSecureApp vars, InsertAccesData[] accesData, String roleid,
       String indice, String strType) throws ServletException {
     log4j.error("longitud accesdata: " + accesData.length + " indice: " + indice + " roleid: "
         + roleid);

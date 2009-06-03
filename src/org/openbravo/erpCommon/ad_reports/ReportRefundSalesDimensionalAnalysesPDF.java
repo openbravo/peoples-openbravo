@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,7 +70,8 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
           "ReportRefundSalesDimensionalAnalyses|product");
       String strNotShown = vars.getInStringParameter("inpNotShown");
       String strShown = vars.getInStringParameter("inpShown");
-      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportRefundSalesDimensionalAnalyses|org");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg",
+          "ReportRefundSalesDimensionalAnalyses|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportRefundSalesDimensionalAnalyses|salesrep");
       String strmWarehouseId = vars.getRequestGlobalVariable("inpmWarehouseId",
@@ -92,7 +93,7 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
       pageErrorPopUp(response);
   }
 
-  void printPagePdf(HttpServletRequest request, HttpServletResponse response,
+  private void printPagePdf(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strComparative, String strDateFrom, String strDateTo,
       String strPartnerGroup, String strcBpartnerId, String strProductCategory,
       String strmProductId, String strNotShown, String strShown, String strDateFromRef,
@@ -111,7 +112,8 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard" };
-    if (strOrg.equals("")) strOrg = vars.getOrg();
+    if (strOrg.equals(""))
+      strOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";

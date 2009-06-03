@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -87,12 +87,12 @@ public class ReportSalesOrderDimensionalPDF extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPagePdf(HttpServletResponse response, VariablesSecureApp vars, String strComparative,
-      String strDateFrom, String strDateTo, String strPartnerGroup, String strcBpartnerId,
-      String strProductCategory, String strmProductId, String strmWarehouseId, String strNotShown,
-      String strShown, String strDateFromRef, String strDateToRef, String strOrg,
-      String strsalesrepId, String strOrder, String strMayor, String strMenor,
-      String strPartnerSalesrepId) throws IOException, ServletException {
+  private void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
+      String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
+      String strcBpartnerId, String strProductCategory, String strmProductId,
+      String strmWarehouseId, String strNotShown, String strShown, String strDateFromRef,
+      String strDateToRef, String strOrg, String strsalesrepId, String strOrder, String strMayor,
+      String strMenor, String strPartnerSalesrepId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     XmlDocument xmlDocument = null;

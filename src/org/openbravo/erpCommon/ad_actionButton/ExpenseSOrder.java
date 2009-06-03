@@ -50,7 +50,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ExpenseSOrder extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  static final BigDecimal ZERO = new BigDecimal(0.0);
+  private static final BigDecimal ZERO = new BigDecimal(0.0);
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -82,7 +82,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError processButton(VariablesSecureApp vars, String strBPartner, String strDatefrom,
+  private OBError processButton(VariablesSecureApp vars, String strBPartner, String strDatefrom,
       String strDateto, String strDateOrdered, String strOrganization, String strCompleteAuto) {
     StringBuffer textoMensaje = new StringBuffer();
     Connection conn = null;
@@ -386,7 +386,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     }
   }
 
-  OBError processOrder(VariablesSecureApp vars, String strCOrderId) throws ServletException,
+  private OBError processOrder(VariablesSecureApp vars, String strCOrderId) throws ServletException,
       NoConnectionAvailableException, SQLException {
     Connection conn = null;
     conn = getTransactionConnection();
@@ -410,7 +410,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDatefrom,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDatefrom,
       String strDateto, String strDateOrdered, String strBPartner, String strOrganization,
       String strCompleteAuto) throws IOException, ServletException {
     if (log4j.isDebugEnabled())

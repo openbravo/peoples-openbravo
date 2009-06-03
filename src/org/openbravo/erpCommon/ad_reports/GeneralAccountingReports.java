@@ -106,7 +106,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPagePDF(HttpServletRequest request, HttpServletResponse response,
+  private void printPagePDF(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strAgno, String strAgnoRef, String strDateFrom,
       String strDateTo, String strDateFromRef, String strDateToRef, String strElementValue,
       String strConImporte, String strOrg, String strLevel, String strConCodigo,
@@ -240,7 +240,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     }
   }
 
-  AccountTreeData[] appendRecords(AccountTreeData[] data, String strIncomeSummary,
+  private AccountTreeData[] appendRecords(AccountTreeData[] data, String strIncomeSummary,
       String strISyear, String strISyearRef) throws ServletException {
     if (data == null || strIncomeSummary == null || strIncomeSummary.equals("")
         || strISyear == null || strISyear.equals("") || strISyearRef == null
@@ -273,7 +273,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     return data2;
   }
 
-  String processIncomeSummary(String strDateFrom, String strDateTo, String strAgno,
+  private String processIncomeSummary(String strDateFrom, String strDateTo, String strAgno,
       String strTreeOrg, String strOrg, String strcAcctSchemaId) throws ServletException,
       IOException {
     String strISRevenue = GeneralAccountingReportsData.selectPyG(this, "R", strDateFrom, strDateTo,
@@ -288,7 +288,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     return total.toString();
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strAgno,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strAgno,
       String strAgnoRef, String strDateFrom, String strDateTo, String strDateFromRef,
       String strDateToRef, String strElementValue, String strConImporte, String strOrg,
       String strLevel, String strConCodigo, String strcAcctSchemaId) throws IOException,
@@ -433,7 +433,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
     xmlDocument.setData("reportC_ElementValue_ID", "liststructure", dataReportIsBalanced);
 
-    xmlDocument.setParameter("accountingReports", arrayDobleEntrada("arrAccountingReports",
+    xmlDocument.setParameter("accountingReports", Utility.arrayDobleEntrada("arrAccountingReports",
         GeneralAccountingReportsData.selectRptDouble(this)));
     /*
      * try { ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",

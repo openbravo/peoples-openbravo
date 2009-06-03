@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -86,12 +86,12 @@ public class ReportDimensionalAnalysesPDF extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPagePdf(HttpServletResponse response, VariablesSecureApp vars, String strComparative,
-      String strDateFrom, String strDateTo, String strPartnerGroup, String strcBpartnerId,
-      String strProductCategory, String strmProductId, String strNotShown, String strShown,
-      String strDateFromRef, String strDateToRef, String strOrg, String strsalesrepId,
-      String strOrder, String strMayor, String strMenor, String strRatioMayor, String strRatioMenor)
-      throws IOException, ServletException {
+  private void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
+      String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
+      String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown,
+      String strShown, String strDateFromRef, String strDateToRef, String strOrg,
+      String strsalesrepId, String strOrder, String strMayor, String strMenor,
+      String strRatioMayor, String strRatioMenor) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print pdf");
     XmlDocument xmlDocument = null;
@@ -111,7 +111,8 @@ public class ReportDimensionalAnalysesPDF extends HttpSecureAppServlet {
       strTitle = strTitle + ", para el grupo de terceros "
           + ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpgroup(this, strPartnerGroup);
     // if (!strcBpartnerId.equals("")) strTitle =
-    // strTitle+", para el tercero "+ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this,
+    //strTitle+", para el tercero "+ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner
+    // (this,
     // strcBpartnerId);
     if (!strProductCategory.equals(""))
       strTitle = strTitle
@@ -122,7 +123,8 @@ public class ReportDimensionalAnalysesPDF extends HttpSecureAppServlet {
       strTitle = strTitle + "y el comercial "
           + ReportRefundInvoiceCustomerDimensionalAnalysesData.selectSalesrep(this, strsalesrepId);
     // if (!strmProductId.equals("")) strTitle =
-    // strTitle+" y el producto "+ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(this,
+    // strTitle+" y el producto "+ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(
+    // this,
     // strmProductId);
     ReportRefundInvoiceCustomerDimensionalAnalysesData[] data = null;
     String[] strShownArray = { "", "", "", "", "", "" };

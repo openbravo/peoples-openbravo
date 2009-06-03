@@ -100,12 +100,12 @@ public class ExportGrid extends HttpSecureAppServlet {
     }
   }
 
-  GridReportVO createGridReport(VariablesSecureApp vars, String strTabId, String strWindowId,
+  private GridReportVO createGridReport(VariablesSecureApp vars, String strTabId, String strWindowId,
       String strAccessLevel) throws ServletException {
     return createGridReport(vars, strTabId, strWindowId, strAccessLevel, false);
   }
 
-  GridReportVO createGridReport(VariablesSecureApp vars, String strTabId, String strWindowId,
+  private GridReportVO createGridReport(VariablesSecureApp vars, String strTabId, String strWindowId,
       String strAccessLevel, boolean useFieldLength) throws ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Create Grid Report, tabID: " + strTabId);

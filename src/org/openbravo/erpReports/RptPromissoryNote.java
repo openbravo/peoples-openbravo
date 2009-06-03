@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,22 +53,22 @@ public class RptPromissoryNote extends HttpSecureAppServlet {
 
   }
 
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strcDebtPaymentId)
-      throws IOException, ServletException {
+  private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strcDebtPaymentId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
     if (!strcDebtPaymentId.equals("")) {
       RptPromissoryNoteData[] data = RptPromissoryNoteData.select(this, Utility.getContext(this,
-          vars, "#AccessibleOrgTree", "RptPromissoryNote"), Utility.getContext(this, vars, "#User_Client",
-          "RptPromissoryNote"), strcDebtPaymentId);
+          vars, "#AccessibleOrgTree", "RptPromissoryNote"), Utility.getContext(this, vars,
+          "#User_Client", "RptPromissoryNote"), strcDebtPaymentId);
       RptPromissoryNoteHeaderData[][] pdfPromissoryNoteHeaderData = null;
       RptPromissoryNoteAfterData[][] pdfPromissoryNoteAfterData = null;
       RptPromissoryNoteErrorData[][] pdfPromissoryNoteErrorData = null;
 
       if (data == null || data.length == 0) {
         data = RptPromissoryNoteData.selectDebtPayment(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "RptPromissoryNote"), Utility.getContext(this, vars, "#User_Client",
-            "RptPromissoryNote"), strcDebtPaymentId);
+            "#AccessibleOrgTree", "RptPromissoryNote"), Utility.getContext(this, vars,
+            "#User_Client", "RptPromissoryNote"), strcDebtPaymentId);
         pdfPromissoryNoteHeaderData = new RptPromissoryNoteHeaderData[data.length][];
         pdfPromissoryNoteAfterData = new RptPromissoryNoteAfterData[data.length][];
         pdfPromissoryNoteErrorData = new RptPromissoryNoteErrorData[data.length][];
@@ -181,7 +181,7 @@ public class RptPromissoryNote extends HttpSecureAppServlet {
     }
   }
 
-  String debtPaymentTree(String strcDebtPaymentId) throws IOException, ServletException {
+  private String debtPaymentTree(String strcDebtPaymentId) throws IOException, ServletException {
     String strDocumentno = "";
     // strMark=(sale, buy);
     // boolean[] strMark = {true, true};

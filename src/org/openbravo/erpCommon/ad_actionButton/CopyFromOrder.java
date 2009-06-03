@@ -40,7 +40,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class CopyFromOrder extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final BigDecimal ZERO = BigDecimal.ZERO;
+  private static final BigDecimal ZERO = BigDecimal.ZERO;
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -78,7 +78,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError copyLines(VariablesSecureApp vars, String strRownum, String strKey, String strWindowId,
+  private OBError copyLines(VariablesSecureApp vars, String strRownum, String strKey, String strWindowId,
       String strSOTrx) throws IOException, ServletException {
 
     OBError myError = null;
@@ -188,7 +188,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     return myError;
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strWindowId, String strTabId, String strSOTrx, String strBpartner,
       String strmPricelistId) throws IOException, ServletException {
     log4j.debug("Output: Shipment");

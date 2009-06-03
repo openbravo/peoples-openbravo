@@ -33,8 +33,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_Conversion_Rate extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final BigDecimal ZERO = new BigDecimal(0.0);
-  static final BigDecimal ONE = new BigDecimal(1.0);
+  private static final BigDecimal ZERO = new BigDecimal(0.0);
+  private static final BigDecimal ONE = new BigDecimal(1.0);
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -61,7 +61,7 @@ public class SL_Conversion_Rate extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strMultiplyRate, String strDivideRate, String strTabId) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())

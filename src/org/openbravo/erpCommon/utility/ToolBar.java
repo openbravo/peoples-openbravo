@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,25 +25,25 @@ import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class ToolBar {
-  static Logger log4j = Logger.getLogger(ToolBar.class);
-  ConnectionProvider conn;
-  String language = "en_US";
-  String servlet_action = "";
-  boolean isNew = false;
-  String keyfield = "";
-  String form = "document.forms[0]";
-  String grid_id = "";
-  String pdf = "";
-  boolean isDirectPrint = false;
-  String window_name = "";
-  String base_direction = "";
-  boolean debug = false;
-  boolean isSrcWindow = false;
-  boolean isFrame = false;
-  boolean isRelation = false;
-  boolean isEditable = false;
-  boolean hasAttachments = false;
-  boolean email = false;
+  private static Logger log4j = Logger.getLogger(ToolBar.class);
+  private ConnectionProvider conn;
+  private String language = "en_US";
+  private String servlet_action = "";
+  private boolean isNew = false;
+  private String keyfield = "";
+  private String form = "document.forms[0]";
+  private String grid_id = "";
+  private String pdf = "";
+  private boolean isDirectPrint = false;
+  private String window_name = "";
+  private String base_direction = "";
+  private boolean debug = false;
+  private boolean isSrcWindow = false;
+  private boolean isFrame = false;
+  private boolean isRelation = false;
+  private boolean isEditable = false;
+  private boolean hasAttachments = false;
+  private boolean email = false;
 
   public void setEmail(boolean email) {
     this.email = email;
@@ -831,13 +831,13 @@ public class ToolBar {
     removeElement("AUDIT_SHOW_RELATION_ENABLED");
   }
 
-  public void removeAllTests() {
+  private void removeAllTests() {
     removeElement("CAPTURE");
     removeElement("CHECK_CONTENT");
     removeElement("CHECK_ELEMENT");
   }
 
-  public void removeReadOnly() {
+  private void removeReadOnly() {
     removeElement("NEW");
     removeElement("SAVE_NEW");
     removeElement("SAVE_RELATION");
@@ -937,7 +937,8 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("FIRST"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("FIRST_RELATION"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("PREVIOUS"), lastType, false));
-      // toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n");
+      //toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
+      // );
       toolbar.append(transformElementsToString(buttons.get("NEXT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("LAST"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("LAST_RELATION"), lastType, false));

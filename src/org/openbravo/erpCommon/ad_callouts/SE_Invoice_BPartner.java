@@ -70,7 +70,7 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
       String strDocType, String strIsSOTrx, String strWindowId, String strLocation,
       String strContact, String strProjectId, String strTabId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())

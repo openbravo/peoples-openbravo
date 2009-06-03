@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,7 +82,7 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
       String strBankAccount, String strDateMax, String strBreakDate, boolean showDefault)
       throws IOException, ServletException {
 
@@ -140,7 +140,7 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
     }
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strBankAccount, String strDateMax, String strBreakDate, boolean showDefault)
       throws IOException, ServletException {
     String[] discard = { "", "" };

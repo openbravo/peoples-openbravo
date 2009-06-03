@@ -65,7 +65,7 @@ public class SL_Project_Margin extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
       String strcProjectId, String strChanged, String strServiceRevenue, String strServiceCost,
       String strServiceMargin, String strPlannedExpenses, String strReinvoicedExpenses,
       String strPlannedMargin) throws IOException, ServletException {

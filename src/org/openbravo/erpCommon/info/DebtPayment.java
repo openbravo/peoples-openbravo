@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,8 +89,8 @@ public class DebtPayment extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageFS(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: DebtPayments seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -102,7 +102,7 @@ public class DebtPayment extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of the DebtPayments seeker");
@@ -144,7 +144,7 @@ public class DebtPayment extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -199,11 +199,12 @@ public class DebtPayment extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strBpartnerId,
-      String strDateFrom, String strDateTo, String strCal1, String strCal2, String strPaymentRule,
-      String strIsReceipt, String strIsPaid, String strIsPending, String strOrder,
-      String strInvoice, String strOrderCols, String strOrderDirs, String strOffset,
-      String strPageSize, String strNewFilter, String strOrg) throws IOException, ServletException {
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars,
+      String strBpartnerId, String strDateFrom, String strDateTo, String strCal1, String strCal2,
+      String strPaymentRule, String strIsReceipt, String strIsPaid, String strIsPending,
+      String strOrder, String strInvoice, String strOrderCols, String strOrderDirs,
+      String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 

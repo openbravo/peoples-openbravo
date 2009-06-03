@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,8 +74,8 @@ public class RptC_Invoice extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strcInvoiceId)
-      throws IOException, ServletException {
+  private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strcInvoiceId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
 

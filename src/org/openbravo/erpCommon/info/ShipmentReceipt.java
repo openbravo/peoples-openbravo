@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -120,8 +120,8 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
     vars.removeSessionValue("ShipmentReceipt.adorgid");
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strNameValue,
-      String strSOTrx) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strNameValue, String strSOTrx) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of the invoice seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -152,7 +152,7 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       ShipmentReceiptData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: invoices seeker Frame Set");
@@ -166,7 +166,7 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(ShipmentReceiptData[] data) throws IOException, ServletException {
+  private String generateResult(ShipmentReceiptData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -177,7 +177,7 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -232,7 +232,7 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
       String strDescription, String strBpartnerId, String strOrderReference, String strDateFrom,
       String strDateTo, String strSalesTransaction, String strOrderCols, String strOrderDirs,
       String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,

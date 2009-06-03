@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,7 +67,7 @@ public class PriceListCreateAll extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError processButton(VariablesSecureApp vars, String strPriceListVersion, String windowId)
+  private OBError processButton(VariablesSecureApp vars, String strPriceListVersion, String windowId)
       throws ServletException {
     Connection conn = null;
     String strMessage = "";
@@ -126,7 +126,7 @@ public class PriceListCreateAll extends HttpSecureAppServlet {
     // return strMessage;
   }
 
-  String processHijos(Connection conn, VariablesSecureApp vars, String windowId,
+  private String processHijos(Connection conn, VariablesSecureApp vars, String windowId,
       String strPriceListVersion) throws ServletException {
     String strMessage = "";
     PriceListCreateAllData[] data = PriceListCreateAllData.select(conn, this, strPriceListVersion,
@@ -145,7 +145,7 @@ public class PriceListCreateAll extends HttpSecureAppServlet {
     return strMessage;
   }
 
-  String processPL(Connection conn, VariablesSecureApp vars, PriceListCreateAllData data)
+  private String processPL(Connection conn, VariablesSecureApp vars, PriceListCreateAllData data)
       throws ServletException {
     if (data.mPricelistVersionBaseId.equals(""))
       return "";
@@ -185,7 +185,7 @@ public class PriceListCreateAll extends HttpSecureAppServlet {
     return messageResult;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Button process Create Pricelist");

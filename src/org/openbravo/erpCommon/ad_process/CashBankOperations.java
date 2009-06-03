@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,7 +75,7 @@ public class CashBankOperations extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError process(VariablesSecureApp vars, String strCashFrom, String strCashTo,
+  private OBError process(VariablesSecureApp vars, String strCashFrom, String strCashTo,
       String strBankFrom, String strBankTo, String strPaymentRuleFrom, String strPaymentRuleTo,
       String strAmount, String strMovementDate, String strDescription, String strOrgTrx) {
     if (log4j.isDebugEnabled())
@@ -212,15 +212,15 @@ public class CashBankOperations extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  String negate(String amount) {
+  private String negate(String amount) {
     BigDecimal amt = new BigDecimal(amount);
     amt = amt.multiply(new BigDecimal("-1.0"));
     return amt.toString();
   }
 
-  String insertCash(VariablesSecureApp vars, String strCashBook, String strAmount, String strDate,
-      String strCurrency, String strDescription, String strDPId, String strOrgTrx, Connection con)
-      throws ServletException {
+  private String insertCash(VariablesSecureApp vars, String strCashBook, String strAmount,
+      String strDate, String strCurrency, String strDescription, String strDPId, String strOrgTrx,
+      Connection con) throws ServletException {
     String strCash = CashBankOperationsData.selectOpenCash(this, strCashBook, strDate);
     if (strCash.equals("")) {
       strCash = SequenceIdData.getUUID();
@@ -235,7 +235,7 @@ public class CashBankOperations extends HttpSecureAppServlet {
     return strCashLine;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: process CashBankOperations");
@@ -269,13 +269,14 @@ public class CashBankOperations extends HttpSecureAppServlet {
     xmlDocument.setParameter("datedisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("datesaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
 
-    xmlDocument.setParameter("arrayBank", arrayDobleEntrada("arrBank", CashBankOperationsData
-        .selectBankDouble(this, Utility.getContext(this, vars, "#User_Org", "CashBankOperations"),
-            Utility.getContext(this, vars, "#User_Client", "CashBankOperations"))));
-    xmlDocument.setParameter("arrayCash", arrayDobleEntrada("arrCash", CashBankOperationsData
-        .selectCashDouble(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Org",
+    xmlDocument.setParameter("arrayBank", Utility.arrayDobleEntrada("arrBank",
+        CashBankOperationsData.selectBankDouble(this, Utility.getContext(this, vars, "#User_Org",
             "CashBankOperations"), Utility.getContext(this, vars, "#User_Client",
             "CashBankOperations"))));
+    xmlDocument.setParameter("arrayCash", Utility.arrayDobleEntrada("arrCash",
+        CashBankOperationsData.selectCashDouble(this, vars.getLanguage(), Utility.getContext(this,
+            vars, "#User_Org", "CashBankOperations"), Utility.getContext(this, vars,
+            "#User_Client", "CashBankOperations"))));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",

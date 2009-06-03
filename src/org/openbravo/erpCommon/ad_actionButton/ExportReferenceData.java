@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,7 +77,7 @@ public class ExportReferenceData extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError processButton(VariablesSecureApp vars, String strKey) {
+  private OBError processButton(VariablesSecureApp vars, String strKey) {
     OBError myError = null;
     try {
       DataSet myDataset = (DataSet) OBDal.getInstance().get(DataSet.class, strKey);
@@ -110,7 +110,7 @@ public class ExportReferenceData extends HttpSecureAppServlet {
     return myError;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDataSetID)
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDataSetID)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Button process Copy from Settlement");

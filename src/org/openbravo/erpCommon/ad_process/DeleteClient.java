@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,7 +63,7 @@ public class DeleteClient extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void processButton(VariablesSecureApp vars, String strClient) throws ServletException {
+  private void processButton(VariablesSecureApp vars, String strClient) throws ServletException {
     String pinstance = SequenceIdData.getUUID();
     OBError myMessage = null;
     try {
@@ -101,7 +101,7 @@ public class DeleteClient extends HttpSecureAppServlet {
 
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strClient)
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strClient)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Delete Client");

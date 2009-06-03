@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,8 +37,6 @@ import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
-//import org.openbravo.erpCommon.ad_combos.WarehouseComboData;
-
 public class ReportInventory extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
@@ -58,7 +56,7 @@ public class ReportInventory extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strmWarehouseId, String strDetalle) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -99,8 +97,8 @@ public class ReportInventory extends HttpSecureAppServlet {
           strUom = data[i].productUom;
           ReportInventoryData[] data2 = ReportInventoryData.select(this, data[i].mProductId,
               data[i].cUomId, data[i].mLocatorId, Utility.getContext(this, vars, "#User_Client",
-                  "ReportInventory"), Utility
-                  .getContext(this, vars, "#AccessibleOrgTree", "ReportInventory"));
+                  "ReportInventory"), Utility.getContext(this, vars, "#AccessibleOrgTree",
+                  "ReportInventory"));
           for (int k = 0; k < data2.length; k++) {
             if (!data2[k].lot.equals("")) {
               subreport[j] = data2;
@@ -127,7 +125,7 @@ public class ReportInventory extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strmWarehouseId, String strDetalle) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -219,9 +217,10 @@ public class ReportInventory extends HttpSecureAppServlet {
    * data[i].mLocatorId; strProduct = data[i].mProductId; strUom = data[i].productUom;
    * ReportInventoryData [] data2 = ReportInventoryData.select(this, data[i].mProductId,
    * data[i].cUomId, data[i].mLocatorId, Utility.getContext(this, vars, "#User_Client",
-   * "ReportInventory"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInventory")); for (int
-   * k=0;k<data2.length ;k++ ){ if (!data2[k].lot.equals("")){ subreport[j] = data2; existsAtt =
-   * true; break; } } if (!existsAtt) { subreport[j] = new ReportInventoryData [0]; } j++; } }
+   * "ReportInventory"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInventory"));
+   * for (int k=0;k<data2.length ;k++ ){ if (!data2[k].lot.equals("")){ subreport[j] = data2;
+   * existsAtt = true; break; } } if (!existsAtt) { subreport[j] = new ReportInventoryData [0]; }
+   * j++; } }
    * 
    * xmlDocument.setDataArray("reportDetalle","structure4",subreport);
    * xmlDocument.setData("structure1", data); } ToolBar toolbar = new ToolBar(this,

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,8 +58,9 @@ public class ReportCash extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strCashbook) throws IOException, ServletException {
+  private void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strCashbook) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -73,8 +74,8 @@ public class ReportCash extends HttpSecureAppServlet {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportCashEdit")
           .createXmlDocument();
       data = ReportCashData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-          "#User_Client", "ReportCash"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCash"),
-          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCashbook);
+          "#User_Client", "ReportCash"), Utility.getContext(this, vars, "#AccessibleOrgTree",
+          "ReportCash"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCashbook);
       xmlDocument.setParameter("sumAmount", ReportCashData.BeginningBalance(this, Utility
           .getContext(this, vars, "#User_Client", "ReportCash"), Utility.getContext(this, vars,
           "#AccessibleOrgTree", "ReportCash"), strDateFrom, strCashbook));
@@ -87,7 +88,7 @@ public class ReportCash extends HttpSecureAppServlet {
     }
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strCashbook) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -100,8 +101,8 @@ public class ReportCash extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportCash")
         .createXmlDocument();
     xmlDocument.setParameter("sumAmount", ReportCashData.BeginningBalance(this, Utility.getContext(
-        this, vars, "#User_Client", "ReportCash"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        "ReportCash"), strDateFrom, strCashbook));
+        this, vars, "#User_Client", "ReportCash"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportCash"), strDateFrom, strCashbook));
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportCash", false, "", "", "", false,
         "ad_reports", strReplaceWith, false, true);
@@ -144,8 +145,8 @@ public class ReportCash extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_CashBook_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCash"), Utility.getContext(
-              this, vars, "#User_Client", "ReportCash"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCash"), Utility
+              .getContext(this, vars, "#User_Client", "ReportCash"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCash", strCashbook);
       xmlDocument.setData("reportC_CASHBOOK", "liststructure", comboTableData.select(false));
       comboTableData = null;

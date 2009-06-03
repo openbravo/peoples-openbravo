@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2007 Openbravo SL 
+ * All portions are Copyright (C) 2007-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -85,9 +85,9 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDate,
-      String strProductCategory, String strmProductId, String strX, String strY, String strZ,
-      String strOutput) throws IOException, ServletException {
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strDate, String strProductCategory, String strmProductId, String strX, String strY,
+      String strZ, String strOutput) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
 
@@ -104,9 +104,9 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
 
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDate,
-      String strProductCategory, String strmProductId, String strX, String strY, String strZ)
-      throws IOException, ServletException {
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strDate, String strProductCategory, String strmProductId, String strX, String strY,
+      String strZ) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");

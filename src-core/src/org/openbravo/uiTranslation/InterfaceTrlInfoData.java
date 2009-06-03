@@ -13,7 +13,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 
-public class InterfaceTrlInfoData implements FieldProvider {
+class InterfaceTrlInfoData implements FieldProvider {
   static Logger log4j = Logger.getLogger(InterfaceTrlInfoData.class);
   private String InitRecordNumber = "0";
   public String name;

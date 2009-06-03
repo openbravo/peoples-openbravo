@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,7 +42,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class EdiFileImport extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static boolean firstRowHeaders = true;
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -71,7 +70,7 @@ public class EdiFileImport extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  public String importarFichero(VariablesSecureApp vars, FieldProvider[] data2,
+  private String importarFichero(VariablesSecureApp vars, FieldProvider[] data2,
       HttpServletRequest request, HttpServletResponse response) throws ServletException,
       IOException {
     Connection con = null;
@@ -197,8 +196,8 @@ public class EdiFileImport extends HttpSecureAppServlet {
     }
   }
 
-  EdiFileImportData insert(ConnectionProvider conn, VariablesSecureApp vars, Connection con,
-      EdiFileImportData data) throws ServletException {
+  private EdiFileImportData insert(ConnectionProvider conn, VariablesSecureApp vars,
+      Connection con, EdiFileImportData data) throws ServletException {
     data.iOrderId = SequenceIdData.getUUID();
     data.adClientId = vars.getClient();
     data.adOrgId = vars.getOrg();
@@ -218,12 +217,12 @@ public class EdiFileImport extends HttpSecureAppServlet {
     return data;
   }
 
-  String clean(String oldstr) {
+  private String clean(String oldstr) {
     String newstr = oldstr.substring(0, oldstr.length() - 1);
     return newstr;
   }
 
-  String get(String str, int pos) {
+  private String get(String str, int pos) {
     String[] tokens = str.split(":");
     if (pos < tokens.length) {
       String result = tokens[pos];
@@ -236,7 +235,7 @@ public class EdiFileImport extends HttpSecureAppServlet {
     }
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: edi files importing Frame Set");

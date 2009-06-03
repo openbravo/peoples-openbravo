@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -22,15 +22,13 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-//import org.compiere.util.*;
-
 /**
  * SAX Handler for parsing Translation
  * 
  * @author Jorg Janke
  * @version $Id: TranslationHandler.java,v 1.5 2003/10/04 03:52:36 jjanke Exp $
  */
-public class TranslationHandler extends DefaultHandler {
+class TranslationHandler extends DefaultHandler {
   /**
    * Translation Handler
    */
@@ -207,7 +205,7 @@ public class TranslationHandler extends DefaultHandler {
     return m_updateCount;
   } // getUpdateCount
 
-  public String TO_STRING(String txt) {
+  private String TO_STRING(String txt) {
     return TO_STRING(txt, 0);
   } // TO_STRING
 
@@ -225,7 +223,7 @@ public class TranslationHandler extends DefaultHandler {
    *          Maximum Length of content or 0 to ignore
    * @return escaped string for insert statement (NULL if null)
    */
-  public String TO_STRING(String txt, int maxLength) {
+  private String TO_STRING(String txt, int maxLength) {
     if (txt == null)
       return "NULL";
 

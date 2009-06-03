@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo S.L.
+ * All portions are Copyright (C) 2001-2009 Openbravo S.L.
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,8 +40,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class ShowSessionPreferences extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  protected static final String windowId = "0";
-  protected static final String tableLevel = "2";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -115,7 +113,7 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
     }
   }
 
-  boolean existsWindow(Vector<Object> windows, String windowId) {
+  private boolean existsWindow(Vector<Object> windows, String windowId) {
     if (windows.size() == 0)
       return false;
     for (int i = 0; i < windows.size(); i++) {
@@ -126,7 +124,7 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
     return false;
   }
 
-  String windowName(ShowSessionPreferencesData[] windows, String windowId) {
+  private String windowName(ShowSessionPreferencesData[] windows, String windowId) {
     if (windows == null || windowId == null || windowId.equals(""))
       return "";
     for (int i = 0; i < windows.length; i++) {
@@ -136,7 +134,7 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
     return "";
   }
 
-  void printPagePreferences(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPagePreferences(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("ShowSession - printPagePreferences - Output: preferences");

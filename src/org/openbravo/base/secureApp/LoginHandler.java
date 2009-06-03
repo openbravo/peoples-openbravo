@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -27,7 +27,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class LoginHandler extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
-  String strServletPorDefecto;
+  private String strServletPorDefecto;
 
   @Override
   public void init(ServletConfig config) {

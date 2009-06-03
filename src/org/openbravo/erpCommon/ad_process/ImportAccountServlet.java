@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
  ******************************************************************************
  */
 
@@ -77,9 +77,10 @@ public class ImportAccountServlet extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strProcessId,
-      String strWindowId, String strTabId, String strDeleteOld, String strCElementId,
-      String strUpdateDefault, String strCreateNewCombination) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strProcessId, String strWindowId, String strTabId, String strDeleteOld,
+      String strCElementId, String strUpdateDefault, String strCreateNewCombination)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: process ImportAccountServlet");
     ActionButtonDefaultData[] data = null;

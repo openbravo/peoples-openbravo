@@ -89,7 +89,7 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strFactAcctGroupId, String strDateacct, String strDPId, String strcAcctSchemaId)
       throws IOException, ServletException {
     String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
@@ -156,7 +156,7 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     out.close();
   }
 
-  public String getValue(String strText, int index) {
+  private String getValue(String strText, int index) {
     log4j.warn("***************strText: " + strText);
     String[] tokens = strText.split("/");
     log4j.warn("***************size: " + tokens.length);

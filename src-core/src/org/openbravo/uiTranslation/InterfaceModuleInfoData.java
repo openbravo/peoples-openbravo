@@ -13,7 +13,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 
-public class InterfaceModuleInfoData implements FieldProvider {
+class InterfaceModuleInfoData implements FieldProvider {
   static Logger log4j = Logger.getLogger(InterfaceModuleInfoData.class);
   private String InitRecordNumber = "0";
   public String moduleid;

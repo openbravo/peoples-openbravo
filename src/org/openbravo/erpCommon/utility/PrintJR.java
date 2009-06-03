@@ -57,7 +57,7 @@ public class PrintJR extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutputType, parameters, null, null);
   }
 
-  HashMap<String, Object> createParameters(VariablesSecureApp vars, String strProcessId)
+  private HashMap<String, Object> createParameters(VariablesSecureApp vars, String strProcessId)
       throws ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("JR: Get Parameters");
@@ -101,7 +101,7 @@ public class PrintJR extends HttpSecureAppServlet {
     return parameters;
   }
 
-  Object formatParameter(VariablesSecureApp vars, String strParamName, String strParamValue,
+  private Object formatParameter(VariablesSecureApp vars, String strParamName, String strParamValue,
       String reference, JasperReport jasperReport) throws ServletException {
     String strObjectClass = "";
     Object object;

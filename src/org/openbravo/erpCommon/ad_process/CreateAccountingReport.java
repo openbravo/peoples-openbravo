@@ -45,7 +45,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateAccountingReport extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  public static String strTreeOrg = "";
+  private static String strTreeOrg = "";
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -97,7 +97,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId,
       String strAccountingReportId, String strOrg, String strPeriod, String strYear,
       String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -150,7 +150,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
             "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client",
             "CreateAccountingReport"), strcAcctSchemaId));
 
-    xmlDocument.setParameter("accountArray", arrayDobleEntrada("arrAccount",
+    xmlDocument.setParameter("accountArray", Utility.arrayDobleEntrada("arrAccount",
         CreateAccountingReportData.selectAD_Accountingrpt_Element_Double_ID(this, Utility
             .getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(
             this, vars, "#User_Client", "CreateAccountingReport"), "")));
@@ -205,7 +205,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePopUp(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPagePopUp(HttpServletResponse response, VariablesSecureApp vars,
       String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod,
       String strYear) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -268,7 +268,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     out.close();
   }
 
-  String arrayEntry(VariablesSecureApp vars, String strcAcctSchemaId) throws ServletException {
+  private String arrayEntry(VariablesSecureApp vars, String strcAcctSchemaId) throws ServletException {
     String result = "";
     CreateAccountingReportData[] data = CreateAccountingReportData
         .selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars, "#User_Org",
@@ -306,7 +306,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     return result;
   }
 
-  void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException {
+  private void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException {
     CreateAccountingReportData[] dataOrg = CreateAccountingReportData.selectOrg(this, strOrg, vars
         .getClient());
     for (int i = 0; i < dataOrg.length; i++) {
@@ -317,7 +317,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     return;
   }
 
-  void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strcAcctSchemaId,
+  private void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strcAcctSchemaId,
       String strAccountingReportId, String strPeriodFrom, String strPeriodTo, String strOrg,
       int level, String strParent, String strPeriod) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -378,7 +378,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     }
   }
 
-  CreateAccountingReportData[] convertVector(Vector<Object> vectorArray) throws ServletException {
+  private CreateAccountingReportData[] convertVector(Vector<Object> vectorArray) throws ServletException {
     CreateAccountingReportData[] data = new CreateAccountingReportData[vectorArray.size()];
     BigDecimal count = BigDecimal.ZERO;
     for (int i = 0; i < vectorArray.size(); i++) {
@@ -401,7 +401,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     return data;
   }
 
-  CreateAccountingReportData[] filterData(CreateAccountingReportData[] data)
+  private CreateAccountingReportData[] filterData(CreateAccountingReportData[] data)
       throws ServletException {
     ArrayList<Object> new_a = new ArrayList<Object>();
     for (int i = 0; i < data.length; i++) {

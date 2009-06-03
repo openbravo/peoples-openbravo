@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,8 +68,8 @@ public class ExecuteTask extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDefault(HttpServletResponse response, VariablesSecureApp vars, String strTaskId)
-      throws IOException, ServletException {
+  private void printPageDefault(HttpServletResponse response, VariablesSecureApp vars,
+      String strTaskId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Default");
     response.setContentType("text/html; charset=UTF-8");
@@ -82,7 +82,7 @@ public class ExecuteTask extends HttpSecureAppServlet {
     out.close();
   }
 
-  void executeCommand(HttpServletResponse response, VariablesSecureApp vars, String Tittle,
+  private void executeCommand(HttpServletResponse response, VariablesSecureApp vars, String Tittle,
       String command) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Default");
@@ -195,7 +195,7 @@ public class ExecuteTask extends HttpSecureAppServlet {
     out.close();
   }
 
-  public void executeCommandTask(PrintWriter out, VariablesSecureApp vars, String cmd)
+  private void executeCommandTask(PrintWriter out, VariablesSecureApp vars, String cmd)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("ExecuteTask.executeCommand: " + cmd);

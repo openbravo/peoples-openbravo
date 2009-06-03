@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,7 @@ import org.openbravo.database.ConnectionProvider;
  *         This class contains all the needed checks to make the node modifications in the tree
  *         windows.
  */
-public class WindowTreeChecks {
+class WindowTreeChecks {
   static Logger log4j = Logger.getLogger(WindowTreeChecks.class);
 
   /**

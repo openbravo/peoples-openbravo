@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,7 +83,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcBpartnerId, String strmWarehouseId,
       String strcProjectId, String strmCategoryId, String strProjectkind, String strcRegionId,
       String strProjectpublic, String strProduct, String strCurrencyId) throws IOException,
@@ -202,9 +202,9 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST",
-            "C_Project_Public_ID", "PublicPrivate", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client",
-                "ReportSalesOrderInvoicedJasper"), 0);
+            "C_Project_Public_ID", "PublicPrivate", "", Utility.getContext(this, vars,
+                "#AccessibleOrgTree", "ReportSalesOrderInvoicedJasper"), Utility.getContext(this,
+                vars, "#User_Client", "ReportSalesOrderInvoicedJasper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData,
             "ReportSalesOrderInvoicedJasper", strProjectpublic);
         xmlDocument.setData("reportC_PROJECTPUBLIC", "liststructure", comboTableData.select(false));
@@ -216,8 +216,9 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderInvoicedJasper"),
-            Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"), 0);
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client",
+                "ReportSalesOrderInvoicedJasper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData,
             "ReportSalesOrderInvoicedJasper", strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -227,9 +228,9 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       }
 
       SubCategoryProductData[] dataSub = SubCategoryProductData.select(this, Utility.getContext(
-          this, vars, "#AccessibleOrgTree", "ReportSalesOrderInvoicedJasper"), Utility.getContext(this,
-          vars, "#User_Client", "ReportSalesOrderInvoicedJasper"));
-      xmlDocument.setParameter("product", arrayDobleEntrada("array", SubCategoryProductData
+          this, vars, "#AccessibleOrgTree", "ReportSalesOrderInvoicedJasper"), Utility.getContext(
+          this, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"));
+      xmlDocument.setParameter("product", Utility.arrayDobleEntrada("array", SubCategoryProductData
           .selectProduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client",
               "ReportSalesOrderInvoicedJasper"))));
@@ -241,12 +242,13 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       }
 
     } else {
-      ReportSalesOrderInvoicedData[] data = ReportSalesOrderInvoicedData
-          .select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client",
-              "ReportSalesOrderInvoiced"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportSalesOrderInvoiced"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,
-              "1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind,
-              strcRegionId, strProjectpublic, strProduct);
+      ReportSalesOrderInvoicedData[] data = ReportSalesOrderInvoicedData.select(this,
+          strCurrencyId,
+          Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoiced"), Utility
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderInvoiced"),
+          strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId,
+          strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId,
+          strProjectpublic, strProduct);
       if (data == null || data.length == 0) {
         xmlDocument = xmlEngine.readXmlTemplate(
             "org/openbravo/erpCommon/ad_reports/ReportSalesOrderInvoicedPop", discard)
@@ -297,7 +299,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
   }
 
   // Jasper calling starts here
-  void printPageDataSheetJasper(HttpServletRequest request, HttpServletResponse response,
+  private void printPageDataSheetJasper(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnerId,
       String strmWarehouseId, String strcProjectId, String strmCategoryId, String strProjectkind,
       String strcRegionId, String strProjectpublic, String strProduct, String strCurrencyId)
@@ -312,8 +314,8 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
     try {
       data = ReportSalesOrderInvoicedData.select(this, strCurrencyId, Utility.getContext(this,
           vars, "#User_Client", "ReportSalesOrderInvoiced"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportSalesOrderInvoiced"), strdateFrom, DateTimeData.nDaysAfter(this,
-          strdateTo, "1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId,
+          "#AccessibleOrgTree", "ReportSalesOrderInvoiced"), strdateFrom, DateTimeData.nDaysAfter(
+          this, strdateTo, "1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId,
           strProjectkind, strcRegionId, strProjectpublic, strProduct);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());

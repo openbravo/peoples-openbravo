@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2008 Openbravo SL
+ * All portions are Copyright (C) 2008-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,9 +48,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class UpdateReferenceData extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final String SALTO_LINEA = "<br>\n";
-  String strError = "";
-  static StringBuffer m_info = new StringBuffer();
+  private static final String SALTO_LINEA = "<br>\n";
+  private String strError = "";
+  private static StringBuffer m_info = new StringBuffer();
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -182,7 +182,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
     out.close();
   }
 
-  public String updateReferenceData(HttpServletRequest request, HttpServletResponse response,
+  private String updateReferenceData(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars) throws IOException, ServletException {
 
     String strOrganization = vars.getStringParameter("inpOrganization");
@@ -212,7 +212,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
               if (myFiles[j].getName().endsWith(".xml"))
                 myTargetFiles.add(myFiles[j]);
             }
-            myFiles = new File [myTargetFiles.size()];
+            myFiles = new File[myTargetFiles.size()];
             myFiles = myTargetFiles.toArray(myFiles);
           } else {
             myFiles = new File[] {};
@@ -278,7 +278,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
 
   /**
    * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   *
+   * 
    * @param modules
    * @return
    */

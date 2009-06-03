@@ -61,7 +61,7 @@ public class SL_CreateLines_Conversion_UOM extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strOrderlineId,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strOrderlineId,
       String strUOM, String strQuantityOrder, String strMProductUOMID) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())

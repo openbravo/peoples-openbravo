@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2008 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -47,7 +47,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  **/
 public class Sqlc extends DefaultHandler {
-  public static final String VERSION = "V1.O00-1";
+  private static final String VERSION = "V1.O00-1";
   String sqlcName;
   String sqlcPackage = null;
   String sqlcAccessModifier = ""; // i.e. "" or public
@@ -82,11 +82,11 @@ public class Sqlc extends DefaultHandler {
 
   static Logger log4j = Logger.getLogger(Sqlc.class); // log4j
 
-  public Sqlc() {
+  private Sqlc() {
     init();
   }
 
-  public void init() {
+  private void init() {
     sql = new Sql();
     stcElement = new Stack<String>();
     first = true;
@@ -193,7 +193,7 @@ public class Sqlc extends DefaultHandler {
   }
 
   // list of files and directories related to a File
-  public static void listDir(File file, boolean boolFilter, DirFilter dirFilter, Sqlc sqlc,
+  private static void listDir(File file, boolean boolFilter, DirFilter dirFilter, Sqlc sqlc,
       XMLReader parser, String strFilter, File fileFin, boolean parse, String parent, int level) {
 
     File[] list;
@@ -533,7 +533,7 @@ public class Sqlc extends DefaultHandler {
     buffer.append(ch, start, lengthc);
   }
 
-  public void readBuffer() {
+  private void readBuffer() {
     if (buffer != null) {
       final String strBuffer = buffer.toString();
       if (log4j.isDebugEnabled())
@@ -551,7 +551,7 @@ public class Sqlc extends DefaultHandler {
     }
   }
 
-  public void connect(String file) throws ClassNotFoundException, SQLException {
+  private void connect(String file) throws ClassNotFoundException, SQLException {
     final Properties properties = new Properties();
     try {
       properties.load(new FileInputStream(file));
@@ -575,7 +575,7 @@ public class Sqlc extends DefaultHandler {
     log4j.info("connect made");
   }
 
-  public void closeConnection() {
+  private void closeConnection() {
     try {
       connection.close();
     } catch (final SQLException e) {
@@ -583,7 +583,7 @@ public class Sqlc extends DefaultHandler {
     }
   }
 
-  public void query() {
+  private void query() {
     try {
       if (preparedStatement != null)
         preparedStatement.close();
@@ -650,7 +650,7 @@ public class Sqlc extends DefaultHandler {
     }
   }
 
-  public void printInitClass() throws IOException {
+  private void printInitClass() throws IOException {
     if (this.writeTxtFiles)
       printTxtFile();
     out1.append("//Sqlc generated " + VERSION + "\n"); // v0.011");
@@ -755,7 +755,7 @@ public class Sqlc extends DefaultHandler {
     out2.append(" }\n");
   }
 
-  void printTxtFile() {
+  private void printTxtFile() {
     try {
       // Display column headings
       if (log4j.isDebugEnabled())
@@ -796,7 +796,7 @@ public class Sqlc extends DefaultHandler {
     }
   }
 
-  public void printFunctionConstant() throws IOException {
+  private void printFunctionConstant() throws IOException {
     printHeadFunctionSql(false, false, false);
     out2.append("    " + sqlcName + " object" + sqlcName + "[] = new " + sqlcName + "[1];\n");
     out2.append("    object" + sqlcName + "[0] = new " + sqlcName + "();\n");
@@ -823,7 +823,7 @@ public class Sqlc extends DefaultHandler {
     out2.append("  }\n");
   }
 
-  public void printSQLBody() throws IOException {
+  private void printSQLBody() throws IOException {
     // codigo para imprimir trozos de Sql opcionales
     int posSQL = 0;
     out2.append("    String strSql = \"\";\n");
@@ -923,7 +923,7 @@ public class Sqlc extends DefaultHandler {
     out2.append("\n");
   }
 
-  public void printSQLParameters() throws IOException {
+  private void printSQLParameters() throws IOException {
     final StringBuffer aux = new StringBuffer();
     boolean declareiParameter = false;
 
@@ -994,7 +994,7 @@ public class Sqlc extends DefaultHandler {
     out2.append(aux.toString());
   }
 
-  public void printFunctionSql() throws IOException {
+  private void printFunctionSql() throws IOException {
     boolean boolSequence = false;
     // *** Call to the argument-less creation header, who calls the header
     // with them
@@ -1269,7 +1269,7 @@ public class Sqlc extends DefaultHandler {
     out2.append("  }\n");
   }
 
-  public void printHeadFunctionSql(boolean printProviderConnection, boolean boolPagin,
+  private void printHeadFunctionSql(boolean printProviderConnection, boolean boolPagin,
       boolean boolSequence) throws IOException {
     out2.append("\n");
     final String[] strSqlCommentsVector = stringToVector(sql.strSqlComments, false);
@@ -1354,7 +1354,7 @@ public class Sqlc extends DefaultHandler {
     out2.append("    throws ServletException {\n");
   }
 
-  public void printCallFunctionSql(boolean printProviderConnection) throws IOException {
+  private void printCallFunctionSql(boolean printProviderConnection) throws IOException {
     out2.append(sql.sqlName + "(");
     boolean firstParameter = true;
     if (sql.sqlConnection.equals("true")) {
@@ -1393,18 +1393,18 @@ public class Sqlc extends DefaultHandler {
     out2.append(")");
   }
 
-  public void printEndClass() throws IOException {
+  private void printEndClass() throws IOException {
     out2.append("}\n");
   }
 
-  public int posFinal(String strSQL, String strPattern) {
+  private int posFinal(String strSQL, String strPattern) {
     int index = sql.strSQL.indexOf(strPattern);
     if (index != -1)
       index = index + strPattern.length();
     return index;
   }
 
-  public void imprimirSubstring(String strSQL, int posIni, int posFin, OutputStreamWriter out)
+  private void imprimirSubstring(String strSQL, int posIni, int posFin, OutputStreamWriter out)
       throws IOException {
     final String[] strSqlVector = stringToVector(strSQL.substring(posIni, posFin), true);
     for (int i = 0; i < strSqlVector.length; i++) {
@@ -1423,7 +1423,7 @@ public class Sqlc extends DefaultHandler {
    * Convert a string with the character 0A (10 decimal) in an array of the text separated by this
    * character
    **/
-  public String[] stringToVector(String strSQL, boolean suppressBlankLines) {
+  private String[] stringToVector(String strSQL, boolean suppressBlankLines) {
     final byte tab[] = { 10 };
     final String strTab = new String(tab);
     final Vector<String> vector = new Vector<String>();
@@ -1483,7 +1483,7 @@ public class Sqlc extends DefaultHandler {
     return result.toString();
   }
 
-  public void readProperties(String strFileProperties) {
+  private void readProperties(String strFileProperties) {
     // Read properties file.
     final Properties properties = new Properties();
     try {

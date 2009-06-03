@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,7 +42,7 @@ public class PoolStatus extends HttpSecureAppServlet {
     }
   }
 
-  void printPageMenuPoolStatus(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageMenuPoolStatus(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -89,7 +89,7 @@ public class PoolStatus extends HttpSecureAppServlet {
 
   // replaces the linebreak character and the enter carriage with \n and \r,
   // in order to make it identify just the in the second reading
-  public String formatearTextoJavascript(String strTexto) {
+  private String formatearTextoJavascript(String strTexto) {
     int pos;
     while (strTexto.indexOf('\r') != -1) {
       pos = strTexto.indexOf('\r');

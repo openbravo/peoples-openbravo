@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,8 +64,9 @@ public class ReportCashJR extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strCashbook, String strOutput) throws IOException, ServletException {
+  private void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strCashbook, String strOutput)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -89,7 +90,7 @@ public class ReportCashJR extends HttpSecureAppServlet {
 
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strCashbook) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())

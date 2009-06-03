@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -88,7 +88,7 @@ public class ReportExpense extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletRequest request, HttpServletResponse response,
+  private void printPageDataHtml(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId,
       String strPartner, String strProject, String strExpense, String strCurrencyId)
       throws IOException, ServletException {
@@ -113,8 +113,8 @@ public class ReportExpense extends HttpSecureAppServlet {
       try {
         data1 = ReportExpenseData.select(this, strCurrencyId, strBaseCurrencyId,
             vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportExpense"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportExpense"), strDateFrom, DateTimeData
-                .nDaysAfter(this, strDateTo, "1"), strcBpartnerId, strPartner, strProject,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportExpense"), strDateFrom,
+            DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId, strPartner, strProject,
             (strExpense.equals("time") ? "Y" : ""), (strExpense.equals("expense") ? "N" : ""));
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -141,7 +141,7 @@ public class ReportExpense extends HttpSecureAppServlet {
     }
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strcBpartnerId, String strPartner,
       String strProject, String strExpense, String strCurrencyId) throws IOException,
       ServletException {
@@ -209,8 +209,8 @@ public class ReportExpense extends HttpSecureAppServlet {
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportExpense", "");
 
       ComboTableData comboTableDataProject = new ComboTableData(this, "TABLE", "C_Project_ID",
-          "C_Project", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportExpense"), Utility
-              .getContext(this, vars, "#User_Client", "ReportExpense"), 0);
+          "C_Project", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportExpense"),
+          Utility.getContext(this, vars, "#User_Client", "ReportExpense"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableDataProject, "ReportExpense", "");
 
       xmlDocument.setData("reportC_BPartner_ID", "liststructure", comboTableData.select(false));
@@ -222,8 +222,8 @@ public class ReportExpense extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportExpense"), Utility.getContext(
-              this, vars, "#User_Client", "ReportExpense"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportExpense"), Utility
+              .getContext(this, vars, "#User_Client", "ReportExpense"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportExpense", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;

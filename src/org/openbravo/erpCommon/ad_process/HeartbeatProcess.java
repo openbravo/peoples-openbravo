@@ -27,11 +27,11 @@ import org.openbravo.scheduling.ProcessLogger;
 
 public class HeartbeatProcess implements Process {
 
-  static Logger log = Logger.getLogger(HeartbeatProcess.class);
+  private static Logger log = Logger.getLogger(HeartbeatProcess.class);
 
-  public static final String HEARTBEAT_URL = "https://butler.openbravo.com:443/heartbeat-server/heartbeat";
+  private static final String HEARTBEAT_URL = "https://butler.openbravo.com:443/heartbeat-server/heartbeat";
 
-  public static final String CERT_ALIAS = "openbravo-butler";
+  private static final String CERT_ALIAS = "openbravo-butler";
 
   private ProcessContext ctx;
 
@@ -78,7 +78,7 @@ public class HeartbeatProcess implements Process {
   /**
    * @return true if heart beat is enabled, false otherwise
    */
-  public boolean isHeartbeatActive() {
+  private boolean isHeartbeatActive() {
     String isheartbeatactive = SystemInfo.get(SystemInfo.Item.ISHEARTBEATACTIVE);
     return (isheartbeatactive != null && !isheartbeatactive.equals("") && !isheartbeatactive
         .equals("N"));
@@ -89,7 +89,7 @@ public class HeartbeatProcess implements Process {
    * @return true if there is a connection to the internet, false otherwise
    * @throws ServletException
    */
-  public static boolean isInternetAvailable(ConnectionProvider connection) throws ServletException {
+  private static boolean isInternetAvailable(ConnectionProvider connection) throws ServletException {
     log.info("Checking for internet connection...");
     String isproxyrequired = SystemInfo.get(SystemInfo.Item.ISPROXYREQUIRED);
     if (isproxyrequired != null && isproxyrequired.equals("Y")) {
@@ -111,7 +111,7 @@ public class HeartbeatProcess implements Process {
    * @return the system info as properties
    * @throws ServletException
    */
-  public Properties getSystemInfo(ConnectionProvider connection) throws ServletException {
+  private Properties getSystemInfo(ConnectionProvider connection) throws ServletException {
     logger.logln(logger.messageDb("HB_GATHER", ctx.getLanguage()));
     return SystemInfo.getSystemInfo();
   }
@@ -122,7 +122,7 @@ public class HeartbeatProcess implements Process {
    * @param props
    * @return the UTF-8 encoded query string
    */
-  public String createQueryStr(Properties props) {
+  private String createQueryStr(Properties props) {
     logger.logln(logger.messageDb("HB_QUERY", ctx.getLanguage()));
     if (props == null)
       return null;
@@ -145,7 +145,7 @@ public class HeartbeatProcess implements Process {
    * @throws IOException
    * @throws GeneralSecurityException
    */
-  public String sendInfo(String queryStr) throws GeneralSecurityException, IOException {
+  private String sendInfo(String queryStr) throws GeneralSecurityException, IOException {
     logger.logln(logger.messageDb("HB_SEND", ctx.getLanguage()));
     URL url = null;
     try {
@@ -158,7 +158,7 @@ public class HeartbeatProcess implements Process {
     return HttpsUtils.sendSecure(url, queryStr, CERT_ALIAS, "changeit");
   }
 
-  public void logSystemInfo(ConnectionProvider connection, Properties systemInfo)
+  private void logSystemInfo(ConnectionProvider connection, Properties systemInfo)
       throws ServletException {
     logger.logln(logger.messageDb("HB_LOG", ctx.getLanguage()));
     String id = SequenceIdData.getUUID();
@@ -195,7 +195,7 @@ public class HeartbeatProcess implements Process {
    * @param response
    * @return the list of updates
    */
-  public List<Alert> parseUpdates(String response) {
+  private List<Alert> parseUpdates(String response) {
     logger.logln(logger.messageDb("HB_UPDATES", ctx.getLanguage()));
     if (response == null)
       return null;
@@ -222,7 +222,7 @@ public class HeartbeatProcess implements Process {
    * @param connection
    * @param updates
    */
-  public void saveUpdateAlerts(ConnectionProvider connection, List<Alert> updates) {
+  private void saveUpdateAlerts(ConnectionProvider connection, List<Alert> updates) {
     if (updates == null) {
       logger.logln("No Updates found...");
       return;

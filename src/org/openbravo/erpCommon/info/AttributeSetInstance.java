@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -119,7 +119,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  String getDescription(VariablesSecureApp vars, AttributeSetInstanceData[] data,
+  private String getDescription(VariablesSecureApp vars, AttributeSetInstanceData[] data,
       String strIsSOTrx, String strWindowId) {
     if (data == null || data.length == 0)
       return "";
@@ -172,7 +172,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     return description;
   }
 
-  OBError writeFields(ConnectionProvider cp, VariablesSecureApp vars,
+  private OBError writeFields(ConnectionProvider cp, VariablesSecureApp vars,
       AttributeSetInstanceData[] data, String strAttributeSet, String strInstance,
       String strWindow, String strIsSOTrx, String strProduct) throws ServletException {
     String strNewInstance = "";
@@ -309,7 +309,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strInstance,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strInstance,
       String strAttributeSet, String strProductInstance, String strWindowId, String strTabId,
       String strLocator, String strIsSOTrx, String strProduct) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -367,7 +367,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     out.close();
   }
 
-  String instanceValue(AttributeSetInstanceData[] instanceData, String strAttributeId,
+  private String instanceValue(AttributeSetInstanceData[] instanceData, String strAttributeId,
       boolean isList) {
     if (instanceData == null || instanceData.length == 0)
       return "";
@@ -382,7 +382,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     return "";
   }
 
-  String generateScript(VariablesSecureApp vars, AttributeSetInstanceData[] fields)
+  private String generateScript(VariablesSecureApp vars, AttributeSetInstanceData[] fields)
       throws IOException, ServletException {
     if (fields == null || fields.length == 0)
       return "";
@@ -393,7 +393,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     return strHtml.toString();
   }
 
-  String generateHtml(VariablesSecureApp vars, AttributeSetInstanceData[] fields,
+  private String generateHtml(VariablesSecureApp vars, AttributeSetInstanceData[] fields,
       AttributeSetInstanceData[] instanceData, String strAttributeInstance, String strIsSOTrx,
       String strWindowId) throws IOException, ServletException {
     if (fields == null || fields.length == 0)
@@ -591,7 +591,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     return strHtml.toString();
   }
 
-  String replace(String strIni) {
+  private String replace(String strIni) {
     // delete characters: " ","&",","
     return Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace
         .replace(strIni, "#", ""), " ", ""), "&", ""), ",", ""), "(", ""), ")", "");

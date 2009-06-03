@@ -113,7 +113,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strLevel, String strOnly,
       String strAccountFrom, String strAccountTo, String strAll, String strcBpartnerId,
       String strcAcctSchemaId) throws IOException, ServletException {
@@ -287,11 +287,11 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
             ""), strcBpartnerIdAux));
 
-    xmlDocument.setParameter("accounFromArray", arrayDobleEntrada("arrAccountFrom",
+    xmlDocument.setParameter("accounFromArray", Utility.arrayDobleEntrada("arrAccountFrom",
         ReportTrialBalanceData.selectAccountDouble(this, Utility.getContext(this, vars,
             "#AccessibleOrgTree", "Account"), Utility.getContext(this, vars, "#User_Client",
             "Account"), "")));
-    xmlDocument.setParameter("accounToArray", arrayDobleEntrada("arrAccountTo",
+    xmlDocument.setParameter("accounToArray", Utility.arrayDobleEntrada("arrAccountTo",
         ReportTrialBalanceData.selectAccountDouble(this, Utility.getContext(this, vars,
             "#AccessibleOrgTree", "Account"), Utility.getContext(this, vars, "#User_Client",
             "Account"), "")));
@@ -320,7 +320,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
+  private void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
       String strDateTo, String strOrg, String strLevel, String strOnly, String strAccountFrom,
       String strAccountTo, String strAll, String strcBpartnerId, String strcAcctSchemaId)
       throws IOException, ServletException {
@@ -543,7 +543,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     return result;
   }
 
-  public String getFamily(String strTree, String strChild) throws IOException, ServletException {
+  private String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, strChild);
     /*
      * ReportGeneralLedgerData [] data = ReportGeneralLedgerData.selectChildren(this, strTree,

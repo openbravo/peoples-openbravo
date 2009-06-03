@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
  ******************************************************************************
 -->
 
@@ -177,34 +177,6 @@
      <Parameter name="tableName" type="replace" optional="true" after="UPDATE " text="DUAL"/>
      <Parameter name="tableName"  type="replace" optional="true" after="WHERE " text="CLAVE"/>
      <Parameter name="Record_ID"/>
-   </SqlMethod>
-  <SqlMethod name="callGetValidCombination" type="callableStatement" return="object" object="RespuestaCS_AcctServer">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        CALL C_ValidCombination_Get(?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), ?,?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?)
-     ]]>
-     </Sql>
-     <Parameter name="validCombination" type="out"/>
-     <Parameter name="AD_Client_ID"/>
-     <Parameter name="AD_Org_ID"/>
-     <Parameter name="C_AcctSchema_ID"/>
-     <Parameter name="Account_ID"/>
-     <Parameter name="base_ValidCombination_ID"/>
-     <Parameter name="MustBeFullyQualified"/>
-     <Parameter name="Alias"/>
-     <Parameter name="AD_User_ID"/>
-     <Parameter name="M_Product_ID"/>
-     <Parameter name="C_BPartner_ID"/>
-     <Parameter name="AD_OrgTrx_ID"/>
-     <Parameter name="C_LocFrom_ID"/>
-     <Parameter name="C_LocTo_ID"/>
-     <Parameter name="C_SRegion_ID"/>
-     <Parameter name="C_Project_ID"/>
-     <Parameter name="C_Campaign_ID"/>
-     <Parameter name="C_Activity_ID"/>
-     <Parameter name="User1_ID"/>
-     <Parameter name="User2_ID"/>
    </SqlMethod>
   <SqlMethod name="updateSave" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

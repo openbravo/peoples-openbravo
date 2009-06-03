@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -36,7 +36,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
   private ConnectionProvider conn = null;
   private String strServletSinIdentificar = null;
-  public Logger log4j = Logger.getLogger(DefaultAuthenticationManager.class);
+  private Logger log4j = Logger.getLogger(DefaultAuthenticationManager.class);
 
   /** Creates a new instance of DefaultAuthenticationManager */
   public DefaultAuthenticationManager() {
@@ -92,7 +92,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     }
   }
 
-  public void bdErrorAjax(HttpServletResponse response, String strType, String strTitle,
+  private void bdErrorAjax(HttpServletResponse response, String strType, String strTitle,
       String strText) throws IOException {
     response.setContentType("text/xml; charset=UTF-8");
     PrintWriter out = response.getWriter();

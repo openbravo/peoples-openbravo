@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,9 +42,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class FileImport extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static boolean firstRowHeaders = true;
+  private static boolean firstRowHeaders = true;
 
-  static final int THRESHOLD = 1000;
+  private static final int THRESHOLD = 1000;
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -89,7 +89,7 @@ public class FileImport extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  public String procesarFichero(VariablesSecureApp vars, FieldProvider[] data2,
+  private String procesarFichero(VariablesSecureApp vars, FieldProvider[] data2,
       HttpServletRequest request, HttpServletResponse response, String strAdImpformatId,
       String strFirstLineHeader) throws ServletException, IOException {
     if (data2 == null)
@@ -132,7 +132,7 @@ public class FileImport extends HttpSecureAppServlet {
     return texto.toString();
   }
 
-  public OBError importarFichero(VariablesSecureApp vars, FieldProvider[] data2,
+  private OBError importarFichero(VariablesSecureApp vars, FieldProvider[] data2,
       HttpServletRequest request, HttpServletResponse response, String strAdImpformatId)
       throws ServletException, IOException {
     Connection con = null;
@@ -227,7 +227,7 @@ public class FileImport extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  public String parseField(String strTexto, String strLength, String strDataType,
+  private String parseField(String strTexto, String strLength, String strDataType,
       String strDataFormat, String strDecimalPoint) throws ServletException {
     if (strDataType.equals("D")) {
       strTexto = FileImportData.parseDate(this, strTexto, strDataFormat);
@@ -250,9 +250,9 @@ public class FileImport extends HttpSecureAppServlet {
     }
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strFirstLineHeader,
-      String strCommand, String texto, String strAdImpformatId) throws IOException,
-      ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strFirstLineHeader, String strCommand, String texto, String strAdImpformatId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: file importing Frame 1");
     XmlDocument xmlDocument = null;
@@ -334,7 +334,7 @@ public class FileImport extends HttpSecureAppServlet {
    * @throws ServletException
    * @throws IOException
    */
-  void printSampleImport(VariablesSecureApp vars, FieldProvider[] data2,
+  private void printSampleImport(VariablesSecureApp vars, FieldProvider[] data2,
       HttpServletRequest request, HttpServletResponse response, String strAdImpformatId,
       String strFirstLineHeader) throws ServletException, IOException {
 
@@ -399,7 +399,7 @@ public class FileImport extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageResult(HttpServletResponse response, VariablesSecureApp vars, String text,
+  private void printPageResult(HttpServletResponse response, VariablesSecureApp vars, String text,
       String command) throws IOException, ServletException {
     XmlDocument xmlDocument = null;
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/FileImport_Result")

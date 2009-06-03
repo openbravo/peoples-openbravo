@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,7 +47,7 @@ public class PopupLoading extends HttpSecureAppServlet {
     }
   }
 
-  public void printPageData(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageData(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/utility/PopupLoading").createXmlDocument();

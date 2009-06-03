@@ -70,7 +70,7 @@ public class SL_InOut_BPartner extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
       String strLocation, String strContact, String strWindowId, String strProjectId,
       String strIsSOTrx, String strTabId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())

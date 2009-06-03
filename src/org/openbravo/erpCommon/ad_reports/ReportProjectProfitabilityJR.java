@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  public static String strTreeOrg = "";
+  private static String strTreeOrg = "";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -114,7 +114,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletRequest request, HttpServletResponse response,
+  private void printPageDataHtml(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strOrg, String strProject, String strProjectType,
       String strResponsible, String strDateFrom, String strDateTo, String strExpand,
       String strPartner, String strDateFrom2, String strDateTo2, String strDateFrom3,
@@ -167,11 +167,11 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     }
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strOrg,
-      String strProject, String strProjectType, String strResponsible, String strDateFrom,
-      String strDateTo, String strExpand, String strPartner, String strDateFrom2,
-      String strDateTo2, String strDateFrom3, String strDateTo3, String strCurrencyId)
-      throws IOException, ServletException {
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strOrg, String strProject, String strProjectType, String strResponsible,
+      String strDateFrom, String strDateTo, String strExpand, String strPartner,
+      String strDateFrom2, String strDateTo2, String strDateFrom3, String strDateTo3,
+      String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -259,24 +259,24 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       comboTableData = null;
 
       comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "", Utility
-          .getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility.getContext(
-          this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+          .getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility
+          .getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
           strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
 
       comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Project_ID", "", "", Utility
-          .getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility.getContext(
-          this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+          .getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility
+          .getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
           strProject);
       xmlDocument.setData("reportC_Project_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
 
       comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_ProjectType_ID", "", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility
-              .getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
           strProjectType);
       xmlDocument.setData("reportC_ProjectType_ID", "liststructure", comboTableData.select(false));
@@ -289,8 +289,9 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
-          Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportProjectProfitabilityJR"), Utility.getContext(this, vars, "#User_Client",
+              "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -307,7 +308,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     return "Servlet ReportProjectProfitabilityJR. This Servlet was made by Pablo Sarobe";
   } // end of getServletInfo() method
 
-  void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException {
+  private void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException {
     ReportProjectProfitabilityData[] dataOrg = ReportProjectProfitabilityData.selectOrg(this,
         strOrg, vars.getClient());
     for (int i = 0; i < dataOrg.length; i++) {
