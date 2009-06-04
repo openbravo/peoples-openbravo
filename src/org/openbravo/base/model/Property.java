@@ -506,7 +506,11 @@ public class Property {
     if (isCompositeId) {
       typeName = getEntity().getClassName() + ".Id";
     } else if (isPrimitive()) {
-      typeName = getPrimitiveType().getName();
+      if (getPrimitiveType().isArray()) {
+        typeName = getPrimitiveType().getComponentType().getName() + "[]";
+      } else {
+        typeName = getPrimitiveType().getName();
+      }
     } else if (getTargetEntity() == null) {
       log.warn("ERROR NO REFERENCETYPE " + getEntity().getName() + "." + getColumnName());
       return "java.lang.Object";
@@ -575,6 +579,9 @@ public class Property {
     }
     if ("double".equals(typeName)) {
       return Double.class;
+    }
+    if ("byte[]".equals(typeName)) {
+      return byte[].class;
     }
     Check.fail("Type " + typeName + " not supported as object type");
     // never gets here
