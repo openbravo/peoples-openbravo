@@ -348,7 +348,8 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="generate.java.doc">
-    <javadoc sourcepath="${base.src}:${base.src.test}:${build.AD}:${base.src.gen}:build/javasqlc/:build/javasqlc/srcAD" Windowtitle="Openbravo ERP 2.50" access="protected" Header="Openbravo ERP 2.50" Footer="Openbravo ERP 2.50" destdir="${build.docs}" linksource="no" maxmemory="1024M">
+    <javadoc sourcepath="${base.src}:${base.src.test}:${build.AD}:${base.src.gen}:build/javasqlc/src/:build/javasqlc/srcAD" Windowtitle="Openbravo ERP 2.50 MP2" access="protected" Header="Openbravo ERP 2.50 MP2" Footer="Openbravo ERP 2.50 MP2" destdir="${build.docs}" linksource="no" maxmemory="1024M">
+      <excludepackage name="org.openbravo.erpWindows.*"/>
       <classpath>
         <path refid="project.class.path"/>
         <pathelement path="lib/build/js.jar" />
