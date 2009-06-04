@@ -27,11 +27,15 @@ import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.zip.CRC32;
 
 import javax.crypto.Cipher;
 
+import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.hibernate.criterion.Expression;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -48,6 +52,8 @@ public class ActivationKey {
   private Properties instanceProperties;
   private static final Logger log = Logger.getLogger(ActivationKey.class);
   private String strPublicKey;
+  private static boolean opsLog = false;
+  private static String opsLogId;
 
   public enum LicenseRestriction {
     NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED
@@ -62,6 +68,7 @@ public class ActivationKey {
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
       hasActivationKey = false;
+      setLogger();
       return;
     }
 
@@ -69,6 +76,7 @@ public class ActivationKey {
     if (pk == null) {
       hasActivationKey = true;
       errorMessage = "@NotAValidKey@";
+      setLogger();
       return;
     }
     hasActivationKey = true;
@@ -95,6 +103,7 @@ public class ActivationKey {
       isActive = false;
       errorMessage = "@NotAValidKey@";
       e.printStackTrace();
+      setLogger();
       return;
     }
 
@@ -112,6 +121,7 @@ public class ActivationKey {
       errorMessage = "@ErrorReadingDates@";
       isActive = false;
       log.error(e);
+      setLogger();
       return;
     }
 
@@ -119,15 +129,58 @@ public class ActivationKey {
     if (startDate == null || now.before(startDate)) {
       isActive = false;
       errorMessage = "@OPSNotActiveTill@ " + startDate;
+      setLogger();
       return;
     }
     if (endDate != null && now.after(endDate)) {
       isActive = false;
       errorMessage = "@OPSActivationExpired@ " + endDate;
+      setLogger();
       return;
     }
     isActive = true;
+    setLogger();
+  }
 
+  @SuppressWarnings( { "static-access", "unchecked" })
+  private void setLogger() {
+    if (isActive() && !opsLog) {
+      // add instance id to logger
+      Enumeration<Appender> appenders = log.getRoot().getAllAppenders();
+      while (appenders.hasMoreElements()) {
+        Appender appender = appenders.nextElement();
+        if (appender.getLayout() instanceof PatternLayout) {
+          PatternLayout l = (PatternLayout) appender.getLayout();
+          opsLogId = getOpsLogId();
+          l.setConversionPattern(opsLogId + l.getConversionPattern());
+        }
+      }
+      opsLog = true;
+    }
+
+    if (!isActive() && opsLog) {
+
+      // remove instance id from logger
+      Enumeration<Appender> appenders = log.getRoot().getAllAppenders();
+      while (appenders.hasMoreElements()) {
+        Appender appender = appenders.nextElement();
+        if (appender.getLayout() instanceof PatternLayout) {
+          PatternLayout l = (PatternLayout) appender.getLayout();
+          String pattern = l.getConversionPattern();
+          if (pattern.startsWith(opsLogId)) {
+            l.setConversionPattern(l.getConversionPattern().substring(opsLogId.length()));
+          }
+        }
+      }
+      opsLog = false;
+    }
+
+  }
+
+  private String getOpsLogId() {
+    CRC32 crc = new CRC32();
+    crc.update(getPublicKey().getBytes());
+    return Long.toHexString(crc.getValue()) + " ";
   }
 
   private PublicKey getPublicKey(String strPublickey) {
@@ -177,11 +230,13 @@ public class ActivationKey {
       return LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE;
 
     if (getProperty("lincensetype").equals("USR")) {
+      boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
       OBContext.getOBContext().setInAdministratorMode(true);
 
       OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
       obCriteria.add(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true));
       int currentSessions = obCriteria.list().size();
+      OBContext.getOBContext().setInAdministratorMode(adminMode);
 
       Long softUsers = null;
       if (getProperty("limituserswarn") != null) {
