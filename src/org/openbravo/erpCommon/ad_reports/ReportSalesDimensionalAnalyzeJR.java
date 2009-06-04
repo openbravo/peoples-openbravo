@@ -178,7 +178,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
       String strcBpartnerId, String strProductCategory, String strmProductId,
       String strmWarehouseId, String strNotShown, String strShown, String strDateFromRef,
@@ -363,7 +363,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageHtml(HttpServletRequest request, HttpServletResponse response,
+  private void printPageHtml(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strComparative, String strDateFrom, String strDateTo,
       String strPartnerGroup, String strcBpartnerId, String strProductCategory,
       String strmProductId, String strmWarehouseId, String strNotShown, String strShown,

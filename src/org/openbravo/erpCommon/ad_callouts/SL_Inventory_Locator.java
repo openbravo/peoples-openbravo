@@ -57,7 +57,7 @@ public class SL_Inventory_Locator extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strProduct, String strLocator, String strAttribute, String strUOM, String strTabId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())

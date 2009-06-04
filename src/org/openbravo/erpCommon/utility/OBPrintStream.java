@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,7 @@ import java.io.PrintWriter;
  * @see AntExecutor
  * 
  */
-public class OBPrintStream extends PrintStream {
+class OBPrintStream extends PrintStream {
   private StringBuffer log;
   private boolean finished;
   private PrintWriter out;
@@ -78,8 +78,7 @@ public class OBPrintStream extends PrintStream {
   }
 
   /**
-   * Writes a byte array to the internal PrintStream, replaces line breaks with the <br/>
-   * html tag.
+   * Writes a byte array to the internal PrintStream, replaces line breaks with the <br/> html tag.
    */
   @Override
   public void write(byte[] buf) {

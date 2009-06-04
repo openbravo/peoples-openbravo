@@ -68,7 +68,7 @@ public class SL_MachineCost extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strPurchaseAmt, String strToolsetAmt, String strYearValue, String strAmortization,
       String strDaysYear, String strDayHours, String strImproductiveHoursYear,
       String strCostUomYear, String strCost, String strCostUom) throws IOException,

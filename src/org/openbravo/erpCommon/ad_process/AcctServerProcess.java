@@ -37,7 +37,7 @@ import org.openbravo.service.db.DalBaseProcess;
 
 public class AcctServerProcess extends DalBaseProcess {
 
-  public final static String BATCH_SIZE = "50";
+  private final static String BATCH_SIZE = "50";
 
   private boolean isDirect;
 
@@ -158,7 +158,7 @@ public class AcctServerProcess extends DalBaseProcess {
    * @param msg
    *          to add to the log
    */
-  public void addLog(String msg) {
+  private void addLog(String msg) {
     addLog(msg, true);
   }
 
@@ -168,7 +168,7 @@ public class AcctServerProcess extends DalBaseProcess {
    * @param msg
    * @param generalLog
    */
-  public void addLog(String msg, boolean generalLog) {
+  private void addLog(String msg, boolean generalLog) {
     logger.log(msg + "\n");
     final Timestamp tmp = new Timestamp(System.currentTimeMillis());
     if (isDirect) {
@@ -190,7 +190,7 @@ public class AcctServerProcess extends DalBaseProcess {
    * @param adClientId
    * @return the id of the note if a new one is created (if passed as null)
    */
-  public String saveLog(String adNoteId, String adClientId) {
+  private String saveLog(String adNoteId, String adClientId) {
     String strMessage = "", strNewMessage = "";
     try {
       if (adNoteId == null || adNoteId.equals("")) {

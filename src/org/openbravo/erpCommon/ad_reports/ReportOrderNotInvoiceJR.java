@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -81,7 +81,7 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcBpartnetId, String strCOrgId,
       String strInvoiceRule, String strDetail, String strCurrencyId) throws IOException,
       ServletException {
@@ -154,8 +154,8 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceJR"), Utility
-              .getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotInvoiceJR",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -172,7 +172,7 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageHtml(HttpServletRequest request, HttpServletResponse response,
+  private void printPageHtml(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnetId,
       String strCOrgId, String strInvoiceRule, String strDetail, String strCurrencyId)
       throws IOException, ServletException {

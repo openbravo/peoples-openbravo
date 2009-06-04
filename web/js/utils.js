@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '3924';
+  var number = '3954';
   return number;
 }
 
@@ -336,8 +336,12 @@ function checkForChanges(f) {
 		var hasUserChanges = typeof top.appFrame.isUserChanges == 'undefined' ? false : top.appFrame.isUserChanges;
 		if (form.inpLastFieldChanged && (hasUserChanges || isButtonClick || isTabClick)) { // if the inpLastFieldChanged exists and there is a user change
 			var autoSave = true;		
-			if (promptConfirmation)
+			if (promptConfirmation) {
 				autoSave = showJSMessage(25);
+				if(typeof top.appFrame.confirmOnChanges != 'undefined' && autoSave) {
+					top.appFrame.confirmOnChanges = false;
+				}
+			}
 			if (autoSave) {
 				if(form.autosave) {
 					form.autosave.value = 'Y';
@@ -2605,11 +2609,12 @@ function formElementValue(form, ElementName, Value) {
     }
     var obj = eval("document." + form.name + "." + ElementName + ";");
     if (obj==null || !obj || !obj.type) return false;
-    if (obj.getAttribute("readonly")=="true" || obj.readOnly || obj.getAttribute("readonly")=="") bolReadOnly=true;
+    if (obj.getAttribute("readonly")=="true" || obj.readOnly || (obj.getAttribute("readonly")=="" && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1)) bolReadOnly=true;
     if (bolReadOnly) {
       if (obj.getAttribute("onChange")) {
         onChangeFunction = obj.getAttribute("onChange").toString();
         onChangeFunction = onChangeFunction.replace("function anonymous()\n","");
+        onChangeFunction = onChangeFunction.replace("function onchange()\n","");
         onChangeFunction = onChangeFunction.replace("{\n","");
         onChangeFunction = onChangeFunction.replace("\n}","");
       } else {
@@ -2723,38 +2728,40 @@ function formElementEvent(form, ElementName, calloutName) {
       var bolReadOnly = false;
       if (obj.onchange!=null && obj.onchange.toString().indexOf(calloutName)==-1) {
         if (obj.onchange.toString().indexOf("callout")!=-1 || obj.onchange.toString().indexOf("reload")!=-1) isReload=true;
-        if (obj.getAttribute("readonly")=="true" || obj.readOnly==true || obj.getAttribute("readonly")=="") {
+        if (obj.getAttribute("readonly")=="true" || obj.readOnly==true || (obj.getAttribute("readonly")=="" && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1)) {
           bolReadOnly=true;
           obj.readOnly = false;
         }
 
-      if (obj.className.indexOf("Combo")!=-1) {
-        if (obj.getAttribute("onChange")) {
-          var onchange_combo = obj.getAttribute("onChange").toString();
-          onchange_combo = onchange_combo.replace("function anonymous()\n","");
-          onchange_combo = onchange_combo.replace("{\n","");
-          onchange_combo = onchange_combo.replace("\n}","");
+        if (obj.className.indexOf("Combo")!=-1) {
+          if (obj.getAttribute("onChange")) {
+            var onchange_combo = obj.getAttribute("onChange").toString();
+            onchange_combo = onchange_combo.replace("function anonymous()\n","");
+            onchange_combo = onchange_combo.replace("function onchange()\n","");
+            onchange_combo = onchange_combo.replace("{\n","");
+            onchange_combo = onchange_combo.replace("\n}","");
+          } else {
+            var onchange_combo = "";
+          }
+          if (onchange_combo.indexOf("selectCombo")!=-1) {
+            onchange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
+            var onchange_combo2 = onchange_combo;
+            onchange_combo = onchange_combo.substring(0,onchange_combo.indexOf("return"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("return"))+1, onchange_combo.length);
+            onchange_combo = onchange_combo.replace("(this)","(obj)");
+            onchange_combo = onchange_combo.replace("(this,","(obj,");
+            onchange_combo = onchange_combo.replace("(this ","(obj ");
+            onchange_combo = onchange_combo.replace(",this)",",obj)");
+            onchange_combo = onchange_combo.replace(" this)"," obj)");
+            eval(onchange_combo);
+            obj.setAttribute("onChange", "selectCombo(this, '" + obj.value + "');" + onchange_combo2);
+          } else {
+            obj.onchange();
+          }
         } else {
-          var onchange_combo = "";
+          if (obj.getAttribute('onchange') != '' && obj.getAttribute('onchange') != null && obj.getAttribute('onchange') != 'null') {
+            obj.onchange();
+          }
         }
-        if (onchange_combo.indexOf("selectCombo")!=-1) {
-          onchange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
-          var onchange_combo2 = onchange_combo;
-          onchange_combo = onchange_combo.substring(0,onchange_combo.indexOf("return"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("return"))+1, onchange_combo.length);
-          onchange_combo = onchange_combo.replace("(this)","(obj)");
-          onchange_combo = onchange_combo.replace("(this,","(obj,");
-          onchange_combo = onchange_combo.replace("(this ","(obj ");
-          onchange_combo = onchange_combo.replace(",this)",",obj)");
-          onchange_combo = onchange_combo.replace(" this)"," obj)");
-          eval(onchange_combo);
-          obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_combo2);
-        } else obj.onchange();
-      } else {
-        if (obj.getAttribute('onchange') != '' && obj.getAttribute('onchange') != null && obj.getAttribute('onchange') != 'null') {
-          obj.onchange();
-        }
-      }
-
         if (bolReadOnly) obj.readOnly = true;
       }
     }
@@ -3006,6 +3013,7 @@ function readOnlyLogicElement(id, readonly) {
       if (obj.getAttribute("onChange")) {
         onchange_combo = obj.getAttribute("onChange").toString();
         onchange_combo = onchange_combo.replace("function anonymous()\n","");
+        onchange_combo = onchange_combo.replace("function onchange()\n","");
         onchange_combo = onchange_combo.replace("{\n","");
         onchange_combo = onchange_combo.replace("\n}","");
       } else {
@@ -3018,6 +3026,7 @@ function readOnlyLogicElement(id, readonly) {
       if (obj.getAttribute("onChange")) {
         onchange_combo = obj.getAttribute("onChange").toString();
         onchange_combo = onchange_combo.replace("function anonymous()\n","");
+        onchange_combo = onchange_combo.replace("function onchange()\n","");
         onchange_combo = onchange_combo.replace("{\n","");
         onchange_combo = onchange_combo.replace("\n}","");
       } else {
@@ -3038,6 +3047,7 @@ function readOnlyLogicElement(id, readonly) {
       if (obj.getAttribute("onChange")) {
         onchange_combo = obj.getAttribute("onChange").toString();
         onchange_combo = onchange_combo.replace("function anonymous()\n","");
+        onchange_combo = onchange_combo.replace("function onchange()\n","");
         onchange_combo = onchange_combo.replace("{\n","");
         onchange_combo = onchange_combo.replace("\n}","");
       } else {

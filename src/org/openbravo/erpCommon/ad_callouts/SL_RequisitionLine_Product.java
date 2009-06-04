@@ -69,7 +69,7 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strMProductID,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strMProductID,
       String strWindowId, String strTabId, String strAttribute, String strUOM,
       String strRequisition, String strPriceListId, String strChanged) throws IOException,
       ServletException {

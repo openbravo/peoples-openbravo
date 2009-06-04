@@ -36,7 +36,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class SL_Invoice_Amt extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  static final BigDecimal ZERO = new BigDecimal(0.0);
+  private static final BigDecimal ZERO = new BigDecimal(0.0);
 
   public void init(ServletConfig config) {
     super.init(config);

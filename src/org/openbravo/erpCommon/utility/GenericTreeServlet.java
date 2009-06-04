@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,8 +75,8 @@ public class GenericTreeServlet extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printOpenNode(HttpServletResponse response, VariablesSecureApp vars, String strNodeId,
-      String treeClass, String level) throws IOException, ServletException {
+  private void printOpenNode(HttpServletResponse response, VariablesSecureApp vars,
+      String strNodeId, String treeClass, String level) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: ajaxreponse");
 
@@ -109,8 +109,8 @@ public class GenericTreeServlet extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printDescription(HttpServletResponse response, VariablesSecureApp vars, String strNodeId,
-      String treeClass, int type) throws IOException, ServletException {
+  private void printDescription(HttpServletResponse response, VariablesSecureApp vars,
+      String strNodeId, String treeClass, int type) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: ajaxreponse");
 

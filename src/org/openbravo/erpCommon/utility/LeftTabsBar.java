@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,11 +22,11 @@ import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class LeftTabsBar {
-  static Logger log4j = Logger.getLogger(LeftTabsBar.class);
-  ConnectionProvider conn;
-  String language = "en_US";
-  String servlet_action = "";
-  String base_direction = "";
+  private static Logger log4j = Logger.getLogger(LeftTabsBar.class);
+  private ConnectionProvider conn;
+  private String language = "en_US";
+  private String servlet_action = "";
+  private String base_direction = "";
 
   public LeftTabsBar(ConnectionProvider _conn, String _language, String _action,
       String _baseDirection) {

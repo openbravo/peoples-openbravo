@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,9 +77,9 @@ public class ReportTaxInvoice extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strOrg, String strDetail, String strSales) throws IOException,
-      ServletException {
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -248,7 +248,7 @@ public class ReportTaxInvoice extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -484,7 +484,7 @@ public class ReportTaxInvoice extends HttpSecureAppServlet {
    * data2Purchase); out.println(xmlDocument.print()); out.close(); }
    */
 
-  void printPageDataExcel(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataExcel(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())

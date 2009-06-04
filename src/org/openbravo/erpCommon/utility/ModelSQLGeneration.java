@@ -319,7 +319,7 @@ public class ModelSQLGeneration {
   /**
    * Overloaded method with sorted columns by default
    */
-  public static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars,
+  static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars,
       TableSQLData tableSQL, String selectFields, Vector<String> filter,
       Vector<String> filterParams, int offset, int pageSize) throws Exception {
     return generateSQL(conn, vars, tableSQL, selectFields, filter, filterParams, offset, pageSize,
@@ -362,7 +362,7 @@ public class ModelSQLGeneration {
    * @return String with the sql.
    * @throws Exception
    */
-  public static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars,
+  static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars,
       TableSQLData tableSQL, String selectFields, Vector<String> filter,
       Vector<String> filterParams, int offset, int pageSize, boolean sorted, boolean onlyId)
       throws Exception {

@@ -26,7 +26,7 @@ import org.openbravo.base.MultipartRequest;
 import org.openbravo.base.VariablesBase;
 import org.openbravo.data.FieldProvider;
 
-public class AccountingValueData extends MultipartRequest implements FieldProvider {
+class AccountingValueData extends MultipartRequest implements FieldProvider {
   static Logger log4j = Logger.getLogger(AccountingValueData.class);
   public String accountValue = "";
   public String accountName = "";

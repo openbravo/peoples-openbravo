@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -78,7 +78,7 @@ public class ProjectSetType extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError processButton(VariablesSecureApp vars, String strKey, String strProjectType,
+  private OBError processButton(VariablesSecureApp vars, String strKey, String strProjectType,
       String strDateFrom, String windowId) {
     Connection conn = null;
     OBError myMessage = new OBError();
@@ -208,7 +208,7 @@ public class ProjectSetType extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strProjectType, String windowId, String strTab, String strProcessId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -269,7 +269,7 @@ public class ProjectSetType extends HttpSecureAppServlet {
   }
 
   // Determines the Starting Date of a Phase or a Task
-  public String calculateStartDate(String strLastContractDate, DateFormat DateFormatter)
+  private String calculateStartDate(String strLastContractDate, DateFormat DateFormatter)
       throws ParseException {
     String strStartDate = "";
     if (strLastContractDate != null && !strLastContractDate.equals("")) {
@@ -296,7 +296,7 @@ public class ProjectSetType extends HttpSecureAppServlet {
 
   // Determines the Contract Date of a Phase or a Task, based on the Standard
   // Duration in Days of the Standard Phase or the Standard Task
-  public String calculateContractDate(String strStartDate, String strStdDuration,
+  private String calculateContractDate(String strStartDate, String strStdDuration,
       DateFormat DateFormatter) throws ParseException {
     String strContractDate = "";
     if (strStartDate != null && !strStartDate.equals("") && strStdDuration != null

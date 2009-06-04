@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.ad_actionButton;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.StringTokenizer;
 
@@ -40,8 +39,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateFromMultiple extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-
-  static final BigDecimal ZERO = new BigDecimal(0.0);
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -107,8 +104,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPage_FS(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPage_FS(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: FrameSet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -131,8 +128,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     }
   }
 
-  void printPageReceipt(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String strWindowId, String strTabId, String strSOTrx, String strProcessId,
+  protected void printPageReceipt(HttpServletResponse response, VariablesSecureApp vars,
+      String strKey, String strWindowId, String strTabId, String strSOTrx, String strProcessId,
       String strBpartner, String strmWarehouseId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Receipt");
@@ -211,8 +208,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageShipment(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String strWindowId, String strTabId, String strSOTrx, String strProcessId,
+  protected void printPageShipment(HttpServletResponse response, VariablesSecureApp vars,
+      String strKey, String strWindowId, String strTabId, String strSOTrx, String strProcessId,
       String strBpartner, String strmWarehouseId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Shipment");
@@ -281,7 +278,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       return saveReceipt(vars, strKey, strWindowId);
   }
 
-  OBError saveReceipt(VariablesSecureApp vars, String strKey, String strWindowId)
+  protected OBError saveReceipt(VariablesSecureApp vars, String strKey, String strWindowId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Receipt");
@@ -343,7 +340,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  OBError saveShipment(VariablesSecureApp vars, String strKey, String strWindowId)
+  protected OBError saveShipment(VariablesSecureApp vars, String strKey, String strWindowId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Shipment");

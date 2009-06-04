@@ -61,7 +61,7 @@ public class SL_GlobalUse_Conversion extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strUOM,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strUOM,
       String strMProductUOMID, String strQuantityOrder, String strTabId) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())

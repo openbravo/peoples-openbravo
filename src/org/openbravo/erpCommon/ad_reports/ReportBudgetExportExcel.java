@@ -45,7 +45,7 @@ public class ReportBudgetExportExcel extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPageDataExportExcel(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataExportExcel(HttpServletResponse response, VariablesSecureApp vars,
       String strBudgetId) throws IOException, ServletException {
 
     if (log4j.isDebugEnabled())

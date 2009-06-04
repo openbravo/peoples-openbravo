@@ -164,7 +164,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
       String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown,
       String strShown, String strDateFromRef, String strDateToRef, String strOrg, String strOrder,
@@ -324,7 +324,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     out.close();
   }
 
-  void printPageHtml(HttpServletRequest request, HttpServletResponse response,
+  private void printPageHtml(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strComparative, String strDateFrom, String strDateTo,
       String strPartnerGroup, String strcBpartnerId, String strProductCategory,
       String strmProductId, String strNotShown, String strShown, String strDateFromRef,

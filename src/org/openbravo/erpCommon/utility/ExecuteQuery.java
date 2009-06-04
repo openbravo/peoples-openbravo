@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,7 +41,7 @@ public class ExecuteQuery {
     FIRST, PREVIOUS, NEXT, LAST, GETPOSITION
   };
 
-  static Logger log4j = Logger.getLogger(ExecuteQuery.class);
+  private static Logger log4j = Logger.getLogger(ExecuteQuery.class);
   private ConnectionProvider pool;
   private Vector<String> parameters = new Vector<String>();
   private String sql;
@@ -77,7 +77,7 @@ public class ExecuteQuery {
    *          Object handler for the database connection.
    * @throws Exception
    */
-  public void setPool(ConnectionProvider _conn) throws Exception {
+  void setPool(ConnectionProvider _conn) throws Exception {
     if (_conn == null)
       throw new Exception("The pool is null");
     this.pool = _conn;
@@ -88,7 +88,7 @@ public class ExecuteQuery {
    * 
    * @return Object with the database connection handler.
    */
-  public ConnectionProvider getPool() {
+  ConnectionProvider getPool() {
     return this.pool;
   }
 
@@ -99,7 +99,7 @@ public class ExecuteQuery {
    *          String with the query.
    * @throws Exception
    */
-  public void setSQL(String _sql) throws Exception {
+  void setSQL(String _sql) throws Exception {
     this.sql = ((_sql == null) ? "" : _sql);
   }
 
@@ -108,7 +108,7 @@ public class ExecuteQuery {
    * 
    * @return String with the query.
    */
-  public String getSQL() {
+  String getSQL() {
     return this.sql;
   }
 
@@ -119,7 +119,7 @@ public class ExecuteQuery {
    *          Vector with the parameters.
    * @throws Exception
    */
-  public void setParameters(Vector<String> _parameters) throws Exception {
+  void setParameters(Vector<String> _parameters) throws Exception {
     this.parameters = _parameters;
   }
 
@@ -128,7 +128,7 @@ public class ExecuteQuery {
    * 
    * @return Vector with the parameters.
    */
-  public Vector<String> getParameters() {
+  Vector<String> getParameters() {
     return this.parameters;
   }
 
@@ -138,7 +138,7 @@ public class ExecuteQuery {
    * @param _value
    *          String with the parameter.
    */
-  public void addParameter(String _value) {
+  void addParameter(String _value) {
     if (this.parameters == null)
       this.parameters = new Vector<String>();
     if (_value == null || _value.equals(""))
@@ -154,7 +154,7 @@ public class ExecuteQuery {
    *          Position of the selected parameter.
    * @return String with the parameter.
    */
-  public String getParameter(int position) {
+  String getParameter(int position) {
     if (this.parameters == null || this.parameters.size() < position)
       return "";
     else

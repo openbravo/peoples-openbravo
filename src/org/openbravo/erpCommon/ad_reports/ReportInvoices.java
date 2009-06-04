@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,7 +82,7 @@ public class ReportInvoices extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strM_Product_ID, String strDateFrom, String strDateTo,
       String strDocumentNo, String strOrder, String strC_BpGroup_ID, String strM_Product_Category_ID)
       throws IOException, ServletException {
@@ -121,7 +121,7 @@ public class ReportInvoices extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strM_Product_ID, String strDateFrom, String strDateTo,
       String strDocumentNo, String strOrder, String strC_BpGroup_ID, String strM_Product_Category_ID)
       throws IOException, ServletException {
@@ -271,8 +271,8 @@ public class ReportInvoices extends HttpSecureAppServlet {
    * 
    * 
    * try { ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-   * "C_BP_Group_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"),
-   * Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
+   * "C_BP_Group_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+   * "ReportInvoices"), Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
    * Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices", strC_BpGroup_ID);
    * xmlDocument.setData("reportC_Bp_Group","liststructure", comboTableData.select(false));
    * comboTableData = null; } catch (Exception ex) { throw new ServletException(ex); }
@@ -280,8 +280,8 @@ public class ReportInvoices extends HttpSecureAppServlet {
    * 
    * 
    * try { ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-   * "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"),
-   * Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
+   * "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+   * "ReportInvoices"), Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
    * Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices",
    * strM_Product_Category_ID); xmlDocument.setData("reportM_Product_Category","liststructure",
    * comboTableData.select(false)); comboTableData = null; } catch (Exception ex) { throw new

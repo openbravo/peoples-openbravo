@@ -65,7 +65,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDateexpense,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDateexpense,
       String strmProductId, String strsTimeexpenseId, String strqty, String strcCurrencyId,
       String strInvPrice, String strChanged, String strTabId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())

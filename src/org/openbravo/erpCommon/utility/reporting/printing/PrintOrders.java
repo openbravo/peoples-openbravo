@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SL All
- * portions are Copyright (C) 2001-2008 Openbravo SL All Rights Reserved.
+ * portions are Copyright (C) 2001-2009 Openbravo SL All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -24,12 +24,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 
 @SuppressWarnings("serial")
 public class PrintOrders extends PrintController {
-  static Logger log4j = Logger.getLogger(PrintOrders.class);
+  private static Logger log4j = Logger.getLogger(PrintOrders.class);
 
   // TODO: Als een email in draft staat de velden voor de email adressen
   // weghalen en melden dat het document

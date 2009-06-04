@@ -60,7 +60,7 @@ public class SL_InvoiceTax_Amt extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strTaxAmt, String strTaxBaseAmt, String strTaxId, String strInvoiceId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())

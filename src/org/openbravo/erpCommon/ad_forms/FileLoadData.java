@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,7 @@ import org.openbravo.base.MultipartRequest;
 import org.openbravo.base.VariablesBase;
 import org.openbravo.data.FieldProvider;
 
-public class FileLoadData extends MultipartRequest {
+class FileLoadData extends MultipartRequest {
   static Logger log4j = Logger.getLogger(FileLoadData.class);
 
   public FileLoadData() {

@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SL All
- * portions are Copyright (C) 2001-2008 Openbravo SL All Rights Reserved.
+ * portions are Copyright (C) 2001-2009 Openbravo SL All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 
@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,12 +36,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class Heartbeat extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    removeFromPageHistory(request);
 
     final org.openbravo.erpCommon.businessUtility.HeartbeatData[] data = org.openbravo.erpCommon.businessUtility.HeartbeatData
         .selectSystemProperties(this);
@@ -72,23 +76,7 @@ public class Heartbeat extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  /**
-   * Removes the Heartbeat pop-up from the page history so when Openbravo back arrow is pressed,
-   * Heartbeat window has no chance of being shown.
-   * 
-   * @param request
-   *          the HttpServletRequest object
-   */
-  public void removeFromPageHistory(HttpServletRequest request) {
-    final Variables variables = new Variables(request);
-    final String sufix = variables.getCurrentHistoryIndex();
-    variables.removeSessionValue("reqHistory.servlet" + sufix);
-    variables.removeSessionValue("reqHistory.path" + sufix);
-    variables.removeSessionValue("reqHistory.command" + sufix);
-    variables.downCurrentHistoryIndex();
-  }
-
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");

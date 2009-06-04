@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -27,7 +27,7 @@ import org.openbravo.exception.PoolNotFoundException;
 /**
  * Clase SqlStandardData
  */
-public class DefaultValuesData implements FieldProvider {
+class DefaultValuesData implements FieldProvider {
   public String columnname;
   static Logger log4j = Logger.getLogger(DefaultValuesData.class);
 

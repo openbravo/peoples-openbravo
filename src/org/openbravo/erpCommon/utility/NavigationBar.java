@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,16 +23,16 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ops.ActivationKey;
 
 public class NavigationBar {
-  static Logger log4j = Logger.getLogger(NavigationBar.class);
-  ConnectionProvider conn;
-  String language = "en_US";
-  String servlet_action = "";
-  String window_name = "";
-  String base_direction = "";
-  String breadcrumb = "";
-  String window_type = "";
-  boolean hideBack = false;
-  boolean validateChangesOnRefresh = true;
+  private static Logger log4j = Logger.getLogger(NavigationBar.class);
+  private ConnectionProvider conn;
+  private String language = "en_US";
+  private String servlet_action = "";
+  private String window_name = "";
+  private String base_direction = "";
+  private String breadcrumb = "";
+  private String window_type = "";
+  private boolean hideBack = false;
+  private boolean validateChangesOnRefresh = true;
 
   public NavigationBar(ConnectionProvider _conn, String _language, String _action,
       String _windowName, String _windowType, String _baseDirection, String _breadcrumb) {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,7 +64,7 @@ public class SE_Proposal_BPartner extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
       String strWindowId, String strLocation, String strContact, String strTabId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -83,8 +83,8 @@ public class SE_Proposal_BPartner extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this,
-              vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars, "#User_Client",
-              strWindowId), 0);
+              vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars,
+              "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       tdv = comboTableData.select(false);
       comboTableData = null;

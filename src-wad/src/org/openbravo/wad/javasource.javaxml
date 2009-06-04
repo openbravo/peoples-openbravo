@@ -52,13 +52,13 @@ import org.apache.log4j.Logger;
 public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   
-  static Logger log4j = Logger.getLogger(<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.class);
+  private static Logger log4j = Logger.getLogger(<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.class);
   
-  protected static final String windowId = "<PARAMETER_TMP id="windowId">Almacen</PARAMETER_TMP>";
-  protected static final String tabId = "<PARAMETER_TMP id="tabId">Almacen</PARAMETER_TMP>";
-  protected static final String defaultTabView = "<PARAMETER_TMP id="defaultView">RELATION</PARAMETER_TMP>";
-  protected static final int accesslevel = <PARAMETER_TMP id="accessLevel">xx</PARAMETER_TMP>;
-  protected static final double SUBTABS_COL_SIZE = 15;
+  private static final String windowId = "<PARAMETER_TMP id="windowId">Almacen</PARAMETER_TMP>";
+  private static final String tabId = "<PARAMETER_TMP id="tabId">Almacen</PARAMETER_TMP>";
+  private static final String defaultTabView = "<PARAMETER_TMP id="defaultView">RELATION</PARAMETER_TMP>";
+  private static final int accesslevel = <PARAMETER_TMP id="accessLevel">xx</PARAMETER_TMP>;
+  private static final double SUBTABS_COL_SIZE = 15;
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     TableSQLData tableSQL = null;
@@ -610,7 +610,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return "";
   }
 */
-  <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data getEditVariables(Connection con, VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException,ServletException {
+  private <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data getEditVariables(Connection con, VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException,ServletException {
     <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data data = new <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data();
     try {
 <FIELDS_TMP id="sectionDetailgetEditVariables">    data.<FIELD_TMP id="fieldName">claveAlmacen</FIELD_TMP> = <FIELD_TMP id="fieldEncryption">FormatUtilities.encryptDecrypt(</FIELD_TMP>vars.get<FIELD_TMP id="fieldType">StringParameter</FIELD_TMP>("inp<FIELD_TMP id="fieldName1">claveAlmacen</FIELD_TMP>"<FIELD_TMP id="fieldDefault">, "D"</FIELD_TMP>)<FIELD_TMP id="fieldEndEncryption">, true)</FIELD_TMP>;</FIELDS_TMP>
@@ -635,14 +635,14 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return data;
   }
 
-   <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] getRelationData(<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data) {
+   private <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] getRelationData(<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data) {
     if (data!=null) {
       for (int i=0;i&#60;data.length;i++) {<FIELDS_TMP id="sectionDetailgetRelationData">        data[i].<FIELD_TMP id="fieldRelationName">claveAlmacen</FIELD_TMP> = FormatUtilities.truncate(data[i].<FIELD_TMP id="fieldRelationName">claveAlmacen</FIELD_TMP>, <FIELD_TMP id="fieldMaxLength">35</FIELD_TMP>);</FIELDS_TMP>}
     }
     return data;
   }
 
-<PARAMETER_TMP id="parent">  void refreshParentSession(VariablesSecureApp vars, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>) throws IOException,ServletException {
+<PARAMETER_TMP id="parent">  private void refreshParentSession(VariablesSecureApp vars, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>) throws IOException,ServletException {
       <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data[] data = <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectEdit(this, vars.getLanguage()<PARAMETER_TMP id="parentwhereclause"></PARAMETER_TMP><PARAMETER_TMP id="grandfather">, vars.getSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>")</PARAMETER_TMP>, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel));
       if (data==null || data.length==0) return;
       <FIELDS_TMP id="sectionDetailParentSession">    vars.setSessionValue(windowId + "|<FIELD_TMP id="fieldRealName8">claveAlmacen</FIELD_TMP>", data[0].<FIELD_TMP id="fieldName8">claveAlmacen</FIELD_TMP>);</FIELDS_TMP>
@@ -651,7 +651,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       </LISTS_TMP>
   }
     
-  String getParentID(VariablesSecureApp vars, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>) throws ServletException {
+  private String getParentID(VariablesSecureApp vars, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>) throws ServletException {
     String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectParentID(this, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
     if (strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>.equals("")) {
       log4j.error("Parent record not found for id: " + str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
@@ -660,18 +660,18 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>;
   }</PARAMETER_TMP>
 
-    void refreshSessionEdit(VariablesSecureApp vars, FieldProvider[] data) {
+    private void refreshSessionEdit(VariablesSecureApp vars, FieldProvider[] data) {
       if (data==null || data.length==0) return;
       <FIELDS_TMP id="sectionDetailSession">    vars.setSessionValue(windowId + "|<FIELD_TMP id="fieldRealName9">claveAlmacen</FIELD_TMP>", data[0].getField("<FIELD_TMP id="fieldName9">claveAlmacen</FIELD_TMP>"));</FIELDS_TMP>
     }
 
-    void refreshSessionNew(VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException,ServletException {
+    private void refreshSessionNew(VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException,ServletException {
       <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectEdit(this, vars.getLanguage()<PARAMETER_TMP id="whereClauseParams"></PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, vars.getStringParameter("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", "")<PARAMETER_TMP id="client">, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARAMETER_TMP>);
       if (data==null || data.length==0) return;
       refreshSessionEdit(vars, data);
     }
 
-  String nextElement(VariablesSecureApp vars, String strSelected, TableSQLData tableSQL) throws IOException, ServletException {
+  private String nextElement(VariablesSecureApp vars, String strSelected, TableSQLData tableSQL) throws IOException, ServletException {
     if (strSelected == null || strSelected.equals("")) return firstElement(vars, tableSQL);
     if (tableSQL!=null) {
       String data = null;
@@ -689,7 +689,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return strSelected;
   }
 
-  int getKeyPosition(VariablesSecureApp vars, String strSelected, TableSQLData tableSQL) throws IOException, ServletException {
+  private int getKeyPosition(VariablesSecureApp vars, String strSelected, TableSQLData tableSQL) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("getKeyPosition: " + strSelected);
     if (tableSQL!=null) {
       String data = null;
@@ -707,7 +707,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return 0;
   }
 
-  String previousElement(VariablesSecureApp vars, String strSelected, TableSQLData tableSQL) throws IOException, ServletException {
+  private String previousElement(VariablesSecureApp vars, String strSelected, TableSQLData tableSQL) throws IOException, ServletException {
     if (strSelected == null || strSelected.equals("")) return firstElement(vars, tableSQL);
     if (tableSQL!=null) {
       String data = null;
@@ -725,7 +725,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return strSelected;
   }
 
-  String firstElement(VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
+  private String firstElement(VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
     if (tableSQL!=null) {
       String data = null;
       try{
@@ -741,7 +741,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return "";
   }
 
-  String lastElement(VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
+  private String lastElement(VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
     if (tableSQL!=null) {
       String data = null;
       try{
@@ -756,7 +756,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return "";
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, TableSQLData tableSQL)
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, TableSQLData tableSQL)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
 
@@ -854,7 +854,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     out.close();
   }
 
-  void printPageEdit(HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,boolean boolNew, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, TableSQLData tableSQL)
+  private void printPageEdit(HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,boolean boolNew, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, TableSQLData tableSQL)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: edit");
     
@@ -1132,14 +1132,14 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     }
 </FIELDS_TMP>
 
-<FIELDS_TMP id="selDisplayLogic">    String getDisplayLogicContext(VariablesSecureApp vars, boolean isNew) throws IOException, ServletException {
+<FIELDS_TMP id="selDisplayLogic">    private String getDisplayLogicContext(VariablesSecureApp vars, boolean isNew) throws IOException, ServletException {
       log4j.debug("Output: Display logic context fields");
       String result = "<PARAMETER_TMP id="paramDisplayLogic">xx</PARAMETER_TMP>";
       return result;
     }
 </FIELDS_TMP>
 
-<FIELDS_TMP id="selReadOnlyLogic">    String getReadOnlyLogicContext(VariablesSecureApp vars) throws IOException, ServletException {
+<FIELDS_TMP id="selReadOnlyLogic">    private String getReadOnlyLogicContext(VariablesSecureApp vars) throws IOException, ServletException {
       log4j.debug("Output: Read Only logic context fields");
       String result = "<PARAMETER_TMP id="paramReadOnlyLogic">xx</PARAMETER_TMP>";
       return result;

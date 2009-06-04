@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.ad_actionButton;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 import java.sql.Connection;
 
 import javax.servlet.ServletConfig;
@@ -36,7 +35,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class EditCCPMeasureValues extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final BigDecimal ZERO = new BigDecimal(0.0);
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -76,9 +74,9 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String strWindowId, String strTabId, String strProcessId, String strMeasureDate,
-      String strShift) throws IOException, ServletException {
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strKey, String strWindowId, String strTabId, String strProcessId,
+      String strMeasureDate, String strShift) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: values ");
     String[] discard = { "" };
@@ -140,7 +138,7 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
       log4j.debug("Output: values - out");
   }
 
-  OBError updateValues(VariablesSecureApp vars, String[] strValueId, String[] strGroupId,
+  private OBError updateValues(VariablesSecureApp vars, String[] strValueId, String[] strGroupId,
       String strKey, String strWindowId) {
 
     if (log4j.isDebugEnabled())

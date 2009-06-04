@@ -56,7 +56,7 @@ public class SE_PeriodNo extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strYearId,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strYearId,
       String strWindowId, String strOrgId, String strCalendarId, String strChanged)
       throws IOException, ServletException {
 

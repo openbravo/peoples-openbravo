@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -110,7 +110,7 @@ public class SalesOrder extends HttpSecureAppServlet {
     vars.removeSessionValue("SalesOrder.adorgid");
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strNameValue)
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strNameValue)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of the sale-orders seeker");
@@ -141,8 +141,8 @@ public class SalesOrder extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars, SalesOrderData[] data)
-      throws IOException, ServletException {
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+      SalesOrderData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: sale-orders seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -155,7 +155,7 @@ public class SalesOrder extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(SalesOrderData[] data) throws IOException, ServletException {
+  private String generateResult(SalesOrderData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -166,7 +166,7 @@ public class SalesOrder extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -220,7 +220,7 @@ public class SalesOrder extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
       String strBpartnerId, String strDateFrom, String strDateTo, String strDescription,
       String strCal1, String strCalc2, String strOrder, String strOrderCols, String strOrderDirs,
       String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,

@@ -46,18 +46,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class ExpenseAPInvoice extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final BigDecimal ZERO = BigDecimal.ZERO;
+  private static final BigDecimal ZERO = BigDecimal.ZERO;
   static Logger log4j = Logger.getLogger(ExpenseAPInvoice.class);
-
-  String strVersionNo = "";
-  String strIsHTML = "";
-  String strMailHeader = "";
-  String strMailText = "";
-  String strrMailTextId = "";
-  String strAttachAsset = "";
-  String strProductDownloadURL = "";
-  String strProductVersionNo = "";
-  String strProductRMailTextID = "";
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -93,7 +83,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError processExpense(VariablesSecureApp vars, String strcBpartnerId, String strDatereportFrom,
+  private OBError processExpense(VariablesSecureApp vars, String strcBpartnerId, String strDatereportFrom,
       String strDatereportTo, String strDateInvoiced) {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Expense AP Invoice");
@@ -443,7 +433,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
 
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strcBpartnerId,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strcBpartnerId,
       String strDatereportFrom, String strDatereportTo, String strDateInvoiced) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())

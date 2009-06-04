@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -28,8 +28,8 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.database.ConnectionProvider;
 
 import com.spikesource.lam.bindings.LamClient;
 
@@ -40,7 +40,7 @@ import com.spikesource.lam.bindings.LamClient;
 public class LamAuthenticationManager implements AuthenticationManager {
 
   private ConnectionProvider conn = null;
-  public static final String AUTHENTICATED_USER_ATTRIBUTE = "#Authenticated_user";
+  private static final String AUTHENTICATED_USER_ATTRIBUTE = "#Authenticated_user";
 
   /** Creates a new instance of LamAuthenticationManager */
   public LamAuthenticationManager() {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,7 +63,7 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
 
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -133,9 +133,9 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePdf(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom,
-      String strdateTo, String strcBpartnetId, String strmWarehouseId, String strcProjectId,
-      String strissotrx) throws IOException, ServletException {
+  private void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
+      String strdateFrom, String strdateTo, String strcBpartnetId, String strmWarehouseId,
+      String strcProjectId, String strissotrx) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print pdf");
     String strOutput = new String(vars.commandIn("EDIT_PDF") ? "pdf" : "html");

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,7 +71,7 @@ public class UsedByLink extends HttpSecureAppServlet {
       throw new ServletException();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindow,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindow,
       String TabId, String keyColumn, String keyId, String tableId) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -154,7 +154,7 @@ public class UsedByLink extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDetail(HttpServletRequest request, HttpServletResponse response,
+  private void printPageDetail(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strWindow, String TabId, String keyColumn, String keyId,
       String strAD_TAB_ID, String strTABLENAME, String strCOLUMNNAME, String adTableId)
       throws IOException, ServletException {
@@ -284,7 +284,7 @@ public class UsedByLink extends HttpSecureAppServlet {
     return " AND " + where.toString();
   }
 
-  public String getAditionalWhereClause(VariablesSecureApp vars, String strWindow, String adTabId,
+  private String getAditionalWhereClause(VariablesSecureApp vars, String strWindow, String adTabId,
       String tableName, String keyColumn, String columnName, String parentTableName)
       throws ServletException {
     String result = "";

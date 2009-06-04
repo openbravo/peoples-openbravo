@@ -77,7 +77,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
       String strOrderType, String strIsSOTrx, String strWindowId, String strLocation,
       String strContact, String strProjectId, String strTabId, String strDeliveryRule0,
       String strUserRep0, String strPaymentrule0, String strPaymentterm0, String strInvoiceRule0,

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,16 +51,16 @@ public class RptC_Settlement extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strcSettlementId)
-      throws IOException, ServletException {
+  private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strcSettlementId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_Settlement")
         .createXmlDocument();
 
     RptCSettlementData[] pdfSettlementData = RptCSettlementData.select(this, Utility.getContext(
-        this, vars, "#User_Client", "RptC_Settlement"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        "RptC_Settlement"), strcSettlementId);
+        this, vars, "#User_Client", "RptC_Settlement"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "RptC_Settlement"), strcSettlementId);
 
     if (pdfSettlementData == null || pdfSettlementData.length == 0)
       pdfSettlementData = RptCSettlementData.set();

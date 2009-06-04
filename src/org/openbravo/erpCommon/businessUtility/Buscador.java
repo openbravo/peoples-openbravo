@@ -39,8 +39,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Buscador extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  protected static final int MAX_TEXTBOX_LENGTH = 150;
-  protected static final int MAX_TEXTBOX_DISPLAY = 30;
+  private static final int MAX_TEXTBOX_LENGTH = 150;
+  private static final int MAX_TEXTBOX_DISPLAY = 30;
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -92,7 +92,7 @@ public class Buscador extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  BuscadorData[] removeParents(BuscadorData[] data, String strTab) throws ServletException {
+  private BuscadorData[] removeParents(BuscadorData[] data, String strTab) throws ServletException {
     String parentColumn = BuscadorData.parentsColumnName(this, strTab);
     if (data == null || data.length == 0)
       return data;
@@ -112,7 +112,7 @@ public class Buscador extends HttpSecureAppServlet {
     return result;
   }
 
-  boolean loadParameters(VariablesSecureApp vars, BuscadorData[] data, String strTab)
+  private boolean loadParameters(VariablesSecureApp vars, BuscadorData[] data, String strTab)
       throws ServletException {
     if (data == null || data.length == 0)
       return false;
@@ -126,7 +126,7 @@ public class Buscador extends HttpSecureAppServlet {
     return isEmpty;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTab,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTab,
       BuscadorData[] data, String strWindow, String strWindowId, String strIsSOTrx)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -162,7 +162,7 @@ public class Buscador extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateScript(BuscadorData[] fields, String strWindow, String strTab) {
+  private String generateScript(BuscadorData[] fields, String strWindow, String strTab) {
     StringBuffer strHtml = new StringBuffer();
     StringBuffer strCombo = new StringBuffer();
     strHtml.append("function aceptar() {\n");
@@ -338,7 +338,7 @@ public class Buscador extends HttpSecureAppServlet {
     return strHtml.toString();
   }
 
-  String generateHtml(VariablesSecureApp vars, BuscadorData[] fields, String strTab,
+  private String generateHtml(VariablesSecureApp vars, BuscadorData[] fields, String strTab,
       String strWindow, StringBuffer script, String strIsSOTrx, Vector<StringBuffer> vecScript)
       throws IOException, ServletException {
     if (fields == null || fields.length == 0)
@@ -856,7 +856,7 @@ public class Buscador extends HttpSecureAppServlet {
     return strHtml.toString();
   }
 
-  public String locationCommands(BuscadorData efd) {
+  private String locationCommands(BuscadorData efd) {
     StringBuffer html = new StringBuffer();
 
     html.append(
@@ -868,7 +868,7 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  public String location(BuscadorData efd) {
+  private String location(BuscadorData efd) {
     StringBuffer html = new StringBuffer();
     html.append("<td class=\"FieldButton_bg\">");
     html.append("<a href=\"#\" class=\"FieldButtonLink\" ");
@@ -885,7 +885,7 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  public String searchsCommand(BuscadorData efd, boolean fromButton, String tabId, String windowId,
+  private String searchsCommand(BuscadorData efd, boolean fromButton, String tabId, String windowId,
       String strIsSOTrx) {
     StringBuffer params = new StringBuffer();
     StringBuffer html = new StringBuffer();
@@ -937,7 +937,7 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  public String searchs(BuscadorData efd, String tabId, String windowId, String strIsSOTrx) {
+  private String searchs(BuscadorData efd, String tabId, String windowId, String strIsSOTrx) {
     StringBuffer html = new StringBuffer();
     if (efd.searchname.toUpperCase().indexOf("BUSINESS") != -1) {
       html.append("<input type=\"hidden\" name=\"inpParam").append(
@@ -973,7 +973,7 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  public String locatorCommands(BuscadorData efd, boolean fromButton, String windowId) {
+  private String locatorCommands(BuscadorData efd, boolean fromButton, String windowId) {
     StringBuffer params = new StringBuffer();
     StringBuffer html = new StringBuffer();
     if (!fromButton) {
@@ -990,7 +990,7 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  public String locator(BuscadorData efd, String windowId) {
+  private String locator(BuscadorData efd, String windowId) {
     StringBuffer html = new StringBuffer();
     html.append("<td class=\"FieldButton_bg\">");
     html.append("<a href=\"#\"  class=\"FieldButtonLink\" ");

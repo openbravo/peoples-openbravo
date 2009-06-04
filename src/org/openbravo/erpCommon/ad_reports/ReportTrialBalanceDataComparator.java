@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,7 @@ package org.openbravo.erpCommon.ad_reports;
 
 import java.util.Comparator;
 
-public class ReportTrialBalanceDataComparator implements Comparator<Object> {
+class ReportTrialBalanceDataComparator implements Comparator<Object> {
   public int compare(Object obj1, Object obj2) {
     String code1 = ((ReportTrialBalanceData) obj1).accountId.toUpperCase();
     String code2 = ((ReportTrialBalanceData) obj2).accountId.toUpperCase();

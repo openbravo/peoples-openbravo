@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -135,7 +135,7 @@ public class ReportRefundInvoiceCustomerDimensionalAnalyses extends HttpSecureAp
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
       String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown,
       String strShown, String strDateFromRef, String strDateToRef, String strOrg,
@@ -220,12 +220,12 @@ public class ReportRefundInvoiceCustomerDimensionalAnalyses extends HttpSecureAp
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(
-            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strcBpartnerId));
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
+            ""), strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(this, Utility.getContext(
-            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strmProductId));
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
+            ""), strmProductId));
 
     if (vars.getLanguage().equals("en_US")) {
       xmlDocument.setData("structure1", ReportRefundInvoiceCustomerDimensionalAnalysesData
@@ -248,12 +248,12 @@ public class ReportRefundInvoiceCustomerDimensionalAnalyses extends HttpSecureAp
     out.close();
   }
 
-  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strComparative,
-      String strDateFrom, String strDateTo, String strPartnerGroup, String strcBpartnerId,
-      String strProductCategory, String strmProductId, String strNotShown, String strShown,
-      String strDateFromRef, String strDateToRef, String strOrg, String strsalesrepId,
-      String strOrder, String strMayor, String strMenor, String strRatioMayor, String strRatioMenor)
-      throws IOException, ServletException {
+  private void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
+      String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown,
+      String strShown, String strDateFromRef, String strDateToRef, String strOrg,
+      String strsalesrepId, String strOrder, String strMayor, String strMenor,
+      String strRatioMayor, String strRatioMenor) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     XmlDocument xmlDocument = null;

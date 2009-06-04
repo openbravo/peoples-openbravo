@@ -33,7 +33,7 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 
 import org.apache.log4j.Logger;
 
-public class ReportDesignBO {
+class ReportDesignBO {
   public static Logger log4j = Logger.getLogger("org.openbravo.erpCommon.utility.GridBO");
   private int px = 0;
 

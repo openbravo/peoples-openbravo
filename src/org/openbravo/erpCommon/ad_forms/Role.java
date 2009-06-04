@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -93,7 +93,7 @@ public class Role extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void changePassword(VariablesSecureApp vars, String strClaveOld, String strClaveNew)
+  private void changePassword(VariablesSecureApp vars, String strClaveOld, String strClaveNew)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Login change process change");
@@ -205,12 +205,12 @@ public class Role extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("structureRol", datarole);
-    xmlDocument.setParameter("clientes", arrayDobleEntrada("arrClientes", vecClients
+    xmlDocument.setParameter("clientes", Utility.arrayDobleEntrada("arrClientes", vecClients
         .toArray(new ClientData[vecClients.size()])));
-    xmlDocument.setParameter("organizaciones", arrayDobleEntrada("arrOrgs", OrganizationData
-        .selectLogin(this)));
-    xmlDocument
-        .setParameter("warehouses", arrayDobleEntrada("arrWare", WarehouseData.select(this)));
+    xmlDocument.setParameter("organizaciones", Utility.arrayDobleEntrada("arrOrgs",
+        OrganizationData.selectLogin(this)));
+    xmlDocument.setParameter("warehouses", Utility.arrayDobleEntrada("arrWare", WarehouseData
+        .select(this)));
 
     {
       OBError myMessage = vars.getMessage("Role");

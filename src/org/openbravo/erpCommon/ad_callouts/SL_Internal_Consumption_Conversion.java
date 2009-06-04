@@ -61,7 +61,7 @@ public class SL_Internal_Consumption_Conversion extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strUOM, String strMProductUOMID, String strQuantityOrder, String strTabId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())

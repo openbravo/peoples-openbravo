@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,7 +71,7 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strLevel, String strId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -84,7 +84,7 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String strTreeAccount = ReportTrialBalanceDetailData.treeAccount(this, vars.getClient());
     ReportTrialBalanceDetailData[] data = null;
-    if (strDateFrom.equals("") && strDateTo.equals("")|| strId.equals("")) {
+    if (strDateFrom.equals("") && strDateTo.equals("") || strId.equals("")) {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportTrialBalanceDetail", discard)
           .createXmlDocument();
@@ -115,9 +115,9 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("printPageDataSheet - select - strId = " + strId);
       data = ReportTrialBalanceDetailData.select(this, strOrgFamily, Utility.getContext(this, vars,
-          "#User_Client", "ReportTrialBalanceDetail"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportTrialBalanceDetail"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-          strIdFamily, strId);
+          "#User_Client", "ReportTrialBalanceDetail"), Utility.getContext(this, vars,
+          "#AccessibleOrgTree", "ReportTrialBalanceDetail"), strDateFrom, DateTimeData.nDaysAfter(
+          this, strDateTo, "1"), strIdFamily, strId);
     }
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTrialBalanceDetail", false, "",
@@ -160,7 +160,7 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
     out.close();
   }
 
-  public String getFamily(String strTree, String strChild) throws IOException, ServletException {
+  private String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, strChild);
     /*
      * ReportGeneralLedgerData [] data = ReportGeneralLedgerData.selectChildren(this, strTree,

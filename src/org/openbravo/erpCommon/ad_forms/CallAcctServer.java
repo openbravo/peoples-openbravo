@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -225,8 +225,8 @@ public class CallAcctServer extends HttpSecureAppServlet {
    * ""); } }
    */
 
-  public void printPageAjax(HttpServletResponse response, VariablesSecureApp vars, String strMessage)
-      throws IOException, ServletException {
+  private void printPageAjax(HttpServletResponse response, VariablesSecureApp vars,
+      String strMessage) throws IOException, ServletException {
     response.setContentType("text/plain; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();

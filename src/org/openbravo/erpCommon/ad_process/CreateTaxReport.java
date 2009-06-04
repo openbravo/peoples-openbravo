@@ -43,8 +43,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateTaxReport extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  public static String strTreeOrg = "";
-  public static int rownum = 1;
+  private static String strTreeOrg = "";
+  private static int rownum = 1;
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -74,7 +74,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTaxReportId,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTaxReportId,
       String strDateFrom, String strDateTo, String strOrg, String strProcessId) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -168,7 +168,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePopUp(HttpServletResponse response, VariablesSecureApp vars, String strTaxReportId,
+  private void printPagePopUp(HttpServletResponse response, VariablesSecureApp vars, String strTaxReportId,
       String strDateFrom, String strDateTo, String strOrg) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pop up CreateTaxReport");
@@ -208,7 +208,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
    * (i<data.length-1) result += ",\n"; } result += ");"; } return result; }
    */
 
-  void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException {
+  private void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException {
     CreateTaxReportData[] dataOrg = CreateTaxReportData.selectOrg(this, strOrg, vars.getClient());
     for (int i = 0; i < dataOrg.length; i++) {
       strTreeOrg += "," + dataOrg[i].id;
@@ -218,7 +218,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     return;
   }
 
-  void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strTaxReportId,
+  private void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strTaxReportId,
       String strPeriodFrom, String strPeriodTo, String strOrg, int level, String strParent,
       int rownum) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -270,7 +270,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     }
   }
 
-  CreateTaxReportData[] convertVector(Vector<Object> vectorArray) throws ServletException {
+  private CreateTaxReportData[] convertVector(Vector<Object> vectorArray) throws ServletException {
     CreateTaxReportData[] data = new CreateTaxReportData[vectorArray.size()];
     BigDecimal count = BigDecimal.ZERO;
     for (int i = 0; i < vectorArray.size(); i++) {

@@ -81,7 +81,7 @@ import com.lowagie.text.pdf.PdfReader;
 
 @SuppressWarnings("serial")
 public class PrintController extends HttpSecureAppServlet {
-  final Map<String, TemplateData[]> differentDocTypes = new HashMap<String, TemplateData[]>();
+  private final Map<String, TemplateData[]> differentDocTypes = new HashMap<String, TemplateData[]>();
   private PocData[] pocData;
   private boolean multiReports = false;
   private boolean archivedReports = false;
@@ -150,7 +150,7 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   @SuppressWarnings("unchecked")
-  protected void post(HttpServletRequest request, HttpServletResponse response,
+  void post(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, DocumentType documentType, String sessionValuePrefix,
       String strDocumentId) throws IOException, ServletException {
 
@@ -567,7 +567,7 @@ public class PrintController extends HttpSecureAppServlet {
 
   }
 
-  protected PocData[] getContactDetails(DocumentType documentType, String strDocumentId)
+  PocData[] getContactDetails(DocumentType documentType, String strDocumentId)
       throws ServletException {
     switch (documentType) {
     case QUOTATION:
@@ -584,7 +584,7 @@ public class PrintController extends HttpSecureAppServlet {
     return null;
   }
 
-  protected void sendDocumentEmail(Report report, VariablesSecureApp vars, Object object,
+  void sendDocumentEmail(Report report, VariablesSecureApp vars, Object object,
       PocData documentData, String senderAddess, HashMap<String, Boolean> checks)
       throws IOException, ServletException {
     final String documentId = report.getDocumentId();

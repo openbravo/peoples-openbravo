@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Business Momentum b.v.
- * All portions are Copyright (C) 2007-2008 Openbravo SL 
+ * All portions are Copyright (C) 2007-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  Business Momentum b.v. (http://www.businessmomentum.eu).
  *************************************************************************
@@ -147,11 +147,11 @@ public class ReportManager {
     return jasperPrint;
   }
 
-  public String getAttachmentPath() {
+  private String getAttachmentPath() {
     return _strAttachmentPath;
   }
 
-  public String getTempReportDir() {
+  private String getTempReportDir() {
     return TEMP_REPORT_DIR;
   }
 

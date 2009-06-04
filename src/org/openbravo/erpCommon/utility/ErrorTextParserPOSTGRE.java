@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,7 +60,7 @@ import org.openbravo.data.FieldProvider;
  *         Instance of the Abstract class, ErrorTextParser, that implements the error parsing for
  *         POSTGRESQL RDBMS.
  */
-public class ErrorTextParserPOSTGRE extends ErrorTextParser {
+class ErrorTextParserPOSTGRE extends ErrorTextParser {
   static Logger log4j = Logger.getLogger(ErrorTextParserPOSTGRE.class);
 
   /**

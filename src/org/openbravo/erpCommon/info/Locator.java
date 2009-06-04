@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -102,8 +102,8 @@ public class Locator extends HttpSecureAppServlet {
     vars.removeSessionValue("Locator.adorgid");
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strNameValue,
-      String strWarehousename) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strNameValue, String strWarehousename) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of Locators seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Locator")
@@ -126,8 +126,8 @@ public class Locator extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars, LocatorData[] data)
-      throws IOException, ServletException {
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+      LocatorData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Locators seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -140,7 +140,7 @@ public class Locator extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(LocatorData[] data) throws IOException, ServletException {
+  private String generateResult(LocatorData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -151,7 +151,7 @@ public class Locator extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -206,7 +206,7 @@ public class Locator extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
       String strWarehousename, String strAisle, String strBin, String strLevel,
       String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
       String strNewFilter, String strOrg) throws IOException, ServletException {

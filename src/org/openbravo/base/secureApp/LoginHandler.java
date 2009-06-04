@@ -28,7 +28,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class LoginHandler extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
-  String strServletPorDefecto;
+  private String strServletPorDefecto;
 
   @Override
   public void init(ServletConfig config) {

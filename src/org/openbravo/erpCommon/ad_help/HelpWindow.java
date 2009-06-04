@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
 
 public class HelpWindow {
-  static Logger log4j = Logger.getLogger(HelpWindow.class);
+  private static Logger log4j = Logger.getLogger(HelpWindow.class);
 
   public static String generateWindow(ConnectionProvider conn, XmlEngine xmlEngine,
       VariablesSecureApp vars, boolean discardEdit, String strKeyId) throws IOException,

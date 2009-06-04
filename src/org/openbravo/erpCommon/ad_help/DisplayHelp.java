@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -277,8 +277,8 @@ public class DisplayHelp extends HttpSecureAppServlet {
     }
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strWindow)
-      throws IOException, ServletException {
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strWindow) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Help Displayer");
     /*
@@ -308,8 +308,8 @@ public class DisplayHelp extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageEdit_FS(HttpServletResponse response, VariablesSecureApp vars, String strTipo)
-      throws IOException, ServletException {
+  private void printPageEdit_FS(HttpServletResponse response, VariablesSecureApp vars,
+      String strTipo) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Help Editor");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -325,8 +325,8 @@ public class DisplayHelp extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageEdit_F1(HttpServletResponse response, VariablesSecureApp vars, String strClave,
-      String strTipo) throws IOException, ServletException {
+  private void printPageEdit_F1(HttpServletResponse response, VariablesSecureApp vars,
+      String strClave, String strTipo) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Help Editor");
     String[] discard = { "" };
@@ -375,8 +375,8 @@ public class DisplayHelp extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageEdit_F2(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageEdit_F2(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Help Editor");
     OBError myMessage = vars.getMessage("Help");
@@ -404,7 +404,7 @@ public class DisplayHelp extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageEditField_F1(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageEditField_F1(HttpServletResponse response, VariablesSecureApp vars,
       String strClave, String strTipo) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Help Editor");
@@ -436,7 +436,7 @@ public class DisplayHelp extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageEditField_F2(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageEditField_F2(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Help Editor");
@@ -466,7 +466,7 @@ public class DisplayHelp extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageEditElement_F1(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageEditElement_F1(HttpServletResponse response, VariablesSecureApp vars,
       String strClave, String strTipo) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Help Editor");
@@ -499,7 +499,7 @@ public class DisplayHelp extends HttpSecureAppServlet {
 
   }
 
-  void printPageEditElement_F2(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageEditElement_F2(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Help Editor");

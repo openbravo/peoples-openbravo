@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,7 +89,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars, String strisReceipt,
+  private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars, String strisReceipt,
       String strcolumn1, String strcolumn2, String strcolumn3, String strcolumn4,
       String strcBpartnerId, String strOrgTrx, String strfirstPrint) throws IOException,
       ServletException {
@@ -121,22 +121,17 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
 
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strisReceipt, String strcolumn1, String strcolumn2, String strcolumn3,
       String strcolumn4, String strcBpartnerId, String strOrgTrx, String strfirstPrint)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
-    response.setContentType("text/html");
+    response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String discard[] = { "sectionDocType" };
     XmlDocument xmlDocument = null;
     ReportAgingBalanceData[] data = null;
-    // Jarenor
-    /*
-     * String strClient=Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"); String
-     * strOrg= Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance");
-     */
 
     String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrgTrx);
@@ -248,14 +243,14 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateToCol5", "");
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInOutData.selectBpartner(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
-            "#User_Client", ""), strcBpartnerId));
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();
   }
 
-  public String getFamily(String strTree, String strChild) throws IOException, ServletException {
+  private  String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, strChild);
     /*
      * ReportGeneralLedgerData [] data = ReportGeneralLedgerData.selectChildren(this, strTree,

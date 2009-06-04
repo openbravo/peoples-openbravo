@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -73,8 +73,8 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageCallOut(HttpServletResponse response, VariablesSecureApp vars, String windowId)
-      throws IOException, ServletException {
+  private void printPageCallOut(HttpServletResponse response, VariablesSecureApp vars,
+      String windowId) throws IOException, ServletException {
     response.setContentType("text/plain");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
@@ -94,8 +94,8 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strInvoice,
-      String windowId) throws IOException, ServletException {
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strInvoice, String windowId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     InvoiceVendorMultilineLinesData[] data = InvoiceVendorMultilineLinesData.select(this, vars
@@ -134,7 +134,7 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
     out.close();
   }
 
-  InvoiceVendorMultilineLinesData getEditVariables(VariablesSecureApp vars, String windowId)
+  private InvoiceVendorMultilineLinesData getEditVariables(VariablesSecureApp vars, String windowId)
       throws IOException, ServletException {
     InvoiceVendorMultilineLinesData data = new InvoiceVendorMultilineLinesData();
 
@@ -226,8 +226,8 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
     return data;
   }
 
-  void printPageHidden(HttpServletResponse response, VariablesSecureApp vars, String windowId)
-      throws IOException, ServletException {
+  private void printPageHidden(HttpServletResponse response, VariablesSecureApp vars,
+      String windowId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: hidden");
     InvoiceVendorMultilineLinesData data = getEditVariables(vars, windowId);

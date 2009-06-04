@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,7 +49,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class MaterialReceiptPending extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static int total = 0;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -101,7 +100,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo,
       String strDocumentNo, String commandIn) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -234,8 +233,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     out.close();
   }
 
-  OBError processPurchaseOrder(VariablesSecureApp vars, String strcOrderLineId) throws IOException,
-      ServletException {
+  private OBError processPurchaseOrder(VariablesSecureApp vars, String strcOrderLineId)
+      throws IOException, ServletException {
     String strMessageResult = "";
     String strMessageType = "Success";
     String strWindowName = WindowTabsData.selectWindowInfo(this, vars.getLanguage(), "184");
@@ -358,7 +357,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  OBError mInoutPost(Connection conn, VariablesSecureApp vars, String strmInoutId)
+  private OBError mInoutPost(Connection conn, VariablesSecureApp vars, String strmInoutId)
       throws IOException, ServletException, SQLException {
     String pinstance = SequenceIdData.getUUID();
 

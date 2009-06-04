@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -109,7 +109,7 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcProjectId, String strcBpartnerId,
       String strmCategoryId, String strProjectkind, String strProjectstatus,
       String strProjectphase, String strProduct, String strProjectpublic, String strSalesRep,
@@ -218,8 +218,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", SubCategoryProductData.select(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility
-            .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR")));
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"),
+        Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR")));
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "C_REGION_ID", "",
@@ -236,9 +236,9 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLE", "", "190",
-          "AD_User SalesRep", Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility.getContext(
-              this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+          "AD_User SalesRep", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportInvoiceCustomerJR"), Utility.getContext(this, vars, "#User_Client",
+              "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
           strSalesRep);
       xmlDocument.setData("reportSALESREP", "liststructure", comboTableData.select(false));
@@ -250,8 +250,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility
-              .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -261,11 +261,11 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportProjectBuildingSiteData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
-            this, vars, "#User_Client", ""), strcBpartnerId));
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure", ReportProjectBuildingSiteData
-        .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
-            this, vars, "#User_Client", ""), strProduct));
+        .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strProduct));
 
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -278,7 +278,7 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageHtml(HttpServletRequest request, HttpServletResponse response,
+  private void printPageHtml(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcProjectId,
       String strcBpartnerId, String strmCategoryId, String strProjectkind, String strProjectstatus,
       String strProjectphase, String strProduct, String strProjectpublic, String strSalesRep,
@@ -295,10 +295,10 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     myMessage = new OBError();
     try {
       data = InvoiceCustomerEditionData.select(this, strCurrencyId, Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "InvoiceCustomerFilter"), Utility.getContext(this, vars, "#User_Client",
-          "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId, strcProjectId,
-          strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic,
-          strcRegionId, strSalesRep, strProduct);
+          "#AccessibleOrgTree", "InvoiceCustomerFilter"), Utility.getContext(this, vars,
+          "#User_Client", "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId,
+          strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus,
+          strProjectpublic, strcRegionId, strSalesRep, strProduct);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }

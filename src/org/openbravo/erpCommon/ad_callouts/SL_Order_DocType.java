@@ -69,7 +69,7 @@ public class SL_Order_DocType extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
       String strDocTypeTarget, String strDocType, String docNo, String strOrder,
       String strDescription, String strTabId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())

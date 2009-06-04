@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -77,11 +77,11 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     prefix = null;
   }
 
-  public String name() {
+  String name() {
     return strName;
   }
 
-  public String fileConfiguration() {
+  String fileConfiguration() {
     return fileConfiguration;
   }
 
@@ -92,7 +92,7 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
   // XmlEngineNP: make sure this functions can be addede or deleted from the
   // constructor, because it is necessary to make clear, or also for the
   // subreports
-  public void clear() {
+  void clear() {
     /*
      * pass to XmlDocument for (Enumeration e = hasDataTemplate.elements() ; e.hasMoreElements();) {
      * DataTemplate elementDataTemplate = (DataTemplate)e.nextElement();
@@ -306,8 +306,8 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
   }
 
   public void endElement(java.lang.String uri, java.lang.String name, java.lang.String qName) { // throws
-                                                                                                // SAXException
-                                                                                                // {
+    // SAXException
+    // {
     do {
       if (log4jXmlTemplate.isDebugEnabled())
         log4jXmlTemplate.debug("XmlTemplate: endElement is called: " + name + " strElement: "
@@ -380,7 +380,7 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     return createXmlDocument(null);
   }
 
-  public XmlDocument createXmlDocument(XmlDocument parentXmlDocument) {
+  XmlDocument createXmlDocument(XmlDocument parentXmlDocument) {
     XmlDocument subXmlDocument = new XmlDocument(this, parentXmlDocument);
     return subXmlDocument;
   }

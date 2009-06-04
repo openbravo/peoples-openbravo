@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2008 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -38,13 +38,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.fop.apps.Driver;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.database.JNDIConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.exception.PoolNotFoundException;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlEngine;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -60,17 +58,17 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
   private static final long serialVersionUID = 1L;
   protected ConnectionProvider myPool;
   public String strDireccion;
-  public String strReplaceWith;
-  public String strReplaceWithFull;
+  protected String strReplaceWith;
+  protected String strReplaceWithFull;
   protected String strDefaultServlet;
   public XmlEngine xmlEngine = null;
-  public String strBaseConfigPath;
-  protected static String strContext = null;
-  protected static String prefix = null;
-  protected static String stcFileProperties = null;
-  protected boolean isJNDIModeOn;
-  public Logger log4j = Logger.getLogger(this.getClass());
-  protected String PoolFileName;
+  private String strBaseConfigPath;
+  private static String strContext = null;
+  private static String prefix = null;
+  private static String stcFileProperties = null;
+  private boolean isJNDIModeOn;
+  protected Logger log4j = Logger.getLogger(this.getClass());
+  private String PoolFileName;
 
   protected ConfigParameters globalParameters;
 
@@ -537,7 +535,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * 
    * @return String with "Status unavailable" or "Not implemented yet"
    */
-  public String getPoolStatus() {
+  protected String getPoolStatus() {
     if (myPool instanceof ConnectionProviderImpl) {
       return ((ConnectionProviderImpl) myPool).getStatus();
     } else {
@@ -556,7 +554,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    *          HttpServletResponse object to which the PDF will be rendered to.
    * @throws ServletException
    */
-  public void renderFO(String strFo, HttpServletResponse response) throws ServletException {
+  protected void renderFO(String strFo, HttpServletResponse response) throws ServletException {
     // Check validity of the certificate
     // Create a trust manager that does not validate certificate chains
     TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
@@ -696,66 +694,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
     }
   }
 
-  /**
-   * Constructs and returns a two dimensional array of the data passed. Array definition is
-   * constructed according to Javascript syntax. Used to generate data storage of lists or trees
-   * within some manual windows/reports.
-   * 
-   * @param strArrayName
-   *          String with the name of the array to be defined.
-   * @param data
-   *          FieldProvider object with the data to be included in the array with the following
-   *          three columns mandatory: padre | id | name.
-   * @return String containing array definition according to Javascript syntax.
-   */
-  public String arrayDobleEntrada(String strArrayName, FieldProvider[] data) {
-    String strArray = "var " + strArrayName + " = ";
-    if (data.length == 0) {
-      strArray = strArray + "null";
-      return strArray;
-    }
-    strArray = strArray + "new Array(";
-    for (int i = 0; i < data.length; i++) {
-      strArray = strArray + "\nnew Array(\"" + data[i].getField("padre") + "\", \""
-          + data[i].getField("id") + "\", \"" + FormatUtilities.replaceJS(data[i].getField("name"))
-          + "\")";
-      if (i < data.length - 1)
-        strArray = strArray + ", ";
-    }
-    strArray = strArray + ");";
-    return strArray;
-  }
-
-  /**
-   * Constructs and returns a two dimensional array of the data passed. Array definition is
-   * constructed according to Javascript syntax. Used to generate data storage of lists or trees
-   * within some manual windows/reports.
-   * 
-   * @param strArrayName
-   *          String with the name of the array to be defined.
-   * @param data
-   *          FieldProvider object with the data to be included in the array with the following two
-   *          columns mandatory: id | name.
-   * @return String containing array definition according to Javascript syntax.
-   */
-  public String arrayEntradaSimple(String strArrayName, FieldProvider[] data) {
-    String strArray = "var " + strArrayName + " = ";
-    if (data.length == 0) {
-      strArray = strArray + "null";
-      return strArray;
-    }
-    strArray = strArray + "new Array(";
-    for (int i = 0; i < data.length; i++) {
-      strArray = strArray + "\nnew Array(\"" + data[i].getField("id") + "\", \""
-          + FormatUtilities.replaceJS(data[i].getField("name")) + "\")";
-      if (i < data.length - 1)
-        strArray = strArray + ", ";
-    }
-    strArray = strArray + ");";
-    return strArray;
-  }
-
-  public void makeConnection(ServletConfig config) throws PoolNotFoundException {
+  private void makeConnection(ServletConfig config) throws PoolNotFoundException {
     if (myPool != null) {
       try {
         myPool.destroy();

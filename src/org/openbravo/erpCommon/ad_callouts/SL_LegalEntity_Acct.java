@@ -55,7 +55,7 @@ public class SL_LegalEntity_Acct extends HttpSecureAppServlet {
 
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strIsAcctLE)
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strIsAcctLE)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");

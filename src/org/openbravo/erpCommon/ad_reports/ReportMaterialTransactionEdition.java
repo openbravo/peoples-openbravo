@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,7 +72,7 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -126,8 +126,8 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
     xmlDocument.setParameter("cProjectId", "");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "MaterialReceiptFilter"), Utility
-              .getContext(this, vars, "#User_Client", "MaterialReceiptFilter"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "MaterialReceiptFilter"),
+          Utility.getContext(this, vars, "#User_Client", "MaterialReceiptFilter"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "MaterialReceiptFilter", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -137,8 +137,8 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Project_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "MaterialReceiptFilter"), Utility
-              .getContext(this, vars, "#User_Client", "MaterialReceiptFilter"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "MaterialReceiptFilter"),
+          Utility.getContext(this, vars, "#User_Client", "MaterialReceiptFilter"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "MaterialReceiptFilter", "");
       xmlDocument.setData("reportC_PROJECTID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -152,9 +152,9 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom,
-      String strdateTo, String strcBpartnetId, String strmWarehouseId, String strcProjectId,
-      String strissotrx) throws IOException, ServletException {
+  private void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strdateFrom, String strdateTo, String strcBpartnetId, String strmWarehouseId,
+      String strcProjectId, String strissotrx) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     XmlDocument xmlDocument = null;
@@ -162,9 +162,9 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_reports/ReportMaterialTransactionEdition").createXmlDocument();
     InoutEditionData[] data = null;
     data = InoutEditionData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "MaterialReceiptFilter"), Utility.getContext(this, vars, "#User_Client",
-        "MaterialReceiptFilter"), strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId,
-        strcProjectId);
+        "#AccessibleOrgTree", "MaterialReceiptFilter"), Utility.getContext(this, vars,
+        "#User_Client", "MaterialReceiptFilter"), strdateFrom, strdateTo, strcBpartnetId,
+        strmWarehouseId, strcProjectId);
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -175,9 +175,9 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePdf(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom,
-      String strdateTo, String strcBpartnetId, String strmWarehouseId, String strcProjectId,
-      String strissotrx) throws IOException, ServletException {
+  private void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
+      String strdateFrom, String strdateTo, String strcBpartnetId, String strmWarehouseId,
+      String strcProjectId, String strissotrx) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print pdf");
     XmlDocument xmlDocument = null;
@@ -186,9 +186,9 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
         .createXmlDocument();
     InoutEditionData[] data = null;
     data = InoutEditionData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "MaterialReceiptFilter"), Utility.getContext(this, vars, "#User_Client",
-        "MaterialReceiptFilter"), strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId,
-        strcProjectId);
+        "#AccessibleOrgTree", "MaterialReceiptFilter"), Utility.getContext(this, vars,
+        "#User_Client", "MaterialReceiptFilter"), strdateFrom, strdateTo, strcBpartnetId,
+        strmWarehouseId, strcProjectId);
     xmlDocument.setData("structure1", data);
     String strResult = xmlDocument.print();
     if (log4j.isDebugEnabled())

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -150,7 +150,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageInstalled(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageInstalled(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Installed");
@@ -213,8 +213,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageApply(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageApply(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     try {
       final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_forms/ApplyModule").createXmlDocument();
@@ -276,7 +276,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageAdd(HttpServletRequest request, HttpServletResponse response,
+  private void printPageAdd(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String searchText, boolean displaySearch) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -339,8 +339,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageHistory(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strUser) throws IOException, ServletException {
+  private void printPageHistory(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strUser) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Installed");
     response.setContentType("text/html; charset=UTF-8");
@@ -405,8 +405,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageDetail(HttpServletResponse response, VariablesSecureApp vars, String recordId,
-      boolean local) throws IOException, ServletException {
+  private void printPageDetail(HttpServletResponse response, VariablesSecureApp vars,
+      String recordId, boolean local) throws IOException, ServletException {
     Module module = null;
     if (!local) {
       try {
@@ -480,7 +480,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @param response
    * @throws IOException
    */
-  void printPageInstallFile(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageInstallFile(HttpServletResponse response, VariablesSecureApp vars)
       throws ServletException, IOException {
     final FileItem fi = vars.getMultiFile("inpFile");
 
@@ -524,9 +524,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageInstall1(HttpServletResponse response, VariablesSecureApp vars, String recordId,
-      boolean islocal, InputStream obx, String[] updateModules) throws IOException,
-      ServletException {
+  private void printPageInstall1(HttpServletResponse response, VariablesSecureApp vars,
+      String recordId, boolean islocal, InputStream obx, String[] updateModules)
+      throws IOException, ServletException {
     final String discard[] = { "", "", "", "", "", "" };
     Module module = null;
     if (!islocal && (updateModules == null || updateModules.length == 0)) {
@@ -676,8 +676,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageInstall2(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageInstall2(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     Module[] inst = null;
     Module[] selected;
 
@@ -772,8 +772,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageInstall3(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageInstall3(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     final ImportModule im = (ImportModule) vars.getSessionObject("InstallModule|ImportModule");
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallP4").createXmlDocument();
@@ -905,8 +905,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printLicenseAgreement(HttpServletResponse response, VariablesSecureApp vars, String record)
-      throws IOException, ServletException {
+  private void printLicenseAgreement(HttpServletResponse response, VariablesSecureApp vars,
+      String record) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: ajaxreponse");
 
@@ -946,8 +946,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printSearchFile(HttpServletResponse response, VariablesSecureApp vars, OBError message)
-      throws IOException, ServletException {
+  private void printSearchFile(HttpServletResponse response, VariablesSecureApp vars,
+      OBError message) throws IOException, ServletException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallLocal").createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -966,7 +966,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printScan(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+  private void printScan(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: ajaxreponse");

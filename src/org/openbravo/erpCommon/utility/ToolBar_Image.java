@@ -11,14 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.utility;
 
-public class ToolBar_Image implements HTMLElement {
+class ToolBar_Image implements HTMLElement {
   String name = "";
   String description = "";
   String base_direction;

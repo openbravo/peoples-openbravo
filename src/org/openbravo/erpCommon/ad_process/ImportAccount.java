@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
  ******************************************************************************
  */
 
@@ -713,7 +713,7 @@ public class ImportAccount extends ImportProcess {
     return strResult;
   } // operandProcess
 
-  public String getValidCombination(Connection con, ConnectionProvider conn, String AD_Client_ID,
+  private String getValidCombination(Connection con, ConnectionProvider conn, String AD_Client_ID,
       String AD_Org_ID, String C_AcctSchema_ID, String Account_ID, String AD_User_ID)
       throws ServletException {
     if (Account_ID == null || Account_ID.equals(""))
@@ -728,7 +728,7 @@ public class ImportAccount extends ImportProcess {
     return C_ValidCombination_ID;
   }
 
-  public String nextSeqNo(String oldSeqNo) {
+  private String nextSeqNo(String oldSeqNo) {
     BigDecimal seqNo = new BigDecimal(oldSeqNo);
     String SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
     return SeqNo;

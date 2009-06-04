@@ -25,7 +25,7 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
-public class ReferencedTables {
+class ReferencedTables {
   static Logger log4j = Logger.getLogger(ReferencedTables.class);
   private ConnectionProvider conn;
   private String adTableId;

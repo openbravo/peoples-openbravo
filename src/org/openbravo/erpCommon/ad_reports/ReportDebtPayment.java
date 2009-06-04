@@ -170,7 +170,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strDateFrom, String strDateTo, String strCal1,
       String strCalc2, String strPaymentRule, String strSettle, String strConciliate,
       String strReceipt, String strPending, String strcbankaccount, String strStatus,
@@ -230,7 +230,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
 
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strDateFrom, String strDateTo, String strCal1,
       String strCalc2, String strPaymentRule, String strSettle, String strConciliate,
       String strReceipt, String strPending, String strcbankaccount, String strStatus,

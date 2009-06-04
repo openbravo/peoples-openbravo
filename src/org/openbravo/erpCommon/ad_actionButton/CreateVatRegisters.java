@@ -110,7 +110,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
    * strProcessed, strProcessing); t } else pageErrorPopUp(response);
    */
 
-  public OBError CreateRegisters(VariablesSecureApp vars, String strTaxpaymentID,
+  private OBError CreateRegisters(VariablesSecureApp vars, String strTaxpaymentID,
       String strDatefrom, String strDateto, String strProcessed, String strGeneratePayment,
       String strProcessing) throws IOException, ServletException {
     // Connection conn = getTransactionConnection();
@@ -297,7 +297,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindowId,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindowId,
       String strTabId, String strDatefrom, String strDateto, String strGeneratePayment,
       String strProcessed, String strProcessing, String strTaxpaymentID) throws IOException,
       ServletException {

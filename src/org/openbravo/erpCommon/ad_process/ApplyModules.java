@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -255,7 +255,7 @@ public class ApplyModules extends HttpSecureAppServlet {
    * @param msg
    *          optional additional message
    */
-  public static void createModuleLog(boolean success, String msg) {
+  private static void createModuleLog(boolean success, String msg) {
     final ModuleLog ml = OBProvider.getInstance().get(ModuleLog.class);
     ml.setAction("B");
     if (success) {

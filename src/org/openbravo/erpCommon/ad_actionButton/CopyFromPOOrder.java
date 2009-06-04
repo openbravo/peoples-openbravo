@@ -39,7 +39,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class CopyFromPOOrder extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final BigDecimal ZERO = BigDecimal.ZERO;
+  private static final BigDecimal ZERO = BigDecimal.ZERO;
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -75,7 +75,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError processButton(VariablesSecureApp vars, String strKey, String strOrder, String windowId) {
+  private OBError processButton(VariablesSecureApp vars, String strKey, String strOrder, String windowId) {
     OBError myError = null;
     int i = 0;
     String priceactual = "";
@@ -183,7 +183,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
     return myError;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String windowId, String strTab, String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Button process Copy lines");

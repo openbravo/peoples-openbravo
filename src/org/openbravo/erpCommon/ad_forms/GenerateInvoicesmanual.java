@@ -129,7 +129,7 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo,
       String strIncludeTaxes) throws IOException, ServletException {
     if (log4j.isDebugEnabled())

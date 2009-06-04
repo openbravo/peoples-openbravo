@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -144,7 +144,7 @@ public class Account extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageSave(HttpServletResponse response, VariablesSecureApp vars, AccountData data)
+  private void printPageSave(HttpServletResponse response, VariablesSecureApp vars, AccountData data)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Saved");
@@ -154,8 +154,8 @@ public class Account extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars, AccountData[] data)
-      throws IOException, ServletException {
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+      AccountData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Account seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -168,7 +168,7 @@ public class Account extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(AccountData[] data) throws IOException, ServletException {
+  private String generateResult(AccountData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -179,7 +179,7 @@ public class Account extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAlias,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAlias,
       String strCombination, String strValidCombination, String strAcctSchema, boolean isDefault)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -264,7 +264,7 @@ public class Account extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -317,11 +317,11 @@ public class Account extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strAlias,
-      String strCombination, String strOrganization, String strAccount, String strProduct,
-      String strBPartner, String strProject, String strCampaign, String strOrderCols,
-      String strOrderDirs, String strOffset, String strPageSize, String strNewFilter,
-      String strAcctSchema) throws IOException, ServletException {
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars,
+      String strAlias, String strCombination, String strOrganization, String strAccount,
+      String strProduct, String strBPartner, String strProject, String strCampaign,
+      String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
+      String strNewFilter, String strAcctSchema) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 

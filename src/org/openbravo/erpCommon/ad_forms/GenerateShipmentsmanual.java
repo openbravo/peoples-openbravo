@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -87,14 +86,13 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
           .getClient(), vars.getOrg(), vars.getUser());
       ActionButtonData.process199(this, pinstance);
 
-
       try {
         PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
         myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
       } catch (Exception e) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
-          e.printStackTrace();
-          log4j.warn("Error");
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+        e.printStackTrace();
+        log4j.warn("Error");
       }
       GenerateShipmentsmanualData.updateReset(this, strSalesOrder);
 
@@ -107,7 +105,7 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())

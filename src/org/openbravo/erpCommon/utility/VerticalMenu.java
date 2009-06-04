@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class VerticalMenu extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  String target = "appFrame";
+  private String target = "appFrame";
 
   @Override
   public void init(ServletConfig config) {
@@ -65,8 +65,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
       throw new ServletException();
   }
 
-  void printPageAlert(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageAlert(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
 
     Integer alertCount = 0;
 
@@ -93,8 +93,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strCliente,
-      boolean open) throws IOException, ServletException {
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strCliente, boolean open) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Vertical Menu's screen");
     final String[] discard = new String[1];
@@ -129,7 +129,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
     out.close();
   }
 
-  public void printPageLoadingMenu(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageLoadingMenu(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/utility/VerticalMenuLoading").createXmlDocument();
@@ -141,7 +141,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
     out.close();
   }
 
-  public String tipoVentana(String tipo) {
+  private String tipoVentana(String tipo) {
     if (tipo.equals("W"))
       return "Windows";
     else if (tipo.equals("X"))
@@ -164,7 +164,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
       return "";
   }
 
-  public String tipoVentanaNico(String tipo) {
+  private String tipoVentanaNico(String tipo) {
     if (tipo.equals("W"))
       return "window";
     else if (tipo.equals("X"))
@@ -187,7 +187,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
       return "";
   }
 
-  public String generarMenuVertical(MenuData[] menuData, String strDireccion, String indice,
+  private String generarMenuVertical(MenuData[] menuData, String strDireccion, String indice,
       boolean open) {
     if (menuData == null || menuData.length == 0)
       return "";
@@ -328,9 +328,9 @@ public class VerticalMenu extends HttpSecureAppServlet {
         adWorkflowId, adTaskId, adProcessId, isExternalService, externalType);
   }
 
-  public String getUrlString(String strDireccionBase, String name, String action, String classname,
-      String mappingname, String adWorkflowId, String adTaskId, String adProcessId,
-      String isExternalService, String externalType) {
+  private String getUrlString(String strDireccionBase, String name, String action,
+      String classname, String mappingname, String adWorkflowId, String adTaskId,
+      String adProcessId, String isExternalService, String externalType) {
     final StringBuffer strResultado = new StringBuffer();
     strResultado.append(strDireccionBase);
     if (mappingname.equals("")) {
@@ -378,7 +378,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
    *         case it returns an empty string
    * @throws ServletException
    */
-  public String generateMenuSearchs(VariablesSecureApp vars, boolean open) throws ServletException {
+  private String generateMenuSearchs(VariablesSecureApp vars, boolean open) throws ServletException {
     final StringBuffer menu = new StringBuffer();
     final MenuData[] data = MenuData.selectSearchs(this, vars.getLanguage());
     if (data != null && data.length > 0) {
@@ -437,7 +437,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
    * @return the table of entries for all accessible search entries
    * @throws ServletException
    */
-  public String generateMenuSearchEntries(VariablesSecureApp vars, String direccion, boolean open,
+  private String generateMenuSearchEntries(VariablesSecureApp vars, String direccion, boolean open,
       MenuData[] data) throws ServletException {
     final StringBuffer result = new StringBuffer();
     if (data == null || data.length == 0)
@@ -489,7 +489,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
     return result.toString();
   }
 
-  void decidePopups(XmlDocument xmlDocument, VariablesSecureApp vars) throws ServletException {
+  private void decidePopups(XmlDocument xmlDocument, VariablesSecureApp vars)
+      throws ServletException {
 
     if (vars.getRole() != null && vars.getRole().equals("0")) {
       // Check if the heartbeat popup needs to be displayed

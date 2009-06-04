@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,7 +39,7 @@ import org.openbravo.xmlEngine.XmlDocument;
  */
 public class WindowTree extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final String CHILD_SHEETS = "frameWindowTreeF3";
+  private static final String CHILD_SHEETS = "frameWindowTreeF3";
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -102,7 +102,7 @@ public class WindowTree extends HttpSecureAppServlet {
    * @return String html with the tree.
    * @throws ServletException
    */
-  public String loadNodes(VariablesSecureApp vars, String key, boolean editable, String strTabId)
+  private String loadNodes(VariablesSecureApp vars, String key, boolean editable, String strTabId)
       throws ServletException {
     String TreeType = WindowTreeUtility.getTreeType(key);
     String TreeID = "";
@@ -154,7 +154,7 @@ public class WindowTree extends HttpSecureAppServlet {
    * @return String html with the tree.
    * @throws ServletException
    */
-  public String loadChildNodes(VariablesSecureApp vars, String key, String strTreeID,
+  private String loadChildNodes(VariablesSecureApp vars, String key, String strTreeID,
       String strParentID, boolean editable, String strTabId) throws ServletException {
     String TreeType = WindowTreeUtility.getTreeType(key);
     StringBuffer menu = new StringBuffer();
@@ -198,7 +198,7 @@ public class WindowTree extends HttpSecureAppServlet {
    *          Indicates if is the first or not.
    * @return String html with the tree.
    */
-  public String generateTree(WindowTreeData[] data, String strDireccion, String indice,
+  private String generateTree(WindowTreeData[] data, String strDireccion, String indice,
       boolean isFirst) {
     if (data == null || data.length == 0)
       return "";
@@ -247,8 +247,8 @@ public class WindowTree extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String TabId)
-      throws IOException, ServletException {
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String TabId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Tree's screen for the tab: " + TabId);
     OBError defaultInfo = new OBError();
@@ -325,7 +325,7 @@ public class WindowTree extends HttpSecureAppServlet {
    *          String indicating if is a child or not of the parent node (Y|N).
    * @throws ServletException
    */
-  void changeNode(VariablesSecureApp vars, String strTabId, String strTop, String strLink,
+  private void changeNode(VariablesSecureApp vars, String strTabId, String strTop, String strLink,
       String strChild) throws ServletException {
     String key = WindowTreeData.selectKey(this, strTabId);
     String TreeType = WindowTreeUtility.getTreeType(key);

@@ -1,6 +1,6 @@
 package org.openbravo.uiTranslation;
 
-public class WindowLabel {
+class WindowLabel {
 
   public static int FIELD_LABEL = 0;
   public static int FIELD_GROUP_LABEL = 1;

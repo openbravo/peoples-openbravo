@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,7 +38,7 @@ public class ScheduleProcess extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
 
-  public static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
+  private static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)

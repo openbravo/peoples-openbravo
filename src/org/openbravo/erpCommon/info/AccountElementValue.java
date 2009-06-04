@@ -120,7 +120,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageSave(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageSave(HttpServletResponse response, VariablesSecureApp vars,
       AccountElementValueData data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Saved");
@@ -130,7 +130,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       AccountElementValueData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: AccountElementValue seeker Frame Set");
@@ -144,7 +144,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(AccountElementValueData[] data) throws IOException, ServletException {
+  private String generateResult(AccountElementValueData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -155,7 +155,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strValue,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strValue,
       String strName, String strElementValue, String strAcctSchema, boolean isDefault)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -205,7 +205,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -256,7 +256,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strValue,
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strValue,
       String strName, String strOrganization, String strAccountElementValue, String strOrderCols,
       String strOrderDirs, String strOffset, String strPageSize, String strNewFilter,
       String strAcctSchema) throws IOException, ServletException {

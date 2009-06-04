@@ -12,7 +12,7 @@ import org.quartz.JobExecutionException;
 
 public class AlertProcess implements Process {
 
-  static int counter = 0;
+  private static int counter = 0;
 
   private ConnectionProvider connection;
   private ProcessLogger logger;
