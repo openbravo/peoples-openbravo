@@ -5385,7 +5385,7 @@ a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_relatio
   background-color: #FFFFFF;
 }
 
-.Main_NavBar_logo_CE {
+.Main_NavBar_logo {
   cursor: pointer;
   width: 122px;
   height: 34px;
@@ -8957,6 +8957,15 @@ td.Popup_InfoBar_text_table {
 .Popup_NavBar_bg_logo {
   height: 34px;
   background-color: #FFFFFF;
+}
+
+.Popup_NavBar_logo_OPS {
+  cursor: pointer;
+  width: 122px;
+  height: 34px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(../../../images/PoweredByOpenbravo.png);
 }
 
 .Popup_NavBar_logo {

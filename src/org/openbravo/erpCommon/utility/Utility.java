@@ -65,6 +65,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ops.ActivationKey;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.domain.ListTrl;
 import org.openbravo.model.ad.domain.Reference;
@@ -241,7 +242,8 @@ public class Utility {
   /**
    * 
    * Formats a message String into a String for html presentation. Escapes the &, <, >, " and ®, and
-   * replace the \n by <br/> and \r for space.
+   * replace the \n by <br/>
+   * and \r for space.
    * 
    * IMPORTANT! : this method is designed to transform the output of Utility.messageBD method, and
    * this method replaces \n by \\n and \" by &quote. Because of that, the first replacements revert
@@ -2283,7 +2285,6 @@ public class Utility {
     return val.getName();
   }
 
-
   /**
    * Constructs and returns a two dimensional array of the data passed. Array definition is
    * constructed according to Javascript syntax. Used to generate data storage of lists or trees
@@ -2341,6 +2342,23 @@ public class Utility {
     }
     strArray = strArray + ");";
     return strArray;
+  }
+
+  /**
+   * Returns the OB logo CSS style
+   * 
+   * @param type
+   *          Type of logo<br>
+   *          W for complete window<br>
+   *          P for pop-up
+   * @return the CSS style
+   */
+  public static String getLogo(String type) {
+    if (type.equals("W")) {
+      return "Main_NavBar_logo" + (ActivationKey.isActiveInstance() ? "_OPS" : "");
+    } else {
+      return "Popup_NavBar_logo" + (ActivationKey.isActiveInstance() ? "_OPS" : "");
+    }
   }
 
 }
