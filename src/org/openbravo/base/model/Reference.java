@@ -66,8 +66,7 @@ public class Reference extends ModelObject {
     primitiveTypes.put("17", String.class);
     primitiveTypes.put("20", Boolean.class);
     primitiveTypes.put("22", Float.class);
-    primitiveTypes.put("23", Object.class); // Binary/Blob Data
-    // is not used
+    primitiveTypes.put("23", byte[].class); // Binary/Blob Data
     primitiveTypes.put("24", Timestamp.class);
     primitiveTypes.put("26", Object.class); // RowID is not used
     primitiveTypes.put("27", Object.class); // Color is not used

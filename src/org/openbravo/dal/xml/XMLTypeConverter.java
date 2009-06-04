@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.axis.encoding.Base64;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
@@ -103,6 +104,9 @@ public class XMLTypeConverter implements OBSingleton {
     if (o instanceof Boolean) {
       return toXML((Boolean) o);
     }
+    if (o instanceof byte[]) {
+      return Base64.encode((byte[]) o);
+    }
     return o.toString();
     // throw new OBException("Type " + o.getClass().getName() +
     // " not supported");
@@ -148,6 +152,9 @@ public class XMLTypeConverter implements OBSingleton {
       }
       if (Float.class == targetClass) {
         return (T) new Float(xml);
+      }
+      if (byte[].class == targetClass) {
+        return (T) Base64.decode(xml);
       }
     } catch (final Exception e) {
       throw new EntityXMLException("Value " + xml + " can not be parsed to an instance of class "
