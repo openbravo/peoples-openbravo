@@ -89,7 +89,7 @@ public class DalMappingGenerator implements OBSingleton {
       log.debug(result);
     }
 
-    if (false) {
+    if (true) {
       try {
         final File f = new File("/tmp/hibernate.hbm.xml");
         if (f.exists()) {
@@ -166,7 +166,12 @@ public class DalMappingGenerator implements OBSingleton {
     final StringBuffer sb = new StringBuffer();
     sb.append(TAB2 + "<property name=\"" + p.getName() + "\"");
     sb.append(getAccessorAttribute());
-    String type = p.getPrimitiveType().getName();
+    String type;
+    if (p.getPrimitiveType().isArray()) {
+      type = p.getPrimitiveType().getComponentType().getName() + "[]";
+    } else {
+      type = p.getPrimitiveType().getName();
+    }
     if (p.isBoolean()) {
       type = OBYesNoType.class.getName(); // "yes_no";
     }
