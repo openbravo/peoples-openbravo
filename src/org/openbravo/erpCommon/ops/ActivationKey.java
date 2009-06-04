@@ -209,6 +209,10 @@ public class ActivationKey {
     return isActive;
   }
 
+  public static boolean isActiveInstance() {
+    return opsLog;
+  }
+
   public String getErrorMessage() {
     return errorMessage;
   }

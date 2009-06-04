@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.utility;
 
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ops.ActivationKey;
 
 public class NavigationBar {
   static Logger log4j = Logger.getLogger(NavigationBar.class);
@@ -66,6 +67,8 @@ public class NavigationBar {
 
   @Override
   public String toString() {
+
+    String OBlogo = "Main_NavBar_logo_" + (ActivationKey.isActiveInstance() ? "OPS" : "CE");
     final StringBuffer toolbar = new StringBuffer();
     String auxText;
     toolbar.append("<TABLE class=\"Main_ContentPane_NavBar\" id=\"tdtopNavButtons\">\n");
@@ -153,7 +156,8 @@ public class NavigationBar {
             "  <TD class=\"Main_NavBar_bg_logo\" width=\"1\" onclick=\"openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;\"><IMG src=\"")
         .append(base_direction)
         .append(
-            "/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\"Main_NavBar_logo\"></TD>\n");
+            "/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\""
+                + OBlogo + "\"></TD>\n");
     toolbar.append("  <TD class=\"Main_NavBar_bg_logo_right\"></TD>\n");
     toolbar.append("  <TD></TD>\n");
     toolbar.append("  </TR>\n");
