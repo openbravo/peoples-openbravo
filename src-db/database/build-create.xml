@@ -183,6 +183,7 @@ create.database: creates the database from scratch.
       	grant create procedure   to ${bbdd.user};
       	grant create trigger     to ${bbdd.user};
       	grant create view        to ${bbdd.user};
+        grant create sequence    to ${bbdd.user};
       	alter user ${bbdd.user} quota unlimited on users;
       </transaction>
     </sql>
