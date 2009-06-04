@@ -52,6 +52,7 @@ public class Home extends HttpSecureAppServlet {
     xmlDocument.setParameter("theme", vars.getTheme());
     LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "Home.html", strReplaceWith);
     xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+    xmlDocument.setParameter("logo", Utility.getLogo("W"));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
