@@ -25,7 +25,7 @@
 
 <PARAMETER id="paramLanguage" name="language" default=""/>
 <PARAMETER id="paramCSS" name="css" attribute="href" replace="Default"/>
-<PARAMETER id="paramCSS_print" name="theme" attribute="href" replace="Default"/>
+<PARAMETER id="paramCSS_print" name="css" attribute="href" replace="Default"/>
 <PARAMETER id="key" name="key" default="" attribute="value"/>
 <PARAMETER id="form" name="form" default="" attribute="action"/>
 <PARAMETER id="processing" name="processing" default="" attribute="value"/>
