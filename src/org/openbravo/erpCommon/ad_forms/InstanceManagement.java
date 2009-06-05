@@ -123,7 +123,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/InstanceManagementActive").createXmlDocument();
+        "org/openbravo/erpCommon/ad_forms/InstanceManagement").createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     // Interface parameters
