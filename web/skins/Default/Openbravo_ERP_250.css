@@ -5394,6 +5394,15 @@ a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_relatio
   background-image: url(../../../../utility/ShowLogo);
 }
 
+.Login_NavBar_logo {
+  cursor: pointer;
+  width: 122px;
+  height: 34px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(../../../images/PoweredByOpenbravo.png);
+}
+
 .Main_NavBar_separator_cell {
   width: 10px;
 }
