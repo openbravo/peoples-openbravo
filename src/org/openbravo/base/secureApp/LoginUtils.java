@@ -14,6 +14,7 @@ package org.openbravo.base.secureApp;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
@@ -60,7 +61,7 @@ public class LoginUtils {
     // Organizations tree
     // enable admin mode, as normal non admin-role
     // has no read-access to i.e. AD_OrgType
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminContext();
     try {
 
       OrgTree tree = new OrgTree(conn, strCliente);
@@ -71,7 +72,7 @@ public class LoginUtils {
       log4j.warn("Error while setting Organzation tree to session " + e);
       return false;
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      OBContext.setOBContext((OBContext) null);
     }
 
     try {
@@ -161,6 +162,14 @@ public class LoginUtils {
       log4j.warn("Error while loading session arguments: " + e);
       return false;
     }
+
+    // set the obcontext
+    try {
+      OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg);
+    } catch (final OBSecurityException e) {
+      return false;
+    }
+
     return true;
   }
 }

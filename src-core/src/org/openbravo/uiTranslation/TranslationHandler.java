@@ -173,7 +173,9 @@ public class TranslationHandler {
           String text = inputLine.substring(start);
           text = text.replace(prefix, "");
           int end = text.indexOf(suffix);
-          text = text.substring(0, end);
+          if (end > 0) {
+            text = text.substring(0, end);
+          }
           String result = formLabels.get(text);
           if (formLabels.containsKey(text)) {
             inputLine = inputLine.replace(prefix + text + suffix, prefix + result + suffix);

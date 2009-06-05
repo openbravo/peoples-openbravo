@@ -208,16 +208,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           strWarehouse = DefaultOptionsData.defaultWarehouse(this, strUserAuth);
           if (strWarehouse == null) {
             if (!strRole.equals("0")) {
-              // enable admin mode, as normal non admin-role
-              // has no read-access to i.e. AD_OrgType
-              final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+              OBContext.setAdminContext();
               try {
-
                 strWarehouse = DefaultOptionsData.getDefaultWarehouse(this, strClient, new OrgTree(
                     this, strClient).getAccessibleTree(this, strRole).toString());
 
               } finally {
-                OBContext.getOBContext().setInAdministratorMode(prevMode);
+                OBContext.setOBContext((OBContext) null);
               }
             } else
               strWarehouse = "";
@@ -1056,7 +1053,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             + (reportId) + "." + strOutputType + " : " + ioex.getMessage());
       }
     } catch (final Exception e) {
-      throw new ServletException(e.getMessage());
+      throw new ServletException(e.getMessage(), e);
     } finally {
       try {
         os.close();

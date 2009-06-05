@@ -571,8 +571,7 @@ public class Translation extends HttpSecureAppServlet {
       // Output
       out.createNewFile();
       // Transform
-      final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(out));// ,
-      // "ISO-8859-1");
+      final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(out), "UTF-8");
       transformer.transform(source, new StreamResult(osw));
     } catch (final Exception e) {
       log4j.error("exportTrl", e);

@@ -20,9 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
-import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.erpCommon.ops.ActivationKey;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -55,16 +52,6 @@ public class LoginHandler extends HttpBaseServlet {
 
       if (!strUserAuth.equals("-1")) {
         req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
-        try {
-          OBContext.setOBContext(req);
-        } catch (final OBSecurityException e) {
-          // login failed, no roles specified
-          // remove authenticated user
-          req.getSession(true).setAttribute("#Authenticated_user", null);
-          goToRetry(res, vars, e.getMessage(), "Identification failure. Try again.");
-          return;
-        }
-
         checkLicenseAndGo(res, vars);
       } else {
         goToRetry(res, vars, null, "Identification failure. Try again.");
