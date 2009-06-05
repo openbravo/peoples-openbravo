@@ -142,7 +142,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
           "org.openbravo.erpCommon.ad_forms.InstanceManagement");
       xmlDocument.setParameter("theme", vars.getTheme());
       final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+          "InstanceManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs
+              .breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "InstanceManagement.html",
           strReplaceWith);
@@ -197,7 +198,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     // Interface parameters
-    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "",
+    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InstanceManagement", false, "",
         "", "", false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
@@ -207,7 +208,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
           "org.openbravo.erpCommon.ad_forms.InstanceManagement");
       xmlDocument.setParameter("theme", vars.getTheme());
       final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+          "InstanceManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs
+              .breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "InstanceManagement.html",
           strReplaceWith);

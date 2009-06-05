@@ -97,7 +97,7 @@ var baseDirectory = "../../../../../web/";
   </script>
 </head>
 <body onload="onLoadDo();" onresize="onResizeDo();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
-<form method="post" action="ModuleManagement.html" name="frmMain">
+<form method="post" action="InstanceManagement.html" name="frmMain">
   <input type="hidden" name="Command">
   <input type="hidden" name="IsPopUpCall" value="1"></input>
   <input type="hidden" name="inpcRecordId" id="inpcRecordId"></input>
@@ -271,19 +271,15 @@ var baseDirectory = "../../../../../web/";
                   <td class="TitleCell">
                     <span class="LabelText">Instance Details</span>
                   </td>
-      <td colspan="5">
-        <div class="TextArea_FourCells_width"  style="height: 150px; background-color: #FFFFFF; overflow: auto; border: #7F9DB9 1px solid;">
-           <table id="begin" style="font-family: tahoma,arial,helvetica,sans-serif; font-size: 8pt; font-weight: normal;" width="100%">
-           <tr><td width="30%"></td><td width="70%"></td></tr>
-           <tr id="instanceInfo"></tr>
-           </table>
-        
-        </div>
-      </td>
-
-                 
-          
-
+                  <td colspan="5">
+                    <div class="TextArea_FourCells_width"  style="height: 150px; background-color: #FFFFFF; overflow: auto; border: #7F9DB9 1px solid;">
+                       <table id="begin" style="font-family: tahoma,arial,helvetica,sans-serif; font-size: 8pt; font-weight: normal;" width="100%">
+                       <tr><td width="30%"></td><td width="70%"></td></tr>
+                       <tr id="instanceInfo"></tr>
+                       </table>
+                    
+                    </div>
+                  </td>
                  <tr>
                   <td colspan="6">
                     <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
@@ -299,36 +295,113 @@ var baseDirectory = "../../../../../web/";
                     </tbody>
                     </table>
                   </td>
-                </tr>             
+                </tr>    
+                
+                <tr>
+                <td/>
+                <td id="OPSActive" colspan="5" class="TitleCell" style="text-align:left;">
+                    <span class="Label_ReadOnly_Text" >To reactivate you need the Public Key that you receive when you renew your Openbravo Professional Subscription. 
+                    You can reactivate online if you are connected to the internet. If you are not connected, you can use an activation file that you downloaded from <a class="LabelLink_noicon" href="http://butler.openbravo.com/DownloadActivationKey.html" target="_blank">butler.openbravo.com</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                </tr>   
                 <tr> 
-                  <td/>
-                  <td class="Button_LeftAlign_ContentCell">
+                <td/>
+                  <td class="Button_LeftAlign_ContentCell" colspan="2">
                     <div>
                       <button type="button" 
-                        id="buttonSearch" 
+                        id="buttonScan" 
                         class="ButtonLink" 
-                        onclick="submitCommandForm('SHOW_ACTIVATE', false, null, 'InstanceManagement.html', '_self', null, true); return false;" 
-                        onfocus="buttonEvent('onfocus', this); window.status='Search'; return true;" 
+                        onclick="openServletNewWindow('SHOW_ACTIVATE', false, 'InstanceManagement.html', 'BUTTON', null, true, 600, 900);return false;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Browse File System'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
                         onkeydown="buttonEvent('onkeydown', this);" 
                         onkeypress="buttonEvent('onkeypress', this);" 
                         onmouseup="buttonEvent('onmouseup', this);" 
                         onmousedown="buttonEvent('onmousedown', this);" 
-                        onmouseover="buttonEvent('onmouseover', this); window.status='Search'; return true;" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Browse File System'; return true;" 
                         onmouseout="buttonEvent('onmouseout', this);">
                         <table class="Button">
                           <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Activate" title="Activate" src="../../../../../web/images/blank.gif" border="0" /></td>
-                            <td class="Button_text Button_width">Activate</td>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Browse File System" title="Browse File System" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_text">Reactivate Online</td>
                             <td class="Button_right"></td>
                           </tr>
                         </table>
                       </button>
                     </div>
                   </td>
-                  <td colspan="2"/>
-                   
+                  <td class="Button_LeftAlign_ContentCell" colspan="2">
+                    <div>
+                      <button type="button" 
+                        id="buttonScan" 
+                        class="ButtonLink" 
+                        onclick="openServletNewWindow('ACTIVATE_LOCAL', false, 'InstanceManagement.html', 'BUTTON', null, true, 600, 900);return false;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Browse File System'; return true;" 
+                        onblur="buttonEvent('onblur', this);" 
+                        onkeyup="buttonEvent('onkeyup', this);" 
+                        onkeydown="buttonEvent('onkeydown', this);" 
+                        onkeypress="buttonEvent('onkeypress', this);" 
+                        onmouseup="buttonEvent('onmouseup', this);" 
+                        onmousedown="buttonEvent('onmousedown', this);" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Browse File System'; return true;" 
+                        onmouseout="buttonEvent('onmouseout', this);">
+                        <table class="Button">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Browse File System" title="Browse File System" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_text">Browse File System for Activation File</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                      </button>
+                    </div>
+                  </td>
+                  <td/>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                </tr> 
+                <tr>
+                  <td/>
+                  <td id="OPSActive" colspan="5" class="TitleCell" style="text-align:left;">
+                    <span class="Label_ReadOnly_Text" >You can temporarily deactivate this this instance. Please note that you will need to re-enter the Public Key when you want to reactivate later.</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                </tr> 
+                <tr> 
+                  <td/>
+                  <td class="Button_LeftAlign_ContentCell" colspan="2">
+                    <div>
+                      <button type="button" 
+                        id="buttonScan" 
+                        class="ButtonLink" 
+                        onclick="openServletNewWindow('DEACTIVATE', false, 'InstanceManagement.html', 'BUTTON', null, true, 600, 900);return false;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Browse File System'; return true;" 
+                        onblur="buttonEvent('onblur', this);" 
+                        onkeyup="buttonEvent('onkeyup', this);" 
+                        onkeydown="buttonEvent('onkeydown', this);" 
+                        onkeypress="buttonEvent('onkeypress', this);" 
+                        onmouseup="buttonEvent('onmouseup', this);" 
+                        onmousedown="buttonEvent('onmousedown', this);" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Browse File System'; return true;" 
+                        onmouseout="buttonEvent('onmouseout', this);">
+                        <table class="Button">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Browse File System" title="Browse File System" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_text">Deactivate</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                      </button>
+                    </div>
+                  </td>
+                  
+                  <td colspan="3"/>
                 </tr>
 
               </table>
