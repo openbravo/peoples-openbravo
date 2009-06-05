@@ -1053,7 +1053,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             + (reportId) + "." + strOutputType + " : " + ioex.getMessage());
       }
     } catch (final Exception e) {
-      throw new ServletException(e.getMessage());
+      throw new ServletException(e.getMessage(), e);
     } finally {
       try {
         os.close();
