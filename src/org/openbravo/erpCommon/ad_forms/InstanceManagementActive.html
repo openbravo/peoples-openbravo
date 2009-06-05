@@ -123,7 +123,7 @@ var baseDirectory = "../../../../../web/";
               <span class="tabTitle">
                 <div class="tabTitle_background">
                   <span class="tabTitle_elements_container">
-                    <span class="tabTitle_elements_text">Instance Manager</span>
+                    <span class="tabTitle_elements_text">Instance Activation</span>
                     <span class="tabTitle_elements_separator"><div class="tabTitle_elements_separator_icon"></div></span>
                     <span class="tabTitle_elements_image"><div class="tabTitle_elements_image_normal_icon" id="TabStatusIcon"></div></span>
                   </span>
@@ -240,16 +240,66 @@ var baseDirectory = "../../../../../web/";
                 </tr>
                 
                 <tr>
-                  <td class="TitleCell">
-                    <span class="LabelText">Instance Info</span>
+                  <td colspan="6">
+                    <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                    <tbody>
+                      <tr class="FieldGroup_TopMargin"/>
+                      <tr>
+                        <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                        <td class="FieldGroupTitle">Status</td>
+                        <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                        <td class="FieldGroupContent"/>
+                      </tr>
+                      <tr class="FieldGroup_BottomMargin"/>
+                    </tbody>
+                    </table>
                   </td>
-                 
+                </tr>
+                <tr>
+                 <td class="TitleCell">
+                    <span class="LabelText">Instance Status</span>
+                  </td>
                   <td colspan="5">
-                    <textarea name="instanceInfo" cols="100%" rows="15" wrap="OFF" id="instanceInfo" disabled="">xx</textarea>
+                    <span class="LabelText">Active. You have <span id="OPSdaysLeft">xx</span> days left before your Openbravo Professional Subscription expires</span>
                   </td>
-             
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td class="TitleCell">
+                    <span class="LabelText">Instance Details</span>
+                  </td>
+      <td colspan="5">
+        <div class="TextArea_FourCells_width"  style="height: 150px; background-color: #FFFFFF; overflow: auto; border: #7F9DB9 1px solid;">
+           <table id="begin" style="font-family: tahoma,arial,helvetica,sans-serif; font-size: 8pt; font-weight: normal;" width="100%">
+           <tr><td width="30%"></td><td width="70%"></td></tr>
+           <tr id="instanceInfo"></tr>
+           </table>
+        
+        </div>
+      </td>
+
+                 
+          
+
+                 <tr>
+                  <td colspan="6">
+                    <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                    <tbody>
+                      <tr class="FieldGroup_TopMargin"/>
+                      <tr>
+                        <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                        <td class="FieldGroupTitle">Activation</td>
+                        <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                        <td class="FieldGroupContent"/>
+                      </tr>
+                      <tr class="FieldGroup_BottomMargin"/>
+                    </tbody>
+                    </table>
+                  </td>
+                </tr>             
                 <tr> 
-                  
                   <td/>
                   <td class="Button_LeftAlign_ContentCell">
                     <div>
