@@ -134,9 +134,13 @@ public class UninstallModule {
             UninstallModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()),
                 data[i].adModuleId, data[i].version, data[i].name, "Uninstalled module "
                     + data[i].name + " - " + data[i].version, "D");
-            final File f = new File(modulesBaseDir + "/" + data[i].javapackage);
+            final File f = new File(modulesBaseDir, data[i].javapackage);
             if (f.exists()) {
               if (!Utility.deleteDir(f)) {
+                addLog("@CannotRemoveModule@ " + data[i].name, MSG_ERROR);
+                log4j.error("Cannot remove module contents " + data[i].name);
+              }
+              if (f.exists()) {
                 addLog("@CannotRemoveModule@ " + data[i].name, MSG_ERROR);
                 log4j.error("Cannot remove module contents " + data[i].name);
               } else {
