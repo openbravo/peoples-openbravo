@@ -72,6 +72,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       log4j.debug("********DEFAULT***************  strShowClosing: " + strShowClosing);
       log4j.debug("********DEFAULT***************  strShowReg: " + strShowReg);
       log4j.debug("********DEFAULT***************  strShowOpening: " + strShowOpening);
+      if (vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0").equals("0"))
+        vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable,
           strRecord, "", strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening);
     } else if (vars.commandIn("DIRECT")) {
@@ -196,7 +198,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedgerJournal", false,
         "", "", "imprimir();return false;", false, "ad_reports", strReplaceWith, false, true);
     toolbar.setEmail(false);
-    if (vars.commandIn("FIND")) {
+    if (vars.commandIn("FIND") || vars.commandIn("DEFAULT")
+        && !vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber").equals("0")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening);
       String strTreeOrg = ReportGeneralLedgerJournalData.treeOrg(this, vars.getClient());
       String strOrgFamily = getFamily(strTreeOrg, strOrg);
