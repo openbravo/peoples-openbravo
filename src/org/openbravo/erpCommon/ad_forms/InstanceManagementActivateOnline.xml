@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 <REPORT>
-  <template file="InstanceManagementNotActive.html"/>
+  <template file="InstanceManagementActivateOnline.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
