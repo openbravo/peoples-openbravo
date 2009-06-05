@@ -121,14 +121,19 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageActive(HttpServletResponse response, VariablesSecureApp vars,
       ActivationKey activationKey) throws IOException, ServletException {
     response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/InstanceManagement").createXmlDocument();
+    String discard[] = { "" };
+    if (!activationKey.hasExpirationDate()) {
+      discard[0] = "OPSExpirationTime";
+    }
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_forms/InstanceManagement", discard).createXmlDocument();
+
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     // Interface parameters
-    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InstanceManagement", false, "",
-        "", "", false, "ad_forms", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InstanceManagement", false, "", "",
+        "", false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -172,6 +177,10 @@ public class InstanceManagement extends HttpSecureAppServlet {
     else
       xmlDocument.setParameter("instanceInfo", activationKey.toString(this, vars.getLanguage()));
 
+    if (activationKey.hasExpirationDate()) {
+      xmlDocument.setParameter("OPSdaysLeft", activationKey.getPendingDays().toString());
+    }
+    PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
 

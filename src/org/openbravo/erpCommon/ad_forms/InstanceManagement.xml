@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 <REPORT>
-  <template file="InstanceManagementActive.html"/>
+  <template file="InstanceManagement.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
@@ -29,5 +29,6 @@
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <PARAMETER id="instanceInfo" name="instanceInfo" default=""/>
+  <PARAMETER id="OPSdaysLeft" name="OPSdaysLeft" dafault=""/>
 
 </REPORT>

@@ -63,6 +63,7 @@ var baseDirectory = "../../../../../web/";
   
   function onloadFunctions() {
     setProcessingMode('window',false);
+    
   }
   
 
@@ -79,7 +80,7 @@ var baseDirectory = "../../../../../web/";
     setTabTableParentElement();
     enableShortcuts('edition');
     setBrowserAutoComplete(false);
-    setWindowElementFocus('firstElement');
+    setWindowElementFocus('buttonSearch');
     
     try {
       onloadFunctions();
@@ -259,8 +260,8 @@ var baseDirectory = "../../../../../web/";
                  <td class="TitleCell">
                     <span class="LabelText">Instance Status</span>
                   </td>
-                  <td colspan="5">
-                    <span class="LabelText">Active. You have <span id="OPSdaysLeft">xx</span> days left before your Openbravo Professional Subscription expires</span>
+                  <td id="OPSActive" colspan="5" class="TitleCell" style="text-align:left;">
+                    <span class="Label_ReadOnly_Text" ><span style="color:green;">Active</span>.<span id="OPSExpirationTime"> You have <span id="OPSdaysLeft">xx</span> days left before your <a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Openbravo Professional Subscription</a> expires.</span></span>
                   </td>
                 </tr>
                 <tr>

@@ -54,10 +54,13 @@ public class ActivationKey {
   private String strPublicKey;
   private static boolean opsLog = false;
   private static String opsLogId;
+  private Long pendingTime;
 
   public enum LicenseRestriction {
     NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED
   }
+
+  private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
 
   public ActivationKey() {
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
@@ -132,11 +135,14 @@ public class ActivationKey {
       setLogger();
       return;
     }
-    if (endDate != null && now.after(endDate)) {
-      isActive = false;
-      errorMessage = "@OPSActivationExpired@ " + endDate;
-      setLogger();
-      return;
+    if (endDate != null) {
+      pendingTime = ((endDate.getTime() - now.getTime()) / MILLSECS_PER_DAY) + 1;
+      if (now.after(endDate)) {
+        isActive = false;
+        errorMessage = "@OPSActivationExpired@ " + endDate;
+        setLogger();
+        return;
+      }
     }
     isActive = true;
     setLogger();
@@ -306,8 +312,16 @@ public class ActivationKey {
     }
   }
 
+  public boolean hasExpirationDate() {
+    return getProperty("enddate") != null;
+  }
+
   public String getProperty(String propName) {
     return instanceProperties.getProperty(propName);
+  }
+
+  public Long getPendingDays() {
+    return pendingTime;
   }
 
 }
