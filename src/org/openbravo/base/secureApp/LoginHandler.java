@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.ops.ActivationKey;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -62,18 +63,23 @@ public class LoginHandler extends HttpBaseServlet {
 
   private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars)
       throws IOException {
-    ActivationKey ak = new ActivationKey();
+    OBContext.setAdminContext();
+    try {
+      ActivationKey ak = new ActivationKey();
 
-    switch (ak.checkOPSLimitations()) {
-    case NUMBER_OF_CONCURRENT_USERS_REACHED:
-      goToRetry(res, vars, "Number of concurrent users reached", "OPS License error");
-      break;
-    case NUMBER_OF_SOFT_USERS_REACHED:
-      // do nothing by the moment
-    case OPS_INSTANCE_NOT_ACTIVE:
-      // do nothing by the moment
-    default:
-      goToTarget(res, vars);
+      switch (ak.checkOPSLimitations()) {
+      case NUMBER_OF_CONCURRENT_USERS_REACHED:
+        goToRetry(res, vars, "Number of concurrent users reached", "OPS License error");
+        break;
+      case NUMBER_OF_SOFT_USERS_REACHED:
+        // do nothing by the moment
+      case OPS_INSTANCE_NOT_ACTIVE:
+        // do nothing by the moment
+      default:
+        goToTarget(res, vars);
+      }
+    } finally {
+      OBContext.setOBContext((OBContext) null);
     }
 
   }
