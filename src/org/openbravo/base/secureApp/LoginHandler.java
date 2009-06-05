@@ -69,7 +69,9 @@ public class LoginHandler extends HttpBaseServlet {
 
       switch (ak.checkOPSLimitations()) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
-        goToRetry(res, vars, "Number of concurrent users reached", "OPS License error");
+        String msg = "At this moment you cannot log in because the maximum number of users that can be logged in at the same time, was reached.<br/>";
+        msg += "You can wait until one or more users log out or you can contact your system adiministrator for advice";
+        goToRetry(res, vars, msg, "Maximum number of concurrent users reached");
         break;
       case NUMBER_OF_SOFT_USERS_REACHED:
         // do nothing by the moment
