@@ -111,7 +111,7 @@ public class ActivationKey {
     }
 
     // Check for dates to know if the instance is active
-    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     Date startDate = null;
     Date endDate = null;
     try {
