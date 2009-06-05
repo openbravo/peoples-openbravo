@@ -154,8 +154,7 @@ public class NavigationBar {
             "  <TD class=\"Main_NavBar_bg_logo\" width=\"1\" onclick=\"openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;\"><IMG src=\"")
         .append(base_direction)
         .append(
-            "/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\""
-                + Utility.getLogo("W") + "\"></TD>\n");
+            "/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\"Main_NavBar_logo\"></TD>\n");
     toolbar.append("  <TD class=\"Main_NavBar_bg_logo_right\"></TD>\n");
     toolbar.append("  <TD></TD>\n");
     toolbar.append("  </TR>\n");
