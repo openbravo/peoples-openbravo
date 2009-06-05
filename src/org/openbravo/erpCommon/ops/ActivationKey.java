@@ -290,6 +290,19 @@ public class ActivationKey {
     return sb.toString();
   }
 
+  public String getPurpose(String lang) {
+    return Utility.getListValueName("InstancePurpose", getProperty("purpose"), lang);
+  }
+
+  public String getLicenseExplanation(ConnectionProvider conn, String lang) {
+    if (getProperty("lincensetype").equals("USR")) {
+      return getProperty("limitusers") + " " + Utility.messageBD(conn, "OPSConcurrentUsers", lang);
+
+    } else {
+      return Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang);
+    }
+  }
+
   public String getProperty(String propName) {
     return instanceProperties.getProperty(propName);
   }

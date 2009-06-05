@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.ops.ActivationKey;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class About extends HttpSecureAppServlet {
@@ -43,29 +45,46 @@ public class About extends HttpSecureAppServlet {
       pageError(response);
   }
 
+  @SuppressWarnings("static-access")
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
+
+    ActivationKey ak = new ActivationKey();
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    String discard[] = { "discard" };
+    String discard[] = { "", "" };
     AboutData[] data = AboutData.selectTranslators(this);
     AboutData[] ver = AboutData.select(this);
     XmlDocument xmlDocument = null;
     if (data.length == 0) {
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/About", discard)
-          .createXmlDocument();
+      discard[0] = "discard";
       data = AboutData.set();
-    } else
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/About")
-          .createXmlDocument();
+    }
+    String licenseInfo = "";
+    if (ak.isActiveInstance()) {
+      licenseInfo = Utility.messageBD(this, "OPSLicensedTo", vars.getLanguage()) + " "
+          + ak.getProperty("customer");
+    } else {
+      licenseInfo = Utility.messageBD(this, "OPSCommunityEdition", vars.getLanguage());
+
+      discard[1] = "paramOPSInfo";
+    }
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/About", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("paramLicensedTo", licenseInfo);
     xmlDocument.setData("structure1", data);
     xmlDocument.setParameter("ver", ver[0].ver);
+
+    if (ak.isActiveInstance()) {
+      xmlDocument.setParameter("paraOPSPurpose", ak.getPurpose(vars.getLanguage()));
+      xmlDocument.setParameter("paraOPSType", ak.getLicenseExplanation(this, vars.getLanguage()));
+    }
 
     out.println(xmlDocument.print());
     out.close();

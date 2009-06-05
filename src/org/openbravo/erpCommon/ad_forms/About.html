@@ -28,21 +28,21 @@
   <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-	<script language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-		this.windowTables = new Array(
-		  new windowTableId('client')
-		);
-		setWindowTableParentElement();
-		enableShortcuts('popup');
-		setBrowserAutoComplete(false);
+    <script language="JavaScript" type="text/javascript">
+    function onLoadDo(){
+        this.windowTables = new Array(
+          new windowTableId('client')
+        );
+        setWindowTableParentElement();
+        enableShortcuts('popup');
+        setBrowserAutoComplete(false);
 
-		setWindowElementFocus('firstElement');
-	}
+        setWindowElementFocus('firstElement');
+    }
 
-	function onResizeDo(){
-	}
-	</script>  
+    function onResizeDo(){
+    }
+    </script>  
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 
@@ -91,7 +91,11 @@
           <tr>
             <td>
 
-              <p class="Wide_Paragraph"><span class="Label_ReadOnly_Text">Openbravo <span id="paramVer">xx</span></span></p>
+              <p class="Wide_Paragraph"><span class="Label_ReadOnly_Text">Openbravo <span id="paramVer">xx</span> <span id="paramLicensedTo">xx</span></span></p>
+              <div id="paramOPSInfo">
+                <p class="Regular_Paragraph">Instance Purpose: <span id="paraOPSPurpose">xx</span></p>
+                <p class="Regular_Paragraph">License Type: <span id="paraOPSType">xx</span> <span class="LabelText"><a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Learn more about subscription types</a></p>
+              </div>
               <p class="Wide_Paragraph">Copyright&nbsp;&copy;&nbsp;Openbravo, S.L.&nbsp;2001-2009</p>
               <p class="Wide_Paragraph">This product has been created by Openbravo S.L. and is distributed under the <span class="LabelText"><a class="LabelLink_noicon" href="http://www.openbravo.com/legal/license.html" target="_blank">Openbravo Public License</a></span> (http://www.openbravo.com/legal/license.html)</p>
               <p class="Wide_Paragraph">This product incorporates software created by third parties and distributed under free software licenses, including:</p>
