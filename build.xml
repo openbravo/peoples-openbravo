@@ -759,7 +759,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <condition property="osname" value="osx">
       <contains string="${os.name}" substring="OS X" />
     </condition>
-    <condition property="os.is.solaris">
+    <condition property="osname" value="solaris">
       <or>
         <contains string="${os.name}" substring="Solaris" />
         <contains string="${os.name}" substring="SunOS" />
