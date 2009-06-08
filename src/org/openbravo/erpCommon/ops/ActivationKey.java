@@ -55,6 +55,7 @@ public class ActivationKey {
   private static boolean opsLog = false;
   private static String opsLogId;
   private Long pendingTime;
+  private boolean hasExpired = false;
 
   public enum LicenseRestriction {
     NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED
@@ -139,7 +140,10 @@ public class ActivationKey {
       pendingTime = ((endDate.getTime() - now.getTime()) / MILLSECS_PER_DAY) + 1;
       if (now.after(endDate)) {
         isActive = false;
-        errorMessage = "@OPSActivationExpired@ " + endDate;
+        hasExpired = true;
+        // message not needed
+        // errorMessage = "@OPSActivationExpired@ " + endDate;
+
         setLogger();
         return;
       }
@@ -322,6 +326,10 @@ public class ActivationKey {
 
   public Long getPendingDays() {
     return pendingTime;
+  }
+
+  public boolean hasExpired() {
+    return hasExpired;
   }
 
 }
