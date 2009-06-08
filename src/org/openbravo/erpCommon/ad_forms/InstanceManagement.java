@@ -67,9 +67,47 @@ public class InstanceManagement extends HttpSecureAppServlet {
       printPageActivateLocal(response, vars);
     } else if (vars.commandIn("INSTALLFILE")) {
       printPageInstallFile(response, vars);
+    } else if (vars.commandIn("SHOW_DEACTIVATE")) {
+      printPageDeactivate(response, vars);
+    } else if (vars.commandIn("DEACTIVATE")) {
+      printPageDeactivateProcess(response, vars);
     } else {
       pageError(response);
     }
+
+  }
+
+  private void printPageDeactivate(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException {
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_forms/InstanceManagementDeactivate").createXmlDocument();
+    response.setContentType("text/html; charset=UTF-8");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    final PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+
+  }
+
+  private void printPageDeactivateProcess(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
+
+    OBError msg = new OBError();
+    try {
+      System sys = OBDal.getInstance().get(System.class, "0");
+      sys.setActivationKey(null);
+      sys.setInstanceKey(null);
+      msg.setType("Success");
+      msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+    } catch (Exception e) {
+      log4j.error(e);
+      msg.setType("Error");
+      msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
+    }
+    vars.setMessage("InstanceManagement", msg);
+    printPageClosePopUp(response, vars, "");
 
   }
 
