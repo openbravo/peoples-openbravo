@@ -194,11 +194,14 @@ public class TranslationHandler {
   }
 
   private void processTranslations() {
+
     if (documentTypeId != null && !documentTypeId.equals("")) {
       setProcessLabels();
-    } else if (tabId != null && !tabId.equals("")) {
+    }
+    if (tabId != null && !tabId.equals("")) {
       setTabLabels();
     } else if (fileName != null && !fileName.equals("")) {
+      // look for fileName for all manual windows (including processes)
       String textFileName = fileName.replace(baseDesignPath, "");
       if (textFileName.contains("?")) {
         String suffix = textFileName.substring(textFileName.lastIndexOf("."));
