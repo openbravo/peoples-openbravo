@@ -252,9 +252,17 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     ActivationKey activationKey = new ActivationKey();
     response.setContentType("text/html; charset=UTF-8");
+    String discard[] = { "" };
+    if (activationKey.isOPSInstance()) {
+      discard[0] = "OPSActivate";
+    } else {
+      discard[0] = "OPSReactivate";
+    }
+
     final PrintWriter out = response.getWriter();
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/InstanceManagementActivateOnline").createXmlDocument();
+        "org/openbravo/erpCommon/ad_forms/InstanceManagementActivateOnline", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     // Interface parameters

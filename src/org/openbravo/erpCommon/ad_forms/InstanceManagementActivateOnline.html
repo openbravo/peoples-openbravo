@@ -100,7 +100,10 @@
             <td class="Popup_NavBar_bg_logo_left"></td>
             <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
-            <td class="Popup_NavBar_Popup_title_cell"><span>Activate Instance</span></td>
+            <td class="Popup_NavBar_Popup_title_cell">
+              <span id="OPSActivate">Activate Instance</span>
+              <span id="OPSReactivate">Reactivate Instance</span>
+            </td>
             <td class="Popup_NavBar_separator_cell"></td>
           </tr>
         </table>
@@ -124,7 +127,8 @@
             <td class="Popup_InfoBar_text_table">
               <table>
                 <tr>
-                  <td class="Popup_InfoBar_text" id="processHelp">Activate the instacne online by sending the Public Key you received by email when you subscribed.</TD>
+                  <td class="Popup_InfoBar_text" id="OPSActivate">Activate the instance online by sending the Public Key you received by email when you subscribed.</TD>
+                  <td class="Popup_InfoBar_text" id="OPSReactivate">Reactivate the instance online by sending the Public Key you received by email when you subscribed.</TD>
                 </tr>
               </table>
             </td>
@@ -305,7 +309,8 @@
                     <table class="Button">
                       <tr>
                         <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Continue" title="Continue" src="../../../../../web/images/blank.gif" border="0" /></td>
-                        <td class="Button_text">Activate Instance</td>
+                        <td class="Button_text" id="OPSActivate">Activate Instance</td>
+                        <td class="Button_text" id="OPSReactivate">Reactivate Instance</td>
                         <td class="Button_right"></td>
                       </tr>
                     </table>
