@@ -111,8 +111,9 @@ public class InstanceManagement extends HttpSecureAppServlet {
   }
 
   private void printPageInstallFile(HttpServletResponse response, VariablesSecureApp vars)
-      throws ServletException {
+      throws IOException, ServletException {
     FileItem fi = vars.getMultiFile("inpFile");
+    OBError msg = new OBError();
     try {
       InputStream is = fi.getInputStream();
 
@@ -126,12 +127,15 @@ public class InstanceManagement extends HttpSecureAppServlet {
       System sys = OBDal.getInstance().get(System.class, "0");
       sys.setActivationKey(buf.toString());
       sys.setInstanceKey(vars.getStringParameter("publicKey"));
-      printPageClosePopUp(response, vars, "");
+      msg.setType("Success");
+      msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
 
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    } catch (Exception e) {
+      log4j.error(e);
+      msg.setType("Error");
+      msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
     }
+    printPageClosePopUp(response, vars, "");
 
   }
 
