@@ -79,14 +79,14 @@
 </head>
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-<form id="form" method="post" action="ModuleManagement.html"  enctype="multipart/form-data" name="frmMain">
+<form id="form" method="post" action="InstanceManagement.html"  enctype="multipart/form-data" name="frmMain">
   <input type="hidden" name="Command"/>
   <input type="hidden" name="IsPopUpCall" value="1"></input>
   <!-- input type="hidden" name="publicKey" value="" id="publicKey"></input-->
 
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
-      <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_moduleInstall" src="../../../../../web/images/blank.gif" border=0/></img>
+      <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
     </div>
   </div>
 
@@ -116,8 +116,24 @@
         </table>
       </td>
     </tr>
+    <tr>
+      <td>
+        <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_InfoBar">
+          <tr>
+            <td class="Popup_InfoBar_Icon_cell"><img src="../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info"></img></td>
+            <td class="Popup_InfoBar_text_table">
+              <table>
+                <tr>
+                  <td class="Popup_InfoBar_text" id="processHelp">Activate the instacne online by sending the Public Key you received by email when you subscribed.</TD>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
 
-<tr>
+    <tr>
       <td>
         <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
          
@@ -220,7 +236,7 @@
             </tr>
             
                 <tr>
-                    <td class="TitleCell"><span class="LabelText">What is the main purpose of this instance?</span></td>
+                    <td class="TitleCell"><span class="LabelText">What is the main purpose of the instance?</span></td>
                     <td class="Combo_ContentCell" colspan="3">
                         <select name="purpose" id="purpose" class="ComboKey Combo_TwoCells_width" required="true" >
                           <div id="reportPurpose"></div>
