@@ -99,7 +99,10 @@
             <td class="Popup_NavBar_bg_logo_left"></td>
             <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
-            <td class="Popup_NavBar_Popup_title_cell"><span>Activate Instance using a File from File System</span></td>
+            <td class="Popup_NavBar_Popup_title_cell">
+              <span id="OPSActivate">Activate Instance using a File from File System</span>
+              <span id="OPSReactivate">Rectivate Instance using a File from File System</span>
+            </td>
             <td class="Popup_NavBar_separator_cell"></td>
           </tr>
         </table>
@@ -123,7 +126,8 @@
             <td class="Popup_InfoBar_text_table">
               <table>
                 <tr>
-                  <td class="Popup_InfoBar_text" id="processHelp">To activate your instance you need to provide the activation file you downloaded from butler.openbravo.com and the public key you received by email when you subscribed.</TD>
+                  <td class="Popup_InfoBar_text" id="OPSActivate">To activate your instance you need to provide the activation file you downloaded from butler.openbravo.com and the public key you received by email when you subscribed.</TD>
+                  <td class="Popup_InfoBar_text" id="OPSReactivate">To reactivate your instance you need to provide the activation file you downloaded from butler.openbravo.com and the public key you received by email when you subscribed.</TD>
                 </tr>
               </table>
             </td>
