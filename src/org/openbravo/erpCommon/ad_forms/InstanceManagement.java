@@ -135,6 +135,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       msg.setType("Error");
       msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
     }
+    vars.setMessage("InstanceManagement", msg);
     printPageClosePopUp(response, vars, "");
 
   }
