@@ -154,8 +154,8 @@ public class BaseWSTest extends BaseTest {
   }
 
   /**
-   * Executes a GET request. The content is validated against the XML schema retrieved using the
-   * /ws/dal/schema webservice call.
+   * Executes a GET request and validates the return against the schema. The content is validated
+   * against the XML schema retrieved using the /ws/dal/schema webservice call.
    * 
    * @param wsPart
    *          the actual webservice part of the url, is appended to the openbravo url (
@@ -168,6 +168,27 @@ public class BaseWSTest extends BaseTest {
    * @return the content returned from the GET request
    */
   protected String doTestGetRequest(String wsPart, String testContent, int responseCode) {
+    return doTestGetRequest(wsPart, testContent, responseCode, true);
+  }
+
+  /**
+   * Executes a GET request. The content is validated against the XML schema retrieved using the
+   * /ws/dal/schema webservice call.
+   * 
+   * @param wsPart
+   *          the actual webservice part of the url, is appended to the openbravo url (
+   *          {@link #getOpenbravoURL()}), includes any query parameters
+   * @param testContent
+   *          the system check that the returned content contains this testContent. if null is
+   *          passed for this parameter then this check is not done.
+   * @param responseCode
+   *          the expected HTTP response code
+   * @param validate
+   *          if true then the response content is validated against the Openbravo XML Schema
+   * @return the content returned from the GET request
+   */
+  protected String doTestGetRequest(String wsPart, String testContent, int responseCode,
+      boolean validate) {
     try {
       final HttpURLConnection hc = createConnection(wsPart, "GET");
       hc.connect();
@@ -182,7 +203,7 @@ public class BaseWSTest extends BaseTest {
       assertEquals(responseCode, hc.getResponseCode());
       is.close();
       // do not validate the xml schema itself, this results in infinite loops
-      if (!wsPart.contains("/ws/dal/schema")) {
+      if (validate) {
         validateXML(content);
       }
       return content;
@@ -283,7 +304,7 @@ public class BaseWSTest extends BaseTest {
       return xmlSchema;
     }
 
-    xmlSchema = doTestGetRequest("/ws/dal/schema", "<xs:element name=\"Openbravo\">", 200);
+    xmlSchema = doTestGetRequest("/ws/dal/schema", "<xs:element name=\"Openbravo\">", 200, false);
     return xmlSchema;
   }
 

@@ -125,6 +125,7 @@ public class BaseWebServiceServlet extends HttpServlet {
     }
     if (userId != null) {
       OBContext.setOBContext(UserContextCache.getInstance().getCreateOBContext(userId));
+      OBContext.setOBContextInSession(request, OBContext.getOBContext());
       return true;
     } else {
       return false;

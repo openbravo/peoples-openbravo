@@ -43,7 +43,7 @@ public class WSReadTest extends BaseWSTest {
    * @throws Exception
    */
   public void testSchemaWebService() throws Exception {
-    doTestGetRequest("/ws/dal/schema", "<xs:element name=\"Openbravo\">", 200);
+    doTestGetRequest("/ws/dal/schema", "<xs:element name=\"Openbravo\">", 200, false);
   }
 
   /**
@@ -52,7 +52,7 @@ public class WSReadTest extends BaseWSTest {
    * @throws Exception
    */
   public void testTypesWebService() throws Exception {
-    doTestGetRequest("/ws/dal", "<Types>", 200);
+    doTestGetRequest("/ws/dal", "<Types>", 200, false);
   }
 
   /**
