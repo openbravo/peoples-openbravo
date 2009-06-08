@@ -20,7 +20,7 @@
 
 
 <REPORT>
-  <template file="ActivationKey_InstallLocal.html" />
+  <template file="InstanceManagementActivateLocal.html" />
   
   <PARAMETER id="paramLanguage" name="language" default=""/>
   <PARAMETER id="paramDirectory" name="directory" default=""/>
@@ -28,5 +28,5 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
-  <PARAMETER id="publicKey" name="publicKey" default="" attribute="value"/>
+  <PARAMETER id="publicKey" name="publicKey" default=""/>
 </REPORT>

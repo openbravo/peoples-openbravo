@@ -137,13 +137,17 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
   private void printPageActivateLocal(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException {
+
+    ActivationKey ak = new ActivationKey();
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/ActivationKey_InstallLocal").createXmlDocument();
+        "org/openbravo/erpCommon/ad_forms/InstanceManagementActivateLocal").createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("publicKey", vars.getStringParameter("publicKey"));
+    if (ak.hasActivationKey()) {
+      xmlDocument.setParameter("publicKey", ak.getPublicKey());
+    }
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
