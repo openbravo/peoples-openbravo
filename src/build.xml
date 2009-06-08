@@ -182,7 +182,7 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="generate.entities" depends="compile.src.gen,clean.src.gen">
-    <taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
+      <taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
     <!-- debug="true" will perform the in-memory model initialization before generating entities
 	if an error occurs then, then a stacktrace is printed. -->
     <workflow debug="false" srcGenPath="${base.src.gen}" propertiesFile="${base.config}/Openbravo.properties" file="${base.src}/org/openbravo/base/gen/gen_entity.oaw" fork="true" maxmemory="${build.maxmemory}">
@@ -192,7 +192,15 @@ build.war: build a war file in the lib directory.
         <path refid="project.class.path" />
       </classpath>
     </workflow>
-    
+
+    <!--
+    see issue: https://issues.openbravo.com/view.php?id=9331
+    Custom columns in standard tables should support a reference to a table in the module
+    if this occurs then possible the following javac has to be enabled instead of the two javacs below
+    <javac srcdir="${base.src}:${base.src.gen}" excludes="org/openbravo/base/*,org/openbravo/base/secureApp/**,org/openbravo/erpCommon/**,org/openbravo/erpReports/**,org/openbravo/scheduling/**,org/openbravo/service/web/**,org/openbravo/service/system/**,org/openbravo/service/rest/**,org/openbravo/service/db/**,org/openbravo/authentication/**,org/openbravo/services/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+      <classpath refid="project.class.path" />
+    </javac>
+    -->
     <javac srcdir="${base.src}:${base.src.gen}" includes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
       <classpath refid="project.class.path" />
     </javac>
@@ -220,6 +228,15 @@ build.war: build a war file in the lib directory.
         <path refid="project.class.path" />
       </classpath>
     </workflow>
+
+    <!--
+      see issue: https://issues.openbravo.com/view.php?id=9331
+      Custom columns in standard tables should support a reference to a table in the module
+      if this occurs then possible the following javac has to be enabled instead of the two javacs below
+    <javac srcdir="${base.src}:${base.src.gen}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+      <classpath refid="project.class.path" />      
+    </javac>
+    -->
     <javac srcdir="${base.src}:${base.src.gen}" includes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
       <classpath refid="project.class.path" />      
     </javac>
