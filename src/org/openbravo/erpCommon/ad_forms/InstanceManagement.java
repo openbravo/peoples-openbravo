@@ -57,13 +57,12 @@ public class InstanceManagement extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       ActivationKey activationKey = new ActivationKey();
       printPageActive(response, vars, activationKey);
+    } else if (vars.commandIn("SHOW_ACTIVATE")) {
+      printPageNotActive(response, vars);
     } else if (vars.commandIn("ACTIVATE")) {
       activateRemote(vars);
       printPageClosePopUp(response, vars);
-
-    } else if (vars.commandIn("SHOW_ACTIVATE")) {
-      printPageNotActive(response, vars);
-    } else if (vars.commandIn("ACTIVATE_LOCAL")) {
+    } else if (vars.commandIn("SHOW_ACTIVATE_LOCAL")) {
       printPageActivateLocal(response, vars);
     } else if (vars.commandIn("INSTALLFILE")) {
       printPageInstallFile(response, vars);
