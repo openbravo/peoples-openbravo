@@ -72,4 +72,14 @@ public abstract class CalloutHelper extends HttpSecureAppServlet {
     }
     return strArray.toString();
   }
+
+  static boolean commandInCommandList(String inCommand, String... commandList) {
+    for (String command : commandList) {
+      if (commandList.equals(command)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }

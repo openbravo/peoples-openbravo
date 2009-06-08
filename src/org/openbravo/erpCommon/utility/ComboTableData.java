@@ -24,6 +24,8 @@ import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -1339,4 +1341,72 @@ public class ComboTableData {
     vector.copyInto(objectListData);
     return (objectListData);
   }
+
+  /**
+   * Special fill parameters function to be used from the search popup (servlet).
+   * 
+   * It flags the combo to be used from a search popup changing the logic to get the needed
+   * parameters for a possible where clause: it uses the pattern inpParam<columnName> to get the
+   * values from the request and does not use the preferences for fields to preset a search filter
+   */
+  public void fillParametersFromSearch(String tab, String window) throws ServletException {
+    fillSQLParameters(pool, vars, null, tab, window, "", true);
+  }
+
+  /**
+   * Fill the parameters of the sql with the session values or FieldProvider values. Used in the
+   * combo fields.
+   * 
+   * @param data
+   *          optional FieldProvider which can be used to get the needed parameter values from. If
+   *          the FieldProvider has a filed named after a parameter, then its value will be used if
+   *          the value could not be already obtained from the request parameters.
+   * @param window
+   *          Window id.
+   * @param actual_value
+   *          actual value for the combo.
+   * @throws ServletException
+   */
+  public void fillParameters(FieldProvider data, String window, String actual_value)
+      throws ServletException {
+    fillSQLParameters(pool, vars, data, "", window, actual_value, false);
+  }
+
+  /**
+   * Fill the parameters of the sql with the session values or FieldProvider values. Used in the
+   * combo fields.
+   * 
+   * @param conn
+   *          Handler for the database connection.
+   * @param vars
+   *          Handler for the session info.
+   * @param data
+   *          FieldProvider with the columns values.
+   * @param window
+   *          Window id.
+   * @param actual_value
+   *          actual value for the combo.
+   * @throws ServletException
+   */
+  void fillSQLParameters(ConnectionProvider conn, VariablesSecureApp vars, FieldProvider data,
+      String tab, String window, String actual_value, boolean fromSearch) throws ServletException {
+    final Vector<String> vAux = getParameters();
+    if (vAux != null && vAux.size() > 0) {
+      if (log4j.isDebugEnabled())
+        log4j.debug("Combo Parameters: " + vAux.size());
+      for (int i = 0; i < vAux.size(); i++) {
+        final String strAux = vAux.elementAt(i);
+        try {
+          final String value = Utility.parseParameterValue(conn, vars, data, strAux, tab, window,
+              actual_value, fromSearch);
+          if (log4j.isDebugEnabled())
+            log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
+          setParameter(strAux, value);
+        } catch (final Exception ex) {
+          throw new ServletException(ex);
+        }
+      }
+    }
+  }
+
 }
