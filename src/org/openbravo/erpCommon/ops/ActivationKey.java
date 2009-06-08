@@ -317,7 +317,7 @@ public class ActivationKey {
   }
 
   public boolean hasExpirationDate() {
-    return getProperty("enddate") != null;
+    return isOPSInstance() && (getProperty("enddate") != null);
   }
 
   public String getProperty(String propName) {

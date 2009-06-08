@@ -116,14 +116,20 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageActive(HttpServletResponse response, VariablesSecureApp vars,
       ActivationKey activationKey) throws IOException, ServletException {
     response.setContentType("text/html; charset=UTF-8");
-    String discard[] = { "", "" };
-    if (activationKey.hasExpired()) {
-      discard[0] = "OPSActive";
-    } else {
-      discard[0] = "OPSExpired";
-      if (!activationKey.hasExpirationDate()) {
-        discard[1] = "OPSExpirationTime";
+    String discard[] = { "", "", "" };
+    if (activationKey.isOPSInstance()) {
+      discard[0] = "CEInstance";
+      if (activationKey.hasExpired()) {
+        discard[1] = "OPSActive";
+      } else {
+        discard[1] = "OPSExpired";
+        if (!activationKey.hasExpirationDate()) {
+          discard[2] = "OPSExpirationTime";
+        }
       }
+    } else {
+      discard[0] = "OPSInstance";
+      discard[1] = "OPSActive";
     }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(

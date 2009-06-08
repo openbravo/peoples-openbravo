@@ -256,7 +256,7 @@ var baseDirectory = "../../../../../web/";
                     </table>
                   </td>
                 </tr>
-                <tr>
+                <tr id="OPSInstance">
                  <td class="TitleCell">
                     <span class="LabelText">Instance Status</span>
                   </td>
@@ -267,10 +267,21 @@ var baseDirectory = "../../../../../web/";
                     <span class="Label_ReadOnly_Text" ><span style="color:red;">Your Openbravo instance has expired</span>.<span id="OPSExpirationTime"> You need to renew your <a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Openbravo Professional Subscription</a> to reactivate the instance.</span></span>
                   </td>
                 </tr>
+                
+                <tr id="CEInstance">
+                 <td/>
+                  <td colspan="5" class="TitleCell" style="text-align:left;">
+                    <p class="Label_ReadOnly_Text">Your instance is not activated as you are now running Openbravo ERP Community Edition. In order to activate an Openbravo  ERP instance, you will need to upgrade to Openbravo Professional Edition. This subscription lets you access to extended updates, support, add-ons and warranties that will save you time, money and hassle.</p>
+                    <p>&nbsp;</p>
+                    <p class="Label_ReadOnly_Text"><a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Learn more about Openbravo Professional Subscription options</a></p>
+                  </td>
+                </tr>
+                
+                
                 <tr>
                   <td>&nbsp;</td>
                 </tr>
-                <tr>
+                <tr id="OPSInstance">
                   <td class="TitleCell">
                     <span class="LabelText">Instance Details</span>
                   </td>
@@ -302,9 +313,10 @@ var baseDirectory = "../../../../../web/";
                 
                 <tr>
                 <td/>
-                <td colspan="5" class="TitleCell" style="text-align:left;">
-                    <span class="Label_ReadOnly_Text" >To reactivate you need the Public Key that you receive when you renew your Openbravo Professional Subscription. 
+                  <td colspan="5" class="TitleCell" style="text-align:left;">
+                    <span id="OPSInstance" class="Label_ReadOnly_Text" >To reactivate you need the Public Key that you receive when you renew your Openbravo Professional Subscription. 
                     You can reactivate online if you are connected to the internet. If you are not connected, you can use an activation file that you downloaded from <a class="LabelLink_noicon" href="http://butler.openbravo.com/DownloadActivationKey.html" target="_blank">butler.openbravo.com</a></span>
+                    <span id="CEInstance" class="Label_ReadOnly_Text" >A Public Key is needed to activate the Openbravo ERP instance. You will receive a Public Key when you purchase an <a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Openbravo Professional Subscription</a>. You can activate online if you are connected to the internet. If you are not connected, you can use an activation file that you downloaded from <a class="LabelLink_noicon" href="http://butler.openbravo.com/DownloadActivationKey.html" target="_blank">butler.openbravo.com</a>. 
                   </td>
                 </tr>
                 <tr>
@@ -368,6 +380,7 @@ var baseDirectory = "../../../../../web/";
                 <tr>
                   <td>&nbsp;</td>
                 </tr> 
+                <div id="OPSInstance">
                 <tr>
                   <td/>
                   <td colspan="5" class="TitleCell" style="text-align:left;">
@@ -407,7 +420,7 @@ var baseDirectory = "../../../../../web/";
                   
                   <td colspan="3"/>
                 </tr>
-
+              </div>
               </table>
                       <!-- USER CONTROLS -->
                 </td>
