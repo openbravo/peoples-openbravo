@@ -26191,6 +26191,7 @@
     <description xsi:nil="true"/>
     <accountingSchema id="1000001"/>
     <balanced>true</balanced>
+    <reportType>Y</reportType>
   </FinancialMgmtAccountingReport>
   <FinancialMgmtAcctRptNode id="1000000">
     <id>1000000</id>
