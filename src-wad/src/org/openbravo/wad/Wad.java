@@ -812,11 +812,11 @@ public class Wad extends DefaultHandler {
         if (totalParameters < vecTotalParameters.size()) {
           ArrayList<String> usedParameters = new ArrayList<String>();
           for (int h = totalParameters; h < vecTotalParameters.size(); h++) {
-            String strParam = (String) vecTotalParameters.elementAt(h);
-            vecParameters.addElement(strParam);
+            String strParam = WadUtility.getWhereParameter(vecTotalParameters.elementAt(h), false);
+            vecParameters.addElement(WadUtility.getWhereParameter(vecTotalParameters.elementAt(h),
+                true));
             if (!usedParameters.contains(strParam)) {
               usedParameters.add(strParam);
-              strParam = strParam.substring(17, strParam.lastIndexOf("\""));
               whereClauseParams += ", Utility.getContext(this, vars, \"" + strParam
                   + "\", windowId)";
             }
@@ -867,8 +867,8 @@ public class Wad extends DefaultHandler {
         if (vecParametersParent.size() > 0) {
           ArrayList<String> usedParameters = new ArrayList<String>();
           for (int h = 0; h < vecParametersParent.size(); h++) {
-            String strParam = (String) vecParametersParent.elementAt(h);
-            strParam = strParam.substring(17, strParam.lastIndexOf("\""));
+            String strParam = WadUtility.getWhereParameter(vecParametersParent.get(h), false);
+
             if (!usedParameters.contains(strParam)) {
               usedParameters.add(strParam);
               parentwhereclause += ", Utility.getContext(this, vars, \"" + strParam
@@ -2399,8 +2399,7 @@ public class Wad extends DefaultHandler {
     while (pos != -1) {
       result.append(strWhere.substring(0, pos));
       strWhere = strWhere.substring(pos + 1);
-      String strParam = (String) vecParameters.elementAt(questNumber);
-      strParam = strParam.substring(17, strParam.lastIndexOf("\""));
+      String strParam = WadUtility.getWhereParameter(vecParameters.elementAt(questNumber), false);
       questNumber++;
       if (strParam.equalsIgnoreCase("paramLanguage"))
         result.append(" '\" + vars.getLanguage() + \"' ");
@@ -2810,7 +2809,7 @@ public class Wad extends DefaultHandler {
             vecParametros);
         final StringBuffer parametros = new StringBuffer();
         for (final Enumeration<Object> e = vecParametros.elements(); e.hasMoreElements();) {
-          final String paramsElement = (String) e.nextElement();
+          String paramsElement = WadUtility.getWhereParameter(e.nextElement(), true);
           parametros.append("\n" + paramsElement);
         }
         fieldsAux[i].whereclause = parametros.toString();
@@ -2829,7 +2828,7 @@ public class Wad extends DefaultHandler {
               vecParametros);
           final StringBuffer parametros = new StringBuffer();
           for (final Enumeration<Object> e = vecParametros.elements(); e.hasMoreElements();) {
-            final String paramsElement = (String) e.nextElement();
+            String paramsElement = WadUtility.getWhereParameter(e.nextElement(), true);
             parametros.append("\n" + paramsElement);
           }
           fieldsDef[i].whereclause = parametros.toString();
@@ -2984,7 +2983,7 @@ public class Wad extends DefaultHandler {
               vecParametros);
           final StringBuffer parametros = new StringBuffer();
           for (final Enumeration<Object> e = vecParametros.elements(); e.hasMoreElements();) {
-            final String paramsElement = (String) e.nextElement();
+            final String paramsElement = WadUtility.getWhereParameter(e.nextElement(), true);
             parametros.append("\n" + paramsElement);
           }
           fieldsAux[i].whereclause = parametros.toString();
