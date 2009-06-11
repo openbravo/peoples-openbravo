@@ -284,6 +284,14 @@ function reloadOpener() {
  }
 }
 
+ /**
+  * Removes the onunload function reference
+  * @return
+  */
+function removeOnUnload() {
+	window.onunload = null;
+}
+
 /**
 * Check for changes in a Form. This function requires the inpLastFieldChanged field. Is a complementary function to {@link #setChangedField}
 * @param {Form} f Reference to a form where the inpLastFieldChanged is located.
