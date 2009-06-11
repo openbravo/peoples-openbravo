@@ -45,6 +45,18 @@
       </Sql>
   </SqlMethod>
   
+  <SqlMethod name="compileCompleteNeeded" type="preparedStatement" return="boolean">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+         SELECT count(*) as NAME
+           FROM AD_MODULE
+          WHERE (STATUS='I'      
+                 AND TYPE = 'T')
+             OR (STATUS='U')
+          ]]>
+      </Sql>
+  </SqlMethod>
+  
   <SqlMethod name="selectUninstalledModules" type="preparedStatement" return="boolean">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

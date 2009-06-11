@@ -102,7 +102,10 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="chekPerms" value="false" />
   <property name="force" value="false" />
   <property name="local" value="true" />
+  <property name="apply.modules.complete.compilation" value="false" />
 
+
+  
   <available file=".hg" property="is.hg" />
 
 
@@ -627,8 +630,30 @@ compare.database.structure: refer to compare.database.structure target of databa
     but then no output is visible for the user.
     -->
     <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" reinitializemodel="false"/>
+    
+    <condition property="apply.modules.complete.compilation.var">
+      <istrue value="${apply.modules.complete.compilation}"  />
+    </condition>
+    
+    <condition property="apply.modules.simple.compilation.var">
+      <isfalse value="${apply.modules.complete.compilation.var}" />
+    </condition>
+    
+    <antcall target="apply.modules.compile"/>
+  </target>
+  
+  
+  <target name="apply.modules.compile">
+    <antcall target="apply.modules.compile.simple"/>
+    <antcall target="apply.modules.compile.complete"/>
+  </target>
+  
+  <target name="apply.modules.compile.simple" if="apply.modules.simple.compilation.var">
     <antcall target="compile.deploy" />
-    <!--antcall target="deploy.context"/-->
+  </target>
+  
+  <target name="apply.modules.compile.complete" if="apply.modules.complete.compilation.var">
+     <antcall target="compile.complete.deploy" />
   </target>
   
   <!-- 
