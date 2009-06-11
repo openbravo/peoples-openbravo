@@ -375,6 +375,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
         	CALL AD_UPDATE_SEQUENCE();
           CALL AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
+          CALL AD_LANGUAGE_CREATE(NULL);
         </transaction>
     </sql>
   </target>
@@ -395,6 +396,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
           SELECT AD_UPDATE_SEQUENCE();
           SELECT AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
+          SELECT AD_LANGUAGE_CREATE(NULL);
         </transaction>
     </sql>
   </target>
