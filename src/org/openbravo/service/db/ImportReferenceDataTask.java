@@ -37,10 +37,6 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
   @Override
   protected void doExecute() {
     final File importDir = getReferenceDataDir();
-    if (importDir.listFiles().length == 0) {
-      throw new OBException("No import files present in the import directory: "
-          + importDir.getAbsolutePath());
-    }
 
     for (final File importFile : importDir.listFiles()) {
       if (importFile.isDirectory()) {
