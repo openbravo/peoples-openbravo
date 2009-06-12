@@ -361,13 +361,13 @@
             <tr>
               <td class="TitleCell"><span class="LabelText">Order</span></td>
               <td class="Combo_ContentCell" colspan="2">
-                <select class="Combo Combo_TwoCells_width" name="inpPurchaseOrder" onchange="submitCommandForm('FIND_PO', false, null, null, '_self');return true;" id="inpPurchaseOrder">
+                <select class="Combo Combo_TwoCells_width" name="inpPurchaseOrder" onchange="removeOnUnload();submitCommandForm('FIND_PO', false, null, null, '_self');return true;" id="inpPurchaseOrder">
                   <option value=""></option><div id="reportPurchaseOrder"></div>
                 </select>
               </td>
               <td class="TitleCell"><span class="LabelText">Shipment/Receipt</span></td>
               <td class="Combo_ContentCell" colspan="2">
-               <select class="Combo Combo_OneCell_width" name="inpShipmentReciept" onchange="submitCommandForm('FIND_SHIPMENT', false, null, null, '_self');return true;" id="inpShipmentReciept">
+               <select class="Combo Combo_OneCell_width" name="inpShipmentReciept" onchange="removeOnUnload();submitCommandForm('FIND_SHIPMENT', false, null, null, '_self');return true;" id="inpShipmentReciept">
                 <option value=""></option><div id="reportShipmentReciept"></div>
               </select>
               </td>
