@@ -29,25 +29,20 @@
 		vAlign="Middle"
 		fontName="Bitstream Vera Sans"
 		fontSize="10"
-	>
-	</style>
+	/>
 	<style 
 		name="Report_Title"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="18"
-	>
-					<box leftPadding="5"></box>
-	</style>
+	/>
 	<style 
 		name="Report_Subtitle"
 		isDefault="false"
 		forecolor="#555555"
 		fontName="Bitstream Vera Sans"
 		fontSize="14"
-	>
-					<box leftPadding="5"></box>
-	</style>
+	/>
 	<style 
 		name="Total_Field"
 		isDefault="false"
@@ -55,9 +50,7 @@
 		forecolor="#000000"
 		backcolor="#CCCCCC"
 		vAlign="Middle"
-	>
-					<box leftPadding="5"></box>
-	</style>
+	/>
 	<style 
 		name="Detail_Header"
 		isDefault="false"
@@ -65,11 +58,7 @@
 		forecolor="#FFFFFF"
 		backcolor="#555555"
 		vAlign="Middle"
-	>
-					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
-	</style>
+	/>
 	<style 
 		name="GroupHeader_DarkGray"
 		isDefault="false"
@@ -79,16 +68,13 @@
 		vAlign="Middle"
 		fontName="Bitstream Vera Sans"
 		fontSize="14"
-	>
-					<box leftPadding="5"></box>
-	</style>
+	/>
 	<style 
 		name="GroupHeader_Gray"
 		isDefault="false"
 		mode="Opaque"
 		backcolor="#999999"
-	>
-	</style>
+	/>
 	<style 
 		name="Detail_Line"
 		isDefault="false"
@@ -101,8 +87,7 @@
 				isDefault="false"
 				mode="Opaque"
 				backcolor="#CCCCCC"
-			>
-			</style>
+			/>
 		</conditionalStyle>
 	</style>
 	<style 
@@ -111,8 +96,7 @@
 		mode="Opaque"
 		forecolor="#000000"
 		backcolor="#CCCCCC"
-	>
-	</style>
+	/>
 
 	<parameter name="ATTACH" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String"/>
@@ -169,17 +153,12 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="GroupHeader_DarkGray"
-						x="147"
+						x="123"
 						y="0"
-						width="388"
+						width="412"
 						height="26"
 						key="textField"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica"/>
 					</textElement>
@@ -194,9 +173,7 @@
 						forecolor="#555555"
 						key="line-2"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -207,24 +184,17 @@
 						forecolor="#555555"
 						key="line-3"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
 						x="0"
 						y="0"
-						width="147"
+						width="123"
 						height="26"
 						key="staticText-2"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
 					</textElement>
@@ -242,9 +212,7 @@
 						height="0"
 						forecolor="#555555"
 						key="line-34"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch"/>
 				</line>
 			</band>
 			</groupFooter>
@@ -256,17 +224,12 @@
 				<staticText>
 					<reportElement
 						style="GroupHeader_DarkGray"
-						x="12"
+						x="10"
 						y="0"
-						width="111"
+						width="113"
 						height="23"
 						key="staticText"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica"/>
 					</textElement>
@@ -280,12 +243,7 @@
 						width="412"
 						height="23"
 						key="textField"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica" isBold="false"/>
 					</textElement>
@@ -300,9 +258,7 @@
 						forecolor="#555555"
 						key="line-4"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -313,9 +269,7 @@
 						forecolor="#555555"
 						key="line-6"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -326,24 +280,17 @@
 						forecolor="#555555"
 						key="line-8"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
 						x="15"
-						y="49"
-						width="100"
+						y="50"
+						width="108"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
@@ -352,17 +299,12 @@
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="116"
+						x="123"
 						y="49"
-						width="53"
+						width="52"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
@@ -371,17 +313,12 @@
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="169"
+						x="175"
 						y="49"
-						width="259"
+						width="251"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
@@ -389,16 +326,12 @@
 				</staticText>
 				<staticText>
 					<reportElement
-						x="12"
-						y="28"
+						x="15"
+						y="23"
 						width="36"
-						height="16"
+						height="27"
 						key="element-91"/>
-					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
@@ -406,16 +339,12 @@
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="49"
-						y="28"
-						width="107"
-						height="16"
+						x="51"
+						y="23"
+						width="72"
+						height="27"
 						key="textField-1"/>
-					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Top">
 						<font fontName="Bitstream Vera Sans" size="10"/>
 					</textElement>
@@ -423,16 +352,12 @@
 				</textField>
 				<staticText>
 					<reportElement
-						x="365"
-						y="28"
-						width="52"
-						height="16"
+						x="175"
+						y="23"
+						width="252"
+						height="27"
 						key="element-92"/>
-					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
@@ -440,16 +365,12 @@
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="419"
-						y="28"
-						width="107"
-						height="16"
+						x="427"
+						y="23"
+						width="102"
+						height="27"
 						key="textField-3"/>
-					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font fontName="Bitstream Vera Sans" size="10"/>
 					</textElement>
@@ -458,22 +379,30 @@
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="428"
-						y="49"
-						width="106"
+						x="427"
+						y="50"
+						width="102"
 						height="16"
 						key="element-93"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Amount]]></text>
 				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="123"
+						y="23"
+						width="52"
+						height="27"
+						key="textField-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[]]></textFieldExpression>
+				</textField>
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -487,9 +416,7 @@
 						forecolor="#555555"
 						key="line-28"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -500,9 +427,7 @@
 						forecolor="#555555"
 						key="line-30"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -512,9 +437,7 @@
 						height="0"
 						forecolor="#555555"
 						key="line-31"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch"/>
 				</line>
 			</band>
 			</groupFooter>
@@ -538,12 +461,7 @@
 						width="535"
 						height="23"
 						key="textField"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -556,9 +474,7 @@
 						width="535"
 						height="0"
 						key="line-1"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch"/>
 				</line>
 			</band>
 		</pageHeader>
@@ -572,14 +488,10 @@
 					<reportElement
 						x="427"
 						y="0"
-						width="106"
+						width="102"
 						height="16"
 						key="textField-2"/>
-					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font fontName="Bitstream Vera Sans" size="10"/>
 					</textElement>
@@ -594,9 +506,7 @@
 						forecolor="#555555"
 						key="line-16"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -607,9 +517,7 @@
 						forecolor="#555555"
 						key="line-17"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -620,22 +528,16 @@
 						forecolor="#555555"
 						key="line-18"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="15"
 						y="0"
-						width="100"
+						width="108"
 						height="16"
 						key="textField"/>
-					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="11"/>
 					</textElement>
@@ -643,16 +545,12 @@
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="115"
+						x="123"
 						y="0"
-						width="53"
+						width="52"
 						height="16"
 						key="textField"/>
-					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="11"/>
 					</textElement>
@@ -660,16 +558,12 @@
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="168"
+						x="175"
 						y="0"
-						width="259"
+						width="252"
 						height="16"
 						key="textField"/>
-					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="11"/>
 					</textElement>
@@ -690,11 +584,7 @@
 						width="95"
 						height="19"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Helvetica" size="10"/>
 					</textElement>
@@ -709,11 +599,7 @@
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Helvetica" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
@@ -727,9 +613,7 @@
 						height="0"
 						forecolor="#000000"
 						key="line"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch"/>
 				</line>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -738,11 +622,7 @@
 						width="69"
 						height="19"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="10"/>
 					</textElement>
@@ -755,11 +635,7 @@
 						width="78"
 						height="19"
 						key="staticText-1"/>
-					<box leftPadding="5" topPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
