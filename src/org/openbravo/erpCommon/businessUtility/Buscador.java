@@ -68,6 +68,13 @@ public class Buscador extends HttpSecureAppServlet {
       String strShowAudit = Utility.getContext(this, vars, "ShowAudit", strWindowId);
       BuscadorData[] data;
 
+      // assumption Buscador servlet is only called from generated windows
+      // get url path working on windows in core & modules and use this instead
+      // of the incoming window path
+      // always use _Relation form url as it matches old behavior in ToolBar.java and
+      // both views are mapped to the same servlet
+      strWindow = Utility.getTabURL(this, strTab, "R");
+
       if (!BuscadorData.hasSelectionColumns(this, strTab).equals("0"))
         data = BuscadorData.select(this, vars.getLanguage(), strTab, strShowAudit);
       else
@@ -347,7 +354,7 @@ public class Buscador extends HttpSecureAppServlet {
     strHtml.append("\n").append(paramsData);
     strHtml
         .append("  if (parent.window.opener.selectFilters) parent.window.opener.selectFilters(paramsData);\n");
-    strHtml.append("  else parent.window.opener.submitFormGetParams(\"SEARCH\", \"../" + strWindow
+    strHtml.append("  else parent.window.opener.submitFormGetParams(\"SEARCH\", \"" + strWindow
         + "\"" + params.toString() + ");\n");
     strHtml.append("  parent.window.close();\n");
     strHtml.append("  return true;\n");
