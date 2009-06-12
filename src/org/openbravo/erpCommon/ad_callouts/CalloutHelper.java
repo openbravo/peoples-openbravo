@@ -75,7 +75,7 @@ public abstract class CalloutHelper extends HttpSecureAppServlet {
 
   static boolean commandInCommandList(String inCommand, String... commandList) {
     for (String command : commandList) {
-      if (commandList.equals(command)) {
+      if (inCommand.equals(command)) {
         return true;
       }
     }
