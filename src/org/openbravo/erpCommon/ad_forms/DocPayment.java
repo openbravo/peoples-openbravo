@@ -239,21 +239,24 @@ public class DocPayment extends AcctServer {
                 + " - Receipt:" + line.isReceipt);
           // Depending on the stt type and the signum of DP it will be
           // posted on credit or debit
+          DocLine_Payment lineAux = line;
+          lineAux.setC_WITHHOLDING_ID(data[0].cWithholdingId);
+          lineAux.setM_C_Tax_ID(data[0].cTaxId);
           if (amount.signum() == 1) {
-            fact.createLine(line, new Account(conn,
-                (line.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
-                C_Currency_ID, (line.isReceipt.equals("Y") ? transitoryAmount.abs().toString()
-                    : "0"), (line.isReceipt.equals("Y") ? "0" : transitoryAmount.abs().toString()),
-                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            fact.createLine(lineAux, new Account(conn,
+                (lineAux.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
+                C_Currency_ID, (lineAux.isReceipt.equals("Y") ? transitoryAmount.abs().toString()
+                    : "0"), (lineAux.isReceipt.equals("Y") ? "0" : transitoryAmount.abs()
+                    .toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
             if ((!changeGenerate && line.isReceipt.equals("N"))
                 || (changeGenerate && line.isReceipt.equals("Y")))
               amount = amount.negate();
           } else {
-            fact.createLine(line, new Account(conn,
-                (line.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
-                C_Currency_ID, (line.isReceipt.equals("Y") ? "0" : transitoryAmount.abs()
-                    .toString()), (line.isReceipt.equals("Y") ? transitoryAmount.abs().toString()
-                    : "0"), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            fact.createLine(lineAux, new Account(conn,
+                (lineAux.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
+                C_Currency_ID, (lineAux.isReceipt.equals("Y") ? "0" : transitoryAmount.abs()
+                    .toString()), (lineAux.isReceipt.equals("Y") ? transitoryAmount.abs()
+                    .toString() : "0"), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
             if ((!changeGenerate && line.isReceipt.equals("Y"))
                 || (changeGenerate && line.isReceipt.equals("N")))
               amount = amount.negate();
@@ -272,8 +275,11 @@ public class DocPayment extends AcctServer {
             if (log4j.isDebugEnabled())
               log4j.debug("DocPayment - createFact - Conceptos - AmountDebit: " + amountdebit
                   + " - AmountCredit: " + amountcredit);
-            fact.createLine(line, new Account(conn,
-                (line.isReceipt.equals("Y") ? data[j].creditAcct : data[j].debitAcct)),
+            DocLine_Payment lineAux = line;
+            lineAux.setC_WITHHOLDING_ID(data[j].cWithholdingId);
+            lineAux.setM_C_Tax_ID(data[j].cTaxId);
+            fact.createLine(lineAux, new Account(conn,
+                (lineAux.isReceipt.equals("Y") ? data[j].creditAcct : data[j].debitAcct)),
                 C_Currency_ID, (amountdebit.equals("0") ? "" : amountdebit), (amountcredit
                     .equals("0") ? "" : amountcredit), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
                 DocumentType, conn);

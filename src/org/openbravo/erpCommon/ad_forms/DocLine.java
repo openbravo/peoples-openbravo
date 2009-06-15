@@ -34,6 +34,15 @@ public class DocLine {
   public String m_TrxHeader_ID = "";
   /** ID - Line ID */
   public String m_TrxLine_ID = "";
+
+  public String getM_C_Tax_ID() {
+    return m_C_Tax_ID;
+  }
+
+  public void setM_C_Tax_ID(String tax_ID) {
+    m_C_Tax_ID = tax_ID;
+  }
+
   /** Line */
   public String m_Line = "";
 
@@ -82,6 +91,8 @@ public class DocLine {
   public String m_description = "";
   /** Tax ID */
   public String m_C_Tax_ID = "";
+  /** WithHolding ID */
+  public String m_C_WithHolding_ID = "";
 
   public String m_DateAcct = "";
   public String m_DateDoc = "";
@@ -120,6 +131,7 @@ public class DocLine {
     m_qty = data.getField("qty");
     //
     m_C_Tax_ID = data.getField("cTaxId");
+    m_C_WithHolding_ID = data.getField("cWithholdingId");
     m_C_Charge_ID = data.getField("cChargeId");
     m_ChargeAmt = data.getField("chargeamt");
     //
@@ -135,6 +147,14 @@ public class DocLine {
     if (m_C_Currency_ID != null && m_C_Currency_ID.equals(""))
       m_C_Currency_ID = vo.C_Currency_ID;
   } // loadAttributes
+
+  public String getM_C_WithHolding_ID() {
+    return m_C_WithHolding_ID;
+  }
+
+  public void setM_C_WithHolding_ID(String withHolding_ID) {
+    m_C_WithHolding_ID = withHolding_ID;
+  }
 
   public void setAmount(String amtSourceDr, String amtSourceCr) {
     m_AmtSourceDr = (amtSourceDr == null || amtSourceDr.equals("")) ? "0" : amtSourceDr;
