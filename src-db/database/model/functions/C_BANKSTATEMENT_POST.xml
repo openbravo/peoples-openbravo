@@ -68,7 +68,8 @@
     -- Parameter Variables
     --  Parameter Variables
     v_Processed CHAR(1) ;
-    v_Posted CHAR(1) ;
+		v_Posted CHAR(1) ;
+		v_Processing CHAR(1) ;
     v_count NUMBER;
     v_SettlementDocType_ID VARCHAR2(32) ;
     v_settlementID varchar2(32) ;
@@ -107,17 +108,22 @@
     END LOOP; --  Get Parameter
     SELECT PROCESSED,
       POSTED,
+			PROCESSING,
       AD_Client_ID,
       AD_Org_ID
     INTO v_Processed,
       v_Posted,
+			v_Processing,
       v_AD_Client_ID,
       v_AD_Org_ID
     FROM C_BANKSTATEMENT
     WHERE C_BankStatement_ID=v_Record_ID;
-    IF(v_Posted='Y') THEN
-      RAISE_APPLICATION_ERROR(-20000, '@BankStatementDocumentPosted@') ;
-    END IF;
+		IF(v_Processing='Y') THEN
+		RAISE_APPLICATION_ERROR(-20000, '@OtherProcessActive@') ;
+		END IF;
+		IF(v_Posted='Y') THEN
+		RAISE_APPLICATION_ERROR(-20000, '@BankStatementDocumentPosted@') ;
+		END IF;
     IF(NOT FINISH_PROCESS) THEN
       DECLARE
         Cur_AutomaticSettlementCancel RECORD;

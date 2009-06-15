@@ -262,7 +262,7 @@
       <foreign-key foreignTable="C_CAMPAIGN" name="SO_CAMPAIGN_FACT_ACCT">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_WITHHOLDING" name="CWITHHOLDING_FACT_ACCT">
+      <foreign-key foreignTable="C_WITHHOLDING" name="CWITHHOLDING_FACTACCT">
         <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
       </foreign-key>
       <index name="FACT_ACCT_ACCOUNT" unique="false">
