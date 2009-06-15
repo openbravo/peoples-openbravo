@@ -272,7 +272,7 @@
       SELECT S.C_ACCTSCHEMA_ID||R.C_ACCT_RPT_ID AS PADRE, O.AD_ORG_ID AS ID, O.NAME AS NAME
       FROM C_ACCT_RPT R, AD_ORG_ACCTSCHEMA S, (
                                               SELECT AD_ORG.AD_ORG_ID, AD_ORG.NAME, AD_ORG.AD_CLIENT_ID,
-                                                (CASE WHEN AD_ORGTYPE.ISBUSINESSUNIT='Y' OR AD_ORGTYPE.ISLEGALENTITY='Y' THEN 'Y' ELSE 'N' END) BALANCED
+                                                (CASE WHEN AD_ORGTYPE.ISBUSINESSUNIT='Y' OR AD_ORGTYPE.ISLEGALENTITY='Y' THEN 'Y' ELSE 'N' END) AS BALANCED
                                               FROM AD_ORG, AD_ORGTYPE
                                               WHERE AD_ORGTYPE.AD_ORGTYPE_ID = AD_ORG.AD_ORGTYPE_ID
                                              ) O
@@ -286,7 +286,7 @@
       SELECT S.C_ACCTSCHEMA_ID||R.C_ACCT_RPT_ID AS PADRE, O.AD_ORG_ID AS ID, O.NAME AS NAME
       FROM C_ACCT_RPT R, AD_ORG_ACCTSCHEMA S, (
                                               SELECT AD_ORG.AD_ORG_ID, AD_ORG.NAME, AD_ORG.AD_CLIENT_ID,
-                                                (CASE WHEN AD_ORGTYPE.ISBUSINESSUNIT='Y' OR AD_ORGTYPE.ISLEGALENTITY='Y' THEN 'Y' ELSE 'N' END) BALANCED
+                                                (CASE WHEN AD_ORGTYPE.ISBUSINESSUNIT='Y' OR AD_ORGTYPE.ISLEGALENTITY='Y' THEN 'Y' ELSE 'N' END) AS BALANCED
                                               FROM AD_ORG, AD_ORGTYPE
                                               WHERE AD_ORGTYPE.AD_ORGTYPE_ID = AD_ORG.AD_ORGTYPE_ID
                                              ) O
