@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.AccountTree;
 import org.openbravo.erpCommon.businessUtility.AccountTreeData;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
@@ -53,11 +52,6 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
-          "ReportGeneralLedger|cAcctSchemaId", "");
-      String strAgno = vars.getGlobalVariable("inpAgno", "GeneralAccountingReports|agno", "");
-      String strAgnoRef = vars.getGlobalVariable("inpAgnoRef", "GeneralAccountingReports|agnoRef",
-          "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom",
           "GeneralAccountingReports|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "GeneralAccountingReports|dateTo", "");
@@ -75,15 +69,12 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           "GeneralAccountingReports|conImporte", "N");
       String strConCodigo = vars.getGlobalVariable("inpConCodigo",
           "GeneralAccountingReports|conCodigo", "N");
-      String strOrg = vars.getGlobalVariable("inpOrganizacion",
-          "GeneralAccountingReports|organizacion", "");
       String strLevel = vars.getGlobalVariable("inpLevel", "GeneralAccountingReports|level", "");
-      printPageDataSheet(response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
-          strDateFromRef, strDateToRef, strAsDateTo, strAsDateToRef, strElementValue,
-          strConImporte, strOrg, strLevel, strConCodigo, strcAcctSchemaId);
+      printPageDataSheet(response, vars, "", "", strDateFrom, strDateTo, strDateFromRef,
+          strDateToRef, strAsDateTo, strAsDateToRef, strElementValue, strConImporte, "", strLevel,
+          strConCodigo, "");
     } else if (vars.commandIn("FIND")) {
-      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
-          "ReportGeneralLedger|cAcctSchemaId");
+      String strcAcctSchemaId = vars.getInParameter("inpcAcctSchemaId");
       String strAgno = vars.getRequiredGlobalVariable("inpAgno", "GeneralAccountingReports|agno");
       String strAgnoRef = vars.getRequiredGlobalVariable("inpAgnoRef",
           "GeneralAccountingReports|agnoRef");
@@ -162,9 +153,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
       // For each year, the initial and closing date is obtained
       GeneralAccountingReportsData[] startEndYear = GeneralAccountingReportsData.startEndYear(this,
-          vars.getClient(), strAgno.substring(1, strAgno.length()));
+          vars.getClient(), "'" + strAgno + "'");
       GeneralAccountingReportsData[] startEndYearRef = GeneralAccountingReportsData.startEndYear(
-          this, vars.getClient(), strAgnoRef.substring(1, strAgnoRef.length()));
+          this, vars.getClient(), "'" + strAgnoRef + "'");
       String strYear = "'" + startEndYear[0].name + "'";
       String strYearRef = "'" + startEndYearRef[0].name + "'";
       String strYearsToClose = "";
@@ -450,82 +441,12 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
-    String balancedOrg;
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "AD_OrgType_BU_LE", Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(
-              this, vars, "#User_Client", "ReportCashFlow"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashFlow", "");
-      FieldProvider[] dataOrg = comboTableData.select(false);
-      balancedOrg = "var arrBalancedOrg = new Array(\n";
-      for (int i = 0; i < dataOrg.length; i++) {
-        balancedOrg += "new Array(\"" + dataOrg[i].getField("id") + "\",\""
-            + dataOrg[i].getField("name") + "\")";
-        if (i < dataOrg.length - 1)
-          balancedOrg += ",\n";
-      }
-      balancedOrg += ");";
-
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    xmlDocument.setParameter("balancedOrg", balancedOrg);
-
-    String allOrg;
-    FieldProvider[] dataOrg;
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility
-              .getContext(this, vars, "#User_Client", "ReportCashFlow"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashFlow", "");
-      dataOrg = comboTableData.select(false);
-      allOrg = "var arrAllOrg = new Array(\n";
-      for (int i = 0; i < dataOrg.length; i++) {
-        allOrg += "new Array(\"" + dataOrg[i].getField("id") + "\",\""
-            + dataOrg[i].getField("name") + "\")";
-        if (i < dataOrg.length - 1)
-          allOrg += ",\n";
-      }
-      allOrg += ");";
-
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    xmlDocument.setParameter("allOrg", allOrg);
-    xmlDocument.setData("reportC_Org_ID", "liststructure", dataOrg);
-
-    String reportIsBalanced;
-    GeneralAccountingReportsData[] dataReportIsBalanced = GeneralAccountingReportsData.selectRpt(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
-        Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"),
-        strcAcctSchemaId);
-    reportIsBalanced = "var arrReportIsBalanced = new Array(\n";
-    for (int i = 0; i < dataReportIsBalanced.length; i++) {
-      reportIsBalanced += "new Array(\"" + dataReportIsBalanced[i].getField("id") + "\",\""
-          + dataReportIsBalanced[i].getField("name") + "\",\""
-          + dataReportIsBalanced[i].getField("isbalanced") + "\")";
-      if (i < dataReportIsBalanced.length - 1)
-        reportIsBalanced += ",\n";
-    }
-    reportIsBalanced += ");";
-    xmlDocument.setParameter("reportIsBalanced", reportIsBalanced);
-
-    xmlDocument.setData("reportC_ElementValue_ID", "liststructure", dataReportIsBalanced);
-
+    xmlDocument.setParameter("orgs", Utility.arrayDobleEntrada("arrOrgs",
+        GeneralAccountingReportsData.selectOrgsDouble(this, vars.getClient())));
     xmlDocument.setParameter("accountingReports", Utility.arrayDobleEntrada("arrAccountingReports",
         GeneralAccountingReportsData.selectRptDouble(this)));
-
-    xmlDocument.setParameter("paramAgno", strAgno);
-    xmlDocument.setData("reportAgno", "liststructure", GeneralAccountingReportsData
-        .checkFiscalYears(this, vars.getClient()));
-    xmlDocument.setParameter("paramAgno", strAgnoRef);
-    xmlDocument.setData("reportAgnoRef", "liststructure", GeneralAccountingReportsData
-        .checkFiscalYears(this, vars.getClient()));
-
+    xmlDocument.setParameter("years", Utility.arrayDobleEntrada("arrYears",
+        GeneralAccountingReportsData.selectYearsDouble(this)));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

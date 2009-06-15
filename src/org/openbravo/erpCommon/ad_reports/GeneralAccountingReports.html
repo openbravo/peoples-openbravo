@@ -111,30 +111,43 @@ function validate(command) {
 	return true;
 }
 
-function refreshAccountingReports() {
-  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
-  var cmbAccountingReports = document.frmMain.inpcElementvalueId.value.substring(0,1);
-  changeComboData(cmbAccountingReports, arrAccountingReports, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
+function refreshComboReports() {
+  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;
+  var cmbAccountingReports = document.frmMain.inpcElementvalueId;
+  var cmbOrganization = document.frmMain.inpOrganizacion;
+  var cmbYear = document.frmMain.inpAgno;
+  var cmbYearRef = document.frmMain.inpAgnoRef;
+  changeComboData(cmbAccountingReports, arrAccountingReports, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, true);
+  changeComboData(cmbOrganization, arrOrgs, "", true);
+  changeComboData(cmbYear, arrOrgs, "", true);
+  changeComboData(cmbYearRef, arrOrgs, "", true);
+  return true;
+}
+
+function refreshComboOrgs() {
+  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;
+  var cmbAccountingReports = document.frmMain.inpcElementvalueId;
+  var cmbOrganization = document.frmMain.inpOrganizacion;
+  var cmbYear = document.frmMain.inpAgno;
+  var cmbYearRef = document.frmMain.inpAgnoRef;
+  changeComboData(cmbOrganization, arrOrgs, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value+cmbAccountingReports.options[cmbAccountingReports.selectedIndex].value.substring(1), true);
+  changeComboData(cmbYear, arrOrgs, "", true);
+  changeComboData(cmbYearRef, arrOrgs, "", true);
+  return true;
+}
+
+function refreshComboYears() {
+  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;
+  var cmbAccountingReports = document.frmMain.inpcElementvalueId;
+  var cmbOrganization = document.frmMain.inpOrganizacion;
+  var cmbYear = document.frmMain.inpAgno;
+  var cmbYearRef = document.frmMain.inpAgnoRef;
+  changeComboData(cmbYear, arrYears, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);
+  changeComboData(cmbYearRef, arrYears, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);
   return true;
 }
 
 function onloadFunctions() {
-}
-
-function validateOrgCombo() {
-  var id = document.frmMain.inpcElementvalueId.value;
-  var cmbOrganization = document.frmMain.inpOrganizacion; 
-  
-  for (i = 0; i < arrReportIsBalanced.length; i++) {
-	  if (id == arrReportIsBalanced[i][0] && arrReportIsBalanced[i][2]=='N') {
-		  fillCombo(cmbOrganization, arrAllOrg, false, false);
-	  }
-	  if (id == arrReportIsBalanced[i][0] && arrReportIsBalanced[i][2]=='Y') {
-		  fillCombo(cmbOrganization, arrBalancedOrg, false, false);
-	  }
-  }
-
-  return true;
 }
 </script>
 
@@ -142,42 +155,38 @@ function validateOrgCombo() {
 var arrAccountingReports=null;
 </script>
 
-<script language="JavaScript" type="text/javascript" id="paramArrayBalancedOrg">
-var arrBalancedOrg=null;
+<script language="JavaScript" type="text/javascript" id="paramArrayOrg">
+var arrOrgs=null;
 </script>
 
-<script language="JavaScript" type="text/javascript" id="paramArrayAllOrg">
-var arrAllOrg=null;
+<script language="JavaScript" type="text/javascript" id="paramArrayYears">
+var arrYears=null;
 </script>
 
-<script language="JavaScript" type="text/javascript" id="paramArrayReportIsBalanced">
-var arrReportIsBalanced = null;
+<script language="JavaScript" type="text/javascript">
+function onLoadDo(){
+	this.windowTables = new Array(
+	  new windowTableId('client', 'buttonPDF')
+	);
+	setWindowTableParentElement();
+	this.tabsTables = new Array(
+	  new tabTableId('tdtopTabs')
+	);
+	setTabTableParentElement();
+	enableShortcuts('edition');
+	setBrowserAutoComplete(false);
+	
+	resizeArea();
+	updateMenuIcon('buttonMenu');
+
+	setWindowElementFocus('firstElement');
+       displayLogic();
+}
+
+function onResizeDo(){
+	resizeArea();
+}
 </script>
-
-	<script language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-		this.windowTables = new Array(
-		  new windowTableId('client', 'buttonPDF')
-		);
-		setWindowTableParentElement();
-		this.tabsTables = new Array(
-		  new tabTableId('tdtopTabs')
-		);
-		setTabTableParentElement();
-		enableShortcuts('edition');
-		setBrowserAutoComplete(false);
-		
-		resizeArea();
-		updateMenuIcon('buttonMenu');
-
-		setWindowElementFocus('firstElement');
-        displayLogic();
-	}
-
-	function onResizeDo(){
-		resizeArea();
-	}
-	</script>
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
       <form method="post" action="GeneralAccountingReports.pdf" name="frmMain" target="_blank" id="form">
@@ -323,7 +332,7 @@ var arrReportIsBalanced = null;
 
                 <tr>
                   <td class="TitleCell"> <span class="LabelText">Accounting schema</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="refreshAccountingReports(); validateOrgCombo(); logChanges(this); return true;">
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="refreshComboReports(); logChanges(this); return true;">
                     <option value=""></option><div id="reportC_ACCTSCHEMA_ID"></div>
                   </select></td>
                   <td class="ContentCell"></td>
@@ -333,7 +342,7 @@ var arrReportIsBalanced = null;
 
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Accounting Report</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcElementvalueId" id="inpcElementvalueId" class="ComboKey Combo_TwoCells_width" onchange="validateOrgCombo(); logChanges(this); return true;">
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcElementvalueId" id="inpcElementvalueId" class="ComboKey Combo_TwoCells_width" onchange="displayLogic(); refreshComboOrgs(); logChanges(this); return true;">
                     <option value=""></option><div id="reportC_ElementValue_ID"></div>
                   </select></td>
                   <td class="ContentCell"></td>
@@ -343,7 +352,7 @@ var arrReportIsBalanced = null;
 
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Organization</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width">
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width" onchange="refreshComboYears(); logChanges(this); return true;">
                       <option value=""></option><div id="reportC_Org_ID"></div>
                     </select></td>
                 </tr>
@@ -375,7 +384,7 @@ var arrReportIsBalanced = null;
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Year</span></td>
                   <td class="Combo_ContentCell"> <SELECT name="inpAgno" id="paramAgno" class="ComboKey Combo_OneCell_width" onchange="displayLogic(); return true;">
-                      <OPTION value=""> <DIV id="reportAgno"></DIV></OPTION>
+                      <OPTION value=""></OPTION>
                     </SELECT></TD>
                   <td class="TitleCell" id="tdFromDateLabel"><SPAN class="LabelText">From Date</SPAN></td>
                   <TD class="TextBox_btn_ContentCell" id="tdFromDate">
@@ -398,7 +407,7 @@ var arrReportIsBalanced = null;
                       </tr>
                     </table>
                  </td>
-                  <td class="TitleCell"><span class="LabelText" id="tdToDateLabel">To Date</span></td>
+                  <td class="TitleCell" id="tdToDateLabel"><span class="LabelText">To Date</span></td>
                   <td class="TextBox_btn_ContentCell" id="tdToDate">
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
@@ -445,7 +454,7 @@ var arrReportIsBalanced = null;
                 <tr>
                 <td class="TitleCell"><span class="LabelText">Reference Year</span></td>
                   <td class="Combo_ContentCell"> <SELECT name="inpAgnoRef" id="paramAgnoRef" class="ComboKey Combo_OneCell_width" onchange="displayLogic(); return true;">
-                      <OPTION value=""> <DIV id="reportAgnoRef"></DIV></OPTION>
+                      <OPTION value=""></OPTION>
                     </SELECT></TD>
                   <td class="TitleCell" id="tdFromRefDateLabel"><SPAN class="LabelText">From Reference Date</SPAN></td>
                   <TD class="TextBox_btn_ContentCell" id="tdFromRefDate">

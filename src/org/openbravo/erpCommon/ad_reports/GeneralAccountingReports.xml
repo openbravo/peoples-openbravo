@@ -60,32 +60,15 @@
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>  
   <PARAMETER id="paramArrayAccountingReports" name="accountingReports"/>
-  <PARAMETER id="paramArrayBalancedOrg" name="balancedOrg"/>
-  <PARAMETER id="paramArrayAllOrg" name="allOrg"/>
-  <PARAMETER id="paramArrayReportIsBalanced" name="reportIsBalanced"/>
-	
-  <SUBREPORT id="reportC_ElementValue_ID" name="reportC_ElementValue_ID" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected" withId="fieldC_ElementValue_ID"/>
-  </SUBREPORT>
-  
-  <SUBREPORT id="reportC_Org_ID" name="reportC_Org_ID" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected" withId="fieldC_Org_ID"/>
-  </SUBREPORT>
-  
+  <PARAMETER id="paramArrayOrg" name="orgs"/>
+  <PARAMETER id="paramArrayYears" name="years"/>
+
   <SUBREPORT id="reportLevel" name="reportLevel" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramLevel"/>
   </SUBREPORT>
 
   <SUBREPORT id="reportC_ACCTSCHEMA_ID" name="reportC_ACCTSCHEMA_ID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramC_ACCTSCHEMA_ID"/>
-  </SUBREPORT>
-
-  <SUBREPORT id="reportAgno" name="reportAgno" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected" withId="paramAgno"/>
-  </SUBREPORT>
-
-  <SUBREPORT id="reportAgnoRef" name="reportAgnoRef" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected" withId="paramAgnoRef"/>
   </SUBREPORT>
        
 </REPORT>
