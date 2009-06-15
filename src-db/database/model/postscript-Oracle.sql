@@ -13,7 +13,7 @@ AS
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All portions are Copyright (C) 2001-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -773,6 +773,15 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOC_PAYMENTS(p_header_table IN VARCHAR2, p
    RETURN v_is_included;
  
 END AD_ORG_CHK_DOC_PAYMENTS;
+/-- END
+
+CREATE OR REPLACE VIEW AD_INTEGER AS 
+SELECT to_number(a.value) AS value
+   FROM ( SELECT ( SELECT count(*) AS count
+                   FROM ad_element
+                  WHERE ad_element.ad_element_id <= e.ad_element_id) AS value
+           FROM ad_element e) a
+  WHERE a.value <= 1024
 /-- END
 
 CALL DBA_RECOMPILE(NULL)
