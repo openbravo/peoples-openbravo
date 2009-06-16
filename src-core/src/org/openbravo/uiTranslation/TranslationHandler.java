@@ -160,7 +160,13 @@ public class TranslationHandler {
       log4j.debug("Error caught tryng to read file into InputStream: " + e.getMessage());
       e.printStackTrace();
     }
-    InputStreamReader inpRe = new InputStreamReader(inputStream);
+    InputStreamReader inpRe = null;
+    try {
+      inpRe = new InputStreamReader(inputStream, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      log4j.error(e);
+      e.printStackTrace();
+    }
     StringBuffer buffer = new StringBuffer();
     BufferedReader bre = new BufferedReader(inpRe);
     String inputLine = null;
