@@ -264,7 +264,7 @@ public class DocPayment extends AcctServer {
           }
         }
         // 4 Manual Sett + Cancelation Sett (no direct posting)
-        // conceptos contables
+        // G/L items
         if (SettlementType.equals("I") || line.IsDirectPosting.equals("N")) {
           DocPaymentData[] data = DocPaymentData.selectManual(conn, as.m_C_AcctSchema_ID,
               line.Line_ID);
@@ -276,6 +276,7 @@ public class DocPayment extends AcctServer {
             if (log4j.isDebugEnabled())
               log4j.debug("DocPayment - createFact - Conceptos - AmountDebit: " + amountdebit
                   + " - AmountCredit: " + amountcredit);
+            // Line is cloned to add withholding and/or tax info
             DocLine_Payment lineAux = DocLine_Payment.clone(line);
             lineAux.setM_C_WithHolding_ID(data[j].cWithholdingId);
             lineAux.setM_C_Tax_ID(data[j].cTaxId);
