@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -29,6 +29,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.apache.log4j.Logger;
+import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -94,6 +95,31 @@ public class VariablesBase {
   }
 
   /**
+   * Utility function which checks a list of input values against the provided request filter. It
+   * does return normally when all input are accepted, otherwise it throws an exception. If the
+   * requestFilter parameter is null, then no validation is performed.
+   * 
+   * @param requestFilter
+   *          filter used to validate the input against
+   * @param inputs
+   *          list of inputs to validate
+   * @throws ServletException
+   *           thrown is at least one input value was not accepted by the filter
+   */
+  private static void filterRequest(RequestFilter requestFilter, String... inputs)
+      throws ServletException {
+    if (requestFilter == null) {
+      return;
+    }
+    for (String input : inputs) {
+      if (!requestFilter.accept(input)) {
+        log4j.error("Input: " + input + " not accepted by filter: " + requestFilter);
+        throw new ServletException("Input: " + input + " is not an accepted input");
+      }
+    }
+  }
+
+  /**
    * Returns the MD5 string hash based on the post data
    * 
    * @return
@@ -154,6 +180,16 @@ public class VariablesBase {
   }
 
   /**
+   * @see #getGlobalVariable(String,String,boolean,boolean,boolean,String,RequestFilter)
+   */
+  public String getGlobalVariable(String requestParameter, String sessionAttribute,
+      boolean clearSession, boolean requestRequired, boolean sessionRequired, String defaultValue)
+      throws ServletException {
+    return getGlobalVariable(requestParameter, sessionAttribute, clearSession, requestRequired,
+        sessionRequired, defaultValue, null);
+  }
+
+  /**
    * Returns the value of the requestParameter passed to the servlet by the HTTP GET/POST method. If
    * this parameter is not found among the ones submitted to the servlet, it then tries to return
    * the session value specified by the sessionAttribute parameter. Before returning the final value
@@ -179,13 +215,16 @@ public class VariablesBase {
    *          If requestRequired or sessionRequired are false then the value returned by the method
    *          will take this value in case the parameter value is not found within the sought
    *          locations.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the value of the parameter.
    * @throws ServletException
    */
   public String getGlobalVariable(String requestParameter, String sessionAttribute,
-      boolean clearSession, boolean requestRequired, boolean sessionRequired, String defaultValue)
-      throws ServletException {
-    String auxStr = getStringParameter(requestParameter);
+      boolean clearSession, boolean requestRequired, boolean sessionRequired, String defaultValue,
+      RequestFilter requestFilter) throws ServletException {
+    String auxStr = getStringParameter(requestParameter, requestFilter);
+
     if (log4j.isDebugEnabled())
       log4j.debug("Request parameter: " + requestParameter + ":..." + auxStr);
     if (!(auxStr.equals(""))) {
@@ -221,6 +260,17 @@ public class VariablesBase {
   }
 
   /**
+   * @see #getInGlobalVariable(String,String,boolean,boolean,boolean,String,RequestFilter)
+   */
+  @Deprecated
+  public String getInGlobalVariable(String requestParameter, String sessionAttribute,
+      boolean clearSession, boolean requestRequired, boolean sessionRequired, String defaultValue)
+      throws ServletException {
+    return getInGlobalVariable(requestParameter, sessionAttribute, clearSession, requestRequired,
+        sessionRequired, defaultValue, null);
+  }
+
+  /**
    * Returns the set of comma separated values passed to the servlet by the HTTP GET/POST method. If
    * this parameter is not found among the ones submitted to the servlet, it then tries to return
    * the session value specified by the sessionAttribute parameter. Before returning the final value
@@ -246,14 +296,16 @@ public class VariablesBase {
    *          If requestRequired or sessionRequired are false then the value returned by the method
    *          will take this value in case the parameter value is not found within the sought
    *          locations.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the set of comma separated values within parentheses. For example
    *         ('value1', 'value2').
    * @throws ServletException
    */
   public String getInGlobalVariable(String requestParameter, String sessionAttribute,
-      boolean clearSession, boolean requestRequired, boolean sessionRequired, String defaultValue)
-      throws ServletException {
-    String auxStr = getInStringParameter(requestParameter);
+      boolean clearSession, boolean requestRequired, boolean sessionRequired, String defaultValue,
+      RequestFilter requestFilter) throws ServletException {
+    String auxStr = getInStringParameter(requestParameter, requestFilter);
     if (log4j.isDebugEnabled())
       log4j.debug("Request IN parameter: " + requestParameter + ":..." + auxStr);
     if (!(auxStr.equals(""))) {
@@ -286,6 +338,14 @@ public class VariablesBase {
   }
 
   /**
+   * @see #getGlobalVariable(String,String,String,RequestFilter)
+   */
+  public String getGlobalVariable(String requestParameter, String sessionAttribute,
+      String defaultValue) throws ServletException {
+    return getGlobalVariable(requestParameter, sessionAttribute, defaultValue, null);
+  }
+
+  /**
    * Returns the value of the requestParameter passed to the servlet by the HTTP GET/POST method. If
    * this parameter is not found among the ones submitted to the servlet, it then tries to return
    * the session value specified by the sessionAttribute parameter. If none are found the
@@ -301,12 +361,23 @@ public class VariablesBase {
    * @param defaultValue
    *          The value returned by the method will take this value in case the parameter value is
    *          not found within the sought locations.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the value of the parameter.
    * @throws ServletException
    */
   public String getGlobalVariable(String requestParameter, String sessionAttribute,
-      String defaultValue) throws ServletException {
-    return getGlobalVariable(requestParameter, sessionAttribute, false, false, false, defaultValue);
+      String defaultValue, RequestFilter requestFilter) throws ServletException {
+    return getGlobalVariable(requestParameter, sessionAttribute, false, false, false, defaultValue,
+        requestFilter);
+  }
+
+  /**
+   * @see #getGlobalVariable(String,String,RequestFilter)
+   */
+  public String getGlobalVariable(String requestParameter, String sessionAttribute)
+      throws ServletException {
+    return getGlobalVariable(requestParameter, sessionAttribute, false, false, true, "", null);
   }
 
   /**
@@ -322,12 +393,23 @@ public class VariablesBase {
    * @param sessionAttribute
    *          The name of the parameter to be retrieved from the session variable in case the
    *          requestParameter is not found.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the value of the parameter.
    * @throws ServletException
    */
-  public String getGlobalVariable(String requestParameter, String sessionAttribute)
+  public String getGlobalVariable(String requestParameter, String sessionAttribute,
+      RequestFilter requestFilter) throws ServletException {
+    return getGlobalVariable(requestParameter, sessionAttribute, false, false, true, "",
+        requestFilter);
+  }
+
+  /**
+   * @see #getRequiredGlobalVariable(String,String,RequestFilter)
+   */
+  public String getRequiredGlobalVariable(String requestParameter, String sessionAttribute)
       throws ServletException {
-    return getGlobalVariable(requestParameter, sessionAttribute, false, false, true, "");
+    return getRequiredGlobalVariable(requestParameter, sessionAttribute, null);
   }
 
   /**
@@ -342,12 +424,23 @@ public class VariablesBase {
    * @param sessionAttribute
    *          The name of the session variable where the value of the parameter specified by the
    *          requestParameter should be stored.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the value of the parameter.
    * @throws ServletException
    */
-  public String getRequiredGlobalVariable(String requestParameter, String sessionAttribute)
+  public String getRequiredGlobalVariable(String requestParameter, String sessionAttribute,
+      RequestFilter requestFilter) throws ServletException {
+    return getGlobalVariable(requestParameter, sessionAttribute, false, true, true, "",
+        requestFilter);
+  }
+
+  /**
+   * @see #getRequestGlobalVariable(String,String,RequestFilter)
+   */
+  public String getRequestGlobalVariable(String requestParameter, String sessionAttribute)
       throws ServletException {
-    return getGlobalVariable(requestParameter, sessionAttribute, false, true, true, "");
+    return getRequestGlobalVariable(requestParameter, sessionAttribute, null);
   }
 
   /**
@@ -364,12 +457,23 @@ public class VariablesBase {
    * @param sessionAttribute
    *          The name of the parameter to be retrieved from the session variable in case the
    *          requestParameter is not found.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the value of the parameter.
    * @throws ServletException
    */
-  public String getRequestGlobalVariable(String requestParameter, String sessionAttribute)
-      throws ServletException {
-    return getGlobalVariable(requestParameter, sessionAttribute, true, false, false, "");
+  public String getRequestGlobalVariable(String requestParameter, String sessionAttribute,
+      RequestFilter requestFilter) throws ServletException {
+    return getGlobalVariable(requestParameter, sessionAttribute, true, false, false, "",
+        requestFilter);
+  }
+
+  /**
+   * @see #getRequiredInputGlobalVariable(String,String,String,RequestFilter)
+   */
+  public String getRequiredInputGlobalVariable(String requestParameter, String sessionAttribute,
+      String defaultStr) throws ServletException {
+    return getRequiredInputGlobalVariable(requestParameter, sessionAttribute, defaultStr, null);
   }
 
   /**
@@ -389,12 +493,24 @@ public class VariablesBase {
    * @param defaultStr
    *          The value returned by the method will take this value in case the parameter value is
    *          not found within the sought locations.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the value of the parameter.
    * @throws ServletException
    */
   public String getRequiredInputGlobalVariable(String requestParameter, String sessionAttribute,
-      String defaultStr) throws ServletException {
-    return getGlobalVariable(requestParameter, sessionAttribute, true, false, false, defaultStr);
+      String defaultStr, RequestFilter requestFilter) throws ServletException {
+    return getGlobalVariable(requestParameter, sessionAttribute, true, false, false, defaultStr,
+        requestFilter);
+  }
+
+  /**
+   * @see #getInGlobalVariable(String,String,String,RequestFilter)
+   */
+  @Deprecated
+  public String getInGlobalVariable(String requestParameter, String sessionAttribute,
+      String defaultValue) throws ServletException {
+    return getInGlobalVariable(requestParameter, sessionAttribute, defaultValue, null);
   }
 
   /**
@@ -414,12 +530,23 @@ public class VariablesBase {
    *          not found within the sought locations.
    * @return String containing the set of comma separated values within parentheses. For example
    *         ('value1', 'value2').
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @throws ServletException
    */
   public String getInGlobalVariable(String requestParameter, String sessionAttribute,
-      String defaultValue) throws ServletException {
+      String defaultValue, RequestFilter requestFilter) throws ServletException {
     return getInGlobalVariable(requestParameter, sessionAttribute, false, false, false,
-        defaultValue);
+        defaultValue, requestFilter);
+  }
+
+  /**
+   * @see #getInGlobalVariable(String,String,RequestFilter)
+   */
+  @Deprecated
+  public String getInGlobalVariable(String requestParameter, String sessionAttribute)
+      throws ServletException {
+    return getInGlobalVariable(requestParameter, sessionAttribute, false, false, true, "", null);
   }
 
   /**
@@ -437,11 +564,23 @@ public class VariablesBase {
    *          requestParameter is not found.
    * @return String containing the set of comma separated values within parentheses. For example
    *         ('value1', 'value2').
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @throws ServletException
    */
-  public String getInGlobalVariable(String requestParameter, String sessionAttribute)
+  public String getInGlobalVariable(String requestParameter, String sessionAttribute,
+      RequestFilter requestFilter) throws ServletException {
+    return getInGlobalVariable(requestParameter, sessionAttribute, false, false, true, "",
+        requestFilter);
+  }
+
+  /**
+   * @see #getRequiredInGlobalVariable(String,String,RequestFilter)
+   */
+  @Deprecated
+  public String getRequiredInGlobalVariable(String requestParameter, String sessionAttribute)
       throws ServletException {
-    return getInGlobalVariable(requestParameter, sessionAttribute, false, false, true, "");
+    return getRequiredInGlobalVariable(requestParameter, sessionAttribute, null);
   }
 
   /**
@@ -457,11 +596,23 @@ public class VariablesBase {
    *          successfully found.
    * @return String containing the set of comma separated values within parentheses. For example
    *         ('value1', 'value2').
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @throws ServletException
    */
-  public String getRequiredInGlobalVariable(String requestParameter, String sessionAttribute)
+  public String getRequiredInGlobalVariable(String requestParameter, String sessionAttribute,
+      RequestFilter requestFilter) throws ServletException {
+    return getInGlobalVariable(requestParameter, sessionAttribute, false, true, true, "",
+        requestFilter);
+  }
+
+  /**
+   * @see #getRequestInGlobalVariable(String,String,RequestFilter)
+   */
+  @Deprecated
+  public String getRequestInGlobalVariable(String requestParameter, String sessionAttribute)
       throws ServletException {
-    return getInGlobalVariable(requestParameter, sessionAttribute, false, true, true, "");
+    return getRequestInGlobalVariable(requestParameter, sessionAttribute, null);
   }
 
   /**
@@ -477,11 +628,21 @@ public class VariablesBase {
    *          The name of the session variable to clear in case the above parameter does not exist.
    * @return String containing the set of comma separated values within parentheses. For example
    *         ('value1', 'value2').
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @throws ServletException
    */
-  public String getRequestInGlobalVariable(String requestParameter, String sessionAttribute)
-      throws ServletException {
-    return getInGlobalVariable(requestParameter, sessionAttribute, true, false, false, "");
+  public String getRequestInGlobalVariable(String requestParameter, String sessionAttribute,
+      RequestFilter requestFilter) throws ServletException {
+    return getInGlobalVariable(requestParameter, sessionAttribute, true, false, false, "",
+        requestFilter);
+  }
+
+  /**
+   * @see #getStringParameter(String,String,RequestFilter)
+   */
+  public String getStringParameter(String parameter, String defaultValue) {
+    return getStringParameter(parameter, defaultValue, null);
   }
 
   /**
@@ -495,12 +656,20 @@ public class VariablesBase {
    * @return String containing the value of the parameter passed to the servlet by the HTTP GET/POST
    *         method.
    */
-  public String getStringParameter(String parameter, String defaultValue) {
+  public String getStringParameter(String parameter, String defaultValue,
+      RequestFilter requestFilter) {
     try {
-      return getStringParameter(parameter, false, defaultValue);
+      return getStringParameter(parameter, false, defaultValue, requestFilter);
     } catch (Exception e) {
       return null;
     }
+  }
+
+  /**
+   * @see #getStringParameter(String,RequestFilter)
+   */
+  public String getStringParameter(String parameter) {
+    return getStringParameter(parameter, "", null);
   }
 
   /**
@@ -509,11 +678,20 @@ public class VariablesBase {
    * 
    * @param parameter
    *          The name of the parameter to be retrieved.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String with the value of the parameter. If value is not found among submitted data, an
    *         empty string is returned.
    */
-  public String getStringParameter(String parameter) {
-    return getStringParameter(parameter, "");
+  public String getStringParameter(String parameter, RequestFilter requestFilter) {
+    return getStringParameter(parameter, "", requestFilter);
+  }
+
+  /**
+   * @see #getRequiredStringParameter(String,RequestFilter)
+   */
+  public String getRequiredStringParameter(String parameter) throws ServletException {
+    return getRequiredStringParameter(parameter, null);
   }
 
   /**
@@ -522,11 +700,22 @@ public class VariablesBase {
    * 
    * @param parameter
    *          The name of the parameter to be retrieved.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String with the value of the parameter.
    * @throws ServletException
    */
-  public String getRequiredStringParameter(String parameter) throws ServletException {
-    return getStringParameter(parameter, true, "");
+  public String getRequiredStringParameter(String parameter, RequestFilter requestFilter)
+      throws ServletException {
+    return getStringParameter(parameter, true, "", requestFilter);
+  }
+
+  /**
+   * @see #getStringParameter(String,boolean,String,RequestFilter)
+   */
+  public String getStringParameter(String parameter, boolean required, String defaultValue)
+      throws ServletException {
+    return getStringParameter(parameter, required, defaultValue, null);
   }
 
   /**
@@ -540,11 +729,13 @@ public class VariablesBase {
    * @param defaultValue
    *          If parameter is not required, this will be the default value the parameter will take
    *          if not found in the submitted data.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String with the value of the parameter.
    * @throws ServletException
    */
-  public String getStringParameter(String parameter, boolean required, String defaultValue)
-      throws ServletException {
+  public String getStringParameter(String parameter, boolean required, String defaultValue,
+      RequestFilter requestFilter) throws ServletException {
     String auxStr = null;
     try {
       if (isMultipart)
@@ -565,10 +756,19 @@ public class VariablesBase {
     }
 
     auxStr = FormatUtilities.sanitizeInput(auxStr);
+    filterRequest(requestFilter, auxStr);
 
     if (log4j.isDebugEnabled())
       log4j.debug("Request parameter: " + parameter + ":..." + auxStr);
     return auxStr;
+  }
+
+  /**
+   * @see #getInParameter(String,String,RequestFilter)
+   */
+  @Deprecated
+  public String getInParameter(String parameter, String defaultValue) throws ServletException {
+    return getInParameter(parameter, defaultValue, null);
   }
 
   /**
@@ -583,11 +783,22 @@ public class VariablesBase {
    * @param defaultValue
    *          The value that will be returned in case the parameter is not found among the data
    *          submitted to the servlet.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the set of values in the form (value1,value2,...).
    * @throws ServletException
    */
-  public String getInParameter(String parameter, String defaultValue) throws ServletException {
-    return getInParameter(parameter, false, defaultValue);
+  public String getInParameter(String parameter, String defaultValue, RequestFilter requestFilter)
+      throws ServletException {
+    return getInParameter(parameter, false, defaultValue, requestFilter);
+  }
+
+  /**
+   * @see #getInParameter(String,RequestFilter)
+   */
+  @Deprecated
+  public String getInParameter(String parameter) throws ServletException {
+    return getInParameter(parameter, false, "", null);
   }
 
   /**
@@ -599,11 +810,22 @@ public class VariablesBase {
    * 
    * @param parameter
    *          Name of the parameter to be retrieved.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the set of values in the form (value1,value2,...).
    * @throws ServletException
    */
-  public String getInParameter(String parameter) throws ServletException {
-    return getInParameter(parameter, false, "");
+  public String getInParameter(String parameter, RequestFilter requestFilter)
+      throws ServletException {
+    return getInParameter(parameter, false, "", requestFilter);
+  }
+
+  /**
+   * @see #getRequiredInParameter(String,RequestFilter)
+   */
+  @Deprecated
+  public String getRequiredInParameter(String parameter) throws ServletException {
+    return getRequiredInParameter(parameter, null);
   }
 
   /**
@@ -615,11 +837,23 @@ public class VariablesBase {
    * 
    * @param parameter
    *          Name of the parameter to be retrieved.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the set of values in the form (value1,value2,...).
    * @throws ServletException
    */
-  public String getRequiredInParameter(String parameter) throws ServletException {
-    return getInParameter(parameter, true, "");
+  public String getRequiredInParameter(String parameter, RequestFilter requestFilter)
+      throws ServletException {
+    return getInParameter(parameter, true, "", requestFilter);
+  }
+
+  /**
+   * @see #getInParameter(String,boolean,String,RequestFilter)
+   */
+  @Deprecated
+  public String getInParameter(String parameter, boolean required, String defaultValue)
+      throws ServletException {
+    return getInParameter(parameter, required, defaultValue, null);
   }
 
   /**
@@ -638,11 +872,13 @@ public class VariablesBase {
    * @param defaultValue
    *          If not required, this is the value that will be returned in case the parameter is not
    *          found among the data submitted to the servlet.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the set of values in the form (value1,value2,...).
    * @throws ServletException
    */
-  public String getInParameter(String parameter, boolean required, String defaultValue)
-      throws ServletException {
+  public String getInParameter(String parameter, boolean required, String defaultValue,
+      RequestFilter requestFilter) throws ServletException {
     String[] auxStr = null;
     StringBuffer strResultado = new StringBuffer();
     try {
@@ -666,6 +902,7 @@ public class VariablesBase {
     }
 
     auxStr = FormatUtilities.sanitizeInput(auxStr);
+    filterRequest(requestFilter, auxStr);
 
     if (auxStr != null && auxStr.length > 0) {
       for (int i = 0; i < auxStr.length; i++) {
@@ -693,6 +930,14 @@ public class VariablesBase {
   }
 
   /**
+   * @see #getInStringParameter(String,String,RequestFilter)
+   */
+  @Deprecated
+  public String getInStringParameter(String parameter, String defaultValue) throws ServletException {
+    return getInStringParameter(parameter, defaultValue, null);
+  }
+
+  /**
    * Retrieves the set of string values for the parameter with the specified name as passed to the
    * servlet by the HTTP POST method. String returned is in the form ('value1', 'value2',...) and
    * can be used within SQL statements as part of the 'WHERE columnName IN' filter which is the main
@@ -704,11 +949,22 @@ public class VariablesBase {
    * @param defaultValue
    *          In case the parameter is not found among the data submitted to the servlet, this value
    *          is returned
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the set of values in the form ('value1', 'value2',...).
    * @throws ServletException
    */
-  public String getInStringParameter(String parameter, String defaultValue) throws ServletException {
-    return getInStringParameter(parameter, false, defaultValue);
+  public String getInStringParameter(String parameter, String defaultValue,
+      RequestFilter requestFilter) throws ServletException {
+    return getInStringParameter(parameter, false, defaultValue, requestFilter);
+  }
+
+  /**
+   * @see #getInStringParameter(String,RequestFilter)
+   */
+  @Deprecated
+  public String getInStringParameter(String parameter) throws ServletException {
+    return getInStringParameter(parameter, false, "", null);
   }
 
   /**
@@ -720,11 +976,22 @@ public class VariablesBase {
    * 
    * @param parameter
    *          Name of the parameter to be retrieved.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the set of values in the form ('value1', 'value2',...).
    * @throws ServletException
    */
-  public String getInStringParameter(String parameter) throws ServletException {
-    return getInStringParameter(parameter, false, "");
+  public String getInStringParameter(String parameter, RequestFilter requestFilter)
+      throws ServletException {
+    return getInStringParameter(parameter, false, "", requestFilter);
+  }
+
+  /**
+   * @see #getRequiredInStringParameter(String,RequestFilter)
+   */
+  @Deprecated
+  public String getRequiredInStringParameter(String parameter) throws ServletException {
+    return getRequiredInStringParameter(parameter, null);
   }
 
   /**
@@ -736,11 +1003,23 @@ public class VariablesBase {
    * 
    * @param parameter
    *          Name of the parameter to be retrieved.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the set of values in the form ('value1', 'value2',...).
    * @throws ServletException
    */
-  public String getRequiredInStringParameter(String parameter) throws ServletException {
-    return getInStringParameter(parameter, true, "");
+  public String getRequiredInStringParameter(String parameter, RequestFilter requestFilter)
+      throws ServletException {
+    return getInStringParameter(parameter, true, "", requestFilter);
+  }
+
+  /**
+   * @see #getInStringParameter(String,boolean,String,RequestFilter)
+   */
+  @Deprecated
+  public String getInStringParameter(String parameter, boolean required, String defaultValue)
+      throws ServletException {
+    return getInStringParameter(parameter, required, defaultValue, null);
   }
 
   /**
@@ -759,11 +1038,13 @@ public class VariablesBase {
    * @param defaultValue
    *          If not required, this is the value that will be returned in case the parameter is not
    *          found among the data submitted to the servlet.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the set of values in the form ('value1', 'value2',...)
    * @throws ServletException
    */
-  public String getInStringParameter(String parameter, boolean required, String defaultValue)
-      throws ServletException {
+  public String getInStringParameter(String parameter, boolean required, String defaultValue,
+      RequestFilter requestFilter) throws ServletException {
     String[] auxStr = null;
     StringBuffer strResult = new StringBuffer();
     try {
@@ -787,6 +1068,7 @@ public class VariablesBase {
     }
 
     auxStr = FormatUtilities.sanitizeInput(auxStr);
+    filterRequest(requestFilter, auxStr);
 
     strResult.append("('");
     for (int i = 0; i < auxStr.length; i++) {
@@ -973,14 +1255,23 @@ public class VariablesBase {
   }
 
   /**
+   * @see #getMultiParameter(String,RequestFilter)
+   */
+  public String getMultiParameter(String parameter) {
+    return getMultiParameter(parameter, null);
+  }
+
+  /**
    * Retrieve a parameter passed to the servlet as part of a multi part content.
    * 
    * @param parameter
    *          the name of the parameter to be retrieved
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String containing the value of the parameter. Empty string if the content is not
    *         multipart or the parameter is not found.
    */
-  public String getMultiParameter(String parameter) {
+  public String getMultiParameter(String parameter, RequestFilter requestFilter) {
     if (!isMultipart || items == null)
       return "";
     Iterator<FileItem> iter = items.iterator();
@@ -988,7 +1279,9 @@ public class VariablesBase {
       FileItem item = iter.next();
       if (item.isFormField() && item.getFieldName().equals(parameter)) {
         try {
-          return (item.getString("UTF-8"));
+          String value = item.getString("UTF-8");
+          filterRequest(requestFilter, value);
+          return value;
         } catch (Exception ex) {
           ex.printStackTrace();
           return "";
@@ -999,15 +1292,24 @@ public class VariablesBase {
   }
 
   /**
+   * @see #getMultiParameters(String,RequestFilter)
+   */
+  public String[] getMultiParameters(String parameter) {
+    return getMultiParameters(parameter, null);
+  }
+
+  /**
    * Retrieve a set of values belonging to a parameter passed to the servlet as part of a multi part
    * content.
    * 
    * @param parameter
    *          The name of the parameter to be retrieved.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
    * @return String array containing the values of the parameter. Empty string if the content is not
    *         multipart.
    */
-  public String[] getMultiParameters(String parameter) {
+  public String[] getMultiParameters(String parameter, RequestFilter requestFilter) {
     if (!isMultipart || items == null)
       return null;
     Iterator<FileItem> iter = items.iterator();
@@ -1016,7 +1318,9 @@ public class VariablesBase {
       FileItem item = iter.next();
       if (item.isFormField() && item.getFieldName().equals(parameter)) {
         try {
-          result.addElement(item.getString("UTF-8"));
+          String value = item.getString("UTF-8");
+          filterRequest(requestFilter, value);
+          result.addElement(value);
         } catch (Exception ex) {
         }
       }
