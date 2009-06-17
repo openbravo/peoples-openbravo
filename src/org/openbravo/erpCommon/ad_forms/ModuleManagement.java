@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -120,7 +121,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       printPageInstallFile(response, vars);
 
     } else if (vars.commandIn("UNINSTALL")) {
-      final String modules = vars.getInStringParameter("inpNodes");
+      final String modules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
       final UninstallModule um = new UninstallModule(this, vars.getSessionValue("#sourcePath"),
           vars);
       um.execute(modules);

@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
@@ -52,7 +53,7 @@ public class GenerateModel347 extends HttpSecureAppServlet {
       String strDateFrom = vars.getStringParameter("inpDateFrom");
       String strDateTo = vars.getStringParameter("inpDateTo");
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "GenerateModel347|product", "");
+          "GenerateModel347|product", "", IsIDFilter.instance);
       printPageDataSheet(response, vars, strType, strDateFrom, strDateTo, strmProductId);
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getStringParameter("inpDateFrom");
@@ -63,7 +64,7 @@ public class GenerateModel347 extends HttpSecureAppServlet {
       String strHac = vars.getStringParameter("inpType", "ES");
       String strID = vars.getStringParameter("inpID", "");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "GenerateModel347|product");
+          "GenerateModel347|product", IsIDFilter.instance);
       printPageGenerate(response, vars, strDateFrom, strDateTo, strType, strComplementar, strOrg,
           strHac, strID, strmProductId);
     } else

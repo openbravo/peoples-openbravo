@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.AccountTree;
@@ -74,7 +75,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           strDateToRef, strAsDateTo, strAsDateToRef, strElementValue, strConImporte, "", strLevel,
           strConCodigo, "");
     } else if (vars.commandIn("FIND")) {
-      String strcAcctSchemaId = vars.getInParameter("inpcAcctSchemaId");
+      String strcAcctSchemaId = vars.getInParameter("inpcAcctSchemaId", IsIDFilter.instance);
       String strAgno = vars.getRequiredGlobalVariable("inpAgno", "GeneralAccountingReports|agno");
       String strAgnoRef = vars.getRequiredGlobalVariable("inpAgnoRef",
           "GeneralAccountingReports|agnoRef");

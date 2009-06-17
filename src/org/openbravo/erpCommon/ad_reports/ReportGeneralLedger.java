@@ -36,6 +36,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
@@ -74,7 +75,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|inpElementValueIdTo_DES", "");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportGeneralLedger|cBpartnerId", "");
+          "ReportGeneralLedger|cBpartnerId", "", IsIDFilter.instance);
       String strAll = vars.getGlobalVariable("inpAll", "ReportGeneralLedger|All", "");
       String strHide = vars.getGlobalVariable("inpHideMatched", "ReportGeneralLedger|HideMatched",
           "");
@@ -100,7 +101,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|inpElementValueIdTo_DES");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportGeneralLedger|cBpartnerId");
+          "ReportGeneralLedger|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
       String strHide = vars.getStringParameter("inpHideMatched");
       if (log4j.isDebugEnabled())
@@ -164,7 +165,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|C_ElementValue_IDTO");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportGeneralLedger|cBpartnerId");
+          "ReportGeneralLedger|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
       String strHide = vars.getStringParameter("inpHideMatched");
       printPageDataPDF(response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
@@ -540,10 +541,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strAmtFrom, String strAmtTo, String strcelementvaluefrom,
-      String strcelementvalueto, String strOrg, String strcBpartnerId, String strAll,
-      String strHide, String strcAcctSchemaId) throws IOException, ServletException {
+  private void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strAmtFrom, String strAmtTo,
+      String strcelementvaluefrom, String strcelementvalueto, String strOrg, String strcBpartnerId,
+      String strAll, String strHide, String strcAcctSchemaId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PDF");
     response.setContentType("text/html; charset=UTF-8");
@@ -720,7 +721,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     return Tree.getMembers(this, strTree, strChild);
   }
 
-  private String getRange(String accountfrom, String accountto) throws IOException, ServletException {
+  private String getRange(String accountfrom, String accountto) throws IOException,
+      ServletException {
 
     ReportGeneralLedgerData[] data = ReportGeneralLedgerData.selectRange(this, accountfrom,
         accountto);

@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -97,7 +98,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       String strIncludeVendor = vars.getRequestGlobalVariable("inpShowNullVendor",
           "RequisitionToOrder|ShowNullVendor");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "RequisitionToOrder|AD_Org_ID");
-      String strRequisitionLines = vars.getRequiredInStringParameter("inpRequisitionLine");
+      String strRequisitionLines = vars.getRequiredInStringParameter("inpRequisitionLine",
+          IsIDFilter.instance);
       updateLockedLines(vars, strOrgId);
       lockRequisitionLines(vars, strRequisitionLines);
       printPageDataSheet(response, vars, strProductId, strDateFrom, strDateTo, strRequesterId,
@@ -115,13 +117,15 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       String strIncludeVendor = vars.getRequestGlobalVariable("inpShowNullVendor",
           "RequisitionToOrder|ShowNullVendor");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "RequisitionToOrder|AD_Org_ID");
-      String strSelectedLines = vars.getRequiredInStringParameter("inpSelectedReq");
+      String strSelectedLines = vars.getRequiredInStringParameter("inpSelectedReq",
+          IsIDFilter.instance);
       unlockRequisitionLines(vars, strSelectedLines);
       updateLockedLines(vars, strOrgId);
       printPageDataSheet(response, vars, strProductId, strDateFrom, strDateTo, strRequesterId,
           strVendorId, strIncludeVendor, strOrgId);
     } else if (vars.commandIn("OPEN_CREATE")) {
-      String strSelectedLines = vars.getRequiredInStringParameter("inpSelectedReq");
+      String strSelectedLines = vars.getRequiredInStringParameter("inpSelectedReq",
+          IsIDFilter.instance);
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "RequisitionToOrder|AD_Org_ID");
       updateLockedLines(vars, strOrgId);
       checkSelectedRequisitionLines(response, vars, strSelectedLines);

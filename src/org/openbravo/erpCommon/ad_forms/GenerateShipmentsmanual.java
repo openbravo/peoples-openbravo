@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -73,7 +74,7 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
     } else if (vars.commandIn("GENERATE")) {
       myMessage = new OBError();
       myMessage.setTitle("");
-      String strSalesOrder = vars.getRequiredInStringParameter("inpOrder");
+      String strSalesOrder = vars.getRequiredInStringParameter("inpOrder", IsIDFilter.instance);
 
       GenerateShipmentsmanualData.update(this);
       GenerateShipmentsmanualData.updateSelection(this, strSalesOrder);

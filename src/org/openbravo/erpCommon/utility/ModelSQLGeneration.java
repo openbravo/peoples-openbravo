@@ -25,6 +25,8 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
@@ -35,6 +37,21 @@ import org.openbravo.database.ConnectionProvider;
  */
 public class ModelSQLGeneration {
   static Logger log4j = Logger.getLogger(ModelSQLGeneration.class);
+
+  private static final RequestFilter columnNameFilter = new RequestFilter() {
+    @Override
+    public boolean accept(String value) {
+      for (int i = 0; i < value.length(); i++) {
+        int c = value.codePointAt(i);
+        if (Character.isLetter(c) || Character.isDigit(c) || value.charAt(i) == '_') {
+          return true;
+        }
+      }
+      return false;
+    }
+  };
+
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   /**
    * Constructor
@@ -58,8 +75,8 @@ public class ModelSQLGeneration {
     StringBuffer orderBy = new StringBuffer();
     if (tableSQL == null)
       return vOrderBy;
-    String sortCols = vars.getInStringParameter("sort_cols");
-    String sortDirs = vars.getInStringParameter("sort_dirs");
+    String sortCols = vars.getInStringParameter("sort_cols", columnNameFilter);
+    String sortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
 
     if (log4j.isDebugEnabled())
       log4j.debug("sort_cols: " + sortCols);

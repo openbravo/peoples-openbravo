@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -63,13 +65,14 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
       String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup",
           "ReportRefundSalesDimensionalAnalyses|partnerGroup");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportRefundSalesDimensionalAnalyses|partner");
+          "ReportRefundSalesDimensionalAnalyses|partner", IsIDFilter.instance);
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportRefundSalesDimensionalAnalyses|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportRefundSalesDimensionalAnalyses|product");
-      String strNotShown = vars.getInStringParameter("inpNotShown");
-      String strShown = vars.getInStringParameter("inpShown");
+          "ReportRefundSalesDimensionalAnalyses|product", IsIDFilter.instance);
+      // hardcoded to numeric in switch in the code
+      String strNotShown = vars.getInStringParameter("inpNotShown", IsPositiveIntFilter.instance);
+      String strShown = vars.getInStringParameter("inpShown", IsPositiveIntFilter.instance);
       String strOrg = vars.getRequestGlobalVariable("inpOrg",
           "ReportRefundSalesDimensionalAnalyses|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",

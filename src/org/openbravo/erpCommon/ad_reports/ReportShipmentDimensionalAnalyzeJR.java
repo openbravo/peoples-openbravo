@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
@@ -64,17 +66,18 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
       String strPartnerGroup = vars.getGlobalVariable("inpPartnerGroup",
           "ReportShipmentDimensionalAnalyzeJR|partnerGroup", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportShipmentDimensionalAnalyzeJR|partner", "");
+          "ReportShipmentDimensionalAnalyzeJR|partner", "", IsIDFilter.instance);
       String strProductCategory = vars.getGlobalVariable("inpProductCategory",
           "ReportShipmentDimensionalAnalyzeJR|productCategory", "");
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportShipmentDimensionalAnalyzeJR|product", "");
+          "ReportShipmentDimensionalAnalyzeJR|product", "", IsIDFilter.instance);
+      // ad_ref_list.value where reference_id = 800087
       String strNotShown = vars.getInGlobalVariable("inpNotShown",
-          "ReportShipmentDimensionalAnalyzeJR|notShown", "");
+          "ReportShipmentDimensionalAnalyzeJR|notShown", "", IsPositiveIntFilter.instance);
       String strShown = vars.getInGlobalVariable("inpShown",
-          "ReportShipmentDimensionalAnalyzeJR|shown", "");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportShipmentDimensionalAnalyzeJR|org",
-          "");
+          "ReportShipmentDimensionalAnalyzeJR|shown", "", IsPositiveIntFilter.instance);
+      String strOrg = vars
+          .getGlobalVariable("inpOrg", "ReportShipmentDimensionalAnalyzeJR|org", "");
       String strmWarehouseId = vars.getGlobalVariable("inpmWarehouseId",
           "ReportShipmentDimensionalAnalyzeJR|warehouse", "");
       String strsalesrepId = vars.getGlobalVariable("inpSalesrepId",
@@ -112,16 +115,18 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
       String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup",
           "ReportShipmentDimensionalAnalyzeJR|partnerGroup");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportShipmentDimensionalAnalyzeJR|partner");
+          "ReportShipmentDimensionalAnalyzeJR|partner", IsIDFilter.instance);
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportShipmentDimensionalAnalyzeJR|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportShipmentDimensionalAnalyzeJR|product");
-      String strNotShown = vars.getInStringParameter("inpNotShown");
-      String strShown = vars.getInStringParameter("inpShown");
+          "ReportShipmentDimensionalAnalyzeJR|product", IsIDFilter.instance);
+      // ad_ref_list.value where reference_id = 800087
+      String strNotShown = vars.getInStringParameter("inpNotShown", IsPositiveIntFilter.instance);
+      String strShown = vars.getInStringParameter("inpShown", IsPositiveIntFilter.instance);
       String strmWarehouseId = vars.getRequestGlobalVariable("inpmWarehouseId",
           "ReportShipmentDimensionalAnalyzeJR|warehouse");
-      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportShipmentDimensionalAnalyzeJR|org");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg",
+          "ReportShipmentDimensionalAnalyzeJR|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportShipmentDimensionalAnalyzeJR|salesrep");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
@@ -149,16 +154,18 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
       String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup",
           "ReportShipmentDimensionalAnalyzeJR|partnerGroup");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportShipmentDimensionalAnalyzeJR|partner");
+          "ReportShipmentDimensionalAnalyzeJR|partner", IsIDFilter.instance);
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportShipmentDimensionalAnalyzeJR|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportShipmentDimensionalAnalyzeJR|product");
-      String strNotShown = vars.getInStringParameter("inpNotShown");
-      String strShown = vars.getInStringParameter("inpShown");
+          "ReportShipmentDimensionalAnalyzeJR|product", IsIDFilter.instance);
+      // ad_ref_list.value where reference_id = 800087
+      String strNotShown = vars.getInStringParameter("inpNotShown", IsPositiveIntFilter.instance);
+      String strShown = vars.getInStringParameter("inpShown", IsPositiveIntFilter.instance);
       String strmWarehouseId = vars.getRequestGlobalVariable("inpmWarehouseId",
           "ReportShipmentDimensionalAnalyzeJR|warehouse");
-      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportShipmentDimensionalAnalyzeJR|org");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg",
+          "ReportShipmentDimensionalAnalyzeJR|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportShipmentDimensionalAnalyzeJR|salesrep");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
@@ -267,9 +274,9 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("partnerSalesRepId", strPartnerSalesrepId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipmentDimensionalAnalyzeJR"),
-          Utility.getContext(this, vars, "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportShipmentDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
+              "ReportShipmentDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportShipmentDimensionalAnalyzeJR", strmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
@@ -280,9 +287,9 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
-          "", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipmentDimensionalAnalyzeJR"),
-          Utility.getContext(this, vars, "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportShipmentDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
+              "ReportShipmentDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportShipmentDimensionalAnalyzeJR", strPartnerGroup);
       xmlDocument.setData("reportC_BP_GROUPID", "liststructure", comboTableData.select(false));
@@ -322,10 +329,12 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
         vars.getRole()));
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportShipmentDimensionalAnalyzeJRData.selectBpartner(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
+            strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure",
         ReportShipmentDimensionalAnalyzeJRData.selectMproduct(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
+            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
+            strmProductId));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
@@ -344,9 +353,9 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipmentDimensionalAnalyzeJR"),
-          Utility.getContext(this, vars, "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportShipmentDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
+              "ReportShipmentDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportShipmentDimensionalAnalyzeJR", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -397,7 +406,8 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard" };
-    if (strOrg.equals("")) strOrg = vars.getOrg();
+    if (strOrg.equals(""))
+      strOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";

@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
@@ -76,7 +77,7 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
     } else if (vars.commandIn("SAVE")) {
       String strNewOrg = vars.getRequiredStringParameter("inpadOrgIdNew");
       String strTax = vars.getStringParameter("inpcTaxId");
-      String strOrder = vars.getRequiredInParameter("inpcOrderId");
+      String strOrder = vars.getRequiredInParameter("inpcOrderId", IsIDFilter.instance);
       OBError myMessage = processSave(vars, strOrder, strNewOrg, strTax);
       vars.setMessage("ChangeOrderOrg", myMessage);
       response.sendRedirect(strDireccion + request.getServletPath());

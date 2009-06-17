@@ -26,6 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
@@ -61,15 +63,16 @@ public class ReportInvoiceCustomerDimensionalAnalyses extends HttpSecureAppServl
       String strPartnerGroup = vars.getGlobalVariable("inpPartnerGroup",
           "ReportInvoiceCustomerDimensionalAnalyses|partnerGroup", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceCustomerDimensionalAnalyses|partner", "");
+          "ReportInvoiceCustomerDimensionalAnalyses|partner", "", IsIDFilter.instance);
       String strProductCategory = vars.getGlobalVariable("inpProductCategory",
           "ReportInvoiceCustomerDimensionalAnalyses|productCategory", "");
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportInvoiceCustomerDimensionalAnalyses|product", "");
+          "ReportInvoiceCustomerDimensionalAnalyses|product", "", IsIDFilter.instance);
+      // ad_ref_list.value for refercence_id 800087
       String strNotShown = vars.getInGlobalVariable("inpNotShown",
-          "ReportInvoiceCustomerDimensionalAnalyses|notShown", "");
+          "ReportInvoiceCustomerDimensionalAnalyses|notShown", "", IsPositiveIntFilter.instance);
       String strShown = vars.getInGlobalVariable("inpShown",
-          "ReportInvoiceCustomerDimensionalAnalyses|shown", "");
+          "ReportInvoiceCustomerDimensionalAnalyses|shown", "", IsPositiveIntFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportInvoiceCustomerDimensionalAnalyses|org", "0");
       String strsalesrepId = vars.getGlobalVariable("inpSalesrepId",
@@ -109,13 +112,14 @@ public class ReportInvoiceCustomerDimensionalAnalyses extends HttpSecureAppServl
       String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup",
           "ReportInvoiceCustomerDimensionalAnalyses|partnerGroup");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceCustomerDimensionalAnalyses|partner");
+          "ReportInvoiceCustomerDimensionalAnalyses|partner", IsIDFilter.instance);
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportInvoiceCustomerDimensionalAnalyses|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportInvoiceCustomerDimensionalAnalyses|product");
-      String strNotShown = vars.getInStringParameter("inpNotShown");
-      String strShown = vars.getInStringParameter("inpShown");
+          "ReportInvoiceCustomerDimensionalAnalyses|product", IsIDFilter.instance);
+      // ad_ref_list.value for refercence_id 800087
+      String strNotShown = vars.getInStringParameter("inpNotShown", IsPositiveIntFilter.instance);
+      String strShown = vars.getInStringParameter("inpShown", IsPositiveIntFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportInvoiceCustomerDimensionalAnalyses|org", "0");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",

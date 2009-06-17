@@ -28,6 +28,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
@@ -63,15 +65,17 @@ public class ReportRefundInvoiceCustomerDimensionalAnalyses extends HttpSecureAp
       String strPartnerGroup = vars.getGlobalVariable("inpPartnerGroup",
           "ReportRefundInvoiceCustomerDimensionalAnalyses|partnerGroup", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportRefundInvoiceCustomerDimensionalAnalyses|partner", "");
+          "ReportRefundInvoiceCustomerDimensionalAnalyses|partner", "", IsIDFilter.instance);
       String strProductCategory = vars.getGlobalVariable("inpProductCategory",
           "ReportRefundInvoiceCustomerDimensionalAnalyses|productCategory", "");
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportRefundInvoiceCustomerDimensionalAnalyses|product", "");
+          "ReportRefundInvoiceCustomerDimensionalAnalyses|product", "", IsIDFilter.instance);
+      // ad_ref_list.value for reference_id = 800087
       String strNotShown = vars.getInGlobalVariable("inpNotShown",
-          "ReportRefundInvoiceCustomerDimensionalAnalyses|notShown", "");
+          "ReportRefundInvoiceCustomerDimensionalAnalyses|notShown", "",
+          IsPositiveIntFilter.instance);
       String strShown = vars.getInGlobalVariable("inpShown",
-          "ReportRefundInvoiceCustomerDimensionalAnalyses|shown", "");
+          "ReportRefundInvoiceCustomerDimensionalAnalyses|shown", "", IsPositiveIntFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportRefundInvoiceCustomerDimensionalAnalyses|org", "0");
       String strsalesrepId = vars.getGlobalVariable("inpSalesrepId",
@@ -109,13 +113,14 @@ public class ReportRefundInvoiceCustomerDimensionalAnalyses extends HttpSecureAp
       String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup",
           "ReportRefundInvoiceCustomerDimensionalAnalyses|partnerGroup");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportRefundInvoiceCustomerDimensionalAnalyses|partner");
+          "ReportRefundInvoiceCustomerDimensionalAnalyses|partner", IsIDFilter.instance);
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportRefundInvoiceCustomerDimensionalAnalyses|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportRefundInvoiceCustomerDimensionalAnalyses|product");
-      String strNotShown = vars.getInStringParameter("inpNotShown");
-      String strShown = vars.getInStringParameter("inpShown");
+          "ReportRefundInvoiceCustomerDimensionalAnalyses|product", IsIDFilter.instance);
+      // ad_ref_list.value for reference_id = 800087
+      String strNotShown = vars.getInStringParameter("inpNotShown", IsPositiveIntFilter.instance);
+      String strShown = vars.getInStringParameter("inpShown", IsPositiveIntFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportRefundInvoiceCustomerDimensionalAnalyses|org", "0");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",

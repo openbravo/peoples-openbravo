@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tax;
@@ -1315,7 +1316,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Bank");
-    String strPayment = vars.getInStringParameter("inpcPaymentId");
+    String strPayment = vars.getInStringParameter("inpcPaymentId", IsIDFilter.instance);
     final String strStatementDate = vars.getStringParameter("inpstatementdate");
     String strDateplanned = "";
     String strChargeamt = "";
@@ -1403,7 +1404,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strBPartner = vars.getRequiredStringParameter("inpcBpartnerId");
     final String strPriceList = vars.getRequiredStringParameter("inpMPricelist");
     final String strType = vars.getRequiredStringParameter("inpType");
-    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpcOrderId"));
+    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpcOrderId",
+        IsIDFilter.instance));
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     String strPO = "", priceActual = "0", priceLimit = "0", priceList = "0", strPriceListVersion = "", priceStd = "0";
     CreateFromInvoiceData[] data = null;
@@ -1530,7 +1532,8 @@ public class CreateFrom extends HttpSecureAppServlet {
       log4j.debug("Save: Shipment");
     final String strLocatorCommon = vars.getStringParameter("inpmLocatorId");
     final String strType = vars.getRequiredStringParameter("inpType");
-    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpId"));
+    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpId",
+        IsIDFilter.instance));
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     String strInvoice = "", strPO = "";
     CreateFromShipmentData[] data = null;
@@ -1741,7 +1744,8 @@ public class CreateFrom extends HttpSecureAppServlet {
       log4j.debug("Save: Shipment");
     final String strLocator = vars.getRequiredStringParameter("inpmLocatorId");
     final String strType = vars.getRequiredStringParameter("inpType");
-    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpId"));
+    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpId",
+        IsIDFilter.instance));
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     String strInvoice = "", strPO = "";
     CreateFromShipmentData[] data = null;
@@ -1914,7 +1918,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Settlement");
-    String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId");
+    String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId", IsIDFilter.instance);
     if (strDebtPayment.equals(""))
       return null;
     OBError myMessage = null;
@@ -1969,7 +1973,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: DPManagement");
-    String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId");
+    String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId", IsIDFilter.instance);
     if (strDebtPayment.equals(""))
       return null;
     OBError myMessage = null;
@@ -2027,7 +2031,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Cremittance");
-    String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId");
+    String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId", IsIDFilter.instance);
     if (strDebtPayment.equals(""))
       return null;
     OBError myMessage = null;

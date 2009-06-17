@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
@@ -64,9 +65,9 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
       String strAccountingCount = vars.getGlobalVariable("inpAccountingCount",
           "ReportAccountingCountDimensionalAnalyses|accountingCount", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAccountingCountDimensionalAnalyses|cBpartnerId", "");
+          "ReportAccountingCountDimensionalAnalyses|cBpartnerId", "", IsIDFilter.instance);
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportAccountingCountDimensionalAnalyses|mProductId", "");
+          "ReportAccountingCountDimensionalAnalyses|mProductId", "", IsIDFilter.instance);
       String strShown = vars.getInGlobalVariable("inpShown",
           "ReportAccountingCountDimensionalAnalyses|shown", "");
       String strOrg = vars.getGlobalVariable("inpOrg",
@@ -99,9 +100,9 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
       String strAccountingCount = vars.getRequestGlobalVariable("inpAccountingCount",
           "ReportAccountingCountDimensionalAnalyses|accountingCount");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAccountingCountDimensionalAnalyses|cBpartnerId");
+          "ReportAccountingCountDimensionalAnalyses|cBpartnerId", IsIDFilter.instance);
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportAccountingCountDimensionalAnalyses|mProductId");
+          "ReportAccountingCountDimensionalAnalyses|mProductId", IsIDFilter.instance);
       String strShown = vars.getRequestInGlobalVariable("inpShown",
           "ReportAccountingCountDimensionalAnalyses|shown");
       String strOrg = vars.getGlobalVariable("inpOrg",
@@ -167,9 +168,9 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
       String strAccountingCount = vars.getRequestGlobalVariable("inpAccountingCount",
           "ReportAccountingCountDimensionalAnalyses|accountingCount");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAccountingCountDimensionalAnalyses|cBpartnerId");
+          "ReportAccountingCountDimensionalAnalyses|cBpartnerId", IsIDFilter.instance);
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportAccountingCountDimensionalAnalyses|mProductId");
+          "ReportAccountingCountDimensionalAnalyses|mProductId", IsIDFilter.instance);
       String strShown = vars.getStringParameter("inpShown");
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportAccountingCountDimensionalAnalyses|org", "0");

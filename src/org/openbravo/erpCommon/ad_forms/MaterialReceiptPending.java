@@ -30,6 +30,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -81,7 +82,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
           strDocumentNo, "FIND");
     } else if (vars.commandIn("GENERATE")) {
-      String strcOrderLineId = vars.getRequiredInStringParameter("inpOrder");
+      String strcOrderLineId = vars.getRequiredInStringParameter("inpOrder", IsIDFilter.instance);
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "MaterialReceiptPending|DateFrom");
       String strDateTo = vars
@@ -192,7 +193,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     xmlDocument.setParameter("displayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
 
     if (commandIn.equals("GENERATE")) {
-      String strcOrderLineId = vars.getRequiredInStringParameter("inpOrder");
+      String strcOrderLineId = vars.getRequiredInStringParameter("inpOrder", IsIDFilter.instance);
       StringBuffer html = new StringBuffer();
       if (strcOrderLineId.startsWith("("))
         strcOrderLineId = strcOrderLineId.substring(1, strcOrderLineId.length() - 1);

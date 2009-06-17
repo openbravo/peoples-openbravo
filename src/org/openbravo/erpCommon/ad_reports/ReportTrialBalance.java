@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
@@ -66,7 +67,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
               "Account")));
 
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportTrialBalance|cBpartnerId");
+          "ReportTrialBalance|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
 
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly,
@@ -86,7 +87,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|AccountTo");
 
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportTrialBalance|cBpartnerId");
+          "ReportTrialBalance|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly,
           strAccountFrom, strAccountTo, strAll, strcBpartnerId, strcAcctSchemaId);
@@ -105,7 +106,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|AccountTo");
 
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportTrialBalance|cBpartnerId");
+          "ReportTrialBalance|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
       printPageDataPDF(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly,
           strAccountFrom, strAccountTo, strAll, strcBpartnerId, strcAcctSchemaId);
@@ -320,10 +321,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strOrg, String strLevel, String strOnly, String strAccountFrom,
-      String strAccountTo, String strAll, String strcBpartnerId, String strcAcctSchemaId)
-      throws IOException, ServletException {
+  private void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strOrg, String strLevel, String strOnly,
+      String strAccountFrom, String strAccountTo, String strAll, String strcBpartnerId,
+      String strcAcctSchemaId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     /*

@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -55,23 +56,23 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       String strcProjectId = vars.getGlobalVariable("inpcProjectId",
           "ReportProjectBuildingSiteJR|cProjectId", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportProjectBuildingSiteJR|cBPartnerId_IN", "");
+          "ReportProjectBuildingSiteJR|cBPartnerId_IN", "", IsIDFilter.instance);
       String strmCategoryId = vars.getInGlobalVariable("inpmProductCategoryId",
-          "ReportProjectBuildingSiteJR|mCategoryId", "");
+          "ReportProjectBuildingSiteJR|mCategoryId", "", IsIDFilter.instance);
       String strProjectkind = vars.getInGlobalVariable("inpProjectkind",
-          "ReportProjectBuildingSiteJR|Projectkind", "");
+          "ReportProjectBuildingSiteJR|Projectkind", "", IsIDFilter.instance);
       String strProjectstatus = vars.getInGlobalVariable("inpProjectstatus",
-          "ReportProjectBuildingSiteJR|Projectstatus", "");
+          "ReportProjectBuildingSiteJR|Projectstatus", "", IsIDFilter.instance);
       String strProjectphase = vars.getInGlobalVariable("inpProjectphase",
-          "ReportProjectBuildingSiteJR|Projectphase", "");
+          "ReportProjectBuildingSiteJR|Projectphase", "", IsIDFilter.instance);
       String strProduct = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportProjectBuildingSiteJR|mProductId_IN", "");
+          "ReportProjectBuildingSiteJR|mProductId_IN", "", IsIDFilter.instance);
       String strProjectpublic = vars.getGlobalVariable("inpProjectpublic",
           "ReportProjectBuildingSiteJR|Projectpublic", "");
       String strSalesRep = vars.getGlobalVariable("inpSalesRepId",
           "ReportProjectBuildingSiteJR|SalesRepId", "");
       String strcRegionId = vars.getInGlobalVariable("inpcRegionId",
-          "ReportProjectBuildingSiteJR|cRegionId", "");
+          "ReportProjectBuildingSiteJR|cRegionId", "", IsIDFilter.instance);
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportProjectBuildingSiteJR|currency", strUserCurrencyId);
       printPageDataSheet(response, vars, strdateFrom, strdateTo, strcBpartnerId, strcProjectId,
@@ -85,23 +86,23 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId",
           "ReportProjectBuildingSiteJR|cProjectId");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportProjectBuildingSiteJR|cBPartnerId_IN");
+          "ReportProjectBuildingSiteJR|cBPartnerId_IN", IsIDFilter.instance);
       String strmCategoryId = vars.getRequestInGlobalVariable("inpmProductCategoryId",
-          "ReportProjectBuildingSiteJR|mCategoryId");
+          "ReportProjectBuildingSiteJR|mCategoryId", IsIDFilter.instance);
       String strProjectkind = vars.getRequestInGlobalVariable("inpProjectkind",
-          "ReportProjectBuildingSiteJR|Projectkind");
+          "ReportProjectBuildingSiteJR|Projectkind", IsIDFilter.instance);
       String strProjectstatus = vars.getRequestInGlobalVariable("inpProjectstatus",
-          "ReportProjectBuildingSiteJR|Projectstatus");
+          "ReportProjectBuildingSiteJR|Projectstatus", IsIDFilter.instance);
       String strProjectphase = vars.getRequestInGlobalVariable("inpProjectphase",
-          "ReportProjectBuildingSiteJR|Projectphase");
+          "ReportProjectBuildingSiteJR|Projectphase", IsIDFilter.instance);
       String strProduct = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportProjectBuildingSiteJR|mProductId_IN");
+          "ReportProjectBuildingSiteJR|mProductId_IN", IsIDFilter.instance);
       String strProjectpublic = vars.getRequestGlobalVariable("inpProjectpublic",
           "ReportProjectBuildingSiteJR|Projectpublic");
       String strSalesRep = vars.getRequestGlobalVariable("inpSalesRepId",
           "ReportProjectBuildingSiteJR|SalesRepId");
       String strcRegionId = vars.getRequestInGlobalVariable("inpcRegionId",
-          "ReportProjectBuildingSiteJR|cRegionId");
+          "ReportProjectBuildingSiteJR|cRegionId", IsIDFilter.instance);
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportProjectBuildingSiteJR|currency", strUserCurrencyId);
       String strOutput = "html";

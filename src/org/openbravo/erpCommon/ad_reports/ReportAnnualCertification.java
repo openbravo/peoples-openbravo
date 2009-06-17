@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -61,7 +62,7 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
           "ReportAnnualCertification|C_ElementValue_IDTO", "");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportAnnualCertification|Org", "0");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAnnualCertification|cBpartnerId", "");
+          "ReportAnnualCertification|cBpartnerId", "", IsIDFilter.instance);
       String strAll = vars.getGlobalVariable("inpAll", "ReportAnnualCertification|All", "");
       String strReportType = vars.getRequestGlobalVariable("inpcReportType",
           "ReportAnnualCertification|ReportType");
@@ -87,7 +88,7 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
           "ReportAnnualCertification|C_ElementValue_IDTO");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportAnnualCertification|Org", "0");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAnnualCertification|cBpartnerId");
+          "ReportAnnualCertification|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
       String strReportType = vars.getRequestGlobalVariable("inpcReportType",
           "ReportAnnualCertification|ReportType");
@@ -159,7 +160,7 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
           "ReportAnnualCertification|C_ElementValue_IDTO");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportAnnualCertification|Org", "0");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAnnualCertification|cBpartnerId");
+          "ReportAnnualCertification|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
       String strReportType = vars.getRequestGlobalVariable("inpcReportType",
           "ReportAnnualCertification|ReportType");
