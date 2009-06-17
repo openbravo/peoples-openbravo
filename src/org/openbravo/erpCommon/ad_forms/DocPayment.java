@@ -237,11 +237,12 @@ public class DocPayment extends AcctServer {
           if (log4j.isDebugEnabled())
             log4j.debug("Manual DP - amount:" + amount + " - transitoryAmount:" + transitoryAmount
                 + " - Receipt:" + line.isReceipt);
+          // Line is cloned to add withholding and/or tax info
+          DocLine_Payment lineAux = DocLine_Payment.clone(line);
+          lineAux.setM_C_WithHolding_ID(data[0].cWithholdingId);
+          lineAux.setM_C_Tax_ID(data[0].cTaxId);
           // Depending on the stt type and the signum of DP it will be
           // posted on credit or debit
-          DocLine_Payment lineAux = line;
-          lineAux.setC_WITHHOLDING_ID(data[0].cWithholdingId);
-          lineAux.setM_C_Tax_ID(data[0].cTaxId);
           if (amount.signum() == 1) {
             fact.createLine(lineAux, new Account(conn,
                 (lineAux.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
@@ -275,8 +276,8 @@ public class DocPayment extends AcctServer {
             if (log4j.isDebugEnabled())
               log4j.debug("DocPayment - createFact - Conceptos - AmountDebit: " + amountdebit
                   + " - AmountCredit: " + amountcredit);
-            DocLine_Payment lineAux = line;
-            lineAux.setC_WITHHOLDING_ID(data[j].cWithholdingId);
+            DocLine_Payment lineAux = DocLine_Payment.clone(line);
+            lineAux.setM_C_WithHolding_ID(data[j].cWithholdingId);
             lineAux.setM_C_Tax_ID(data[j].cTaxId);
             fact.createLine(lineAux, new Account(conn,
                 (lineAux.isReceipt.equals("Y") ? data[j].creditAcct : data[j].debitAcct)),

@@ -71,7 +71,7 @@ public class FactLine {
 
   /**
    * Constructor
-   *
+   * 
    * @param AD_Table_ID
    *          - Table of Document Source
    * @param Record_ID
@@ -91,7 +91,7 @@ public class FactLine {
 
   /**
    * Constructor
-   *
+   * 
    * @param AD_Table_ID
    *          - Table of Document Source
    * @param Record_ID
@@ -116,7 +116,7 @@ public class FactLine {
 
   /**
    * Set Source Amounts
-   *
+   * 
    * @param C_Currency_ID
    *          currency
    * @param AmtSourceDr
@@ -141,7 +141,7 @@ public class FactLine {
 
   /**
    * Set Account Info
-   *
+   * 
    * @param acctSchema
    *          account schema
    * @param acct
@@ -155,7 +155,7 @@ public class FactLine {
 
   /**
    * Set Accounted Amounts (alternative: call convert)
-   *
+   * 
    * @param AmtAcctDr
    *          acct amount dr
    * @param AmtAcctCr
@@ -168,7 +168,7 @@ public class FactLine {
 
   /**
    * Set Journal Info
-   *
+   * 
    * @param GL_Category_ID
    *          category
    */
@@ -178,7 +178,7 @@ public class FactLine {
 
   /**
    * Set Posting Type
-   *
+   * 
    * @param PostingType
    *          posting type
    */
@@ -188,7 +188,7 @@ public class FactLine {
 
   /**
    * Set Document Info
-   *
+   * 
    * @param docVO
    *          document value object
    * @param docLine
@@ -201,7 +201,7 @@ public class FactLine {
 
   /**
    * Convert to Accounted Currency
-   *
+   * 
    * @param Acct_Currency_ID
    *          acct currency
    * @param ConversionDate
@@ -238,7 +238,7 @@ public class FactLine {
 
   /**
    * Set Location from Organization
-   *
+   * 
    * @param AD_Org_ID
    *          org
    * @param isFrom
@@ -262,7 +262,7 @@ public class FactLine {
 
   /**
    * Set Location
-   *
+   * 
    * @param C_Location_ID
    *          location
    * @param isFrom
@@ -279,7 +279,7 @@ public class FactLine {
    * <p>
    * Note that Locator needs to be set before - otherwise segment balancing might produce the wrong
    * results
-   *
+   * 
    * @return AD_Org_ID
    */
   public String getAD_Org_ID(ConnectionProvider conn) {
@@ -333,7 +333,7 @@ public class FactLine {
 
   /**
    * Set AD_Org_ID (balancing segment)
-   *
+   * 
    * @param AD_Org_ID
    *          org
    */
@@ -344,7 +344,7 @@ public class FactLine {
 
   /**
    * Set Warehouse Locator. - will overwrite Organization -
-   *
+   * 
    * @param M_Locator_ID
    *          locator
    */
@@ -358,7 +358,7 @@ public class FactLine {
 
   /**
    * Returns Source Balance of line
-   *
+   * 
    * @return source balance
    */
   public BigDecimal getSourceBalance() {
@@ -374,7 +374,7 @@ public class FactLine {
 
   /**
    * Set Location from Busoness Partner Location
-   *
+   * 
    * @param C_BPartner_Location_ID
    *          bp location
    * @param isFrom
@@ -400,7 +400,7 @@ public class FactLine {
 
   /**
    * Set Location from Locator
-   *
+   * 
    * @param M_Locator_ID
    *          locator
    * @param isFrom
@@ -424,7 +424,7 @@ public class FactLine {
   /**
    * Save to Disk. Get Info from this, doc-line, document, account Optionally create Revenue
    * Recognition Plan
-   *
+   * 
    * @param con
    *          connection
    * @return true if saved
@@ -689,6 +689,8 @@ public class FactLine {
             + Record_ID2);
         log4jFactLine.debug("FactLine - m_A_Asset_ID "
             + ((m_docLine != null) ? m_docLine.m_A_Asset_ID : ""));
+        log4jFactLine.debug("FactLine - m_C_WithHolding_ID "
+            + ((m_docLine != null) ? m_docLine.m_C_WithHolding_ID : ""));
         no = FactLineData.insertFactAct(con, conn, m_Fact_Acct_ID, AD_Client_ID, AD_Org_ID,
             m_C_AcctSchema_ID, Account_ID, cuenta[0].value, cuenta[0].description, DateDoc,
             DateAcct, C_Period_ID, m_AD_Table_ID, m_Record_ID, m_Line_ID, m_GL_Category_ID,
@@ -710,7 +712,7 @@ public class FactLine {
 
   /**
    * Get AD_Client
-   *
+   * 
    * @return AD_Client_ID
    */
   private String getAD_Client_ID() {
@@ -722,7 +724,7 @@ public class FactLine {
 
   /**
    * Get/derive Sales Region
-   *
+   * 
    * @return Sales Region
    */
   private String getC_SalesRegion_ID(ConnectionProvider conn) {
@@ -767,7 +769,7 @@ public class FactLine {
 
   /**
    * /** Get Accounted Balance
-   *
+   * 
    * @return accounting balance
    */
   public String getAcctBalance() {
@@ -782,7 +784,7 @@ public class FactLine {
 
   /**
    * Is Account on Balance Sheet
-   *
+   * 
    * @return true if account is a balance sheet account
    */
   public boolean isBalanceSheet() {
@@ -791,13 +793,13 @@ public class FactLine {
 
   /**
    * Currect Accounting Amount.
-   *
+   * 
    * <pre>
    *  Example:    1       -1      1       -1
    *  Old         100/0   100/0   0/100   0/100
    *  New         101/0   99/0    0/99    0/101
    * </pre>
-   *
+   * 
    * @param deltaAmount
    *          delta amount
    */
