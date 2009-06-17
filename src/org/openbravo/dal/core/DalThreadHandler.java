@@ -40,7 +40,8 @@ public abstract class DalThreadHandler extends ThreadHandler {
   @Override
   public void doFinal(boolean errorOccured) {
     try {
-      if (SessionHandler.isSessionHandlerPresent()) {
+      if (SessionHandler.isSessionHandlerPresent()
+          && SessionHandler.getInstance().doSessionInViewPatter()) {
         // application software can force a rollback
         if (SessionHandler.getInstance().getDoRollback()) {
           SessionHandler.getInstance().rollback();
