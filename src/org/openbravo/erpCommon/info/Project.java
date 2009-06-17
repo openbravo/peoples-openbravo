@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -38,6 +40,10 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Project extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "value", "name", "bpartner", "projectstatus", "rowkey" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -95,8 +101,8 @@ public class Project extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getInStringParameter("sort_cols");
-      String strSortDirs = vars.getInStringParameter("sort_dirs");
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       printGridData(response, vars, strKey, strName, strBpartners, strSortCols, strSortDirs,
           strOffset, strPageSize, strNewFilter, strOrg);
     } else
@@ -198,7 +204,6 @@ public class Project extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "value", "name", "bpartner", "projectstatus", "rowkey" };
     // String[] gridNames = {"Key", "Name","Disp. Credit","Credit used",
     // "Contact", "Phone no.", "Zip", "City", "Income", "c_bpartner_id",
     // "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey"};
@@ -242,8 +247,8 @@ public class Project extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
-        // validate orderby parameters and build sql orderBy clause
-        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+        // build sql orderBy clause from parameters
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter

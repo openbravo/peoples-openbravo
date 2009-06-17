@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -39,6 +41,11 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class InvoiceLine extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "BPARTNER_NAME", "DATEINVOICED", "DOCUMENTNO",
+      "ISSOTRX", "PRODUCT_NAME", "QTY", "PRICEACTUAL", "LINENETAMT", "C_INVOICELINE_ID", "ROWKEY" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -143,8 +150,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getInStringParameter("sort_cols");
-      String strSortDirs = vars.getInStringParameter("sort_dirs");
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
 
       printGridData(response, vars, strDocumentNo, strBpartnerId, strDateFrom, strDateTo,
           strDescription, strCal1, strCal2, strOrder, strProduct, strSortCols, strSortDirs,
@@ -243,8 +250,6 @@ public class InvoiceLine extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "BPARTNER_NAME", "DATEINVOICED", "DOCUMENTNO", "ISSOTRX", "PRODUCT_NAME",
-        "QTY", "PRICEACTUAL", "LINENETAMT", "C_INVOICELINE_ID", "ROWKEY" };
     String[] colWidths = { "220", "80", "110", "35", "170", "60", "50", "55", "0", "0" };
     for (int i = 0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
@@ -286,8 +291,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
-        // validate orderby parameters and build sql orderBy clause
-        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+        // build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
         // remove single % in parameters used in like upper(parameter)
         if (strDocumentNo.equals("%")) {

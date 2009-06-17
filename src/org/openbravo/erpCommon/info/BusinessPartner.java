@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -38,6 +40,12 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class BusinessPartner extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "value", "name", "so_creditavailable",
+      "so_creditused", "contact", "phone", "pc", "city", "income", "c_bpartner_id",
+      "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   @Override
   public void init(ServletConfig config) {
@@ -134,8 +142,8 @@ public class BusinessPartner extends HttpSecureAppServlet {
       final String strNewFilter = vars.getStringParameter("newFilter");
       final String strOffset = vars.getStringParameter("offset");
       final String strPageSize = vars.getStringParameter("page_size");
-      final String strSortCols = vars.getInStringParameter("sort_cols");
-      final String strSortDirs = vars.getInStringParameter("sort_dirs");
+      final String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      final String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       printGridData(response, vars, strKey, strName, strOrg, strContact, strZIP, strProvincia,
           strBpartners, strCity, strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter);
     } else
@@ -235,9 +243,6 @@ public class BusinessPartner extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     final Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    final String[] colNames = { "value", "name", "so_creditavailable", "so_creditused", "contact",
-        "phone", "pc", "city", "income", "c_bpartner_id", "c_bpartner_contact_id",
-        "c_bpartner_location_id", "rowkey" };
     final String[] colWidths = { "98", "172", "50", "83", "104", "63", "43", "100", "63", "0", "0",
         "0", "0" };
     for (int i = 0; i < colNames.length; i++) {
@@ -288,8 +293,8 @@ public class BusinessPartner extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
-        // validate orderby parameters and build sql orderBy clause
-        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+        // build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {

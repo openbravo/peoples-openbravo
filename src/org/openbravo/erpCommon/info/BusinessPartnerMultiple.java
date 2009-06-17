@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -37,6 +39,11 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class BusinessPartnerMultiple extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "Value", "Name", "SO_CreditAvailable",
+      "SO_CreditUsed", "SalesRep", "Url", "Email", "ActualLifetimeValue", "C_BPartner_ID", "RowKey" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -86,8 +93,8 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getInStringParameter("sort_cols");
-      String strSortDirs = vars.getInStringParameter("sort_dirs");
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Invoice.adorgid", "");
 
       if (action.equalsIgnoreCase("getRows")) { // Asking for data rows
@@ -159,8 +166,6 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "Value", "Name", "SO_CreditAvailable", "SO_CreditUsed", "SalesRep",
-        "Url", "Email", "ActualLifetimeValue", "C_BPartner_ID", "RowKey" };
     String[] colWidths = { "87", "165", "73", "77", "117", "100", "110", "51", "0", "0" };
     for (int i = 0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
@@ -202,8 +207,8 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
-        // validate orderby parameters and build sql orderBy clause
-        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+        // build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
@@ -335,9 +340,8 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     FieldProvider[] data = null;
     FieldProvider[] res = null;
     try {
-      SQLReturnObject[] headers = getHeaders(vars);
-      // validate orderby parameters and build sql orderBy clause
-      String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+      // build sql orderBy clause
+      String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
       // Filtering result
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {

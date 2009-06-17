@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -39,6 +41,12 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Account extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "ALIAS", "COMBINATION", "DESCRIPTION", "AD_ORG_ID_D",
+      "ACCOUNT_ID_D", "M_PRODUCT_ID_D", "C_BPARTNER_ID_D", "C_PROJECT_ID_D", "C_CAMPAIGN_ID_D",
+      "C_VALIDCOMBINATION_ID", "ROWKEY" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -94,8 +102,8 @@ public class Account extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getInStringParameter("sort_cols");
-      String strSortDirs = vars.getInStringParameter("sort_dirs");
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       printGridData(response, vars, strAlias, strCombination, strOrganization, strAccount,
           strProduct, strBPartner, strProject, strCampaign, strSortCols, strSortDirs, strOffset,
           strPageSize, strNewFilter, strAcctSchema);
@@ -292,9 +300,6 @@ public class Account extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "ALIAS", "COMBINATION", "DESCRIPTION", "AD_ORG_ID_D", "ACCOUNT_ID_D",
-        "M_PRODUCT_ID_D", "C_BPARTNER_ID_D", "C_PROJECT_ID_D", "C_CAMPAIGN_ID_D",
-        "C_VALIDCOMBINATION_ID", "ROWKEY" };
     String[] colWidths = { "43", "193", "151", "105", "123", "71", "101", "43", "59", "0", "0" };
     for (int i = 0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
@@ -336,8 +341,8 @@ public class Account extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
-        // validate orderby parameters and build sql orderBy clause
-        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+        // build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
         strAcctSchema = (strAcctSchema.equals("%") ? "" : strAcctSchema);
         strAlias = (strAlias.equals("%") ? "" : strAlias);
