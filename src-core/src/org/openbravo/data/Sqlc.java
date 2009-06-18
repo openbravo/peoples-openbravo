@@ -445,6 +445,7 @@ public class Sqlc extends DefaultHandler {
       String strOptional = null;
       String strAfter = null;
       String strText = null;
+      String strIgnoreValue = null;
       final int size = amap.getLength();
       for (int i = 0; i < size; i++) {
         if (amap.getQName(i).equals("name")) {
@@ -459,12 +460,14 @@ public class Sqlc extends DefaultHandler {
           strAfter = amap.getValue(i);
         } else if (amap.getQName(i).equals("text")) {
           strText = amap.getValue(i);
+        } else if (amap.getQName(i).equals("ignoreValue")) {
+          strIgnoreValue = amap.getValue(i);
         }
       }
       if (log4j.isDebugEnabled())
         log4j.debug("Configuration: call to addParameter ");
       parameterSql = sql.addParameter(false, strName, strDefault, strInOut, strOptional, strAfter,
-          strText);
+          strText, strIgnoreValue);
     } else if (name.equals("Field")) {
       FieldAdded field = null;
       final int size = amap.getLength();
@@ -483,7 +486,8 @@ public class Sqlc extends DefaultHandler {
           sql.strSequenceName = amap.getValue(i);
         }
       }
-      parameterSql = sql.addParameter(true, sql.strSequenceName, null, null, null, null, null);
+      parameterSql = sql
+          .addParameter(true, sql.strSequenceName, null, null, null, null, null, null);
     }
   }
 
@@ -848,14 +852,29 @@ public class Sqlc extends DefaultHandler {
                   + parameter.strName + "\"))?\" " + parameter.strText + " \":\"\");\n");
             } else if (parameter.strInOut.equals("argument")) {
               out2.append("    strSql = strSql + ((" + parameter.strName + "==null || "
-                  + parameter.strName + ".equals(\"\"))?\"\":\" " + parameter.strText + "\" + "
-                  + parameter.strName + ");\n");
+                  + parameter.strName + ".equals(\"\")");
+              if (parameter.strIgnoreValue != null) {
+                out2.append(" || " + parameter.strName + ".equals(\"" + parameter.strIgnoreValue
+                    + "\") ");
+              }
+              out2.append(")?\"\":\" " + parameter.strText + "\" + " + parameter.strName + ");\n");
             } else if (parameter.strInOut.equals("replace")) {
               out2.append("    strSql = strSql + ((" + parameter.strName + "==null || "
-                  + parameter.strName + ".equals(\"\"))?\"\":" + parameter.strName + ");\n");
+                  + parameter.strName + ".equals(\"\")");
+              if (parameter.strIgnoreValue != null) {
+                out2.append(" || " + parameter.strName + ".equals(\"" + parameter.strIgnoreValue
+                    + "\") ");
+              }
+              out2.append(")?\"\":" + parameter.strName + ");\n");
+
             } else {
               out2.append("    strSql = strSql + ((" + parameter.strName + "==null || "
-                  + parameter.strName + ".equals(\"\"))?\"\":\" " + parameter.strText + " \");\n");
+                  + parameter.strName + ".equals(\"\")");
+              if (parameter.strIgnoreValue != null) {
+                out2.append(" || " + parameter.strName + ".equals(\"" + parameter.strIgnoreValue
+                    + "\") ");
+              }
+              out2.append(")?\"\":\" " + parameter.strText + " \");\n");
             }
           } else if (parameter.strInOut.equals("replace")) {
             posFinalAfter = 0;
@@ -956,7 +975,12 @@ public class Sqlc extends DefaultHandler {
         }
         if (parameter.boolOptional) {
           aux.append("      if (" + parameter.strName + " != null && !(" + parameter.strName
-              + ".equals(\"\"))) {\n");
+              + ".equals(\"\"))");
+          if (parameter.strIgnoreValue != null) {
+            aux.append(" && !(" + parameter.strName + ".equals(\"" + parameter.strIgnoreValue
+                + "\"))");
+          }
+          aux.append(") {\n");
           aux.append("  ");
         }
         if (parameter.strInOut.equals("in") || parameter.strInOut.equals("inOut")) {
