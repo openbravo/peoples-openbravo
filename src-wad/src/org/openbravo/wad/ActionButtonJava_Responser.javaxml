@@ -55,7 +55,10 @@ public class ActionButtonJava_Responser extends HttpSecureAppServlet {
       strProcessId = vars.getRequiredStringParameter("inpadProcessId");
     else if (command.startsWith("BUTTON"))
       strProcessId = command.substring("BUTTON".length());
-    else if (command.startsWith("SAVE_BUTTONActionButton"))
+    else if (command.startsWith("FRAMES")) {
+      strProcessId = command.substring("FRAMES".length());
+      printPageFrames(response, vars, strProcessId);
+    } else if (command.startsWith("SAVE_BUTTONActionButton"))
       strProcessId = command.substring("SAVE_BUTTONActionButton".length());
    
     if (!vars.commandIn("DEFAULT") &amp;&amp; !hasGeneralAccess(vars, "P", strProcessId)) {
@@ -91,6 +94,19 @@ public class ActionButtonJava_Responser extends HttpSecureAppServlet {
         processButtonHelper(request, response, vars, (OBError)pb.getResult());        
 </FIELDS_TMP>
     } else pageErrorPopUp(response);
+  }
+  
+  void printPageFrames(HttpServletResponse response, VariablesSecureApp vars, String strProcessId) throws IOException, ServletException {
+    log4j.debug("Output: Default");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/ActionButtonDefaultFrames").createXmlDocument();
+    xmlDocument.setParameter("processId", strProcessId);
+    xmlDocument.setParameter("trlFormType", "PROCESS");
+    xmlDocument.setParameter("type", "ActionButtonJava_Responser.html");
+    xmlDocument.setParameter("language", "defaultLang = \"" + vars.getLanguage() + "\";\n");
+    out.println(xmlDocument.print());
+    out.close();
   }
 
   void printPageDefault(HttpServletResponse response, VariablesSecureApp vars, String strProcessId) throws IOException, ServletException {
