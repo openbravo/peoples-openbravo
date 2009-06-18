@@ -336,17 +336,6 @@ public class SalesOrderLine extends HttpSecureAppServlet {
         // build sql orderBy clause from parameters
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
-        // remove single % in parameters used in like upper(parameter)
-        if (strDocumentNo.equals("%")) {
-          strDocumentNo = null;
-        }
-        if (strDescription.equals("%")) {
-          strDescription = null;
-        }
-        if (strOrder.equals("%")) {
-          strOrder = null;
-        }
-
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
           if (strSOTrx.equals("Y")) {

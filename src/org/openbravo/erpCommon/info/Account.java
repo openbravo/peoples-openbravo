@@ -344,9 +344,6 @@ public class Account extends HttpSecureAppServlet {
         // build sql orderBy clause
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
-        strAcctSchema = (strAcctSchema.equals("%") ? "" : strAcctSchema);
-        strAlias = (strAlias.equals("%") ? "" : strAlias);
-        strCombination = (strCombination.equals("%") ? "" : strCombination);
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or

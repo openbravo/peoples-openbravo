@@ -49,7 +49,7 @@
         <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND C_ACCTSCHEMA_ID = ?]]></Parameter>
         <Parameter name="value" optional="true" after="AND 2=2"><![CDATA[ AND (C.VALUE IS NULL  OR UPPER(C.VALUE) LIKE UPPER(?)) ]]></Parameter>
-        <Parameter name="name" optional="true" after="AND 2=2"><![CDATA[ AND UPPER(C.NAME) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="AND 2=2"><![CDATA[ AND UPPER(C.NAME) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="organization" optional="true" after="AND 2=2"><![CDATA[ AND C.AD_ORG_ID = ? ]]></Parameter>
         <Parameter name="elementValue" optional="true" after="AND 2=2"><![CDATA[ AND C.C_ELEMENTVALUE_ID = ? ]]></Parameter>
         <Parameter name="adUserClient" type="replace" optional="true" after="C.AD_Client_ID IN (" text="'1'"/>
@@ -84,7 +84,7 @@
       ]]></Sql>
         <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND C_ACCTSCHEMA_ID = ?]]></Parameter>
         <Parameter name="value" optional="true" after="AND 2=2"><![CDATA[ AND (C.VALUE IS NULL  OR UPPER(C.VALUE) LIKE UPPER(?)) ]]></Parameter>
-        <Parameter name="name" optional="true" after="AND 2=2"><![CDATA[ AND UPPER(C.NAME) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="AND 2=2"><![CDATA[ AND UPPER(C.NAME) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="organization" optional="true" after="AND 2=2"><![CDATA[ AND C.AD_ORG_ID = ? ]]></Parameter>
         <Parameter name="elementValue" optional="true" after="AND 2=2"><![CDATA[ AND C.C_ELEMENTVALUE_ID = ? ]]></Parameter>
         <Parameter name="adUserClient" type="replace" optional="true" after="C.AD_Client_ID IN (" text="'1'"/>

@@ -343,10 +343,6 @@ public class ProductComplete extends HttpSecureAppServlet {
     int offset = Integer.valueOf(strOffset).intValue();
     int pageSize = Integer.valueOf(strPageSize).intValue();
 
-    // strip out single '%' parameters used with like
-    strKey = strKey.equals("%") ? "" : strKey;
-    strName = strName.equals("%") ? "" : strName;
-
     if (headers != null) {
       try {
         // build sql orderBy clause from parameters
