@@ -80,8 +80,7 @@ public class CheckSum {
 
   private String[] getFiles(String type) {
     if (type.equals("md5.db.all")) {
-      String rt[] = { obDir + "src-db/database/model", obDir + "src-db/database/sourcedata",
-          obDir + "modules" };
+      String rt[] = { obDir + "src-db/database/model", obDir + "src-db/database/sourcedata" };
       return rt;
     } else if (type.equals("md5.db.structure")) {
       String rt[] = { obDir + "src-db/database/model", obDir + "modules" };
@@ -120,8 +119,7 @@ public class CheckSum {
     }
   }
 
-  public String calculateCheckSumWithoutSaving(String type)
-  {
+  public String calculateCheckSumWithoutSaving(String type) {
     try {
       String[] files = getFiles(type);
       String checkSum = getCheckSum(files);
@@ -131,7 +129,7 @@ public class CheckSum {
       return "0";
     }
   }
-  
+
   public String calculateCheckSumDBStructure() {
     return calculateCheckSum("md5.db.structure");
   }
