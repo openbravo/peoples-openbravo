@@ -387,12 +387,20 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         vars.setMessage(tabId, myError);
       }
       response.sendRedirect(strDireccion + request.getServletPath());
-<FIELDS_TMP id="sectionActionButtons1">    } else if (vars.commandIn("BUTTON<FIELD_TMP id="ButtonRealName1">button</FIELD_TMP><FIELD_TMP id="ProcessID1">button</FIELD_TMP>")) {
+<FIELDS_TMP id="sectionActionButtons1">
+     } else if (vars.commandIn("BUTTON<FIELD_TMP id="ButtonRealName1">button</FIELD_TMP><FIELD_TMP id="ProcessID1">button</FIELD_TMP>")) {
+        vars.setSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.str<FIELD_TMP id="ButtonName1">name</FIELD_TMP>", vars.getStringParameter("inp<FIELD_TMP id="ButtonName1">name</FIELD_TMP>"));
+        vars.setSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.strProcessing", vars.getStringParameter("inpprocessing", "Y"));
+        vars.setSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.strOrg", vars.getStringParameter("inpadOrgId"));
+        vars.setSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.strClient", vars.getStringParameter("inpadClientId"));
+        printPageButtonFS(response, vars, "<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>", request.getServletPath());    
+     } else if (vars.commandIn("BUTTON<FIELD_TMP id="ProcessID1">button</FIELD_TMP>")) {
         String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
-        String str<FIELD_TMP id="ButtonName1">name</FIELD_TMP> = vars.getStringParameter("inp<FIELD_TMP id="ButtonName1">name</FIELD_TMP>");
-        String strProcessing = vars.getStringParameter("inpprocessing", "Y");
-        String strOrg = vars.getStringParameter("inpadOrgId");
-        String strClient = vars.getStringParameter("inpadClientId");
+        String str<FIELD_TMP id="ButtonName1">name</FIELD_TMP> = vars.getSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.str<FIELD_TMP id="ButtonName1">name</FIELD_TMP>");
+        String strProcessing = vars.getSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.strProcessing");
+        String strOrg = vars.getSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.strOrg");
+        String strClient = vars.getSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.strClient");
+        
         <FIELD_TMP id="FieldsLoad1">String strField = vars.getStringParameter("inpFields");</FIELD_TMP>
         if ((org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId)) || !(Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),strClient)  &amp;&amp; Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),strOrg))){
           OBError myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
@@ -403,11 +411,18 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         }
 </FIELDS_TMP>
 <FIELDS_TMP id="sectionActionButtonsJava1">    } else if (vars.commandIn("BUTTON<FIELD_TMP id="ButtonRealName4">button</FIELD_TMP><FIELD_TMP id="ProcessID4">button</FIELD_TMP>")) {
+        vars.setSessionValue("button<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>.str<FIELD_TMP id="ButtonName4">name</FIELD_TMP>", vars.getStringParameter("inp<FIELD_TMP id="ButtonName4">name</FIELD_TMP>"));
+        vars.setSessionValue("button<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>.strProcessing", vars.getStringParameter("inpprocessing", "Y"));
+        vars.setSessionValue("button<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>.strOrg", vars.getStringParameter("inpadOrgId"));
+        vars.setSessionValue("button<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>.strClient", vars.getStringParameter("inpadClientId"));
+        printPageButtonFS(response, vars, "<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>", request.getServletPath());
+      } else if (vars.commandIn("BUTTON<FIELD_TMP id="ProcessID4">button</FIELD_TMP>")) {
         String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
-        String str<FIELD_TMP id="ButtonName4">name</FIELD_TMP> = vars.getStringParameter("inp<FIELD_TMP id="ButtonName4">name</FIELD_TMP>");
-        String strProcessing = vars.getStringParameter("inpprocessing", "Y");
-        String strOrg = vars.getStringParameter("inpadOrgId");
-        String strClient = vars.getStringParameter("inpadClientId");
+        String str<FIELD_TMP id="ButtonName4">name</FIELD_TMP> = vars.getSessionValue("button<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>.str<FIELD_TMP id="ButtonName4">name</FIELD_TMP>");
+        String strProcessing = vars.getSessionValue("button<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>.strProcessing");
+        String strOrg = vars.getSessionValue("button<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>.strOrg");
+        String strClient = vars.getSessionValue("button<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>.strClient");
+
         <FIELD_TMP id="FieldsLoad4">String strField = vars.getStringParameter("inpFields");</FIELD_TMP>
         if ((org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId)) || !(Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),strClient)  &amp;&amp; Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),strOrg))){
           OBError myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
@@ -1058,6 +1073,20 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  void printPageButtonFS(HttpServletResponse response, VariablesSecureApp vars, String strProcessId, String path) throws IOException, ServletException {
+    log4j.debug("Output: Frames action button");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_actionButton/ActionButtonDefaultFrames").createXmlDocument();
+    xmlDocument.setParameter("processId", strProcessId);
+    xmlDocument.setParameter("trlFormType", "PROCESS");
+    xmlDocument.setParameter("language", "defaultLang = \"" + vars.getLanguage() + "\";\n");
+    xmlDocument.setParameter("type", strDireccion + path);
     out.println(xmlDocument.print());
     out.close();
   }
