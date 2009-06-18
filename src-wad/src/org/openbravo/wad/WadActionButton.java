@@ -733,6 +733,7 @@ public class WadActionButton {
    *          String with the description for the calc controls.
    * @param jsDateFormat
    *          Date format for js.
+   * @param vecReloads
    * @throws ServletException
    * @throws IOException
    */
@@ -740,7 +741,7 @@ public class WadActionButton {
       FieldsData fd, Vector<Object> vecFields, int max_textbox_length,
       int max_size_edition_1_columns, String strLanguage, boolean isGeneric,
       String calendarDescription, String clockDescription, String calculatorDescription,
-      String jsDateFormat) throws ServletException, IOException {
+      String jsDateFormat, Vector<Object> vecReloads) throws ServletException, IOException {
     final String[] discard = { "", "isGeneric", "fieldDiscardProcess" };
     if (fd.xmltext.equals(""))
       discard[0] = "helpDiscard";
@@ -764,6 +765,7 @@ public class WadActionButton {
     }
 
     if (efd != null) {
+
       vecFields.addElement(fd.columnname);
       for (int i = 0; i < efd.length; i++)
         vecFields.addElement(efd[i].columnname);
@@ -778,11 +780,11 @@ public class WadActionButton {
         WADControl auxControl = null;
         try {
           auxControl = WadUtility.getControl(conn, efd[i], false, (fd.columnname + fd.reference),
-              strLanguage, xmlEngine, false, false, false, false);
+              strLanguage, xmlEngine, false, WadUtility.isInVector(vecReloads, efd[i]
+                  .getField("columnname")), false, false);
         } catch (final Exception ex) {
           throw new ServletException(ex);
         }
-        auxControl.setData("IsComboReload", "N");
 
         html.append("<tr><td class=\"TitleCell\">").append(auxControl.toLabel().replace("\n", ""))
             .append("</td>\n");
@@ -881,6 +883,13 @@ public class WadActionButton {
       script.append("  var frm=document.frmMain;\n");
       script.append("  var key = frm.inpKey;");
       script.append(onload);
+      script.append("  return true;\n");
+      script.append("}\n");
+
+      script.append("\nfunction reloadComboReloads").append(fd.reference).append(
+          "(changedField) {\n");
+      script
+          .append("  submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloadsProcessHelper.html', 'hiddenFrame', null, null, true);\n");
       script.append("  return true;\n");
       script.append("}\n");
 
