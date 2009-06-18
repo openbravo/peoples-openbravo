@@ -137,7 +137,7 @@ public class OBContext implements OBNotSingleton {
    *          the context which will be stored in the session
    */
   public static void setOBContextInSession(HttpServletRequest request, OBContext context) {
-    request.getSession().setAttribute(CONTEXT_PARAM, getOBContext());
+    request.getSession().setAttribute(CONTEXT_PARAM, context);
   }
 
   /**
