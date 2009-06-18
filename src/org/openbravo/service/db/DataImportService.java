@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -49,6 +50,8 @@ import org.openbravo.dal.xml.PrimitiveReferenceHandler;
 import org.openbravo.dal.xml.StaxXMLEntityConverter;
 import org.openbravo.dal.xml.XMLEntityConverter;
 import org.openbravo.dal.xml.EntityResolver.ResolvingMode;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
@@ -382,6 +385,8 @@ public class DataImportService implements OBSingleton {
     final ImportResult ir = new ImportResult();
 
     boolean rolledBack = false;
+    List<BaseOBObject> listNew = new Vector<BaseOBObject>();
+    List<BaseOBObject> listChanged = new Vector<BaseOBObject>();
     try {
       // disable the triggers to prevent unexpected extra db actions
       // during import
@@ -393,6 +398,9 @@ public class DataImportService implements OBSingleton {
       xec.setOptionClientImport(isClientImport);
       xec.setOptionImportAuditInfo(importAuditInfo);
       xec.getEntityResolver().setOptionCreateReferencedIfNotFound(createReferencesIfNotFound);
+
+      listNew = xec.getToInsert();
+      listChanged = xec.getToUpdate();
       if (isClientImport) {
         xec.setEntityResolver(ClientImportEntityResolver.getInstance());
       }
@@ -442,6 +450,19 @@ public class DataImportService implements OBSingleton {
         TriggerHandler.getInstance().clear();
       } else if (TriggerHandler.getInstance().isDisabled()) {
         TriggerHandler.getInstance().enable();
+        Vector<BaseOBObject> allObjs = new Vector<BaseOBObject>();
+        allObjs.addAll(listNew);
+        allObjs.addAll(listChanged);
+        boolean containsAdRoleOrOrgAccess = false;
+        for (BaseOBObject bob : allObjs) {
+          if (bob instanceof Role || bob instanceof RoleOrganization) {
+            containsAdRoleOrOrgAccess = true;
+            break;
+          }
+        }
+        if (containsAdRoleOrOrgAccess)
+          SessionHandler.getInstance().getSession().createSQLQuery(
+              "UPDATE AD_ROLE_ORGACCESS SET AD_ROLE_ID='0' where AD_ROLE_ID='0'").executeUpdate();
       }
     }
 
