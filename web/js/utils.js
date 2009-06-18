@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '3954';
+  var number = '4032';
   return number;
 }
 
@@ -2208,6 +2208,8 @@ function executeWindowButton(id,focus) {
     appWindow = top.frames['frameSuperior'];
   } else if (top.frames['frameButton']) {
     appWindow = top.frames['frameButton'];
+  } else if (top.frames['mainframe']) {
+    appWindow = top.frames['mainframe'];
   }
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
     if (focus==true) appWindow.document.getElementById(id).focus();
