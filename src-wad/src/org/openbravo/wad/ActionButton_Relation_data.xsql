@@ -29,7 +29,7 @@
       '' AS htmlfields, '' AS htmltext, '' AS htmlfields_Header, AD_COLUMN.AD_TABLE_ID, '' AS javacode, 
       AD_COLUMN.ad_reference_value_id, '' AS process_Params, '' AS process_code, '' AS additional_code, 
       '' AS process_Params_Code, AD_COLUMN.AD_PROCESS_ID AS xmlid, mo.classname, mom.mappingname,
-      '' AS isjasper, '' as total
+      '' AS isjasper, '' as total, '' as comboparacode
       FROM AD_FIELD, AD_COLUMN
             left join ad_model_object mo on ad_column.ad_process_id = mo.ad_process_id 
                           and mo.isactive = 'Y' 
@@ -183,5 +183,30 @@
       ]]>
     </Sql>
     <Parameter name="adProcessId"/>
+  </SqlMethod>
+  
+  <SqlMethod name="selectComboParams" type="preparedStatement" return="multiple">
+    <SqlMethodComment>The table references in dictionary</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+              select substr(code, instr(code,'@')+1, instr(code,'@',1,2)-instr(code,'@')-1) as columnname
+            from ad_process_para p, ad_val_rule v, ad_column c, ad_table t, ad_tab tb
+            where p.ad_val_rule_id is not null
+            and t.ad_table_id = c.ad_table_id
+            and c.ad_process_id = p.ad_process_id
+            and v.ad_val_rule_id = p.ad_val_rule_id
+            and code like '%@%'
+            and t.ad_table_id = tb.ad_table_id
+            and tb.ad_tab_id = ?
+            and p.ad_process_id = ? 
+            and exists (select 1 
+                          from ad_column c1, ad_field f
+                        where t.ad_table_id = c1.ad_table_id
+                          and upper(c1.columnname)=upper(substr(code, instr(code,'@')+1, instr(code,'@',1,2)-instr(code,'@')-1))
+                          and f.ad_column_id = c1.ad_column_id)
+              ]]>
+    </Sql>
+    <Parameter name="tabId"/>
+    <Parameter name="processId"/>
   </SqlMethod>
 </SqlClass>

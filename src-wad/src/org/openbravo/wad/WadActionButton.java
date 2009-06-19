@@ -117,7 +117,8 @@ public class WadActionButton {
         fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
         fab[i].htmltext = getFieldsLoad(fab[i], vecFields, vecTotalFields);
         fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, isSOTrx, window,
-            tabName);
+            tabName, false, fab[i].adProcessId);
+        fab[i].comboparacode = getComboParaCode(conn, fab[i].adProcessId, strTab);
         final StringBuffer fields = new StringBuffer();
         final StringBuffer fieldsHeader = new StringBuffer();
         for (int j = 0; j < vecFields.size(); j++) {
@@ -187,7 +188,8 @@ public class WadActionButton {
         fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
         fab[i].htmltext = getFieldsLoad(fab[i], vecFields, vecTotalFields);
         fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, isSOTrx, window,
-            tabName);
+            tabName, false, fab[i].adProcessId);
+        fab[i].comboparacode = getComboParaCode(conn, fab[i].adProcessId, strTab);
         final StringBuffer fields = new StringBuffer();
         final StringBuffer fieldsHeader = new StringBuffer();
         for (int j = 0; j < vecFields.size(); j++) {
@@ -210,6 +212,21 @@ public class WadActionButton {
       }
     }
     return fab;
+  }
+
+  private static String getComboParaCode(ConnectionProvider conn, String processId, String tabId) {
+    String result = "";
+    ActionButtonRelationData[] params = null;
+    try {
+      params = ActionButtonRelationData.selectComboParams(conn, tabId, processId);
+    } catch (final ServletException e) {
+      return "";
+    }
+    for (ActionButtonRelationData para : params) {
+      result += "p.put(\"" + para.columnname + "\", vars.getStringParameter(\"inp"
+          + Sqlc.TransformaNombreColumna(para.columnname) + "\"));\n";
+    }
+    return result;
   }
 
   /**
@@ -240,7 +257,8 @@ public class WadActionButton {
         fab[i].realname = FormatUtilities.replace(fab[i].realname);
         fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
         fab[i].htmltext = getFieldsLoad(fab[i], vecFields, vecTotalFields);
-        fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, "", "", "");
+        fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, "", "", "",
+            true, "");
         final StringBuffer fields = new StringBuffer();
         final StringBuffer fieldsHeader = new StringBuffer();
         for (int j = 0; j < vecFields.size(); j++) {
@@ -286,7 +304,8 @@ public class WadActionButton {
         fab[i].realname = FormatUtilities.replace(fab[i].realname);
         fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
         fab[i].htmltext = getFieldsLoad(fab[i], vecFields, vecTotalFields);
-        fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, "", "", "");
+        fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, "", "", "",
+            true, "");
         final StringBuffer fields = new StringBuffer();
         final StringBuffer fieldsHeader = new StringBuffer();
         for (int j = 0; j < vecFields.size(); j++) {
@@ -390,11 +409,15 @@ public class WadActionButton {
    *          Id of the window.
    * @param tabName
    *          Name of the tab.
+   * @param genericActionButton
+   *          Indicates whether it is generic or column action button
+   * @param processId
+   *          Id for the current process
    * @return String with the java code.
    */
   public static String getPrintPageJavaCode(ConnectionProvider conn, ActionButtonRelationData fd,
       Vector<Object> vecFields, Vector<Object> vecParams, String isSOTrx, String window,
-      String tabName) {
+      String tabName, boolean genericActionButton, String processId) {
     if (fd == null)
       return "";
     final StringBuffer html = new StringBuffer();
@@ -450,8 +473,10 @@ public class WadActionButton {
 
             html.append("Utility.getContext(this, vars, \"#User_Client\", \"\"), 0");
             html.append(");\n");
-            html.append("    Utility.fillSQLParameters(this, vars, null, comboTableData, \"\", ")
-                .append(strDefault).append(");\n");
+            html.append("    Utility.fillSQLParameters(this, vars, ").append(
+                genericActionButton ? "null" : "(FieldProvider) vars.getSessionObject(\"button"
+                    + processId + ".originalParams\")").append(", comboTableData, \"\", ").append(
+                strDefault).append(");\n");
             html.append("    xmlDocument.setData(\"report");
             // html.append(Sqlc.TransformaNombreColumna(data[i].columnname));
             html.append(data[i].columnname);

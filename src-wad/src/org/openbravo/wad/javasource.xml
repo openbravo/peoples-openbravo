@@ -162,6 +162,7 @@
   <FIELD id="ButtonMapping1">mappingname</FIELD>
   <FIELD id="FieldsLoad1">htmltext</FIELD>
   <FIELD id="FieldsLoadName1">htmlfields</FIELD>
+  <FIELD id="comboParameters1">comboparacode</FIELD>
   <SECTION id="sectionActionButtons1"/>
 </structure>
 
