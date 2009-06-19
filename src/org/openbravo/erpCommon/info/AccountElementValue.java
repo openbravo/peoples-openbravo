@@ -284,9 +284,6 @@ public class AccountElementValue extends HttpSecureAppServlet {
         // build sql orderBy clause
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
-        strAcctSchema = (strAcctSchema.equals("%") ? "" : strAcctSchema);
-        strValue = (strValue.equals("%") ? "" : strValue);
-        strName = (strName.equals("%") ? "" : strName);
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or

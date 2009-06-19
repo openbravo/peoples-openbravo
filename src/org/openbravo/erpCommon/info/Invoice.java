@@ -267,14 +267,6 @@ public class Invoice extends HttpSecureAppServlet {
         // build sql orderBy clause
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
-        // remove single % in parameters used in like upper(parameter)
-        if (strName.equals("%")) {
-          strName = null;
-        }
-        if (strDescription.equals("%")) {
-          strDescription = null;
-        }
-
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or

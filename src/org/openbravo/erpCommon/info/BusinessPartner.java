@@ -284,13 +284,6 @@ public class BusinessPartner extends HttpSecureAppServlet {
     int offset = Integer.valueOf(strOffset).intValue();
     int pageSize = Integer.valueOf(strPageSize).intValue();
 
-    final String locKey = strKey.equals("%") ? "" : strKey;
-    final String locName = strName.equals("%") ? "" : strName;
-    final String locContact = strContact.equals("%") ? "" : strContact;
-    final String locZIP = strZIP.equals("%") ? "" : strZIP;
-    final String locProvince = strProvincia.equals("%") ? "" : strProvincia;
-    final String locCity = strCity.equals("%") ? "" : strCity;
-
     if (headers != null) {
       try {
         // build sql orderBy clause
@@ -300,9 +293,9 @@ public class BusinessPartner extends HttpSecureAppServlet {
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
           strNumRows = BusinessPartnerData.countRows(this, Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
-              locKey, locName, locContact, locZIP, locProvince,
+              strKey, strName, strContact, strZIP, strProvincia,
               (strBpartners.equals("customer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), locCity);
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity);
           vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
@@ -313,16 +306,16 @@ public class BusinessPartner extends HttpSecureAppServlet {
           final String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = BusinessPartnerData.select(this, "ROWNUM", Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
-              locKey, locName, locContact, locZIP, locProvince,
+              strKey, strName, strContact, strZIP, strProvincia,
               (strBpartners.equals("customer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), locCity, strOrderBy, oraLimit, "");
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, oraLimit, "");
         } else {
           final String pgLimit = pageSize + " OFFSET " + offset;
           data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
-              locKey, locName, locContact, locZIP, locProvince,
+              strKey, strName, strContact, strZIP, strProvincia,
               (strBpartners.equals("customer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), locCity, strOrderBy, "", pgLimit);
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", pgLimit);
         }
       } catch (final ServletException e) {
         log4j.error("Error in print page data: " + e);
