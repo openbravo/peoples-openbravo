@@ -671,7 +671,7 @@
       SELECT ColumnName As Name, 'x' as xmltext, ad_reference_value_id as referencevalue, 
       ad_val_rule.CODE as defaultValue, ad_val_rule.AD_VAL_RULE_ID as columnname,
       ad_ref_table.WHERECLAUSE, ad_table.tablename, 'TableList' as tablenametrl, ad_table.name as nameref, 
-      '18' as reference, 'Y' as required, 'N' istranslated 
+      '18' as reference, 'Y' as required, 'N'as istranslated 
       FROM ad_process_para p left join ad_val_rule on p.AD_VAL_RULE_ID = ad_val_rule.AD_VAL_RULE_ID, 
            ad_ref_table, 
            ad_table 
