@@ -173,6 +173,7 @@
   <FIELD id="ButtonMapping4">mappingname</FIELD>
   <FIELD id="FieldsLoad4">htmltext</FIELD>
   <FIELD id="FieldsLoadName4">htmlfields</FIELD>
+  <FIELD id="comboParametersJava1">comboparacode</FIELD>
   <SECTION id="sectionActionButtonsJava1"/>
 </structure>
 
