@@ -66,36 +66,38 @@
     <Sql>
       <![CDATA[
         SELECT ga.UnearnedRevenue_Acct as unearnedrevenue, vc.Account_ID as account
-        FROM C_BP_Group_Acct ga, C_BPartner p, C_ValidCombination vc 
+        FROM C_BP_Group_Acct ga, C_BPartner p, C_ValidCombination vc
         WHERE ga.C_BP_Group_ID=p.C_BP_Group_ID
         AND ga.UnearnedRevenue_Acct=vc.C_ValidCombination_ID
-        AND ga.C_AcctSchema_ID = ? 
+        AND ga.C_AcctSchema_ID = ?
         AND p.C_BPartner_ID = ?
         ]]>
      </Sql>
      <Parameter name="C_AcctSchema_ID"/>
      <Parameter name="C_BPartner_ID"/>
    </SqlMethod>
-  
+
   <SqlMethod name="insertFactAct" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        INSERT INTO Fact_Acct 
+        INSERT INTO Fact_Acct
           (Fact_Acct_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
         C_AcctSchema_ID,Account_ID, AcctValue, AcctDescription,DateTrx,DateAcct,
         C_Period_ID,AD_Table_ID,Record_ID,Line_ID,
         GL_Category_ID,C_Tax_ID,PostingType,C_Currency_ID,
         AmtSourceDR,AmtSourceCR,AmtAcctDR,AmtAcctCR,
         C_UOM_ID,Qty,M_Locator_ID,M_Product_ID,C_BPartner_ID,AD_OrgTrx_ID,C_LocFrom_ID,C_LocTo_ID,C_SalesRegion_ID,
-        C_Project_ID,C_Campaign_ID,C_Activity_ID,User1_ID,User2_ID,Description, Fact_Acct_Group_ID, SeqNo, DocBaseType, Record_ID2, A_ASSET_ID) 
-        VALUES 
+        C_Project_ID,C_Campaign_ID,C_Activity_ID,User1_ID,User2_ID,Description, Fact_Acct_Group_ID, SeqNo, DocBaseType,
+        Record_ID2, A_ASSET_ID, C_WithHolding_ID)
+        VALUES
           (?, ?, ?,'Y',now(),0,now(),0,
            ?, ?, ?, ?, TO_DATE(?), TO_DATE(?),
            ?, ?, ?, ?,
-           ?, ?, ?, ?, 
+           ?, ?, ?, ?,
            TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
-           ?, TO_NUMBER(?), ?,?, ?, ?,?, ?, ?,?, ?, ?,?, ?, ?, ?, TO_NUMBER(?), ?, ?, ?)
+           ?, TO_NUMBER(?), ?,?, ?, ?,?, ?, ?,?, ?, ?,?, ?, ?, ?, TO_NUMBER(?), ?,
+           ?, ?, ?)
      ]]>
      </Sql>
      <Parameter name="m_Fact_Acct_ID"/>
@@ -139,6 +141,7 @@
      <Parameter name="DocBaseType"/>
      <Parameter name="Record_ID2"/>
      <Parameter name="aAssetId"/>
+     <Parameter name="cWithholdingId"/>
    </SqlMethod>
   <SqlMethod name="updateFactAcct" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
@@ -156,7 +159,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT w.C_Location_ID as location FROM M_Warehouse w, M_Locator l 
+        SELECT w.C_Location_ID as location FROM M_Warehouse w, M_Locator l
         WHERE w.M_Warehouse_ID=l.M_Warehouse_ID AND l.M_Locator_ID=?
         ]]>
      </Sql>
