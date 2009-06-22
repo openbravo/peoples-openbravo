@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -229,10 +229,13 @@ public class XmlDocument implements XmlComponentValue {
     if (!ignoreTranslation && xmlTemplate != null && xmlTemplate.strName != null) {
       if (log4jXmlDocument.isDebugEnabled())
         log4jXmlDocument.debug("Start of print of: " + xmlTemplate.strName);
-
       final TranslationHandler handler = new TranslationHandler(
           this.xmlTemplate.xmlEngine.connProvider, this);
-      handler.setFileName(xmlTemplate.strName.replace("designorg/", "/org/") + ".html");
+      String baseDirectory = xmlTemplate.strName.substring(0, xmlTemplate.strName.lastIndexOf("/"))
+          .replace("designorg/", "/org/");
+      String templateFileName = xmlTemplate.configuration.strTemplate;
+      String absoluteTemplateFile = baseDirectory + "/" + templateFileName;
+      handler.setFileName(absoluteTemplateFile);
 
       log4jXmlDocument.debug("print() - xmlTemplate.xmlEngine.fileBaseLocation: "
           + xmlTemplate.xmlEngine.fileBaseLocation);
@@ -252,19 +255,8 @@ public class XmlDocument implements XmlComponentValue {
           handler.setXmlDocumentType(TranslationHandler.PROCESS);
           handler.setXmlDocumentTypeId(hasParameterValue.get("processId").strValue);
         }
-        if (hasParameterValue.get("language") != null
-            && hasParameterValue.get("language").strValue != null) {
-          log4jXmlDocument.debug("print(strBlank) - language: "
-              + hasParameterValue.get("language").strValue);
-          handler.setLanguage(hasParameterValue.get("language").strValue
-              .replace("defaultLang=", "").replace("\"", ""));
-        } else if (hasParameterValue.get("paramLanguage") != null
-            && hasParameterValue.get("paramLanguage").strValue != null) {
-          log4jXmlDocument.debug("print(strBlank) - language: "
-              + hasParameterValue.get("paramLanguage").strValue);
-          handler.setLanguage(hasParameterValue.get("paramLanguage").strValue.replace(
-              "defaultLang=", "").replace("\"", ""));
-        }
+        handler.setLanguage(xmlTemplate.xmlEngine.sessionLanguage);
+
         log4jXmlDocument.debug("before running generateTranslations.");
         handler.generateTranslations();
         if (!ignoreTranslation && handler.getFormLabels() != null
@@ -319,7 +311,7 @@ public class XmlDocument implements XmlComponentValue {
               if (CharacterComponent.class.isInstance(componentTemplate)) {
                 CharacterComponent charComponent = (CharacterComponent) componentTemplate;
                 if (charComponent.character != null && !charComponent.equals("")) {
-                  String original = charComponent.character;
+                  String original = charComponent.character.trim();
                   String trl = xmlVectorValue.getTextMap().get(original);
                   if (trl != null && !trl.equals(""))
                     charComponent.character = trl;
@@ -337,7 +329,7 @@ public class XmlDocument implements XmlComponentValue {
               if (CharacterComponent.class.isInstance(componentTemplate)) {
                 CharacterComponent charComponent = (CharacterComponent) componentTemplate;
                 if (charComponent.character != null && !charComponent.equals("")) {
-                  String original = charComponent.character;
+                  String original = charComponent.character.trim();
                   String trl = xmlVectorValue.getTextMap().get(original);
                   if (trl != null && !trl.equals(""))
                     charComponent.character = trl;

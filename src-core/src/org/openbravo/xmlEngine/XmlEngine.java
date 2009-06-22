@@ -49,6 +49,7 @@ public class XmlEngine extends HttpServlet {
   String strFormatFile;
   public File fileXmlEngineFormat;
   public File fileBaseLocation;
+  public String sessionLanguage;
   public String strReplaceWhat;
   public String strReplaceWith;
   public boolean isResource = false;
