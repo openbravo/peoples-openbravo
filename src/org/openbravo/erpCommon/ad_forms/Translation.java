@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -39,7 +39,6 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.ad_combos.LanguageComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -63,37 +62,37 @@ import org.w3c.dom.Element;
 public class Translation extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   /** XML Element Tag */
-  public static final String XML_TAG = "compiereTrl";
+  static final String XML_TAG = "compiereTrl";
   /** XML Attribute Table */
-  public static final String XML_ATTRIBUTE_TABLE = "table";
+  static final String XML_ATTRIBUTE_TABLE = "table";
   /** XML Attribute Language */
-  public static final String XML_ATTRIBUTE_LANGUAGE = "language";
+  static final String XML_ATTRIBUTE_LANGUAGE = "language";
   /** XML row attribute original language */
-  public static final String XML_ATTRIBUTE_BASE_LANGUAGE = "baseLanguage";
+  static final String XML_ATTRIBUTE_BASE_LANGUAGE = "baseLanguage";
   /** XML Attribute Version */
-  public static final String XML_ATTRIBUTE_VERSION = "version";
+  static final String XML_ATTRIBUTE_VERSION = "version";
   /** XML Row Tag */
 
-  public static final String XML_ROW_TAG = "row";
+  static final String XML_ROW_TAG = "row";
   /** XML Row Attribute ID */
-  public static final String XML_ROW_ATTRIBUTE_ID = "id";
+  static final String XML_ROW_ATTRIBUTE_ID = "id";
   /** XML Row Attribute Translated */
-  public static final String XML_ROW_ATTRIBUTE_TRANSLATED = "trl";
+  static final String XML_ROW_ATTRIBUTE_TRANSLATED = "trl";
 
   /** XML Value Tag */
-  public static final String XML_VALUE_TAG = "value";
+  static final String XML_VALUE_TAG = "value";
   /** XML Value Column */
-  public static final String XML_VALUE_ATTRIBUTE_COLUMN = "column";
+  static final String XML_VALUE_ATTRIBUTE_COLUMN = "column";
   /** XML Value Original */
-  public static final String XML_VALUE_ATTRIBUTE_ORIGINAL = "original";
+  static final String XML_VALUE_ATTRIBUTE_ORIGINAL = "original";
   /** XML Value Original */
-  public static final String XML_VALUE_ATTRIBUTE_ISTRL = "isTrl";
+  static final String XML_VALUE_ATTRIBUTE_ISTRL = "isTrl";
 
-  public static final String CONTRIBUTORS_FILENAME = "CONTRIBUTORS";
-  public static final String XML_CONTRIB = "Contributors";
+  static final String CONTRIBUTORS_FILENAME = "CONTRIBUTORS";
+  static final String XML_CONTRIB = "Contributors";
 
-  static Logger translationlog4j;
-  static ConnectionProvider cp;
+  private static Logger translationlog4j;
+  private static ConnectionProvider cp;
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
@@ -572,8 +571,7 @@ public class Translation extends HttpSecureAppServlet {
       // Output
       out.createNewFile();
       // Transform
-      final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(out));// ,
-      // "ISO-8859-1");
+      final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(out), "UTF-8");
       transformer.transform(source, new StreamResult(osw));
     } catch (final Exception e) {
       log4j.error("exportTrl", e);
@@ -648,7 +646,7 @@ public class Translation extends HttpSecureAppServlet {
     return list;
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");

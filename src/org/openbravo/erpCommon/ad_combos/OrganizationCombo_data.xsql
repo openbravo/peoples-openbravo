@@ -22,7 +22,7 @@
 
 
 
-<SqlClass name="OrganizationComboData" package="org.openbravo.erpCommon.ad_combos">
+<SqlClass name="OrganizationComboData" package="org.openbravo.erpCommon.ad_combos" accessModifier="public">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -54,20 +54,7 @@
       ]]></Sql>
         <Parameter name="rol"/>
    </SqlMethod>
-   <SqlMethod name="isLoginRoleOrg" type="preparedStatement" return="Boolean" default="false">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT COUNT(*) AS TOTAL 
-        FROM AD_ROLE_ORGACCESS A_R_O, AD_ROLE R 
-        WHERE A_R_O.ISACTIVE = 'Y' 
-        AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
-        AND R.ISACTIVE = 'Y' 
-        AND A_R_O.AD_ROLE_ID = ? 
-        AND A_R_O.AD_ORG_ID = ?
-      ]]></Sql>
-        <Parameter name="rol"/>
-        <Parameter name="org"/>
-   </SqlMethod>
+
    <SqlMethod name="isRoleOrg" type="preparedStatement" return="Boolean" default="false">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

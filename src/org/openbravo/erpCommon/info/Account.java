@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -39,6 +41,12 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Account extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "ALIAS", "COMBINATION", "DESCRIPTION", "AD_ORG_ID_D",
+      "ACCOUNT_ID_D", "M_PRODUCT_ID_D", "C_BPARTNER_ID_D", "C_PROJECT_ID_D", "C_CAMPAIGN_ID_D",
+      "C_VALIDCOMBINATION_ID", "ROWKEY" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -94,11 +102,11 @@ public class Account extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       printGridData(response, vars, strAlias, strCombination, strOrganization, strAccount,
-          strProduct, strBPartner, strProject, strCampaign, strSortCols + " " + strSortDirs,
-          strOffset, strPageSize, strNewFilter, strAcctSchema);
+          strProduct, strBPartner, strProject, strCampaign, strSortCols, strSortDirs, strOffset,
+          strPageSize, strNewFilter, strAcctSchema);
     } else if (vars.commandIn("KEY")) {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Account.alias");
       String strAcctSchema = vars
@@ -144,7 +152,7 @@ public class Account extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageSave(HttpServletResponse response, VariablesSecureApp vars, AccountData data)
+  private void printPageSave(HttpServletResponse response, VariablesSecureApp vars, AccountData data)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Saved");
@@ -154,8 +162,8 @@ public class Account extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars, AccountData[] data)
-      throws IOException, ServletException {
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+      AccountData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Account seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -168,7 +176,7 @@ public class Account extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(AccountData[] data) throws IOException, ServletException {
+  private String generateResult(AccountData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -179,7 +187,7 @@ public class Account extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAlias,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAlias,
       String strCombination, String strValidCombination, String strAcctSchema, boolean isDefault)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -264,7 +272,7 @@ public class Account extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -292,9 +300,6 @@ public class Account extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "ALIAS", "COMBINATION", "DESCRIPTION", "AD_ORG_ID_D", "ACCOUNT_ID_D",
-        "M_PRODUCT_ID_D", "C_BPARTNER_ID_D", "C_PROJECT_ID_D", "C_CAMPAIGN_ID_D",
-        "C_VALIDCOMBINATION_ID", "ROWKEY" };
     String[] colWidths = { "43", "193", "151", "105", "123", "71", "101", "43", "59", "0", "0" };
     for (int i = 0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
@@ -317,11 +322,11 @@ public class Account extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strAlias,
-      String strCombination, String strOrganization, String strAccount, String strProduct,
-      String strBPartner, String strProject, String strCampaign, String strOrderBy,
-      String strOffset, String strPageSize, String strNewFilter, String strAcctSchema)
-      throws IOException, ServletException {
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars,
+      String strAlias, String strCombination, String strOrganization, String strAccount,
+      String strProduct, String strBPartner, String strProject, String strCampaign,
+      String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
+      String strNewFilter, String strAcctSchema) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -331,12 +336,14 @@ public class Account extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     if (headers != null) {
       try {
-        strAcctSchema = (strAcctSchema.equals("%") ? "" : strAcctSchema);
-        strAlias = (strAlias.equals("%") ? "" : strAlias);
-        strCombination = (strCombination.equals("%") ? "" : strCombination);
+        // build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
+
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or
@@ -353,16 +360,13 @@ public class Account extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = AccountData.select(this, "ROWNUM", strAcctSchema, strAlias, strCombination,
               strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "",
               Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this,
                   vars, "#User_Org", "Account"), strOrderBy, oraLimit, "");
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           data = AccountData.select(this, "1", strAcctSchema, strAlias, strCombination,
               strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "",
               Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this,

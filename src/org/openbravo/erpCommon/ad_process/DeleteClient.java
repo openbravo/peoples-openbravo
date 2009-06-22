@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
-import org.openbravo.erpCommon.ad_combos.ClientComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -64,7 +63,7 @@ public class DeleteClient extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void processButton(VariablesSecureApp vars, String strClient) throws ServletException {
+  private void processButton(VariablesSecureApp vars, String strClient) throws ServletException {
     String pinstance = SequenceIdData.getUUID();
     OBError myMessage = null;
     try {
@@ -102,7 +101,7 @@ public class DeleteClient extends HttpSecureAppServlet {
 
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strClient)
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strClient)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Delete Client");

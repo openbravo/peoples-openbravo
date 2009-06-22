@@ -19,11 +19,13 @@
 
 package org.openbravo.dal.xml;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.codec.binary.Base64;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
@@ -103,6 +105,14 @@ public class XMLTypeConverter implements OBSingleton {
     if (o instanceof Boolean) {
       return toXML((Boolean) o);
     }
+    if (o instanceof byte[]) {
+      try {
+        return new String(Base64.encodeBase64((byte[]) o), "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
     return o.toString();
     // throw new OBException("Type " + o.getClass().getName() +
     // " not supported");
@@ -149,6 +159,9 @@ public class XMLTypeConverter implements OBSingleton {
       if (Float.class == targetClass) {
         return (T) new Float(xml);
       }
+      if (byte[].class == targetClass) {
+        return (T) Base64.decodeBase64(xml.getBytes("UTF-8"));
+      }
     } catch (final Exception e) {
       throw new EntityXMLException("Value " + xml + " can not be parsed to an instance of class "
           + targetClass.getName());
@@ -161,32 +174,35 @@ public class XMLTypeConverter implements OBSingleton {
    */
   public String toXMLSchemaType(Class<?> targetClass) {
     if (Date.class == targetClass) {
-      return "dateTime";
+      return "ob:dateTime";
     }
     if (Timestamp.class == targetClass) {
-      return "dateTime";
+      return "ob:dateTime";
     }
     if (String.class == targetClass) {
-      return "string";
+      return "ob:string";
     }
     if (BigDecimal.class == targetClass) {
-      return "decimal";
+      return "ob:decimal";
     }
     if (Long.class == targetClass) {
-      return "long";
+      return "ob:long";
     }
     if (boolean.class == targetClass) {
-      return "boolean";
+      return "ob:boolean";
     }
     if (Boolean.class == targetClass) {
-      return "boolean";
+      return "ob:boolean";
     }
     if (Float.class == targetClass) {
-      return "float";
+      return "ob:float";
+    }
+    if (byte[].class == targetClass) {
+      return "ob:base64Binary";
     }
     if (Object.class == targetClass) {
       // TODO catch this
-      return "OBJECT";
+      return "xs:anyType";
     }
     if (targetClass == null) {
       // TODO catch this

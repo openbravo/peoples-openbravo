@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -60,13 +62,14 @@ public class ReportDimensionalAnalysesPDF extends HttpSecureAppServlet {
       String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup",
           "ReportRefundInvoiceCustomerDimensionalAnalyses|partnerGroup");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportRefundInvoiceCustomerDimensionalAnalyses|partner");
+          "ReportRefundInvoiceCustomerDimensionalAnalyses|partner", IsIDFilter.instance);
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportRefundInvoiceCustomerDimensionalAnalyses|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportRefundInvoiceCustomerDimensionalAnalyses|product");
-      String strNotShown = vars.getInStringParameter("inpNotShown");
-      String strShown = vars.getInStringParameter("inpShown");
+          "ReportRefundInvoiceCustomerDimensionalAnalyses|product", IsIDFilter.instance);
+      // numeric hardcoded in switch in the report
+      String strNotShown = vars.getInStringParameter("inpNotShown", IsPositiveIntFilter.instance);
+      String strShown = vars.getInStringParameter("inpShown", IsPositiveIntFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportRefundInvoiceCustomerDimensionalAnalyses|org", "0");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
@@ -86,12 +89,12 @@ public class ReportDimensionalAnalysesPDF extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPagePdf(HttpServletResponse response, VariablesSecureApp vars, String strComparative,
-      String strDateFrom, String strDateTo, String strPartnerGroup, String strcBpartnerId,
-      String strProductCategory, String strmProductId, String strNotShown, String strShown,
-      String strDateFromRef, String strDateToRef, String strOrg, String strsalesrepId,
-      String strOrder, String strMayor, String strMenor, String strRatioMayor, String strRatioMenor)
-      throws IOException, ServletException {
+  private void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
+      String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
+      String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown,
+      String strShown, String strDateFromRef, String strDateToRef, String strOrg,
+      String strsalesrepId, String strOrder, String strMayor, String strMenor,
+      String strRatioMayor, String strRatioMenor) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print pdf");
     XmlDocument xmlDocument = null;
@@ -111,7 +114,8 @@ public class ReportDimensionalAnalysesPDF extends HttpSecureAppServlet {
       strTitle = strTitle + ", para el grupo de terceros "
           + ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpgroup(this, strPartnerGroup);
     // if (!strcBpartnerId.equals("")) strTitle =
-    // strTitle+", para el tercero "+ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this,
+    //strTitle+", para el tercero "+ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner
+    // (this,
     // strcBpartnerId);
     if (!strProductCategory.equals(""))
       strTitle = strTitle
@@ -122,7 +126,8 @@ public class ReportDimensionalAnalysesPDF extends HttpSecureAppServlet {
       strTitle = strTitle + "y el comercial "
           + ReportRefundInvoiceCustomerDimensionalAnalysesData.selectSalesrep(this, strsalesrepId);
     // if (!strmProductId.equals("")) strTitle =
-    // strTitle+" y el producto "+ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(this,
+    // strTitle+" y el producto "+ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(
+    // this,
     // strmProductId);
     ReportRefundInvoiceCustomerDimensionalAnalysesData[] data = null;
     String[] strShownArray = { "", "", "", "", "", "" };

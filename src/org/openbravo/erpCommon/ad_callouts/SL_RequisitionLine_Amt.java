@@ -34,7 +34,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  static final BigDecimal ZERO = new BigDecimal("0");
+  private static final BigDecimal ZERO = new BigDecimal("0");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -61,7 +61,7 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strQty,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strQty,
       String strPriceActual, String strDiscount, String strPriceList, String strChanged)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())

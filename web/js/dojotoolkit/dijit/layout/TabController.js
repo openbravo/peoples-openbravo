@@ -33,10 +33,6 @@ dojo.declare("dijit.layout.TabController",
 	//		"top", "bottom", "left-h", "right-h"
 	tabPosition: "top",
 
-	// doLayout: Boolean
-	//		TODO: unused, remove
-	doLayout: true,
-
 	// buttonWidget: String
 	//		The name of the tab widget to create to correspond to each page
 	buttonWidget: "dijit.layout._TabButton",
@@ -71,26 +67,61 @@ dojo.declare("dijit.layout._TabButton",
 
 	baseClass: "dijitTab",
 
-	templateString:"<div waiRole=\"presentation\" dojoAttachEvent='onclick:onClick,onmouseenter:_onMouse,onmouseleave:_onMouse'>\n    <div waiRole=\"presentation\" class='dijitTabInnerDiv' dojoAttachPoint='innerDiv'>\n        <div waiRole=\"presentation\" class='dijitTabContent' dojoAttachPoint='tabContent'>\n\t        <span dojoAttachPoint='containerNode,focusNode' class='tabLabel'>${!label}</span><img class =\"dijitTabButtonSpacer\" src=\"${_blankGif}\" />\n\t        <span class=\"closeButton\" dojoAttachPoint='closeNode'\n\t        \t\tdojoAttachEvent='onclick: onClickCloseButton, onmouseenter: _onCloseButtonEnter, onmouseleave: _onCloseButtonLeave'>\n\t        \t<img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint='closeIcon' class='closeImage' waiRole=\"presentation\"/>\n\t            <span dojoAttachPoint='closeText' class='closeText'>x</span>\n\t        </span>\n        </div>\n    </div>\n</div>\n",
+	templateString:"<div waiRole=\"presentation\" dojoAttachPoint=\"titleNode\" dojoAttachEvent='onclick:onClick,onmouseenter:_onMouse,onmouseleave:_onMouse'>\n    <div waiRole=\"presentation\" class='dijitTabInnerDiv' dojoAttachPoint='innerDiv'>\n        <div waiRole=\"presentation\" class='dijitTabContent' dojoAttachPoint='tabContent,focusNode'>\n\t        <img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint='iconNode' waiRole=\"presentation\"/>\n\t        <span dojoAttachPoint='containerNode' class='tabLabel'></span>\n\t        <span class=\"closeButton\" dojoAttachPoint='closeNode'\n\t        \t\tdojoAttachEvent='onclick: onClickCloseButton, onmouseenter: _onCloseButtonEnter, onmouseleave: _onCloseButtonLeave'>\n\t        \t<img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint='closeIcon' class='closeImage' waiRole=\"presentation\"/>\n\t            <span dojoAttachPoint='closeText' class='closeText'>x</span>\n\t        </span>\n        </div>\n    </div>\n</div>\n",
 
 	// Override _FormWidget.scrollOnFocus.
 	// Don't scroll the whole tab container into view when the button is focused.
 	scrollOnFocus: false,
 
+	postMixInProperties: function(){
+		// Override blank iconClass from Button to do tab height adjustment on IE6,
+		// to make sure that tabs with and w/out close icons are same height
+		if(!this.iconClass){
+			this.iconClass = "dijitTabButtonIcon";	
+		}
+	},
+
 	postCreate: function(){
-		if(this.closeButton){
-			dojo.addClass(this.innerDiv, "dijitClosable");
+		this.inherited(arguments); 
+		dojo.setSelectable(this.containerNode, false);
+	},
+
+	_setCloseButtonAttr: function(disp){
+		this.closeButton = disp;
+		dojo.toggleClass(this.innerDiv, "dijitClosable", disp);
+		this.closeNode.style.display = disp ? "" : "none";		
+		if(disp){
 			var _nlsResources = dojo.i18n.getLocalization("dijit", "common");
 			if(this.closeNode){
 				dojo.attr(this.closeNode,"title", _nlsResources.itemClose);
 				// IE needs title set directly on image
 				dojo.attr(this.closeIcon,"title", _nlsResources.itemClose);
 			}
+			// add context menu onto title button
+			var _nlsResources = dojo.i18n.getLocalization("dijit", "common");
+			this._closeMenu = new dijit.Menu({
+				id: this.id+"_Menu",
+				targetNodeIds: [this.domNode]
+			});
+
+			this._closeMenu.addChild(new dijit.MenuItem({
+				label: _nlsResources.itemClose,
+				onClick: dojo.hitch(this, "onClickCloseButton")
+			}));
 		}else{
-			this.closeNode.style.display="none";		
+			if(this._closeMenu){
+				this._closeMenu.destroyRecursive();
+				delete this._closeMenu;
+			}
 		}
-		this.inherited(arguments); 
-		dojo.setSelectable(this.containerNode, false);
+	},
+
+	destroy: function(){
+		if(this._closeMenu){
+			this._closeMenu.destroyRecursive();
+			delete this._closeMenu;
+		}
+		this.inherited(arguments);
 	},
 
 	_onCloseButtonEnter: function(){

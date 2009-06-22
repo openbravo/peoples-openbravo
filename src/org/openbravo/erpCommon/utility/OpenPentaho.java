@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2008 Openbravo SL
+ * All portions are Copyright (C) 2008-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,7 +52,7 @@ public class OpenPentaho extends HttpSecureAppServlet {
     }
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String pentahoServer, String source, String adProcessId, String userRole) throws IOException,
       ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(

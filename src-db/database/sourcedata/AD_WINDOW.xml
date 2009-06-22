@@ -2853,7 +2853,7 @@
 <!--1002100004-->  <NAME><![CDATA[Tax Payment]]></NAME>
 <!--1002100004-->  <DESCRIPTION><![CDATA[Tax Payment/Tax Register]]></DESCRIPTION>
 <!--1002100004-->  <HELP><![CDATA[Tax Payment where put the payment of tax and in where tax register is recorded .]]></HELP>
-<!--1002100004-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
+<!--1002100004-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--1002100004-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--1002100004-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1002100004-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>

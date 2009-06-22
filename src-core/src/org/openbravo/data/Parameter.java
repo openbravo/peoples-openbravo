@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -21,10 +21,11 @@ class Parameter {
   String strValue;
   String strAfter;
   String strText;
+  String strIgnoreValue;
   boolean boolOptional = false;
 
   public Parameter(boolean sequence, String strName, String strDefault, String strInOut,
-      String strOptional, String strAfter, String strText) {
+      String strOptional, String strAfter, String strText, String strIgnoreValue) {
     boolSequence = sequence;
     this.strName = strName;
     this.strDefault = strDefault;
@@ -34,6 +35,7 @@ class Parameter {
     type = java.sql.Types.VARCHAR;
     this.strAfter = strAfter;
     this.strText = strText;
+    this.strIgnoreValue = strIgnoreValue;
   }
 
 }

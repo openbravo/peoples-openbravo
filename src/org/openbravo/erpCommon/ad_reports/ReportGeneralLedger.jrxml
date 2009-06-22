@@ -195,11 +195,11 @@
 	<parameter name="SUBREPORT_DIR" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA[$P{BASE_DESIGN}+"/org/openbravo/erpCommon/ad_reports/"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="DateTo" isForPrompting="false" class="java.util.Date">
-		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("22-12-2222")]]></defaultValueExpression>
+	<parameter name="dateTo" isForPrompting="false" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("31-12-2006")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="ShowPartner" isForPrompting="false" class="java.lang.Boolean">
-		<defaultValueExpression ><![CDATA[new Boolean(true)]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA[new Boolean(false)]]></defaultValueExpression>
 	</parameter>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat">
 		<defaultValueExpression ><![CDATA[new DecimalFormat("###,##0.00", new DecimalFormatSymbols())
@@ -209,14 +209,20 @@
 	<parameter name="InitialYearDate" isForPrompting="false" class="java.util.Date">
 		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2006")]]></defaultValueExpression>
 	</parameter>
-	<parameter name="DateFrom" isForPrompting="false" class="java.util.Date">
-		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("01-07-2006")]]></defaultValueExpression>
-	</parameter>
 	<parameter name="Org" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["0,1000006"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA["0,1000000,1000001"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="DateToPlus1" isForPrompting="false" class="java.util.Date">
-		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("22-12-2222")]]></defaultValueExpression>
+	<parameter name="dateFrom" isForPrompting="false" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("01-06-2006")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateToPlus1" isForPrompting="false" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2007")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isHiding" isForPrompting="false" class="java.lang.Boolean">
+		<defaultValueExpression ><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="strDateFormat" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["dd/MM/yyyy"]]></defaultValueExpression>
 	</parameter>
 	<queryString><![CDATA[SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, DATEACCT, FACT_ACCT.ACCTDESCRIPTION AS NAME,
         AMTACCTDR, AMTACCTCR, FACT_ACCT_GROUP_ID, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID,
@@ -230,8 +236,8 @@
         )
         AND FACT_ACCT.AD_ORG_ID IN ($P!{Org})
         AND FACT_ACCT.AD_CLIENT_ID IN ($P!{USER_CLIENT})
-        AND DATEACCT >= $P{DateFrom}
-        AND DATEACCT < $P{DateTo}
+        AND DATEACCT >= $P{dateFrom}
+        AND DATEACCT < $P{dateTo}
       ORDER BY VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryString>
 
 	<field name="value" class="java.lang.String"/>
@@ -529,9 +535,6 @@
 					<subreportParameter  name="Title">
 						<subreportParameterExpression><![CDATA[new String("Previous")]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter  name="Date">
-						<subreportParameterExpression><![CDATA[$F{dateacct}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter  name="Partner">
 						<subreportParameterExpression><![CDATA[$F{c_bpartner_id}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -555,6 +558,21 @@
 					</subreportParameter>
 					<subreportParameter  name="Org">
 						<subreportParameterExpression><![CDATA[$P{Org}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="isHiding">
+						<subreportParameterExpression><![CDATA[$P{isHiding}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="dateFrom">
+						<subreportParameterExpression><![CDATA[$P{dateFrom}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="dateTo">
+						<subreportParameterExpression><![CDATA[$P{dateToPlus1}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="dateTo2">
+						<subreportParameterExpression><![CDATA[$P{dateFrom}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="strDateFormat">
+						<subreportParameterExpression><![CDATA[$P{strDateFormat}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<returnValue subreportVariable="PreviousBalance" toVariable="PreviousBalance"/>
@@ -707,9 +725,6 @@
 					<subreportParameter  name="Title">
 						<subreportParameterExpression><![CDATA[new String("Final")]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter  name="Date">
-						<subreportParameterExpression><![CDATA[$P{DateToPlus1}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter  name="Partner">
 						<subreportParameterExpression><![CDATA[$F{c_bpartner_id}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -733,6 +748,21 @@
 					</subreportParameter>
 					<subreportParameter  name="Org">
 						<subreportParameterExpression><![CDATA[$P{Org}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="isHiding">
+						<subreportParameterExpression><![CDATA[$P{isHiding}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="dateFrom">
+						<subreportParameterExpression><![CDATA[$P{dateFrom}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="dateTo">
+						<subreportParameterExpression><![CDATA[$P{dateToPlus1}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="dateTo2">
+						<subreportParameterExpression><![CDATA[$P{dateToPlus1}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="strDateFormat">
+						<subreportParameterExpression><![CDATA[$P{strDateFormat}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"ReportGeneralLedger_Previous.jasper"]]></subreportExpression>

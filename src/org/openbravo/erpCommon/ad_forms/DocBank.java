@@ -278,7 +278,7 @@ public class DocBank extends AcctServer {
             line.m_C_Currency_ID, TrxAmt.negate().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
       // Charge DR (Charge)
-      fact.createLine(new DocLine_Bank(DocumentType, Record_ID, line.m_TrxLine_ID), new Account(
+      fact.createLine(lineAux, new Account(
           conn, DocLineBankData.selectChargeAccount(conn, C_BankAccount_ID, as.m_C_AcctSchema_ID)),
           line.m_C_Currency_ID, ChargeAmt.toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
@@ -294,11 +294,11 @@ public class DocBank extends AcctServer {
        */
       //
       if (ConvertChargeAmt.signum() > 0) // >0 loss
-        fact.createLine(new DocLine_Bank(DocumentType, Record_ID, line.m_TrxLine_ID), getAccount(
+        fact.createLine(lineAux, getAccount(
             AcctServer.ACCTTYPE_ConvertChargeLossAmt, as, conn), line.m_C_Currency_ID,
             line.convertChargeAmt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       else
-        fact.createLine(new DocLine_Bank(DocumentType, Record_ID, line.m_TrxLine_ID), getAccount(
+        fact.createLine(lineAux, getAccount(
             AcctServer.ACCTTYPE_ConvertChargeGainAmt, as, conn), line.m_C_Currency_ID, "",
             ConvertChargeAmt.negate().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);

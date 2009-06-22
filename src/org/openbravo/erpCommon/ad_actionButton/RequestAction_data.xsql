@@ -35,24 +35,6 @@
     </Sql>
     <Parameter name="rRequestId"/>
   </SqlMethod>
-  <SqlMethod name="selectEmail" type="preparedStatement" connection="true" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT EMail, EMailUser, EMailUserPw, Name FROM AD_User WHERE AD_User_ID=?
-      ]]>
-    </Sql>
-    <Parameter name="adUserId"/>
-  </SqlMethod>
-  <SqlMethod name="selectEmailRequest" type="preparedStatement" connection="true" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT RequestEMail AS EMail, RequestUser AS EMailUser, RequestUserPw AS EMailUserPw FROM AD_Client WHERE AD_Client_ID=?
-      ]]>
-    </Sql>
-    <Parameter name="adClientId"/>
-  </SqlMethod>
   <SqlMethod name="selectEmailTo" type="preparedStatement" connection="true" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -64,15 +46,6 @@
     </Sql>
     <Parameter name="adUserId" optional="true" after="WHERE " text=" bpc.AD_User_ID = ? AND "/>
     <Parameter name="cBpartnerId"/>
-  </SqlMethod>
-  <SqlMethod name="selectSMTPHost" type="preparedStatement" connection="true" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT SMTPHost AS NAME FROM AD_Client WHERE AD_Client_ID=?
-      ]]>
-    </Sql>
-    <Parameter name="adClientId"/>
   </SqlMethod>
   <SqlMethod name="update" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

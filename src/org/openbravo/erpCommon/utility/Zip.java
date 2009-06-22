@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
  * 
  */
 public class Zip {
-  static Logger log4j = Logger.getLogger(Zip.class);
+  private static Logger log4j = Logger.getLogger(Zip.class);
 
   private static void zip(File[] list, ZipOutputStream dest, String relativeDir) throws Exception {
     for (int i = 0; i < list.length; i++) {

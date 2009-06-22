@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -38,6 +40,12 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class BusinessPartner extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "value", "name", "so_creditavailable",
+      "so_creditused", "contact", "phone", "pc", "city", "income", "c_bpartner_id",
+      "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   @Override
   public void init(ServletConfig config) {
@@ -134,16 +142,15 @@ public class BusinessPartner extends HttpSecureAppServlet {
       final String strNewFilter = vars.getStringParameter("newFilter");
       final String strOffset = vars.getStringParameter("offset");
       final String strPageSize = vars.getStringParameter("page_size");
-      final String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      final String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      final String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      final String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       printGridData(response, vars, strKey, strName, strOrg, strContact, strZIP, strProvincia,
-          strBpartners, strCity, strSortCols + " " + strSortDirs, strOffset, strPageSize,
-          strNewFilter);
+          strBpartners, strCity, strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter);
     } else
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
       String strNameValue, String strBpartners, String focusedId) throws IOException,
       ServletException {
 
@@ -179,7 +186,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       BusinessPartnerData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: business partners seeker Frame Set");
@@ -193,7 +200,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(BusinessPartnerData[] data) throws IOException, ServletException {
+  private String generateResult(BusinessPartnerData[] data) throws IOException, ServletException {
     final StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -208,7 +215,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -236,9 +243,6 @@ public class BusinessPartner extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     final Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    final String[] colNames = { "value", "name", "so_creditavailable", "so_creditused", "contact",
-        "phone", "pc", "city", "income", "c_bpartner_id", "c_bpartner_contact_id",
-        "c_bpartner_location_id", "rowkey" };
     final String[] colWidths = { "98", "172", "50", "83", "104", "63", "43", "100", "63", "0", "0",
         "0", "0" };
     for (int i = 0; i < colNames.length; i++) {
@@ -263,10 +267,11 @@ public class BusinessPartner extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strName, String strOrg, String strContact, String strZIP, String strProvincia,
-      String strBpartners, String strCity, String strOrderBy, String strOffset, String strPageSize,
-      String strNewFilter) throws IOException, ServletException {
+      String strBpartners, String strCity, String strOrderCols, String strOrderDirs,
+      String strOffset, String strPageSize, String strNewFilter) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -276,23 +281,21 @@ public class BusinessPartner extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
-
-    final String locKey = strKey.equals("%") ? "" : strKey;
-    final String locName = strName.equals("%") ? "" : strName;
-    final String locContact = strContact.equals("%") ? "" : strContact;
-    final String locZIP = strZIP.equals("%") ? "" : strZIP;
-    final String locProvince = strProvincia.equals("%") ? "" : strProvincia;
-    final String locCity = strCity.equals("%") ? "" : strCity;
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     if (headers != null) {
       try {
+        // build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
+
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
           strNumRows = BusinessPartnerData.countRows(this, Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
-              locKey, locName, locContact, locZIP, locProvince,
+              strKey, strName, strContact, strZIP, strProvincia,
               (strBpartners.equals("customer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), locCity);
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity);
           vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
@@ -300,22 +303,19 @@ public class BusinessPartner extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          final String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          final String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = BusinessPartnerData.select(this, "ROWNUM", Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
-              locKey, locName, locContact, locZIP, locProvince,
+              strKey, strName, strContact, strZIP, strProvincia,
               (strBpartners.equals("customer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), locCity, strOrderBy, oraLimit, "");
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, oraLimit, "");
         } else {
-          final String pgLimit = strPageSize + " OFFSET " + strOffset;
+          final String pgLimit = pageSize + " OFFSET " + offset;
           data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
-              locKey, locName, locContact, locZIP, locProvince,
+              strKey, strName, strContact, strZIP, strProvincia,
               (strBpartners.equals("customer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), locCity, strOrderBy, "", pgLimit);
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", pgLimit);
         }
       } catch (final ServletException e) {
         log4j.error("Error in print page data: " + e);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -38,6 +40,10 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Project extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "value", "name", "bpartner", "projectstatus", "rowkey" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -95,9 +101,9 @@ public class Project extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
-      printGridData(response, vars, strKey, strName, strBpartners, strSortCols + " " + strSortDirs,
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
+      printGridData(response, vars, strKey, strName, strBpartners, strSortCols, strSortDirs,
           strOffset, strPageSize, strNewFilter, strOrg);
     } else
       pageError(response);
@@ -110,7 +116,7 @@ public class Project extends HttpSecureAppServlet {
     vars.removeSessionValue("Project.adorgid");
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
       String strNameValue, String strBpartners, String strWindow, String focusedId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -144,8 +150,8 @@ public class Project extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars, ProjectData[] data)
-      throws IOException, ServletException {
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+      ProjectData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Project seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -158,7 +164,7 @@ public class Project extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(ProjectData[] data) throws IOException, ServletException {
+  private String generateResult(ProjectData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -170,7 +176,7 @@ public class Project extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -198,7 +204,6 @@ public class Project extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "value", "name", "bpartner", "projectstatus", "rowkey" };
     // String[] gridNames = {"Key", "Name","Disp. Credit","Credit used",
     // "Contact", "Phone no.", "Zip", "City", "Income", "c_bpartner_id",
     // "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey"};
@@ -224,9 +229,10 @@ public class Project extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String strName, String strBpartners, String strOrderBy, String strOffset, String strPageSize,
-      String strNewFilter, String strOrg) throws IOException, ServletException {
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+      String strName, String strBpartners, String strOrderCols, String strOrderDirs,
+      String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -236,9 +242,14 @@ public class Project extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     if (headers != null) {
       try {
+        // build sql orderBy clause from parameters
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
+
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or
@@ -255,15 +266,12 @@ public class Project extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = ProjectData.select(this, "ROWNUM", vars.getLanguage(), Utility.getContext(this,
               vars, "#User_Client", "Project"), Utility.getSelectorOrgs(this, vars, strOrg),
               strKey, strName, strBpartners, strOrderBy, oraLimit, "");
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           data = ProjectData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars,
               "#User_Client", "Project"), Utility.getSelectorOrgs(this, vars, strOrg), strKey,
               strName, strBpartners, strOrderBy, "", pgLimit);

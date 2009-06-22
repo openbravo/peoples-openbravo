@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.EMail;
+import org.openbravo.erpCommon.businessUtility.EmailData;
 import org.openbravo.erpCommon.reference.ActionButtonData;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -112,7 +113,7 @@ public class RequestAction extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  String processButton(VariablesSecureApp vars, String strKey, String windowId) {
+  private String processButton(VariablesSecureApp vars, String strKey, String windowId) {
     int i = 0;
     Connection conn = null;
     try {
@@ -131,11 +132,11 @@ public class RequestAction extends HttpSecureAppServlet {
       vars.removeSessionValue("#Request_EMailUserPw");
 
       if (data[0].actiontype.equals("E")) {
-        String smtpHost = RequestActionData.selectSMTPHost(conn, this, data[0].adClientId);
+        String smtpHost = EmailData.selectSMTPHost(conn, this, data[0].adClientId);
         String from = "";
-        RequestActionData[] mails = RequestActionData.selectEmail(conn, this, data[0].salesrepId);
+        EmailData[] mails = EmailData.selectEmail(conn, this, data[0].salesrepId);
         if (mails == null || mails.length == 0) {
-          mails = RequestActionData.selectEmailRequest(conn, this, data[0].adClientId);
+          mails = EmailData.selectEmailRequest(conn, this, data[0].adClientId);
           if (mails != null && mails.length > 0) {
             from = mails[0].email;
             from = from.trim().toLowerCase();
@@ -188,9 +189,9 @@ public class RequestAction extends HttpSecureAppServlet {
         String subject = Utility.messageBD(this, "RequestActionTransfer", vars.getLanguage());
 
         RequestActionData.update(conn, this, subject, strKey);
-        String smtpHost = RequestActionData.selectSMTPHost(conn, this, data[0].adClientId);
+        String smtpHost = EmailData.selectSMTPHost(conn, this, data[0].adClientId);
         String to = "";
-        RequestActionData[] dataTo = RequestActionData.selectEmail(conn, this, data[0].adUserId);
+        EmailData[] dataTo = EmailData.selectEmail(conn, this, data[0].adUserId);
         if (dataTo != null && dataTo.length > 0) {
           to = dataTo[0].email;
         }
@@ -206,9 +207,9 @@ public class RequestAction extends HttpSecureAppServlet {
             to = to.substring(0, pos) + to.substring(pos + 1);
         }
         String from = "";
-        RequestActionData[] mails = RequestActionData.selectEmail(conn, this, data[0].updatedby);
+        EmailData[] mails = EmailData.selectEmail(conn, this, data[0].updatedby);
         if (mails == null || mails.length == 0) {
-          mails = RequestActionData.selectEmailRequest(conn, this, data[0].adClientId);
+          mails = EmailData.selectEmailRequest(conn, this, data[0].adClientId);
           if (mails != null && mails.length > 0) {
             from = mails[0].email;
             from = from.trim().toLowerCase();
@@ -261,7 +262,7 @@ public class RequestAction extends HttpSecureAppServlet {
     return (Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + i);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String windowId, String strTab, String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Button process Copy from Invoice");

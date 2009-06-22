@@ -205,34 +205,63 @@ dojo.declare(
 		//		See description of `dijit.Tooltip.defaultPosition` for details on position parameter.
 		position: [],
 
-		_setConnectIdAttr: function(ids){
-			// TODO: erase old conections
+		constructor: function(){
+			// Map id's of nodes I'm connected to to a list of the this.connect() handles
+			this._nodeConnectionsById = {};
+		},
 
-			this._connectNodes = [];
+		_setConnectIdAttr: function(newIds){
+			for(var oldId in this._nodeConnectionsById){
+				this.removeTarget(oldId);
+			}
+			dojo.forEach(dojo.isArrayLike(newIds) ? newIds : [newIds], this.addTarget, this);
+		},
 
-			// TODO: rename connectId to connectIds for 2.0, and remove this code converting from string to array
-			this.connectId = dojo.isArrayLike(ids) ? ids : [ids];
-			
-			dojo.forEach(this.connectId, function(id) {
-				var node = dojo.byId(id);
-				if (node) {
-					this._connectNodes.push(node);
-					dojo.forEach(["onMouseEnter", "onMouseLeave", "onFocus", "onBlur"], function(event){
-						this.connect(node, event.toLowerCase(), "_"+event);
-					}, this);
-					if(dojo.isIE){
-						// BiDi workaround
-						node.style.zoom = 1;
-					}
-				}
-			}, this);
+		_getConnectIdAttr: function(){
+			var ary = [];
+			for(var id in this._nodeConnectionsById){
+				ary.push(id);
+			}
+			return ary;
+		},
+
+		addTarget: function(/*DOMNODE || String*/ id){
+			// summary:
+			//		Attach tooltip to specified node, if it's not already connected
+			var node = dojo.byId(id);
+			if(!node){ return; }
+			if(node.id in this._nodeConnectionsById){ return; }//Already connected
+
+			this._nodeConnectionsById[node.id] = [
+				this.connect(node, "onmouseenter", "_onTargetMouseEnter"),
+				this.connect(node, "onmouseleave", "_onTargetMouseLeave"),
+				this.connect(node, "onfocus", "_onTargetFocus"),
+				this.connect(node, "onblur", "_onTargetBlur")
+			];
+			if(dojo.isIE && !node.style.zoom){//preserve zoom
+				// BiDi workaround
+				node.style.zoom = 1;
+			}
+		},
+
+		removeTarget: function(/*DOMNODE || String*/ node){
+			// summary:
+			//		Detach tooltip from specified node
+
+			// map from DOMNode back to plain id string
+			var id = node.id || node;
+
+			if(id in this._nodeConnectionsById){
+				dojo.forEach(this._nodeConnectionsById[id], this.disconnect, this);
+				delete this._nodeConnectionsById[id];
+			}
 		},
 
 		postCreate: function(){	
 			dojo.addClass(this.domNode,"dijitTooltipData");
 		},
 
-		_onMouseEnter: function(/*Event*/ e){
+		_onTargetMouseEnter: function(/*Event*/ e){
 			// summary:
 			//		Handler for mouseenter event on the target node
 			// tags:
@@ -240,7 +269,7 @@ dojo.declare(
 			this._onHover(e);
 		},
 
-		_onMouseLeave: function(/*Event*/ e){
+		_onTargetMouseLeave: function(/*Event*/ e){
 			// summary:
 			//		Handler for mouseleave event on the target node
 			// tags:
@@ -248,32 +277,24 @@ dojo.declare(
 			this._onUnHover(e);
 		},
 
-		_onFocus: function(/*Event*/ e){
+		_onTargetFocus: function(/*Event*/ e){
 			// summary:
 			//		Handler for focus event on the target node
 			// tags:
 			//		private
 
-			// TODO: this is dangerously named, as the dijit focus manager calls
-			// _onFocus() on any widget that gets focus (whereas in this class we
-			// are connecting onfocus on the *target* DOM node to this method
-
 			this._focus = true;
 			this._onHover(e);
-			this.inherited(arguments);
 		},
 		
-		_onBlur: function(/*Event*/ e){
+		_onTargetBlur: function(/*Event*/ e){
 			// summary:
 			//		Handler for blur event on the target node
 			// tags:
 			//		private
 
-			// TODO: rename; see above comment
-
 			this._focus = false;
 			this._onUnHover(e);
-			this.inherited(arguments);
 		},
 
 		_onHover: function(/*Event*/ e){
@@ -322,6 +343,7 @@ dojo.declare(
 			dijit.showTooltip(this.label || this.domNode.innerHTML, target, this.position);
 			
 			this._connectNode = target;
+			this.onShow(target, this.position);
 		},
 
 		close: function(){
@@ -334,6 +356,7 @@ dojo.declare(
 				// if tooltip is currently shown
 				dijit.hideTooltip(this._connectNode);
 				delete this._connectNode;
+				this.onHide();
 			}
 			if(this._showTimer){
 				// if tooltip is scheduled to be shown (after a brief delay)
@@ -342,8 +365,23 @@ dojo.declare(
 			}
 		},
 
+		onShow: function(target, position){
+			// summary:
+			//		Called when the tooltip is shown
+			// tags:
+			//		callback
+		},
+
+		onHide: function(){
+			// summary:
+			//		Called when the tooltip is hidden
+			// tags:
+			//		callback
+		},
+
 		uninitialize: function(){
 			this.close();
+			this.inherited(arguments);
 		}
 	}
 );

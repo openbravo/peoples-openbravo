@@ -52,9 +52,7 @@ import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.security.AccessData;
 import org.openbravo.erpCommon.security.SessionLogin;
-import org.openbravo.erpCommon.security.SessionLoginData;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBError;
@@ -70,14 +68,14 @@ import org.w3c.dom.NodeList;
 
 public class HttpSecureAppServlet extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
-  public boolean boolHist = true;
+  protected boolean boolHist = true;
   // String myTheme = "";
-  public ClassInfoData classInfo;
-  protected AuthenticationManager m_AuthManager = null;
+  protected ClassInfoData classInfo;
+  private AuthenticationManager m_AuthManager = null;
 
-  String servletClass = this.getClass().getName();
+  private String servletClass = this.getClass().getName();
 
-  public class Variables extends VariablesHistory {
+  private class Variables extends VariablesHistory {
     public Variables(HttpServletRequest request) {
       super(request);
     }
@@ -209,16 +207,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           strWarehouse = DefaultOptionsData.defaultWarehouse(this, strUserAuth);
           if (strWarehouse == null) {
             if (!strRole.equals("0")) {
-              // enable admin mode, as normal non admin-role
-              // has no read-access to i.e. AD_OrgType
-              final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+              OBContext.setAdminContext();
               try {
-
                 strWarehouse = DefaultOptionsData.getDefaultWarehouse(this, strClient, new OrgTree(
                     this, strClient).getAccessibleTree(this, strRole).toString());
 
               } finally {
-                OBContext.getOBContext().setInAdministratorMode(prevMode);
+                OBContext.setOBContext((OBContext) null);
               }
             } else
               strWarehouse = "";
@@ -266,9 +261,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       return;
     } catch (final Exception e) {
       // Re-login
-      if (log4j.isDebugEnabled())
-        log4j.debug("HTTPSecureAppServlet.service() - exception caught: " + e.getMessage());
-      log4j.error(e);
+      log4j.error("HTTPSecureAppServlet.service() - exception caught: ", e);
       logout(request, response);
       return;
     }
@@ -338,7 +331,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           bdError(request, response, "AccessTableNoView", vars1.getLanguage());
       }
     } catch (final ServletException ex) {
-      log4j.error("Error captured: " + ex, ex);
+      log4j.error("Error captured: ", ex);
       final VariablesSecureApp vars1 = new VariablesSecureApp(request, false);
       final OBError myError = Utility.translateError(this, vars1, variables.getLanguage(), ex
           .getMessage());
@@ -359,15 +352,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         request.removeAttribute("popupWindow");
         throw e;
       } else {
-        log4j.error("Error captured: " + e);
+        log4j.error("Error captured: ", e);
         if (strPopUp != null && !strPopUp.equals(""))
           bdErrorGeneralPopUp(request, response, "Error", e.toString());
         else
           bdErrorGeneral(request, response, "Error", e.toString());
       }
     } catch (final Exception e) {
-      log4j.error("Error captured: " + e);
-      e.printStackTrace();
+      log4j.error("Error captured: ", e);
       if (strPopUp != null && !strPopUp.equals(""))
         bdErrorGeneralPopUp(request, response, "Error", e.toString());
       else
@@ -387,21 +379,21 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    */
   protected boolean hasGeneralAccess(VariablesSecureApp vars, String type, String id) {
     try {
-      final String accessLevel = AccessData.selectAccessLevel(this, type, id);
+      final String accessLevel = SeguridadData.selectAccessLevel(this, type, id);
       vars.setSessionValue("#CurrentAccessLevel", accessLevel);
       if (type.equals("W")) {
         return hasLevelAccess(vars, accessLevel)
-            && AccessData.selectAccess(this, vars.getRole(), "TABLE", id).equals("0")
-            && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
+            && SeguridadData.selectAccess(this, vars.getRole(), "TABLE", id).equals("0")
+            && !SeguridadData.selectAccess(this, vars.getRole(), type, id).equals("0");
       } else if (type.equals("S")) {
-        return !AccessData.selectAccessSearch(this, vars.getRole(), id).equals("0");
+        return !SeguridadData.selectAccessSearch(this, vars.getRole(), id).equals("0");
       } else if (type.equals("C"))
         return true;
       else
         return hasLevelAccess(vars, accessLevel)
-            && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
+            && !SeguridadData.selectAccess(this, vars.getRole(), type, id).equals("0");
     } catch (final Exception e) {
-      log4j.error("Error checking access: " + e.toString());
+      log4j.error("Error checking access: ", e);
       return false;
     }
 
@@ -417,7 +409,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       return hasGeneralAccess(vars, classInfo.type, classInfo.id);
 
     } catch (final Exception e) {
-      log4j.error("Error checking access: " + e.toString());
+      log4j.error("Error checking access: ", e);
       return false;
     }
   }
@@ -459,8 +451,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           strError);
   }
 
-  public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  protected void logout(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     final String user = vars.getUser();
@@ -470,7 +462,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Clearing session");
     if (!dbSession.equals(""))
-      SessionLoginData.saveProcessed(this, user, dbSession);
+      SeguridadData.saveProcessed(this, user, dbSession);
 
     m_AuthManager.logout(request, response);
   }
@@ -485,7 +477,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    * @throws IOException
    * @throws ServletException
    */
-  public void invalidLogin(HttpServletRequest request, HttpServletResponse response, OBError error)
+  private void invalidLogin(HttpServletRequest request, HttpServletResponse response, OBError error)
       throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
@@ -504,17 +496,17 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   }
 
-  public void setHistoryCommand(HttpServletRequest request, String strCommand) {
+  protected void setHistoryCommand(HttpServletRequest request, String strCommand) {
     final Variables vars = new Variables(request);
     vars.setHistoryCommand(strCommand);
   }
 
-  public void advise(HttpServletResponse response, String strTipo, String strTitulo, String strTexto)
-      throws IOException {
+  private void advise(HttpServletResponse response, String strTipo, String strTitulo,
+      String strTexto) throws IOException {
     advise(null, response, strTipo, strTitulo, strTexto);
   }
 
-  public void advise(HttpServletRequest request, HttpServletResponse response, String strTipo,
+  protected void advise(HttpServletRequest request, HttpServletResponse response, String strTipo,
       String strTitulo, String strTexto) throws IOException {
 
     String myTheme;
@@ -536,13 +528,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void advisePopUp(HttpServletRequest request, HttpServletResponse response,
+  protected void advisePopUp(HttpServletRequest request, HttpServletResponse response,
       String strTitulo, String strTexto) throws IOException {
     advisePopUp(request, response, "Error", strTitulo, strTexto);
   }
 
-  public void advisePopUp(HttpServletRequest request, HttpServletResponse response, String strTipo,
-      String strTitulo, String strTexto) throws IOException {
+  protected void advisePopUp(HttpServletRequest request, HttpServletResponse response,
+      String strTipo, String strTitulo, String strTexto) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/AdvisePopUp").createXmlDocument();
 
@@ -573,17 +565,17 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    * @throws IOException
    *           if an error occurs writing to the output stream
    */
-  public void advisePopUpRefresh(HttpServletRequest request, HttpServletResponse response,
+  private void advisePopUpRefresh(HttpServletRequest request, HttpServletResponse response,
       String strTitle, String strText) throws IOException {
     advisePopUpRefresh(request, response, "Error", strTitle, strText);
   }
 
-  public void advisePopUpRefresh(HttpServletResponse response, String strTitle, String strText)
+  private void advisePopUpRefresh(HttpServletResponse response, String strTitle, String strText)
       throws IOException {
     advisePopUpRefresh(null, response, "Error", strTitle, strText);
   }
 
-  public void advisePopUpRefresh(HttpServletResponse response, String strType, String strTitle,
+  private void advisePopUpRefresh(HttpServletResponse response, String strType, String strTitle,
       String strText) throws IOException {
     advisePopUpRefresh(null, response, strTitle, strText);
   }
@@ -602,7 +594,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    * @throws IOException
    *           if an error occurs writing to the output stream
    */
-  public void advisePopUpRefresh(HttpServletRequest request, HttpServletResponse response,
+  protected void advisePopUpRefresh(HttpServletRequest request, HttpServletResponse response,
       String strType, String strTitle, String strText) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/AdvisePopUpRefresh").createXmlDocument();
@@ -623,12 +615,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void bdError(HttpServletResponse response, String strCode, String strLanguage)
+  private void bdError(HttpServletResponse response, String strCode, String strLanguage)
       throws IOException {
     bdError(null, response, strCode, strLanguage);
   }
 
-  public void bdError(HttpServletRequest request, HttpServletResponse response, String strCode,
+  protected void bdError(HttpServletRequest request, HttpServletResponse response, String strCode,
       String strLanguage) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/Error")
         .createXmlDocument();
@@ -648,12 +640,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void bdErrorGeneralPopUp(HttpServletResponse response, String strTitle, String strText)
+  private void bdErrorGeneralPopUp(HttpServletResponse response, String strTitle, String strText)
       throws IOException {
     bdErrorGeneralPopUp(null, response, strTitle, strText);
   }
 
-  public void bdErrorGeneralPopUp(HttpServletRequest request, HttpServletResponse response,
+  protected void bdErrorGeneralPopUp(HttpServletRequest request, HttpServletResponse response,
       String strTitle, String strText) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/ErrorPopUp").createXmlDocument();
@@ -674,12 +666,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void bdErrorGeneral(HttpServletResponse response, String strTitle, String strText)
+  private void bdErrorGeneral(HttpServletResponse response, String strTitle, String strText)
       throws IOException {
     bdErrorGeneral(null, response, strTitle, strText);
   }
 
-  public void bdErrorGeneral(HttpServletRequest request, HttpServletResponse response,
+  private void bdErrorGeneral(HttpServletRequest request, HttpServletResponse response,
       String strTitle, String strText) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/Error")
         .createXmlDocument();
@@ -700,7 +692,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void bdErrorConnection(HttpServletResponse response) throws IOException {
+  protected void bdErrorConnection(HttpServletResponse response) throws IOException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Error connection");
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -712,7 +704,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void bdErrorAjax(HttpServletResponse response, String strType, String strTitle,
+  protected void bdErrorAjax(HttpServletResponse response, String strType, String strTitle,
       String strText) throws IOException {
     response.setContentType("text/xml; charset=UTF-8");
     final PrintWriter out = response.getWriter();
@@ -727,7 +719,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void bdErrorHidden(HttpServletResponse response, String strType, String strTitle,
+  protected void bdErrorHidden(HttpServletResponse response, String strType, String strTitle,
       String strText) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
@@ -748,7 +740,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void pageError(HttpServletResponse response) throws IOException {
+  protected void pageError(HttpServletResponse response) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/HtmlError").createXmlDocument();
 
@@ -758,7 +750,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void pageErrorPopUp(HttpServletResponse response) throws IOException {
+  protected void pageErrorPopUp(HttpServletResponse response) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/HtmlErrorPopUp").createXmlDocument();
 
@@ -768,11 +760,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void whitePage(HttpServletResponse response) throws IOException {
+  protected void whitePage(HttpServletResponse response) throws IOException {
     whitePage(response, "");
   }
 
-  public void whitePage(HttpServletResponse response, String strAlert) throws IOException {
+  protected void whitePage(HttpServletResponse response, String strAlert) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/HtmlWhitePage").createXmlDocument();
     if (strAlert == null)
@@ -785,8 +777,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void printPageClosePopUp(HttpServletResponse response, VariablesSecureApp vars, String path)
-      throws IOException, ServletException {
+  protected void printPageClosePopUp(HttpServletResponse response, VariablesSecureApp vars,
+      String path) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PopUp Response");
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -799,12 +791,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void printPageClosePopUp(HttpServletResponse response, VariablesSecureApp vars)
+  protected void printPageClosePopUp(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     printPageClosePopUp(response, vars, "");
   }
 
-  public void printPageClosePopUpWindow(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageClosePopUpWindow(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PopUp Response");
@@ -817,8 +809,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void printPagePopUpDownload(ServletOutputStream os, String fileName) throws IOException,
-      ServletException {
+  protected void printPagePopUpDownload(ServletOutputStream os, String fileName)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PopUp Download");
     String href = strDireccion + "/utility/DownloadReport.html?report=" + fileName;
@@ -829,7 +821,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     os.close();
   }
 
-  public void printPageClosePopUpAndRefresh(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageClosePopUpAndRefresh(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PopUp Response");
@@ -842,7 +834,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void printPageClosePopUpAndRefreshParent(HttpServletResponse response,
+  protected void printPageClosePopUpAndRefreshParent(HttpServletResponse response,
       VariablesSecureApp vars) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PopUp Response");
@@ -855,7 +847,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void pageErrorCallOut(HttpServletResponse response) throws IOException {
+  protected void pageErrorCallOut(HttpServletResponse response) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/HtmlErrorCallOut").createXmlDocument();
 
@@ -865,7 +857,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  public void readProperties(VariablesSecureApp vars, String strFileProperties) {
+  protected void readProperties(VariablesSecureApp vars, String strFileProperties) {
     // Read properties file.
     final Properties properties = new Properties();
     try {
@@ -891,11 +883,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       vars.setSessionValue("#sourcePath", sourcePath);
     } catch (final IOException e) {
       // catch possible io errors from readLine()
-      log4j.error(e);
+      log4j.error("Error reading properties", e);
     }
   }
 
-  public void readNumberFormat(VariablesSecureApp vars, String strFormatFile) {
+  protected void readNumberFormat(VariablesSecureApp vars, String strFormatFile) {
     final String strNumberFormat = "###,##0.00"; // Default number format
     String strGroupingSeparator = ","; // Default grouping separator
     String strDecimalSeparator = "."; // Default decimal separator
@@ -930,7 +922,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         }
       }
     } catch (final Exception e) {
-      log4j.error(e.getMessage());
+      log4j.error("error reading number format", e);
     }
     vars.setSessionValue("#AD_ReportNumberFormat", strNumberFormat);
     vars.setSessionValue("#AD_ReportGroupingSeparator", strGroupingSeparator);
@@ -945,7 +937,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     vars.setSessionValue("#AD_Session_ID", sl.getSessionID());
   }
 
-  public void renderJR(VariablesSecureApp variables, HttpServletResponse response,
+  protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,
       String strReportName, String strOutputType, HashMap<String, Object> designParameters,
       FieldProvider[] data, Map<Object, Object> exportParameters) throws ServletException {
 
@@ -1012,7 +1004,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
         }
       } catch (final Exception e) {
-        throw new ServletException(e.getCause().getMessage());
+        throw new ServletException(e.getMessage(), e);
       } finally {
         releaseRollbackConnection(con);
       }
@@ -1048,9 +1040,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         throw new ServletException("Output format no supported");
       }
     } catch (final JRException e) {
-      if (log4j.isDebugEnabled())
-        log4j.debug("JR: Error: " + e);
-      throw new ServletException(e.getMessage());
+      log4j.error("JR: Error: ", e);
+      throw new ServletException(e.getMessage(), e);
     } catch (IOException ioe) {
       try {
         FileUtility f = new FileUtility(globalParameters.strFTPDirectory, strFileName + "-"
@@ -1062,7 +1053,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             + (reportId) + "." + strOutputType + " : " + ioex.getMessage());
       }
     } catch (final Exception e) {
-      throw new ServletException(e.getMessage());
+      throw new ServletException(e.getMessage(), e);
     } finally {
       try {
         os.close();
@@ -1116,7 +1107,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    * @throws IOException
    * @throws ServletException
    */
-  public boolean forwardRequest(HttpServletRequest request, HttpServletResponse response)
+  private boolean forwardRequest(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     final String forwardTo = request.getParameter("mappingName");
     final String autoSave = request.getParameter("autosave");

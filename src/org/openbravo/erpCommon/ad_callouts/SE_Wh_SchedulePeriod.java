@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_actionButton.InvoicingScheduleData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -60,16 +59,16 @@ public class SE_Wh_SchedulePeriod extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWhSchedule,
-      String strTabId) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strWhSchedule, String strTabId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
     InvoicingScheduleData[] data = InvoicingScheduleData.selectM_WH_Period_ID(this, Utility
-        .getContext(this, vars, "#AccessibleOrgTree", "SE_Wh_SchedulePeriod"), Utility.getContext(this,
-        vars, "#User_Client", "SE_Wh_SchedulePeriod"), strWhSchedule);
+        .getContext(this, vars, "#AccessibleOrgTree", "SE_Wh_SchedulePeriod"), Utility.getContext(
+        this, vars, "#User_Client", "SE_Wh_SchedulePeriod"), strWhSchedule);
     StringBuffer resultado = new StringBuffer();
     if (data == null || data.length == 0)
       resultado.append("var respuesta = null;");

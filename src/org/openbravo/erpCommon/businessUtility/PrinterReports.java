@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.utils.FormatUtilities;
@@ -56,9 +57,9 @@ public class PrinterReports extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDirectPrint,
-      String strPDFPath, String strHiddenKey, String strHiddenValue, String inptabId)
-      throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strDirectPrint, String strPDFPath, String strHiddenKey, String strHiddenValue,
+      String inptabId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     String[] discard = { "isPrintPreview" };
@@ -89,7 +90,8 @@ public class PrinterReports extends HttpSecureAppServlet {
     if (!strHiddenValue.equals(""))
       vars.setSessionValue(strPDFPath + "." + strHiddenKey, "('" + strHiddenValue + "')");
     else
-      vars.getRequestInGlobalVariable(strHiddenKey, strPDFPath + "." + strHiddenKey);
+      vars.getRequestInGlobalVariable(strHiddenKey, strPDFPath + "." + strHiddenKey,
+          IsIDFilter.instance);
 
     // vars.getRequestInGlobalVariable(strHiddenKey + "_R", mapping + "." +
     // strHiddenKey + "_R");

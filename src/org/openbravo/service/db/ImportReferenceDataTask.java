@@ -20,7 +20,8 @@
 package org.openbravo.service.db;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
@@ -36,10 +37,6 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
   @Override
   protected void doExecute() {
     final File importDir = getReferenceDataDir();
-    if (importDir.listFiles().length == 0) {
-      throw new OBException("No import files present in the import directory: "
-          + importDir.getAbsolutePath());
-    }
 
     for (final File importFile : importDir.listFiles()) {
       if (importFile.isDirectory()) {
@@ -50,8 +47,11 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
       final ClientImportProcessor importProcessor = new ClientImportProcessor();
       importProcessor.setNewName(null);
       try {
+        final InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(
+            importFile), "UTF-8");
         final ImportResult ir = DataImportService.getInstance().importClientData(importProcessor,
-            false, new FileReader(importFile));
+            false, inputStreamReader);
+        inputStreamReader.close();
 
         if (ir.hasErrorOccured()) {
           if (ir.getException() != null) {
@@ -62,7 +62,8 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
           }
         }
       } catch (Exception e) {
-        throw new OBException("Exception while importing from file " + importFile);
+        throw new OBException("Exception (" + e.getMessage() + ") while importing from file "
+            + importFile, e);
       }
     }
     OBDal.getInstance().commitAndClose();

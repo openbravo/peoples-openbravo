@@ -21,6 +21,7 @@ package org.openbravo.service.web;
 
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.sql.BatchUpdateException;
 import java.util.List;
 
 import javax.xml.transform.Transformer;
@@ -36,6 +37,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.xml.XMLConstants;
 import org.openbravo.dal.xml.XMLUtil;
 
 /**
@@ -71,12 +73,22 @@ public class WebServiceUtil implements OBSingleton {
     final StringBuilder sb = new StringBuilder(t.getMessage());
 
     // prevent infinite cycling
-    while (x.getCause() != null && x.getCause() != t) {
-      x = x.getCause();
+    while (x.getCause() != null
+        || (x instanceof BatchUpdateException && ((BatchUpdateException) x).getNextException() != null)) {
+      final Throwable prevX = x;
+      if (x instanceof BatchUpdateException) {
+        x = ((BatchUpdateException) x).getNextException();
+      } else {
+        x = x.getCause();
+      }
+      if (x == prevX) {
+        break;
+      }
       sb.append("\nCaused by: " + x.getMessage());
     }
 
-    return "<error><message>" + sb + "</message></error>";
+    return "<ob:error xmlns:ob=\"" + XMLConstants.OPENBRAVO_NAMESPACE + "\"><message>" + sb
+        + "</message></ob:error>";
   }
 
   /**
@@ -87,7 +99,8 @@ public class WebServiceUtil implements OBSingleton {
    * @return a xml result string
    */
   public String createResultXML(String content) {
-    return "<result>" + content + "</result>";
+    return "<ob:result xmlns:ob=\"" + XMLConstants.OPENBRAVO_NAMESPACE + "\">" + content
+        + "</ob:result>";
   }
 
   /**
@@ -104,7 +117,9 @@ public class WebServiceUtil implements OBSingleton {
    */
   public String createResultXMLWithLogWarning(String msg, String log, String warning) {
     final Document doc = DocumentHelper.createDocument();
-    final Element rootElement = doc.addElement("result");
+    final Element rootElement = doc.addElement("ob:result");
+    rootElement.addAttribute("xmlns:ob", XMLConstants.OPENBRAVO_NAMESPACE);
+
     if (msg != null && msg.trim().length() > 0) {
       rootElement.addElement("msg").addText(msg);
     }
@@ -129,7 +144,9 @@ public class WebServiceUtil implements OBSingleton {
   public String createResultXMLWithObjectsAndWarning(String msg, String log, String warning,
       List<BaseOBObject> inserted, List<BaseOBObject> updated, List<BaseOBObject> deleted) {
     final Document doc = DocumentHelper.createDocument();
-    final Element rootElement = doc.addElement("result");
+    final Element rootElement = doc.addElement("ob:result");
+    rootElement.addAttribute("xmlns:ob", XMLConstants.OPENBRAVO_NAMESPACE);
+
     if (msg != null && msg.trim().length() > 0) {
       rootElement.addElement("msg").addText(msg);
     }
@@ -152,9 +169,8 @@ public class WebServiceUtil implements OBSingleton {
     final Element groupElement = parentElement.addElement(elementName);
     for (final BaseOBObject bob : bobs) {
       final Element bobElement = groupElement.addElement(bob.getEntityName());
-      bobElement.addAttribute("id", (String) bob.getId());
-      bobElement.addAttribute("identifier", bob.getIdentifier());
-
+      bobElement.addAttribute(XMLConstants.ID_ATTRIBUTE, (String) bob.getId());
+      bobElement.addAttribute(XMLConstants.IDENTIFIER_ATTRIBUTE, bob.getIdentifier());
     }
   }
 

@@ -14,12 +14,9 @@ package org.openbravo.base.secureApp;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.ad_combos.ClientComboData;
-import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
-import org.openbravo.erpCommon.ad_combos.RoleComboData;
-import org.openbravo.erpCommon.reference.PreferencesData;
 import org.openbravo.erpCommon.utility.Utility;
 
 public class LoginUtils {
@@ -35,17 +32,17 @@ public class LoginUtils {
       String strOrg, String strAlmacen) throws ServletException {
 
     // Check session options
-    if (!RoleComboData.isUserRole(conn, strUserAuth, strRol)) {
+    if (!SeguridadData.isUserRole(conn, strUserAuth, strRol)) {
       log4j.error("Login role is not in user roles list");
       log4j.error("User: " + strUserAuth);
       log4j.error("Role: " + strRol);
       return false;
     }
-    if (!ClientComboData.isRoleClient(conn, strRol, strCliente)) {
+    if (!SeguridadData.isRoleClient(conn, strRol, strCliente)) {
       log4j.error("Login client is not in role clients list");
       return false;
     }
-    if (!OrganizationComboData.isLoginRoleOrg(conn, strRol, strOrg)) {
+    if (!SeguridadData.isLoginRoleOrg(conn, strRol, strOrg)) {
       log4j.error("Login organization is not in role organizations list");
       return false;
     }
@@ -64,7 +61,7 @@ public class LoginUtils {
     // Organizations tree
     // enable admin mode, as normal non admin-role
     // has no read-access to i.e. AD_OrgType
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminContext();
     try {
 
       OrgTree tree = new OrgTree(conn, strCliente);
@@ -75,7 +72,7 @@ public class LoginUtils {
       log4j.warn("Error while setting Organzation tree to session " + e);
       return false;
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      OBContext.setOBContext((OBContext) null);
     }
 
     try {
@@ -165,6 +162,14 @@ public class LoginUtils {
       log4j.warn("Error while loading session arguments: " + e);
       return false;
     }
+
+    // set the obcontext
+    try {
+      OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg);
+    } catch (final OBSecurityException e) {
+      return false;
+    }
+
     return true;
   }
 }

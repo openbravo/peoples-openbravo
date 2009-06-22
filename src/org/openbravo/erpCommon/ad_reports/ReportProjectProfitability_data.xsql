@@ -57,9 +57,9 @@
            SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN ia.c_project_id ELSE ila.c_project_id END AS C_Project,
                   CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL 
                   THEN COALESCE(C_CURRENCY_CONVERT(il.linenetamt, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID),0) * 
-                  (1 + (CASE WHEN ia.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(ABS(C_CURRENCY_CONVERT(ia.totallines, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, ia.AD_CLIENT_ID, ia.AD_ORG_ID)) + ABS(disc.dis_amt))) END)) 
+                  (1 + (CASE WHEN ia.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ia.totallines, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, ia.AD_CLIENT_ID, ia.AD_ORG_ID) - disc.dis_amt)) END)) 
                   ELSE COALESCE(C_CURRENCY_CONVERT(ila.amt, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, ila.AD_CLIENT_ID, ila.AD_ORG_ID),0) * 
-                  (1 + (CASE WHEN ia.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(ABS(C_CURRENCY_CONVERT(ia.totallines, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, ia.AD_CLIENT_ID, ia.AD_ORG_ID)) + ABS(disc.dis_amt))) END)) END AS amount
+                  (1 + (CASE WHEN ia.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ia.totallines, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, ia.AD_CLIENT_ID, ia.AD_ORG_ID) - disc.dis_amt)) END)) END AS amount
            FROM M_Product p, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
              C_Invoice ia left join (SELECT il.c_invoice_id, sum(C_CURRENCY_CONVERT(il.linenetamt, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID)) as dis_amt
                                          FROM c_invoiceline il, c_invoice ia
@@ -69,7 +69,7 @@
            WHERE ia.C_Invoice_ID = il.C_Invoice_ID
              AND il.M_Product_ID = p.M_Product_ID
              AND ia.issotrx = 'Y'
-             AND ia.docStatus IN ('CO', 'CL')
+             AND ia.processed = 'Y'
              AND 2=2
              AND ia.AD_Org_ID IN ('1')
              AND ia.AD_Client_ID IN ('1')
@@ -82,9 +82,9 @@
            SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN ib.c_project_id ELSE ila.c_project_id END AS C_Project,
                   CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL 
                   THEN COALESCE(C_CURRENCY_CONVERT(il.linenetamt, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID),0) * 
-                  (1 + (CASE WHEN ib.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(ABS(C_CURRENCY_CONVERT(ib.totallines, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, ib.AD_CLIENT_ID, ib.AD_ORG_ID)) + ABS(disc.dis_amt))) END)) 
+                  (1 + (CASE WHEN ib.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ib.totallines, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, ib.AD_CLIENT_ID, ib.AD_ORG_ID) - disc.dis_amt)) END)) 
                   ELSE COALESCE(C_CURRENCY_CONVERT(ila.amt, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, ila.AD_CLIENT_ID, ila.AD_ORG_ID),0) * 
-                  (1 + (CASE WHEN ib.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(ABS(C_CURRENCY_CONVERT(ib.totallines, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, ib.AD_CLIENT_ID, ib.AD_ORG_ID)) + ABS(disc.dis_amt))) END)) END AS amount
+                  (1 + (CASE WHEN ib.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ib.totallines, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, ib.AD_CLIENT_ID, ib.AD_ORG_ID) - disc.dis_amt)) END)) END AS amount
            FROM M_Product p, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
              C_Invoice ib left join (SELECT il.c_invoice_id, sum(C_CURRENCY_CONVERT(il.linenetamt, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID)) as dis_amt
                                          FROM c_invoiceline il, c_invoice ib 
@@ -94,7 +94,7 @@
            WHERE ib.C_Invoice_ID = il.C_Invoice_ID
              AND il.M_Product_ID = p.M_Product_ID
              AND ib.issotrx = 'Y'
-             AND ib.docStatus IN ('CO', 'CL')
+             AND ib.processed = 'Y'
              AND 3=3
              AND ib.AD_Org_ID IN ('2')
              AND ib.AD_Client_ID IN ('2')
@@ -107,9 +107,9 @@
            SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN ic.c_project_id ELSE ila.c_project_id END AS C_Project,
                   CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL 
                   THEN COALESCE(C_CURRENCY_CONVERT(il.linenetamt, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID),0) * 
-                  (1 + (CASE WHEN ic.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(ABS(C_CURRENCY_CONVERT(ic.totallines, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, ic.AD_CLIENT_ID, ic.AD_ORG_ID)) + ABS(disc.dis_amt))) END)) 
+                  (1 + (CASE WHEN ic.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ic.totallines, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, ic.AD_CLIENT_ID, ic.AD_ORG_ID) - disc.dis_amt)) END)) 
                   ELSE COALESCE(C_CURRENCY_CONVERT(ila.amt, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, ila.AD_CLIENT_ID, ila.AD_ORG_ID),0) * 
-                  (1 + (CASE WHEN ic.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(ABS(C_CURRENCY_CONVERT(ic.totallines, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, ic.AD_CLIENT_ID, ic.AD_ORG_ID)) + ABS(disc.dis_amt))) END)) END AS amount
+                  (1 + (CASE WHEN ic.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ic.totallines, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, ic.AD_CLIENT_ID, ic.AD_ORG_ID) - disc.dis_amt)) END)) END AS amount
            FROM M_Product p, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
              C_Invoice ic left join (SELECT il.c_invoice_id, sum(C_CURRENCY_CONVERT(il.linenetamt, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID)) as dis_amt
                                       FROM c_invoiceline il, c_invoice ic 
@@ -118,7 +118,7 @@
                                       GROUP BY il.c_invoice_id) disc ON ic.C_Invoice_ID = disc.C_Invoice_ID
            WHERE ic.C_Invoice_ID = il.C_Invoice_ID
              AND il.M_Product_ID = p.M_Product_ID
-             AND ic.docStatus IN ('CO', 'CL')
+             AND ic.processed = 'Y'
              AND 4=4
              AND ic.AD_Org_ID IN ('3')
              AND ic.AD_Client_ID IN ('3')
@@ -135,7 +135,7 @@
              M_Product p
            WHERE id.C_Invoice_ID = il.C_Invoice_ID
              AND il.M_Product_ID = p.M_Product_ID
-             AND id.docStatus IN ('CO', 'CL')
+             AND id.processed = 'Y'
              AND 5=5
              AND id.AD_Org_ID IN ('4')
              AND id.AD_Client_ID IN ('4')

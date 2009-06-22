@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -67,7 +68,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
       String strProject = vars.getGlobalVariable("inpcProjectId", "ReportProjectProgress|Project",
           "");
       String strProjectStatus = vars.getInGlobalVariable("inpProjectstatus",
-          "ReportProjectProgress|Projectstatus", "");
+          "ReportProjectProgress|Projectstatus", "", IsIDFilter.instance);
       String strBPartner = vars.getGlobalVariable("inpcBPartnerId",
           "ReportProjectProgress|Partner", "");
       String strResponsible = vars.getGlobalVariable("inpResponsible",
@@ -97,7 +98,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
       String strProject = vars.getRequestGlobalVariable("inpcProjectId",
           "ReportProjectProgress|Project");
       String strProjectStatus = vars.getRequestInGlobalVariable("inpProjectstatus",
-          "ReportProjectProgress|Projectstatus");
+          "ReportProjectProgress|Projectstatus", IsIDFilter.instance);
       String strBPartner = vars.getRequestGlobalVariable("inpcBPartnerId",
           "ReportProjectProgress|Partner");
       String strResponsible = vars.getRequestGlobalVariable("inpResponsible",
@@ -119,8 +120,8 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strRefDate,
-      String strOlderFirst, String strStartDateFrom, String strStartDateTo,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strRefDate, String strOlderFirst, String strStartDateFrom, String strStartDateTo,
       String strContractDateFrom, String strContractDateTo, String strEndingDateFrom,
       String strEndingDateTo, String strProject, String strProjectStatus, String strBPartner,
       String strResponsible) throws IOException, ServletException {
@@ -213,8 +214,8 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
     // Project selector
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Project_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProgress"), Utility
-              .getContext(this, vars, "#User_Client", "ReportProjectProgress"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProgress"),
+          Utility.getContext(this, vars, "#User_Client", "ReportProjectProgress"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProgress",
           strProject);
       xmlDocument.setData("reportC_Project_ID", "liststructure", comboTableData.select(false));
@@ -226,9 +227,9 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
     // Project Status multiple selector
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Project_status",
-          "ProjectStatus", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProgress"), Utility.getContext(
-              this, vars, "#User_Client", "ReportProjectProgress"), 0);
+          "ProjectStatus", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportProjectProgress"), Utility.getContext(this, vars, "#User_Client",
+              "ReportProjectProgress"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProgress",
           strProjectStatus);
       xmlDocument.setData("reportC_PROJECTSTATUS", "liststructure", comboTableData.select(false));
@@ -255,8 +256,8 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strRefDate,
-      String strOlderFirst, String strStartDateFrom, String strStartDateTo,
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strRefDate, String strOlderFirst, String strStartDateFrom, String strStartDateTo,
       String strContractDateFrom, String strContractDateTo, String strEndingDateFrom,
       String strEndingDateTo, String strProject, String strProjectStatus, String strBPartner,
       String strResponsible, String strOutput) throws IOException, ServletException, ParseException {
@@ -270,11 +271,11 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
 
     ReportProjectProgressData[] data = null;
     data = ReportProjectProgressData.select(this, vars.getLanguage(), Utility.getContext(this,
-        vars, "#User_Client", "ReportProjectProgress"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        "ReportProjectProgress"), strStartDateFrom, DateTimeData.nDaysAfter(this, strStartDateTo,
-        "1"), strContractDateFrom, DateTimeData.nDaysAfter(this, strContractDateTo, "1"),
-        strEndingDateFrom, DateTimeData.nDaysAfter(this, strEndingDateTo, "1"), strProject,
-        strProjectStatus, strBPartner, strResponsible, strOlderPhasesTasksFirst);
+        vars, "#User_Client", "ReportProjectProgress"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportProjectProgress"), strStartDateFrom, DateTimeData.nDaysAfter(
+        this, strStartDateTo, "1"), strContractDateFrom, DateTimeData.nDaysAfter(this,
+        strContractDateTo, "1"), strEndingDateFrom, DateTimeData.nDaysAfter(this, strEndingDateTo,
+        "1"), strProject, strProjectStatus, strBPartner, strResponsible, strOlderPhasesTasksFirst);
 
     String strReferenceDate = strRefDate.equals("") ? DateTimeData.today(this) : strRefDate;
 

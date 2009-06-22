@@ -42,7 +42,6 @@ dojo.declare(
 				// TODO: change key from object to id, to get more separation from StackContainer
 				this.pane2button = {};		// mapping from panes to buttons
 				this.pane2handles = {};		// mapping from panes to dojo.connect() handles
-				this.pane2menu = {};		// mapping from panes to close menu
 
 				this._subscriptions=[
 					dojo.subscribe(this.containerId+"-startup", this, "onStartup"),
@@ -82,29 +81,38 @@ dojo.declare(
 				this.domNode.appendChild(refNode);
 				// create an instance of the button widget
 				var cls = dojo.getObject(this.buttonWidget);
-				var button = new cls({label: page.title, closeButton: page.closable}, refNode);
+				var button = new cls({
+					label: page.title,
+					showLabel: page.showTitle,
+					iconClass: page.iconClass,
+					closeButton: page.closable
+				}, refNode);
+				var map = 
+				this.pane2handles[page] = [
+				    this.connect(page, 'attr', function(name, value){
+						if(arguments.length == 2){
+							var buttonAttr = {
+								title: 'label',
+								showTitle: 'showLabel',
+								iconClass: 'iconClass',
+								closable: 'closeButton'
+							}[name];
+							if(buttonAttr){
+								button.attr(buttonAttr, value);
+							}
+						}
+					}),
+					this.connect(button, 'onClick', dojo.hitch(this,"onButtonClick", page)),
+					this.connect(button, 'onClickCloseButton', dojo.hitch(this,"onCloseButtonClick", page))
+				];
 				this.addChild(button, insertIndex);
 				this.pane2button[page] = button;
 				page.controlButton = button;	// this value might be overwritten if two tabs point to same container
-
-				var handles = [];
-				handles.push(dojo.connect(button, "onClick", dojo.hitch(this,"onButtonClick",page)));
-				if(page.closable){
-					handles.push(dojo.connect(button, "onClickCloseButton", dojo.hitch(this,"onCloseButtonClick",page)));
-					// add context menu onto title button
-					var _nlsResources = dojo.i18n.getLocalization("dijit", "common");
-					var closeMenu = new dijit.Menu({targetNodeIds:[button.id], id:button.id+"_Menu"});
-					var mItem = new dijit.MenuItem({label:_nlsResources.itemClose});
-					handles.push(dojo.connect(mItem, "onClick", dojo.hitch(this, "onCloseButtonClick", page)));
-					closeMenu.addChild(mItem);
-					this.pane2menu[page] = closeMenu;
-				}
-				this.pane2handles[page] = handles;
 				if(!this._currentChild){ // put the first child into the tab order
 					button.focusNode.setAttribute("tabIndex", "0");
 					this._currentChild = page;
 				}
-				//make sure all tabs have the same length
+				// make sure all tabs have the same length
 				if(!this.isLeftToRight() && dojo.isIE && this._rectifyRtlTabList){
 					this._rectifyRtlTabList();
 				}
@@ -118,13 +126,8 @@ dojo.declare(
 				//		private
 
 				if(this._currentChild === page){ this._currentChild = null; }
-				dojo.forEach(this.pane2handles[page], dojo.disconnect);
+				dojo.forEach(this.pane2handles[page], this.disconnect, this);
 				delete this.pane2handles[page];
-				var menu = this.pane2menu[page];
-				if (menu){
-					menu.destroyRecursive();
-					delete this.pane2menu[page];
-				}
 				var button = this.pane2button[page];
 				if(button){
 					// TODO? if current child { reassign }
@@ -271,14 +274,14 @@ dojo.declare("dijit.layout._StackButton",
 
 		// Override _FormWidget.tabIndex.
 		// StackContainer buttons are not in the tab order by default.
-		// TODO: unclear if we need this; doesn't _KeyNavContainer (superclass of StackController) do it for us?
+		// Probably we should be calling this.startupKeyNavChildren() instead.
 		tabIndex: "-1",
-		
+
 		postCreate: function(/*Event*/ evt){
 			dijit.setWaiRole((this.focusNode || this.domNode), "tab");
 			this.inherited(arguments);
 		},
-		
+
 		onClick: function(/*Event*/ evt){
 			// summary:
 			//		This is for TabContainer where the tabs are <span> rather than button,

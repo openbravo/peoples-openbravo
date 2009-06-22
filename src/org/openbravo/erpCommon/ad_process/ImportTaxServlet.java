@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,9 +75,9 @@ public class ImportTaxServlet extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strProcessId,
-      String strWindowId, String strTabId, String strRecordId, String strDeleteOld)
-      throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strProcessId, String strWindowId, String strTabId, String strRecordId,
+      String strDeleteOld) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: process ImportTaxServlet");
     ActionButtonDefaultData[] data = null;

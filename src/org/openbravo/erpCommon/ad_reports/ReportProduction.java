@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,7 +60,7 @@ public class ReportProduction extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strRawMaterial) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -115,8 +115,9 @@ public class ReportProduction extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strRawMaterial) throws IOException, ServletException {
+  private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strRawMaterial) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
 
@@ -134,15 +135,15 @@ public class ReportProduction extends HttpSecureAppServlet {
 
     ReportProductionData[] data = ReportProductionData.select(this, strRawMaterial, Utility
         .getContext(this, vars, "#User_Client", "ReportProduction"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportProduction"), strDateFrom, DateTimeData
-        .nDaysAfter(this, strDateTo, "1"));
+        "#AccessibleOrgTree", "ReportProduction"), strDateFrom, DateTimeData.nDaysAfter(this,
+        strDateTo, "1"));
     if (data == null || data.length == 0) {
       data = ReportProductionData.set();
     }
     ReportProductionData[] dataSummering = ReportProductionData.selectSummering(this, Utility
         .getContext(this, vars, "#User_Client", "ReportProduction"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportProduction"), strDateFrom, DateTimeData
-        .nDaysAfter(this, strDateTo, "1"));
+        "#AccessibleOrgTree", "ReportProduction"), strDateFrom, DateTimeData.nDaysAfter(this,
+        strDateTo, "1"));
 
     if (dataSummering == null || dataSummering.length == 0) {
       dataSummering = ReportProductionData.set();

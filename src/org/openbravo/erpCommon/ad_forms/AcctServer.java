@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -1050,114 +1050,6 @@ public abstract class AcctServer {
       log4j.warn(e);
     }
   } // setC_Period_ID
-
-  /**
-   * Get fully qualified Account Combination
-   * 
-   * @param AD_Client_ID
-   *          client
-   * @param AD_Org_ID
-   *          org
-   * @param C_AcctSchema_ID
-   *          acct schema
-   * @param Account_ID
-   *          natural account
-   * @param base_ValidCombination_ID
-   *          optional base combination to be specified
-   * @param Alias
-   *          aloas
-   * @param AD_User_ID
-   *          user
-   * @param M_Product_ID
-   *          product
-   * @param C_BPartner_ID
-   *          partner
-   * @param AD_OrgTrx_ID
-   *          trx org
-   * @param C_LocFrom_ID
-   *          loc from
-   * @param C_LocTo_ID
-   *          loc to
-   * @param C_SRegion_ID
-   *          sales region
-   * @param C_Project_ID
-   *          project
-   * @param C_Campaign_ID
-   *          campaign
-   * @param C_Activity_ID
-   *          activity
-   * @param User1_ID
-   *          user1
-   * @param User2_ID
-   *          user2
-   * @return C_ValidCombination_ID of existing or new Combination
-   */
-  public static String getValidCombination(String AD_Client_ID, String AD_Org_ID,
-      String C_AcctSchema_ID, String Account_ID, String base_ValidCombination_ID, String Alias,
-      String AD_User_ID, String M_Product_ID, String C_BPartner_ID, String AD_OrgTrx_ID,
-      String C_LocFrom_ID, String C_LocTo_ID, String C_SRegion_ID, String C_Project_ID,
-      String C_Campaign_ID, String C_Activity_ID, String User1_ID, String User2_ID,
-      ConnectionProvider conn) {
-    String retValue = "";
-    StringBuffer sb = new StringBuffer("C_ValidCombination_Get[");
-    sb.append("v,");
-    // -- Mandatory Accounting fields
-    // 2 - AD_Client_ID
-    sb.append("AD_Client_ID=").append(AD_Client_ID).append(",");
-    // 3 - AD_Org_ID
-    sb.append("AD_Org_ID=").append(AD_Org_ID).append(",");
-    // 4- C_AcctSchema_ID
-    sb.append("C_AcctSchema_ID=").append(C_AcctSchema_ID).append(",");
-    // 5 - Account_ID
-    sb.append("Account_ID=").append(Account_ID).append(", ");
-    // -- Optional
-    // 6 - Base C_ValidCombination_ID
-    sb.append("BaseValidCombination_ID=").append(base_ValidCombination_ID).append(",");
-    // 7 - MustBeFullyQualified
-    sb.append("MustBeFullyQualified='Y',");
-    // 8 - Alias
-    sb.append("Alias='").append(Alias).append("',");
-    // 9 - CreatedBy
-    sb.append("AD_User_ID=").append(AD_User_ID).append(", ");
-    // -- Optional Accounting fields
-    // 10 - M_Product_ID
-    sb.append("M_Product_ID=").append(M_Product_ID).append(",");
-    // 11 - C_BPartner_ID
-    sb.append("C_BPartner_ID=").append(C_BPartner_ID).append(",");
-    // 12 - AD_OrgTrx_ID
-    sb.append("AD_OrgTrx_ID=").append(AD_OrgTrx_ID).append(",");
-    // 13 - C_LocFrom_ID
-    sb.append("C_LocFrom_ID=").append(C_LocFrom_ID).append(",");
-    // 14 - C_LocTo_ID
-    sb.append("C_LocTo_ID=").append(C_LocTo_ID).append(", ");
-    // 15 - C_SalesRegion_ID
-    sb.append("C_SalesRegion_ID=").append(C_SRegion_ID).append(",");
-    // 16 - C_Project_ID
-    sb.append("C_Project_ID=").append(C_Project_ID).append(",");
-    // 17 - C_Campaign_ID
-    sb.append("C_Campaign_ID=").append(C_Campaign_ID).append(",");
-    // 18 - C_Activity_ID
-    sb.append("C_Activity_ID=").append(C_Activity_ID).append(",");
-    // 19 - User1_ID
-    sb.append("User1_ID=").append(User1_ID).append(",");
-    // 20 - User2_ID
-    sb.append("User2_ID=").append(User2_ID).append(")");
-
-    RespuestaCS_AcctServer data = null;
-    try {
-      data = AcctServerData.callGetValidCombination(conn, AD_Client_ID, AD_Org_ID, C_AcctSchema_ID,
-          Account_ID, base_ValidCombination_ID, "Y", Alias, AD_User_ID, M_Product_ID,
-          C_BPartner_ID, AD_OrgTrx_ID, C_LocFrom_ID, C_LocTo_ID, C_SRegion_ID, C_Project_ID,
-          C_Campaign_ID, C_Activity_ID, User1_ID, User2_ID);
-      retValue = data.validCombination;
-    } catch (ServletException e) {
-      log4j.warn(e);
-    }
-    //
-    // if (log4j.isDebugEnabled())
-    // log4j.debug("AcctServer - getValidCombination: " + sb.toString());
-    return retValue;
-  } // getValidCombination
 
   /**
    * Matching

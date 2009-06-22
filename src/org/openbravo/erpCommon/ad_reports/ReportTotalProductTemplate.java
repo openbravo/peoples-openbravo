@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,8 +47,8 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
       printPageDataSheet(response, vars);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -60,8 +60,8 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplateEdit").createXmlDocument();
 
     data = ReportTotalProductTemplateData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "ReportTotalProductTemplate"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        "ReportTotalProductTemplate"));
+        "#User_Client", "ReportTotalProductTemplate"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportTotalProductTemplate"));
     vars.removeSessionValue("Default.value");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -111,7 +111,7 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
    * out.println(xmlDocument.print()); out.close(); }
    */
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");

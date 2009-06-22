@@ -106,7 +106,7 @@ dojo.provide("dojox.grid._Scroller");
 		},
 		setKeepInfo: function(inKeepRows){
 			this.keepRows = inKeepRows;
-			this.keepPages = !this.keepRows ? this.keepRows : Math.max(Math.ceil(this.keepRows / this.rowsPerPage), 2);
+			this.keepPages = !this.keepRows ? this.keepPages : Math.max(Math.ceil(this.keepRows / this.rowsPerPage), 2);
 		},
 		// nodes
 		setContentNodes: function(inNodes){
@@ -122,10 +122,12 @@ dojo.provide("dojox.grid._Scroller");
 		},
 		// updating
 		invalidate: function(){
+			this._invalidating = true;
 			this.invalidateNodes();
 			this.pageHeights = [];
 			this.height = (this.pageCount ? (this.pageCount - 1)* this.defaultPageHeight + this.calcLastPageHeight() : 0);
 			this.resize();
+			this._invalidating = false;
 		},
 		updateRowCount: function(inRowCount){
 			this.invalidateNodes();
@@ -259,7 +261,16 @@ dojo.provide("dojox.grid._Scroller");
 			}
 			
 			// Calculate the average row height and update the defaults (row and page).
-			this.needPage(this.page, this.pageTop);
+			var needPage = (!this._invalidating);
+			if(!needPage){
+				var ah = this.grid.attr("autoHeight");
+				if(typeof ah == "number" && ah < Math.min(this.rowsPerPage, this.rowCount)){
+					needPage = true;
+				}
+			}
+			if(needPage){
+				this.needPage(this.page, this.pageTop);
+			}
 			var rowsOnPage = (this.page < this.pageCount - 1) ? this.rowsPerPage : ((this.rowCount % this.rowsPerPage) || this.rowsPerPage);
 			var pageHeight = this.getPageHeight(this.page);
 			this.averageRowHeight = (pageHeight > 0 && rowsOnPage > 0) ? (pageHeight / rowsOnPage) : 0;
@@ -284,7 +295,12 @@ dojo.provide("dojox.grid._Scroller");
 				this.pageHeights[inPageIndex] = h;
 				if((h)&&(oh != h)){
 					this.updateContentHeight(h - oh)
-					this.repositionPages(inPageIndex);
+					var ah = this.grid.attr("autoHeight");
+					if((typeof ah == "number" && ah > this.rowCount)||ah === true){
+						this.grid.sizeChange();
+					}else{
+						this.repositionPages(inPageIndex);
+					}
 				}
 			}
 		},

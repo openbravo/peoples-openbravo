@@ -50,6 +50,14 @@ dojo.require("dojo.dnd.Manager");
 		//		Width of the column being toggled (-1 for none)
 		_togglingColumn: -1,
 		
+		// _headerBuilderClass: Object
+		//		The class to use for our header builder
+		_headerBuilderClass: dojox.grid._HeaderBuilder,
+		
+		// _contentBuilderClass: Object
+		//		The class to use for our content builder
+		_contentBuilderClass: dojox.grid._ContentBuilder,
+		
 		postMixInProperties: function(){
 			this.rowNodes = [];
 		},
@@ -58,8 +66,8 @@ dojo.require("dojo.dnd.Manager");
 			this.connect(this.scrollboxNode,"onscroll","doscroll");
 			dojox.grid.util.funnelEvents(this.contentNode, this, "doContentEvent", [ 'mouseover', 'mouseout', 'click', 'dblclick', 'contextmenu', 'mousedown' ]);
 			dojox.grid.util.funnelEvents(this.headerNode, this, "doHeaderEvent", [ 'dblclick', 'mouseover', 'mouseout', 'mousemove', 'mousedown', 'click', 'contextmenu' ]);
-			this.content = new dojox.grid._ContentBuilder(this);
-			this.header = new dojox.grid._HeaderBuilder(this);
+			this.content = new this._contentBuilderClass(this);
+			this.header = new this._headerBuilderClass(this);
 			//BiDi: in RTL case, style width='9000em' causes scrolling problem in head node
 			if(!dojo._isBodyLtr()){
 				this.headerNodeContainer.style.width = "";
@@ -94,8 +102,8 @@ dojo.require("dojo.dnd.Manager");
 			}else{
 				this.viewWidth = vs.width || (vs.noscroll ? 'auto' : this.viewWidth); //|| this.defaultWidth;
 			}
-			this.onBeforeRow = vs.onBeforeRow;
-			this.onAfterRow = vs.onAfterRow;
+			this._onBeforeRow = vs.onBeforeRow||function(){};
+			this._onAfterRow = vs.onAfterRow||function(){};
 			this.noscroll = vs.noscroll;
 			if(this.noscroll){
 				this.scrollboxNode.style.overflow = "hidden";
@@ -105,6 +113,14 @@ dojo.require("dojo.dnd.Manager");
 			this.testFlexCells();
 			// accomodate new structure
 			this.updateStructure();
+		},
+		
+		onBeforeRow: function(inRowIndex, cells){
+			this._onBeforeRow(inRowIndex, cells);
+		},
+		
+		onAfterRow: function(inRowIndex, cells, inRowNode){
+			this._onAfterRow(inRowIndex, cells, inRowNode);
 		},
 
 		testFlexCells: function(){
@@ -138,7 +154,8 @@ dojo.require("dojo.dnd.Manager");
 		},
 
 		getColumnsWidth: function(){
-			return this.headerContentNode.firstChild.offsetWidth; // Integer
+			var h = this.headerContentNode;
+			return h && h.firstChild ? h.firstChild.offsetWidth : 0; // Integer
 		},
 
 		setColumnsWidth: function(width){
@@ -181,10 +198,41 @@ dojo.require("dojo.dnd.Manager");
 				if(this.source){
 					this.source.destroy();
 				}
+				
+				// Create the top and bottom markers
+				var bottomMarkerId = "dojoxGrid_bottomMarker";
+				var topMarkerId = "dojoxGrid_topMarker";
+				if(this.bottomMarker){
+					dojo.destroy(this.bottomMarker);
+				}
+				this.bottomMarker = dojo.byId(bottomMarkerId);
+				if(this.topMarker){
+					dojo.destroy(this.topMarker);
+				}
+				this.topMarker = dojo.byId(topMarkerId);
+				if (!this.bottomMarker) {
+					this.bottomMarker = dojo.create("div", {
+						"id": bottomMarkerId,
+						"class": "dojoxGridColPlaceBottom"
+					}, dojo.body());
+					this._hide(this.bottomMarker);
+
+					
+					this.topMarker = dojo.create("div", {
+						"id": topMarkerId,
+						"class": "dojoxGridColPlaceTop"
+					}, dojo.body());
+					this._hide(this.topMarker);
+				}
+				this.arrowDim = dojo.contentBox(this.bottomMarker);
+
+				var headerHeight = dojo.contentBox(this.headerContentNode.firstChild.rows[0]).h;
+				
 				this.source = new dojo.dnd.Source(this.headerContentNode.firstChild.rows[0], {
 					horizontal: true,
 					accept: [ "gridColumn_" + this.grid.id ],
 					viewIndex: this.index,
+					generateText: false,
 					onMouseDown: dojo.hitch(this, function(e){
 						this.header.decorateEvent(e);
 						if((this.header.overRightResizeArea(e) || this.header.overLeftResizeArea(e)) &&
@@ -199,7 +247,10 @@ dojo.require("dojo.dnd.Manager");
 								dojo.dnd.Source.prototype.onMouseDown.call(this.source, e);
 							}
 						}
+						dojo.style(this.bottomMarker, "visibility", "visible");
+						dojo.style(this.topMarker, "visibility", "visible");
 					}),
+
 					_markTargetAnchor: dojo.hitch(this, function(before){
 						var src = this.source;
 						if(src.current == src.targetAnchor && src.before == before){ return; }
@@ -207,9 +258,31 @@ dojo.require("dojo.dnd.Manager");
 							src._removeItemClass(getSibling(src.targetAnchor, src.before), src.before ? "After" : "Before");
 						}
 						dojo.dnd.Source.prototype._markTargetAnchor.call(src, before);
+						
+						var target = before ? src.targetAnchor : getSibling(src.targetAnchor, src.before);
+						var endAdd = 0;
+
+						if (!target) {
+							target = src.targetAnchor;
+							endAdd = dojo.contentBox(target).w + this.arrowDim.w/2 + 2;
+						}
+
+						var pos = dojo._abs(target, true);
+						var left = Math.floor(pos.x - this.arrowDim.w/2 + endAdd);
+
+						dojo.style(this.bottomMarker, {
+							"left": left + "px",
+							"top" : (headerHeight + pos.y) + "px"
+						});
+
+						dojo.style(this.topMarker, {
+							"left": left + "px",
+							"top" : (pos.y - this.arrowDim.h) + "px"
+						});
+
 						if(src.targetAnchor && getSibling(src.targetAnchor, src.before)){
 							src._addItemClass(getSibling(src.targetAnchor, src.before), src.before ? "After" : "Before");
-						}						
+						}
 					}),
 					_unmarkTargetAnchor: dojo.hitch(this, function(){
 						var src = this.source;
@@ -223,12 +296,34 @@ dojo.require("dojo.dnd.Manager");
 						dojo.disconnect(this._source_conn);
 						dojo.unsubscribe(this._source_sub);
 						dojo.dnd.Source.prototype.destroy.call(this.source);
+						if(this.bottomMarker){
+							dojo.destroy(this.bottomMarker);
+							delete this.bottomMarker;
+						}
+						if(this.topMarker){
+							dojo.destroy(this.topMarker);
+							delete this.topMarker;
+						}
+					}),
+					onDndCancel: dojo.hitch(this, function(){
+						dojo.dnd.Source.prototype.onDndCancel.call(this.source);
+						this._hide(this.bottomMarker);
+						this._hide(this.topMarker);
 					})
 				});
+
 				this._source_conn = dojo.connect(this.source, "onDndDrop", this, "_onDndDrop");
 				this._source_sub = dojo.subscribe("/dnd/drop/before", this, "_onDndDropBefore");
 				this.source.startup();
 			}
+		},
+		
+		_hide: function(node){
+			dojo.style(node, {
+				left: "-10000px",
+				top: "-10000px",
+				"visibility": "hidden"
+			});
 		},
 
 		_onDndDropBefore: function(source, nodes, copy){
@@ -241,14 +336,8 @@ dojo.require("dojo.dnd.Manager");
 			var srcView = views[source.viewIndex];
 			var tgtView = views[this.index];
 			if(tgtView != srcView){
-				var s = srcView.convertColPctToFixed();
-				var t = tgtView.convertColPctToFixed();
-				if(s || t){
-					setTimeout(function(){
-						srcView.update();
-						tgtView.update();
-					}, 50);
-				}
+				srcView.convertColPctToFixed();
+				tgtView.convertColPctToFixed();
 			}
 		},
 
@@ -259,6 +348,8 @@ dojo.require("dojo.dnd.Manager");
 				}
 				return;
 			}
+			this._hide(this.bottomMarker);
+			this._hide(this.topMarker);
 
 			var getIdx = function(n){
 				return n ? dojo.attr(n, "idx") : null;
@@ -282,15 +373,13 @@ dojo.require("dojo.dnd.Manager");
 			delete this.source._targetNode;
 			delete this.source._beforeTarget;
 			
-			window.setTimeout(function(){
-				layout.moveColumn(
-					source.viewIndex,
-					idx,
-					getIdx(nodes[0]),
-					getIdx(stn),
-					stb
-				);
-			}, 1);
+			layout.moveColumn(
+				source.viewIndex,
+				idx,
+				getIdx(nodes[0]),
+				getIdx(stn),
+				stb
+			);
 		},
 
 		renderHeader: function(){
@@ -326,6 +415,7 @@ dojo.require("dojo.dnd.Manager");
 		},
 
 		hasHScrollbar: function(reset){
+			var hadScroll = this._hasHScroll||false;
 			if(this._hasHScroll == undefined || reset){
 				if(this.noscroll){
 					this._hasHScroll = false;
@@ -340,10 +430,14 @@ dojo.require("dojo.dnd.Manager");
 					}
 				}
 			}
+			if(hadScroll !== this._hasHScroll){
+				this.grid.update();
+			}
 			return this._hasHScroll; // Boolean
 		},
 
 		hasVScrollbar: function(reset){
+			var hadScroll = this._hasVScroll||false;
 			if(this._hasVScroll == undefined || reset){
 				if(this.noscroll){
 					this._hasVScroll = false;
@@ -357,6 +451,9 @@ dojo.require("dojo.dnd.Manager");
 						this._hasVScroll = (this.scrollboxNode.offsetHeight < this.contentNode.offsetHeight);
 					}
 				}
+			}
+			if(hadScroll !== this._hasVScroll){
+				this.grid.update();
 			}
 			return this._hasVScroll; // Boolean
 		},
@@ -382,7 +479,6 @@ dojo.require("dojo.dnd.Manager");
 						if(cellNode && dojo.hasAttr(cellNode, "vIdx")){
 							var vIdx = window.parseInt(dojo.attr(cellNode, "vIdx"));
 							this.setColWidth(idx, fixedWidths[vIdx]);
-							cellNodes[vIdx].style.width = cell.unitWidth;
 							dojo.removeAttr(cellNode, "vIdx");
 						}
 					}
@@ -438,14 +534,6 @@ dojo.require("dojo.dnd.Manager");
 			var rowNode = this.createRowNode(inRowIndex);
 			this.buildRow(inRowIndex, rowNode);
 			this.grid.edit.restore(this, inRowIndex);
-			if(this._pendingUpdate){
-				window.clearTimeout(this._pendingUpdate);
-			}
-			this._pendingUpdate = window.setTimeout(dojo.hitch(this, function(){
-				window.clearTimeout(this._pendingUpdate);
-				delete this._pendingUpdate;
-				this.grid._resize();
-			}), 50);
 			return rowNode;
 		},
 
@@ -460,8 +548,12 @@ dojo.require("dojo.dnd.Manager");
 		},
 
 		buildRow: function(inRowIndex, inRowNode){
+			
 			this.buildRowContent(inRowIndex, inRowNode);
+		  	
 			this.styleRow(inRowIndex, inRowNode);
+		  
+		 
 		},
 
 		buildRowContent: function(inRowIndex, inRowNode){
@@ -592,6 +684,9 @@ dojo.require("dojo.dnd.Manager");
 		},
 
 		update: function(){
+			if(!this.domNode){
+				return;
+			}
 			this.content.update();
 			this.grid.update();
 			//get scroll after update or scroll left setting goes wrong on IE.
@@ -668,7 +763,7 @@ dojo.require("dojo.dnd.Manager");
 	var oldMakeAvatar = dojo.dnd.manager().makeAvatar;
 	dojo.dnd.manager().makeAvatar = function(){
 		var src = this.source;
-		if(src.viewIndex !== undefined){
+		if(src.viewIndex !== undefined && !dojo.hasClass(dojo.body(),"dijit_a11y")){
 			return new dojox.grid._GridAvatar(this);
 		}
 		return oldMakeAvatar.call(dojo.dnd.manager());

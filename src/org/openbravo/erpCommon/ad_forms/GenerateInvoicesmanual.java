@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -76,7 +77,7 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
           strIncludeTaxes);
     } else if (vars.commandIn("GENERATE")) {
-      String strCOrderId = vars.getInStringParameter("inpOrder");
+      String strCOrderId = vars.getInStringParameter("inpOrder", IsIDFilter.instance);
       if (strCOrderId.equals(""))
         strCOrderId = "('0')";
       GenerateInvoicesmanualData.initUpdate(this);
@@ -129,7 +130,7 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo,
       String strIncludeTaxes) throws IOException, ServletException {
     if (log4j.isDebugEnabled())

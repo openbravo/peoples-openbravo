@@ -104,7 +104,7 @@ public class ProcessContext {
    * @see #getUser()
    */
   public VariablesSecureApp toVars() {
-    return new VariablesSecureApp(user, client, organization);
+    return new VariablesSecureApp(user, client, organization, role);
   }
 
   /**

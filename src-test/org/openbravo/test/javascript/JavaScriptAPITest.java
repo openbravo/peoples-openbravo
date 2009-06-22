@@ -28,19 +28,25 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 
 /**
- * Generates a description file for each JavaScript in web/js
+ * Test case for JavaScript API check
  * 
  * @author iperdomo
  * 
  */
 public class JavaScriptAPITest extends TestCase {
 
+  /**
+   * Sets up the Openbravo.properties file
+   */
   @Override
   protected void setUp() throws Exception {
     setConfigPropertyFiles();
     super.setUp();
   }
 
+  /**
+   * Helper function to get the Openbravo.properties file path
+   */
   protected void setConfigPropertyFiles() {
     // get the location of the current class file
     final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
@@ -59,6 +65,9 @@ public class JavaScriptAPITest extends TestCase {
     OBPropertiesProvider.getInstance().setProperties(f.getAbsolutePath());
   }
 
+  /**
+   * Checks the JavaScript API It fails if the resultant API Map is not empty
+   */
   public void testJavaScriptAPI() {
     JavaScriptAPIChecker apiCheck = new JavaScriptAPIChecker();
     final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();

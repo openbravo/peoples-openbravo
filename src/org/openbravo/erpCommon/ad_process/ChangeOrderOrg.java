@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
@@ -76,7 +77,7 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
     } else if (vars.commandIn("SAVE")) {
       String strNewOrg = vars.getRequiredStringParameter("inpadOrgIdNew");
       String strTax = vars.getStringParameter("inpcTaxId");
-      String strOrder = vars.getRequiredInParameter("inpcOrderId");
+      String strOrder = vars.getRequiredInParameter("inpcOrderId", IsIDFilter.instance);
       OBError myMessage = processSave(vars, strOrder, strNewOrg, strTax);
       vars.setMessage("ChangeOrderOrg", myMessage);
       response.sendRedirect(strDireccion + request.getServletPath());
@@ -84,7 +85,8 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError processSave(VariablesSecureApp vars, String strOrder, String strNewOrg, String strTax) {
+  private OBError processSave(VariablesSecureApp vars, String strOrder, String strNewOrg,
+      String strTax) {
     OBError myMessage = null;
 
     if (log4j.isDebugEnabled())
@@ -209,7 +211,7 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
       String strOrg, String strShipperpath, String strPayment, String strNewOrg, String strTax)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())

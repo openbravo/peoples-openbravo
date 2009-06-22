@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,7 +61,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
       String strDetail = vars.getStringParameter("inpDetalle", "-1");
       String strSales = vars.getStringParameter("inpSales", "S");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales);
-    } else if (vars.commandIn("FIND")) {
+    } else if (vars.commandIn("PRINT_HTML")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportTaxInvoiceJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTaxInvoiceJR|DateTo");
@@ -69,6 +69,16 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
       String strDetail = vars.getStringParameter("inpDetalle");
       String strSales = vars.getStringParameter("inpSales");
       printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "html");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+          "ReportTaxInvoiceJR|DateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTaxInvoiceJR|DateTo");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTaxInvoiceJR|Org");
+      if (strOrg.equals(""))
+        strOrg = "0";
+      String strDetail = vars.getStringParameter("inpDetalle");
+      String strSales = vars.getStringParameter("inpSales");
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "pdf");
     } else if (vars.commandIn("RELATION_XLS")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportTaxInvoiceJR|DateFrom");
@@ -81,15 +91,16 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strOrg, String strDetail, String strSales, String strOutput)
-      throws IOException, ServletException {
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales,
+      String strOutput) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
     String strSale = "";
     String strPurchase = "";
-    if (strOrg.equals("")) strOrg = vars.getOrg();
+    if (strOrg.equals(""))
+      strOrg = vars.getOrg();
     if (log4j.isDebugEnabled())
       log4j.debug("****** strSales: " + strSales + " fecha desde: " + strDateFrom
           + " fecha hasta: " + strDateTo + " detalle: " + strDetail);
@@ -175,7 +186,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutput, parameters, null, null);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -411,7 +422,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
    * data2Purchase); out.println(xmlDocument.print()); out.close(); }
    */
 
-  void printPageDataExcel(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataExcel(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())

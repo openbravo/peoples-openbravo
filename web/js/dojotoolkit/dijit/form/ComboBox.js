@@ -44,7 +44,9 @@ dojo.declare(
 		// fetchProperties: Object
 		//		Mixin to the dojo.data store's fetch.
 		//		For example, to set the sort order of the ComboBox menu, pass:
-		//		{sort:{attribute:"name",descending: true}}
+		//	|	{ sort: {attribute:"name",descending: true} }
+		//		To override the default queryOptions so that deep=false, do:
+		//	|	{ queryOptions: {ignoreCase: true, deep: false} }
 		fetchProperties:{},
 
 		// query: Object
@@ -343,7 +345,7 @@ dojo.declare(
 			this.item = null;
 			var zerothvalue = new String(this.store.getValue(results[0], this.searchAttr));
 			if(zerothvalue && this.autoComplete && !this._prev_key_backspace &&
-				(dataObject.query[this.searchAttr] != "*")){
+				!/^[*]+$/.test(dataObject.query[this.searchAttr])){
 				// when the user clicks the arrow button to show the full list,
 				// startSearch looks for "*".
 				// it does not make sense to autocomplete
@@ -376,8 +378,6 @@ dojo.declare(
 
 		_showResultList: function(){
 			this._hideResultList();
-			var items = this._popupWidget.getItems(),
-				visibleCount = Math.min(items.length,this.maxListLength);   // TODO: unused, remove
 			this._arrowPressed();
 			// hide the tooltip
 			this.displayMessage("");
@@ -682,6 +682,7 @@ dojo.declare(
 				this._hideResultList();
 				this._popupWidget.destroy();
 			}
+			this.inherited(arguments);
 		},
 
 		_getMenuLabelFromItem: function(/*Item*/ item){
@@ -880,20 +881,6 @@ dojo.declare(
 			while(this.domNode.childNodes.length>2){
 				this.domNode.removeChild(this.domNode.childNodes[this.domNode.childNodes.length-2]);
 			}
-		},
-
-		// these functions are called in showResultList
-		getItems: function(){
-			// summary:
-			//		Called from _showResultList().   Returns DOM Nodes representing the items in the drop down list.
-			return this.domNode.childNodes;
-		},
-
-		getListLength: function(){
-			// summary:
-			//		Called from _showResultList().   Returns number of  items in the drop down list,
-			//		not including next and previous buttons.
-			return this.domNode.childNodes.length-2;
 		},
 
 		_onMouseDown: function(/*Event*/ evt){

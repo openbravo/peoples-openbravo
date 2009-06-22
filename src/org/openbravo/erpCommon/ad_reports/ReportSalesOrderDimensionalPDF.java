@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -60,15 +62,16 @@ public class ReportSalesOrderDimensionalPDF extends HttpSecureAppServlet {
       String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup",
           "ReportSalesDimensionalAnalyses|partnerGroup");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportSalesDimensionalAnalyses|partner");
+          "ReportSalesDimensionalAnalyses|partner", IsIDFilter.instance);
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportSalesDimensionalAnalyses|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportSalesDimensionalAnalyses|product");
+          "ReportSalesDimensionalAnalyses|product", IsIDFilter.instance);
       String strmWarehouseId = vars.getRequestGlobalVariable("inpmWarehouseId",
           "ReportSalesDimensionalAnalyze|warehouse");
-      String strNotShown = vars.getInStringParameter("inpNotShown");
-      String strShown = vars.getInStringParameter("inpShown");
+      // hardcoded to numeric in switch in the code
+      String strNotShown = vars.getInStringParameter("inpNotShown", IsPositiveIntFilter.instance);
+      String strShown = vars.getInStringParameter("inpShown", IsPositiveIntFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportSalesDimensionalAnalyses|org", "0");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportSalesDimensionalAnalyses|salesrep");
@@ -87,12 +90,12 @@ public class ReportSalesOrderDimensionalPDF extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPagePdf(HttpServletResponse response, VariablesSecureApp vars, String strComparative,
-      String strDateFrom, String strDateTo, String strPartnerGroup, String strcBpartnerId,
-      String strProductCategory, String strmProductId, String strmWarehouseId, String strNotShown,
-      String strShown, String strDateFromRef, String strDateToRef, String strOrg,
-      String strsalesrepId, String strOrder, String strMayor, String strMenor,
-      String strPartnerSalesrepId) throws IOException, ServletException {
+  private void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
+      String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
+      String strcBpartnerId, String strProductCategory, String strmProductId,
+      String strmWarehouseId, String strNotShown, String strShown, String strDateFromRef,
+      String strDateToRef, String strOrg, String strsalesrepId, String strOrder, String strMayor,
+      String strMenor, String strPartnerSalesrepId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     XmlDocument xmlDocument = null;

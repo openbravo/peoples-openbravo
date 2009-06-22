@@ -31,11 +31,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.ad_combos.MonedaComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataClientTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
@@ -57,28 +57,28 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class InitialClientSetup extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final String SALTO_LINEA = "<br>\n";
-  String C_Currency_ID = "";
-  String clientName = "";
-  String AD_User_ID = "";
-  String AD_User_Name = "";
-  String AD_User_U_Name = "";
-  String AD_User_U_ID = "";
-  String AD_Client_ID = "";
-  String C_AcctSchema_ID = "";
-  String client = "1000000";
-  String strError = "";
-  String C_Calendar_ID = null;
-  StringBuffer strSummary = new StringBuffer();
-  AcctSchema m_AcctSchema;
-  boolean m_hasProject;
-  boolean m_hasMCampaign;
-  boolean m_hasSRegion;
-  boolean isOK = true;
-  String AD_Tree_Org_ID = "", AD_Tree_BPartner_ID = "", AD_Tree_Project_ID = "",
+  private static final String SALTO_LINEA = "<br>\n";
+  private String C_Currency_ID = "";
+  private String clientName = "";
+  private String AD_User_ID = "";
+  private String AD_User_Name = "";
+  private String AD_User_U_Name = "";
+  private String AD_User_U_ID = "";
+  private String AD_Client_ID = "";
+  private String C_AcctSchema_ID = "";
+  private String client = "1000000";
+  private String strError = "";
+  private String C_Calendar_ID = null;
+  private StringBuffer strSummary = new StringBuffer();
+  private AcctSchema m_AcctSchema;
+  private boolean m_hasProject;
+  private boolean m_hasMCampaign;
+  private boolean m_hasSRegion;
+  private boolean isOK = true;
+  private String AD_Tree_Org_ID = "", AD_Tree_BPartner_ID = "", AD_Tree_Project_ID = "",
       AD_Tree_SalesRegion_ID = "", AD_Tree_Product_ID = "", AD_Tree_Account_ID = "";
-  static StringBuffer m_info = new StringBuffer();
-  static StringBuffer m_infoOperands = new StringBuffer();
+  private static StringBuffer m_info = new StringBuffer();
+  private static StringBuffer m_infoOperands = new StringBuffer();
   private final String CompiereSys = "N"; // Should NOT be changed
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -87,7 +87,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars);
     } else if (vars.commandIn("OK")) {
-      String strModules = vars.getInStringParameter("inpNodes");
+      String strModules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
       m_info.delete(0, m_info.length());
       String strResultado = process(request, response, vars, strModules);
       log4j.debug("InitialClientSetup - after processFile");
@@ -207,7 +207,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     out.close();
   }
 
-  public String process(HttpServletRequest request, HttpServletResponse response,
+  private String process(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strModules) throws IOException {
     if (log4j.isDebugEnabled())
       log4j.debug("InitialOrgSetup - strModules - " + strModules);
@@ -365,7 +365,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
     }
 
-    // ==========================================================================================================================================
+    //==============================================================================================
     if (!strModules.equals("")) {
       try {
         m_info.append(SALTO_LINEA).append("*****************************************************")
@@ -411,7 +411,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
     }
 
-    // ==========================================================================================================================================
+    //==============================================================================================
 
     log4j.debug("InitialClientSetup - after createEntities");
     if (isOK)
@@ -422,14 +422,14 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     return m_info.toString();
   }
 
-  public boolean isTrue(String s) {
+  private boolean isTrue(String s) {
     if (s == null || s.equals(""))
       return false;
     else
       return true;
   }
 
-  public boolean createClient(Connection conn, VariablesSecureApp vars, String m_ClientName,
+  private boolean createClient(Connection conn, VariablesSecureApp vars, String m_ClientName,
       String userClient) throws ServletException {
 
     if (log4j.isDebugEnabled())
@@ -658,7 +658,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     return true;
   }
 
-  public boolean save(Connection conn, VariablesSecureApp vars, String AD_Client_ID,
+  private boolean save(Connection conn, VariablesSecureApp vars, String AD_Client_ID,
       String C_Element_ID, AccountingValueData[] data) throws ServletException {
     String strAccountTree = InitialClientSetupData.selectTree(this, AD_Client_ID);
     for (int i = 0; i < data.length; i++) {
@@ -743,7 +743,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     return updateOperands(conn, vars, AD_Client_ID, data, C_Element_ID);
   }// save
 
-  public boolean updateOperands(Connection conn, VariablesSecureApp vars, String AD_Client_ID,
+  private boolean updateOperands(Connection conn, VariablesSecureApp vars, String AD_Client_ID,
       AccountingValueData[] data, String C_Element_ID) throws ServletException {
     boolean OK = true;
     for (int i = 0; i < data.length; i++) {
@@ -794,13 +794,13 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     return strResult;
   } // operandProcess
 
-  public String nextSeqNo(String oldSeqNo) {
+  private String nextSeqNo(String oldSeqNo) {
     BigDecimal seqNo = new BigDecimal(oldSeqNo);
     String SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
     return SeqNo;
   }
 
-  public AccountingValueData[] parseData(FieldProvider[] data) throws ServletException {
+  private AccountingValueData[] parseData(FieldProvider[] data) throws ServletException {
     AccountingValueData[] result = null;
     Vector<Object> vec = new Vector<Object>();
     for (int i = 0; i < data.length; i++) {
@@ -883,7 +883,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     return result;
   }// parseData
 
-  public String getC_ElementValue_ID(AccountingValueData[] data, String key) {
+  private String getC_ElementValue_ID(AccountingValueData[] data, String key) {
     if (data == null || data.length == 0)
       return "";
     for (int i = 0; i < data.length; i++) {
@@ -896,7 +896,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     return "";
   } // getC_ElementValue_ID
 
-  public boolean createAccounting(Connection conn, VariablesSecureApp vars,
+  private boolean createAccounting(Connection conn, VariablesSecureApp vars,
       String newC_Currency_ID, String curName, boolean hasProduct, boolean hasBPartner,
       boolean hasProject, boolean hasMCampaign, boolean hasSRegion, FieldProvider[] avData)
       throws ServletException {
@@ -1191,7 +1191,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     return true;
   } // createAccounting
 
-  public boolean createDocumentTypes(VariablesSecureApp vars) throws ServletException {
+  private boolean createDocumentTypes(VariablesSecureApp vars) throws ServletException {
     // GL Categories
     String GL_Standard = createGLCategory(vars, "Standard", "M", true);
     String GL_None = createGLCategory(vars, "None", "D", false);
@@ -1432,7 +1432,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
    * @return the error. "" if there is no error
    */
 
-  public String createReferenceData(Connection conn, VariablesSecureApp vars, String strClient,
+  private String createReferenceData(Connection conn, VariablesSecureApp vars, String strClient,
       String strModules, String strCurrency, boolean hasProduct, boolean hasBPartner,
       boolean hasProject, boolean hasMCampaign, boolean hasSRegion, boolean bCreateAccounting)
       throws ServletException, IOException, SQLException, NoConnectionAvailableException {
@@ -1475,6 +1475,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
             if (myFiles[j].getName().endsWith(".xml"))
               myTargetFiles.add(myFiles[j]);
           }
+          myFiles = new File[myTargetFiles.size()];
           myFiles = myTargetFiles.toArray(myFiles);
           StringBuffer strError = new StringBuffer("");
           for (int j = 0; j < myFiles.length; j++) {

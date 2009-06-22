@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Vector;
+
+import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -37,7 +39,7 @@ import org.openbravo.database.ConnectionProvider;
  *         application.
  */
 public class ComboTableData {
-  static Logger log4j = Logger.getLogger(ComboTableData.class);
+  private static Logger log4j = Logger.getLogger(ComboTableData.class);
   private final String internalPrefix = "@@";
   private static final String FIELD_CONCAT = " || ' - ' || ";
   private static final String INACTIVE_DATA = "**";
@@ -135,7 +137,7 @@ public class ComboTableData {
    *          New session object.
    * @throws Exception
    */
-  public void setVars(VariablesSecureApp _vars) throws Exception {
+  private void setVars(VariablesSecureApp _vars) throws Exception {
     if (_vars == null)
       throw new Exception("The session vars is null");
     this.vars = _vars;
@@ -146,7 +148,7 @@ public class ComboTableData {
    * 
    * @return Session object.
    */
-  public VariablesSecureApp getVars() {
+  private VariablesSecureApp getVars() {
     return this.vars;
   }
 
@@ -157,7 +159,7 @@ public class ComboTableData {
    *          New database handler object.
    * @throws Exception
    */
-  public void setPool(ConnectionProvider _conn) throws Exception {
+  private void setPool(ConnectionProvider _conn) throws Exception {
     if (_conn == null)
       throw new Exception("The pool is null");
     this.pool = _conn;
@@ -168,7 +170,7 @@ public class ComboTableData {
    * 
    * @return Database handler object.
    */
-  public ConnectionProvider getPool() {
+  private ConnectionProvider getPool() {
     return this.pool;
   }
 
@@ -179,7 +181,7 @@ public class ComboTableData {
    *          String with the new reference
    * @throws Exception
    */
-  public void setReferenceType(String _reference) throws Exception {
+  private void setReferenceType(String _reference) throws Exception {
     if (_reference != null && !_reference.equals("")) {
       try {
         Integer.valueOf(_reference).intValue();
@@ -196,7 +198,7 @@ public class ComboTableData {
    * 
    * @return String with the reference type id.
    */
-  public String getReferenceType() {
+  private String getReferenceType() {
     return getParameter(internalPrefix + "reference");
   }
 
@@ -207,7 +209,7 @@ public class ComboTableData {
    *          String with the new object name.
    * @throws Exception
    */
-  public void setObjectName(String _name) throws Exception {
+  private void setObjectName(String _name) throws Exception {
     setParameter(internalPrefix + "name", _name);
   }
 
@@ -216,7 +218,7 @@ public class ComboTableData {
    * 
    * @return String with the object name.
    */
-  public String getObjectName() {
+  private String getObjectName() {
     return getParameter(internalPrefix + "name");
   }
 
@@ -227,7 +229,7 @@ public class ComboTableData {
    *          String with the new object reference id.
    * @throws Exception
    */
-  public void setObjectReference(String _reference) throws Exception {
+  private void setObjectReference(String _reference) throws Exception {
     if (_reference != null && !_reference.equals("")) {
       try {
         Integer.valueOf(_reference).intValue();
@@ -245,7 +247,7 @@ public class ComboTableData {
    * 
    * @return String with the object reference id.
    */
-  public String getObjectReference() {
+  private String getObjectReference() {
     return getParameter(internalPrefix + "objectReference");
   }
 
@@ -256,7 +258,7 @@ public class ComboTableData {
    *          String for the new validation id.
    * @throws Exception
    */
-  public void setValidation(String _reference) throws Exception {
+  private void setValidation(String _reference) throws Exception {
     if (_reference != null && !_reference.equals("")) {
       try {
         Integer.valueOf(_reference).intValue();
@@ -273,7 +275,7 @@ public class ComboTableData {
    * 
    * @return String with the validation id.
    */
-  public String getValidation() {
+  private String getValidation() {
     return getParameter(internalPrefix + "validation");
   }
 
@@ -284,7 +286,7 @@ public class ComboTableData {
    *          String with the new granted organizations list.
    * @throws Exception
    */
-  public void setOrgList(String _orgList) throws Exception {
+  private void setOrgList(String _orgList) throws Exception {
     setParameter(internalPrefix + "orgList", _orgList);
   }
 
@@ -293,7 +295,7 @@ public class ComboTableData {
    * 
    * @return String with the granted organizations list.
    */
-  public String getOrgList() {
+  private String getOrgList() {
     return getParameter(internalPrefix + "orgList");
   }
 
@@ -304,7 +306,7 @@ public class ComboTableData {
    *          String with the new granted clients list.
    * @throws Exception
    */
-  public void setClientList(String _clientList) throws Exception {
+  private void setClientList(String _clientList) throws Exception {
     setParameter(internalPrefix + "clientList", _clientList);
   }
 
@@ -313,7 +315,7 @@ public class ComboTableData {
    * 
    * @return String with the granted clients list.
    */
-  public String getClientList() {
+  private String getClientList() {
     return getParameter(internalPrefix + "clientList");
   }
 
@@ -325,7 +327,7 @@ public class ComboTableData {
    * @param _alias
    *          String with the alias for this field.
    */
-  public void addSelectField(String _field, String _alias) {
+  private void addSelectField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " AS ", _alias, "SELECT");
     if (this.select == null)
       this.select = new Vector<QueryFieldStructure>();
@@ -337,7 +339,7 @@ public class ComboTableData {
    * 
    * @return Vector with the select's fields.
    */
-  public Vector<QueryFieldStructure> getSelectFields() {
+  private Vector<QueryFieldStructure> getSelectFields() {
     return this.select;
   }
 
@@ -349,7 +351,7 @@ public class ComboTableData {
    * @param _alias
    *          String with the alias for the field.
    */
-  public void addFromField(String _field, String _alias) {
+  private void addFromField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " ", _alias, "FROM");
     if (this.from == null)
       this.from = new Vector<QueryFieldStructure>();
@@ -361,7 +363,7 @@ public class ComboTableData {
    * 
    * @return Vector with the from's fields.
    */
-  public Vector<QueryFieldStructure> getFromFields() {
+  private Vector<QueryFieldStructure> getFromFields() {
     return this.from;
   }
 
@@ -373,7 +375,7 @@ public class ComboTableData {
    * @param _type
    *          String for group fields.
    */
-  public void addWhereField(String _field, String _type) {
+  private void addWhereField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
     if (this.where == null)
       this.where = new Vector<QueryFieldStructure>();
@@ -385,7 +387,7 @@ public class ComboTableData {
    * 
    * @return Vector with the where's fields.
    */
-  public Vector<QueryFieldStructure> getWhereFields() {
+  private Vector<QueryFieldStructure> getWhereFields() {
     return this.where;
   }
 
@@ -395,7 +397,7 @@ public class ComboTableData {
    * @param _field
    *          String with the field.
    */
-  public void addOrderByField(String _field) {
+  private void addOrderByField(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
     if (this.orderBy == null)
       this.orderBy = new Vector<QueryFieldStructure>();
@@ -407,7 +409,7 @@ public class ComboTableData {
    * 
    * @return Vector with the order by's fields.
    */
-  public Vector<QueryFieldStructure> getOrderByFields() {
+  private Vector<QueryFieldStructure> getOrderByFields() {
     return this.orderBy;
   }
 
@@ -419,7 +421,7 @@ public class ComboTableData {
    * @param _fieldName
    *          String with the name of the field.
    */
-  public void addSelectParameter(String _parameter, String _fieldName) {
+  private void addSelectParameter(String _parameter, String _fieldName) {
     if (this.paramSelect == null)
       this.paramSelect = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "SELECT");
@@ -431,7 +433,7 @@ public class ComboTableData {
    * 
    * @return Vector with the parameters.
    */
-  public Vector<QueryParameterStructure> getSelectParameters() {
+  private Vector<QueryParameterStructure> getSelectParameters() {
     return this.paramSelect;
   }
 
@@ -443,7 +445,7 @@ public class ComboTableData {
    * @param _fieldName
    *          String with the name od the field.
    */
-  public void addFromParameter(String _parameter, String _fieldName) {
+  private void addFromParameter(String _parameter, String _fieldName) {
     if (this.paramFrom == null)
       this.paramFrom = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "FROM");
@@ -455,7 +457,7 @@ public class ComboTableData {
    * 
    * @return Vector with the parameters.
    */
-  public Vector<QueryParameterStructure> getFromParameters() {
+  private Vector<QueryParameterStructure> getFromParameters() {
     return this.paramFrom;
   }
 
@@ -469,7 +471,7 @@ public class ComboTableData {
    * @param _type
    *          String with a group name.
    */
-  public void addWhereParameter(String _parameter, String _fieldName, String _type) {
+  private void addWhereParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramWhere == null)
       this.paramWhere = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
@@ -481,7 +483,7 @@ public class ComboTableData {
    * 
    * @return Vector with the parameters.
    */
-  public Vector<QueryParameterStructure> getWhereParameters() {
+  private Vector<QueryParameterStructure> getWhereParameters() {
     return this.paramWhere;
   }
 
@@ -493,7 +495,7 @@ public class ComboTableData {
    * @param _fieldName
    *          String with the name of the field.
    */
-  public void addOrderByParameter(String _parameter, String _fieldName) {
+  private void addOrderByParameter(String _parameter, String _fieldName) {
     if (this.paramOrderBy == null)
       this.paramOrderBy = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "ORDERBY");
@@ -505,7 +507,7 @@ public class ComboTableData {
    * 
    * @return Vector with the parameters.
    */
-  public Vector<QueryParameterStructure> getOrderByParameters() {
+  private Vector<QueryParameterStructure> getOrderByParameters() {
     return this.paramOrderBy;
   }
 
@@ -518,7 +520,7 @@ public class ComboTableData {
    *          The value for this parameter.
    * @throws Exception
    */
-  public void setParameter(String name, String value) throws Exception {
+  void setParameter(String name, String value) throws Exception {
     if (name == null || name.equals(""))
       throw new Exception("Invalid parameter name");
     if (this.parameters == null)
@@ -536,7 +538,7 @@ public class ComboTableData {
    *          The name of the field defined for the parameter.
    * @return String with the value.
    */
-  public String getParameter(String name) {
+  private String getParameter(String name) {
     if (name == null || name.equals(""))
       return "";
     else if (this.parameters == null)
@@ -550,7 +552,7 @@ public class ComboTableData {
    * 
    * @return Vector with the values.
    */
-  public Vector<String> getParameters() {
+  Vector<String> getParameters() {
     Vector<String> result = new Vector<String>();
     if (log4j.isDebugEnabled())
       log4j.debug("Obtaining parameters");
@@ -608,7 +610,7 @@ public class ComboTableData {
    * @param _index
    *          Integer with the new index.
    */
-  public void setIndex(int _index) {
+  private void setIndex(int _index) {
     this.index = _index;
   }
 
@@ -617,7 +619,7 @@ public class ComboTableData {
    * 
    * @return Integer with the index.
    */
-  public int getIndex() {
+  private int getIndex() {
     return this.index;
   }
 
@@ -626,7 +628,7 @@ public class ComboTableData {
    * 
    * @throws Exception
    */
-  public void generateSQL() throws Exception {
+  private void generateSQL() throws Exception {
     if (getPool() == null)
       throw new Exception("No pool defined for database connection");
     else if (getReferenceType().equals(""))
@@ -792,7 +794,7 @@ public class ComboTableData {
    * in the whereclauses, filterclauses and orderbyclauses fields of the tab's table, where the user
    * doesn´t know the alias of the referenced field.
    */
-  public void parseNames() {
+  private void parseNames() {
     Vector<QueryFieldStructure> tables = getFromFields();
     if (tables == null || tables.size() == 0)
       return;
@@ -899,7 +901,7 @@ public class ComboTableData {
    *          String with the type of the clause (WHERE, ORDER...)
    * @return String with the text replaced.
    */
-  public String parseContext(String context, String type) {
+  private String parseContext(String context, String type) {
     if (context == null || context.equals(""))
       return "";
     StringBuffer strOut = new StringBuffer();
@@ -945,7 +947,7 @@ public class ComboTableData {
    *          String with the name of the field.
    * @throws Exception
    */
-  public void identifier(String tableName, FieldProvider field) throws Exception {
+  private void identifier(String tableName, FieldProvider field) throws Exception {
     String reference;
     if (field == null)
       reference = getReferenceType();
@@ -1081,7 +1083,7 @@ public class ComboTableData {
    *          Array of field groups to remove from the query.
    * @return String with the query.
    */
-  public String getQuery(boolean onlyId, String[] discard) {
+  private String getQuery(boolean onlyId, String[] discard) {
     StringBuffer text = new StringBuffer();
     Vector<QueryFieldStructure> aux = getSelectFields();
     String idName = "";
@@ -1339,4 +1341,72 @@ public class ComboTableData {
     vector.copyInto(objectListData);
     return (objectListData);
   }
+
+  /**
+   * Special fill parameters function to be used from the search popup (servlet).
+   * 
+   * It flags the combo to be used from a search popup changing the logic to get the needed
+   * parameters for a possible where clause: it uses the pattern inpParam<columnName> to get the
+   * values from the request and does not use the preferences for fields to preset a search filter
+   */
+  public void fillParametersFromSearch(String tab, String window) throws ServletException {
+    fillSQLParameters(pool, vars, null, tab, window, "", true);
+  }
+
+  /**
+   * Fill the parameters of the sql with the session values or FieldProvider values. Used in the
+   * combo fields.
+   * 
+   * @param data
+   *          optional FieldProvider which can be used to get the needed parameter values from. If
+   *          the FieldProvider has a filed named after a parameter, then its value will be used if
+   *          the value could not be already obtained from the request parameters.
+   * @param window
+   *          Window id.
+   * @param actual_value
+   *          actual value for the combo.
+   * @throws ServletException
+   */
+  public void fillParameters(FieldProvider data, String window, String actual_value)
+      throws ServletException {
+    fillSQLParameters(pool, vars, data, "", window, actual_value, false);
+  }
+
+  /**
+   * Fill the parameters of the sql with the session values or FieldProvider values. Used in the
+   * combo fields.
+   * 
+   * @param conn
+   *          Handler for the database connection.
+   * @param vars
+   *          Handler for the session info.
+   * @param data
+   *          FieldProvider with the columns values.
+   * @param window
+   *          Window id.
+   * @param actual_value
+   *          actual value for the combo.
+   * @throws ServletException
+   */
+  void fillSQLParameters(ConnectionProvider conn, VariablesSecureApp vars, FieldProvider data,
+      String tab, String window, String actual_value, boolean fromSearch) throws ServletException {
+    final Vector<String> vAux = getParameters();
+    if (vAux != null && vAux.size() > 0) {
+      if (log4j.isDebugEnabled())
+        log4j.debug("Combo Parameters: " + vAux.size());
+      for (int i = 0; i < vAux.size(); i++) {
+        final String strAux = vAux.elementAt(i);
+        try {
+          final String value = Utility.parseParameterValue(conn, vars, data, strAux, tab, window,
+              actual_value, fromSearch);
+          if (log4j.isDebugEnabled())
+            log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
+          setParameter(strAux, value);
+        } catch (final Exception ex) {
+          throw new ServletException(ex);
+        }
+      }
+    }
+  }
+
 }

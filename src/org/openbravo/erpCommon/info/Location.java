@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -93,7 +93,7 @@ public class Location extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  LocationSearchData getEditVariables(VariablesSecureApp vars) {
+  private LocationSearchData getEditVariables(VariablesSecureApp vars) {
     LocationSearchData data = new LocationSearchData();
     data.cLocationId = vars.getStringParameter("inpCLocationId");
     data.adClientId = vars.getClient();
@@ -109,8 +109,8 @@ public class Location extends HttpSecureAppServlet {
     return data;
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars, LocationSearchData data)
-      throws IOException, ServletException {
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+      LocationSearchData data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Location seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -123,7 +123,7 @@ public class Location extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(LocationSearchData data) throws IOException, ServletException {
+  private String generateResult(LocationSearchData data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -135,8 +135,8 @@ public class Location extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageFS(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: FS Locations seeker");
 
@@ -149,8 +149,8 @@ public class Location extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageSheet(HttpServletResponse response, VariablesSecureApp vars, String strcLocationId,
-      String strWindow) throws IOException, ServletException {
+  private void printPageSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strcLocationId, String strWindow) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: F1 Locations seeker");
     XmlDocument xmlDocument;
@@ -213,8 +213,8 @@ public class Location extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageF2(HttpServletResponse response, VariablesSecureApp vars, String strcCountryId,
-      String strWindow) throws IOException, ServletException {
+  private void printPageF2(HttpServletResponse response, VariablesSecureApp vars,
+      String strcCountryId, String strWindow) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: F2 Locations seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Location_F2")
@@ -225,8 +225,8 @@ public class Location extends HttpSecureAppServlet {
           "C_Region of Country", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindow),
           Utility.getContext(this, vars, "#User_Client", strWindow), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindow, "");
-      xmlDocument
-          .setParameter("array", arrayEntradaSimple("regions", comboTableData.select(false)));
+      xmlDocument.setParameter("array", Utility.arrayEntradaSimple("regions", comboTableData
+          .select(false)));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -130,7 +130,7 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  InvoiceVendorMultilineData getEditVariables(VariablesSecureApp vars, String windowId)
+  private InvoiceVendorMultilineData getEditVariables(VariablesSecureApp vars, String windowId)
       throws IOException, ServletException {
     InvoiceVendorMultilineData data = new InvoiceVendorMultilineData();
 
@@ -212,7 +212,7 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
     return data;
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strC_Invoice_ID, String windowName, String tabName, String windowId, String tabId,
       String tableId, String windowNameEnUS, String tabNameEnUS) throws IOException,
       ServletException {

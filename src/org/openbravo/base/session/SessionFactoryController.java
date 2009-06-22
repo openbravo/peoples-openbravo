@@ -26,7 +26,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.PostgreSQLDialect;
-
 import org.openbravo.base.exception.OBException;
 
 /**
@@ -43,6 +42,13 @@ public abstract class SessionFactoryController {
   // uniqueconstraints (ModelProvider) can fail with strange errors.
   private static final String UNIQUE_CONSTRAINT_QUERY_POSTGRES = "SELECT pg_class.relname, pg_attribute.attname, pg_constraint.conname FROM pg_constraint JOIN pg_class ON pg_class.oid = pg_constraint.conrelid JOIN pg_attribute ON pg_attribute.attrelid=pg_constraint.conrelid WHERE pg_constraint.contype = 'u' AND (pg_attribute.attnum = ANY (pg_constraint.conkey)) order by pg_constraint.conname";
   private static final String UNIQUE_CONSTRAINT_QUERY_ORACLE = "SELECT UCC.TABLE_NAME,UCC.COLUMN_NAME,UCC.CONSTRAINT_NAME FROM USER_CONS_COLUMNS UCC JOIN USER_CONSTRAINTS UC ON UC.CONSTRAINT_NAME=UCC.CONSTRAINT_NAME WHERE UC.CONSTRAINT_TYPE = 'U' ORDER BY UCC.CONSTRAINT_NAME";
+
+  private static final String COLUMN_QUERY_POSTGRES = "SELECT t.tablename, a.attname, a.attnotnull FROM pg_tables t, pg_class c, pg_attribute a "
+      + "WHERE tablename NOT LIKE 'pg%' AND tablename NOT LIKE 'sql%' and "
+      + "c.relname = t.tablename AND a.attnum > 0 AND a.attrelid = c.oid";
+
+  private static final String COLUMN_QUERY_ORACLE = "SELECT C.TABLE_NAME, C.COLUMN_NAME, C.NULLABLE FROM "
+      + " ALL_TAB_COLUMNS C ORDER BY C.TABLE_NAME";
 
   private static SessionFactoryController instance = null;
 
@@ -79,7 +85,7 @@ public abstract class SessionFactoryController {
     } else {
       log.debug("Nullifying session factory controller");
     }
-    if (instance != null) {
+    if (instance != null && instance.isInitialized()) {
       // TODO: we should ensure that there are no open sessions....
       instance.getSessionFactory().close();
     }
@@ -98,6 +104,10 @@ public abstract class SessionFactoryController {
   public Configuration getConfiguration() {
     initialize();
     return configuration;
+  }
+
+  public boolean isInitialized() {
+    return sessionFactory != null;
   }
 
   /**
@@ -149,7 +159,7 @@ public abstract class SessionFactoryController {
 
   protected abstract void mapModel(Configuration theConfiguration);
 
-  private Properties getOpenbravoProperties() {
+  protected Properties getOpenbravoProperties() {
     final Properties props = new Properties();
     final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
     if (obProps == null) {
@@ -244,5 +254,18 @@ public abstract class SessionFactoryController {
       return UNIQUE_CONSTRAINT_QUERY_POSTGRES;
     }
     return UNIQUE_CONSTRAINT_QUERY_ORACLE;
+  }
+
+  /**
+   * Returns a query for column metadata for not-null/required which is specific for Postgres or
+   * Oracle.
+   * 
+   * @return depending on the Openbravo.properties a Postgres or Oracle specific query is returned
+   */
+  public String getColumnMetadataQuery() {
+    if (isPostgresDatabase) {
+      return COLUMN_QUERY_POSTGRES;
+    }
+    return COLUMN_QUERY_ORACLE;
   }
 }

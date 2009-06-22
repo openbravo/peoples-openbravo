@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_callouts.SEOrderBPartnerData;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
+import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.reference.ActionButtonData;
@@ -50,7 +50,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ExpenseSOrder extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  static final BigDecimal ZERO = new BigDecimal(0.0);
+  private static final BigDecimal ZERO = new BigDecimal(0.0);
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -82,7 +82,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError processButton(VariablesSecureApp vars, String strBPartner, String strDatefrom,
+  private OBError processButton(VariablesSecureApp vars, String strBPartner, String strDatefrom,
       String strDateto, String strDateOrdered, String strOrganization, String strCompleteAuto) {
     StringBuffer textoMensaje = new StringBuffer();
     Connection conn = null;
@@ -161,7 +161,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
             strBPCCurrencyId = ExpenseSOrderData.selectCurrency(this, data[i].mPricelistId);
           }
 
-          SEOrderBPartnerData[] data1 = SEOrderBPartnerData.select(this, data[i].cBpartnerId);
+          BpartnerMiscData[] data1 = BpartnerMiscData.select(this, data[i].cBpartnerId);
 
           if (data1[0].paymentrule.equals("")) {
             throw new Exception("FormofPaymentNotdefined");
@@ -180,7 +180,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
                     data[i].cBpartnerId), ExpenseSOrderData.billto(this, data[i].cBpartnerId)
                     .equals("") ? ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId)
                     : ExpenseSOrderData.billto(this, data[i].cBpartnerId), strBPCCurrencyId,
-                data1[0].paymentrule, data1[0].cPaymenttermId.equals("") ? SEOrderBPartnerData
+                data1[0].paymentrule, data1[0].cPaymenttermId.equals("") ? ExpenseSOrderData
                     .selectPaymentTerm(this, data[i].adClientId) : data1[0].cPaymenttermId,
                 data1[0].invoicerule.equals("") ? "I" : data1[0].invoicerule, data1[0].deliveryrule
                     .equals("") ? "A" : data1[0].deliveryrule, "I", data1[0].deliveryviarule
@@ -386,7 +386,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     }
   }
 
-  OBError processOrder(VariablesSecureApp vars, String strCOrderId) throws ServletException,
+  private OBError processOrder(VariablesSecureApp vars, String strCOrderId) throws ServletException,
       NoConnectionAvailableException, SQLException {
     Connection conn = null;
     conn = getTransactionConnection();
@@ -410,7 +410,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDatefrom,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDatefrom,
       String strDateto, String strDateOrdered, String strBPartner, String strOrganization,
       String strCompleteAuto) throws IOException, ServletException {
     if (log4j.isDebugEnabled())

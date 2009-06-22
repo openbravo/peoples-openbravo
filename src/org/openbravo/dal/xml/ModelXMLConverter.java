@@ -93,9 +93,10 @@ public class ModelXMLConverter implements OBSingleton {
             + "* KIND, either express or implied. See the License for the specific language\n"
             + "* governing permissions and limitations under the License.\n"
             + "* ***********************************************************************************\n");
-    final Element root = doc.addElement("schema");
-    root.addAttribute("xmlns", "http://www.w3.org/1999/XMLSchema");
-    root.addAttribute("xmlns:ob", "http://www.openbravo.com");
+    final Element root = doc.addElement("xs:schema");
+    root.addNamespace("xs", "http://www.w3.org/2001/XMLSchema");
+    root.addNamespace("ob", "http://www.openbravo.com");
+    root.addAttribute("targetNamespace", "http://www.openbravo.com");
 
     final List<String> entityNames = new ArrayList<String>();
     for (final Entity e : ModelProvider.getInstance().getModel()) {
@@ -103,58 +104,68 @@ public class ModelXMLConverter implements OBSingleton {
     }
     Collections.sort(entityNames);
 
-    final Element rootElement = root.addElement("element");
+    final Element rootElement = root.addElement("xs:element");
     rootElement.addAttribute("name", XMLConstants.OB_ROOT_ELEMENT);
-    final Element complexType = rootElement.addElement("complexType");
-    final Element choiceElement = complexType.addElement("choice");
-    choiceElement.addAttribute("minOccurs", "1");
+    final Element complexType = rootElement.addElement("xs:complexType");
+    final Element choiceElement = complexType.addElement("xs:choice");
+    choiceElement.addAttribute("minOccurs", "0");
     choiceElement.addAttribute("maxOccurs", "unbounded");
 
-    rootElement.addElement("attribute").addAttribute("name", XMLConstants.DATE_TIME_ATTRIBUTE)
-        .addAttribute("type", "string").addAttribute("use", "optional");
-    rootElement.addElement("attribute").addAttribute("name", XMLConstants.OB_VERSION_ATTRIBUTE)
-        .addAttribute("type", "string").addAttribute("use", "optional");
-    rootElement.addElement("attribute").addAttribute("name", XMLConstants.OB_REVISION_ATTRIBUTE)
-        .addAttribute("type", "string").addAttribute("use", "optional");
+    complexType.addElement("xs:attribute").addAttribute("name", XMLConstants.DATE_TIME_ATTRIBUTE)
+        .addAttribute("type", "xs:string").addAttribute("use", "optional");
+    complexType.addElement("xs:attribute").addAttribute("name", XMLConstants.OB_VERSION_ATTRIBUTE)
+        .addAttribute("type", "xs:string").addAttribute("use", "optional");
+    complexType.addElement("xs:attribute").addAttribute("name", XMLConstants.OB_REVISION_ATTRIBUTE)
+        .addAttribute("type", "xs:string").addAttribute("use", "optional");
 
     for (final String entityName : entityNames) {
-      final Element entityElement = choiceElement.addElement("element");
+      final Element entityElement = choiceElement.addElement("xs:element");
       entityElement.addAttribute("name", entityName);
       entityElement.addAttribute("type", "ob:" + entityName + "Type");
     }
 
     for (final String entityName : entityNames) {
-      final Element typeElement = root.addElement("complexType");
+      final Element typeElement = root.addElement("xs:complexType");
       typeElement.addAttribute("name", entityName + "Type");
 
-      final Element typeSequenceElement = typeElement.addElement("sequence");
+      final Element typeSequenceElement = typeElement.addElement("xs:sequence");
       typeSequenceElement.addAttribute("minOccurs", "0");
 
       addPropertyElements(typeSequenceElement, ModelProvider.getInstance().getEntity(entityName));
 
-      typeElement.addElement("attribute").addAttribute("name", "id").addAttribute("type", "string")
-          .addAttribute("use", "optional");
-      typeElement.addElement("attribute").addAttribute("name", "identifier").addAttribute("type",
-          "string").addAttribute("use", "optional");
-      typeElement.addElement("anyAttribute");
+      typeElement.addElement("xs:attribute").addAttribute("name", XMLConstants.ID_ATTRIBUTE)
+          .addAttribute("type", "xs:string").addAttribute("use", "optional");
+      typeElement.addElement("xs:attribute")
+          .addAttribute("name", XMLConstants.IDENTIFIER_ATTRIBUTE)
+          .addAttribute("type", "xs:string").addAttribute("use", "optional");
+      typeElement.addElement("xs:attribute").addAttribute("name", XMLConstants.REFERENCE_ATTRIBUTE)
+          .addAttribute("type", "xs:boolean").addAttribute("use", "optional");
+      typeElement.addElement("xs:anyAttribute");
     }
+
+    addSimpleTypeDeclarations(root);
+    addReferenceType(root);
+    addErrorSchema(root);
+    addResultSchema(root);
 
     return doc;
   }
 
   protected void addPropertyElements(Element sequence, Entity e) {
     for (final Property p : e.getProperties()) {
-      final Element element = sequence.addElement("element");
+      final Element element = sequence.addElement("xs:element");
 
       element.addAttribute("name", p.getName());
+
+      element.addAttribute("minOccurs", "0");
 
       if (p.isOneToMany()) {
         element.addAttribute("minOccurs", "0");
       } else {
         if ((p.isPrimitive() && p.isId()) || !p.isMandatory()) {
-          element.addAttribute("minOccurs", "0");
+          // element.addAttribute("minOccurs", "0");
         } else if (p.isMandatory()) {
-          element.addAttribute("minOccurs", "1");
+          // element.addAttribute("minOccurs", "1");
         }
         element.addAttribute("nillable", Boolean.toString(!p.isMandatory()));
       }
@@ -164,27 +175,129 @@ public class ModelXMLConverter implements OBSingleton {
         element.addAttribute("type", XMLTypeConverter.getInstance().toXMLSchemaType(
             p.getPrimitiveType()));
       } else if (p.isOneToMany()) {
-        final Element complexChildElement = element.addElement("complexType");
-        final Element sequenceChildElement = complexChildElement.addElement("sequence");
-        final Element childElement = sequenceChildElement.addElement("element");
+        final Element complexChildElement = element.addElement("xs:complexType");
+        final Element sequenceChildElement = complexChildElement.addElement("xs:sequence");
+        final Element childElement = sequenceChildElement.addElement("xs:element");
 
         childElement.addAttribute("name", p.getTargetEntity().getName());
         childElement.addAttribute("type", "ob:" + p.getTargetEntity().getName() + "Type");
         childElement.addAttribute("minOccurs", "0");
         childElement.addAttribute("maxOccurs", "unbounded");
       } else {
-        addReferenceAttributes(element);
+        element.addAttribute("type", "ob:ReferenceType");
       }
     }
   }
 
+  /**
+   * @deprecated do not use this method anymore, the reference attributes are defined in the new
+   *             addReferenceType method
+   */
   protected void addReferenceAttributes(Element elem) {
-    elem.addElement("attribute").addAttribute("name", "id").addAttribute("type", "string")
-        .addAttribute("use", "optional");
-    elem.addElement("attribute").addAttribute("name", "entityName").addAttribute("type", "string")
-        .addAttribute("use", "optional");
-    elem.addElement("attribute").addAttribute("name", "identifier").addAttribute("type", "string")
-        .addAttribute("use", "optional");
+    final Element complexElem = elem.addElement("xs:complexType");
+    complexElem.addElement("xs:attribute").addAttribute("name", "id").addAttribute("type",
+        "xs:string").addAttribute("use", "optional");
+    complexElem.addElement("xs:attribute").addAttribute("name", "entityName").addAttribute("type",
+        "xs:string").addAttribute("use", "optional");
+    complexElem.addElement("xs:attribute").addAttribute("name", "identifier").addAttribute("type",
+        "xs:string").addAttribute("use", "optional");
+  }
+
+  private void addReferenceType(Element schemaElement) {
+    final Element complexElem = schemaElement.addElement("xs:complexType").addAttribute("name",
+        "ReferenceType");
+    complexElem.addElement("xs:attribute").addAttribute("name", XMLConstants.ID_ATTRIBUTE)
+        .addAttribute("type", "xs:string").addAttribute("use", "optional");
+    complexElem.addElement("xs:attribute").addAttribute("name", XMLConstants.ENTITYNAME_ATTRIBUTE)
+        .addAttribute("type", "xs:string").addAttribute("use", "optional");
+    complexElem.addElement("xs:attribute").addAttribute("name", XMLConstants.IDENTIFIER_ATTRIBUTE)
+        .addAttribute("type", "xs:string").addAttribute("use", "optional");
+    complexElem.addElement("xs:attribute").addAttribute("name", XMLConstants.TRANSIENT_ATTRIBUTE)
+        .addAttribute("type", "xs:boolean").addAttribute("use", "optional");
+    complexElem.addElement("xs:attribute").addAttribute("name", XMLConstants.INACTIVE_ATTRIBUTE)
+        .addAttribute("type", "xs:boolean").addAttribute("use", "optional");
+  }
+
+  private void addSimpleTypeDeclarations(Element schema) {
+    addSimpleTypeDeclaration(schema, "string");
+    addSimpleTypeDeclaration(schema, "boolean");
+    addSimpleTypeDeclaration(schema, "dateTime");
+    addSimpleTypeDeclaration(schema, "decimal");
+    addSimpleTypeDeclaration(schema, "long");
+    addSimpleTypeDeclaration(schema, "float");
+    addSimpleTypeDeclaration(schema, "base64Binary");
+  }
+
+  private void addSimpleTypeDeclaration(Element schema, String typeName) {
+    final Element complex = schema.addElement("xs:complexType").addAttribute("name", typeName);
+    final Element simple = complex.addElement("xs:simpleContent");
+    final Element extension = simple.addElement("xs:extension").addAttribute("base",
+        "xs:" + typeName);
+    extension.addElement("xs:attribute").addAttribute("name", XMLConstants.TRANSIENT_ATTRIBUTE)
+        .addAttribute("type", "xs:boolean");
+    extension.addElement("xs:attribute").addAttribute("name", XMLConstants.INACTIVE_ATTRIBUTE)
+        .addAttribute("type", "xs:boolean").addAttribute("use", "optional");
+  }
+
+  protected void addErrorSchema(Element rootSchema) {
+    final Element errElem = rootSchema.addElement("xs:element").addAttribute("name", "error");
+    final Element complexType = errElem.addElement("xs:complexType");
+    final Element seqElement = complexType.addElement("xs:sequence");
+    seqElement.addElement("xs:element").addAttribute("name", "message").addAttribute("type",
+        "xs:string");
+  }
+
+  private void addResultSchema(Element schemaElement) {
+    final Element resultElem = schemaElement.addElement("xs:element")
+        .addAttribute("name", "result");
+    final Element complexType = resultElem.addElement("xs:complexType").addAttribute("mixed",
+        "true");
+    final Element seqElement = complexType.addElement("xs:sequence");
+    addStringElement(seqElement, "msg");
+    addStringElement(seqElement, "log");
+    addStringElement(seqElement, "warning");
+    addGroupTypeElement(seqElement, "inserted");
+    addGroupTypeElement(seqElement, "updated");
+    addGroupTypeElement(seqElement, "deleted");
+    addGroupResultType(schemaElement);
+  }
+
+  private void addStringElement(Element sequence, String name) {
+    sequence.addElement("xs:element").addAttribute("name", name).addAttribute("minOccurs", "0")
+        .addAttribute("type", "xs:string");
+  }
+
+  private void addGroupTypeElement(Element sequence, String name) {
+    sequence.addElement("xs:element").addAttribute("name", name).addAttribute("minOccurs", "0")
+        .addAttribute("type", "ob:ResultEntitiesType");
+  }
+
+  private void addGroupResultType(Element schemaElement) {
+    final Element complexElem = schemaElement.addElement("xs:complexType").addAttribute("name",
+        "ResultEntitiesType");
+    final Element choiceElement = complexElem.addElement("xs:choice");
+    choiceElement.addAttribute("minOccurs", "0");
+    choiceElement.addAttribute("maxOccurs", "unbounded");
+
+    final List<String> entityNames = new ArrayList<String>();
+    for (final Entity e : ModelProvider.getInstance().getModel()) {
+      entityNames.add(e.getName());
+    }
+    Collections.sort(entityNames);
+    for (String entityName : entityNames) {
+      choiceElement.addElement("xs:element").addAttribute("name", entityName).addAttribute("type",
+          "ob:ResultEntityType");
+    }
+    addGroupTypeDef(schemaElement);
+  }
+
+  private void addGroupTypeDef(Element schemaElement) {
+    final Element complexElem = schemaElement.addElement("xs:complexType").addAttribute("name",
+        "ResultEntityType");
+    complexElem.addElement("xs:attribute").addAttribute("name", XMLConstants.ID_ATTRIBUTE)
+        .addAttribute("type", "xs:string").addAttribute("use", "optional");
+    complexElem.addElement("xs:attribute").addAttribute("name", XMLConstants.IDENTIFIER_ATTRIBUTE)
+        .addAttribute("type", "xs:string").addAttribute("use", "optional");
   }
 
 }

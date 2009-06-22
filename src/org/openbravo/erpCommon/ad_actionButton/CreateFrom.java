@@ -29,11 +29,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_reports.ReportTrialBalanceData;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.Tree;
+import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -43,7 +44,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateFrom extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final BigDecimal ZERO = BigDecimal.ZERO;
+  private static final BigDecimal ZERO = BigDecimal.ZERO;
 
   @Override
   public void init(ServletConfig config) {
@@ -198,7 +199,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPage_FS(HttpServletResponse response, VariablesSecureApp vars, String strPath,
+  private void printPage_FS(HttpServletResponse response, VariablesSecureApp vars, String strPath,
       String strKey, String strTableId, String strProcessId, String strWindowId, String strTabName,
       String strDateInvoiced, String strBPartnerLocation, String strPriceList, String strBPartner,
       String strStatementDate, String strBankAccount, String strOrg, String strIsreceipt)
@@ -227,7 +228,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     out.close();
   }
 
-  String pageType(String strTableId) {
+  private String pageType(String strTableId) {
     if (strTableId.equals("392"))
       return "Bank";
     else if (strTableId.equals("318"))
@@ -273,9 +274,10 @@ public class CreateFrom extends HttpSecureAppServlet {
     }
   }
 
-  void printPageBank(HttpServletResponse response, VariablesSecureApp vars, String strPath,
-      String strKey, String strTableId, String strProcessId, String strWindowId, String strTabName,
-      String strStatementDate, String strBank) throws IOException, ServletException {
+  protected void printPageBank(HttpServletResponse response, VariablesSecureApp vars,
+      String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
+      String strTabName, String strStatementDate, String strBank) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Bank");
     final String strcBPartner = vars.getStringParameter("inpcBpartnerId");
@@ -427,10 +429,10 @@ public class CreateFrom extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageInvoice(HttpServletResponse response, VariablesSecureApp vars, String strPath,
-      String strKey, String strTableId, String strProcessId, String strWindowId, String strTabName,
-      String strDateInvoiced, String strBPartnerLocation, String strPriceList, String strBPartner)
-      throws IOException, ServletException {
+  protected void printPageInvoice(HttpServletResponse response, VariablesSecureApp vars,
+      String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
+      String strTabName, String strDateInvoiced, String strBPartnerLocation, String strPriceList,
+      String strBPartner) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Invoice");
     CreateFromInvoiceData[] data = null;
@@ -555,9 +557,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageShipment(HttpServletResponse response, VariablesSecureApp vars, String strPath,
-      String strKey, String strTableId, String strProcessId, String strWindowId, String strTabName,
-      String strBPartner) throws IOException, ServletException {
+  protected void printPageShipment(HttpServletResponse response, VariablesSecureApp vars,
+      String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
+      String strTabName, String strBPartner) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Shipment");
     CreateFromShipmentData[] data = null;
@@ -726,46 +728,47 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
 
     if (strBPartner.equals("")) {
-      strArray = arrayEntradaSimple("arrDatos", new CreateFromShipmentData[0]);
-      strArray2 = arrayEntradaSimple("arrDatos2", new CreateFromShipmentData[0]);
+      strArray = Utility.arrayEntradaSimple("arrDatos", new CreateFromShipmentData[0]);
+      strArray2 = Utility.arrayEntradaSimple("arrDatos2", new CreateFromShipmentData[0]);
     } else {
       if (vars.commandIn("REFRESH_INVOICES")) { // Loading the combos in
         // the delivery note's
         // CreateFrom
         if (isSOTrx.equals("Y")) {
-          strArray = arrayEntradaSimple("arrDatos", new CreateFromShipmentData[0]);
-          strArray2 = arrayEntradaSimple("arrDatos2", CreateFromShipmentData
+          strArray = Utility.arrayEntradaSimple("arrDatos", new CreateFromShipmentData[0]);
+          strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromShipmentData
               .selectFromPOSOTrxCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
                   "#User_Client", strWindowId), Utility.getContext(this, vars,
                   "#AccessibleOrgTree", strWindowId), strBPartner));
         } else {
-          strArray = arrayEntradaSimple("arrDatos", CreateFromShipmentData.selectFromInvoiceCombo(
-              this, vars.getLanguage(),
-              Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                  vars, "#AccessibleOrgTree", strWindowId), strBPartner));
-          strArray2 = arrayEntradaSimple("arrDatos2", CreateFromShipmentData.selectFromPOCombo(
-              this, vars.getLanguage(),
-              Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                  vars, "#AccessibleOrgTree", strWindowId), strBPartner));
+          strArray = Utility.arrayEntradaSimple("arrDatos", CreateFromShipmentData
+              .selectFromInvoiceCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
+                  "#User_Client", strWindowId), Utility.getContext(this, vars,
+                  "#AccessibleOrgTree", strWindowId), strBPartner));
+          strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromShipmentData
+              .selectFromPOCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
+                  "#User_Client", strWindowId), Utility.getContext(this, vars,
+                  "#AccessibleOrgTree", strWindowId), strBPartner));
         }
       } else { // Loading the Combos in the Invoice's CreateFrom
         if (isSOTrx.equals("Y")) {
-          strArray = arrayEntradaSimple("arrDatos", CreateFromInvoiceData
+          strArray = Utility.arrayEntradaSimple("arrDatos", CreateFromInvoiceData
               .selectFromShipmentSOTrxCombo(this, vars.getLanguage(), Utility.getContext(this,
                   vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
                   "#AccessibleOrgTree", strWindowId), strBPartner));
-          strArray2 = arrayEntradaSimple("arrDatos2", CreateFromInvoiceData.selectFromPOSOTrxCombo(
-              this, vars.getLanguage(),
-              Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                  vars, "#AccessibleOrgTree", strWindowId), strBPartner));
+          strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromInvoiceData
+              .selectFromPOSOTrxCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
+                  "#User_Client", strWindowId), Utility.getContext(this, vars,
+                  "#AccessibleOrgTree", strWindowId), strBPartner));
         } else {
-          strArray = arrayEntradaSimple("arrDatos", CreateFromInvoiceData.selectFromShipmentCombo(
-              this, vars.getLanguage(),
-              Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                  vars, "#AccessibleOrgTree", strWindowId), strBPartner));
-          strArray2 = arrayEntradaSimple("arrDatos2", CreateFromInvoiceData.selectFromPOCombo(this,
-              vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId),
-              Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
+          strArray = Utility.arrayEntradaSimple("arrDatos", CreateFromInvoiceData
+              .selectFromShipmentCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
+                  "#User_Client", strWindowId), Utility.getContext(this, vars,
+                  "#AccessibleOrgTree", strWindowId), strBPartner));
+          strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromInvoiceData
+              .selectFromPOCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
+                  "#User_Client", strWindowId), Utility.getContext(this, vars,
+                  "#AccessibleOrgTree", strWindowId), strBPartner));
         }
       }
     }
@@ -778,9 +781,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePay(HttpServletResponse response, VariablesSecureApp vars, String strPath,
-      String strKey, String strTableId, String strProcessId, String strWindowId, String strTabName,
-      String strBPartner) throws IOException, ServletException {
+  protected void printPagePay(HttpServletResponse response, VariablesSecureApp vars,
+      String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
+      String strTabName, String strBPartner) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Pay");
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -793,9 +796,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageSettlement(HttpServletResponse response, VariablesSecureApp vars, String strPath,
-      String strKey, String strTableId, String strProcessId, String strWindowId, String strTabName,
-      String strBPartner) throws IOException, ServletException {
+  protected void printPageSettlement(HttpServletResponse response, VariablesSecureApp vars,
+      String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
+      String strTabName, String strBPartner) throws IOException, ServletException {
 
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Settlement");
@@ -970,9 +973,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars, String strPath,
-      String strKey, String strTableId, String strProcessId, String strWindowId, String strTabName,
-      String strBPartner) throws IOException, ServletException {
+  protected void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars,
+      String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
+      String strTabName, String strBPartner) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: DPManagement");
     String strcBPartner = vars.getStringParameter("inpcBpartnerId");
@@ -1139,9 +1142,10 @@ public class CreateFrom extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageCRemittance(HttpServletResponse response, VariablesSecureApp vars, String strPath,
-      String strKey, String strTableId, String strProcessId, String strWindowId, String strTabName,
-      String strBPartner, String stradOrgId, String isReceipt) throws IOException, ServletException {
+  protected void printPageCRemittance(HttpServletResponse response, VariablesSecureApp vars,
+      String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
+      String strTabName, String strBPartner, String stradOrgId, String isReceipt)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: CRemittance");
     String strcBPartner = vars.getStringParameter("inpcBpartnerId");
@@ -1162,7 +1166,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     // String strStatusTo = vars.getStringParameter("inpStatusTo");
 
     final String strMarcarTodos = vars.getStringParameter("inpTodos", "N");
-    final String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    final String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     final String strOrgFamily = Tree.getMembers(this, strTreeOrg, strOrg);
 
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -1308,11 +1312,11 @@ public class CreateFrom extends HttpSecureAppServlet {
       return null;
   }
 
-  OBError saveBank(VariablesSecureApp vars, String strKey, String strTableId, String strProcessId)
-      throws IOException, ServletException {
+  protected OBError saveBank(VariablesSecureApp vars, String strKey, String strTableId,
+      String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Bank");
-    String strPayment = vars.getInStringParameter("inpcPaymentId");
+    String strPayment = vars.getInStringParameter("inpcPaymentId", IsIDFilter.instance);
     final String strStatementDate = vars.getStringParameter("inpstatementdate");
     String strDateplanned = "";
     String strChargeamt = "";
@@ -1391,7 +1395,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  OBError saveInvoice(VariablesSecureApp vars, String strKey, String strTableId,
+  protected OBError saveInvoice(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId, String strWindowId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Invoice");
@@ -1400,7 +1404,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strBPartner = vars.getRequiredStringParameter("inpcBpartnerId");
     final String strPriceList = vars.getRequiredStringParameter("inpMPricelist");
     final String strType = vars.getRequiredStringParameter("inpType");
-    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpcOrderId"));
+    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpcOrderId",
+        IsIDFilter.instance));
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     String strPO = "", priceActual = "0", priceLimit = "0", priceList = "0", strPriceListVersion = "", priceStd = "0";
     CreateFromInvoiceData[] data = null;
@@ -1510,7 +1515,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  OBError saveShipment(VariablesSecureApp vars, String strKey, String strTableId,
+  protected OBError saveShipment(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId, String strWindowId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Shipment");
@@ -1521,13 +1526,14 @@ public class CreateFrom extends HttpSecureAppServlet {
       return saveShipmentPO(vars, strKey, strTableId, strProcessId, strWindowId);
   }
 
-  OBError saveShipmentPO(VariablesSecureApp vars, String strKey, String strTableId,
+  protected OBError saveShipmentPO(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId, String strWindowId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Shipment");
     final String strLocatorCommon = vars.getStringParameter("inpmLocatorId");
     final String strType = vars.getRequiredStringParameter("inpType");
-    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpId"));
+    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpId",
+        IsIDFilter.instance));
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     String strInvoice = "", strPO = "";
     CreateFromShipmentData[] data = null;
@@ -1732,13 +1738,14 @@ public class CreateFrom extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  OBError saveShipmentSO(VariablesSecureApp vars, String strKey, String strTableId,
+  protected OBError saveShipmentSO(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId, String strWindowId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Shipment");
     final String strLocator = vars.getRequiredStringParameter("inpmLocatorId");
     final String strType = vars.getRequiredStringParameter("inpType");
-    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpId"));
+    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpId",
+        IsIDFilter.instance));
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     String strInvoice = "", strPO = "";
     CreateFromShipmentData[] data = null;
@@ -1900,18 +1907,18 @@ public class CreateFrom extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  OBError savePay(VariablesSecureApp vars, String strKey, String strTableId, String strProcessId)
-      throws IOException, ServletException {
+  protected OBError savePay(VariablesSecureApp vars, String strKey, String strTableId,
+      String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Pay");
     return null;
   }
 
-  OBError saveSettlement(VariablesSecureApp vars, String strKey, String strTableId,
+  protected OBError saveSettlement(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Settlement");
-    String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId");
+    String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId", IsIDFilter.instance);
     if (strDebtPayment.equals(""))
       return null;
     OBError myMessage = null;
@@ -1962,11 +1969,11 @@ public class CreateFrom extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  OBError saveDPManagement(VariablesSecureApp vars, String strKey, String strTableId,
+  protected OBError saveDPManagement(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: DPManagement");
-    String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId");
+    String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId", IsIDFilter.instance);
     if (strDebtPayment.equals(""))
       return null;
     OBError myMessage = null;
@@ -2020,11 +2027,11 @@ public class CreateFrom extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  OBError saveCRemittance(VariablesSecureApp vars, String strKey, String strTableId,
+  protected OBError saveCRemittance(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Cremittance");
-    String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId");
+    String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId", IsIDFilter.instance);
     if (strDebtPayment.equals(""))
       return null;
     OBError myMessage = null;

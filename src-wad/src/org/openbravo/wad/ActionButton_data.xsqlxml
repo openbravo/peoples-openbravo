@@ -20,7 +20,7 @@
 
 
 
-<SqlClass name="ActionButtonData" package="org.openbravo.erpCommon.reference">
+<SqlClass name="ActionButtonData" package="org.openbravo.erpCommon.reference" accessModifier="public">
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>empty select</SqlMethodComment>
     <Sql>

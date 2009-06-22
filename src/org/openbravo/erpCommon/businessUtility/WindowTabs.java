@@ -634,7 +634,8 @@ public class WindowTabs {
       if (this.editView) {
         if (this.newRecord) {
           if (this.level >= _level) {
-            text.append("false"); // Don't validate when click parent or sibling tab
+            text.append("isUserChanges"); // Validate when click parent or sibling tab, when user
+                                          // has changed something
           } else {
             text.append("true"); // Always validate when are in NEW record and clicking a child tab
           }

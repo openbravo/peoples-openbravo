@@ -29,8 +29,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -65,7 +67,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
               "Account")));
 
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportTrialBalance|cBpartnerId");
+          "ReportTrialBalance|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
 
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly,
@@ -85,7 +87,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|AccountTo");
 
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportTrialBalance|cBpartnerId");
+          "ReportTrialBalance|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly,
           strAccountFrom, strAccountTo, strAll, strcBpartnerId, strcAcctSchemaId);
@@ -104,7 +106,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|AccountTo");
 
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportTrialBalance|cBpartnerId");
+          "ReportTrialBalance|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
       printPageDataPDF(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly,
           strAccountFrom, strAccountTo, strAll, strcBpartnerId, strcAcctSchemaId);
@@ -112,7 +114,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strLevel, String strOnly,
       String strAccountFrom, String strAccountTo, String strAll, String strcBpartnerId,
       String strcAcctSchemaId) throws IOException, ServletException {
@@ -259,7 +261,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Client", "Account"), "", strcAcctSchemaId));
     xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData
         .selectCombo(this, vars.getRole()));
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Client",
             "ReportTrialBalance"), strcAcctSchemaId));
@@ -286,11 +288,11 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
             ""), strcBpartnerIdAux));
 
-    xmlDocument.setParameter("accounFromArray", arrayDobleEntrada("arrAccountFrom",
+    xmlDocument.setParameter("accounFromArray", Utility.arrayDobleEntrada("arrAccountFrom",
         ReportTrialBalanceData.selectAccountDouble(this, Utility.getContext(this, vars,
             "#AccessibleOrgTree", "Account"), Utility.getContext(this, vars, "#User_Client",
             "Account"), "")));
-    xmlDocument.setParameter("accounToArray", arrayDobleEntrada("arrAccountTo",
+    xmlDocument.setParameter("accounToArray", Utility.arrayDobleEntrada("arrAccountTo",
         ReportTrialBalanceData.selectAccountDouble(this, Utility.getContext(this, vars,
             "#AccessibleOrgTree", "Account"), Utility.getContext(this, vars, "#User_Client",
             "Account"), "")));
@@ -319,10 +321,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strOrg, String strLevel, String strOnly, String strAccountFrom,
-      String strAccountTo, String strAll, String strcBpartnerId, String strcAcctSchemaId)
-      throws IOException, ServletException {
+  private void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strOrg, String strLevel, String strOnly,
+      String strAccountFrom, String strAccountTo, String strAll, String strcBpartnerId,
+      String strcAcctSchemaId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     /*
@@ -387,11 +389,14 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_reports/ReportTrialBalancePDF", discard).createXmlDocument();
     xmlDocument.setParameter("companyName", ReportTrialBalanceData.selectCompany(this, vars
         .getClient()));
+    xmlDocument.setParameter("orgName", ReportTrialBalanceData.selectOrgName(this, strOrg));
     xmlDocument.setParameter("date", DateTimeData.today(this));
     xmlDocument.setParameter("period", strDateFrom + " - " + strDateTo);
+    xmlDocument.setParameter("accountingSchema", ReportTrialBalanceData.selectAcctSchemaName(this,
+        strcAcctSchemaId));
     if (strLevel.equals("S"))
-      xmlDocument.setParameter("accounting", "Cuenta inicio: "
-          + ReportTrialBalanceData.selectAccountingName(this, strAccountFrom) + " - Cuenta fin: "
+      xmlDocument.setParameter("accounting", "From Account: "
+          + ReportTrialBalanceData.selectAccountingName(this, strAccountFrom) + " - To Account: "
           + ReportTrialBalanceData.selectAccountingName(this, strAccountTo));
     else
       xmlDocument.setParameter("accounting", "");
@@ -539,7 +544,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     return result;
   }
 
-  public String getFamily(String strTree, String strChild) throws IOException, ServletException {
+  private String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, strChild);
     /*
      * ReportGeneralLedgerData [] data = ReportGeneralLedgerData.selectChildren(this, strTree,

@@ -183,6 +183,7 @@ create.database: creates the database from scratch.
       	grant create procedure   to ${bbdd.user};
       	grant create trigger     to ${bbdd.user};
       	grant create view        to ${bbdd.user};
+        grant create sequence    to ${bbdd.user};
       	alter user ${bbdd.user} quota unlimited on users;
       </transaction>
     </sql>
@@ -249,13 +250,14 @@ create.database: creates the database from scratch.
           VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100,  1, 'Default');
           DELETE FROM AD_SYSTEM_INFO;
           INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_VERSION, OB_INSTALLMODE, CODE_REVISION)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', '${application.version}', 'From Sources', ${code.revision});
+          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', '${application.version}', 'From Sources', SUBSTR('${code.revision}',1,60));
           DELETE FROM AD_REGISTRATION_INFO;
           INSERT INTO AD_REGISTRATION_INFO(AD_REGISTRATION_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
           VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0');
           CALL AD_UPDATE_SEQUENCE();
           CALL AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
+          CALL AD_LANGUAGE_CREATE(NULL);
         </transaction>
     </sql>
     <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true" delimitertype="row">
@@ -287,13 +289,14 @@ create.database: creates the database from scratch.
           VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
           DELETE FROM AD_SYSTEM_INFO;
           INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_VERSION, OB_INSTALLMODE, CODE_REVISION)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', '${application.version}', 'From Sources', ${code.revision});
+          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', '${application.version}', 'From Sources', SUBSTR('${code.revision}',1,60));
           DELETE FROM AD_REGISTRATION_INFO;
           INSERT INTO AD_REGISTRATION_INFO(AD_REGISTRATION_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
           VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0');
           SELECT AD_UPDATE_SEQUENCE();
           SELECT AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
+          SELECT AD_LANGUAGE_CREATE(NULL);
           ANALYZE;
         </transaction>
     </sql>

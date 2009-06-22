@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,7 +56,7 @@ public class ReportNotPosted extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -72,8 +72,8 @@ public class ReportNotPosted extends HttpSecureAppServlet {
     } else {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportNotPosted")
           .createXmlDocument();
-      data = ReportNotPostedData.select(this, vars.getLanguage(), strDateFrom, strDateTo, vars
-          .getClient());
+      data = ReportNotPostedData.select(this, vars.getLanguage(), vars.getClient(), strDateFrom,
+          strDateTo);
     }// DateTimeData.nDaysAfter
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportNotPosted", false, "", "", "",

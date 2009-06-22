@@ -195,23 +195,5 @@
       <Parameter name="aduserid"/>
    </SqlMethod>
 
-   <SqlMethod name="saveDefaultOptions" type="preparedStatement" return="rowCount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        UPDATE AD_USER SET 
-            DEFAULT_AD_LANGUAGE = ?,
-            DEFAULT_AD_ROLE_ID = ?,
-            DEFAULT_AD_CLIENT_ID = ?,
-            DEFAULT_AD_ORG_ID = ?,
-            DEFAULT_M_WAREHOUSE_ID = ?
-        WHERE AD_USER_ID = ?
-      ]]></Sql>
-      <Parameter name="adlanguage"/>
-      <Parameter name="adroleid"/>
-      <Parameter name="adclientid"/>
-      <Parameter name="adorgid"/>
-      <Parameter name="mwarehouseid"/>
-      <Parameter name="aduserid"/>
-   </SqlMethod>
 </SqlClass>
 

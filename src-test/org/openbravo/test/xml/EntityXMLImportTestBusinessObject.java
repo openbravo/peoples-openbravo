@@ -62,6 +62,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   public void testAPaymentTerm() {
     cleanRefDataLoaded();
     setUserContext("1000000");
+    addReadWriteAccess(PaymentTermTrl.class);
     createSavePaymentTerm();
   }
 
@@ -331,7 +332,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     final List<PaymentTerm> result = new ArrayList<PaymentTerm>();
     for (int i = 0; i < NO_OF_PT; i++) {
       final PaymentTerm source = OBDal.getInstance().get(PaymentTerm.class, "1000000");
-      final PaymentTerm pt = (PaymentTerm) DalUtil.copy(source);
+      final PaymentTerm pt = (PaymentTerm) DalUtil.copy(source, false);
       pt.setName("test " + i);
       pt.setOrganization(OBContext.getOBContext().getCurrentOrganization());
 

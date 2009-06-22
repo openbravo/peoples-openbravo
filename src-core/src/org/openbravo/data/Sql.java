@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -41,7 +41,7 @@ class Sql {
   }
 
   public Parameter addParameter(boolean sequence, String strName, String strDefault,
-      String strInOut, String strOptional, String strAfter, String strText) {
+      String strInOut, String strOptional, String strAfter, String strText, String strIgnoreValue) {
     if (log4j.isDebugEnabled())
       log4j.debug("addParameter sequence: " + sequence + " name: " + strName);
     if (strOptional != null)
@@ -49,7 +49,7 @@ class Sql {
     if (log4j.isDebugEnabled())
       log4j.debug("previous new Parameter");
     Parameter parameterNew = new Parameter(sequence, strName, strDefault, strInOut, strOptional,
-        strAfter, strText);
+        strAfter, strText, strIgnoreValue);
     if (log4j.isDebugEnabled())
       log4j.debug("called new Parameter");
     for (Enumeration<Parameter> e = vecParameter.elements(); e.hasMoreElements();) {

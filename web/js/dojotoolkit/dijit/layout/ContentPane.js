@@ -144,7 +144,7 @@ dojo.declare(
 		// over a node
 		this.domNode.title = "";
 
-		if (!dijit.hasWaiRole(this.domNode)){
+		if (!dojo.attr(this.domNode,"role")){
 			dijit.setWaiRole(this.domNode, "group");
 		}
 
@@ -287,6 +287,7 @@ dojo.declare(
 		if(this._beingDestroyed){
 			this.cancel();
 		}
+		this.inherited(arguments);
 	},
 
 	destroyRecursive: function(/*Boolean*/ preserveDom){
@@ -343,7 +344,7 @@ dojo.declare(
 		// description:
 		//		For a plain ContentPane, this is called on initialization, from startup().
 		//		If the ContentPane is a hidden pane of a TabContainer etc., then it's
-		//		called whever the pane is made visible.
+		//		called whenever the pane is made visible.
 		//
 		//		Does processing necessary, including href download and layout/resize of
 		//		child widget(s)
@@ -356,10 +357,7 @@ dojo.declare(
 		// Do lazy-load of URL
 		this._loadCheck();
 
-		// call onShow, if we have one
-		if(this.onShow){
-			this.onShow();
-		}
+		this.inherited(arguments);
 	},
 
 	_loadCheck: function(){
@@ -374,7 +372,6 @@ dojo.declare(
 			(!this.isLoaded || this._hrefChanged || this.refreshOnShow) && 	// and we need a [re]load
 			(this.preload || this._isShown())	// and now is the time to [re]load
 		){
-			delete this._hrefChanged;
 			this.refresh();
 		}
 	},
@@ -387,7 +384,7 @@ dojo.declare(
 		//		2. posts "loading..." message
 		//		3. sends XHR to download new data
 
-		// cancel possible prior inflight request
+		// Cancel possible prior in-flight request
 		this.cancel();
 
 		// display loading message
@@ -425,6 +422,9 @@ dojo.declare(
 			delete self._xhrDfd;
 			return err;
 		});
+
+		// Remove flag saying that a load is needed
+		delete this._hrefChanged;
 	},
 
 	_onLoadHandler: function(data){
@@ -482,6 +482,9 @@ dojo.declare(
 		
 		// And then clear away all the DOM nodes
 		dojo.html._emptyNode(this.containerNode);
+
+		// Delete any state information we have about current contents
+		delete this._singleChild;
 	},
 
 	_setContent: function(cont, isFakeContent){
@@ -491,11 +494,8 @@ dojo.declare(
 		// first get rid of child widgets
 		this.destroyDescendants();
 
-		// Delete any state information we have about current contents
-		delete this._singleChild;
-
 		// dojo.html.set will take care of the rest of the details
-		// we provide an overide for the error handling to ensure the widget gets the errors 
+		// we provide an override for the error handling to ensure the widget gets the errors 
 		// configure the setter instance with only the relevant widget instance properties
 		// NOTE: unless we hook into attr, or provide property setters for each property, 
 		// we need to re-configure the ContentSetter with each use

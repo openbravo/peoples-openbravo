@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2008 Openbravo S.L.
+ * Copyright (C) 2008-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -23,7 +23,7 @@ import org.openbravo.erpCommon.utility.WindowTreeData;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
 
-public class OrgTreeNode implements Serializable {
+class OrgTreeNode implements Serializable {
   private static final long serialVersionUID = 1L;
   private String id;
   private String parentId;

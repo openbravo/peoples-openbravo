@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -39,6 +41,11 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class InvoiceLine extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "BPARTNER_NAME", "DATEINVOICED", "DOCUMENTNO",
+      "ISSOTRX", "PRODUCT_NAME", "QTY", "PRICEACTUAL", "LINENETAMT", "C_INVOICELINE_ID", "ROWKEY" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -143,19 +150,19 @@ public class InvoiceLine extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
 
       printGridData(response, vars, strDocumentNo, strBpartnerId, strDateFrom, strDateTo,
-          strDescription, strCal1, strCal2, strOrder, strProduct, strSortCols + " " + strSortDirs,
+          strDescription, strCal1, strCal2, strOrder, strProduct, strSortCols, strSortDirs,
           strOffset, strPageSize, strNewFilter, strOrg);
 
     } else
       pageError(response);
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars, InvoiceLineData[] data)
-      throws IOException, ServletException {
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+      InvoiceLineData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: sale-order-lines seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -168,7 +175,7 @@ public class InvoiceLine extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(InvoiceLineData[] data) throws IOException, ServletException {
+  private String generateResult(InvoiceLineData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
     if (log4j.isDebugEnabled())
       log4j.debug("Save- clave:" + data[0].cInvoicelineId + " txt:" + data[0].lineText);
@@ -180,7 +187,7 @@ public class InvoiceLine extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
       String strProduct, String strDocumentNo, String strDateFrom, String strDateTo,
       String strCal1, String strCal2) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -215,7 +222,7 @@ public class InvoiceLine extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -243,8 +250,6 @@ public class InvoiceLine extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "BPARTNER_NAME", "DATEINVOICED", "DOCUMENTNO", "ISSOTRX", "PRODUCT_NAME",
-        "QTY", "PRICEACTUAL", "LINENETAMT", "C_INVOICELINE_ID", "ROWKEY" };
     String[] colWidths = { "220", "80", "110", "35", "170", "60", "50", "55", "0", "0" };
     for (int i = 0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
@@ -267,11 +272,11 @@ public class InvoiceLine extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strDocumentNo,
-      String strBpartnerId, String strDateFrom, String strDateTo, String strDescription,
-      String strCal1, String strCal2, String strOrder, String strProduct, String strOrderBy,
-      String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,
-      ServletException {
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars,
+      String strDocumentNo, String strBpartnerId, String strDateFrom, String strDateTo,
+      String strDescription, String strCal1, String strCal2, String strOrder, String strProduct,
+      String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
+      String strNewFilter, String strOrg) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -281,20 +286,13 @@ public class InvoiceLine extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     if (headers != null) {
       try {
-
-        // remove single % in parameters used in like upper(parameter)
-        if (strDocumentNo.equals("%")) {
-          strDocumentNo = null;
-        }
-        if (strDescription.equals("%")) {
-          strDescription = null;
-        }
-        if (strOrder.equals("%")) {
-          strOrder = null;
-        }
+        // build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
@@ -311,17 +309,14 @@ public class InvoiceLine extends HttpSecureAppServlet {
         }
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = InvoiceLineData.select(this, "ROWNUM", Utility.getContext(this, vars,
               "#User_Client", "InvoiceLine"), Utility.getSelectorOrgs(this, vars, strOrg),
               strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
                   .nDaysAfter(this, strDateTo, "1"), strCal1, strCal2, strProduct, strOrderBy,
               oraLimit, "");
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           data = InvoiceLineData.select(this, "1", Utility.getContext(this, vars, "#User_Client",
               "InvoiceLine"), Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo,
               strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,

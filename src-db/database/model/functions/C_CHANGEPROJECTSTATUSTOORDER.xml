@@ -27,6 +27,7 @@
   v_AD_User_ID VARCHAR2(32);
   v_AD_Client_ID VARCHAR2(32);
   v_AD_Org_ID VARCHAR2(32);
+  v_M_Discountschema_ID VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     v_ProjectStatus VARCHAR(60) ;
@@ -166,7 +167,31 @@
               )
               ;
             Ad_Sequence_Next('M_PriceList_Version', v_AD_Client_ID, v_PriceListVersion) ;
-            INSERT
+    	    SELECT MIN(M_DISCOUNTSCHEMA_ID) INTO v_M_Discountschema_ID
+    		FROM M_DISCOUNTSCHEMA 
+    		WHERE ISACTIVE='Y' 
+    		AND AD_CLIENT_ID=v_AD_Client_ID
+    		AND AD_ORG_ID IN ((SELECT '0' AS org FROM dual)
+                UNION (SELECT AD_ORG_ID AS org
+    			FROM AD_ORG
+    			WHERE AD_CLIENT_ID=v_AD_Client_ID
+    			AND (AD_ISORGINCLUDED(AD_ORG_ID,v_AD_Org_ID,AD_CLIENT_ID) <> -1)
+			    OR (AD_ISORGINCLUDED(v_AD_Org_ID,AD_ORG_ID,AD_CLIENT_ID) <> -1)))
+    		AND CREATED = (SELECT MIN(CREATED)
+        		FROM M_DISCOUNTSCHEMA 
+        		WHERE ISACTIVE='Y' 
+        		AND AD_CLIENT_ID=v_AD_Client_ID
+        		AND AD_ORG_ID IN ((SELECT '0' AS org FROM dual)
+                    UNION (SELECT AD_ORG_ID AS org
+        			FROM AD_ORG
+        			WHERE AD_CLIENT_ID=v_AD_Client_ID
+        			AND (AD_ISORGINCLUDED(AD_ORG_ID,v_AD_Org_ID,AD_CLIENT_ID) <> -1)
+				    OR (AD_ISORGINCLUDED(v_AD_Org_ID,AD_ORG_ID,AD_CLIENT_ID) <> -1)))) ;
+            IF v_M_Discountschema_ID IS NULL
+    	    THEN
+    	      RAISE_APPLICATION_ERROR(-20000, '@NoPLSchema@');
+            END IF;    
+    	    INSERT
             INTO M_PRICELIST_VERSION
               (
                 M_PRICELIST_VERSION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
@@ -182,7 +207,7 @@
                 now(), v_AD_User_ID, now(), v_AD_User_ID,
                 (Cur_SO.value || ' - ' ||v_BPName|| ' - ' ||TRUNC(now(), 'DD')), 
 				(Cur_SO.value || ' - ' ||v_BPName|| ' - ' ||TRUNC(now(), 'DD')), 
-				v_PriceList, (SELECT MIN(M_DISCOUNTSCHEMA_ID) AS ID FROM M_DISCOUNTSCHEMA WHERE isactive='Y'),
+				v_PriceList, v_M_Discountschema_ID,
                 TRUNC(now(), 'DD')
               )
               ;
@@ -242,7 +267,31 @@
                 )
                 ;
               Ad_Sequence_Next('M_PriceList_Version', v_AD_Client_ID, v_PriceListVersionPO) ;
-              INSERT
+              SELECT MIN(M_DISCOUNTSCHEMA_ID) INTO v_M_Discountschema_ID
+        		FROM M_DISCOUNTSCHEMA 
+        		WHERE ISACTIVE='Y' 
+        		AND AD_CLIENT_ID=v_AD_Client_ID
+        		AND AD_ORG_ID IN ((SELECT '0' AS org FROM dual)
+                    UNION (SELECT AD_ORG_ID AS org
+        			FROM AD_ORG
+        			WHERE AD_CLIENT_ID=v_AD_Client_ID
+        			AND (AD_ISORGINCLUDED(AD_ORG_ID,v_AD_Org_ID,AD_CLIENT_ID) <> -1)
+    			    OR (AD_ISORGINCLUDED(v_AD_Org_ID,AD_ORG_ID,AD_CLIENT_ID) <> -1)))
+        		AND CREATED = (SELECT MIN(CREATED)
+            		FROM M_DISCOUNTSCHEMA 
+            		WHERE ISACTIVE='Y' 
+            		AND AD_CLIENT_ID=v_AD_Client_ID
+            		AND AD_ORG_ID IN ((SELECT '0' AS org FROM dual)
+                        UNION (SELECT AD_ORG_ID AS org
+            			FROM AD_ORG
+            			WHERE AD_CLIENT_ID=v_AD_Client_ID
+            			AND (AD_ISORGINCLUDED(AD_ORG_ID,v_AD_Org_ID,AD_CLIENT_ID) <> -1)
+    				    OR (AD_ISORGINCLUDED(v_AD_Org_ID,AD_ORG_ID,AD_CLIENT_ID) <> -1)))) ;
+    	      IF v_M_Discountschema_ID IS NULL
+    	      THEN
+    		    RAISE_APPLICATION_ERROR(-20000, '@NoPLSchema@');
+              END IF;
+    	      INSERT
               INTO M_PRICELIST_VERSION
                 (
                   M_PRICELIST_VERSION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
@@ -258,7 +307,7 @@
                   now(), v_AD_User_ID, now(), v_AD_User_ID,
                   (Cur_SO.value || ' - ' ||v_SupplierName|| ' - ' ||TRUNC(now(), 'DD')), 
 		          (Cur_SO.value || ' - ' ||v_SupplierName||' - ' ||TRUNC(now(), 'DD')), 
-		          v_PriceListPO, (SELECT MIN(M_DISCOUNTSCHEMA_ID) AS ID FROM M_DISCOUNTSCHEMA WHERE isactive='Y'),
+		          v_PriceListPO, v_M_Discountschema_ID,
                   TRUNC(now(), 'DD')
                 )
                 ;

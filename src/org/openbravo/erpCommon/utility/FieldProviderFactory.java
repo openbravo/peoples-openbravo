@@ -19,8 +19,9 @@
 package org.openbravo.erpCommon.utility;
 
 import java.lang.reflect.Method;
-import java.util.Properties;
+import java.util.HashMap;
 
+import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
 /**
@@ -43,7 +44,8 @@ import org.openbravo.data.FieldProvider;
 public class FieldProviderFactory implements FieldProvider {
 
   private Object object;
-  private Properties properties;
+  private HashMap<String, String> properties;
+  private static Logger log4j = Logger.getLogger(Utility.class);
 
   /**
    * Initializes a new FieldProviderFactory for the object
@@ -52,7 +54,11 @@ public class FieldProviderFactory implements FieldProvider {
    */
   public FieldProviderFactory(Object obj) {
     object = obj;
-    properties = new Properties();
+    if (obj instanceof HashMap) {
+      properties = (HashMap<String, String>) obj;
+    } else {
+      properties = new HashMap<String, String>();
+    }
   }
 
   /**
@@ -65,7 +71,7 @@ public class FieldProviderFactory implements FieldProvider {
    */
   public String getField(String fieldName) {
     try {
-      String rt = properties.getProperty(fieldName);
+      String rt = properties.get(fieldName);
       if (rt != null) {
         return rt;
       } else {
@@ -75,13 +81,13 @@ public class FieldProviderFactory implements FieldProvider {
         return (String) method.invoke(object, new Object[] {});
       }
     } catch (Exception e) {
-      e.printStackTrace();
-      return "";
+      log4j.info("Not found field" + fieldName);
+      return null;
     }
   }
 
   private void setProperty(String name, String value) {
-    properties.setProperty(name, value);
+    properties.put(name, value);
   }
 
   /**

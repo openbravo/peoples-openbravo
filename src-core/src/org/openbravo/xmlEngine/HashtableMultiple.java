@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -13,7 +13,7 @@ package org.openbravo.xmlEngine;
 
 import java.util.Vector;
 
-public class HashtableMultiple { // class to simulate a Hashtable but with
+class HashtableMultiple { // class to simulate a Hashtable but with
   // various keys of the same value
   // get returns the first key find but you can iterate to find all.
   Vector<String> vecKeys;

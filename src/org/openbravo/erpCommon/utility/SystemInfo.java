@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,7 +51,7 @@ public class SystemInfo {
     }
   }
 
-  public static void load(Item i, ConnectionProvider conn) throws ServletException {
+  private static void load(Item i, ConnectionProvider conn) throws ServletException {
     switch (i) {
     case SYSTEM_IDENTIFIER:
       systemInfo.put(i, getSystemIdentifier(conn));
@@ -119,7 +119,7 @@ public class SystemInfo {
     }
   }
 
-  final static String getSystemIdentifier(ConnectionProvider conn) throws ServletException {
+  private final static String getSystemIdentifier(ConnectionProvider conn) throws ServletException {
     validateConnection(conn);
     String systemIdentifier = SystemInfoData.selectSystemIdentifier(conn);
     if (systemIdentifier == null || systemIdentifier.equals("")) {
@@ -129,7 +129,7 @@ public class SystemInfo {
     return systemIdentifier;
   }
 
-  final static String getDatabaseVersion(ConnectionProvider conn) throws ServletException {
+  private final static String getDatabaseVersion(ConnectionProvider conn) throws ServletException {
     validateConnection(conn);
     if (systemInfo.get(Item.DATABASE) == null) {
       load(Item.DATABASE, conn);
@@ -153,7 +153,7 @@ public class SystemInfo {
    * @param conn
    * @throws ServletException
    */
-  final static String[] getWebserver(ConnectionProvider conn) {
+  private final static String[] getWebserver(ConnectionProvider conn) {
     List<String> commands = new ArrayList<String>();
     String[] paths = { "/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin",
         "/bin" };
@@ -198,7 +198,7 @@ public class SystemInfo {
    * @return
    * @throws ServletException
    */
-  final static String getActivityRate(ConnectionProvider conn) throws ServletException {
+  private final static String getActivityRate(ConnectionProvider conn) throws ServletException {
     String result = null;
     int activityRate = Integer.valueOf(SystemInfoData.selectActivityRate(conn));
     if (activityRate == 0) {
@@ -223,7 +223,7 @@ public class SystemInfo {
    * @return
    * @throws ServletException
    */
-  final static String getComplexityRate(ConnectionProvider conn) throws ServletException {
+  private final static String getComplexityRate(ConnectionProvider conn) throws ServletException {
     String result = null;
     int complexityRate = Integer.valueOf(SystemInfoData.selectComplexityRate(conn));
     if (complexityRate > 0 && complexityRate < 3) {
@@ -236,7 +236,7 @@ public class SystemInfo {
     return result;
   }
 
-  public static boolean validateConnection(ConnectionProvider conn) throws ServletException {
+  private static boolean validateConnection(ConnectionProvider conn) throws ServletException {
     if (conn == null) {
       throw new ServletException("Invalid database connection provided.");
     }
@@ -267,7 +267,7 @@ public class SystemInfo {
    * @param str
    * @return the string representation of a numerical version from a longer string.
    */
-  public static String getVersion(String str) {
+  private static String getVersion(String str) {
     String version = "";
     if (str == null)
       return "";
@@ -303,7 +303,7 @@ public class SystemInfo {
       this.label = label;
     }
 
-    public String getLabel() {
+    private String getLabel() {
       return label;
     }
   }

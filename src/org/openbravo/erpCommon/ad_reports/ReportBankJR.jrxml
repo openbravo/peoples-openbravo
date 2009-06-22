@@ -29,25 +29,20 @@
 		vAlign="Middle"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
-	>
-	</style>
+	/>
 	<style 
 		name="Report_Title"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="18"
-	>
-					<box leftPadding="5"></box>
-	</style>
+	/>
 	<style 
 		name="Report_Subtitle"
 		isDefault="false"
 		forecolor="#555555"
 		fontName="Bitstream Vera Sans"
 		fontSize="14"
-	>
-					<box leftPadding="5"></box>
-	</style>
+	/>
 	<style 
 		name="Total_Field"
 		isDefault="false"
@@ -58,9 +53,7 @@
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="true"
-	>
-					<box leftPadding="5"></box>
-	</style>
+	/>
 	<style 
 		name="Detail_Header"
 		isDefault="false"
@@ -71,11 +64,7 @@
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="true"
-	>
-					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
-	</style>
+	/>
 	<style 
 		name="GroupHeader_DarkGray"
 		isDefault="false"
@@ -86,16 +75,13 @@
 		fontName="Bitstream Vera Sans"
 		fontSize="18"
 		isBold="true"
-	>
-					<box leftPadding="5"></box>
-	</style>
+	/>
 	<style 
 		name="GroupHeader_Gray"
 		isDefault="false"
 		mode="Opaque"
 		backcolor="#999999"
-	>
-	</style>
+	/>
 	<style 
 		name="Detail_Line"
 		isDefault="false"
@@ -110,8 +96,7 @@
 				isDefault="false"
 				mode="Opaque"
 				backcolor="#CCCCCC"
-			>
-			</style>
+			/>
 		</conditionalStyle>
 	</style>
 	<style 
@@ -120,46 +105,40 @@
 		mode="Opaque"
 		forecolor="#000000"
 		backcolor="#CCCCCC"
-	>
-	</style>
+	/>
 	<style 
 		name="Report_Data_Label"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="true"
-	>
-	</style>
+	/>
 	<style 
 		name="Report_Data_Field"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="false"
-	>
-	</style>
+	/>
 	<style 
 		name="Report_Footer"
 		isDefault="true"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
-	>
-	</style>
+	/>
 	<style 
 		name="Group_Data_Label"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="14"
 		isBold="true"
-	>
-	</style>
+	/>
 	<style 
 		name="Group_Data_Field"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="14"
-	>
-	</style>
+	/>
 	<style 
 		name="Detail_Data_Label"
 		isDefault="false"
@@ -168,8 +147,7 @@
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="true"
-	>
-	</style>
+	/>
 	<style 
 		name="Detail_Data_Field"
 		isDefault="false"
@@ -177,16 +155,14 @@
 		backcolor="#CCCCCC"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
-	>
-	</style>
+	/>
 	<style 
 		name="Group_Footer"
 		isDefault="false"
 		fontName="Bitstream Vera Sans"
 		fontSize="11"
 		isBold="true"
-	>
-	</style>
+	/>
 
 	<parameter name="ATTACH" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String"/>
@@ -282,16 +258,12 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="126"
-						y="30"
-						width="184"
-						height="16"
+						x="131"
+						y="25"
+						width="210"
+						height="24"
 						key="textField"/>
-					<box leftPadding="5" topPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" size="10"/>
 					</textElement>
@@ -299,16 +271,14 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 				</textField>
 				<line direction="TopDown">
 					<reportElement
-						x="1"
+						x="0"
 						y="26"
 						width="0"
 						height="24"
 						forecolor="#555555"
 						key="line-2"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -319,9 +289,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						forecolor="#555555"
 						key="line-3"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -331,12 +299,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						width="535"
 						height="25"
 						key="textField"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="12"/>
 					</textElement>
@@ -345,16 +308,12 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="416"
-						y="30"
-						width="93"
-						height="16"
+						x="440"
+						y="25"
+						width="91"
+						height="24"
 						key="textField"/>
-					<box leftPadding="5" topPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10"/>
 					</textElement>
@@ -363,16 +322,12 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 				<staticText>
 					<reportElement
 						style="Report_Footer"
-						x="10"
-						y="30"
-						width="116"
-						height="16"
+						x="9"
+						y="25"
+						width="122"
+						height="24"
 						key="staticText-2"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
@@ -381,16 +336,12 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 				<staticText>
 					<reportElement
 						style="Report_Footer"
-						x="332"
-						y="30"
-						width="83"
-						height="16"
+						x="341"
+						y="25"
+						width="99"
+						height="24"
 						key="staticText-3"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
@@ -402,16 +353,14 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 			<band height="20"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
-						x="1"
+						x="0"
 						y="0"
 						width="0"
 						height="14"
 						forecolor="#555555"
 						key="line-32"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -422,9 +371,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						forecolor="#555555"
 						key="line-33"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -434,9 +381,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						height="0"
 						forecolor="#555555"
 						key="line-34"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch"/>
 				</line>
 			</band>
 			</groupFooter>
@@ -447,16 +392,14 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 			<band height="70"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
-						x="10"
+						x="9"
 						y="24"
 						width="0"
 						height="46"
 						forecolor="#555555"
 						key="line-4"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -467,37 +410,28 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						forecolor="#555555"
 						key="line-6"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
-						x="1"
+						x="0"
 						y="0"
 						width="0"
 						height="70"
 						forecolor="#555555"
 						key="line-8"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="360"
+						x="341"
 						y="54"
-						width="80"
+						width="99"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -511,12 +445,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						width="91"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -530,12 +459,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						width="526"
 						height="23"
 						key="textField"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="12"/>
 					</textElement>
@@ -544,16 +468,12 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 				<staticText>
 					<reportElement
 						style="default"
-						x="26"
+						x="15"
 						y="30"
-						width="112"
+						width="116"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="11" isBold="true"/>
 					</textElement>
@@ -562,16 +482,12 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 				<staticText>
 					<reportElement
 						style="default"
-						x="262"
+						x="341"
 						y="30"
-						width="117"
+						width="99"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="11" isBold="true"/>
 					</textElement>
@@ -582,15 +498,10 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						style="Detail_Header"
 						x="15"
 						y="54"
-						width="345"
+						width="326"
 						height="16"
 						key="element-90"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -598,16 +509,12 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NAME2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="379"
+						x="440"
 						y="30"
-						width="100"
+						width="91"
 						height="16"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="11"/>
 					</textElement>
@@ -615,16 +522,12 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="138"
+						x="131"
 						y="30"
-						width="78"
-						height="18"
+						width="210"
+						height="16"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font/>
 					</textElement>
@@ -636,29 +539,25 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 			<band height="20"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
-						x="1"
+						x="0"
 						y="0"
 						width="0"
 						height="20"
 						forecolor="#555555"
 						key="line-28"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
-						x="10"
+						x="9"
 						y="0"
 						width="0"
 						height="10"
 						forecolor="#555555"
 						key="line-29"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -669,9 +568,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						forecolor="#555555"
 						key="line-30"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -681,9 +578,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						height="0"
 						forecolor="#555555"
 						key="line-31"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
@@ -717,12 +612,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						width="535"
 						height="20"
 						key="textField"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -735,9 +625,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						width="535"
 						height="0"
 						key="line-1"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch"/>
 				</line>
 			</band>
 		</pageHeader>
@@ -756,49 +644,39 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						forecolor="#555555"
 						key="line-16"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
-						x="1"
+						x="0"
 						y="0"
 						width="0"
 						height="16"
 						forecolor="#555555"
 						key="line-17"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
-						x="10"
+						x="9"
 						y="0"
 						width="0"
 						height="16"
 						forecolor="#555555"
 						key="line-18"
 						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Detail_Line"
-						x="360"
+						x="341"
 						y="0"
-						width="80"
+						width="99"
 						height="16"
 						key="textField-1"/>
-					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10"/>
 					</textElement>
@@ -809,14 +687,10 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						style="Detail_Line"
 						x="15"
 						y="0"
-						width="345"
+						width="326"
 						height="16"
 						key="textField-3"/>
-					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10"/>
 					</textElement>
@@ -831,11 +705,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						height="16"
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
@@ -857,11 +727,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						width="95"
 						height="16"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Helvetica" size="10"/>
 					</textElement>
@@ -877,11 +743,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Helvetica" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
@@ -895,9 +757,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						height="0"
 						forecolor="#000000"
 						key="line"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="2.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch"/>
 				</line>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -907,11 +767,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						width="69"
 						height="16"
 						key="textField"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="10"/>
 					</textElement>
@@ -925,11 +781,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						width="78"
 						height="16"
 						key="staticText-1"/>
-					<box leftPadding="5" topPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>

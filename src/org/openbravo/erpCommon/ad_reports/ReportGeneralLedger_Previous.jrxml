@@ -185,8 +185,9 @@
 		<defaultValueExpression ><![CDATA["REPORT TITLE"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="REPORT_SUBTITLE" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
+	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<parameter name="AcctID" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="Date" isForPrompting="false" class="java.util.Date"/>
 	<parameter name="Partner" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="ShowPartner" isForPrompting="false" class="java.lang.Boolean">
 		<defaultValueExpression ><![CDATA[new Boolean(true)]]></defaultValueExpression>
@@ -194,18 +195,35 @@
 	<parameter name="auxPartner" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA[$P{ShowPartner}.booleanValue()?" and c_bpartner_id="+$P{Partner}:""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
-	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
-	<parameter name="InitialYearDate" isForPrompting="false" class="java.util.Date"/>
 	<parameter name="Org" isForPrompting="false" class="java.lang.String"/>
-	<queryString><![CDATA[SELECT COALESCE(SUM(AMTACCTDR),0) AS TOTALDR, COALESCE(SUM(AMTACCTCR),0) AS TOTALCR,
-  COALESCE(SUM(AMTACCTDR-AMTACCTCR),0) AS TOTAL
+	<parameter name="InitialYearDate" isForPrompting="false" class="java.util.Date"/>
+	<parameter name="dateFrom" isForPrompting="false" class="java.util.Date"/>
+	<parameter name="dateTo" isForPrompting="false" class="java.util.Date"/>
+	<parameter name="dateTo2" isForPrompting="false" class="java.util.Date"/>
+	<parameter name="isHiding" isForPrompting="false" class="java.lang.Boolean"/>
+	<parameter name="strDateFormat" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["dd/MM/yyyy"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hidingJoin" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{isHiding}.booleanValue()?"LEFT JOIN( select account_id, record_id2, sum(amtacctdr-amtacctcr) as sum from fact_acct f1 where DATEACCT >= TO_DATE('"+new SimpleDateFormat($P{strDateFormat}).format($P{dateFrom})+"') and DATEACCT < TO_DATE('"+new SimpleDateFormat($P{strDateFormat}).format($P{dateTo})+"') group by account_id, record_id2 ) f2 ON fact_acct.account_id = f2.account_id and fact_acct.record_id2 = f2.record_id2":""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hidingWhere" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{isHiding}.booleanValue()?"AND ((fact_acct.RECORD_ID2 IS NULL) OR (DATEACCT < TO_DATE('"+new SimpleDateFormat($P{strDateFormat}).format($P{dateFrom})+"')) OR (SUM != 0))":""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="InitialYearDateFormatted" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new SimpleDateFormat($P{strDateFormat}).format($P{InitialYearDate})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateTo2Formatted" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new SimpleDateFormat($P{strDateFormat}).format($P{dateTo2})]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT COALESCE(SUM(AMTACCTDR),0) AS totaldr, COALESCE(SUM(AMTACCTCR),0) AS totalcr,
+  COALESCE(SUM(AMTACCTDR-AMTACCTCR),0) AS total
 FROM FACT_ACCT
 where fact_acct.account_id = $P{AcctID}
   and ad_client_id in ($P!{USER_CLIENT})
   and ad_org_id in ($P!{Org})
-  and dateacct >= to_date($P{InitialYearDate})
-  and dateacct <  to_date($P{Date})
+  and dateacct >= to_date($P{InitialYearDateFormatted})
+  and dateacct <  to_date($P{dateTo2Formatted})
   $P!{auxPartner}]]></queryString>
 
 	<field name="totaldr" class="java.math.BigDecimal"/>
@@ -225,6 +243,12 @@ where fact_acct.account_id = $P{AcctID}
 	</variable>
 	<variable name="PreviousCredit" class="java.math.BigDecimal" resetType="Report" calculation="Nothing">
 		<variableExpression><![CDATA[$F{totalcr}]]></variableExpression>
+	</variable>
+	<variable name="hidingLeftJoin" class="java.lang.String" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA["LEFT JOIN( select account_id, record_id2, sum(amtacctdr-amtacctcr) as sum from fact_acct f1 where DATEACCT >= TO_DATE("+$P{dateFrom}+") and DATEACCT < TO_DATE("+$P{dateTo}+") group by account_id, record_id2 ) f2 ON fact_acct.account_id = f2.account_id and fact_acct.record_id2 = f2.record_id2"]]></variableExpression>
+	</variable>
+	<variable name="hidingWhereClause" class="java.lang.String" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA["AND ((fact_acct.RECORD_ID2 IS NULL) OR (DATEACCT < TO_DATE("+$P{dateFrom}+")) OR (SUM != 0))"]]></variableExpression>
 	</variable>
 		<background>
 			<band height="0"  isSplitAllowed="true" >

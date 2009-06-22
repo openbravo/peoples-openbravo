@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,7 +68,7 @@ public class SessionLogin {
     defaultParameters(request);
   }
 
-  public void defaultParameters() {
+  private void defaultParameters() {
     try {
       InetAddress lh = InetAddress.getLocalHost();
       setRemoteAddr(lh.getHostAddress());
@@ -81,7 +81,7 @@ public class SessionLogin {
           + " - Remote Host: " + getRemoteHost());
   }
 
-  public void defaultParameters(HttpServletRequest request) {
+  private void defaultParameters(HttpServletRequest request) {
     setRemoteAddr(request.getRemoteAddr());
     setRemoteHost(request.getRemoteHost());
     if (log4j.isDebugEnabled())
@@ -102,7 +102,7 @@ public class SessionLogin {
           getRemoteAddr(), getRemoteHost(), getProcessed(), getSessionID());
   }
 
-  public void setSessionID(String newValue) {
+  private void setSessionID(String newValue) {
     this.sessionID = (newValue == null) ? "" : newValue;
   }
 
@@ -110,67 +110,67 @@ public class SessionLogin {
     return ((this.sessionID == null) ? "" : this.sessionID);
   }
 
-  public void setClient(String newValue) {
+  private void setClient(String newValue) {
     this.client = (newValue == null) ? "" : newValue;
   }
 
-  public String getClient() {
+  private String getClient() {
     return ((this.client == null) ? "" : this.client);
   }
 
-  public void setOrg(String newValue) {
+  private void setOrg(String newValue) {
     this.org = (newValue == null) ? "" : newValue;
   }
 
-  public String getOrg() {
+  private String getOrg() {
     return ((this.org == null) ? "" : this.org);
   }
 
-  public void setIsActive(String newValue) {
+  private void setIsActive(String newValue) {
     this.isactive = (newValue == null) ? "Y" : newValue;
   }
 
-  public String getIsActive() {
+  private String getIsActive() {
     return (this.isactive);
   }
 
-  public void setUser(String newValue) {
+  private void setUser(String newValue) {
     this.user = (newValue == null) ? "" : newValue;
   }
 
-  public String getUser() {
+  private String getUser() {
     return ((this.user == null) ? "" : this.user);
   }
 
-  public void setWebSession(String newValue) {
+  private void setWebSession(String newValue) {
     this.websession = (newValue == null) ? "" : newValue;
   }
 
-  public String getWebSession() {
+  private String getWebSession() {
     return ((this.websession == null) ? "" : this.websession);
   }
 
-  public void setRemoteAddr(String newValue) {
+  private void setRemoteAddr(String newValue) {
     this.remoteAddr = (newValue == null) ? "" : newValue;
   }
 
-  public String getRemoteAddr() {
+  private String getRemoteAddr() {
     return ((this.remoteAddr == null) ? "" : this.remoteAddr);
   }
 
-  public void setRemoteHost(String newValue) {
+  private void setRemoteHost(String newValue) {
     this.remoteHost = (newValue == null) ? "" : newValue;
   }
 
-  public String getRemoteHost() {
+  private String getRemoteHost() {
     return ((this.remoteHost == null) ? "" : this.remoteHost);
   }
 
-  public void setProcessed(String newValue) {
+  private void setProcessed(String newValue) {
     this.processed = (newValue == null) ? "" : newValue;
   }
 
-  public String getProcessed() {
+  private String getProcessed() {
     return ((this.processed == null) ? "" : this.processed);
   }
 }

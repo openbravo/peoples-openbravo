@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -34,8 +33,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_BankDebt_Amount extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-
-  static final BigDecimal ZERO = new BigDecimal(0.0);
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -65,7 +62,7 @@ public class SL_BankDebt_Amount extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strDebtPayment, String strTabId, String strBankStatement, String strCurrency,
       String strDescription) throws IOException, ServletException {
     if (log4j.isDebugEnabled())

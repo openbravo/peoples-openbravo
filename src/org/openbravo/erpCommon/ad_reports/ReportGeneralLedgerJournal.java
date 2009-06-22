@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -65,11 +66,14 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "ReportGeneralLedgerJournal|ShowReg", "");
       String strShowOpening = vars.getGlobalVariable("inpShowOpening",
           "ReportGeneralLedgerJournal|ShowOpening", "");
-      String strRecord = vars.getGlobalVariable("inpRecord", "ReportGeneralLedgerJournal|Record", "");
+      String strRecord = vars.getGlobalVariable("inpRecord", "ReportGeneralLedgerJournal|Record",
+          "");
       String strTable = vars.getGlobalVariable("inpTable", "ReportGeneralLedgerJournal|Table", "");
       log4j.debug("********DEFAULT***************  strShowClosing: " + strShowClosing);
       log4j.debug("********DEFAULT***************  strShowReg: " + strShowReg);
       log4j.debug("********DEFAULT***************  strShowOpening: " + strShowOpening);
+      if (vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0").equals("0"))
+        vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable,
           strRecord, "", strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening);
     } else if (vars.commandIn("DIRECT")) {
@@ -94,8 +98,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strDocument = vars.getRequestGlobalVariable("inpDocument",
           "ReportGeneralLedgerJournal|Document");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
-      String strRecord = vars.getRequestGlobalVariable("inpRecord", "ReportGeneralLedgerJournal|Record");
-      String strTable = vars.getRequestGlobalVariable("inpTable", "ReportGeneralLedgerJournal|Table");
+      String strRecord = vars.getRequestGlobalVariable("inpRecord",
+          "ReportGeneralLedgerJournal|Record");
+      String strTable = vars.getRequestGlobalVariable("inpTable",
+          "ReportGeneralLedgerJournal|Table");
       String strShowClosing = vars.getRequestGlobalVariable("inpShowClosing",
           "ReportGeneralLedgerJournal|ShowClosing");
       String strShowReg = vars.getRequestGlobalVariable("inpShowReg",
@@ -173,7 +179,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable,
       String strRecord, String strFactAcctGroupId, String strcAcctSchemaId, String strShowClosing,
       String strShowReg, String strShowOpening) throws IOException, ServletException {
@@ -192,7 +198,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedgerJournal", false,
         "", "", "imprimir();return false;", false, "ad_reports", strReplaceWith, false, true);
     toolbar.setEmail(false);
-    if (vars.commandIn("DEFAULT", "FIND")) {
+    if (vars.commandIn("FIND") || vars.commandIn("DEFAULT")
+        && !vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber").equals("0")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening);
       String strTreeOrg = ReportGeneralLedgerJournalData.treeOrg(this, vars.getClient());
       String strOrgFamily = getFamily(strTreeOrg, strOrg);
@@ -320,7 +327,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
     xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData
         .selectCombo(this, vars.getRole()));
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
             "ReportGeneralLedger"), strcAcctSchemaId));
@@ -346,10 +353,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strDocument, String strOrg, String strTable, String strRecord,
-      String strFactAcctGroupId, String strcAcctSchemaId, String strShowClosing, String strShowReg,
-      String strShowOpening) throws IOException, ServletException {
+  private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable,
+      String strRecord, String strFactAcctGroupId, String strcAcctSchemaId, String strShowClosing,
+      String strShowReg, String strShowOpening) throws IOException, ServletException {
 
     ReportGeneralLedgerJournalData[] data = null;
 
@@ -382,7 +389,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
-  public String getFamily(String strTree, String strChild) throws IOException, ServletException {
+  private String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, (strChild == null || strChild.equals("")) ? "0"
         : strChild);
     /*
@@ -393,7 +400,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
      */
   }
 
-  public String buildCheck(String strShowClosing, String strShowReg, String strShowOpening) {
+  private String buildCheck(String strShowClosing, String strShowReg, String strShowOpening) {
     if (strShowClosing.equals("") && strShowReg.equals("") && strShowOpening.equals(""))
       return "'C','N','O','R'";
     String[] strElements = { strShowClosing.equals("") ? "" : "'C'",

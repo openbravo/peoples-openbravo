@@ -102,11 +102,11 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="chekPerms" value="false" />
   <property name="force" value="false" />
   <property name="local" value="true" />
-
-  <available file=".svn/entries" property="is.svn" />
-
+  <property name="apply.modules.complete.compilation" value="false" />
 
 
+  
+  <available file=".hg" property="is.hg" />
 
 
   <condition property="deploy.mode" value="class">
@@ -206,23 +206,16 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="code.rev" depends="set.code.rev">
-    <condition property="code.revision" value="${svn.entries}" else="0">
-      <isset property="svn.entries" />
+    <condition property="code.revision" value="${hg.id}" else="0">
+      <isset property="hg.id" />
     </condition>
   </target>
 
-  <target name="set.code.rev" if="is.svn">
-    <loadfile property="svn.entries" srcFile=".svn/entries" failonerror="false">
-      <filterchain>
-        <filterreader classname="org.apache.tools.ant.filters.HeadFilter">
-          <param name="skip" value="3" />
-          <param name="lines" value="1" />
-        </filterreader>
-      </filterchain>
-      <filterchain>
-        <filterreader classname="org.apache.tools.ant.filters.StripLineBreaks" />
-      </filterchain>
-    </loadfile>
+  <target name="set.code.rev" if="is.hg">
+    <exec executable="hg" outputproperty="hg.id" failifexecutionfails="false">
+      <arg value="id"/>
+      <arg value="-i"/>
+    </exec>
   </target>
 
   <target name="compile.complete" depends="init">
@@ -358,11 +351,13 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="generate.java.doc">
-    <javadoc sourcepath="${base.src}:${base.src.test}:${base.src.gen}" Windowtitle="Openbravo ERP 2.50" access="public" Header="Openbravo ERP 2.50" Footer="Openbravo ERP 2.50" destdir="${build.docs}" maxmemory="${build.maxmemory}">
+    <javadoc sourcepath="${base.src}:${base.src.test}:${build.AD}:${base.src.gen}:build/javasqlc/src/:build/javasqlc/srcAD" Windowtitle="Openbravo ERP 2.50 MP2" access="protected" Header="Openbravo ERP 2.50 MP2" Footer="Openbravo ERP 2.50 MP2" destdir="${build.docs}" linksource="no" maxmemory="1024M">
+      <excludepackage name="org.openbravo.erpWindows.*"/>
       <classpath>
         <path refid="project.class.path"/>
         <pathelement path="lib/build/js.jar" />
       </classpath>
+      <link href="http://java.sun.com/javase/6/docs/api/"/>
     </javadoc>
   </target>
 
@@ -386,8 +381,24 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="run.javascript.tests">
-    <ant dir="${base.src}" target="run.javascript.tests" inheritAll="true" inheritRefs="true" />
+  <target name="run.api.test.javascript">
+    <ant dir="${base.src}" target="run.api.test.javascript" inheritAll="true" inheritRefs="true" />
+  </target>
+  
+  <target name="run.api.test.model" 
+          description="Checks current xml db model and dictionary API for not-allowed changes. Requires stableDBdir parameter">
+    <taskdef name="checkAPI" classname="org.openbravo.ddlutils.task.CheckAPI">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <checkAPI driver="${bbdd.driver}" 
+                  url="${bbdd.owner.url}" 
+                  user="${bbdd.user}" 
+                  password="${bbdd.password}" 
+                  stableDBdir="${stableDBdir}"
+                  testDBdir="${base.src.db}/database"
+                  verbosity="${bbdd.verbosity}"
+                  userId="0" 
+                  propertiesFile="${base.config}/Openbravo.properties"/>    
   </target>
 
   <target name="export.sample.data" depends="code.rev">
@@ -534,7 +545,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="core.lib" />
     <ant dir="${base.db}" target="update.database.mod" inheritAll="true" inheritRefs="true" />
     <antcall target="db.apply.modules" />
-    <antcall target="generate.entities.quick" />
+    <antcall target="generate.entities" />
   </target>
 
   <target name="update.customized.database" depends="init,code.rev">
@@ -612,11 +623,39 @@ compare.database.structure: refer to compare.database.structure target of databa
       <classpath refid="project.class.path" />
     </taskdef>
     <antcall target="update.database.mod" />
-    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" reinitializemodel="true" />
-    <antcall target="compile.deploy" />
-    <!--antcall target="deploy.context"/-->
+    <!-- 
+    Note: set reinitializeModel to false because otherwise the dal is re-initialized with classes and a model
+    which are not in sync (see issue: https://issues.openbravo.com/view.php?id=9376)
+    Note: applyModule can also be moved to a java task to fork it (to prevent this from occuring)
+    but then no output is visible for the user.
+    -->
+    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" reinitializemodel="false"/>
+    
+    <condition property="apply.modules.complete.compilation.var">
+      <istrue value="${apply.modules.complete.compilation}"  />
+    </condition>
+    
+    <condition property="apply.modules.simple.compilation.var">
+      <isfalse value="${apply.modules.complete.compilation.var}" />
+    </condition>
+    
+    <antcall target="apply.modules.compile"/>
   </target>
-
+  
+  
+  <target name="apply.modules.compile">
+    <antcall target="apply.modules.compile.simple"/>
+    <antcall target="apply.modules.compile.complete"/>
+  </target>
+  
+  <target name="apply.modules.compile.simple" if="apply.modules.simple.compilation.var">
+    <antcall target="compile.deploy" />
+  </target>
+  
+  <target name="apply.modules.compile.complete" if="apply.modules.complete.compilation.var">
+     <antcall target="compile.complete.deploy" />
+  </target>
+  
   <!-- 
 		apparently this does not overwrite the default catalina_opts, only
 		if it is not set will it be set to the value below 
@@ -742,7 +781,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <condition property="osname" value="linux">
       <equals arg1="${os.name}" arg2="Linux" />
     </condition>
-    <condition property="osname" value="freebsd">
+    <condition property="osname" value="freebsd6">
       <equals arg1="${os.name}" arg2="FreeBSD" />
     </condition>
     <condition property="osname" value="windows">
@@ -751,7 +790,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <condition property="osname" value="osx">
       <contains string="${os.name}" substring="OS X" />
     </condition>
-    <condition property="os.is.solaris">
+    <condition property="osname" value="solaris">
       <or>
         <contains string="${os.name}" substring="Solaris" />
         <contains string="${os.name}" substring="SunOS" />

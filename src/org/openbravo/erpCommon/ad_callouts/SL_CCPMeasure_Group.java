@@ -59,7 +59,7 @@ public class SL_CCPMeasure_Group extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
       String strMACCPGroupID) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");

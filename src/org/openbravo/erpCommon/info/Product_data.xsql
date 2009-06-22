@@ -73,8 +73,8 @@
         <Parameter name="warehouse"/>
         <Parameter name="warehouse"/>
         <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
-        <Parameter name="key" optional="true" after="ip.IsSummary='N' AND "><![CDATA[ UPPER(ip.Value) LIKE UPPER(?) AND ]]></Parameter>
-        <Parameter name="name" optional="true" after="ip.IsSummary='N' AND "><![CDATA[ UPPER(ip.Name) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="key" ignoreValue="%" optional="true" after="ip.IsSummary='N' AND "><![CDATA[ UPPER(ip.Value) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="ip.IsSummary='N' AND "><![CDATA[ UPPER(ip.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="adUserClient" type="replace" optional="true" after="ip.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="ip.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="priceListVersion"/>
@@ -100,8 +100,8 @@
         AND p.AD_Client_ID IN ('1') 
         AND p.AD_Org_ID IN ('1') 
       ]]></Sql>
-        <Parameter name="key" optional="true" after="WHERE "><![CDATA[ UPPER(p.Value) LIKE UPPER(?) AND ]]></Parameter>
-        <Parameter name="name" optional="true" after="WHERE "><![CDATA[ UPPER(p.Name) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="key" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(p.Value) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(p.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="priceListVersion"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="p.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="p.AD_Org_ID IN (" text="'1'"/>

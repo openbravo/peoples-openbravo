@@ -377,6 +377,18 @@ public class Property {
   }
 
   /**
+   * @return true if the class of the primitive type ({@link #getPrimitiveObjectType()}) is a number
+   *         (extends {@link Number}).
+   */
+  public boolean isNumericType() {
+    final Class<?> typeClass = getPrimitiveObjectType();
+    if (typeClass == null) {
+      return false;
+    }
+    return Number.class.isAssignableFrom(typeClass);
+  }
+
+  /**
    * Returns the Object value of the default, for example a Date property with default value of
    * today will return a new Date() object.
    * 
@@ -494,7 +506,11 @@ public class Property {
     if (isCompositeId) {
       typeName = getEntity().getClassName() + ".Id";
     } else if (isPrimitive()) {
-      typeName = getPrimitiveType().getName();
+      if (getPrimitiveType().isArray()) {
+        typeName = getPrimitiveType().getComponentType().getName() + "[]";
+      } else {
+        typeName = getPrimitiveType().getName();
+      }
     } else if (getTargetEntity() == null) {
       log.warn("ERROR NO REFERENCETYPE " + getEntity().getName() + "." + getColumnName());
       return "java.lang.Object";
@@ -536,7 +552,7 @@ public class Property {
 
   /**
    * Returns the class of the type of this property, will translate primitive type classes (int) to
-   * their object type (java.lang.Integer). Used by the entity code generation.
+   * their object type (java.lang.Long for example). Used by the entity code generation.
    * 
    * @return the Object class for the primitive type
    */
@@ -563,6 +579,9 @@ public class Property {
     }
     if ("double".equals(typeName)) {
       return Double.class;
+    }
+    if ("byte[]".equals(typeName)) {
+      return byte[].class;
     }
     Check.fail("Type " + typeName + " not supported as object type");
     // never gets here

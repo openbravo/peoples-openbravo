@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -90,7 +90,7 @@ public class Login extends HttpBaseServlet {
     }
   }
 
-  public void printPageFrameIdentificacion(HttpServletResponse response, String strMenu,
+  private void printPageFrameIdentificacion(HttpServletResponse response, String strMenu,
       String strDetalle, String textDirection) throws IOException, ServletException {
 
     XmlDocument xmlDocument;
@@ -114,7 +114,7 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  public void printPageBlank(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageBlank(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine
         .readXmlTemplate("org/openbravo/erpCommon/security/Login_F0").createXmlDocument();
@@ -125,7 +125,7 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  public void printPageWelcome(HttpServletResponse response, String strTheme) throws IOException,
+  private void printPageWelcome(HttpServletResponse response, String strTheme) throws IOException,
       ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/security/Login_Welcome").createXmlDocument();
@@ -139,7 +139,7 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  public void printPageLogo(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageLogo(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/security/Login_Logo").createXmlDocument();
@@ -154,7 +154,7 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  public void printPageIdentificacion(HttpServletResponse response, String strTheme)
+  private void printPageIdentificacion(HttpServletResponse response, String strTheme)
       throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine
         .readXmlTemplate("org/openbravo/erpCommon/security/Login_F1").createXmlDocument();
@@ -168,7 +168,7 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  void goToRetry(HttpServletResponse res) throws IOException {
+  private void goToRetry(HttpServletResponse res) throws IOException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
 
@@ -181,7 +181,8 @@ public class Login extends HttpBaseServlet {
   // public void printPageOptions(HttpServletResponse response,
   // VariablesSecureApp vars) throws IOException, ServletException {
   // XmlDocument xmlDocument =
-  // xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_Options_F1").createXmlDocument();
+  //xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_Options_F1").createXmlDocument
+  // ();
   //    
   // RoleComboData[] data = RoleComboData.select(this, vars.getUser());
   // if (data==null || data.length==0) {
@@ -254,7 +255,7 @@ public class Login extends HttpBaseServlet {
   // out.close();
   // }
 
-  public void bdError(HttpServletResponse response, String strCode, String strLanguage)
+  private void bdError(HttpServletResponse response, String strCode, String strLanguage)
       throws IOException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/Error")
         .createXmlDocument();

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,8 +20,8 @@ package org.openbravo.erpCommon.businessUtility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Vector;
 import java.util.Random;
+import java.util.Vector;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -39,8 +40,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Buscador extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  protected static final int MAX_TEXTBOX_LENGTH = 150;
-  protected static final int MAX_TEXTBOX_DISPLAY = 30;
+  private static final int MAX_TEXTBOX_LENGTH = 150;
+  private static final int MAX_TEXTBOX_DISPLAY = 30;
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -52,12 +53,27 @@ public class Buscador extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strTab = vars.getRequiredStringParameter("inpTabId");
-      String strWindow = vars.getRequiredStringParameter("inpWindow");
-      String strWindowId = vars.getStringParameter("inpWindowId");
+      vars.setSessionValue("Buscador.inpTabId", vars.getRequiredStringParameter("inpTabId"));
+      vars.setSessionValue("Buscador.inpWindow", vars.getRequiredStringParameter("inpWindow"));
+      vars.setSessionValue("Buscador.inpWindowId", vars.getStringParameter("inpWindowId"));
+
+      printPageFS(response, vars);
+    }
+
+    if (vars.commandIn("FRAME1")) {
+      String strTab = vars.getSessionValue("Buscador.inpTabId");
+      String strWindow = vars.getSessionValue("Buscador.inpWindow");
+      String strWindowId = vars.getSessionValue("Buscador.inpWindowId");
       String strIsSOTrx = vars.getSessionValue(strWindowId + "|issotrxtab");
       String strShowAudit = Utility.getContext(this, vars, "ShowAudit", strWindowId);
       BuscadorData[] data;
+
+      // assumption Buscador servlet is only called from generated windows
+      // get url path working on windows in core & modules and use this instead
+      // of the incoming window path
+      // always use _Relation form url as it matches old behavior in ToolBar.java and
+      // both views are mapped to the same servlet
+      strWindow = Utility.getTabURL(this, strTab, "R");
 
       if (!BuscadorData.hasSelectionColumns(this, strTab).equals("0"))
         data = BuscadorData.select(this, vars.getLanguage(), strTab, strShowAudit);
@@ -92,7 +108,19 @@ public class Buscador extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  BuscadorData[] removeParents(BuscadorData[] data, String strTab) throws ServletException {
+  private void printPageFS(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/businessUtility/Buscador_FS").createXmlDocument();
+
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  private BuscadorData[] removeParents(BuscadorData[] data, String strTab) throws ServletException {
     String parentColumn = BuscadorData.parentsColumnName(this, strTab);
     if (data == null || data.length == 0)
       return data;
@@ -112,7 +140,7 @@ public class Buscador extends HttpSecureAppServlet {
     return result;
   }
 
-  boolean loadParameters(VariablesSecureApp vars, BuscadorData[] data, String strTab)
+  private boolean loadParameters(VariablesSecureApp vars, BuscadorData[] data, String strTab)
       throws ServletException {
     if (data == null || data.length == 0)
       return false;
@@ -126,7 +154,7 @@ public class Buscador extends HttpSecureAppServlet {
     return isEmpty;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTab,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTab,
       BuscadorData[] data, String strWindow, String strWindowId, String strIsSOTrx)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -162,7 +190,7 @@ public class Buscador extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateScript(BuscadorData[] fields, String strWindow, String strTab) {
+  private String generateScript(BuscadorData[] fields, String strWindow, String strTab) {
     StringBuffer strHtml = new StringBuffer();
     StringBuffer strCombo = new StringBuffer();
     strHtml.append("function aceptar() {\n");
@@ -324,12 +352,20 @@ public class Buscador extends HttpSecureAppServlet {
       }
     }
     strHtml.append("\n").append(paramsData);
-    strHtml.append("  if (window.opener.selectFilters) window.opener.selectFilters(paramsData);\n");
-    strHtml.append("  else window.opener.submitFormGetParams(\"SEARCH\", \"../" + strWindow + "\""
-        + params.toString() + ");\n");
-    strHtml.append("  window.close();\n");
+    strHtml
+        .append("  if (parent.window.opener.selectFilters) parent.window.opener.selectFilters(paramsData);\n");
+    strHtml.append("  else parent.window.opener.submitFormGetParams(\"SEARCH\", \"" + strWindow
+        + "\"" + params.toString() + ");\n");
+    strHtml.append("  parent.window.close();\n");
     strHtml.append("  return true;\n");
     strHtml.append("}\n");
+
+    strHtml.append("\nfunction reloadComboReloads(changedField) {\n");
+    strHtml.append("  submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloads"
+        + strTab + ".html', 'hiddenFrame', null, null, true);\n");
+    strHtml.append("  return true;\n");
+    strHtml.append("}\n");
+
     strHtml.append("function onloadFunctions() {\n");
     strHtml.append("  enableLocalShortcuts();\n");
     strHtml.append(strCombo);
@@ -338,7 +374,7 @@ public class Buscador extends HttpSecureAppServlet {
     return strHtml.toString();
   }
 
-  String generateHtml(VariablesSecureApp vars, BuscadorData[] fields, String strTab,
+  private String generateHtml(VariablesSecureApp vars, BuscadorData[] fields, String strTab,
       String strWindow, StringBuffer script, String strIsSOTrx, Vector<StringBuffer> vecScript)
       throws IOException, ServletException {
     if (fields == null || fields.length == 0)
@@ -347,6 +383,7 @@ public class Buscador extends HttpSecureAppServlet {
     boolean scriptCalendar = false;
     boolean scriptClock = false;
     boolean scriptCalculator = false;
+    boolean scriptTime = false;
     boolean scriptKeyboard = false;
     boolean scriptSearch = false;
     boolean scriptSelect = false;
@@ -355,6 +392,10 @@ public class Buscador extends HttpSecureAppServlet {
     int randomId4Num3 = 0;
     Random rnd = new Random();
     Vector<Object> vecKeys = new Vector<Object>();
+
+    // get list of fields with comboreloads
+    Vector<String> comboReloadFields = getComboReloadFields(this, strTab);
+
     for (int i = 0; i < fields.length; i++) {
       randomId4Num1 = rnd.nextInt(10000);
       randomId4Num2 = rnd.nextInt(10000);
@@ -378,8 +419,14 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("<select ");
         strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname))
             .append("\" ");
-        strHtml.append("onchange=\"return true; \" id=\"idParam").append(
-            FormatUtilities.replace(fields[i].columnname)).append("\" ");
+        // attach comboReload call if needed
+        if (isInVector(comboReloadFields, fields[i].columnname)) {
+          strHtml.append("onchange=\"reloadComboReloads(this.name);return true; \" id=\"idParam")
+              .append(FormatUtilities.replace(fields[i].columnname)).append("\" ");
+        } else {
+          strHtml.append("onchange=\"return true; \" id=\"idParam").append(
+              FormatUtilities.replace(fields[i].columnname)).append("\" ");
+        }
         if (Integer.valueOf(fields[i].fieldlength).intValue() < (MAX_TEXTBOX_LENGTH / 4)) {
           strHtml.append("class=\"Combo Combo_OneCell_width\"");
         } else if (Integer.valueOf(fields[i].fieldlength).intValue() < (MAX_TEXTBOX_LENGTH / 2)) {
@@ -394,7 +441,7 @@ public class Buscador extends HttpSecureAppServlet {
               fields[i].columnname, fields[i].referencevalue, fields[i].adValRuleId, Utility
                   .getContext(this, vars, "#AccessibleOrgTree", strWindow), Utility.getContext(
                   this, vars, "#User_Client", strWindow), 0);
-          Utility.fillSQLParameters(this, vars, null, comboTableData, strWindow, fields[i].value);
+          comboTableData.fillParametersFromSearch(strTab, strWindow);
           FieldProvider[] data = comboTableData.select(false);
           comboTableData = null;
           for (int j = 0; j < data.length; j++) {
@@ -461,6 +508,33 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("</tr>\n");
         strHtml.append("</table>\n");
         strHtml.append("</td>\n");
+      } else if (fields[i].reference.equals("24")) { // time
+        scriptTime = true;
+        strHtml.append("<td class=\"TextBox_btn_ContentCell\">\n");
+        strHtml
+            .append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\"  style=\"padding-top: 0px;\">\n");
+        strHtml.append("<tr>\n");
+        strHtml.append("<td class=\"TextBox_ContentCell\">\n");
+        strHtml
+            .append("<input type=\"text\" class=\"dojoValidateValid TextBox_btn_OneCell_width\" ");
+        strHtml.append("displayFormat=\"%H:%M:%S\" ");
+        strHtml.append("saveFormat=\"%H:%M:%S\" ");
+        strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname))
+            .append("\" ");
+        strHtml.append("maxlength=\"19\" ");
+        strHtml.append("value=\"").append(fields[i].value).append("\" ");
+        strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields[i].columnname))
+            .append("\" ");
+
+        strHtml
+            .append("onkeyup=\"autoCompleteTime(this);\" onchange=\"validateTimeTextBox(this);logChanges(this);return true;\"></input> ");
+        strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam").append(
+            FormatUtilities.replace(fields[i].columnname)).append("\") </script>");
+        strHtml.append("</td>\n");
+        strHtml.append("</td>\n");
+        strHtml.append("</tr>\n");
+        strHtml.append("</table>\n");
+        strHtml.append("</td>\n");
       } else if (fields[i].reference.equals("20")) { // YesNo
         strHtml.append("<td class=\"Radio_Check_ContentCell\">\n");
         strHtml
@@ -471,8 +545,8 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("checked");
         strHtml.append("></input></span>\n");
       } else if (fields[i].reference.equals("30") || fields[i].reference.equals("21")
-          || fields[i].reference.equals("31") || fields[i].reference.equals("35")
-          || fields[i].reference.equals("25") || fields[i].reference.equals("800011")) { // Search
+          || fields[i].reference.equals("31") || fields[i].reference.equals("25")
+          || fields[i].reference.equals("800011")) { // Search
         strHtml.append("<td class=\"TextBox_btn_ContentCell\" colspan=\"3\">\n");
         strHtml.append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\">\n");
         scriptSearch = true;
@@ -557,11 +631,13 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("value=\"").append(fields[i].value).append("\" ");
         if (Utility.isDecimalNumber(fields[i].reference))
           strHtml
-              .append("onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, true, true, event);return true;\" ")
+              .append(
+                  "onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, true, true, event);return true;\" ")
               .append("id=\"").append(randomId4Num1).append("\" ");
         else if (Utility.isIntegerNumber(fields[i].reference))
           strHtml
-              .append("onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, false, false, event);return true;\" ")
+              .append(
+                  "onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, false, false, event);return true;\" ")
               .append("id=\"").append(randomId4Num1).append("\" ");
         strHtml.append(">");
         if (Utility.isDecimalNumber(fields[i].reference)
@@ -584,10 +660,10 @@ public class Buscador extends HttpSecureAppServlet {
                   "<img alt=\"Calculator\" class=\"FieldButton_Icon FieldButton_Icon_Calc\" title=\"Calculator\" src=\"")
               .append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></img>\n");
           strHtml.append("</td>\n</tr>\n</table>\n</td>\n</tr>\n</table>\n</a>\n");
-          strHtml
-              .append("<span class=\"invalid\" style=\"display: none;\" id=\"").append(randomId4Num1).append("invalidSpan\">* The value entered is not valid.</span>");
-          strHtml
-              .append("<span class=\"missing\" style=\"display: none;\" id=\"").append(randomId4Num1).append("missingSpan\">* This value is required.</span>");
+          strHtml.append("<span class=\"invalid\" style=\"display: none;\" id=\"").append(
+              randomId4Num1).append("invalidSpan\">* The value entered is not valid.</span>");
+          strHtml.append("<span class=\"missing\" style=\"display: none;\" id=\"").append(
+              randomId4Num1).append("missingSpan\">* This value is required.</span>");
           strHtml
               .append("<span class=\"range\" style=\"display: none;\">* This value is out of range.</span>");
           strHtml.append("</td>");
@@ -628,7 +704,8 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         } else if (Utility.isIntegerNumber(fields[i].reference)) {
           scriptCalculator = true;
-          strHtml.append("onkeydown=\"autoCompleteNumber(this, false, false, event);return true;\" ");
+          strHtml
+              .append("onkeydown=\"autoCompleteNumber(this, false, false, event);return true;\" ");
           strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         }
         strHtml.append(">");
@@ -659,11 +736,13 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("value=\"").append(value).append("\" ");
           if (Utility.isDecimalNumber(fields[i].reference))
             strHtml
-                .append("onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, true, true, event);return true;\" ")
+                .append(
+                    "onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, true, true, event);return true;\" ")
                 .append("id=\"").append(randomId4Num3).append("\" ");
           else if (Utility.isIntegerNumber(fields[i].reference))
             strHtml
-                .append("onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, false, false, event);return true;\" ")
+                .append(
+                    "onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, false, false, event);return true;\" ")
                 .append("id=\"").append(randomId4Num3).append("\" ");
           strHtml.append(">");
 
@@ -682,10 +761,10 @@ public class Buscador extends HttpSecureAppServlet {
                   "<img alt=\"Calculator\" class=\"FieldButton_Icon FieldButton_Icon_Calc\" title=\"Calculator\" src=\"")
               .append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></img>\n");
           strHtml.append("</td>\n</tr>\n</table>\n</td>\n</tr>\n</table>\n");
-          strHtml
-              .append("<span class=\"invalid\" style=\"display: none;\" id=\"").append(randomId4Num3).append("invalidSpan\">* The value entered is not valid.</span>");
-          strHtml
-              .append("<span class=\"missing\" style=\"display: none;\" id=\"").append(randomId4Num3).append("missingSpan\">* This value is required.</span>");
+          strHtml.append("<span class=\"invalid\" style=\"display: none;\" id=\"").append(
+              randomId4Num3).append("invalidSpan\">* The value entered is not valid.</span>");
+          strHtml.append("<span class=\"missing\" style=\"display: none;\" id=\"").append(
+              randomId4Num3).append("missingSpan\">* This value is required.</span>");
           strHtml
               .append("<span class=\"range\" style=\"display: none;\">* This value is out of range.</span>");
           strHtml.append("</td>");
@@ -737,29 +816,48 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("</tr>\n");
           strHtml.append("</table>\n");
           strHtml.append("</td>\n");
-        } else {
-          strHtml.append("<input type=\"text\" ");
+        } else { // time
+          strHtml.append("<td class=\"TextBox_btn_ContentCell\">\n");
+          strHtml
+              .append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\"  style=\"padding-top: 0px;\">\n");
+          strHtml.append("<tr>\n");
+          strHtml.append("<td class=\"TextBox_ContentCell\">\n");
+          strHtml
+              .append("<input type=\"text\" class=\"dojoValidateValid TextBox_btn_OneCell_width\" ");
+          strHtml.append("displayFormat=\"%H:%M:%S\" ");
+          strHtml.append("saveFormat=\"%H:%M:%S\" ");
           strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append("_f\" ");
-          strHtml.append(fields[i].fieldlength).append("\" ");
+          strHtml.append("maxlength=\"19\" ");
           strHtml.append("value=\"").append(value).append("\" ");
-          strHtml.append(">");
+          strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields[i].columnname))
+              .append("_f\" ");
+
+          strHtml
+              .append("onkeyup=\"autoCompleteTime(this);\" onchange=\"validateTimeTextBox(this);logChanges(this);return true;\"></input> ");
+          strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam").append(
+              FormatUtilities.replace(fields[i].columnname)).append("\") </script>");
+          strHtml.append("</td>\n");
+          strHtml.append("</td>\n");
+          strHtml.append("</tr>\n");
+          strHtml.append("</table>\n");
+          strHtml.append("</td>\n");
         }
         // strHtml.append("</td></tr></table>\n");
       }
       // strHtml.append("</td></tr></table>\n");
       strHtml.append("</td></tr>\n");
     }
-    //vecKeys.addElement("new keyArrayItem(\"B\", \"aceptar()\", null, \"ctrlKey\")");
-    //vecKeys.addElement("new keyArrayItem(\"ESCAPE\", \"window.close()\", null, null)");
+    // vecKeys.addElement("new keyArrayItem(\"B\", \"aceptar()\", null, \"ctrlKey\")");
+    // vecKeys.addElement("new keyArrayItem(\"ESCAPE\", \"window.close()\", null, null)");
     script.append("\nfunction enableLocalShortcuts() {\n");
     if (vecKeys.size() > 0) {
-      //script.append("var keyArray = new Array();\n");
+      // script.append("var keyArray = new Array();\n");
       for (int i = 0; i < vecKeys.size(); i++) {
         script.append("  keyArray[keyArray.length] = ").append(vecKeys.elementAt(i).toString())
             .append(";\n");
       }
-      //script.append("enableShortcuts();\n");
+      // script.append("enableShortcuts();\n");
     } else {
       script.append("\n");
     }
@@ -785,10 +883,8 @@ public class Buscador extends HttpSecureAppServlet {
           "/js/default/DateTextBox.js\" type=\"text/javascript\"></script>");
     }
     if (scriptCalculator) {
-      scrScr
-          .append("<script language=\"JavaScript\" src=\"")
-          .append(strReplaceWith)
-          .append("/js/default/ValidationNumberBox.js\" type=\"text/javascript\"></script>");
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append(
+          "/js/default/ValidationNumberBox.js\" type=\"text/javascript\"></script>");
       scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append(
           "/js/calculator.js\" type=\"text/javascript\"></script>");
     }
@@ -796,13 +892,17 @@ public class Buscador extends HttpSecureAppServlet {
       scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append(
           "/js/searchs.js\" type=\"text/javascript\"></script>");
     }
+    if (scriptTime) {
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append(
+          "/js/default/TimeTextBox.js\" type=\"text/javascript\"></script>");
+    }
     if (scriptSelect) {
     }
     vecScript.addElement(scrScr);
     return strHtml.toString();
   }
 
-  public String locationCommands(BuscadorData efd) {
+  private String locationCommands(BuscadorData efd) {
     StringBuffer html = new StringBuffer();
 
     html.append(
@@ -814,7 +914,7 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  public String location(BuscadorData efd) {
+  private String location(BuscadorData efd) {
     StringBuffer html = new StringBuffer();
     html.append("<td class=\"FieldButton_bg\">");
     html.append("<a href=\"#\" class=\"FieldButtonLink\" ");
@@ -831,8 +931,8 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  public String searchsCommand(BuscadorData efd, boolean fromButton, String tabId, String windowId,
-      String strIsSOTrx) {
+  private String searchsCommand(BuscadorData efd, boolean fromButton, String tabId,
+      String windowId, String strIsSOTrx) {
     StringBuffer params = new StringBuffer();
     StringBuffer html = new StringBuffer();
     String strMethodName = "openSearch";
@@ -883,7 +983,7 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  public String searchs(BuscadorData efd, String tabId, String windowId, String strIsSOTrx) {
+  private String searchs(BuscadorData efd, String tabId, String windowId, String strIsSOTrx) {
     StringBuffer html = new StringBuffer();
     if (efd.searchname.toUpperCase().indexOf("BUSINESS") != -1) {
       html.append("<input type=\"hidden\" name=\"inpParam").append(
@@ -919,7 +1019,7 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  public String locatorCommands(BuscadorData efd, boolean fromButton, String windowId) {
+  private String locatorCommands(BuscadorData efd, boolean fromButton, String windowId) {
     StringBuffer params = new StringBuffer();
     StringBuffer html = new StringBuffer();
     if (!fromButton) {
@@ -936,7 +1036,7 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  public String locator(BuscadorData efd, String windowId) {
+  private String locator(BuscadorData efd, String windowId) {
     StringBuffer html = new StringBuffer();
     html.append("<td class=\"FieldButton_bg\">");
     html.append("<a href=\"#\"  class=\"FieldButtonLink\" ");
@@ -955,8 +1055,66 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
+  /**
+   * Gets list of fields which have a comboReload associated to trigger reloads of dependent combos.
+   * Change in logic needs to be synchronized with copy in wad
+   * 
+   * @return List of columnnames of fields with have a comboReload associated
+   */
+  private static Vector<String> getComboReloadFields(ConnectionProvider pool, String strTab)
+      throws ServletException {
+    final BuscadorData[] dataReload = BuscadorData.selectValidationTab(pool, strTab);
+
+    final Vector<String> vecReloads = new Vector<String>();
+    if (dataReload != null && dataReload.length > 0) {
+      for (int z = 0; z < dataReload.length; z++) {
+        String code = dataReload[z].whereclause
+            + ((!dataReload[z].whereclause.equals("") && !dataReload[z].referencevalue.equals("")) ? " AND "
+                : "") + dataReload[z].referencevalue;
+
+        if (code.equals("") && dataReload[z].type.equals("R"))
+          code = "@AD_Org_ID@";
+        getComboReloadText(code, vecReloads, dataReload[z].columnname);
+      }
+    }
+    return vecReloads;
+  }
+
+  private static void getComboReloadText(String token, Vector<String> vecComboReload,
+      String columnname) {
+    int i = token.indexOf("@");
+    while (i != -1) {
+      token = token.substring(i + 1);
+      if (!token.startsWith("SQL")) {
+        i = token.indexOf("@");
+        if (i != -1) {
+          String strAux = token.substring(0, i);
+          token = token.substring(i + 1);
+          getComboReloadTextTranslate(strAux, vecComboReload, columnname);
+        }
+      }
+      i = token.indexOf("@");
+    }
+  }
+
+  private static void getComboReloadTextTranslate(String token, Vector<String> vecComboReload,
+      String columnname) {
+    if (token == null || token.trim().equals(""))
+      return;
+    if (!token.equalsIgnoreCase(columnname))
+      if (!isInVector(vecComboReload, token))
+        vecComboReload.addElement(token);
+  }
+
+  private static boolean isInVector(Vector<String> vec, String field) {
+    for (String aux : vec) {
+      if (aux.equalsIgnoreCase(field))
+        return true;
+    }
+    return false;
+  }
+
   public String getServletInfo() {
-    // FIXME: Should be in English
-    return "Servlet que presenta el buscador";
-  } // end of getServletInfo() method
+    return "Servlet to render the search popup";
+  }
 }

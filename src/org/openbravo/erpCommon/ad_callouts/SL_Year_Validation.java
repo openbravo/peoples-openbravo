@@ -56,7 +56,7 @@ public class SL_Year_Validation extends HttpSecureAppServlet {
 
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strYear)
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strYear)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");

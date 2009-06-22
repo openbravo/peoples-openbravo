@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -47,13 +48,13 @@ public class ReportOffer extends HttpSecureAppServlet {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportOffer|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportOffer|dateTo", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN", "ReportOffer|partner",
-          "");
+          "", IsIDFilter.instance);
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId);
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportOffer|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportOffer|dateTo", "");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportOffer|partner");
+          "ReportOffer|partner", IsIDFilter.instance);
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId);
     } else if (vars.commandIn("OPENAJAX")) {
       String strOfferId = vars.getRequiredStringParameter("inpOfferAjax");
@@ -62,7 +63,7 @@ public class ReportOffer extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strcBpartnerId) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -77,8 +78,8 @@ public class ReportOffer extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
 
     ReportOfferData[] data = ReportOfferData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "ReportOffer"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOffer"),
-        strDateFrom, strDateTo, strcBpartnerId);
+        "#User_Client", "ReportOffer"), Utility.getContext(this, vars, "#AccessibleOrgTree",
+        "ReportOffer"), strDateFrom, strDateTo, strcBpartnerId);
     /*
      * SubreportOfferProductData[][] dataProduct = new SubreportOfferProductData[data.length][]; for
      * (int i=0; i<data.length; i++) { dataProduct[i] = SubreportOfferProductData.select(this,
@@ -123,8 +124,8 @@ public class ReportOffer extends HttpSecureAppServlet {
     xmlDocument.setParameter("today", DateTimeData.today(this));
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportOfferData.selectBpartner(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOffer"), Utility.getContext(this,
-            vars, "#User_Client", "ReportOffer"), strcBpartnerId));
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOffer"), Utility
+            .getContext(this, vars, "#User_Client", "ReportOffer"), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     // xmlDocument.setDataArray("reportProduct", "structure1" ,
     // dataProduct);
@@ -134,15 +135,15 @@ public class ReportOffer extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageAjaxDocumentResponse(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageAjaxDocumentResponse(HttpServletResponse response, VariablesSecureApp vars,
       String strOfferId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: ajaxreponse");
     XmlDocument xmlDocument = null;
 
     SubreportOfferProductData[] data = SubreportOfferProductData.select(this, Utility.getContext(
-        this, vars, "#User_Client", "ReportOffer"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        "ReportOffer"), strOfferId);
+        this, vars, "#User_Client", "ReportOffer"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportOffer"), strOfferId);
 
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/SubreportOfferProduct").createXmlDocument();

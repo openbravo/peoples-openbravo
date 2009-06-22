@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,8 +29,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ImportModule;
@@ -39,11 +41,13 @@ import org.openbravo.erpCommon.modules.UninstallModule;
 import org.openbravo.erpCommon.modules.VersionUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
+import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.SimpleModule;
@@ -117,7 +121,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       printPageInstallFile(response, vars);
 
     } else if (vars.commandIn("UNINSTALL")) {
-      final String modules = vars.getInStringParameter("inpNodes");
+      final String modules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
       final UninstallModule um = new UninstallModule(this, vars.getSessionValue("#sourcePath"),
           vars);
       um.execute(modules);
@@ -150,7 +154,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageInstalled(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageInstalled(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Installed");
@@ -213,8 +217,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageApply(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageApply(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     try {
       final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_forms/ApplyModule").createXmlDocument();
@@ -276,7 +280,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageAdd(HttpServletRequest request, HttpServletResponse response,
+  private void printPageAdd(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String searchText, boolean displaySearch) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -339,8 +343,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageHistory(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strUser) throws IOException, ServletException {
+  private void printPageHistory(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strUser) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Installed");
     response.setContentType("text/html; charset=UTF-8");
@@ -405,8 +409,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageDetail(HttpServletResponse response, VariablesSecureApp vars, String recordId,
-      boolean local) throws IOException, ServletException {
+  private void printPageDetail(HttpServletResponse response, VariablesSecureApp vars,
+      String recordId, boolean local) throws IOException, ServletException {
     Module module = null;
     if (!local) {
       try {
@@ -480,7 +484,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @param response
    * @throws IOException
    */
-  void printPageInstallFile(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageInstallFile(HttpServletResponse response, VariablesSecureApp vars)
       throws ServletException, IOException {
     final FileItem fi = vars.getMultiFile("inpFile");
 
@@ -524,9 +528,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageInstall1(HttpServletResponse response, VariablesSecureApp vars, String recordId,
-      boolean islocal, InputStream obx, String[] updateModules) throws IOException,
-      ServletException {
+  private void printPageInstall1(HttpServletResponse response, VariablesSecureApp vars,
+      String recordId, boolean islocal, InputStream obx, String[] updateModules)
+      throws IOException, ServletException {
     final String discard[] = { "", "", "", "", "", "" };
     Module module = null;
     if (!islocal && (updateModules == null || updateModules.length == 0)) {
@@ -676,8 +680,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageInstall2(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageInstall2(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     Module[] inst = null;
     Module[] selected;
 
@@ -772,8 +776,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printPageInstall3(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageInstall3(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     final ImportModule im = (ImportModule) vars.getSessionObject("InstallModule|ImportModule");
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallP4").createXmlDocument();
@@ -819,7 +823,23 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private String getSearchResults(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String text) {
     SimpleModule[] modules = null;
+    SystemInformation info = OBDal.getInstance().get(SystemInformation.class, "0");
     try {
+      if (info.isProxyRequired() && !info.getProxyServer().equals("") && info.getProxyPort() > 0) {
+        if (!HttpsUtils.isInternetAvailable(info.getProxyServer(), info.getProxyPort().intValue())) {
+          final OBError message = new OBError();
+          message.setType("Error");
+          message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+          message.setMessage(Utility.messageBD(this, "WSError", vars.getLanguage()));
+          vars.setMessage("ModuleManagement", message);
+          try {
+            response
+                .sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
+          } catch (final Exception ex) {
+            ex.printStackTrace();
+          }
+        }
+      }
       final WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
       final WebServiceImpl ws = loc.getWebService();
       modules = ws.moduleSearch(text, getInstalledModules());
@@ -905,8 +925,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printLicenseAgreement(HttpServletResponse response, VariablesSecureApp vars, String record)
-      throws IOException, ServletException {
+  private void printLicenseAgreement(HttpServletResponse response, VariablesSecureApp vars,
+      String record) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: ajaxreponse");
 
@@ -946,8 +966,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  void printSearchFile(HttpServletResponse response, VariablesSecureApp vars, OBError message)
-      throws IOException, ServletException {
+  private void printSearchFile(HttpServletResponse response, VariablesSecureApp vars,
+      OBError message) throws IOException, ServletException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallLocal").createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -966,7 +986,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printScan(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+  private void printScan(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: ajaxreponse");

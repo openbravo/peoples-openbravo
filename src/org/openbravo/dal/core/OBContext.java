@@ -71,7 +71,7 @@ public class OBContext implements OBNotSingleton {
 
   // private static final String AD_USERID = "#AD_USER_ID";
   // TODO: maybe use authenticated user
-  private static final String AUTHENTICATED_USER = "#AUTHENTICATED_USER";
+  private static final String AUTHENTICATED_USER = "#AD_User_ID";
   private static final String ROLE = "#AD_Role_ID";
   private static final String CLIENT = "#AD_Client_ID";
   private static final String ORG = "#AD_Org_ID";
@@ -81,6 +81,25 @@ public class OBContext implements OBNotSingleton {
   private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<OBContext>();
 
   private static String CONTEXT_PARAM = "#OBContext";
+
+  private static OBContext adminContext = null;
+
+  /**
+   * Sets the context to the 0 (SystemAdmin) user.
+   * 
+   * Note overwrites the current OBContext! This method should be used in case there is no real user
+   * context yet because the user still has to login (for example).
+   * 
+   * In all other cases use the method {@link #setInAdministratorMode(boolean)}.
+   */
+  public static void setAdminContext() {
+    if (adminContext == null) {
+      setOBContext("0");
+      adminContext = getOBContext();
+    } else {
+      setOBContext(adminContext);
+    }
+  }
 
   /**
    * Sets the OBContext through the information stored in the http session of the request (mainly
@@ -98,7 +117,7 @@ public class OBContext implements OBNotSingleton {
     if (context == null) {
       context = new OBContext();
       if (context.setFromRequest(request)) {
-        request.getSession().setAttribute(CONTEXT_PARAM, context);
+        setOBContextInSession(request, context);
         setOBContext(context);
       }
     } else {
@@ -107,6 +126,18 @@ public class OBContext implements OBNotSingleton {
       }
       setOBContext(context);
     }
+  }
+
+  /**
+   * Sets the passed OBContext in the http session.
+   * 
+   * @param request
+   *          the http request used to get the http session
+   * @param context
+   *          the context which will be stored in the session
+   */
+  public static void setOBContextInSession(HttpServletRequest request, OBContext context) {
+    request.getSession().setAttribute(CONTEXT_PARAM, context);
   }
 
   /**
@@ -347,6 +378,13 @@ public class OBContext implements OBNotSingleton {
     writableOrganizations = null;
   }
 
+  /**
+   * Sets the OBContext using the information stored in the HttpSession
+   * 
+   * @param request
+   *          the http request used to set the OBContext
+   * @return false if no user was specified in the session, true otherwise
+   */
   public boolean setFromRequest(HttpServletRequest request) {
     String userId = null;
     for (final Enumeration<?> e = request.getSession().getAttributeNames(); e.hasMoreElements();) {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2008 Openbravo SL
+ * All portions are Copyright (C) 2008-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,13 +33,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.ad_combos.MonedaComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
@@ -61,24 +61,24 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class InitialOrgSetup extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final String SALTO_LINEA = "<br>\n";
-  String C_Currency_ID = "";
-  String AD_User_U_Name = "";
-  String AD_User_U_ID = "";
-  String AD_Client_ID = "";
-  String AD_Org_ID = "";
-  String C_AcctSchema_ID = "";
-  String client = "";
-  String strError = "";
-  StringBuffer strSummary = new StringBuffer();
-  AcctSchema m_AcctSchema;
-  boolean m_hasProject;
-  boolean m_hasMCampaign;
-  boolean m_hasSRegion;
-  boolean isOK = true;
-  String AD_Tree_Org_ID = "", AD_Tree_BPartner_ID = "", AD_Tree_Project_ID = "",
+  private static final String SALTO_LINEA = "<br>\n";
+  private String C_Currency_ID = "";
+  private String AD_User_U_Name = "";
+  private String AD_User_U_ID = "";
+  private String AD_Client_ID = "";
+  private String AD_Org_ID = "";
+  private String C_AcctSchema_ID = "";
+  private String client = "";
+  private String strError = "";
+  private StringBuffer strSummary = new StringBuffer();
+  private AcctSchema m_AcctSchema;
+  private boolean m_hasProject;
+  private boolean m_hasMCampaign;
+  private boolean m_hasSRegion;
+  private boolean isOK = true;
+  private String AD_Tree_Org_ID = "", AD_Tree_BPartner_ID = "", AD_Tree_Project_ID = "",
       AD_Tree_SalesRegion_ID = "", AD_Tree_Product_ID = "", AD_Tree_Account_ID = "";
-  static StringBuffer m_info = new StringBuffer();
+  private static StringBuffer m_info = new StringBuffer();
   private final String CompiereSys = "N"; // Should NOT be changed
 
   @Override
@@ -88,7 +88,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars);
     } else if (vars.commandIn("OK")) {
-      final String strModules = vars.getInStringParameter("inpNodes");
+      final String strModules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
       m_info.delete(0, m_info.length());
       final String strResult = process(request, response, vars, strModules);
       log4j.debug("InitialOrgSetup - after processFile");
@@ -217,7 +217,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     out.close();
   }
 
-  synchronized public String process(HttpServletRequest request, HttpServletResponse response,
+  private synchronized String process(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strModules) throws IOException {
     if (log4j.isDebugEnabled())
       log4j.debug("InitialOrgSetup - strModules - " + strModules);
@@ -350,7 +350,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       }
     }
 
-    // ==========================================================================================================================================
+    //==============================================================================================
 
     if (strModules != null && !strModules.equals("")) {
       try {
@@ -391,7 +391,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
         }
       }
     }
-    // ==========================================================================================================================================
+    //==============================================================================================
     log4j.debug("InitialOrgSetup - after createEntities");
     if (isOK)
       strError = Utility.messageBD(this, "Success", vars.getLanguage());
@@ -401,14 +401,14 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     return m_info.toString();
   }
 
-  public boolean isTrue(String s) {
+  private boolean isTrue(String s) {
     if (s == null || s.equals(""))
       return false;
     else
       return true;
   }
 
-  public boolean createOrg(HttpServletRequest request, VariablesSecureApp vars, String orgName,
+  private boolean createOrg(HttpServletRequest request, VariablesSecureApp vars, String orgName,
       String strOrgType, String strParentOrg, String userOrg, String strcLocationId)
       throws ServletException {
 
@@ -524,7 +524,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     return true;
   }
 
-  public boolean save(Connection conn, VariablesSecureApp vars, String C_Element_ID,
+  private boolean save(Connection conn, VariablesSecureApp vars, String C_Element_ID,
       AccountingValueData[] data) throws ServletException {
     final String strAccountTree = InitialOrgSetupData.selectTree(this, AD_Client_ID);
     for (int i = 0; i < data.length; i++) {
@@ -609,7 +609,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     return updateOperands(conn, vars, data, C_Element_ID);
   }// save
 
-  public boolean updateOperands(Connection conn, VariablesSecureApp vars,
+  private boolean updateOperands(Connection conn, VariablesSecureApp vars,
       AccountingValueData[] data, String C_Element_ID) throws ServletException {
     boolean OK = true;
     for (int i = 0; i < data.length; i++) {
@@ -658,13 +658,13 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     return strResult;
   } // operandProcess
 
-  public String nextSeqNo(String oldSeqNo) {
+  private String nextSeqNo(String oldSeqNo) {
     final BigDecimal seqNo = new BigDecimal(oldSeqNo);
     final String SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
     return SeqNo;
   }
 
-  public AccountingValueData[] parseData(FieldProvider[] data) throws ServletException {
+  private AccountingValueData[] parseData(FieldProvider[] data) throws ServletException {
     AccountingValueData[] result = null;
     final Vector<Object> vec = new Vector<Object>();
     for (int i = 0; i < data.length; i++) {
@@ -745,7 +745,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     return result;
   }// parseData
 
-  public String getC_ElementValue_ID(AccountingValueData[] data, String key) {
+  private String getC_ElementValue_ID(AccountingValueData[] data, String key) {
     if (data == null || data.length == 0)
       return "";
     for (int i = 0; i < data.length; i++)
@@ -754,7 +754,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     return "";
   } // getC_ElementValue_ID
 
-  public boolean createAccounting(VariablesSecureApp vars, String strOrganization,
+  private boolean createAccounting(VariablesSecureApp vars, String strOrganization,
       String newC_Currency_ID, String curName, boolean hasProduct, boolean hasBPartner,
       boolean hasProject, boolean hasMCampaign, boolean hasSRegion, FieldProvider[] avData)
       throws ServletException {
@@ -1038,7 +1038,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
    * @param strCreateAccounting
    * @return the error. "" if there is no error
    */
-  public String createReferenceData(VariablesSecureApp vars, String strOrganization,
+  private String createReferenceData(VariablesSecureApp vars, String strOrganization,
       String strClient, String strModules, boolean hasProduct, boolean hasBPartner,
       boolean hasProject, boolean hasMCampaign, boolean hasSRegion, String strCreateAccounting)
       throws ServletException, IOException {
@@ -1079,6 +1079,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             if (myFiles[j].getName().endsWith(".xml"))
               myTargetFiles.add(myFiles[j]);
           }
+          myFiles = new File[myTargetFiles.size()];
           myFiles = myTargetFiles.toArray(myFiles);
           StringBuffer strError = new StringBuffer("");
           for (int j = 0; j < myFiles.length; j++) {

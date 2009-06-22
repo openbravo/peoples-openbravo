@@ -306,4 +306,19 @@
     <Parameter name="client"/>
     <Parameter name="org"/>
    </SqlMethod>
+
+  <SqlMethod name="selectPaymentTerm" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select c_paymentterm_id 
+        from c_paymentterm 
+        where isactive='Y' 
+        AND isdefault='Y' 
+        AND AD_Client_ID IN ('1') 
+      ]]>
+    </Sql>
+    <Parameter name="clientlist" optional="true" type="replace" after="AND AD_Client_ID IN (" text="'1'"/>
+  </SqlMethod>
+
 </SqlClass>

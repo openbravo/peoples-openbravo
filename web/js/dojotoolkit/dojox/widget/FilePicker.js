@@ -12,7 +12,7 @@ dojo.provide("dojox.widget.FilePicker");
 dojo.require("dojox.widget.RollingList");
 
 dojo.require("dojo.i18n"); 
-dojo.requireLocalization("dojox.widget", "FilePicker", null, "ROOT"); 
+dojo.requireLocalization("dojox.widget", "FilePicker", null, "ROOT,ar,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sv,tr,zh,zh-tw"); 
 
 dojo.declare("dojox.widget._FileInfoPane", 
 	[dojox.widget._RollingListPane], {

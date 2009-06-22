@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,7 +64,7 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError process(HttpServletResponse response, VariablesSecureApp vars) {
+  private OBError process(HttpServletResponse response, VariablesSecureApp vars) {
 
     Connection conn = null;
     OBError myError = null;
@@ -97,7 +97,7 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
     return myError;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strProcessId)
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strProcessId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: process CreateCashFlowStatement");
@@ -162,7 +162,7 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
     out.close();
   }
 
-  void insertCFS(Connection conn, HttpServletResponse response, VariablesSecureApp vars,
+  private void insertCFS(Connection conn, HttpServletResponse response, VariablesSecureApp vars,
       String strPaymentId, String strFactAcctId, String strAmount, String strAccount, int level)
       throws ServletException {
     if (log4j.isDebugEnabled())
@@ -277,8 +277,9 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
             String strFactAcctCFS = SequenceIdData.getUUID();
             if (log4j.isDebugEnabled())
               log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
-            CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
-                vars.getClient(), vars.getOrg(), vars.getUser(), strPaymentAccount, strAmount, null);
+            CreateCashFlowStatementData
+                .insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars.getClient(), vars
+                    .getOrg(), vars.getUser(), strPaymentAccount, strAmount, null);
           } else {
             String strTotal = CreateCashFlowStatementData.selectSumGeneratedPayments(this,
                 data[0].cSettlementGenerateId);
@@ -314,7 +315,7 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
     }
   }
 
-  public String calculateRatio(String strTotal, String strAmt) {
+  private String calculateRatio(String strTotal, String strAmt) {
     if (log4j.isDebugEnabled())
       log4j.debug("CreateCashFlowStatement - calculateRatio - strTotal - " + strTotal
           + " - strAmt - " + strAmt);
@@ -342,7 +343,7 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
     return strRatio;
   } // end of getServletInfo() method
 
-  public String multiply(String strOP1, String strOP2) {
+  private String multiply(String strOP1, String strOP2) {
     if (log4j.isDebugEnabled())
       log4j.debug("CreateCashFlowStatement - multiply - strOP1 - " + strOP1 + " - strOP2 - "
           + strOP2);

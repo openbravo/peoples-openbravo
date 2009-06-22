@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
+import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -87,7 +88,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId,
       String strAccountingReportId, String strOrg, String strPeriod, String strProcessId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -116,10 +117,10 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     xmlDocument.setParameter("period", strPeriod);
     xmlDocument.setParameter("array", strArray);
 
-    xmlDocument.setParameter("accounArray", arrayDobleEntrada("arrAccount", ReportCashFlowData
-        .selectAD_Accountingrpt_Element_ID_Double(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client",
-            "ReportCashFlow"), "")));
+    xmlDocument.setParameter("accounArray", Utility.arrayDobleEntrada("arrAccount",
+        ReportCashFlowData.selectAD_Accountingrpt_Element_ID_Double(this, Utility.getContext(this,
+            vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(this, vars,
+            "#User_Client", "ReportCashFlow"), "")));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
@@ -142,7 +143,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
         Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(
             this, vars, "#User_Client", "ReportCashFlow"), vars.getLanguage()));
 
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"),
             strcAcctSchemaId));
@@ -185,7 +186,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePopUp(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPagePopUp(HttpServletResponse response, VariablesSecureApp vars,
       String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod,
       String process) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -237,7 +238,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDepurar(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDepurar(HttpServletResponse response, VariablesSecureApp vars,
       String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod,
       String process) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -325,7 +326,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     out.close();
   }
 
-  String arrayEntry(VariablesSecureApp vars, String strcAcctSchemaId) throws ServletException {
+  private String arrayEntry(VariablesSecureApp vars, String strcAcctSchemaId) throws ServletException {
     String result = "";
     ReportCashFlowData[] data = ReportCashFlowData.selectAD_Accountingrpt_Element_ID(this, Utility
         .getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(this,
@@ -361,7 +362,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     return result;
   }
 
-  void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException {
+  private void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException {
     ReportCashFlowData[] dataOrg = ReportCashFlowData.selectOrg(this, strOrg, vars.getClient());
     for (int i = 0; i < dataOrg.length; i++) {
       strTreeOrg += ",'" + dataOrg[i].id + "'";
@@ -371,7 +372,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     return;
   }
 
-  void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strcAcctSchemaId,
+  private void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strcAcctSchemaId,
       String strAccountingReportId, String strPeriodFrom, String strPeriodTo, String strOrg,
       int level, String strParent) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -394,7 +395,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     }
   }
 
-  ReportCashFlowData[] convertVector(Vector<Object> vectorArray) throws ServletException {
+  private ReportCashFlowData[] convertVector(Vector<Object> vectorArray) throws ServletException {
     ReportCashFlowData[] data = new ReportCashFlowData[vectorArray.size()];
     BigDecimal count = BigDecimal.ZERO;
     for (int i = 0; i < vectorArray.size(); i++) {
@@ -417,7 +418,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     return data;
   }
 
-  ReportCashFlowData[] filterData(ReportCashFlowData[] data) throws ServletException {
+  private ReportCashFlowData[] filterData(ReportCashFlowData[] data) throws ServletException {
     ArrayList<Object> new_a = new ArrayList<Object>();
     for (int i = 0; i < data.length; i++) {
       if (data[i].isshown.equals("Y"))

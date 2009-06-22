@@ -32,7 +32,7 @@ import org.openbravo.erpCommon.utility.Utility;
  *         This one is the class in charge of the report of accounting
  */
 public class AccountTree {
-  static Logger log4j = Logger.getLogger(AccountTree.class);
+  private static Logger log4j = Logger.getLogger(AccountTree.class);
   private VariablesSecureApp vars;
   private ConnectionProvider conn;
   private AccountTreeData[] accounts;

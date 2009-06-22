@@ -129,16 +129,22 @@ public class DatabaseValidator implements SystemValidator {
 
     // only check this one if the global validate check is done
     for (org.apache.ddlutils.model.Table dbTable : tmpDBTablesByName.values()) {
-      result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
-          + dbTable.getName() + " present in the database "
-          + " but not defined in the Application Dictionary");
+      // ignore errors related to C_TEMP_SELECTION
+      if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")) {
+        result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
+            + dbTable.getName() + " present in the database "
+            + " but not defined in the Application Dictionary");
+      }
     }
 
     if (getValidateModule() == null) {
       for (View view : dbViews.values()) {
-        result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "View "
-            + view.getName() + " present in the database "
-            + " but not defined in the Application Dictionary");
+        // ignore errors related to C_TEMP_SELECTION
+        if (!view.getName().toUpperCase().startsWith("C_TEMP_SELECTION")) {
+          result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "View "
+              + view.getName() + " present in the database "
+              + " but not defined in the Application Dictionary");
+        }
       }
     }
 
@@ -261,13 +267,15 @@ public class DatabaseValidator implements SystemValidator {
       if (dbColumn == null) {
         result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_DB, "Column "
             + adTable.getDBTableName() + "." + column.getDBColumnName()
-            + " defined in the Application Dictionary " + " but not present in the database.");
+            + " defined in the Application Dictionary but not present in the database.");
       } else {
         checkDataType(column, dbColumn, result, dbTable);
 
         checkNameLength("(table: " + dbTable.getName() + ") Column ", dbColumn.getName(), result);
 
         dbColumnsByName.remove(column.getDBColumnName().toUpperCase());
+
+        checkDefaultValue(column, dbColumn, result);
       }
     }
 
@@ -279,6 +287,35 @@ public class DatabaseValidator implements SystemValidator {
             + dbTable.getName() + "." + dbColumn.getName() + " present in the database "
             + " but not defined in the Application Dictionary.");
       }
+    }
+  }
+
+  private void checkDefaultValue(Column adColumn, org.apache.ddlutils.model.Column dbColumn,
+      SystemValidationResult result) {
+    if (true) {
+      // disable this test until the following issues are all solved:
+      // https://issues.openbravo.com/view.php?id=9054
+      // https://issues.openbravo.com/view.php?id=9053
+      // https://issues.openbravo.com/view.php?id=9052
+      // https://issues.openbravo.com/view.php?id=9051
+      // https://issues.openbravo.com/view.php?id=9050
+      // these cover the differences in default values
+      return;
+    }
+    if (adColumn.getDefaultValue() == null || adColumn.getDefaultValue().startsWith("@")) {
+      return;
+    } else if (false && dbColumn.getDefaultValue() == null) {
+      // this check is disabled for now
+      result.addWarning(SystemValidationType.UNEQUAL_DEFAULTVALUE, "Column "
+          + adColumn.getTable().getName() + "." + adColumn.getName() + " has default value "
+          + adColumn.getDefaultValue()
+          + " in the Application Dictionary but no default value in the database");
+    } else if (dbColumn.getDefaultValue() != null
+        && !dbColumn.getDefaultValue().equals(adColumn.getDefaultValue())) {
+      result.addWarning(SystemValidationType.UNEQUAL_DEFAULTVALUE, "Column "
+          + adColumn.getTable().getName() + "." + adColumn.getName()
+          + ": the Application Dictionary and the database have differing default values,"
+          + " AD: " + adColumn.getDefaultValue() + " DB: " + dbColumn.getDefaultValue());
     }
   }
 
@@ -345,8 +382,10 @@ public class DatabaseValidator implements SystemValidator {
     } else if (property != null && property.getPrimitiveObjectType() != null) {
       final Class<?> prim = property.getPrimitiveObjectType();
       if (prim == String.class) {
-        checkType(dbColumn, dbTable, result,
-            new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR" });
+        checkType(dbColumn, dbTable, result, new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR",
+            "CLOB" });
+      } else if (prim == Long.class) {
+        checkType(dbColumn, dbTable, result, "DECIMAL");
       } else if (prim == Integer.class) {
         checkType(dbColumn, dbTable, result, "DECIMAL");
       } else if (prim == BigDecimal.class) {

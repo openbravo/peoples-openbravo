@@ -20,7 +20,7 @@
 
 
 
-<SqlClass name="AccountTreeData" package="org.openbravo.erpCommon.businessUtility">
+<SqlClass name="AccountTreeData" package="org.openbravo.erpCommon.businessUtility" accessModifier="public">
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
@@ -75,7 +75,7 @@
             AND 0=0 AND f.AD_ORG_ID IN ('1')
             AND f.C_PERIOD_ID = p.C_PERIOD_ID 
             AND p.C_YEAR_ID = y.C_YEAR_ID
-            AND y.YEAR = ? 
+            AND Y.YEAR IN ('1') 
         UNION ALL
         SELECT m.C_ElementValue_ID as id, 0 AS QTY, 0 as qtyCredit, (COALESCE(f.AMTACCTDR,0) - COALESCE(f.AMTACCTCR, 0)) AS qty_ref, 
                 (COALESCE(f.AMTACCTCR,0) - COALESCE(f.AMTACCTDR, 0)) AS qtyCredit_ref 
@@ -90,7 +90,7 @@
             AND 1=1 AND f.AD_ORG_ID IN ('1')
             AND f.C_PERIOD_ID = p.C_PERIOD_ID 
             AND p.C_YEAR_ID = y.C_YEAR_ID
-            AND y.YEAR = ? 
+            AND y.YEAR IN ('1') 
         ) AA
         GROUP BY ID
       ]]></Sql>
@@ -100,14 +100,14 @@
         <Parameter name="dateTo" optional="true" after="AND 1=1 "><![CDATA[ AND f.DATEACCT < to_date(?)]]></Parameter>
         <Parameter name="acctschema" optional="true" after="AND 1=1 "><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
         <Parameter name="org" optional="true" type="replace" after="AND 0=0 AND f.AD_ORG_ID IN (" text="'1'"/>
-        <Parameter name="agno"/>
+        <Parameter name="agno" optional="true" type="replace" after="AND Y.YEAR IN (" text="'1'"/>
         <Parameter name="adOrgClient" type="replace" optional="true" after="m.AD_Org_ID IN(" text="'2'"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="m.AD_Client_ID IN(" text="'2'"/>
         <Parameter name="dateFromRef" optional="true" after="AND 2=2 "><![CDATA[ AND f.DATEACCT >= to_date(?)]]></Parameter>
         <Parameter name="dateToRef" optional="true" after="AND 2=2 "><![CDATA[ AND f.DATEACCT < to_date(?)]]></Parameter>
         <Parameter name="acctschema" optional="true" after="AND 2=2 "><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
         <Parameter name="org" optional="true" type="replace" after="AND 1=1 AND f.AD_ORG_ID IN (" text="'1'"/>
-        <Parameter name="agnoRef"/>
+        <Parameter name="agnoRef" optional="true" type="replace" after="AND y.YEAR IN (" text="'1'"/>
   </SqlMethod>
   <SqlMethod name="selectForms" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>

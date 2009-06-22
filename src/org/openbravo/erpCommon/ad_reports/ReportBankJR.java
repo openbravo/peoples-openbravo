@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.AccountNumberComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -51,17 +50,23 @@ public class ReportBankJR extends HttpSecureAppServlet {
       String strcbankaccount = vars.getGlobalVariable("inpmProductId",
           "ReportBankJR|C_Bankaccount_ID", "");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcbankaccount);
-    } else if (vars.commandIn("FIND")) {
+    } else if (vars.commandIn("PRINT_HTML")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportBankJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportBankJR|DateTo");
       String strcbankaccount = vars.getRequestGlobalVariable("inpcBankAccountId",
           "ReportBankJR|C_Bankaccount_ID");
-      printPageDataHtml(response, vars, strDateFrom, strDateTo, strcbankaccount);
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strcbankaccount, "html");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportBankJR|DateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportBankJR|DateTo");
+      String strcbankaccount = vars.getRequestGlobalVariable("inpcBankAccountId",
+          "ReportBankJR|C_Bankaccount_ID");
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strcbankaccount, "pdf");
     } else
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strcbankaccount) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -125,8 +130,9 @@ public class ReportBankJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strcbankaccount) throws IOException, ServletException {
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strcbankaccount, String strOutput)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -178,10 +184,11 @@ public class ReportBankJR extends HttpSecureAppServlet {
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("DATE_FROM", strDateFrom);
-    parameters.put("USER_ORG", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR"));
+    parameters
+        .put("USER_ORG", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR"));
     parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client", "ReportBankJR"));
     String strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportBankJR.jrxml";
-    renderJR(vars, response, strReportPath, "html", parameters, data, null);
+    renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
   }
 
   public String getServletInfo() {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2007 Openbravo SL 
+ * All portions are Copyright (C) 2007-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -51,31 +52,43 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
       String strProductCategory = vars.getGlobalVariable("inpProductCategory",
           "ReportWarehousePartnerJR|productCategory", "");
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportWarehousePartnerJR|mProductId", "");
+          "ReportWarehousePartnerJR|mProductId", "", IsIDFilter.instance);
       String strX = vars.getGlobalVariable("inpX", "ReportWarehousePartnerJR|X", "");
       String strY = vars.getGlobalVariable("inpY", "ReportWarehousePartnerJR|Y", "");
       String strZ = vars.getGlobalVariable("inpZ", "ReportWarehousePartnerJR|Z", "");
       printPageDataSheet(response, vars, strDate, strProductCategory, strmProductId, strX, strY,
           strZ);
-    } else if (vars.commandIn("FIND")) {
+    } else if (vars.commandIn("PRINT_HTML")) {
       String strDate = vars.getGlobalVariable("inpDateFrom", "ReportWarehousePartner|Date");
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportWarehousePartnerJR|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportWarehousePartnerJR|mProductId");
+          "ReportWarehousePartnerJR|mProductId", IsIDFilter.instance);
       String strX = vars.getRequestGlobalVariable("inpX", "ReportWarehousePartnerJR|X");
       String strY = vars.getRequestGlobalVariable("inpY", "ReportWarehousePartnerJR|Y");
       String strZ = vars.getRequestGlobalVariable("inpZ", "ReportWarehousePartnerJR|Z");
       setHistoryCommand(request, "FIND");
       printPageDataHtml(response, vars, strDate, strProductCategory, strmProductId, strX, strY,
-          strZ);
+          strZ, "html");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strDate = vars.getGlobalVariable("inpDateFrom", "ReportWarehousePartner|Date");
+      String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
+          "ReportWarehousePartnerJR|productCategory");
+      String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
+          "ReportWarehousePartnerJR|mProductId", IsIDFilter.instance);
+      String strX = vars.getRequestGlobalVariable("inpX", "ReportWarehousePartnerJR|X");
+      String strY = vars.getRequestGlobalVariable("inpY", "ReportWarehousePartnerJR|Y");
+      String strZ = vars.getRequestGlobalVariable("inpZ", "ReportWarehousePartnerJR|Z");
+      setHistoryCommand(request, "FIND");
+      printPageDataHtml(response, vars, strDate, strProductCategory, strmProductId, strX, strY,
+          strZ, "pdf");
     } else
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDate,
-      String strProductCategory, String strmProductId, String strX, String strY, String strZ)
-      throws IOException, ServletException {
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strDate, String strProductCategory, String strmProductId, String strX, String strY,
+      String strZ, String strOutput) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
 
@@ -84,7 +97,6 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
             .getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"), DateTimeData
             .nDaysAfter(this, strDate, "1"), strmProductId, strProductCategory, strX, strY, strZ);
 
-    String strOutput = "html";
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportWarehousePartnerJR.jrxml";
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
@@ -93,9 +105,9 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
 
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDate,
-      String strProductCategory, String strmProductId, String strX, String strY, String strZ)
-      throws IOException, ServletException {
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strDate, String strProductCategory, String strmProductId, String strX, String strY,
+      String strZ) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -147,8 +159,8 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("mProductCategoryId", strProductCategory);
 
     xmlDocument.setData("reportMProductId_IN", "liststructure", ReportWarehousePartnerData
-        .selectMproduct2(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
-            this, vars, "#User_Client", ""), strmProductId));
+        .selectMproduct2(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strmProductId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -204,13 +216,13 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
    * xmlDocument.setParameter("mProductCategoryId", strProductCategory);
    * 
    * xmlDocument.setData("reportMProductId_IN", "liststructure",
-   * ReportWarehousePartnerData.selectMproduct2(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-   * ""), Utility.getContext(this, vars, "#User_Client", ""), strmProductId)); try { ComboTableData
-   * comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Product_Category_ID", "", "",
-   * Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportPricelist"), Utility.getContext(this, vars,
-   * "#User_Client", "ReportPricelist"), 0); Utility.fillSQLParameters(this, vars, null,
-   * comboTableData, "ReportPricelist", strProductCategory);
-   * xmlDocument.setData("reportM_PRODUCT_CATEGORYID","liststructure",
+   * ReportWarehousePartnerData.selectMproduct2(this, Utility.getContext(this, vars,
+   * "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
+   * try { ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
+   * "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+   * "ReportPricelist"), Utility.getContext(this, vars, "#User_Client", "ReportPricelist"), 0);
+   * Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportPricelist",
+   * strProductCategory); xmlDocument.setData("reportM_PRODUCT_CATEGORYID","liststructure",
    * comboTableData.select(false)); comboTableData = null; } catch (Exception ex) { throw new
    * ServletException(ex); }
    * 

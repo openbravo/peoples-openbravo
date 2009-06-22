@@ -427,12 +427,13 @@
               v_NoRecords:=v_NoRecords + 1;
               v_LineNo:=0;
               -- Insert Reference/Comment to Shipment for Warehouse Order/Pickup
-              IF(v_Reference IS NOT NULL
+
+		IF(v_Reference IS NOT NULL AND TRIM(v_Reference)!=''
                 /*AND v_DocSubTypeSO = 'WP'*/
                 ) THEN
                 v_ResultStr:='InsertShipmentReference';
                 Ad_Sequence_Next('C_InvoiceLine', Cur_Order.C_Order_ID, v_NextNo) ;
-                INSERT
+               INSERT
                 INTO C_INVOICELINE
                   (
                     C_InvoiceLine_ID, AD_Client_ID, AD_Org_ID, IsActive,

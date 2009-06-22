@@ -45,7 +45,7 @@ public class OrgTree implements Serializable {
   /**
    * Creates an empty Tree
    */
-  public OrgTree() {
+  private OrgTree() {
     nodes = new ArrayList<OrgTreeNode>();
 
   }
@@ -55,7 +55,7 @@ public class OrgTree implements Serializable {
    * 
    * @param nodeList
    */
-  public OrgTree(List<OrgTreeNode> nodeList) {
+  private OrgTree(List<OrgTreeNode> nodeList) {
     nodes = nodeList;
   }
 
@@ -65,7 +65,7 @@ public class OrgTree implements Serializable {
    * @param strOrgs
    *          colon-separated AD_Org_ID. Example "'0','1000000'"
    */
-  public OrgTree(String strOrgs) {
+  private OrgTree(String strOrgs) {
     OrgTreeNode orgTreeNode;
     List<OrgTreeNode> nodeList = new ArrayList<OrgTreeNode>();
 
@@ -127,7 +127,7 @@ public class OrgTree implements Serializable {
    * @param strRole
    * @return the created {@link OrgTree}
    */
-  public OrgTree getAccessibleTree(ConnectionProvider conn, String strRole, boolean withZero) {
+  private OrgTree getAccessibleTree(ConnectionProvider conn, String strRole, boolean withZero) {
     // TODO: this method with boolean should be removed.
     return getAccessibleTree(conn, strRole);
   }
@@ -152,7 +152,7 @@ public class OrgTree implements Serializable {
    *          tree contains all the nodes to reference from
    * @return new tree with referenceable nodes.
    */
-  public OrgTree getReferenceableTree(OrgTree tree) {
+  private OrgTree getReferenceableTree(OrgTree tree) {
     Iterator<OrgTreeNode> iterator = tree.iterator();
     OrgTree refeTree = new OrgTree();
     while (iterator.hasNext()) {
@@ -168,7 +168,7 @@ public class OrgTree implements Serializable {
    * @param parentNodeId
    * @return the new tree with the desdentant elements
    */
-  public OrgTree getDescendantTree(String parentNodeId) {
+  private OrgTree getDescendantTree(String parentNodeId) {
     try {
       List<OrgTreeNode> treeNodes = new ArrayList<OrgTreeNode>();
       getDescendantTreeList(parentNodeId, treeNodes);
@@ -184,7 +184,7 @@ public class OrgTree implements Serializable {
    * @param nodeId
    * @return the new tree with the ascendant elements
    */
-  public OrgTree getAscendantTree(String nodeId) {
+  private OrgTree getAscendantTree(String nodeId) {
     try {
       List<OrgTreeNode> treeNodes = new ArrayList<OrgTreeNode>();
       OrgTreeNode parentNode = getNodeById(nodeId);
@@ -213,11 +213,11 @@ public class OrgTree implements Serializable {
     }
   }
 
-  public Iterator<OrgTreeNode> iterator() {
+  private Iterator<OrgTreeNode> iterator() {
     return nodes.iterator();
   }
 
-  public static String getAllOrgsString(ConnectionProvider conn, String name) {
+  private static String getAllOrgsString(ConnectionProvider conn, String name) {
     try {
       OrgTreeData[] dataClients = OrgTreeData.selectAllClients(conn);
       String retVal = "";
@@ -289,7 +289,7 @@ public class OrgTree implements Serializable {
    * 
    * @param t1
    */
-  public void addTree(OrgTree t1) {
+  private void addTree(OrgTree t1) {
     if ((t1 != null) && (t1.nodes != null)) {
       for (int i = 0; i < t1.nodes.toArray().length; i++) {
         if (!this.isNodeInTree(t1.nodes.get(i).getId()))
@@ -307,7 +307,7 @@ public class OrgTree implements Serializable {
    *          tree2
    * @return new tree (t1+t2)
    */
-  public static OrgTree addTree(OrgTree t1, OrgTree t2) {
+  private static OrgTree addTree(OrgTree t1, OrgTree t2) {
     List<OrgTreeNode> treeNodes = new ArrayList<OrgTreeNode>();
 
     treeNodes.addAll(t1.nodes);

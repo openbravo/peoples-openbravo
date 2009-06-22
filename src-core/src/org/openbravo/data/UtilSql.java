@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -11,104 +11,14 @@
  */
 package org.openbravo.data;
 
-import java.lang.reflect.Field;
 import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class UtilSql {
-
-  public boolean GetStringResultSet(ResultSet result, Object sqlObject) {
-    Field f = null;
-    try {
-      ResultSetMetaData rmeta = result.getMetaData();
-      int numColumns = rmeta.getColumnCount();
-
-      for (int i = 1; i <= numColumns; ++i) {
-        String strNombreColumna = rmeta.getColumnName(i);
-        String strFieldName = TransformaNombreColumna(strNombreColumna);
-        f = sqlObject.getClass().getField(strFieldName);
-        f.setAccessible(true);
-
-        switch (rmeta.getColumnType(i)) {
-        case 2:
-          f.set(sqlObject, Long.toString(result.getLong(strNombreColumna)));
-          break;
-        case 12:
-          f.set(sqlObject, result.getString(strNombreColumna));
-          break;
-        case 93:
-          f.set(sqlObject, result.getDate(strNombreColumna));
-          if (result.wasNull())
-            f.set(sqlObject, new java.sql.Date(System.currentTimeMillis()));
-          break;
-        }
-        if (result.wasNull() && rmeta.getColumnType(i) != 93)
-          f.set(sqlObject, "");
-
-        f.setAccessible(false);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      return (false);
-    }
-    return (true);
-  }
-
-  public String TransformaNombreColumna(String strColumn) {
-    String strNombreTransformado = "";
-    Character BarraBaja = new Character('_');
-    int intNumCaracteres = strColumn.length();
-    boolean blnFueBarraBaja = false;
-    for (int i = 0; i < intNumCaracteres; i++) {
-      if (i == 0)
-        strNombreTransformado = new Character(Character.toUpperCase(strColumn.charAt(i)))
-            .toString();
-      else {
-        if (new Character(strColumn.charAt(i)).compareTo(BarraBaja) == 0)
-          blnFueBarraBaja = true;
-        else {
-          if (blnFueBarraBaja) {
-            strNombreTransformado = strNombreTransformado
-                + new Character(Character.toUpperCase(strColumn.charAt(i))).toString();
-            blnFueBarraBaja = false;
-          } else
-            strNombreTransformado = strNombreTransformado
-                + new Character(Character.toLowerCase(strColumn.charAt(i))).toString();
-        }
-      }
-    }
-    return (strNombreTransformado);
-  }
-
-  public boolean AsignarValoresEntrada(PreparedStatement ps, int posicion, int tipo, String strValor) {
-    try {
-      if (strValor != null) {
-        if (strValor.compareTo("") == 0)
-          ps.setNull(posicion, tipo);
-        else {
-          switch (tipo) {
-          case 2:
-            ps.setLong(posicion, Long.valueOf(strValor).longValue());
-            break;
-          case 12:
-            ps.setString(posicion, strValor);
-            break;
-          }
-
-        }
-      } else
-        ps.setNull(posicion, tipo);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return (false);
-    }
-    return (true);
-  }
 
   // setValue and getValue method to be used in sqlc
 

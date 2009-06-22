@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -93,7 +93,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  OBError processButton(VariablesSecureApp vars, String strSettlement, String strKey) {
+  private OBError processButton(VariablesSecureApp vars, String strSettlement, String strKey) {
     OBError myError = null;
     int i = 0;
     Connection conn = null;
@@ -158,7 +158,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     return myError;
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Button process Copy from Settlement");
@@ -186,9 +186,9 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strSetDescription,
-      String strDocumentNo, String strDateFrom, String strDateTo, String strSettlement,
-      String strWindow) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strSetDescription, String strDocumentNo, String strDateFrom, String strDateTo,
+      String strSettlement, String strWindow) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Button process Copy from Settlement");
 
@@ -224,8 +224,9 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strSettlement,
-      String strSettlementFrom, String strWindow) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strSettlement, String strSettlementFrom, String strWindow) throws IOException,
+      ServletException {
 
     String strDateFrom = vars.getStringParameter("inpDateFrom");
     String strDateTo = vars.getStringParameter("inpDateTo");

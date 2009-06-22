@@ -57,7 +57,7 @@ public class SL_Inventory_Locator extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strProduct, String strLocator, String strAttribute, String strUOM, String strTabId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -91,13 +91,13 @@ public class SL_Inventory_Locator extends HttpSecureAppServlet {
           + ((data[0].qty == null || data[0].qty.equals("")) ? "\"\"" : data[0].qty) + "), \n");
 
       resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
-      resultado.append(");");
-      xmlDocument.setParameter("array", resultado.toString());
-      xmlDocument.setParameter("frameName", "appFrame");
-      response.setContentType("text/html; charset=UTF-8");
-      final PrintWriter out = response.getWriter();
-      out.println(xmlDocument.print());
-      out.close();
     }
+    resultado.append(");");
+    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
   }
 }

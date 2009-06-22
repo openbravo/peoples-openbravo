@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
@@ -64,15 +66,16 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strPartnerGroup = vars.getGlobalVariable("inpPartnerGroup",
           "ReportInvoiceCustomerDimensionalAnalysesJR|partnerGroup", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceCustomerDimensionalAnalysesJR|partner", "");
+          "ReportInvoiceCustomerDimensionalAnalysesJR|partner", "", IsIDFilter.instance);
       String strProductCategory = vars.getGlobalVariable("inpProductCategory",
           "ReportInvoiceCustomerDimensionalAnalysesJR|productCategory", "");
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportInvoiceCustomerDimensionalAnalysesJR|product", "");
+          "ReportInvoiceCustomerDimensionalAnalysesJR|product", "", IsIDFilter.instance);
+      // ad_ref_list.value for refercence_id 800087
       String strNotShown = vars.getInGlobalVariable("inpNotShown",
-          "ReportInvoiceCustomerDimensionalAnalysesJR|notShown", "");
+          "ReportInvoiceCustomerDimensionalAnalysesJR|notShown", "", IsPositiveIntFilter.instance);
       String strShown = vars.getInGlobalVariable("inpShown",
-          "ReportInvoiceCustomerDimensionalAnalysesJR|shown", "");
+          "ReportInvoiceCustomerDimensionalAnalysesJR|shown", "", IsPositiveIntFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportInvoiceCustomerDimensionalAnalysesJR|org", "");
       String strsalesrepId = vars.getGlobalVariable("inpSalesrepId",
@@ -114,13 +117,14 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup",
           "ReportInvoiceCustomerDimensionalAnalysesJR|partnerGroup");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceCustomerDimensionalAnalysesJR|partner");
+          "ReportInvoiceCustomerDimensionalAnalysesJR|partner", IsIDFilter.instance);
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportInvoiceCustomerDimensionalAnalysesJR|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportInvoiceCustomerDimensionalAnalysesJR|product");
-      String strNotShown = vars.getInStringParameter("inpNotShown");
-      String strShown = vars.getInStringParameter("inpShown");
+          "ReportInvoiceCustomerDimensionalAnalysesJR|product", IsIDFilter.instance);
+      // ad_ref_list.value for refercence_id 800087
+      String strNotShown = vars.getInStringParameter("inpNotShown", IsPositiveIntFilter.instance);
+      String strShown = vars.getInStringParameter("inpShown", IsPositiveIntFilter.instance);
       String strOrg = vars.getRequestGlobalVariable("inpOrg",
           "ReportInvoiceCustomerDimensionalAnalysesJR|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
@@ -154,13 +158,14 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup",
           "ReportInvoiceCustomerDimensionalAnalysesJR|partnerGroup");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceCustomerDimensionalAnalysesJR|partner");
+          "ReportInvoiceCustomerDimensionalAnalysesJR|partner", IsIDFilter.instance);
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportInvoiceCustomerDimensionalAnalysesJR|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportInvoiceCustomerDimensionalAnalysesJR|product");
-      String strNotShown = vars.getInStringParameter("inpNotShown");
-      String strShown = vars.getInStringParameter("inpShown");
+          "ReportInvoiceCustomerDimensionalAnalysesJR|product", IsIDFilter.instance);
+      // ad_ref_list.value for refercence_id 800087
+      String strNotShown = vars.getInStringParameter("inpNotShown", IsPositiveIntFilter.instance);
+      String strShown = vars.getInStringParameter("inpShown", IsPositiveIntFilter.instance);
       String strOrg = vars.getRequestGlobalVariable("inpOrg",
           "ReportInvoiceCustomerDimensionalAnalysesJR|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
@@ -186,7 +191,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
       String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown,
       String strShown, String strDateFromRef, String strDateToRef, String strOrg,
@@ -305,12 +310,12 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         vars.getRole()));
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportInvoiceCustomerDimensionalAnalysesJRData.selectBpartner(this, Utility.getContext(
-            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strcBpartnerId));
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
+            ""), strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure",
         ReportInvoiceCustomerDimensionalAnalysesJRData.selectMproduct(this, Utility.getContext(
-            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strmProductId));
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
+            ""), strmProductId));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
@@ -387,7 +392,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     out.close();
   }
 
-  void printPageHtml(HttpServletRequest request, HttpServletResponse response,
+  private void printPageHtml(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strComparative, String strDateFrom, String strDateTo,
       String strPartnerGroup, String strcBpartnerId, String strProductCategory,
       String strmProductId, String strNotShown, String strShown, String strDateFromRef,
@@ -407,7 +412,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard" };
-    if (strOrg.equals("")) strOrg = vars.getOrg();
+    if (strOrg.equals(""))
+      strOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";

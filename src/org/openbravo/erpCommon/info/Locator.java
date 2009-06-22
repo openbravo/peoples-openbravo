@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -38,6 +40,11 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Locator extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "name", "value", "aisle", "bin", "nivel",
+      "priorityno", "isdefault", "rowkey" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -84,11 +91,11 @@ public class Locator extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Locator.adorgid", "");
       printGridData(response, vars, strName, strWarehousename, strAisle, strBin, strLevel,
-          strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
+          strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
     } else
       pageError(response);
   }
@@ -102,8 +109,8 @@ public class Locator extends HttpSecureAppServlet {
     vars.removeSessionValue("Locator.adorgid");
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strNameValue,
-      String strWarehousename) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strNameValue, String strWarehousename) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of Locators seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Locator")
@@ -126,8 +133,8 @@ public class Locator extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars, LocatorData[] data)
-      throws IOException, ServletException {
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+      LocatorData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Locators seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -140,7 +147,7 @@ public class Locator extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(LocatorData[] data) throws IOException, ServletException {
+  private String generateResult(LocatorData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -151,7 +158,7 @@ public class Locator extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -206,10 +213,10 @@ public class Locator extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
-      String strWarehousename, String strAisle, String strBin, String strLevel, String strOrderBy,
-      String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,
-      ServletException {
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
+      String strWarehousename, String strAisle, String strBin, String strLevel,
+      String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
+      String strNewFilter, String strOrg) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -219,9 +226,14 @@ public class Locator extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     if (headers != null) {
       try {
+        // build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
+
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or
@@ -238,15 +250,12 @@ public class Locator extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = LocatorData.select(this, "ROWNUM", vars.getLanguage(), Utility.getContext(this,
               vars, "#User_Client", "Locator"), Utility.getSelectorOrgs(this, vars, strOrg),
               strName, strWarehousename, strAisle, strBin, strLevel, strOrderBy, oraLimit, "");
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           data = LocatorData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars,
               "#User_Client", "Locator"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
               strWarehousename, strAisle, strBin, strLevel, strOrderBy, "", pgLimit);

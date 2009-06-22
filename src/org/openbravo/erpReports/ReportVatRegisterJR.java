@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,7 +34,6 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.ad_combos.AccountNumberComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.KeyMap;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -87,7 +86,7 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -153,7 +152,7 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printReportJRRegisterLine(HttpServletResponse response, VariablesSecureApp vars,
+  private void printReportJRRegisterLine(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String TaxPayId, String TaxRegId, String strTypeReport)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -205,7 +204,7 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
 }
 
 class TypeReportRegister implements FieldProvider {
-  static Logger log4j = Logger.getLogger(AccountNumberComboData.class);
+  static Logger log4j = Logger.getLogger(TypeReportRegister.class);
   // private String InitRecordNumber = "0";
   public String id;
   public String name;
@@ -221,7 +220,7 @@ class TypeReportRegister implements FieldProvider {
     }
   }
 
-  public static TypeReportRegister[] set() throws ServletException {
+  static TypeReportRegister[] set() throws ServletException {
     TypeReportRegister objectTypeReport[] = new TypeReportRegister[1];
     // first
     objectTypeReport[0] = new TypeReportRegister();

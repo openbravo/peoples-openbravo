@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -19,11 +19,11 @@ import org.apache.log4j.Logger;
 public class VariablesHistory {
   private String currentHistoryIndex;
   private static final int reqHistoryLength = 10;
-  HttpSession session;
+  private HttpSession session;
   private String role;
   private String language;
   private String dbSessionID;
-  static Logger log4j = Logger.getLogger(VariablesHistory.class);
+  private static Logger log4j = Logger.getLogger(VariablesHistory.class);
 
   public VariablesHistory(HttpServletRequest request) {
     this.session = request.getSession(true);
@@ -38,7 +38,7 @@ public class VariablesHistory {
         .toString(Integer.valueOf(this.currentHistoryIndex).intValue() % reqHistoryLength);
   }
 
-  public void upCurrentHistoryIndex() {
+  void upCurrentHistoryIndex() {
     this.currentHistoryIndex = Integer.toString(Integer.valueOf(this.currentHistoryIndex)
         .intValue() + 1);
     setSessionValue("reqHistory.current", this.currentHistoryIndex);
@@ -50,19 +50,19 @@ public class VariablesHistory {
     setSessionValue("reqHistory.current", this.currentHistoryIndex);
   }
 
-  public String getCurrentServletPath(String defaultServletPath) {
+  String getCurrentServletPath(String defaultServletPath) {
     return getSessionValue("reqHistory.path" + getCurrentHistoryIndex(), defaultServletPath);
   }
 
-  public String getCurrentServletCommand() {
+  String getCurrentServletCommand() {
     return getSessionValue("reqHistory.command" + getCurrentHistoryIndex(), "DEFAULT");
   }
 
-  public String getSessionValue(String sessionAttribute) {
+  String getSessionValue(String sessionAttribute) {
     return getSessionValue(sessionAttribute, "");
   }
 
-  public String getSessionValue(String sessionAttribute, String defaultValue) {
+  String getSessionValue(String sessionAttribute, String defaultValue) {
     String auxStr = null;
     try {
       auxStr = (String) session.getAttribute(sessionAttribute.toUpperCase());
@@ -96,7 +96,7 @@ public class VariablesHistory {
     }
   }
 
-  public String getRole() {
+  String getRole() {
     return role;
   }
 
@@ -104,7 +104,7 @@ public class VariablesHistory {
     return language;
   }
 
-  public String getDBSession() {
+  String getDBSession() {
     return dbSessionID;
   }
 }

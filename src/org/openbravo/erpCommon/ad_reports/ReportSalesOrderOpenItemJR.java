@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,8 +56,8 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strWarehouse)
-      throws IOException, ServletException {
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strWarehouse) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -72,8 +72,8 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strWarehouse)
-      throws IOException, ServletException {
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strWarehouse) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -121,8 +121,9 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("mWarehouseId", strWarehouse);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItemJR"),
-          Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderOpenItemJR"), 0);
+          "", "", Utility
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItemJR"), Utility
+              .getContext(this, vars, "#User_Client", "ReportSalesOrderOpenItemJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderOpenItemJR",
           strWarehouse);
       xmlDocument
@@ -143,8 +144,8 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
    * PrintWriter out = response.getWriter(); String discard[]={"discard"}; XmlDocument xmlDocument;
    * ReportSalesOrderOpenItemData[] data=ReportSalesOrderOpenItemData.select(this,
    * Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderOpenItem"),
-   * Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItem"), strWarehouse); if
-   * (data == null || data.length == 0){ xmlDocument = xmlEngine.readXmlTemplate(
+   * Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItem"),
+   * strWarehouse); if (data == null || data.length == 0){ xmlDocument = xmlEngine.readXmlTemplate(
    * "org/openbravo/erpCommon/ad_reports/ReportSalesOrderOpenItem", discard).createXmlDocument();
    * data = ReportSalesOrderOpenItemData.set(); } else { xmlDocument =xmlEngine.readXmlTemplate(
    * "org/openbravo/erpCommon/ad_reports/ReportSalesOrderOpenItem" ).createXmlDocument(); }
@@ -175,9 +176,9 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
    * xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
    * xmlDocument.setParameter("mWarehouseId", strWarehouse); try { ComboTableData comboTableData =
    * new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID", "", "", Utility.getContext(this,
-   * vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItem"), Utility.getContext(this, vars, "#User_Client",
-   * "ReportSalesOrderOpenItem"), 0); Utility.fillSQLParameters(this, vars, null, comboTableData,
-   * "ReportSalesOrderOpenItem", strWarehouse);
+   * vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItem"), Utility.getContext(this, vars,
+   * "#User_Client", "ReportSalesOrderOpenItem"), 0); Utility.fillSQLParameters(this, vars, null,
+   * comboTableData, "ReportSalesOrderOpenItem", strWarehouse);
    * xmlDocument.setData("reportM_WAREHOUSESHIPPER","liststructure", comboTableData.select(false));
    * comboTableData = null; } catch (Exception ex) { throw new ServletException(ex); }
    * 

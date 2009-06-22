@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -39,6 +41,11 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class AccountElementValue extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "Value", "NAME", "AD_ORG_ID_D", "C_ELEMENTVALUE_ID",
+      "ROWKEY" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -93,10 +100,10 @@ public class AccountElementValue extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       printGridData(response, vars, strValue, strName, strOrganization, strAccountElementValue,
-          strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter, strAcctSchema);
+          strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter, strAcctSchema);
     } else if (vars.commandIn("KEY")) {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue",
           "AccountElementValue.value");
@@ -120,7 +127,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageSave(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageSave(HttpServletResponse response, VariablesSecureApp vars,
       AccountElementValueData data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Saved");
@@ -130,7 +137,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       AccountElementValueData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: AccountElementValue seeker Frame Set");
@@ -144,7 +151,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(AccountElementValueData[] data) throws IOException, ServletException {
+  private String generateResult(AccountElementValueData[] data) throws IOException,
+      ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -155,7 +163,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strValue,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strValue,
       String strName, String strElementValue, String strAcctSchema, boolean isDefault)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -205,7 +213,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -233,7 +241,6 @@ public class AccountElementValue extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "Value", "NAME", "AD_ORG_ID_D", "C_ELEMENTVALUE_ID", "ROWKEY" };
     String[] colWidths = { "204", "401", "151", "0", "0" };
     for (int i = 0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
@@ -256,10 +263,10 @@ public class AccountElementValue extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strValue,
-      String strName, String strOrganization, String strAccountElementValue, String strOrderBy,
-      String strOffset, String strPageSize, String strNewFilter, String strAcctSchema)
-      throws IOException, ServletException {
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars,
+      String strValue, String strName, String strOrganization, String strAccountElementValue,
+      String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
+      String strNewFilter, String strAcctSchema) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -269,12 +276,14 @@ public class AccountElementValue extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     if (headers != null) {
       try {
-        strAcctSchema = (strAcctSchema.equals("%") ? "" : strAcctSchema);
-        strValue = (strValue.equals("%") ? "" : strValue);
-        strName = (strName.equals("%") ? "" : strName);
+        // build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
+
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or
@@ -291,16 +300,13 @@ public class AccountElementValue extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = AccountElementValueData.select(this, "ROWNUM", strAcctSchema, strValue, strName,
               strOrganization, strAccountElementValue, Utility.getContext(this, vars,
                   "#User_Client", "AccountElementValue"), Utility.getContext(this, vars,
                   "#User_Org", "AccountElementValue"), strOrderBy, oraLimit, "");
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           data = AccountElementValueData.select(this, "1", strAcctSchema, strValue, strName,
               strOrganization, strAccountElementValue, Utility.getContext(this, vars,
                   "#User_Client", "AccountElementValue"), Utility.getContext(this, vars,

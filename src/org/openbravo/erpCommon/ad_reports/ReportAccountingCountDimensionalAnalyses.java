@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
@@ -46,6 +48,19 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  private static final RequestFilter columnNameFilter = new RequestFilter() {
+    @Override
+    public boolean accept(String value) {
+      for (int i = 0; i < value.length(); i++) {
+        int c = value.codePointAt(i);
+        if (Character.isLetter(c) || Character.isDigit(c) || value.charAt(i) == '_') {
+          return true;
+        }
+      }
+      return false;
+    }
+  };
+
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -64,11 +79,11 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
       String strAccountingCount = vars.getGlobalVariable("inpAccountingCount",
           "ReportAccountingCountDimensionalAnalyses|accountingCount", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAccountingCountDimensionalAnalyses|cBpartnerId", "");
+          "ReportAccountingCountDimensionalAnalyses|cBpartnerId", "", IsIDFilter.instance);
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportAccountingCountDimensionalAnalyses|mProductId", "");
+          "ReportAccountingCountDimensionalAnalyses|mProductId", "", IsIDFilter.instance);
       String strShown = vars.getInGlobalVariable("inpShown",
-          "ReportAccountingCountDimensionalAnalyses|shown", "");
+          "ReportAccountingCountDimensionalAnalyses|shown", "", columnNameFilter);
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportAccountingCountDimensionalAnalyses|org", "0");
       String strcProjectId = vars.getGlobalVariable("inpcProjectId",
@@ -99,11 +114,11 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
       String strAccountingCount = vars.getRequestGlobalVariable("inpAccountingCount",
           "ReportAccountingCountDimensionalAnalyses|accountingCount");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAccountingCountDimensionalAnalyses|cBpartnerId");
+          "ReportAccountingCountDimensionalAnalyses|cBpartnerId", IsIDFilter.instance);
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportAccountingCountDimensionalAnalyses|mProductId");
+          "ReportAccountingCountDimensionalAnalyses|mProductId", IsIDFilter.instance);
       String strShown = vars.getRequestInGlobalVariable("inpShown",
-          "ReportAccountingCountDimensionalAnalyses|shown");
+          "ReportAccountingCountDimensionalAnalyses|shown", columnNameFilter);
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportAccountingCountDimensionalAnalyses|org", "0");
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId",
@@ -167,9 +182,9 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
       String strAccountingCount = vars.getRequestGlobalVariable("inpAccountingCount",
           "ReportAccountingCountDimensionalAnalyses|accountingCount");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAccountingCountDimensionalAnalyses|cBpartnerId");
+          "ReportAccountingCountDimensionalAnalyses|cBpartnerId", IsIDFilter.instance);
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportAccountingCountDimensionalAnalyses|mProductId");
+          "ReportAccountingCountDimensionalAnalyses|mProductId", IsIDFilter.instance);
       String strShown = vars.getStringParameter("inpShown");
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportAccountingCountDimensionalAnalyses|org", "0");
@@ -186,7 +201,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
       pageErrorPopUp(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strComparative, String strDateFrom, String strDateTo, String strAccountingCount,
       String strcBpartnerId, String strmProductId, String strShown, String strDateFromRef,
       String strDateToRef, String strOrg, String strcProjectId, String strPeriod, String strLevel,
@@ -425,11 +440,11 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
    * 
    * xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
    * ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this,
-   * Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
-   * ""), strcBpartnerId)); xmlDocument.setData("reportMProductId_IN", "liststructure",
-   * ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(this,
-   * Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
-   * ""), strmProductId)); xmlDocument.setData("reportAD_ORGID", "liststructure",
+   * Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
+   * "#User_Client", ""), strcBpartnerId)); xmlDocument.setData("reportMProductId_IN",
+   * "liststructure", ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(this,
+   * Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
+   * "#User_Client", ""), strmProductId)); xmlDocument.setData("reportAD_ORGID", "liststructure",
    * OrganizationComboData.selectCombo(this, vars.getRole()));
    * 
    * try { WindowTabs tabs = new WindowTabs(this, vars,
@@ -451,9 +466,9 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
    * xmlDocument.setParameter("messageMessage", myMessage.getMessage()); } }
    * 
    * try { ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "Account_ID",
-   * "C_ElementValue (Accounts)", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
-   * Utility.getContext(this, vars, "#User_Client", "Account"), 0); Utility.fillSQLParameters(this,
-   * vars, null, comboTableData, "Account", strAccountingCount);
+   * "C_ElementValue (Accounts)", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+   * "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), 0);
+   * Utility.fillSQLParameters(this, vars, null, comboTableData, "Account", strAccountingCount);
    * xmlDocument.setData("reportAccount_ID","liststructure", comboTableData.select(false));
    * comboTableData = null; } catch (Exception ex) { throw new ServletException(ex); }
    * 
@@ -463,7 +478,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
    * out.println(xmlDocument.print()); out.close(); }
    */
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strComparative, String strDateFrom, String strDateTo, String strAccountingCount,
       String strcBpartnerId, String strmProductId, String strShown, String strDateFromRef,
       String strDateToRef, String strOrg, String strcProjectId, String strPeriod, String strLevel,
@@ -518,12 +533,12 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(
-            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strcBpartnerId));
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
+            ""), strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(this, Utility.getContext(
-            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strmProductId));
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
+            ""), strmProductId));
     xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
         vars.getRole()));
 
@@ -556,8 +571,8 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "Account_ID",
-          "C_ElementValue (Accounts)", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
-          Utility.getContext(this, vars, "#User_Client", "Account"), 0);
+          "C_ElementValue (Accounts)", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "Account", strAccountingCount);
       xmlDocument.setData("reportAccount_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -573,11 +588,11 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
     out.close();
   }
 
-  void printPageOpen(HttpServletResponse response, VariablesSecureApp vars, String strComparative,
-      String strDateFrom, String strDateTo, String strAccountingCount, String strcBpartnerId,
-      String strmProductId, String strShown, String strDateFromRef, String strDateToRef,
-      String strOrg, String strcProjectId, String strPeriod, String strLevel, String strColumnLevel)
-      throws IOException, ServletException {
+  private void printPageOpen(HttpServletResponse response, VariablesSecureApp vars,
+      String strComparative, String strDateFrom, String strDateTo, String strAccountingCount,
+      String strcBpartnerId, String strmProductId, String strShown, String strDateFromRef,
+      String strDateToRef, String strOrg, String strcProjectId, String strPeriod, String strLevel,
+      String strColumnLevel) throws IOException, ServletException {
     // Ajax response
     if (log4j.isDebugEnabled())
       log4j.debug("Output: open - period: " + strPeriod + " strAccountingCount:"
@@ -612,7 +627,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
             log4j.debug("inpLevel" + strLevel + ":"
                 + vars.getStringParameter("inpNivel" + strLevel));
           data = ReportAccountingCountDimensionalAnalysesData.select(this, "'" + arrayString[0]
-              + "'", vars.getStringParameter("inpNivel" + strLevel,"0"), arrayString[2],
+              + "'", vars.getStringParameter("inpNivel" + strLevel, "0"), arrayString[2],
               arrayString[1], vars.getStringParameter("inpNivel1", "0"), vars.getStringParameter(
                   "inpNivel2", "0"), vars.getStringParameter("inpNivel3", "0"), vars
                   .getStringParameter("inpNivel4", "0"), arrayString[3], Utility.getContext(this,
@@ -632,7 +647,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
               .createXmlDocument();
 
           data = ReportAccountingCountDimensionalAnalysesData.selectComparative(this, "'"
-              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel,"0"),
+              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel, "0"),
               arrayString[2], arrayString[1], vars.getStringParameter("inpNivel1", "0"), vars
                   .getStringParameter("inpNivel2", "0"), vars.getStringParameter("inpNivel3", "0"),
               vars.getStringParameter("inpNivel4", "0"), arrayString[3], Utility.getContext(this,
@@ -653,7 +668,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
               .createXmlDocument();
 
           data = ReportAccountingCountDimensionalAnalysesData.selectPeriod(this, "'"
-              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel,"0"),
+              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel, "0"),
               arrayString[2], arrayString[1], vars.getStringParameter("inpNivel1", "0"), vars
                   .getStringParameter("inpNivel2", "0"), vars.getStringParameter("inpNivel3", "0"),
               vars.getStringParameter("inpNivel4", "0"), arrayString[3], Utility.getContext(this,
@@ -669,7 +684,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
               "org/openbravo/erpCommon/ad_reports/ReportAccountingComparativePeriod")
               .createXmlDocument();
           data = ReportAccountingCountDimensionalAnalysesData.selectPeriodComparative(this, "'"
-              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel,"0"),
+              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel, "0"),
               arrayString[2], arrayString[1], vars.getStringParameter("inpNivel1", "0"), vars
                   .getStringParameter("inpNivel2", "0"), vars.getStringParameter("inpNivel3", "0"),
               vars.getStringParameter("inpNivel4", "0"), arrayString[3], Utility.getContext(this,
@@ -689,7 +704,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
               .createXmlDocument();
 
           data = ReportAccountingCountDimensionalAnalysesData.selectPeriodQuarter(this, "'"
-              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel,"0"),
+              + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel, "0"),
               arrayString[2], arrayString[1], vars.getStringParameter("inpNivel1", "0"), vars
                   .getStringParameter("inpNivel2", "0"), vars.getStringParameter("inpNivel3", "0"),
               vars.getStringParameter("inpNivel4", "0"), arrayString[3], Utility.getContext(this,
@@ -705,7 +720,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
               "org/openbravo/erpCommon/ad_reports/ReportAccountingComparativePeriod")
               .createXmlDocument();
           data = ReportAccountingCountDimensionalAnalysesData.selectPeriodComparativeQuarter(this,
-              "'" + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel,"0"),
+              "'" + arrayString[0] + "'", vars.getStringParameter("inpNivel" + strLevel, "0"),
               arrayString[2], arrayString[1], vars.getStringParameter("inpNivel1", "0"), vars
                   .getStringParameter("inpNivel2", "0"), vars.getStringParameter("inpNivel3", "0"),
               vars.getStringParameter("inpNivel4", "0"), arrayString[3], Utility.getContext(this,
@@ -735,7 +750,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
 
   }
 
-  Vector<Object> createVector() throws IOException, ServletException {
+  private Vector<Object> createVector() throws IOException, ServletException {
     // Dimension main vector. Here you must put new dimensions
     ReportAccountingCountDimensionalAnalysesData[] data = ReportAccountingCountDimensionalAnalysesData
         .selectDimension(this, "RV_ReportAccountingCountDimensionalAnaly");
@@ -753,8 +768,8 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
     return vectorArray;
   }
 
-  ReportAccountingCountDimensionalAnalysesData[] createList(VariablesSecureApp vars, String strShown)
-      throws IOException, ServletException {
+  private ReportAccountingCountDimensionalAnalysesData[] createList(VariablesSecureApp vars,
+      String strShown) throws IOException, ServletException {
     // Dimension filter lists creation
     ReportAccountingCountDimensionalAnalysesData[] dataDimension = ReportAccountingCountDimensionalAnalysesData
         .selectDimension(this, "RV_ReportAccountingCountDimensionalAnaly");
@@ -788,8 +803,8 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
 
   }
 
-  String[] createArrayString(Vector<Object> vectorArray, String strShown, String strColumnLevel)
-      throws IOException, ServletException {
+  private String[] createArrayString(Vector<Object> vectorArray, String strShown,
+      String strColumnLevel) throws IOException, ServletException {
     // Method to create the array string which say sqlc fields to obtain.
     if (log4j.isDebugEnabled())
       log4j.debug("createArrayString strShown:" + strShown + " - level:" + strColumnLevel);
@@ -821,7 +836,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
     return arrayString;
   }
 
-  String createFilter(VariablesSecureApp vars, Vector<Object> vectorArray, String strShown,
+  private String createFilter(VariablesSecureApp vars, Vector<Object> vectorArray, String strShown,
       String strLevel) throws IOException, ServletException {
     // Method which creates filter to sqlc.
     if (log4j.isDebugEnabled())
@@ -844,7 +859,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
             j++;
           }
           strFilter += " AND " + arrayAux[3] + " = '"
-              + vars.getStringParameter("inpNivel" + (i + 1))+"'";
+              + vars.getStringParameter("inpNivel" + (i + 1)) + "'";
 
         }
       }
@@ -852,7 +867,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
     return strFilter;
   }
 
-  String createGroupby(Vector<Object> vectorArray, String strShown, String strLevel)
+  private String createGroupby(Vector<Object> vectorArray, String strShown, String strLevel)
       throws IOException, ServletException {
     // Method that cretates group by sentence to sqlc.
     String strGroupBy = "";
@@ -877,7 +892,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
     return strGroupBy;
   }
 
-  String[] inicializarArray() throws IOException, ServletException {
+  private String[] inicializarArray() throws IOException, ServletException {
     String[] defaultArray = { "", "", "", "", "", "" };
     return defaultArray;
   }

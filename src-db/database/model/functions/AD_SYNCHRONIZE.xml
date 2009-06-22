@@ -1208,7 +1208,6 @@
               AD_WINDOW_TRL T
         WHERE AD_MENU.AD_Window_ID=w.AD_Window_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-          AND M.AD_MODULE_ID = W.AD_MODULE_ID
           AND w.AD_Window_ID = T.ad_Window_ID
           AND M.AD_LANGUAGE = T.AD_LANGUAGE
         UNION
@@ -1218,7 +1217,6 @@
         WHERE AD_MENU.AD_Window_ID=w.AD_Window_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
           AND W.AD_MODULE_ID = M2.AD_MODULE_ID
-          AND M.AD_MODULE_ID = W.AD_MODULE_ID
           AND M.AD_LANGUAGE = M2.AD_LANGUAGE
           )
       , Description=
@@ -1228,7 +1226,6 @@
               AD_WINDOW_TRL T
         WHERE AD_MENU.AD_Window_ID=w.AD_Window_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-          AND M.AD_MODULE_ID = W.AD_MODULE_ID
           AND w.AD_Window_ID = T.ad_Window_ID
           AND M.AD_LANGUAGE = T.AD_LANGUAGE
         UNION
@@ -1238,7 +1235,6 @@
         WHERE AD_MENU.AD_Window_ID=w.AD_Window_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
           AND W.AD_MODULE_ID = M2.AD_MODULE_ID
-          AND M.AD_MODULE_ID = W.AD_MODULE_ID
           AND M.AD_LANGUAGE = M2.AD_LANGUAGE
           )
     WHERE AD_Window_ID IS NOT NULL AND Action='W'
@@ -1315,7 +1311,6 @@
               AD_PROCESS_TRL T
         WHERE AD_MENU.AD_Process_ID=w.AD_Process_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-          AND M.AD_MODULE_ID = W.AD_MODULE_ID
           AND w.AD_Process_ID = T.AD_Process_ID
           AND M.AD_LANGUAGE = T.AD_LANGUAGE
         UNION
@@ -1325,7 +1320,6 @@
         WHERE AD_MENU.AD_Process_ID=w.AD_Process_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
           AND W.AD_MODULE_ID = M2.AD_MODULE_ID
-          AND M.AD_MODULE_ID = W.AD_MODULE_ID
           AND M.AD_LANGUAGE = M2.AD_LANGUAGE
           )
       , Description=
@@ -1335,7 +1329,6 @@
               AD_PROCESS_TRL T
         WHERE AD_MENU.AD_Process_ID=w.AD_Process_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-          AND M.AD_MODULE_ID = W.AD_MODULE_ID
           AND w.AD_Process_ID = T.AD_Process_ID
           AND M.AD_LANGUAGE = T.AD_LANGUAGE
         UNION
@@ -1345,7 +1338,6 @@
         WHERE AD_MENU.AD_Process_ID=w.AD_Process_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
           AND W.AD_MODULE_ID = M2.AD_MODULE_ID
-          AND M.AD_MODULE_ID = W.AD_MODULE_ID
           AND M.AD_LANGUAGE = M2.AD_LANGUAGE
           )
     WHERE AD_MENU.AD_Process_ID IS NOT NULL AND AD_MENU.Action IN('R', 'P')
@@ -1418,7 +1410,6 @@
                AD_Form_TRL T
         WHERE AD_MENU.AD_Form_ID=w.AD_Form_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-          AND M.AD_MODULE_ID = W.AD_MODULE_ID
           AND w.AD_Form_ID = T.AD_Form_ID
           AND M.AD_LANGUAGE = T.AD_LANGUAGE
         UNION
@@ -1428,7 +1419,6 @@
         WHERE AD_MENU.AD_Form_ID=w.AD_Form_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
           AND W.AD_MODULE_ID = M2.AD_MODULE_ID
-          AND M.AD_MODULE_ID = W.AD_MODULE_ID
           AND M.AD_LANGUAGE = M2.AD_LANGUAGE
           )
       , Description=
@@ -1438,7 +1428,6 @@
                AD_Form_TRL T
         WHERE AD_MENU.AD_Form_ID=w.AD_Form_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-          AND M.AD_MODULE_ID = W.AD_MODULE_ID
           AND w.AD_Form_ID = T.AD_Form_ID
           AND M.AD_LANGUAGE = T.AD_LANGUAGE
         UNION
@@ -1448,7 +1437,6 @@
         WHERE AD_MENU.AD_Form_ID=w.AD_Form_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
           AND W.AD_MODULE_ID = M2.AD_MODULE_ID
-          AND M.AD_MODULE_ID = W.AD_MODULE_ID
           AND M.AD_LANGUAGE = M2.AD_LANGUAGE
           )          
     WHERE AD_Form_ID IS NOT NULL  AND Action='X'

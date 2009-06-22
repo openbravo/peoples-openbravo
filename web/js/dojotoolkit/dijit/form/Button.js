@@ -45,7 +45,7 @@ dojo.declare("dijit.form.Button",
 	showLabel: true,
 
 	// iconClass: String
-	//		Class to apply to div in button to make it display an icon
+	//		Class to apply to DOMNode in button to make it display an icon
 	iconClass: "",
 
 	// type: String
@@ -65,7 +65,7 @@ dojo.declare("dijit.form.Button",
 	_onClick: function(/*Event*/ e){
 		// summary:
 		//		Internal function to handle click actions
-		if(this.disabled || this.readOnly){
+		if(this.disabled){
 			return false;
 		}
 		this._clicked(); // widget click actions
@@ -104,20 +104,24 @@ dojo.declare("dijit.form.Button",
 	},
 
 	_fillContent: function(/*DomNode*/ source){
-		// Overrides _Templated._fillcContent().
+		// Overrides _Templated._fillContent().
 		// If button label is specified as srcNodeRef.innerHTML rather than
 		// this.params.label, handle it here.
-		if(source && !("label" in this.params)){
+		if(source && (!this.params || !("label" in this.params))){
 			this.attr('label', source.innerHTML);
 		}
 	},
 
 	postCreate: function(){
-		if (this.showLabel == false){
-			dojo.addClass(this.containerNode,"dijitDisplayNone");
-		}
 		dojo.setSelectable(this.focusNode, false);
 		this.inherited(arguments);
+	},
+
+	_setShowLabelAttr: function(val){
+		if(this.containerNode){
+			dojo.toggleClass(this.containerNode, "dijitDisplayNone", !val);
+		}
+		this.showLabel = val;
 	},
 
 	onClick: function(/*Event*/ e){
@@ -216,7 +220,7 @@ dojo.declare("dijit.form.DropDownButton", [dijit.form.Button, dijit._Container],
 	_onArrowClick: function(/*Event*/ e){
 		// summary:
 		//		Handler for when the user mouse clicks on menu popup node
-		if(this.disabled || this.readOnly){ return; }
+		if(this.disabled){ return; }
 		this._toggleDropDown();
 	},
 
@@ -227,7 +231,7 @@ dojo.declare("dijit.form.DropDownButton", [dijit.form.Button, dijit._Container],
 		// we want to prevent opening our menu in this situation
 		// and only do so if we have seen a keydown on this button;
 		// e.detail != 0 means that we were fired by mouse
-		var isMacFFlessThan3 = dojo.isFF && dojo.isFF < 3
+		var isMacFFlessThan3 = dojo.isFF < 3
 			&& navigator.appVersion.indexOf("Macintosh") != -1;
 		if(!isMacFFlessThan3 || e.detail != 0 || this._seenKeydown){
 			this._onArrowClick(e);
@@ -246,7 +250,7 @@ dojo.declare("dijit.form.DropDownButton", [dijit.form.Button, dijit._Container],
 	_onKey: function(/*Event*/ e){
 		// summary:
 		//		Handler when the user presses a key on drop down widget
-		if(this.disabled || this.readOnly){ return; }
+		if(this.disabled){ return; }
 		if(e.charOrCode == dojo.keys.DOWN_ARROW){
 			if(!this.dropDown || this.dropDown.domNode.style.visibility=="hidden"){
 				dojo.stopEvent(e);
@@ -266,7 +270,7 @@ dojo.declare("dijit.form.DropDownButton", [dijit.form.Button, dijit._Container],
 	_toggleDropDown: function(){
 		// summary:
 		//		Toggle the drop-down widget; if it is up, close it; if not, open it.
-		if(this.disabled || this.readOnly){ return; }
+		if(this.disabled){ return; }
 		dijit.focus(this.popupStateNode);
 		var dropDown = this.dropDown;
 		if(!dropDown){ return; }

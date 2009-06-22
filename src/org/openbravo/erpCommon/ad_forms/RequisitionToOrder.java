@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -97,7 +98,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       String strIncludeVendor = vars.getRequestGlobalVariable("inpShowNullVendor",
           "RequisitionToOrder|ShowNullVendor");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "RequisitionToOrder|AD_Org_ID");
-      String strRequisitionLines = vars.getRequiredInStringParameter("inpRequisitionLine");
+      String strRequisitionLines = vars.getRequiredInStringParameter("inpRequisitionLine",
+          IsIDFilter.instance);
       updateLockedLines(vars, strOrgId);
       lockRequisitionLines(vars, strRequisitionLines);
       printPageDataSheet(response, vars, strProductId, strDateFrom, strDateTo, strRequesterId,
@@ -115,13 +117,15 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       String strIncludeVendor = vars.getRequestGlobalVariable("inpShowNullVendor",
           "RequisitionToOrder|ShowNullVendor");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "RequisitionToOrder|AD_Org_ID");
-      String strSelectedLines = vars.getRequiredInStringParameter("inpSelectedReq");
+      String strSelectedLines = vars.getRequiredInStringParameter("inpSelectedReq",
+          IsIDFilter.instance);
       unlockRequisitionLines(vars, strSelectedLines);
       updateLockedLines(vars, strOrgId);
       printPageDataSheet(response, vars, strProductId, strDateFrom, strDateTo, strRequesterId,
           strVendorId, strIncludeVendor, strOrgId);
     } else if (vars.commandIn("OPEN_CREATE")) {
-      String strSelectedLines = vars.getRequiredInStringParameter("inpSelectedReq");
+      String strSelectedLines = vars.getRequiredInStringParameter("inpSelectedReq",
+          IsIDFilter.instance);
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "RequisitionToOrder|AD_Org_ID");
       updateLockedLines(vars, strOrgId);
       checkSelectedRequisitionLines(response, vars, strSelectedLines);
@@ -145,7 +149,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strProductId, String strDateFrom, String strDateTo, String strRequesterId,
       String strVendorId, String strIncludeVendor, String strOrgId) throws IOException,
       ServletException {
@@ -250,21 +254,21 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     out.close();
   }
 
-  void lockRequisitionLines(VariablesSecureApp vars, String strRequisitionLines)
+  private void lockRequisitionLines(VariablesSecureApp vars, String strRequisitionLines)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Locking requisition lines: " + strRequisitionLines);
     RequisitionToOrderData.lock(this, vars.getUser(), strRequisitionLines);
   }
 
-  void unlockRequisitionLines(VariablesSecureApp vars, String strRequisitionLines)
+  private void unlockRequisitionLines(VariablesSecureApp vars, String strRequisitionLines)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Unlocking requisition lines: " + strRequisitionLines);
     RequisitionToOrderData.unlock(this, strRequisitionLines);
   }
 
-  void updateLockedLines(VariablesSecureApp vars, String strOrgId) throws IOException,
+  private void updateLockedLines(VariablesSecureApp vars, String strOrgId) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Update locked lines");
@@ -281,7 +285,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     }
   }
 
-  void checkSelectedRequisitionLines(HttpServletResponse response, VariablesSecureApp vars,
+  private void checkSelectedRequisitionLines(HttpServletResponse response, VariablesSecureApp vars,
       String strSelected) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Check selected requisition lines");
@@ -353,9 +357,9 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         strSelected);
   }
 
-  void printPageCreate(HttpServletResponse response, VariablesSecureApp vars, String strOrderDate,
-      String strVendorId, String strPriceListId, String strOrgId, String strSelected)
-      throws IOException, ServletException {
+  private void printPageCreate(HttpServletResponse response, VariablesSecureApp vars,
+      String strOrderDate, String strVendorId, String strPriceListId, String strOrgId,
+      String strSelected) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Print Create Purchase order");
     String strDescription = Utility.messageBD(this, "RequisitionToOrderCreate", vars.getLanguage());
@@ -382,7 +386,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("orderDate", strOrderDate);
     xmlDocument.setParameter("displayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramOrderOrgId", strOrgId);
-    xmlDocument.setParameter("arrayWarehouse", arrayDobleEntrada("arrWarehouse",
+    xmlDocument.setParameter("arrayWarehouse", Utility.arrayDobleEntrada("arrWarehouse",
         RequisitionToOrderData.selectWarehouseDouble(this, vars.getClient(), Utility.getContext(
             this, vars, "#AccessibleOrgTree", "RequisitionToOrder"), Utility.getContext(this, vars,
             "#User_Client", "RequisitionToOrder"))));
@@ -416,9 +420,9 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     out.close();
   }
 
-  OBError processPurchaseOrder(VariablesSecureApp vars, String strSelected, String strOrderDate,
-      String strVendor, String strPriceListId, String strOrg, String strWarehouse)
-      throws IOException, ServletException {
+  private OBError processPurchaseOrder(VariablesSecureApp vars, String strSelected,
+      String strOrderDate, String strVendor, String strPriceListId, String strOrg,
+      String strWarehouse) throws IOException, ServletException {
     StringBuffer textMessage = new StringBuffer();
     Connection conn = null;
 
@@ -573,7 +577,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     }
   }
 
-  OBError cOrderPost(Connection conn, VariablesSecureApp vars, String strcOrderId)
+  private OBError cOrderPost(Connection conn, VariablesSecureApp vars, String strcOrderId)
       throws IOException, ServletException {
     String pinstance = SequenceIdData.getUUID();
 

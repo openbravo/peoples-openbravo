@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SL All
- * portions are Copyright (C) 2001-2008 Openbravo SL All Rights Reserved.
+ * portions are Copyright (C) 2001-2009 Openbravo SL All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 
@@ -22,28 +22,32 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_process.HeartbeatProcessData;
-import org.openbravo.erpCommon.ad_process.RegisterData;
+import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Heartbeat extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    removeFromPageHistory(request);
-
-    final HeartbeatProcessData[] data = HeartbeatProcessData.selectSystemProperties(this);
+    final org.openbravo.erpCommon.businessUtility.HeartbeatData[] data = org.openbravo.erpCommon.businessUtility.HeartbeatData
+        .selectSystemProperties(this);
     if (data.length > 0) {
       String servletContainer = data[0].servletContainer;
       String servletContainerVersion = data[0].servletContainerVersion;
@@ -54,8 +58,7 @@ public class Heartbeat extends HttpSecureAppServlet {
           servletContainer = serverInfo.split("/")[0];
           servletContainerVersion = serverInfo.split("/")[1];
 
-          HeartbeatProcessData.updateServletContainer(this, servletContainer,
-              servletContainerVersion);
+          HeartbeatData.updateServletContainer(this, servletContainer, servletContainerVersion);
         }
       }
     }
@@ -63,33 +66,17 @@ public class Heartbeat extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       printPageDataSheet(response, vars);
     } else if (vars.commandIn("DISABLE")) {
-      HeartbeatProcessData.disableHeartbeat(myPool);
+      HeartbeatData.disableHeartbeat(myPool);
     } else if (vars.commandIn("POSTPONE")) {
       final Calendar cal = Calendar.getInstance();
       cal.add(Calendar.DATE, 2);
       final String date = new SimpleDateFormat(vars.getJavaDateFormat()).format(cal.getTime());
-      HeartbeatProcessData.postpone(myPool, date);
+      HeartbeatData.postpone(myPool, date);
     } else
       pageError(response);
   }
 
-  /**
-   * Removes the Heartbeat pop-up from the page history so when Openbravo back arrow is pressed,
-   * Heartbeat window has no chance of being shown.
-   * 
-   * @param request
-   *          the HttpServletRequest object
-   */
-  public void removeFromPageHistory(HttpServletRequest request) {
-    final Variables variables = new Variables(request);
-    final String sufix = variables.getCurrentHistoryIndex();
-    variables.removeSessionValue("reqHistory.servlet" + sufix);
-    variables.removeSessionValue("reqHistory.path" + sufix);
-    variables.removeSessionValue("reqHistory.command" + sufix);
-    variables.downCurrentHistoryIndex();
-  }
-
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -106,7 +93,7 @@ public class Heartbeat extends HttpSecureAppServlet {
     xmlDocument.setParameter("welcome", Utility.formatMessageBDToHtml(Utility.messageBD(this,
         "HB_WELCOME", vars.getLanguage())));
 
-    final RegisterData[] rData = RegisterData.select(this);
+    final RegistrationData[] rData = RegistrationData.select(this);
     if (rData.length > 0) {
       final String isregistrationactive = rData[0].isregistrationactive;
       final String rPostponeDate = rData[0].postponeDate;

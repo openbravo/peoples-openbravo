@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,10 +27,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.ad_combos.WarehouseComboData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.Utility;
@@ -39,6 +40,11 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class ProductComplete extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "value", "name", "locator", "qty", "c_uom1",
+      "attribute", "qtyorder", "c_uom2", "qty_ref", "quantityorder_ref", "rowkey" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -169,14 +175,14 @@ public class ProductComplete extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       String strClients = Utility.getContext(this, vars, "#User_Client", "ProductComplete");
       String strOrg = vars.getStringParameter("inpAD_Org_ID");
       String strOrgs = Utility.getSelectorOrgs(this, vars, strOrg);
 
       printGridData(response, vars, strKey, strName, strWarehouse, strBpartner, strStore,
-          isCalledFromProduction, strOrgs, strClients, strSortCols + " " + strSortDirs, strOffset,
+          isCalledFromProduction, strOrgs, strClients, strSortCols, strSortDirs, strOffset,
           strPageSize, strNewFilter);
     } else
       pageError(response);
@@ -190,7 +196,7 @@ public class ProductComplete extends HttpSecureAppServlet {
     vars.removeSessionValue("ProductComplete.withstorelines");
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
       String strNameValue, String strWarehouse, String strStore, String strBpartner,
       String strClients, String strOrgs, String focusedId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -228,7 +234,7 @@ public class ProductComplete extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       ProductCompleteData[] data, String strWarehouse) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Product seeker Frame Set");
@@ -242,8 +248,8 @@ public class ProductComplete extends HttpSecureAppServlet {
     out.close();
   }
 
-  String generateResult(ProductCompleteData[] data, String strWarehouse) throws IOException,
-      ServletException {
+  private String generateResult(ProductCompleteData[] data, String strWarehouse)
+      throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -264,7 +270,7 @@ public class ProductComplete extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -292,8 +298,6 @@ public class ProductComplete extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "value", "name", "locator", "qty", "c_uom1", "attribute", "qtyorder",
-        "c_uom2", "qty_ref", "quantityorder_ref", "rowkey" };
     boolean[] colSortable = { true, true, false, true, false, true, true, false, false, false,
         false };
     // String[] gridNames = {"Key", "Name","Disp. Credit","Credit used",
@@ -322,11 +326,11 @@ public class ProductComplete extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strName, String strWarehouse, String strBpartner, String strStore,
-      String strIsCalledFromProduction, String strOrgs, String strClients, String strOrderBy,
-      String strOffset, String strPageSize, String strNewFilter) throws IOException,
-      ServletException {
+      String strIsCalledFromProduction, String strOrgs, String strClients, String strOrderCols,
+      String strOrderDirs, String strOffset, String strPageSize, String strNewFilter)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -336,13 +340,14 @@ public class ProductComplete extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
-
-    // strip out single '%' parameters used with like
-    strKey = strKey.equals("%") ? "" : strKey;
-    strName = strName.equals("%") ? "" : strName;
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     if (headers != null) {
       try {
+        // build sql orderBy clause from parameters
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
+
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or
@@ -369,10 +374,7 @@ public class ProductComplete extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           // data = BusinessPartnerData.select(this, "ROWNUM",
           // Utility.getContext(this, vars, "#User_Client",
           // "BusinessPartner"), Utility.getSelectorOrgs(this, vars,
@@ -402,7 +404,7 @@ public class ProductComplete extends HttpSecureAppServlet {
                   strOrderBy, oraLimit, "");
           }
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           // data = BusinessPartnerData.select(this, "1",
           // Utility.getContext(this, vars, "#User_Client",
           // "BusinessPartner"), Utility.getSelectorOrgs(this, vars,

@@ -22,8 +22,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -129,9 +129,10 @@ public class ExtractModule {
             new HashMap<String, Object>());
         if (xml != null) {
           final String fileName = ds.getName() + ".xml";
-          final FileWriter fw = new FileWriter(new File(stdDir, fileName));
-          fw.write(xml);
-          fw.close();
+          final OutputStreamWriter osWriter = new OutputStreamWriter(new FileOutputStream(new File(
+              stdDir, fileName)), "UTF-8");
+          osWriter.write(xml);
+          osWriter.close();
         }
       } catch (final Exception e) {
         throw new OBException("Exception while extracting referencedata for module: " + moduleId

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -13,6 +13,8 @@ package org.openbravo.xmlEngine;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
@@ -223,13 +225,17 @@ public class XmlDocument implements XmlComponentValue {
   }
 
   public String print(String strBlank) {
+    // Pre-process template to translate it in case it is necessary
     if (!ignoreTranslation && xmlTemplate != null && xmlTemplate.strName != null) {
       if (log4jXmlDocument.isDebugEnabled())
         log4jXmlDocument.debug("Start of print of: " + xmlTemplate.strName);
-
       final TranslationHandler handler = new TranslationHandler(
           this.xmlTemplate.xmlEngine.connProvider, this);
-      handler.setFileName(xmlTemplate.strName.replace("designorg/", "/org/") + ".html");
+      String baseDirectory = xmlTemplate.strName.substring(0, xmlTemplate.strName.lastIndexOf("/"))
+          .replace("designorg/", "/org/");
+      String templateFileName = xmlTemplate.configuration.strTemplate;
+      String absoluteTemplateFile = baseDirectory + "/" + templateFileName;
+      handler.setFileName(absoluteTemplateFile);
 
       log4jXmlDocument.debug("print() - xmlTemplate.xmlEngine.fileBaseLocation: "
           + xmlTemplate.xmlEngine.fileBaseLocation);
@@ -245,29 +251,12 @@ public class XmlDocument implements XmlComponentValue {
         if (hasParameterValue.get("processId") != null
             && hasParameterValue.get("processId").strValue != null
             && !hasParameterValue.get("processId").strValue.equals("")) {
-          // String formType =
-          // hasParameterValue.get("trlFormType").strValue;
-          // if (formType.equalsIgnoreCase("PROCESS"))
           log4jXmlDocument.debug("ProcessId: " + hasParameterValue.get("processId").strValue);
           handler.setXmlDocumentType(TranslationHandler.PROCESS);
           handler.setXmlDocumentTypeId(hasParameterValue.get("processId").strValue);
         }
-        // CPStandAlone cpStandAlone = new
-        // CPStandAlone(xmlTemplate.xmlEngine.fileBaseLocation +
-        // "/../../WEB-INF/Openbravo.properties");
-        if (hasParameterValue.get("language") != null
-            && hasParameterValue.get("language").strValue != null) {
-          log4jXmlDocument.debug("print(strBlank) - language: "
-              + hasParameterValue.get("language").strValue);
-          handler.setLanguage(hasParameterValue.get("language").strValue
-              .replace("defaultLang=", "").replace("\"", ""));
-        } else if (hasParameterValue.get("paramLanguage") != null
-            && hasParameterValue.get("paramLanguage").strValue != null) {
-          log4jXmlDocument.debug("print(strBlank) - language: "
-              + hasParameterValue.get("paramLanguage").strValue);
-          handler.setLanguage(hasParameterValue.get("paramLanguage").strValue.replace(
-              "defaultLang=", "").replace("\"", ""));
-        }
+        handler.setLanguage(xmlTemplate.xmlEngine.sessionLanguage);
+
         log4jXmlDocument.debug("before running generateTranslations.");
         handler.generateTranslations();
         if (!ignoreTranslation && handler.getFormLabels() != null
@@ -282,30 +271,80 @@ public class XmlDocument implements XmlComponentValue {
     } else {
       log4jXmlDocument.debug("print(String strBlank) - hasParameterValue is null");
     }
+    // Translation is done (except for sections within dataValues)
 
     for (final DataValue elementDataValue : hasDataValue.values()) {
+      // Do the translation for DataValues, it is necessary because it is possible to have in a
+      // DataValue a section that needs to be translated
+      translateDataValue(elementDataValue);
+
       if (strBlank != null && !strBlank.equals("")) {
         elementDataValue.executeBlank(strBlank);
       } else {
         elementDataValue.printGenerated();
-        // log4jXmlDocument.debug("printGenerated of "+
-        // elementDataValue.dataTemplate.strName + " lng: " +
-        // elementDataValue.firstSectionValue.strSection.length());
       }
     }
 
     final StringBuffer strPrint = xmlVectorValue.printStringBuffer();
-    // if (strPrint != null)
-    // log4jXmlDocument.debug("print(String strBlank) - returning strPrint: "
-    // + strPrint);
-    // log4jXmlDocument.debug("XmlDocument: StringBuffer length:" +
-    // strPrint.length() + " de " + xmlTemplate.strName);
-    /*
-     * String strStringPrint = new String(strPrint);
-     * log4jXmlDocument.debug("XmlDocument: String length:" + strStringPrint.length());
-     */
 
     return strPrint.toString();
+  }
+
+  /**
+   * Translates the template for sections within DataValue. Note that subsections are in DataValue
+   * and are not translated in with the general template
+   * 
+   * @param elementDataValue
+   *          DataValue object that might contain sections to be translated
+   */
+  private void translateDataValue(DataValue elementDataValue) {
+    if (elementDataValue.dataTemplate != null) {
+      DataTemplate dataTemplate = elementDataValue.dataTemplate;
+      if (dataTemplate.vecSectionTemplate != null) {
+        Vector<Object> vecSectionTemplate = dataTemplate.vecSectionTemplate;
+        for (Iterator<?> iterator = vecSectionTemplate.iterator(); iterator.hasNext();) {
+          SectionTemplate sectionTemplate = (SectionTemplate) iterator.next();
+          if (sectionTemplate.vecHeadTemplate != null) {
+            XmlVectorTemplate template = sectionTemplate.vecHeadTemplate;
+            for (Iterator<?> iterator2 = template.iterator(); iterator2.hasNext();) {
+              Object componentTemplate = (Object) iterator2.next();
+              if (CharacterComponent.class.isInstance(componentTemplate)) {
+                CharacterComponent charComponent = (CharacterComponent) componentTemplate;
+                if (charComponent.character != null && !charComponent.equals("")) {
+                  String original = charComponent.character.trim();
+                  String trl = xmlVectorValue.getTextMap().get(original);
+                  if (trl != null && !trl.equals(""))
+                    charComponent.character = trl;
+                }
+                componentTemplate = charComponent;
+              }
+            }
+            sectionTemplate.vecHeadTemplate = template;
+          }
+
+          if (sectionTemplate.vecFootTemplate != null) {
+            XmlVectorTemplate xmlFootTemplate = sectionTemplate.vecFootTemplate;
+            for (Iterator<?> iterator2 = xmlFootTemplate.iterator(); iterator2.hasNext();) {
+              Object componentTemplate = (Object) iterator2.next();
+              if (CharacterComponent.class.isInstance(componentTemplate)) {
+                CharacterComponent charComponent = (CharacterComponent) componentTemplate;
+                if (charComponent.character != null && !charComponent.equals("")) {
+                  String original = charComponent.character.trim();
+                  String trl = xmlVectorValue.getTextMap().get(original);
+                  if (trl != null && !trl.equals(""))
+                    charComponent.character = trl;
+                }
+                componentTemplate = charComponent;
+              }
+            }
+            sectionTemplate.vecFootTemplate = xmlFootTemplate;
+          }
+        }
+        dataTemplate.vecSectionTemplate = vecSectionTemplate;
+      }
+      elementDataValue.dataTemplate = dataTemplate;
+    }
+
   }
 
   public String printPrevious() {

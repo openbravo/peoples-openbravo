@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,8 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
@@ -35,6 +37,21 @@ import org.openbravo.database.ConnectionProvider;
  */
 public class ModelSQLGeneration {
   static Logger log4j = Logger.getLogger(ModelSQLGeneration.class);
+
+  private static final RequestFilter columnNameFilter = new RequestFilter() {
+    @Override
+    public boolean accept(String value) {
+      for (int i = 0; i < value.length(); i++) {
+        int c = value.codePointAt(i);
+        if (Character.isLetter(c) || Character.isDigit(c) || value.charAt(i) == '_') {
+          return true;
+        }
+      }
+      return false;
+    }
+  };
+
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   /**
    * Constructor
@@ -58,8 +75,8 @@ public class ModelSQLGeneration {
     StringBuffer orderBy = new StringBuffer();
     if (tableSQL == null)
       return vOrderBy;
-    String sortCols = vars.getInStringParameter("sort_cols");
-    String sortDirs = vars.getInStringParameter("sort_dirs");
+    String sortCols = vars.getInStringParameter("sort_cols", columnNameFilter);
+    String sortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
 
     if (log4j.isDebugEnabled())
       log4j.debug("sort_cols: " + sortCols);
@@ -132,8 +149,9 @@ public class ModelSQLGeneration {
         if (!aux.equals("")) {
           if (!aux.equals("%")
               || (!prop.getProperty("AD_Reference_ID").equals("10")
-                  && !prop.getProperty("AD_Reference_ID").equals("14") && !prop.getProperty(
-                  "AD_Reference_ID").equals("34"))) {
+                  && !prop.getProperty("AD_Reference_ID").equals("14")
+                  && !prop.getProperty("AD_Reference_ID").equals("34") || !prop.getProperty(
+                  "AD_Reference_ID").equals("35"))) {
             filter.addElement(formatFilter(tableSQL.getTableName(), prop.getProperty("ColumnName"),
                 prop.getProperty("AD_Reference_ID"), true));
             filterParams.addElement("Param" + prop.getProperty("ColumnName"));
@@ -212,8 +230,9 @@ public class ModelSQLGeneration {
       return "";
     StringBuffer text = new StringBuffer();
     if (reference.equals("15") || reference.equals("16") || reference.equals("24")) {
-      text.append("TO_DATE(").append(tablename).append(".").append(columnname).append(
-          (reference.equals("24") ? ", 'HH24:MI:SS'" : "")).append(") ");
+      text.append("TO_DATE(").append(reference.equals("24") ? "TO_CHAR(" : "").append(tablename)
+          .append(".").append(columnname).append(
+              (reference.equals("24") ? ", 'HH24:MI:SS'), 'HH24:MI:SS'" : "")).append(") ");
       if (first)
         text.append(">= ");
       else {
@@ -241,6 +260,11 @@ public class ModelSQLGeneration {
       text.append(aux).append("(");
       text.append(tablename).append(".").append(columnname).append(") LIKE ");
       text.append(aux).append("(?)");
+    } else if (reference.equals("35")) {
+      text
+          .append(
+              "(SELECT UPPER(DESCRIPTION) FROM M_ATTRIBUTESETINSTANCE WHERE M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID = ")
+          .append(tablename).append(".").append(columnname).append(") LIKE C_IGNORE_ACCENT(?)");
     } else {
       text.append(tablename).append(".").append(columnname).append(" = ?");
     }
@@ -312,7 +336,7 @@ public class ModelSQLGeneration {
   /**
    * Overloaded method with sorted columns by default
    */
-  public static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars,
+  static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars,
       TableSQLData tableSQL, String selectFields, Vector<String> filter,
       Vector<String> filterParams, int offset, int pageSize) throws Exception {
     return generateSQL(conn, vars, tableSQL, selectFields, filter, filterParams, offset, pageSize,
@@ -355,7 +379,7 @@ public class ModelSQLGeneration {
    * @return String with the sql.
    * @throws Exception
    */
-  public static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars,
+  static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars,
       TableSQLData tableSQL, String selectFields, Vector<String> filter,
       Vector<String> filterParams, int offset, int pageSize, boolean sorted, boolean onlyId)
       throws Exception {

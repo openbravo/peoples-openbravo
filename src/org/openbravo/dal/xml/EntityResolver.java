@@ -46,6 +46,8 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.ReferenceDataStore;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.plm.AttributeSet;
+import org.openbravo.model.common.plm.AttributeSetInstance;
 
 /**
  * The entity resolver will resolve an entity name and id to a business object. The resolver will
@@ -233,6 +235,11 @@ public class EntityResolver implements OBNotSingleton {
       result = searchClientOrganization(id, entity);
       if (result == null) {
         result = searchClient(id, entity);
+      }
+      if (result == null
+          && (entity.getName().compareTo(AttributeSetInstance.ENTITY_NAME) == 0 || entity.getName()
+              .compareTo(AttributeSet.ENTITY_NAME) == 0)) {
+        result = searchSystem(id, entity);
       }
     } else if (al == AccessLevel.ALL) {
       // search all three levels from the bottom

@@ -102,17 +102,29 @@ public class SessionHandler implements OBNotSingleton {
     return session;
   }
 
+  protected void setSession(Session thisSession) {
+    session = thisSession;
+  }
+
+  protected Session createSession() {
+    return SessionFactoryController.getInstance().getSessionFactory().openSession();
+  }
+
+  protected void closeSession() {
+    session.close();
+  }
+
   /**
-   * Saves the object in this session.
+   * Saves the object in this getSession().
    * 
    * @param obj
    *          the object to persist
    */
   public void save(Object obj) {
     if (Identifiable.class.isAssignableFrom(obj.getClass())) {
-      session.saveOrUpdate(((Identifiable) obj).getEntityName(), obj);
+      getSession().saveOrUpdate(((Identifiable) obj).getEntityName(), obj);
     } else {
-      session.saveOrUpdate(obj);
+      getSession().saveOrUpdate(obj);
     }
   }
 
@@ -124,9 +136,9 @@ public class SessionHandler implements OBNotSingleton {
    */
   public void delete(Object obj) {
     if (Identifiable.class.isAssignableFrom(obj.getClass())) {
-      session.delete(((Identifiable) obj).getEntityName(), obj);
+      getSession().delete(((Identifiable) obj).getEntityName(), obj);
     } else {
-      session.delete(obj);
+      getSession().delete(obj);
     }
   }
 
@@ -142,12 +154,12 @@ public class SessionHandler implements OBNotSingleton {
   @SuppressWarnings("unchecked")
   public <T extends Object> T find(Class<T> clazz, Object id) {
     // translates a class to an entityname because the hibernate
-    // Session.get method can not handle class names if the entity was
+    // getSession().get method can not handle class names if the entity was
     // mapped with entitynames.
     if (Identifiable.class.isAssignableFrom(clazz)) {
       return (T) find(DalUtil.getEntityName(clazz), id);
     }
-    return (T) session.get(clazz, (Serializable) id);
+    return (T) getSession().get(clazz, (Serializable) id);
   }
 
   /**
@@ -162,29 +174,29 @@ public class SessionHandler implements OBNotSingleton {
    * @see Entity
    */
   public BaseOBObject find(String entityName, Object id) {
-    return (BaseOBObject) session.get(entityName, (Serializable) id);
+    return (BaseOBObject) getSession().get(entityName, (Serializable) id);
   }
 
   /**
-   * Create a query object from the current session.
+   * Create a query object from the current getSession().
    * 
    * @param qryStr
    *          the HQL query
    * @return a new Query object
    */
   public Query createQuery(String qryStr) {
-    return session.createQuery(qryStr);
+    return getSession().createQuery(qryStr);
   }
 
   /**
    * Starts a transaction.
    */
-  private void begin() {
-    Check.isTrue(session == null, "Session must be null before begin");
-    session = SessionFactoryController.getInstance().getSessionFactory().openSession();
-    session.setFlushMode(FlushMode.COMMIT);
+  protected void begin() {
+    Check.isTrue(getSession() == null, "Session must be null before begin");
+    setSession(createSession());
+    getSession().setFlushMode(FlushMode.COMMIT);
     Check.isTrue(tx == null, "tx must be null before begin");
-    tx = session.beginTransaction();
+    tx = getSession().beginTransaction();
     log.debug("Transaction started");
   }
 
@@ -199,9 +211,9 @@ public class SessionHandler implements OBNotSingleton {
       tx = null;
     } finally {
       deleteSessionHandler();
-      session.close();
+      closeSession();
     }
-    session = null;
+    setSession(null);
     log.debug("Transaction closed, session closed");
   }
 
@@ -212,12 +224,12 @@ public class SessionHandler implements OBNotSingleton {
     checkInvariant();
     tx.commit();
     tx = null;
-    tx = session.beginTransaction();
+    tx = getSession().beginTransaction();
     log.debug("Committed and started new transaction");
   }
 
   /**
-   * Rolls back the transaction and closes the session.
+   * Rolls back the transaction and closes the getSession().
    */
   public void rollback() {
     log.debug("Rolling back transaction");
@@ -229,19 +241,19 @@ public class SessionHandler implements OBNotSingleton {
       deleteSessionHandler();
       try {
         log.debug("Closing session");
-        session.close();
+        closeSession();
       } finally {
         // purposely ignoring it to not hide other errors
       }
     }
-    session = null;
+    setSession(null);
   }
 
   /**
    * The invariant is that for begin, rollback and commit the session etc. are alive
    */
   private void checkInvariant() {
-    Check.isNotNull(session, "Session is null");
+    Check.isNotNull(getSession(), "Session is null");
     Check.isNotNull(tx, "Tx is null");
     Check.isTrue(tx.isActive(), "Tx is active");
   }
@@ -262,5 +274,15 @@ public class SessionHandler implements OBNotSingleton {
   /** @return the doRollback value */
   public boolean getDoRollback() {
     return doRollback;
+  }
+
+  /**
+   * Returns true if the session-in-view pattern should be supported. That is that the session is
+   * closed and committed at the end of the request.
+   * 
+   * @return always true in this implementation
+   */
+  public boolean doSessionInViewPatter() {
+    return true;
   }
 }

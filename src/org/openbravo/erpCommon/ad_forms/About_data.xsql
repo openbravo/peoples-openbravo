@@ -27,7 +27,7 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-        SELECT AD_SYSTEM_INFO.OB_VERSION || ' (r' || AD_SYSTEM_INFO.CODE_REVISION || ')' AS VER, '' as LANG, '' as TRANSLATEDBY
+        SELECT AD_SYSTEM_INFO.OB_VERSION || ' (' || AD_SYSTEM_INFO.CODE_REVISION || ')' AS VER, '' as LANG, '' as TRANSLATEDBY
           FROM AD_SYSTEM_INFO
      </Sql>
    </SqlMethod>

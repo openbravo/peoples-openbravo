@@ -15,6 +15,45 @@ dojo.require("dijit.Menu");
 
 dojo.requireLocalization("dijit.form", "validate", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
+dojo.declare("dojox.form._DropDownSelectMenu", dijit.Menu, {
+	// Summary:
+	//		An internally-used menu for dropdown that allows us to more
+	//		gracefully overflow our menu
+	buildRendering: function(){
+		// Summary:
+		//		Stub in our own changes, so that our domNode is not a table
+		//		otherwise, we won't respond correctly to heights/overflows
+		this.inherited(arguments);
+		var o = this.menuTableNode = this.domNode;
+		var n = this.domNode = dojo.doc.createElement("div");
+		if(o.parentNode){
+			o.parentNode.replaceChild(n, o);
+		}
+		dojo.removeClass(o, "dijitMenuTable");
+		n.className = o.className + " dojoxDropDownSelectMenu";
+		o.className = "dijitReset dijitMenuTable";
+		n.appendChild(o);
+	},
+	resize: function(/*Object*/ mb){
+		// Summary:
+		//		Overridden so that we are able to handle resizing our 
+		//		internal widget.  Note that this is not a "full" resize
+		//		implementation - it only works correctly if you pass it a
+		//		marginBox.
+		//
+		// mb: Object
+		//		The margin box to set this dropdown to.
+		if(mb){
+			dojo.marginBox(this.domNode, mb);
+			var w = dojo.contentBox(this.domNode).w;
+			if(dojo.isFF && this.domNode.scrollHeight > this.domNode.clientHeight){
+				w--;
+			}
+			dojo.marginBox(this.menuTableNode, {w: w});
+		}
+	}
+});
+
 dojo.declare("dojox.form.DropDownSelect", [dojox.form._FormSelectWidget, dojox.form._HasDropDown], {
 	attributeMap: dojo.mixin(dojo.clone(dojox.form._FormSelectWidget.prototype.attributeMap),{value:"valueNode",name:"valueNode"}),
 	// summary:
@@ -63,7 +102,7 @@ dojo.declare("dojox.form.DropDownSelect", [dojox.form._FormSelectWidget, dojox.f
 		}
 		
 		// Create the dropDown widget
-		this.dropDown = new dijit.Menu();
+		this.dropDown = new dojox.form._DropDownSelectMenu();
 		dojo.addClass(this.dropDown.domNode, this.baseClass + "Menu");
 	},
 
@@ -100,7 +139,14 @@ dojo.declare("dojox.form.DropDownSelect", [dojox.form._FormSelectWidget, dojox.f
 		// summary: 
 		//		Resets the menu and the length attribute of the button - and
 		//		ensures that the label is appropriately set.
+
+		// this.inherited destroys this.dropDown's child widgets (MenuItems).
+		// Avoid this.dropDown (Menu widget) having a pointer to a destroyed widget (which will cause
+		// issues later in _setSelected).
+		delete this.dropDown.focusedChild;
+
 		this.inherited(arguments);
+
 		var len = this.options.length;
 		this._isLoaded = false;
 		this._childrenLoaded = true;
@@ -124,7 +170,7 @@ dojo.declare("dojox.form.DropDownSelect", [dojox.form._FormSelectWidget, dojox.f
 	
 	_setDisplay: function(/*String*/ newDisplay){
 		// summary: sets the display for the given value (or values)
-		this.containerNode.innerHTML = '<span class=" ' + this.baseClass + 'Label">' +
+		this.containerNode.innerHTML = '<span class="dijitReset dijitInline ' + this.baseClass + 'Label">' +
 					(newDisplay || this.emptyLabel || "&nbsp;") +
 					'</span>';
 		this._layoutHack();

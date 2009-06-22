@@ -1,6 +1,6 @@
 package org.openbravo.uiTranslation;
 
-public class InterfaceInfo {
+class InterfaceInfo {
 
   public static int TAB = 0, PROCESS = 1, FORM = 2;
 

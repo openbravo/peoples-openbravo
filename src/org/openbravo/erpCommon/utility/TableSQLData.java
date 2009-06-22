@@ -36,7 +36,7 @@ import org.openbravo.database.ConnectionProvider;
  *         Handler to manage all the process for the tab's query building.
  */
 public class TableSQLData implements Serializable {
-  static Logger log4j = Logger.getLogger(TableSQLData.class);
+  private static Logger log4j = Logger.getLogger(TableSQLData.class);
   private final String internalPrefix = "@@";
   private static final String FIELD_CONCAT = " || ' - ' || ";
   private static final String INACTIVE_DATA = "**";
@@ -115,7 +115,7 @@ public class TableSQLData implements Serializable {
    *          String with the value.
    * @throws Exception
    */
-  public void setParameter(String name, String value) throws Exception {
+  void setParameter(String name, String value) throws Exception {
     if (name == null || name.equals(""))
       throw new Exception("Invalid parameter name");
     if (this.parameters == null)
@@ -133,7 +133,7 @@ public class TableSQLData implements Serializable {
    *          String with the name of the parameter to get.
    * @return String with the value of the parameter.
    */
-  public String getParameter(String name) {
+  String getParameter(String name) {
     if (name == null || name.equals(""))
       return "";
     else if (this.parameters == null)
@@ -147,7 +147,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with all the parameters defined.
    */
-  public Vector<String> getParameters() {
+  Vector<String> getParameters() {
     Vector<String> result = new Vector<String>();
     if (log4j.isDebugEnabled())
       log4j.debug("Obtaining parameters");
@@ -237,7 +237,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the values.
    */
-  public Vector<String> getParameterValues() {
+  Vector<String> getParameterValues() {
     Vector<String> result = new Vector<String>();
     if (log4j.isDebugEnabled())
       log4j.debug("Obtaining parameters values");
@@ -369,7 +369,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the values.
    */
-  public Vector<String> getParameterValuesTotalSQL() {
+  Vector<String> getParameterValuesTotalSQL() {
     Vector<String> result = new Vector<String>();
     if (log4j.isDebugEnabled())
       log4j.debug("Obtaining parameters values");
@@ -410,7 +410,7 @@ public class TableSQLData implements Serializable {
    *          Handler of session info.
    * @throws Exception
    */
-  public void setVars(VariablesSecureApp _vars) throws Exception {
+  void setVars(VariablesSecureApp _vars) throws Exception {
     if (_vars == null)
       throw new Exception("The session vars is null");
     this.vars = _vars;
@@ -421,7 +421,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Handler of session info.
    */
-  public VariablesSecureApp getVars() {
+  VariablesSecureApp getVars() {
     return this.vars;
   }
 
@@ -432,7 +432,7 @@ public class TableSQLData implements Serializable {
    *          Handler of database connection.
    * @throws Exception
    */
-  public void setPool(ConnectionProvider _conn) throws Exception {
+  void setPool(ConnectionProvider _conn) throws Exception {
     if (_conn == null)
       throw new Exception("The pool is null");
     this.pool = _conn;
@@ -443,7 +443,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Handler of database connection.
    */
-  public ConnectionProvider getPool() {
+  ConnectionProvider getPool() {
     return this.pool;
   }
 
@@ -454,7 +454,7 @@ public class TableSQLData implements Serializable {
    *          String with the tab id.
    * @throws Exception
    */
-  public void setTabID(String _data) throws Exception {
+  void setTabID(String _data) throws Exception {
     if (_data == null || _data.equals(""))
       throw new Exception("The Tab ID must be specified");
     setParameter(internalPrefix + "AD_Tab_ID", _data);
@@ -465,7 +465,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the tab id.
    */
-  public String getTabID() {
+  String getTabID() {
     return getParameter(internalPrefix + "AD_Tab_ID");
   }
 
@@ -474,7 +474,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Boolean that indicates if is of the same table or not.
    */
-  public boolean getIsSameTable() {
+  boolean getIsSameTable() {
     return this.isSameTable;
   }
 
@@ -483,7 +483,7 @@ public class TableSQLData implements Serializable {
    * 
    * @throws Exception
    */
-  public void setWindowDefinition() throws Exception {
+  void setWindowDefinition() throws Exception {
     TableSQLQueryData[] data = TableSQLQueryData.selectWindowDefinition(getPool(), getVars()
         .getLanguage(), getTabID());
     if (data == null || data.length == 0)
@@ -531,7 +531,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the window id.
    */
-  public String getWindowID() {
+  String getWindowID() {
     return getParameter(internalPrefix + "AD_Window_ID");
   }
 
@@ -551,7 +551,7 @@ public class TableSQLData implements Serializable {
    *          tableName
    * @return a comma separated string with the list of key columns
    */
-  public String getKeyColumns(String tableName) {
+  String getKeyColumns(String tableName) {
     String result = "";
     Vector<Properties> headers = getStructure();
     if (headers == null || headers.size() == 0)
@@ -575,7 +575,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the table id.
    */
-  public String getTableID() {
+  String getTableID() {
     return getParameter(internalPrefix + "AD_Table_ID");
   }
 
@@ -593,7 +593,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the where clause.
    */
-  public String getWhereClause() {
+  String getWhereClause() {
     return getParameter(internalPrefix + "WhereClause");
   }
 
@@ -602,7 +602,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the order by clause.
    */
-  public String getOrderByClause() {
+  String getOrderByClause() {
     return getParameter(internalPrefix + "OrderByClause");
   }
 
@@ -611,7 +611,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the filter clause.
    */
-  public String getFilterClause() {
+  String getFilterClause() {
     return getParameter(internalPrefix + "FilterClause");
   }
 
@@ -620,7 +620,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the tab level.
    */
-  public String getTabLevel() {
+  String getTabLevel() {
     return getParameter(internalPrefix + "TabLevel");
   }
 
@@ -629,7 +629,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the window type.
    */
-  public String getWindowType() {
+  String getWindowType() {
     return getParameter(internalPrefix + "WindowType");
   }
 
@@ -638,7 +638,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the parent column name.
    */
-  public String getParentColumnName() {
+  String getParentColumnName() {
     return getParameter(internalPrefix + "ParentColumnName");
   }
 
@@ -649,7 +649,7 @@ public class TableSQLData implements Serializable {
    *          Granted organizations.
    * @throws Exception
    */
-  public void setOrgList(String _orgList) throws Exception {
+  void setOrgList(String _orgList) throws Exception {
     setParameter(internalPrefix + "orgList", _orgList);
   }
 
@@ -658,7 +658,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the list.
    */
-  public String getOrgList() {
+  String getOrgList() {
     return getParameter(internalPrefix + "orgList");
   }
 
@@ -669,7 +669,7 @@ public class TableSQLData implements Serializable {
    *          List of granted clients.
    * @throws Exception
    */
-  public void setClientList(String _clientList) throws Exception {
+  void setClientList(String _clientList) throws Exception {
     setParameter(internalPrefix + "clientList", _clientList);
   }
 
@@ -678,7 +678,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the list.
    */
-  public String getClientList() {
+  String getClientList() {
     return getParameter(internalPrefix + "clientList");
   }
 
@@ -688,7 +688,7 @@ public class TableSQLData implements Serializable {
    * @param _prop
    *          Properties with the window information.
    */
-  public void addStructure(Properties _prop) {
+  void addStructure(Properties _prop) {
     if (_prop == null)
       return;
     if (this.structure == null)
@@ -701,7 +701,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the information.
    */
-  public Vector<Properties> getStructure() {
+  Vector<Properties> getStructure() {
     return this.structure;
   }
 
@@ -711,7 +711,7 @@ public class TableSQLData implements Serializable {
    * @param _data
    *          String with the order by.
    */
-  public void addOrderByPosition(String _data) {
+  void addOrderByPosition(String _data) {
     if (_data == null)
       return;
     if (this.orderByPosition == null)
@@ -724,7 +724,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the positions of the order by fields.
    */
-  public Vector<String> getOrderByPosition() {
+  Vector<String> getOrderByPosition() {
     return this.orderByPosition;
   }
 
@@ -734,7 +734,7 @@ public class TableSQLData implements Serializable {
    * @param _data
    *          String with the order by direction.
    */
-  public void addOrderByDirection(String _data) {
+  void addOrderByDirection(String _data) {
     if (_data == null)
       return;
     if (this.orderByDirection == null)
@@ -747,7 +747,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the directions.
    */
-  public Vector<String> getOrderByDirection() {
+  Vector<String> getOrderByDirection() {
     return this.orderByDirection;
   }
 
@@ -760,7 +760,7 @@ public class TableSQLData implements Serializable {
    *          Vaule of the property to filter.
    * @return Vector with the filtered information.
    */
-  public Vector<Properties> getFilteredStructure(String propertyName, String propertyValue) {
+  Vector<Properties> getFilteredStructure(String propertyName, String propertyValue) {
     Vector<Properties> vAux = new Vector<Properties>();
     if (this.structure == null)
       return vAux;
@@ -772,7 +772,7 @@ public class TableSQLData implements Serializable {
     return vAux;
   }
 
-  public void addAuditFields(Vector<Properties> properties) {
+  void addAuditFields(Vector<Properties> properties) {
     if (this.structure == null)
       return;
     for (Enumeration<Properties> e = this.structure.elements(); e.hasMoreElements();) {
@@ -791,7 +791,7 @@ public class TableSQLData implements Serializable {
    * @param _index
    *          Integer with the new index.
    */
-  public void setIndex(int _index) {
+  void setIndex(int _index) {
     this.index = _index;
   }
 
@@ -800,7 +800,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Integer with the index.
    */
-  public int getIndex() {
+  int getIndex() {
     return this.index;
   }
 
@@ -812,7 +812,7 @@ public class TableSQLData implements Serializable {
    * @param _alias
    *          String with the alias.
    */
-  public void addSelectField(String _field, String _alias) {
+  void addSelectField(String _field, String _alias) {
     addSelectField(_field, _alias, false);
   }
 
@@ -826,7 +826,7 @@ public class TableSQLData implements Serializable {
    * @param _new
    *          Boolean to know if the field is new (not used).
    */
-  public void addSelectField(String _field, String _alias, boolean _new) {
+  void addSelectField(String _field, String _alias, boolean _new) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " AS ", _alias, "SELECT");
     if (this.select == null)
       this.select = new Vector<QueryFieldStructure>();
@@ -848,7 +848,7 @@ public class TableSQLData implements Serializable {
    *          String with the alias.
    * @return Object with the field.
    */
-  public QueryFieldStructure getSelectFieldElement(String _alias) {
+  QueryFieldStructure getSelectFieldElement(String _alias) {
     if (this.select == null)
       return null;
     for (int i = 0; i < this.select.size(); i++) {
@@ -866,7 +866,7 @@ public class TableSQLData implements Serializable {
    *          String with the alias.
    * @return String with the field.
    */
-  public String getSelectField(String _alias) {
+  String getSelectField(String _alias) {
     if (this.select == null)
       return "";
     for (int i = 0; i < this.select.size(); i++) {
@@ -882,7 +882,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the fields.
    */
-  public Vector<QueryFieldStructure> getSelectFields() {
+  Vector<QueryFieldStructure> getSelectFields() {
     return this.select;
   }
 
@@ -894,7 +894,7 @@ public class TableSQLData implements Serializable {
    * @param _alias
    *          String with the alias.
    */
-  public void addFromField(String _field, String _alias, String _realName) {
+  void addFromField(String _field, String _alias, String _realName) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " ", _alias, "FROM", _realName);
     if (this.from == null)
       this.from = new Vector<QueryFieldStructure>();
@@ -906,7 +906,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of fields.
    */
-  public Vector<QueryFieldStructure> getFromFields() {
+  Vector<QueryFieldStructure> getFromFields() {
     return this.from;
   }
 
@@ -918,7 +918,7 @@ public class TableSQLData implements Serializable {
    * @param _type
    *          String with the type of field.
    */
-  public void addWhereField(String _field, String _type) {
+  void addWhereField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
     if (this.where == null)
       this.where = new Vector<QueryFieldStructure>();
@@ -930,7 +930,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of fields.
    */
-  public Vector<QueryFieldStructure> getWhereFields() {
+  Vector<QueryFieldStructure> getWhereFields() {
     return this.where;
   }
 
@@ -942,7 +942,7 @@ public class TableSQLData implements Serializable {
    * @param _type
    *          String with the type of field.
    */
-  public void addFilterField(String _field, String _type) {
+  void addFilterField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
     if (this.filter == null)
       this.filter = new Vector<QueryFieldStructure>();
@@ -954,7 +954,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list.
    */
-  public Vector<QueryFieldStructure> getFilterFields() {
+  Vector<QueryFieldStructure> getFilterFields() {
     return this.filter;
   }
 
@@ -967,7 +967,7 @@ public class TableSQLData implements Serializable {
    * @param _type
    *          String with the type.
    */
-  public void addInternalFilterField(String _field, String _type) {
+  void addInternalFilterField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
     if (this.internalFilter == null)
       this.internalFilter = new Vector<QueryFieldStructure>();
@@ -979,7 +979,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of fields.
    */
-  public Vector<QueryFieldStructure> getInternalFilterFields() {
+  Vector<QueryFieldStructure> getInternalFilterFields() {
     return this.internalFilter;
   }
 
@@ -989,7 +989,7 @@ public class TableSQLData implements Serializable {
    * @param _field
    *          String with the field.
    */
-  public void addOrderByField(String _field) {
+  void addOrderByField(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
     if (this.orderBy == null)
       this.orderBy = new Vector<QueryFieldStructure>();
@@ -1002,7 +1002,7 @@ public class TableSQLData implements Serializable {
    * @param _field
    *          String with the field.
    */
-  public void addOrderByFieldSimple(String _field) {
+  void addOrderByFieldSimple(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
     if (this.orderBySimple == null)
       this.orderBySimple = new Vector<QueryFieldStructure>();
@@ -1014,7 +1014,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of fields.
    */
-  public Vector<QueryFieldStructure> getOrderByFields() {
+  Vector<QueryFieldStructure> getOrderByFields() {
     return this.orderBy;
   }
 
@@ -1023,7 +1023,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of fields.
    */
-  public Vector<QueryFieldStructure> getOrderBySimpleFields() {
+  Vector<QueryFieldStructure> getOrderBySimpleFields() {
     return this.orderBySimple;
   }
 
@@ -1032,7 +1032,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of fields.
    */
-  public Vector<String> getOrderBySimpleFieldsString() {
+  Vector<String> getOrderBySimpleFieldsString() {
     Vector<String> vOrderBy = new Vector<String>();
     if (this.orderBySimple != null) {
       for (int i = 0; i < this.orderBySimple.size(); i++) {
@@ -1049,7 +1049,7 @@ public class TableSQLData implements Serializable {
    * @param v
    * @return a cleaned vector of Strings
    */
-  public Vector<String> cleanVector(Vector<String> v) {
+  Vector<String> cleanVector(Vector<String> v) {
     Vector<String> result = new Vector<String>();
     Vector<String> aux = new Vector<String>();
     if (v != null) {
@@ -1077,7 +1077,7 @@ public class TableSQLData implements Serializable {
    * @param _field
    *          String with the field.
    */
-  public void addInternalOrderByField(String _field) {
+  void addInternalOrderByField(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
     if (this.internalOrderBy == null)
       this.internalOrderBy = new Vector<QueryFieldStructure>();
@@ -1089,7 +1089,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of fields.
    */
-  public Vector<QueryFieldStructure> getInternalOrderByFields() {
+  Vector<QueryFieldStructure> getInternalOrderByFields() {
     return this.internalOrderBy;
   }
 
@@ -1101,7 +1101,7 @@ public class TableSQLData implements Serializable {
    * @param _fieldName
    *          String with the name of the field for this parameter.
    */
-  public void addSelectParameter(String _parameter, String _fieldName) {
+  void addSelectParameter(String _parameter, String _fieldName) {
     if (this.paramSelect == null)
       this.paramSelect = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "SELECT");
@@ -1113,7 +1113,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of parameters
    */
-  public Vector<QueryParameterStructure> getSelectParameters() {
+  Vector<QueryParameterStructure> getSelectParameters() {
     return this.paramSelect;
   }
 
@@ -1125,7 +1125,7 @@ public class TableSQLData implements Serializable {
    * @param _fieldName
    *          String with the field of this parameter.
    */
-  public void addFromParameter(String _parameter, String _fieldName, String _realName) {
+  void addFromParameter(String _parameter, String _fieldName, String _realName) {
     if (this.paramFrom == null)
       this.paramFrom = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "FROM",
@@ -1141,7 +1141,7 @@ public class TableSQLData implements Serializable {
    * @param _fieldName
    *          String with the field of this parameter.
    */
-  public void addSubQueryParameter(String _parameter, String _fieldName, String _realName) {
+  void addSubQueryParameter(String _parameter, String _fieldName, String _realName) {
     if (this.paramSubquery == null)
       this.paramSubquery = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "SUB",
@@ -1154,7 +1154,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of parameters
    */
-  public Vector<QueryParameterStructure> getFromParameters() {
+  Vector<QueryParameterStructure> getFromParameters() {
     return this.paramFrom;
   }
 
@@ -1163,7 +1163,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of parameters
    */
-  public Vector<QueryParameterStructure> getSubqueryParameters() {
+  Vector<QueryParameterStructure> getSubqueryParameters() {
     return this.paramSubquery;
   }
 
@@ -1177,7 +1177,7 @@ public class TableSQLData implements Serializable {
    * @param _type
    *          String with the type of parameter.
    */
-  public void addWhereParameter(String _parameter, String _fieldName, String _type) {
+  void addWhereParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramWhere == null)
       this.paramWhere = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
@@ -1189,7 +1189,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of parameters
    */
-  public Vector<QueryParameterStructure> getWhereParameters() {
+  Vector<QueryParameterStructure> getWhereParameters() {
     return this.paramWhere;
   }
 
@@ -1203,7 +1203,7 @@ public class TableSQLData implements Serializable {
    * @param _type
    *          String with the type of parameter.
    */
-  public void addFilterParameter(String _parameter, String _fieldName, String _type) {
+  void addFilterParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramFilter == null)
       this.paramFilter = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
@@ -1220,7 +1220,7 @@ public class TableSQLData implements Serializable {
    * @param _type
    *          String with the type of parameter.
    */
-  public void addWrapperParameter(String _parameter, String _fieldName, String _type) {
+  void addWrapperParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramWrapper == null)
       this.paramWrapper = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
@@ -1232,7 +1232,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of parameters
    */
-  public Vector<QueryParameterStructure> getFilterParameters() {
+  Vector<QueryParameterStructure> getFilterParameters() {
     return this.paramFilter;
   }
 
@@ -1246,7 +1246,7 @@ public class TableSQLData implements Serializable {
    * @param _type
    *          String with the type of parameter.
    */
-  public void addInternalFilterParameter(String _parameter, String _fieldName, String _type) {
+  void addInternalFilterParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramInternalFilter == null)
       this.paramInternalFilter = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
@@ -1258,7 +1258,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of parameters
    */
-  public Vector<QueryParameterStructure> getInternalFilterParameters() {
+  Vector<QueryParameterStructure> getInternalFilterParameters() {
     return this.paramInternalFilter;
   }
 
@@ -1270,7 +1270,7 @@ public class TableSQLData implements Serializable {
    * @param _fieldName
    *          String with the field for the parameter.
    */
-  public void addOrderByParameter(String _parameter, String _fieldName) {
+  void addOrderByParameter(String _parameter, String _fieldName) {
     if (this.paramOrderBy == null)
       this.paramOrderBy = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "ORDERBY");
@@ -1282,7 +1282,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of parameters
    */
-  public Vector<QueryParameterStructure> getOrderByParameters() {
+  Vector<QueryParameterStructure> getOrderByParameters() {
     return this.paramOrderBy;
   }
 
@@ -1291,7 +1291,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of parameters
    */
-  public Vector<QueryParameterStructure> getWrapperParameters() {
+  Vector<QueryParameterStructure> getWrapperParameters() {
     return this.paramWrapper;
   }
 
@@ -1303,7 +1303,7 @@ public class TableSQLData implements Serializable {
    * @param _fieldName
    *          String with the field for the parameter.
    */
-  public void addInternalOrderByParameter(String _parameter, String _fieldName) {
+  void addInternalOrderByParameter(String _parameter, String _fieldName) {
     if (this.paramInternalOrderBy == null)
       this.paramInternalOrderBy = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "ORDERBY");
@@ -1315,7 +1315,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Vector with the list of parameters
    */
-  public Vector<QueryParameterStructure> getInternalOrderByParameters() {
+  Vector<QueryParameterStructure> getInternalOrderByParameters() {
     return this.paramInternalOrderBy;
   }
 
@@ -1328,7 +1328,7 @@ public class TableSQLData implements Serializable {
    *          Type of the text (the clause).
    * @return String parsed.
    */
-  public String parseContext(String context, String type) {
+  String parseContext(String context, String type) {
     if (context == null || context.equals(""))
       return "";
     StringBuffer strOut = new StringBuffer();
@@ -1470,7 +1470,7 @@ public class TableSQLData implements Serializable {
    * 
    * @throws Exception
    */
-  public void generateSQL() throws Exception {
+  void generateSQL() throws Exception {
     if (getPool() == null)
       throw new Exception("No pool defined for database connection");
     Vector<Properties> headers = getStructure();
@@ -1518,7 +1518,7 @@ public class TableSQLData implements Serializable {
    *          String identifying tableName.fieldName, this is maintained through recursivity
    * @throws Exception
    */
-  public void identifier(String parentTableName, Properties field, String identifierName,
+  void identifier(String parentTableName, Properties field, String identifierName,
       String realName) throws Exception {
     String reference;
     if (field == null)
@@ -2019,11 +2019,11 @@ public class TableSQLData implements Serializable {
    * 
    * @return Array with the columns.
    */
-  public SQLReturnObject[] getHeaders() {
+  SQLReturnObject[] getHeaders() {
     return getHeaders(false, false);
   }
 
-  public SQLReturnObject[] getHeaders(boolean useFieldLength) {
+  SQLReturnObject[] getHeaders(boolean useFieldLength) {
     return getHeaders(false, useFieldLength);
   }
 
@@ -2037,7 +2037,7 @@ public class TableSQLData implements Serializable {
    *          instead of DisplayLength.
    * @return Array with the columns.
    */
-  public SQLReturnObject[] getHeaders(boolean withoutIdentifiers, boolean useFieldLength) {
+  SQLReturnObject[] getHeaders(boolean withoutIdentifiers, boolean useFieldLength) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
     Vector<Properties> structure = getStructure();
@@ -2130,7 +2130,7 @@ public class TableSQLData implements Serializable {
    *          Column object to clone.
    * @return New cloned column object.
    */
-  public SQLReturnObject getClone(SQLReturnObject data) {
+  SQLReturnObject getClone(SQLReturnObject data) {
     SQLReturnObject dataAux = new SQLReturnObject();
     dataAux.setData("columnname", data.getData("columnname"));
     dataAux.setData("gridcolumnname", "keyname");
@@ -2152,7 +2152,7 @@ public class TableSQLData implements Serializable {
    *          String with the column name.
    * @return Properties with the position and other information.
    */
-  public Properties getColumnPosition(String _name) {
+  Properties getColumnPosition(String _name) {
     SQLReturnObject[] vAux = getHeaders();
     Properties _prop = new Properties();
     for (int i = 0; i < vAux.length; i++) {
@@ -2173,7 +2173,7 @@ public class TableSQLData implements Serializable {
    *          String with the field.
    * @return String with the alias.
    */
-  public String getSelectFieldAlias(String _data) {
+  String getSelectFieldAlias(String _data) {
     if (this.select == null)
       return "";
     for (int i = 0; i < this.select.size(); i++) {
@@ -2196,7 +2196,7 @@ public class TableSQLData implements Serializable {
    * @param _params
    *          Vector with the order by parameters.
    */
-  public void setOrderBy(Vector<String> _fields, Vector<String> _params) {
+  void setOrderBy(Vector<String> _fields, Vector<String> _params) {
     this.orderBy = new Vector<QueryFieldStructure>();
     this.paramOrderBy = new Vector<QueryParameterStructure>();
     if (_fields == null || _fields.size() == 0) {
@@ -2241,7 +2241,7 @@ public class TableSQLData implements Serializable {
    * @param _params
    *          Vector with the paramters.
    */
-  public void setFilter(Vector<String> _fields, Vector<String> _params) {
+  void setFilter(Vector<String> _fields, Vector<String> _params) {
     this.filter = new Vector<QueryFieldStructure>();
     this.paramFilter = new Vector<QueryParameterStructure>();
     if (_fields == null || _fields.size() == 0) {
@@ -2271,7 +2271,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the sql.
    */
-  public String getSQL() {
+  String getSQL() {
     return getSQL(null, null, null, null, null, null, 0, 0, false, false);
   }
 
@@ -2280,7 +2280,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the sql
    */
-  public String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams,
+  String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams,
       Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields,
       Vector<String> _OrderSimple, int startPosition, int rangeLength) {
     return getSQL(_FilterFields, _FilterParams, _OrderFields, _OrderParams, selectFields,
@@ -2310,7 +2310,7 @@ public class TableSQLData implements Serializable {
    * @return String with the generated sql.
    */
 
-  public String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams,
+  String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams,
       Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields,
       Vector<String> _OrderSimple, int startPosition, int rangeLength, boolean sorted,
       boolean onlyId) {
@@ -2544,7 +2544,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the sql.
    */
-  public String getTotalSQL() {
+  String getTotalSQL() {
     StringBuffer text = new StringBuffer();
     Vector<QueryFieldStructure> aux = null;
     boolean hasWhere = false;

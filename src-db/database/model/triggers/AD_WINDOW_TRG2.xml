@@ -24,8 +24,8 @@
 ************************************************************************/
     TYPE RECORD IS REF CURSOR;
   CUR_DATA RECORD;
-  v_JavaPackage VARCHAR2(60);
-  v_ModuleMapping VARCHAR2(60);
+  v_JavaPackage VARCHAR2(260);
+  v_ModuleMapping VARCHAR2(260);
     
 BEGIN
     

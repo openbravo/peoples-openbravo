@@ -1691,13 +1691,19 @@ public class WadUtility {
           return "";
 
         token = strValue.substring(0, j);
-        if (token.substring(0, 1).indexOf("#") > -1 || token.substring(0, 1).indexOf("$") > -1)
+
+        String modifier = ""; // holds the modifier (# or $) for the session value
+        if (token.substring(0, 1).indexOf("#") > -1 || token.substring(0, 1).indexOf("$") > -1) {
+          modifier = token.substring(0, 1);
           token = token.substring(1, token.length());
+        }
         if (strAux.equals(""))
           strOut.append("?");
         else
           strOut.append("'" + i + "'");
-        vecParameters.addElement("<Parameter name=\"" + token + "\"" + strAux + "/>");
+        String parameter = "<Parameter name=\"" + token + "\"" + strAux + "/>";
+        String paramElement[] = { parameter, modifier };
+        vecParameters.addElement(paramElement);
         strValue = strValue.substring(j + 1, strValue.length());
         strAux = strValue.trim();
         if (strAux.length() > 0 && strAux.substring(0, 1).indexOf("'") > -1)
@@ -2541,5 +2547,39 @@ public class WadUtility {
    */
   public static String toJavaString(String str) {
     return (str.replace("\n", "\\n").replace("\"", "\\\""));
+  }
+
+  /**
+   * Returns a where parameter, this parameter can contain a modifier to decide which level of
+   * session value is (# or $).
+   * <p>
+   * This method returns the parameter applying the modifier if exists. It can return the complete
+   * parameter to be used in xsql files or just the name for the parameter with the modifier.
+   * 
+   * @param parameter
+   *          parameter for the where clause to parse
+   * @param complete
+   *          return the complete parameter or just the name
+   * @return the paresed parameter
+   */
+  public static String getWhereParameter(Object parameter, boolean complete) {
+    String strParam = "";
+    if (parameter instanceof String) {
+      // regular parameter without modifier
+      strParam = (String) parameter;
+      if (!complete) {
+        strParam = strParam.substring(17, strParam.lastIndexOf("\""));
+      }
+    } else {
+      // parameter with modifier, used for session values (#, $)
+      String paramElement[] = (String[]) parameter;
+      if (complete) {
+        strParam = paramElement[0];
+      } else {
+        strParam = paramElement[1]
+            + paramElement[0].substring(17, paramElement[0].lastIndexOf("\""));
+      }
+    }
+    return strParam;
   }
 }

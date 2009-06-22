@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -20,14 +20,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
-import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class LoginHandler extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
-  String strServletPorDefecto;
+  private String strServletPorDefecto;
 
   @Override
   public void init(ServletConfig config) {
@@ -54,18 +52,7 @@ public class LoginHandler extends HttpBaseServlet {
 
       if (!strUserAuth.equals("-1")) {
         req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
-        try {
-          OBContext.setOBContext(req);
-        } catch (final OBSecurityException e) {
-          // login failed, no roles specified
-          // remove authenticated user
-          req.getSession(true).setAttribute("#Authenticated_user", null);
-          goToRetry(res, vars, e.getMessage());
-          return;
-        }
-
         goToTarget(res, vars);
-
       } else {
         goToRetry(res, vars, null);
       }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.AccountNumberComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -60,7 +59,7 @@ public class ReportBank extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strcbankaccount) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -123,8 +122,9 @@ public class ReportBank extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strcbankaccount) throws IOException, ServletException {
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strcbankaccount) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -162,8 +162,8 @@ public class ReportBank extends HttpSecureAppServlet {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBankEdit")
           .createXmlDocument();
       data = ReportBankData.select(this, Utility.getContext(this, vars, "#User_Client",
-          "ReportBank"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"), strDateFrom,
-          DateTimeData.nDaysAfter(this, strDateTo, "1"), strcbankaccount);
+          "ReportBank"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"),
+          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcbankaccount);
       xmlDocument.setParameter("sumAmount", ReportBankData.BeginningBalance(this, Utility
           .getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this, vars,
           "#AccessibleOrgTree", "ReportBank"), strDateFrom, strcbankaccount));

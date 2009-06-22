@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
@@ -61,15 +63,16 @@ public class ReportInvoiceCustomerDimensionalAnalyses extends HttpSecureAppServl
       String strPartnerGroup = vars.getGlobalVariable("inpPartnerGroup",
           "ReportInvoiceCustomerDimensionalAnalyses|partnerGroup", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceCustomerDimensionalAnalyses|partner", "");
+          "ReportInvoiceCustomerDimensionalAnalyses|partner", "", IsIDFilter.instance);
       String strProductCategory = vars.getGlobalVariable("inpProductCategory",
           "ReportInvoiceCustomerDimensionalAnalyses|productCategory", "");
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportInvoiceCustomerDimensionalAnalyses|product", "");
+          "ReportInvoiceCustomerDimensionalAnalyses|product", "", IsIDFilter.instance);
+      // ad_ref_list.value for refercence_id 800087
       String strNotShown = vars.getInGlobalVariable("inpNotShown",
-          "ReportInvoiceCustomerDimensionalAnalyses|notShown", "");
+          "ReportInvoiceCustomerDimensionalAnalyses|notShown", "", IsPositiveIntFilter.instance);
       String strShown = vars.getInGlobalVariable("inpShown",
-          "ReportInvoiceCustomerDimensionalAnalyses|shown", "");
+          "ReportInvoiceCustomerDimensionalAnalyses|shown", "", IsPositiveIntFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportInvoiceCustomerDimensionalAnalyses|org", "0");
       String strsalesrepId = vars.getGlobalVariable("inpSalesrepId",
@@ -109,13 +112,14 @@ public class ReportInvoiceCustomerDimensionalAnalyses extends HttpSecureAppServl
       String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup",
           "ReportInvoiceCustomerDimensionalAnalyses|partnerGroup");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceCustomerDimensionalAnalyses|partner");
+          "ReportInvoiceCustomerDimensionalAnalyses|partner", IsIDFilter.instance);
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportInvoiceCustomerDimensionalAnalyses|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportInvoiceCustomerDimensionalAnalyses|product");
-      String strNotShown = vars.getInStringParameter("inpNotShown");
-      String strShown = vars.getInStringParameter("inpShown");
+          "ReportInvoiceCustomerDimensionalAnalyses|product", IsIDFilter.instance);
+      // ad_ref_list.value for refercence_id 800087
+      String strNotShown = vars.getInStringParameter("inpNotShown", IsPositiveIntFilter.instance);
+      String strShown = vars.getInStringParameter("inpShown", IsPositiveIntFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportInvoiceCustomerDimensionalAnalyses|org", "0");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
@@ -139,7 +143,7 @@ public class ReportInvoiceCustomerDimensionalAnalyses extends HttpSecureAppServl
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
       String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown,
       String strShown, String strDateFromRef, String strDateToRef, String strOrg,
@@ -271,12 +275,12 @@ public class ReportInvoiceCustomerDimensionalAnalyses extends HttpSecureAppServl
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(
-            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strcBpartnerId));
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
+            ""), strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure",
         ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(this, Utility.getContext(
-            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strmProductId));
+            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
+            ""), strmProductId));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
@@ -326,12 +330,13 @@ public class ReportInvoiceCustomerDimensionalAnalyses extends HttpSecureAppServl
     out.close();
   }
 
-  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strComparative,
-      String strDateFrom, String strDateTo, String strPartnerGroup, String strcBpartnerId,
-      String strProductCategory, String strmProductId, String strNotShown, String strShown,
-      String strDateFromRef, String strDateToRef, String strOrg, String strsalesrepId,
-      String strcProjectId, String strProducttype, String strOrder, String strMayor,
-      String strMenor, String strPartnerSalesrepId) throws IOException, ServletException {
+  private void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
+      String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown,
+      String strShown, String strDateFromRef, String strDateToRef, String strOrg,
+      String strsalesrepId, String strcProjectId, String strProducttype, String strOrder,
+      String strMayor, String strMenor, String strPartnerSalesrepId) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     XmlDocument xmlDocument = null;

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -13,13 +13,13 @@ package org.openbravo.xmlEngine;
 
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.openbravo.uiTranslation.TranslationHandler;
 
-public class XmlVectorValue extends Vector<Object> {
+class XmlVectorValue extends Vector<Object> {
 
   private static final long serialVersionUID = 1L;
   static Logger log4jXmlVectorValue = Logger.getLogger(XmlVectorValue.class);
@@ -48,10 +48,12 @@ public class XmlVectorValue extends Vector<Object> {
       XmlComponentValue xmlComponentValue = (XmlComponentValue) e.nextElement();
       String result = "";
       if (textMap != null) {
+
         if (xmlComponentValue.print() != null && !xmlComponentValue.print().startsWith("<")
             && !xmlComponentValue.print().equals("")) {
+
           boolean isTranslated = false;
-          result = xmlComponentValue.print();
+          result = xmlComponentValue.print().trim();
           log4jXmlVectorValue.debug("printStringBuffer(HashMap<String, String> textMap) - result: "
               + result);
           log4jXmlVectorValue.debug("checking for existence of text in textdata: " + result);
@@ -60,61 +62,6 @@ public class XmlVectorValue extends Vector<Object> {
             log4jXmlVectorValue.debug("printStringBuffer() appending xmlComponentValue: "
                 + xmlComponentValue.print() + ", translation: " + translation);
             result = translation;
-            isTranslated = true;
-          }
-          if (!isTranslated) {
-            if (DataValue.class.isInstance(xmlComponentValue)) {
-              DataValue dataValue = (DataValue) xmlComponentValue;
-              if (dataValue.dataTemplate != null) {
-                DataTemplate dataTemplate = dataValue.dataTemplate;
-                if (dataTemplate.vecSectionTemplate != null) {
-                  Vector<Object> vecSectionTemplate = dataTemplate.vecSectionTemplate;
-                  for (Iterator iterator = vecSectionTemplate.iterator(); iterator.hasNext();) {
-                    SectionTemplate sectionTemplate = (SectionTemplate) iterator.next();
-                    if (sectionTemplate.vecHeadTemplate != null) {
-                      XmlVectorTemplate xmlTemplate = sectionTemplate.vecHeadTemplate;
-                      for (Iterator iterator2 = xmlTemplate.iterator(); iterator2.hasNext();) {
-                        Object componentTemplate = (Object) iterator2.next();
-                        if (CharacterComponent.class.isInstance(componentTemplate)) {
-                          CharacterComponent charComponent = (CharacterComponent) componentTemplate;
-                          if (charComponent.character != null && !charComponent.equals("")) {
-                            String original = charComponent.character;
-                            String trl = textMap.get(original);
-                            if (trl != null && !trl.equals(""))
-                              charComponent.character = trl;
-                          }
-                          componentTemplate = charComponent;
-                        }
-                      }
-                      sectionTemplate.vecHeadTemplate = xmlTemplate;
-                    }
-
-                    if (sectionTemplate.vecFootTemplate != null) {
-                      XmlVectorTemplate xmlFootTemplate = sectionTemplate.vecFootTemplate;
-                      for (Iterator iterator2 = xmlFootTemplate.iterator(); iterator2.hasNext();) {
-                        Object componentTemplate = (Object) iterator2.next();
-                        if (CharacterComponent.class.isInstance(componentTemplate)) {
-                          CharacterComponent charComponent = (CharacterComponent) componentTemplate;
-                          if (charComponent.character != null && !charComponent.equals("")) {
-                            String original = charComponent.character;
-                            String trl = textMap.get(original);
-                            if (trl != null && !trl.equals(""))
-                              charComponent.character = trl;
-                          }
-                          componentTemplate = charComponent;
-                        }
-                      }
-                      sectionTemplate.vecFootTemplate = xmlFootTemplate;
-                    }
-                  }
-                  dataTemplate.vecSectionTemplate = vecSectionTemplate;
-                }
-                dataValue.dataTemplate = dataTemplate;
-              }
-              dataValue.printGenerated();
-              xmlComponentValue = dataValue;
-            }
-            result = xmlComponentValue.print();
           }
         }
       }
@@ -284,5 +231,9 @@ public class XmlVectorValue extends Vector<Object> {
 
   public void setTextMap(HashMap<String, String> textMap) {
     this.textMap = textMap;
+  }
+
+  Map<String, String> getTextMap() {
+    return textMap;
   }
 }

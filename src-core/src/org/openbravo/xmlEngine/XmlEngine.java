@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -45,15 +45,16 @@ public class XmlEngine extends HttpServlet {
   Hashtable<String, Vector<ReplaceElement>> replaceHashtable;
   String strDriverDefault;
   String strUrlDefault;
-  public String strBaseLocation;
+  String strBaseLocation;
   String strFormatFile;
   public File fileXmlEngineFormat;
   public File fileBaseLocation;
+  public String sessionLanguage;
   public String strReplaceWhat;
   public String strReplaceWith;
   public boolean isResource = false;
 
-  public ServletConfig configXMLEngine;
+  ServletConfig configXMLEngine;
 
   static public String strTextDividedByZero;
 
@@ -103,7 +104,7 @@ public class XmlEngine extends HttpServlet {
     initialize();
   }
 
-  public void loadParams() {
+  private void loadParams() {
     /*
      * // decimal separator:. thousands separator: , DecimalFormatSymbols dfs = new
      * DecimalFormatSymbols(); log4jXmlEngine.info("InternationalCurrencySymbol: " +
@@ -272,7 +273,7 @@ public class XmlEngine extends HttpServlet {
    * @param discard
    *          A vector of Strings with the names of the discards in the template
    */
-  public XmlTemplate readAllXmlTemplates(String strXmlTemplateName, String strXmlTemplateFile,
+  XmlTemplate readAllXmlTemplates(String strXmlTemplateName, String strXmlTemplateFile,
       String[] discard) {
     XmlTemplate xmlTemplate = addXmlTemplate(strXmlTemplateName, strXmlTemplateFile, discard);
     while (!stcRead.empty()) {
@@ -319,7 +320,7 @@ public class XmlEngine extends HttpServlet {
    * @param xmlTemplate
    *          The XmlTemplate object
    */
-  public void readFile(XmlTemplate xmlTemplate) {
+  private void readFile(XmlTemplate xmlTemplate) {
     xmlParser = new SAXParser();
     htmlParser = new org.cyberneko.html.parsers.SAXParser();
 
@@ -516,7 +517,7 @@ public class XmlEngine extends HttpServlet {
 
   @SuppressWarnings("unchecked")
   // It's not possible to cast from xmlTemplate to Report
-  public void connect() {
+  void connect() {
     for (Enumeration e1 = hasXmlTemplate.elements(); e1.hasMoreElements();) {
       Report report = (Report) e1.nextElement(); // use XmlDocument
       for (Enumeration<DataValue> e2 = report.xmlDocument.hasDataValue.elements(); e2
@@ -529,7 +530,7 @@ public class XmlEngine extends HttpServlet {
 
   @SuppressWarnings("unchecked")
   // It's not possible to cast from xmlTemplate to Report
-  public void closeConnections() {
+  void closeConnections() {
     for (Enumeration e1 = hasXmlTemplate.elements(); e1.hasMoreElements();) {
       Report report = (Report) e1.nextElement();
       for (DataValue elementDataValue : report.xmlDocument.hasDataValue.values()) {
@@ -542,7 +543,7 @@ public class XmlEngine extends HttpServlet {
     closeConnections();
   }
 
-  public static void configureLog4j(String file) {
+  static void configureLog4j(String file) {
     if (file != null) {
       PropertyConfigurator.configure(file);
     } else {
@@ -616,11 +617,11 @@ public class XmlEngine extends HttpServlet {
   }
 
   // XmlEngineNP: classes for compatibilizing with the Rrports version
-  public Report readReportConfiguration(String strReportFile) {
+  Report readReportConfiguration(String strReportFile) {
     return readReportConfiguration(strReportFile, new String[0]);
   }
 
-  public Report readReportConfiguration(String strReportFile, String[] discard) {
+  Report readReportConfiguration(String strReportFile, String[] discard) {
     return new Report(strReportFile, discard, this);
   }
 

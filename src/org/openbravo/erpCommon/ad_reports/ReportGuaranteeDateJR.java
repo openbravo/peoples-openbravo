@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,19 +51,27 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
           "ReportGuaranteeDateJR|cBpartnerId", "");
       String strmWarehouseId = vars.getStringParameter("inpmWarehouseId", "");
       printPageDataSheet(response, vars, strDate, strcBpartnerId, strmWarehouseId);
-    } else if (vars.commandIn("FIND")) {
+    } else if (vars.commandIn("PRINT_HTML")) {
       String strDate = vars.getRequestGlobalVariable("inpDate", "ReportGuaranteeDateJR|date");
       String strcBpartnerId = vars.getRequestGlobalVariable("inpcBPartnerId",
           "ReportGuaranteeDateJR|cBpartnerId");
       String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
       setHistoryCommand(request, "FIND");
-      printPageDataHtml(response, vars, strDate, strcBpartnerId, strmWarehouseId);
+      printPageDataHtml(response, vars, strDate, strcBpartnerId, strmWarehouseId, "html");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strDate = vars.getRequestGlobalVariable("inpDate", "ReportGuaranteeDateJR|date");
+      String strcBpartnerId = vars.getRequestGlobalVariable("inpcBPartnerId",
+          "ReportGuaranteeDateJR|cBpartnerId");
+      String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
+      setHistoryCommand(request, "FIND");
+      printPageDataHtml(response, vars, strDate, strcBpartnerId, strmWarehouseId, "pdf");
     } else
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDate,
-      String strcBpartnerId, String strmWarehouseId) throws IOException, ServletException {
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strDate, String strcBpartnerId, String strmWarehouseId, String strOutput)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -82,7 +90,6 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
     }
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGuaranteeDateJR.jrxml";
-    String strOutput = "html";
     if (strOutput.equals("pdf"))
       response.setHeader("Content-disposition", "inline; filename=ReportGuaranteeDateJR.pdf");
 
@@ -93,8 +100,9 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
 
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDate,
-      String strcBpartnerId, String strmWarehouseId) throws IOException, ServletException {
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strDate, String strcBpartnerId, String strmWarehouseId) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -146,8 +154,8 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
         strcBpartnerId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGuaranteeDateJR"), Utility
-              .getContext(this, vars, "#User_Client", "ReportGuaranteeDateJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGuaranteeDateJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportGuaranteeDateJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportGuaranteeDateJR",
           strmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));

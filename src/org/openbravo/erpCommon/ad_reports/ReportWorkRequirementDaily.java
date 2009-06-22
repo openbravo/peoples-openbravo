@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.ProcessPlanComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -55,21 +54,29 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
       strStartDateTo = DateTimeData.today(this);
       strStartDateFrom = DateTimeData.today(this);
       printPageDataSheet(response, vars, strStartDateFrom, strStartDateTo, strmaProcessPlan);
-    } else if (vars.commandIn("FIND")) {
+    } else if (vars.commandIn("PRINT_HTML")) {
       String strStartDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportWorkRequirementDaily|dateFrom");
       String strStartDateTo = vars.getRequestGlobalVariable("inpDateTo",
           "ReportWorkRequirementDaily|dateTo");
       String strmaProcessPlan = vars.getRequestGlobalVariable("inpmaProcessPlanId",
           "ReportWorkRequirementDaily|MA_ProcessPlan_ID");
-      printPageDataHtml(response, vars, strStartDateFrom, strStartDateTo, strmaProcessPlan);
+      printPageDataHtml(response, vars, strStartDateFrom, strStartDateTo, strmaProcessPlan, "html");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strStartDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+          "ReportWorkRequirementDaily|dateFrom");
+      String strStartDateTo = vars.getRequestGlobalVariable("inpDateTo",
+          "ReportWorkRequirementDaily|dateTo");
+      String strmaProcessPlan = vars.getRequestGlobalVariable("inpmaProcessPlanId",
+          "ReportWorkRequirementDaily|MA_ProcessPlan_ID");
+      printPageDataHtml(response, vars, strStartDateFrom, strStartDateTo, strmaProcessPlan, "pdf");
     } else
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
-      String strStartDateFrom, String strStartDateTo, String strmaProcessPlan) throws IOException,
-      ServletException {
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strStartDateFrom, String strStartDateTo, String strmaProcessPlan, String strOutput)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
 
@@ -92,14 +99,13 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
     }
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEdit.jrxml";
-    String strOutput = "html";
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
 
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strStartDateFrom, String strStartDateTo, String strmaProcessPlan) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -169,8 +175,8 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
    * xmlEngine.readXmlTemplate ("org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDaily"
    * ).createXmlDocument(); data = ReportWorkRequirementDailyData.select(this,
    * Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDaily"),
-   * Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDaily"), strStartDateFrom,
-   * strStartDateTo, strmaProcessPlan); for (int i=0; i<data.length; i++) {
+   * Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDaily"),
+   * strStartDateFrom, strStartDateTo, strmaProcessPlan); for (int i=0; i<data.length; i++) {
    * ReportWorkRequirementDailyData[] product = ReportWorkRequirementDailyData.producedproduct(this,
    * data[i].wrpid); data[i].prodproduct = product[0].name; String strqty =
    * ReportWorkRequirementDailyData.inprocess(this, data[i].wrid, data[i].productid);

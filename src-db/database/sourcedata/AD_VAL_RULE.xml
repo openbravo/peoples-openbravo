@@ -288,7 +288,14 @@
 <!--134-->  <NAME><![CDATA[C_Order SO to be invoiced]]></NAME>
 <!--134-->  <DESCRIPTION><![CDATA[Ordered <> Invoiced]]></DESCRIPTION>
 <!--134-->  <TYPE><![CDATA[S]]></TYPE>
-<!--134-->  <CODE><![CDATA[DocStatus NOT IN ('DR','IP') AND InvoiceRule <> 'S' AND EXISTS (SELECT * FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced) AND IsSOTrx='Y']]></CODE>
+<!--134-->  <CODE><![CDATA[IsSOTrx='Y' AND DocStatus NOT IN ('DR','IP') 
+AND ((InvoiceRule = 'O'
+AND NOT EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyDelivered)
+AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced))
+OR (InvoiceRule = 'D'
+AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced AND QtyDelivered <> QtyInvoiced))
+OR (InvoiceRule = 'I'
+AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced)))]]></CODE>
 <!--134-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--134--></AD_VAL_RULE>
 
@@ -300,12 +307,18 @@
 <!--135-->  <NAME><![CDATA[C_BPartner w SO to invoice]]></NAME>
 <!--135-->  <DESCRIPTION><![CDATA[BPartners with invoices to be invoiced]]></DESCRIPTION>
 <!--135-->  <TYPE><![CDATA[S]]></TYPE>
-<!--135-->  <CODE><![CDATA[C_BPartner_ID in (
-SELECT distinct o.C_BPartner_ID FROM C_Order o
-  INNER JOIN C_OrderLine l ON (o.C_Order_ID=l.C_Order_ID)
-  WHERE o.DocStatus NOT IN ('DR','IP') AND l.QtyOrdered <> l.QtyInvoiced
-  AND o.IsSOTrx='Y'
- )]]></CODE>
+<!--135-->  <CODE><![CDATA[C_BPartner_ID IN (
+SELECT DISTINCT C_BPartner_ID
+FROM c_order
+WHERE IsSOTrx='Y'
+AND DocStatus NOT IN ('DR','IP') 
+AND ((InvoiceRule = 'O'
+AND NOT EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyDelivered)
+AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced))
+OR (InvoiceRule = 'D'
+AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced AND QtyDelivered <> QtyInvoiced))
+OR (InvoiceRule = 'I'
+AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced))))]]></CODE>
 <!--135-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--135--></AD_VAL_RULE>
 

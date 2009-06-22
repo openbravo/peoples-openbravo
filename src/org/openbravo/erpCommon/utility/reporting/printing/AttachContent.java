@@ -10,7 +10,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************/
@@ -20,7 +20,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
-public class AttachContent implements FieldProvider {
+class AttachContent implements FieldProvider {
 
   static Logger log4j = Logger.getLogger(AttachContent.class);
   public String docName;

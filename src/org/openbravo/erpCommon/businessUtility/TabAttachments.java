@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.DataTypeComboData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -193,8 +192,8 @@ public class TabAttachments extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  OBError insert(VariablesSecureApp vars, String strFileReference, String tableId, String key,
-      String strDataType, String strText) throws IOException, ServletException {
+  private OBError insert(VariablesSecureApp vars, String strFileReference, String tableId,
+      String key, String strDataType, String strText) throws IOException, ServletException {
 
     OBError myMessage = null;
     myMessage = new OBError();
@@ -255,7 +254,7 @@ public class TabAttachments extends HttpSecureAppServlet {
     // return "";
   }
 
-  OBError delete(VariablesSecureApp vars, String strFileReference) throws IOException,
+  private OBError delete(VariablesSecureApp vars, String strFileReference) throws IOException,
       ServletException {
     OBError myMessage = null;
     myMessage = new OBError();
@@ -305,8 +304,8 @@ public class TabAttachments extends HttpSecureAppServlet {
     // return "";
   }
 
-  void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageFS(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Attachments relations frame set");
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -318,7 +317,7 @@ public class TabAttachments extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTab,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTab,
       String strWindow, String key, boolean editable) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of the attachments relations");
@@ -371,7 +370,7 @@ public class TabAttachments extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageEdit(HttpServletResponse response, VariablesSecureApp vars, String strTab,
+  private void printPageEdit(HttpServletResponse response, VariablesSecureApp vars, String strTab,
       String strWindow, String key, String strFileReference) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of the attachments edition");
@@ -436,8 +435,8 @@ public class TabAttachments extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageFile(HttpServletResponse response, VariablesSecureApp vars, String strFileReference)
-      throws IOException, ServletException {
+  private void printPageFile(HttpServletResponse response, VariablesSecureApp vars,
+      String strFileReference) throws IOException, ServletException {
     final TabAttachmentsData[] data = TabAttachmentsData.selectEdit(this, strFileReference);
     if (data == null || data.length == 0)
       throw new ServletException("Missing file");
@@ -461,7 +460,7 @@ public class TabAttachments extends HttpSecureAppServlet {
     response.getOutputStream().close();
   }
 
-  void printPageCheck(HttpServletResponse response, VariablesSecureApp vars, String strTab,
+  private void printPageCheck(HttpServletResponse response, VariablesSecureApp vars, String strTab,
       String recordId) throws IOException, ServletException {
     response.setContentType("text/plain; charset=UTF-8");
     final PrintWriter out = response.getWriter();

@@ -49,8 +49,13 @@ var baseDirectory = "../../../../../web/";
       //all dojo.require above this line
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
 </script> 
-<script language="JavaScript" type="text/javascript">
 
+<script language="JavaScript" type="text/javascript" id="paramScript" >
+function insertData() {
+  return true;
+}
+</script>
+<script language="JavaScript" type="text/javascript">
 function validate(action) {
   var frm=document.frmMain;
   	if (action=="GENERATE") {
@@ -98,7 +103,17 @@ function validate(action) {
 	}
   return true;
 }
-
+//set the radio button with the given value as being checked
+//do nothing if there are no radio buttons
+function setCheckedValue(radioObj, newValue) {
+	var radioLength = radioObj.length;
+	for(var i = 0; i < radioLength; i++) {
+		if(radioObj[i].value == newValue.toString()) {
+			radioObj[i].checked = true;
+			updateData(newValue.toString(), true);
+		}
+	}
+}
 function updateData(key, mark) {
 	if (mark==null) mark=false;
 	var frm = document.frmMain;
@@ -148,8 +163,9 @@ function onloadFunctions() {
 		xx();
 		resizeArea();
 		updateMenuIcon('buttonMenu');
-
+		
 		setWindowElementFocus('firstElement');
+		insertData();
 	}
 
 	function onResizeDo(){

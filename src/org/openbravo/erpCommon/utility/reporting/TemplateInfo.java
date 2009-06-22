@@ -9,22 +9,19 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SL All
- * portions are Copyright (C) 2001-2008 Openbravo SL All Rights Reserved.
+ * portions are Copyright (C) 2001-2009 Openbravo SL All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
 package org.openbravo.erpCommon.utility.reporting;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 
 public class TemplateInfo {
@@ -120,19 +117,19 @@ public class TemplateInfo {
     return null;
   }
 
-  public TemplateData[] getTemplates() {
+  TemplateData[] getTemplates() {
     return templates;
   }
 
-  public void setTemplates(TemplateData[] templates) {
+  void setTemplates(TemplateData[] templates) {
     this.templates = templates;
   }
 
-  public String getTemplate() {
+  String getTemplate() {
     return _TemplateLocation + "/" + _TemplateFilename;
   }
 
-  public void setTemplateLocation(String templateLocation) {
+  void setTemplateLocation(String templateLocation) {
     _TemplateLocation = templateLocation;
     // Make sure the location always ends with a / character
     if (!_TemplateLocation.endsWith("/"))
@@ -141,11 +138,11 @@ public class TemplateInfo {
       log4j.debug("Template location is set to: " + _TemplateLocation);
   }
 
-  public String getTemplateLocation() {
+  String getTemplateLocation() {
     return _TemplateLocation;
   }
 
-  public String getTemplateFilename() {
+  String getTemplateFilename() {
     return _TemplateFilename;
   }
 
@@ -153,7 +150,7 @@ public class TemplateInfo {
     return _ReportFilename;
   }
 
-  public EmailDefinition getEmailDefinition(String language) throws ReportingException {
+  EmailDefinition getEmailDefinition(String language) throws ReportingException {
     EmailDefinition emailDefinition = _EmailDefinitions.get(language);
     if (emailDefinition == null) {
       log4j.info("No email definition found for language " + language
@@ -170,7 +167,7 @@ public class TemplateInfo {
     return _DefaultEmailDefinition;
   }
 
-  public void set_DefaultEmailDefinition(EmailDefinition defaultEmailDefinition) {
+  void set_DefaultEmailDefinition(EmailDefinition defaultEmailDefinition) {
     _DefaultEmailDefinition = defaultEmailDefinition;
   }
 }

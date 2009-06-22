@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -51,23 +52,23 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
       String strcProjectId = vars.getGlobalVariable("inpcProjectId",
           "ReportInvoiceCustomerEdition|cProjectId", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceCustomerEdition|cBPartnerId_IN", "");
+          "ReportInvoiceCustomerEdition|cBPartnerId_IN", "", IsIDFilter.instance);
       String strmCategoryId = vars.getInGlobalVariable("inpmProductCategoryId",
-          "ReportInvoiceCustomerEdition|mCategoryId", "");
+          "ReportInvoiceCustomerEdition|mCategoryId", "", IsIDFilter.instance);
       String strProjectkind = vars.getInGlobalVariable("inpProjectkind",
-          "ReportInvoiceCustomerEdition|Projectkind", "");
+          "ReportInvoiceCustomerEdition|Projectkind", "", IsIDFilter.instance);
       String strProjectstatus = vars.getInGlobalVariable("inpProjectstatus",
-          "ReportInvoiceCustomerEdition|Projectstatus", "");
+          "ReportInvoiceCustomerEdition|Projectstatus", "", IsIDFilter.instance);
       String strProjectphase = vars.getInGlobalVariable("inpProjectphase",
-          "ReportInvoiceCustomerEdition|Projectphase", "");
+          "ReportInvoiceCustomerEdition|Projectphase", "", IsIDFilter.instance);
       String strProduct = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportInvoiceCustomerEdition|mProductId_IN", "");
+          "ReportInvoiceCustomerEdition|mProductId_IN", "", IsIDFilter.instance);
       String strProjectpublic = vars.getGlobalVariable("inpProjectpublic",
           "ReportInvoiceCustomerEdition|Projectpublic", "");
       String strSalesRep = vars.getGlobalVariable("inpSalesRepId",
           "ReportInvoiceCustomerEdition|SalesRepId", "");
       String strcRegionId = vars.getInGlobalVariable("inpcRegionId",
-          "ReportInvoiceCustomerEdition|cRegionId", "");
+          "ReportInvoiceCustomerEdition|cRegionId", "", IsIDFilter.instance);
       printPageDataSheet(response, vars, strdateFrom, strdateTo, strcProjectId, strcBpartnerId,
           strmCategoryId, strProjectkind, strProjectstatus, strProjectphase, strProduct,
           strProjectpublic, strSalesRep, strcRegionId);
@@ -79,23 +80,23 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId",
           "ReportInvoiceCustomerEdition|cProjectId");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceCustomerEdition|cBPartnerId_IN");
+          "ReportInvoiceCustomerEdition|cBPartnerId_IN", IsIDFilter.instance);
       String strmCategoryId = vars.getRequestInGlobalVariable("inpmProductCategoryId",
-          "ReportInvoiceCustomerEdition|mCategoryId");
+          "ReportInvoiceCustomerEdition|mCategoryId", IsIDFilter.instance);
       String strProjectkind = vars.getRequestInGlobalVariable("inpProjectkind",
-          "ReportInvoiceCustomerEdition|Projectkind");
+          "ReportInvoiceCustomerEdition|Projectkind", IsIDFilter.instance);
       String strProjectstatus = vars.getRequestInGlobalVariable("inpProjectstatus",
-          "ReportInvoiceCustomerEdition|Projectstatus");
+          "ReportInvoiceCustomerEdition|Projectstatus", IsIDFilter.instance);
       String strProjectphase = vars.getRequestInGlobalVariable("inpProjectphase",
-          "ReportInvoiceCustomerEdition|Projectphase");
+          "ReportInvoiceCustomerEdition|Projectphase", IsIDFilter.instance);
       String strProduct = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportInvoiceCustomerEdition|mProductId_IN");
+          "ReportInvoiceCustomerEdition|mProductId_IN", IsIDFilter.instance);
       String strProjectpublic = vars.getRequestGlobalVariable("inpProjectpublic",
           "ReportInvoiceCustomerEdition|Projectpublic");
       String strSalesRep = vars.getRequestGlobalVariable("inpSalesRepId",
           "ReportInvoiceCustomerEdition|SalesRepId");
       String strcRegionId = vars.getRequestInGlobalVariable("inpcRegionId",
-          "ReportInvoiceCustomerEdition|cRegionId");
+          "ReportInvoiceCustomerEdition|cRegionId", IsIDFilter.instance);
       printPageHtml(response, vars, strdateFrom, strdateTo, strcProjectId, strcBpartnerId,
           strmCategoryId, strProjectkind, strProjectstatus, strProjectphase, strProduct,
           strProjectpublic, strSalesRep, strcRegionId);
@@ -107,23 +108,23 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId",
           "ReportInvoiceCustomerEdition|cProjectId");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceCustomerEdition|cBPartnerId_IN");
+          "ReportInvoiceCustomerEdition|cBPartnerId_IN", IsIDFilter.instance);
       String strmCategoryId = vars.getRequestInGlobalVariable("inpmProductCategoryId",
-          "ReportInvoiceCustomerEdition|mCategoryId");
+          "ReportInvoiceCustomerEdition|mCategoryId", IsIDFilter.instance);
       String strProjectkind = vars.getRequestInGlobalVariable("inpProjectkind",
-          "ReportInvoiceCustomerEdition|Projectkind");
+          "ReportInvoiceCustomerEdition|Projectkind", IsIDFilter.instance);
       String strProjectstatus = vars.getRequestInGlobalVariable("inpProjectstatus",
-          "ReportInvoiceCustomerEdition|Projectstatus");
+          "ReportInvoiceCustomerEdition|Projectstatus", IsIDFilter.instance);
       String strProjectphase = vars.getRequestInGlobalVariable("inpProjectphase",
-          "ReportInvoiceCustomerEdition|Projectphase");
+          "ReportInvoiceCustomerEdition|Projectphase", IsIDFilter.instance);
       String strProduct = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportInvoiceCustomerEdition|mProductId_IN");
+          "ReportInvoiceCustomerEdition|mProductId_IN", IsIDFilter.instance);
       String strProjectpublic = vars.getRequestGlobalVariable("inpProjectpublic",
           "ReportInvoiceCustomerEdition|Projectpublic");
       String strSalesRep = vars.getRequestGlobalVariable("inpSalesRepId",
           "ReportInvoiceCustomerEdition|SalesRepId");
       String strcRegionId = vars.getRequestInGlobalVariable("inpcRegionId",
-          "ReportInvoiceCustomerEdition|cRegionId");
+          "ReportInvoiceCustomerEdition|cRegionId", IsIDFilter.instance);
       printPagePdf(response, vars, strdateFrom, strdateTo, strcProjectId, strcBpartnerId,
           strmCategoryId, strProjectkind, strProjectstatus, strProjectphase, strProduct,
           strProjectpublic, strSalesRep, strcRegionId);
@@ -131,7 +132,7 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcProjectId, String strcBpartnerId,
       String strmCategoryId, String strProjectkind, String strProjectstatus,
       String strProjectphase, String strProduct, String strProjectpublic, String strSalesRep,
@@ -193,8 +194,8 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "Projectkind", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerEdition"), Utility
-              .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerEdition"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerEdition",
           strProjectkind);
       xmlDocument.setData("reportC_PROJECTKIND", "liststructure", comboTableData.select(false));
@@ -205,8 +206,8 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "Projectphase", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerEdition"), Utility
-              .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerEdition"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerEdition",
           strProjectphase);
       xmlDocument.setData("reportC_PROJECTPHASE", "liststructure", comboTableData.select(false));
@@ -217,8 +218,8 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "ProjectStatus", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerEdition"), Utility
-              .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerEdition"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerEdition",
           strProjectstatus);
       xmlDocument.setData("reportC_PROJECTSTATUS", "liststructure", comboTableData.select(false));
@@ -229,8 +230,8 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "PublicPrivate", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerEdition"), Utility
-              .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerEdition"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerEdition",
           strProjectpublic);
       xmlDocument.setData("reportC_PROJECTPUBLIC", "liststructure", comboTableData.select(false));
@@ -240,8 +241,8 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", SubCategoryProductData.select(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerEdition"), Utility
-            .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition")));
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerEdition"),
+        Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition")));
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "C_REGION_ID", "",
@@ -270,11 +271,11 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportProjectBuildingSiteData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
-            this, vars, "#User_Client", ""), strcBpartnerId));
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure", ReportProjectBuildingSiteData
-        .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
-            this, vars, "#User_Client", ""), strProduct));
+        .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strProduct));
 
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -287,11 +288,11 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom,
-      String strdateTo, String strcProjectId, String strcBpartnerId, String strmCategoryId,
-      String strProjectkind, String strProjectstatus, String strProjectphase, String strProduct,
-      String strProjectpublic, String strSalesRep, String strcRegionId) throws IOException,
-      ServletException {
+  private void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strdateFrom, String strdateTo, String strcProjectId, String strcBpartnerId,
+      String strmCategoryId, String strProjectkind, String strProjectstatus,
+      String strProjectphase, String strProduct, String strProjectpublic, String strSalesRep,
+      String strcRegionId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     XmlDocument xmlDocument = null;
@@ -301,10 +302,10 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
     // Get user Client's base currency
     String strCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     data = InvoiceCustomerEditionData.select(this, strCurrencyId, Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "InvoiceCustomerFilter"), Utility.getContext(this, vars, "#User_Client",
-        "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId, strcProjectId,
-        strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic,
-        strcRegionId, strSalesRep, strProduct);
+        "#AccessibleOrgTree", "InvoiceCustomerFilter"), Utility.getContext(this, vars,
+        "#User_Client", "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId,
+        strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus,
+        strProjectpublic, strcRegionId, strSalesRep, strProduct);
     xmlDocument.setData("structure1", data);
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -317,11 +318,11 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePdf(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom,
-      String strdateTo, String strcProjectId, String strcBpartnerId, String strmCategoryId,
-      String strProjectkind, String strProjectstatus, String strProjectphase, String strProduct,
-      String strProjectpublic, String strSalesRep, String strcRegionId) throws IOException,
-      ServletException {
+  private void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
+      String strdateFrom, String strdateTo, String strcProjectId, String strcBpartnerId,
+      String strmCategoryId, String strProjectkind, String strProjectstatus,
+      String strProjectphase, String strProduct, String strProjectpublic, String strSalesRep,
+      String strcRegionId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print pdf");
     XmlDocument xmlDocument = null;
@@ -331,10 +332,10 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
     // Get user Client's base currency
     String strCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     data = InvoiceCustomerEditionData.select(this, strCurrencyId, Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "InvoiceCustomerFilter"), Utility.getContext(this, vars, "#User_Client",
-        "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId, strcProjectId,
-        strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic,
-        strcRegionId, strSalesRep, strProduct);
+        "#AccessibleOrgTree", "InvoiceCustomerFilter"), Utility.getContext(this, vars,
+        "#User_Client", "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId,
+        strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus,
+        strProjectpublic, strcRegionId, strSalesRep, strProduct);
     xmlDocument.setData("structure1", data);
     String strResult = xmlDocument.print();
     if (log4j.isDebugEnabled())

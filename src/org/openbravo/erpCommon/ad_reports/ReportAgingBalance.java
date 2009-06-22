@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,11 +21,13 @@ package org.openbravo.erpCommon.ad_reports;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -56,7 +58,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       String strcolumn3 = vars.getGlobalVariable("inpColumn3", "ReportAgingBalance|Column3", "30");
       String strcolumn4 = vars.getGlobalVariable("inpColumn4", "ReportAgingBalance|Column4", "60");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAgingBalance|cBpartnerId", "");
+          "ReportAgingBalance|cBpartnerId", "", IsIDFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportAgingBalance|Org", "");
       printPageDataSheet(response, vars, strisReceipt, strcolumn1, strcolumn2, strcolumn3,
           strcolumn4, strcBpartnerId, strOrg, "Y");
@@ -68,30 +70,69 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       String strcolumn3 = vars.getRequestGlobalVariable("inpColumn3", "ReportAgingBalance|Column3");
       String strcolumn4 = vars.getRequestGlobalVariable("inpColumn4", "ReportAgingBalance|Column4");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAgingBalance|cBpartnerId");
+          "ReportAgingBalance|cBpartnerId", IsIDFilter.instance);
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportAgingBalance|Org");
       printPageDataSheet(response, vars, strisReceipt, strcolumn1, strcolumn2, strcolumn3,
+          strcolumn4, strcBpartnerId, strOrg, "N");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strisReceipt = vars.getRequestGlobalVariable("inpReceipt",
+          "ReportAgingBalance|IsReceipt");
+      String strcolumn1 = vars.getRequestGlobalVariable("inpColumn1", "ReportAgingBalance|Column1");
+      String strcolumn2 = vars.getRequestGlobalVariable("inpColumn2", "ReportAgingBalance|Column2");
+      String strcolumn3 = vars.getRequestGlobalVariable("inpColumn3", "ReportAgingBalance|Column3");
+      String strcolumn4 = vars.getRequestGlobalVariable("inpColumn4", "ReportAgingBalance|Column4");
+      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
+          "ReportAgingBalance|cBpartnerId", IsIDFilter.instance);
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportAgingBalance|Org");
+      printPageDataPdf(response, vars, strisReceipt, strcolumn1, strcolumn2, strcolumn3,
           strcolumn4, strcBpartnerId, strOrg, "N");
     } else
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
       String strisReceipt, String strcolumn1, String strcolumn2, String strcolumn3,
       String strcolumn4, String strcBpartnerId, String strOrgTrx, String strfirstPrint)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    response.setContentType("text/html");
-    PrintWriter out = response.getWriter();
-    String discard[] = { "sectionDocType" };
-    XmlDocument xmlDocument = null;
     ReportAgingBalanceData[] data = null;
     // Jarenor
     /*
      * String strClient=Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"); String
      * strOrg= Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance");
      */
+
+    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strOrgFamily = getFamily(strTreeOrg, strOrgTrx);
+
+    if (strisReceipt.equals(""))
+      strisReceipt = "N";
+
+    data = ReportAgingBalanceData.select(this, vars.getLanguage(), strOrgTrx, strcolumn1,
+        strcolumn2, strcolumn3, strcolumn4, strisReceipt, strcBpartnerId, strOrgFamily, Utility
+            .getContext(this, vars, "#User_Client", "ReportAgingBalance"), Utility.getContext(this,
+            vars, "#AccessibleOrgTree", "ReportAgingBalance"));
+    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportAgingBalance.jrxml";
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("col1", "0 - " + strcolumn1);
+    parameters.put("col2", String.valueOf((Integer.valueOf(strcolumn1) + 1)) + " - " + strcolumn2);
+    parameters.put("col3", String.valueOf((Integer.valueOf(strcolumn2) + 1)) + " - " + strcolumn3);
+    parameters.put("col4", String.valueOf((Integer.valueOf(strcolumn3) + 1)) + " - " + strcolumn4);
+    parameters.put("col5", ">" + strcolumn4);
+    renderJR(vars, response, strReportName, "pdf", parameters, data, null);
+
+  }
+
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+      String strisReceipt, String strcolumn1, String strcolumn2, String strcolumn3,
+      String strcolumn4, String strcBpartnerId, String strOrgTrx, String strfirstPrint)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    String discard[] = { "sectionDocType" };
+    XmlDocument xmlDocument = null;
+    ReportAgingBalanceData[] data = null;
 
     String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrgTrx);
@@ -203,14 +244,14 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateToCol5", "");
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInOutData.selectBpartner(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
-            "#User_Client", ""), strcBpartnerId));
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();
   }
 
-  public String getFamily(String strTree, String strChild) throws IOException, ServletException {
+  private String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, strChild);
     /*
      * ReportGeneralLedgerData [] data = ReportGeneralLedgerData.selectChildren(this, strTree,

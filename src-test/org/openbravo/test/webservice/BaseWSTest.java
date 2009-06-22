@@ -21,10 +21,18 @@ package org.openbravo.test.webservice;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -32,6 +40,11 @@ import org.dom4j.io.SAXReader;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.test.base.BaseTest;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 
 /**
  * Base class for webservice tests. Provides several methods to do HTTP REST requests.
@@ -46,6 +59,8 @@ public class BaseWSTest extends BaseTest {
   private static final String OB_URL = "http://localhost:8080/openbravo";
   private static final String LOGIN = "Openbravo";
   private static final String PWD = "openbravo";
+
+  private String xmlSchema = null;
 
   /**
    * Executes a DELETE HTTP request, the wsPart is appended to the {@link #getOpenbravoURL()}.
@@ -69,7 +84,8 @@ public class BaseWSTest extends BaseTest {
   }
 
   /**
-   * Execute a REST webservice HTTP request which posts/puts content and returns a XML result.
+   * Execute a REST webservice HTTP request which posts/puts content and returns a XML result. The
+   * content is validated against the XML schema retrieved using the /ws/dal/schema webservice call.
    * 
    * @param wsPart
    *          the actual webservice part of the url, is appended to the openbravo url (
@@ -82,7 +98,8 @@ public class BaseWSTest extends BaseTest {
    *          the system check that the returned content contains this expectedContent
    * @param method
    *          POST or PUT
-   * @return
+   * @return the result from the rest request (i.e. the content of the response), most of the time
+   *         an xml string
    */
   protected String doContentRequest(String wsPart, String content, int expectedResponse,
       String expectedContent, String method) {
@@ -108,6 +125,7 @@ public class BaseWSTest extends BaseTest {
         log.debug(retContent);
         fail();
       }
+      validateXML(retContent);
       return retContent;
     } catch (final Exception e) {
       throw new OBException(e);
@@ -136,7 +154,8 @@ public class BaseWSTest extends BaseTest {
   }
 
   /**
-   * Executes a GET request.
+   * Executes a GET request and validates the return against the schema. The content is validated
+   * against the XML schema retrieved using the /ws/dal/schema webservice call.
    * 
    * @param wsPart
    *          the actual webservice part of the url, is appended to the openbravo url (
@@ -149,6 +168,27 @@ public class BaseWSTest extends BaseTest {
    * @return the content returned from the GET request
    */
   protected String doTestGetRequest(String wsPart, String testContent, int responseCode) {
+    return doTestGetRequest(wsPart, testContent, responseCode, true);
+  }
+
+  /**
+   * Executes a GET request. The content is validated against the XML schema retrieved using the
+   * /ws/dal/schema webservice call.
+   * 
+   * @param wsPart
+   *          the actual webservice part of the url, is appended to the openbravo url (
+   *          {@link #getOpenbravoURL()}), includes any query parameters
+   * @param testContent
+   *          the system check that the returned content contains this testContent. if null is
+   *          passed for this parameter then this check is not done.
+   * @param responseCode
+   *          the expected HTTP response code
+   * @param validate
+   *          if true then the response content is validated against the Openbravo XML Schema
+   * @return the content returned from the GET request
+   */
+  protected String doTestGetRequest(String wsPart, String testContent, int responseCode,
+      boolean validate) {
     try {
       final HttpURLConnection hc = createConnection(wsPart, "GET");
       hc.connect();
@@ -162,6 +202,10 @@ public class BaseWSTest extends BaseTest {
       }
       assertEquals(responseCode, hc.getResponseCode());
       is.close();
+      // do not validate the xml schema itself, this results in infinite loops
+      if (validate) {
+        validateXML(content);
+      }
       return content;
     } catch (final Exception e) {
       throw new OBException(e);
@@ -225,4 +269,56 @@ public class BaseWSTest extends BaseTest {
   protected String getPassword() {
     return PWD;
   }
+
+  /**
+   * Validates the xml against the generated schema.
+   * 
+   * @param xml
+   *          the xml to validate
+   */
+  protected void validateXML(String xml) {
+    final Reader schemaReader = new StringReader(getXMLSchema());
+    final Reader xmlReader = new StringReader(xml);
+    try {
+      SAXParserFactory factory = SAXParserFactory.newInstance();
+      factory.setValidating(false);
+      factory.setNamespaceAware(true);
+
+      SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+
+      factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(schemaReader) }));
+
+      SAXParser parser = factory.newSAXParser();
+
+      XMLReader reader = parser.getXMLReader();
+      reader.setErrorHandler(new SimpleErrorHandler());
+      reader.parse(new InputSource(xmlReader));
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
+
+  }
+
+  private String getXMLSchema() {
+    if (xmlSchema != null) {
+      return xmlSchema;
+    }
+
+    xmlSchema = doTestGetRequest("/ws/dal/schema", "<xs:element name=\"Openbravo\">", 200, false);
+    return xmlSchema;
+  }
+
+  public class SimpleErrorHandler implements ErrorHandler {
+    public void warning(SAXParseException e) throws SAXException {
+    }
+
+    public void error(SAXParseException e) throws SAXException {
+      throw e;
+    }
+
+    public void fatalError(SAXParseException e) throws SAXException {
+      throw e;
+    }
+  }
+
 }

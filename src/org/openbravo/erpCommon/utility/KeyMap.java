@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -111,7 +111,7 @@ public class KeyMap {
    * @param _prop
    *          Properties with all the additional info for this tab.
    */
-  public void addStructure(Properties _prop) {
+  private void addStructure(Properties _prop) {
     if (_prop == null)
       return;
     if (this.structure == null)
@@ -124,7 +124,7 @@ public class KeyMap {
    * 
    * @return Vector with the additional information.
    */
-  public Vector<Properties> getStructure() {
+  private Vector<Properties> getStructure() {
     return this.structure;
   }
 

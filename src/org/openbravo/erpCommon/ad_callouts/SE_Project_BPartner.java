@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
@@ -64,7 +65,7 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
       String strIsSOTrx, String strWindowId, String strLocation, String strContact)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -73,7 +74,7 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     String strPaymentrule, strPaymentterm, strPricelist;
     strPaymentrule = strPaymentterm = strPricelist = "";
-    SEOrderBPartnerData[] data = SEOrderBPartnerData.select(this, strBPartner);
+    BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
     if (data != null && data.length > 0) {
       strPaymentrule = (strIsSOTrx.equals("Y") ? data[0].paymentrule : data[0].paymentrulepo);
       strPaymentterm = (strIsSOTrx.equals("Y") ? data[0].cPaymenttermId : data[0].poPaymenttermId);
@@ -86,8 +87,8 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
     FieldProvider[] tdv = null;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_PriceList_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(
-              this, vars, "#User_Client", strWindowId), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
+              .getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       tdv = comboTableData.select(false);
       comboTableData = null;
@@ -98,8 +99,8 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this,
-              vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars, "#User_Client",
-              strWindowId), 0);
+              vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars,
+              "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       tdv = comboTableData.select(false);
       comboTableData = null;
@@ -150,8 +151,8 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
           "C_BPartner Location", "C_BPartner Location - Bill To", Utility.getContext(this, vars,
-              "#AccessibleOrgTree", strWindowId), Utility
-              .getContext(this, vars, "#User_Client", strWindowId), 0);
+              "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars, "#User_Client",
+              strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       tlv = comboTableData.select(false);
       comboTableData = null;

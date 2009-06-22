@@ -523,7 +523,7 @@
                   <button type="button" 
                     id="buttonSearch" 
                     class="ButtonLink" 
-                    onclick="submitCommandForm('FIND_SETTLEMENT', true);return false;" 
+                    onclick="removeOnUnload();submitCommandForm('FIND_SETTLEMENT', true);return false;" 
                     onfocus="buttonEvent('onfocus', this); window.status='Search'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 

@@ -49,7 +49,7 @@ public class CheckSum {
     if (f.isDirectory()) {
       File[] list = f.listFiles(new FilenameFilter() {
         public boolean accept(File file, String s) {
-          return !s.equals(".svn");
+          return !s.equals(".svn") && !s.endsWith(".orig");
         }
       });
       for (File element : list)
@@ -79,7 +79,10 @@ public class CheckSum {
   }
 
   private String[] getFiles(String type) {
-    if (type.equals("md5.db.structure")) {
+    if (type.equals("md5.db.all")) {
+      String rt[] = { obDir + "src-db/database/model", obDir + "src-db/database/sourcedata" };
+      return rt;
+    } else if (type.equals("md5.db.structure")) {
       String rt[] = { obDir + "src-db/database/model", obDir + "modules" };
       return rt;
     } else if (type.equals("md5.db.sourcedata")) {
@@ -109,6 +112,17 @@ public class CheckSum {
       String checkSum = getCheckSum(files);
       properties.setProperty(type, checkSum);
       saveCheckSum();
+      return checkSum;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return "0";
+    }
+  }
+
+  public String calculateCheckSumWithoutSaving(String type) {
+    try {
+      String[] files = getFiles(type);
+      String checkSum = getCheckSum(files);
       return checkSum;
     } catch (Exception e) {
       e.printStackTrace();
@@ -146,6 +160,10 @@ public class CheckSum {
 
   public String getCheckSum(String type) {
     return properties.getProperty(type, "0");
+  }
+
+  public String getCheckSumDatabase() {
+    return calculateCheckSum("md5.db.all");
   }
 
   public static void main(String[] args) {

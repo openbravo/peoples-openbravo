@@ -16,8 +16,8 @@ dojo.require("dijit._Container");
 dojo.require("dijit.Editor");
 dojo.require("dijit.form.TextBox");
 dojo.require("dijit.form.SimpleTextarea");
-dojo.requireLocalization("dojox.atom.widget", "FeedEntryEditor", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
-dojo.requireLocalization("dojox.atom.widget", "PeopleEditor", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
+dojo.requireLocalization("dojox.atom.widget", "FeedEntryEditor", null, "ROOT,ar,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sv,tr,zh,zh-tw");
+dojo.requireLocalization("dojox.atom.widget", "PeopleEditor", null, "ROOT,ar,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sv,tr,zh,zh-tw");
 
 dojo.experimental("dojox.atom.widget.FeedEntryEditor");
 

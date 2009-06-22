@@ -65,10 +65,7 @@ d.declare("dojox.image.LightboxNano", null, {
 			n = a;
 		}
 
-		d.style(n, {
-			display: "block",
-			position: "relative"
-		});
+		d.style(n, "position", "relative");
 		_this._createDiv("dojoxEnlarge", n);
 
 		_this._node = n;
@@ -91,7 +88,13 @@ d.declare("dojox.image.LightboxNano", null, {
 
 	_createDiv: function(/*String*/cssClass, /*DomNode*/refNode, /*boolean*/display){
 		// summary: Creates a div for the enlarge icon and loading indicator layers
-		return d.create("div", { "class": cssClass, style: { position: abs, display: display ? "" : "none" } }, refNode); // DomNode
+		return d.create("div", { // DomNode
+			"class": cssClass, 
+			style: { 
+				position: abs, 
+				display: display ? "" : "none" 
+			} 
+		}, refNode); 
 	},
 	
 	_load: function(/*Event*/e){
@@ -226,12 +229,12 @@ d.declare("dojox.image.LightboxNano", null, {
 
 	_coords: function(/*Object*/s, /*Object*/e){
 		// summary: Returns animation parameters with the start and end coords
-		return {
+		return { // Object
 			left:	{ start: s.x, end: e.x },
 			top:	{ start: s.y, end: e.y },
 			width:	{ start: s.w, end: e.w },
 			height:	{ start: s.h, end: e.h }
-		}; // object
+		}; 
 	},
 
 	_hide: function(){
@@ -257,12 +260,12 @@ d.declare("dojox.image.LightboxNano", null, {
 
 	_anim: function(node, args, onEnd){
 		// summary: Creates the lightbox open/close and background fadein/out animations
-		return d.animateProperty({
+		return d.animateProperty({ // dojo.Animation
 			node: node,
 			duration: this.duration,
 			properties: args,
 			onEnd: onEnd ? d.hitch(this, onEnd) : null
-		}); // object
+		}); 
 	}
 });
 

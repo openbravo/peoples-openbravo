@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,14 +20,22 @@ package org.openbravo.erpCommon.ad_reports;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.AccountNumberComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -61,11 +69,78 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
           "ReportCashflowForecast|BreakDate");
 
       printPageDataSheet(response, vars, strBankAccount, strDateFrom, strBreakDate, false);
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strBankAccount = vars.getRequestGlobalVariable("inpcBankAccountId",
+          "ReportCashflowForecast|AcctNo");
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+          "ReportCashflowForecast|DateFrom");
+      String strBreakDate = vars.getRequestGlobalVariable("inpBreakDate",
+          "ReportCashflowForecast|BreakDate");
+
+      printPageDataPdf(response, vars, strBankAccount, strDateFrom, strBreakDate, false);
     } else
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
+      String strBankAccount, String strDateMax, String strBreakDate, boolean showDefault)
+      throws IOException, ServletException {
+
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportCashflowForecast", false, "",
+        "", "", false, "ad_reports", strReplaceWith, false, true);
+
+    // ReportCashflowForecastData[] dataSummary =
+    // ReportCashflowForecastData.select(this,Utility.getContext(this, vars, "#User_Client",
+    // "ReportBank"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"));
+    ReportCashflowForecastData[] dataSummary = ReportCashflowForecastData.select(this, strDateMax,
+        "", Utility.getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this,
+            vars, "#AccessibleOrgTree", "ReportBank"));
+
+    if (!showDefault) {
+      ReportCashflowForecastData[] dataDetail = null;
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
+      String strLanguage = vars.getLanguage();
+      String strBaseDesign = getBaseDesignPath(strLanguage);
+      JasperReport jasperReportLines;
+      try {
+        JasperDesign jasperDesignLines = (("on".equals(strBreakDate)) ? JRXmlLoader
+            .load(strBaseDesign
+                + "/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_perDay.jrxml")
+            : JRXmlLoader.load(strBaseDesign
+                + "/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast.jrxml"));
+        jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+      } catch (JRException e) {
+        log4j.error("Error Compiling report ", e);
+        throw new ServletException(e.getMessage());
+      }
+      parameters.put("ReportData", jasperReportLines);
+      Date date = null;
+      try {
+        String strDateFormat;
+        strDateFormat = vars.getJavaDateFormat();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+        date = dateFormat.parse(strDateMax);
+      } catch (Exception e) {
+        throw new ServletException(e.getMessage());
+      }
+      parameters.put("DatePlanned", date);
+      parameters.put("BankAcc", vars.getRequestGlobalVariable("inpcBankAccountId",
+          "ReportCashflowForecast|AcctNo"));
+
+      try {
+        dataDetail = ReportCashflowForecastData.selectAllLines(this, vars.getSqlDateFormat(), vars
+            .getLanguage(), vars.getRequestGlobalVariable("inpcBankAccountId",
+            "ReportCashflowForecast|AcctNo"), strDateMax, "BANKACCOUNT, ISRECEIPT desc");
+        String strReportName = (("on".equals(strBreakDate)) ? "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_perDay.jrxml"
+            : "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast.jrxml");
+        renderJR(vars, response, strReportName, "pdf", parameters, dataDetail, null);
+      } catch (Exception e) {
+        log4j.error("Error trying to render the PDF", e);
+      }
+    }
+  }
+
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strBankAccount, String strDateMax, String strBreakDate, boolean showDefault)
       throws IOException, ServletException {
     String[] discard = { "", "" };

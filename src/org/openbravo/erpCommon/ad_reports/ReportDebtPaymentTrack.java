@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -47,7 +48,7 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
           "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportDebtPaymentTrack|DateTo", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportDebtPaymentTrack|cBpartnerId", "");
+          "ReportDebtPaymentTrack|cBpartnerId", "", IsIDFilter.instance);
       String strAmtFrom = vars
           .getGlobalVariable("inpAmtFrom", "ReportDebtPaymentTrack|AmtFrom", "");
       String strAmtTo = vars.getGlobalVariable("inpAmtTo", "ReportDebtPaymentTrack|AmtTo", "");
@@ -68,7 +69,7 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       String strDateTo = vars
           .getRequestGlobalVariable("inpDateTo", "ReportDebtPaymentTrack|DateTo");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportDebtPaymentTrack|cBpartnerId");
+          "ReportDebtPaymentTrack|cBpartnerId", IsIDFilter.instance);
       String strAmtFrom = vars.getRequestGlobalVariable("inpAmtFrom",
           "ReportDebtPaymentTrack|AmtFrom");
       String strAmtTo = vars.getRequestGlobalVariable("inpAmtTo", "ReportDebtPaymentTrack|AmtTo");
@@ -84,11 +85,54 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strAmtFrom,
           strAmtTo, strInvoice, strDPCNA, strDPCA, strDPGNA, strDPGA, strDPM, strDPC, strDPB);
       // setHistoryCommand(request, "FIND");
+    } else if (vars.commandIn("PRINT_PDF")) {
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+          "ReportDebtPaymentTrack|DateFrom");
+      String strDateTo = vars
+          .getRequestGlobalVariable("inpDateTo", "ReportDebtPaymentTrack|DateTo");
+      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
+          "ReportDebtPaymentTrack|cBpartnerId", IsIDFilter.instance);
+      String strAmtFrom = vars.getRequestGlobalVariable("inpAmtFrom",
+          "ReportDebtPaymentTrack|AmtFrom");
+      String strAmtTo = vars.getRequestGlobalVariable("inpAmtTo", "ReportDebtPaymentTrack|AmtTo");
+      String strInvoice = vars.getRequestGlobalVariable("inpInvoice",
+          "ReportDebtPaymentTrack|Invoice");
+      String strDPCNA = vars.getRequestGlobalVariable("inpDPCNA", "ReportDebtPaymentTrack|DPCNA");
+      String strDPCA = vars.getRequestGlobalVariable("inpDPCA", "ReportDebtPaymentTrack|DPCA");
+      String strDPGNA = vars.getRequestGlobalVariable("inpDPGNA", "ReportDebtPaymentTrack|DPGNA");
+      String strDPGA = vars.getRequestGlobalVariable("inpDPGA", "ReportDebtPaymentTrack|DPGA");
+      String strDPM = vars.getRequestGlobalVariable("inpDPM", "ReportDebtPaymentTrack|DPM");
+      String strDPC = vars.getRequestGlobalVariable("inpDPC", "ReportDebtPaymentTrack|DPC");
+      String strDPB = vars.getRequestGlobalVariable("inpDPB", "ReportDebtPaymentTrack|DPB");
+      printPageDataPdf(response, vars, strDateFrom, strDateTo, strcBpartnerId, strAmtFrom,
+          strAmtTo, strInvoice, strDPCNA, strDPCA, strDPGNA, strDPGA, strDPM, strDPC, strDPB);
+      // setHistoryCommand(request, "FIND");
     } else
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strcBpartnerId, String strAmtFrom,
+      String strAmtTo, String strInvoice, String strDPCNA, String strDPCA, String strDPGNA,
+      String strDPGA, String strDPM, String strDPC, String strDPB) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: dataSheet");
+    response.setContentType("text/html; charset=UTF-8");
+    ReportDebtPaymentTrackData[] data = null;
+
+    String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','" + strDPGNA
+        + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
+    data = ReportDebtPaymentTrackData.select(this, vars.getLanguage(), Utility.getContext(this,
+        vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId, strDateFrom, strDateTo,
+        strAmtFrom, strAmtTo, strDocTypes);
+    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTracker.jrxml";
+    renderJR(vars, response, strReportName, "pdf", null, data, null);
+
+  }
+
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strcBpartnerId, String strAmtFrom,
       String strAmtTo, String strInvoice, String strDPCNA, String strDPCA, String strDPGNA,
       String strDPGA, String strDPM, String strDPC, String strDPB) throws IOException,
@@ -110,9 +154,9 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','" + strDPGNA
           + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
       data = ReportDebtPaymentTrackData.select(this, vars.getLanguage(), Utility.getContext(this,
-          vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportDebtPayment"), strcBpartnerId, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
-          strDocTypes);
+          vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars,
+          "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId, strDateFrom, strDateTo,
+          strAmtFrom, strAmtTo, strDocTypes);
     }
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTrack", discard).createXmlDocument();
@@ -168,8 +212,8 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     xmlDocument.setParameter("DPB", strDPB);
     xmlDocument.setParameter("Invoice", strInvoice);
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInOutData.selectBpartner(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
-            "#User_Client", ""), strcBpartnerId));
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();

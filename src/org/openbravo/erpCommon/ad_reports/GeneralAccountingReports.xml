@@ -25,18 +25,24 @@
   <PARAMETER id="paramLanguage" name="language"/>
   <PARAMETER id="paramAgno" name="agno" attribute="value"/>
   <PARAMETER id="paramAgnoRef" name="agnoRef" attribute="value"/>
-	<PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>
-	<PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
-	<PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
-	<PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
-	<PARAMETER id="paramDateFromRef" name="dateFromRef" attribute="value"/>
-	<PARAMETER id="paramDateFromRef" name="dateFromRefdisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDateFromRef" name="dateFromRefsaveFormat" attribute="saveformat" replace="yy"/>
-	<PARAMETER id="paramDateToRef" name="dateToRef" attribute="value"/>
-	<PARAMETER id="paramDateToRef" name="dateToRefdisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDateToRef" name="dateToRefsaveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>
+  <PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
+  <PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramAsDateTo" name="asDateTo" attribute="value"/>
+  <PARAMETER id="paramAsDateTo" name="asDateTodisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramAsDateTo" name="dateTodisplayFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramAsDateToRef" name="asDateToRef" attribute="value"/>
+  <PARAMETER id="paramAsDateToRef" name="asDateToRefdisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramAsDateToRef" name="asDateToRefsaveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateFromRef" name="dateFromRef" attribute="value"/>
+  <PARAMETER id="paramDateFromRef" name="dateFromRefdisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateFromRef" name="dateFromRefsaveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateToRef" name="dateToRef" attribute="value"/>
+  <PARAMETER id="paramDateToRef" name="dateToRefdisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateToRef" name="dateToRefsaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="fieldCheck" name="check" default="Y"/>
   <PARAMETER id="fieldConImporte" name="conImporte" boolean="checked" withId="fieldCheck"/>
   <PARAMETER id="fieldConCodigo" name="conCodigo" boolean="checked" withId="fieldCheck"/>
@@ -54,23 +60,15 @@
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>  
   <PARAMETER id="paramArrayAccountingReports" name="accountingReports"/>
-  <PARAMETER id="paramArrayBalancedOrg" name="balancedOrg"/>
-  <PARAMETER id="paramArrayAllOrg" name="allOrg"/>
-  <PARAMETER id="paramArrayReportIsBalanced" name="reportIsBalanced"/>
-	
-  <SUBREPORT id="reportC_ElementValue_ID" name="reportC_ElementValue_ID" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected" withId="fieldC_ElementValue_ID"/>
-  </SUBREPORT>
-  
-  <SUBREPORT id="reportC_Org_ID" name="reportC_Org_ID" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected" withId="fieldC_Org_ID"/>
-  </SUBREPORT>
-  
+  <PARAMETER id="paramArrayOrg" name="orgs"/>
+  <PARAMETER id="paramArrayYears" name="years"/>
+
   <SUBREPORT id="reportLevel" name="reportLevel" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramLevel"/>
   </SUBREPORT>
 
-	 <SUBREPORT id="reportC_ACCTSCHEMA_ID" name="reportC_ACCTSCHEMA_ID" report="org/openbravo/erpCommon/reference/List">
-	   <ARGUMENT name="parameterListSelected" withId="paramC_ACCTSCHEMA_ID"/>
-	</SUBREPORT>       
+  <SUBREPORT id="reportC_ACCTSCHEMA_ID" name="reportC_ACCTSCHEMA_ID" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramC_ACCTSCHEMA_ID"/>
+  </SUBREPORT>
+       
 </REPORT>

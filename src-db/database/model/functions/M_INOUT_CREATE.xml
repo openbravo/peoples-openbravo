@@ -528,7 +528,7 @@
                         C_UOM_ID, M_Locator_ID, MovementQty, Description,
                         IsInvoiced,
                         --MODIFIED BY F.IRIAZABAL
-                        QuantityOrder, M_Product_Uom_ID)
+                        QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID)
                       VALUES
                         (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                         ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
@@ -536,7 +536,7 @@
                         ol.C_UOM_ID, NULL, v_Qty, ol.Description,
                         'N',
                         --MODIFIED BY F.IRIAZABAL
-                        v_QtyOrder, ol.M_PRODUCT_UOM_ID);
+                        v_QtyOrder, ol.M_PRODUCT_UOM_ID, ol.M_ATTRIBUTESETINSTANCE_ID);
                       v_lines:=v_lines + 10;
                     END IF;
                   END;
@@ -694,7 +694,7 @@
                 C_UOM_ID, M_Locator_ID, MovementQty, Description,
                 IsInvoiced,
                 --MODIFIED BY F.IRIAZABAL
-                QuantityOrder, M_Product_Uom_ID
+                QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID
                 )
               VALUES
                 (v_NextNo, Cur_Lines.Line, p_InOut_ID, Cur_Lines.C_OrderLine_ID,
@@ -703,7 +703,7 @@
                 Cur_Lines.C_UOM_ID, p_Locator_ID, Cur_Lines.QtyInvoiced, Cur_Lines.Description,
                 'Y',
                 --MODIFIED BY F.IRIAZABAL
-                Cur_Lines.QuantityOrder, Cur_Lines.M_Product_Uom_ID
+                Cur_Lines.QuantityOrder, Cur_Lines.M_Product_Uom_ID, Cur_Lines.M_ATTRIBUTESETINSTANCE_ID
                 );
               UPDATE C_INVOICELINE
               SET M_INOUTLINE_ID=v_NextNo

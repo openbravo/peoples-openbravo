@@ -35,7 +35,7 @@ public class UnscheduleProcess extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
 
-  public static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
+  private static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)

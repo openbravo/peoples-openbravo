@@ -38,10 +38,10 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class CreateRegFactAcct extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  BigDecimal ExpenseAmtDr = new BigDecimal("0");
-  BigDecimal ExpenseAmtCr = new BigDecimal("0");
-  BigDecimal RevenueAmtDr = new BigDecimal("0");
-  BigDecimal RevenueAmtCr = new BigDecimal("0");
+  private BigDecimal ExpenseAmtDr = new BigDecimal("0");
+  private BigDecimal ExpenseAmtCr = new BigDecimal("0");
+  private BigDecimal RevenueAmtDr = new BigDecimal("0");
+  private BigDecimal RevenueAmtCr = new BigDecimal("0");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -75,7 +75,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  synchronized OBError processButton(VariablesSecureApp vars, String strKey, String strOrgId,
+  private synchronized OBError processButton(VariablesSecureApp vars, String strKey, String strOrgId,
       String windowId) {
 
     Connection conn = null;
@@ -140,7 +140,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
     return myError;
   }
 
-  synchronized String processButtonReg(Connection conn, VariablesSecureApp vars, String strKey,
+  private synchronized String processButtonReg(Connection conn, VariablesSecureApp vars, String strKey,
       String windowId, String stradOrgId, String strID, String strAcctSchema)
       throws ServletException {
 
@@ -206,7 +206,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
     return "Success";
   }
 
-  synchronized String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey,
+  private synchronized String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey,
       String windowId, String stradOrgId, String strCloseID, String strOpenID,
       String strDivideUpId, String strAcctSchema) throws ServletException {
     BigDecimal assetAmtDr = new BigDecimal("0");
@@ -335,7 +335,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
     return "Success";
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strOrgId, String windowId, String strTab, String strProcessId) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())

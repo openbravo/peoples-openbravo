@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,7 +63,7 @@ public class ReportWarehouseDetailInventoryJR extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strWarehouse) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
@@ -119,8 +119,9 @@ public class ReportWarehouseDetailInventoryJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseDetailInventoryJR"),
-          Utility.getContext(this, vars, "#User_Client", "ReportWarehouseDetailInventoryJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportWarehouseDetailInventoryJR"), Utility.getContext(this, vars, "#User_Client",
+              "ReportWarehouseDetailInventoryJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportWarehouseDetailInventoryJR", strWarehouse);
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
@@ -133,8 +134,9 @@ public class ReportWarehouseDetailInventoryJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strWarehouse) throws IOException, ServletException {
+  private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strWarehouse) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PDF");
 
@@ -146,8 +148,8 @@ public class ReportWarehouseDetailInventoryJR extends HttpSecureAppServlet {
 
     ReportWarehouseDetailInventoryData[] data = ReportWarehouseDetailInventoryData.select(this,
         Utility.getContext(this, vars, "#User_Client", "ReportWarehouseDetailInventory"), Utility
-            .getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseDetailInventory"), strDateFromSql,
-        DateTimeData.nDaysAfter(this, strDateTo, "1"), strWarehouse);
+            .getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseDetailInventory"),
+        strDateFromSql, DateTimeData.nDaysAfter(this, strDateTo, "1"), strWarehouse);
 
     if (log4j.isDebugEnabled())
       log4j.debug("data.length:" + data.length);

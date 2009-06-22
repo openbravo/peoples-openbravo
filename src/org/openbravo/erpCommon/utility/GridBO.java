@@ -41,8 +41,8 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
 
-public class GridBO {
-  public static Logger log4j = Logger.getLogger("org.openbravo.erpCommon.utility.GridBO");
+class GridBO {
+  private static Logger log4j = Logger.getLogger("org.openbravo.erpCommon.utility.GridBO");
 
   public static void createHTMLReport(InputStream reportFile, GridReportVO gridReportVO,
       String path, String fileName) throws JRException, IOException {

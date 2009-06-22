@@ -166,7 +166,12 @@ public class DalMappingGenerator implements OBSingleton {
     final StringBuffer sb = new StringBuffer();
     sb.append(TAB2 + "<property name=\"" + p.getName() + "\"");
     sb.append(getAccessorAttribute());
-    String type = p.getPrimitiveType().getName();
+    String type;
+    if (p.getPrimitiveType().isArray()) {
+      type = p.getPrimitiveType().getComponentType().getName() + "[]";
+    } else {
+      type = p.getPrimitiveType().getName();
+    }
     if (p.isBoolean()) {
       type = OBYesNoType.class.getName(); // "yes_no";
     }
@@ -174,15 +179,11 @@ public class DalMappingGenerator implements OBSingleton {
 
     sb.append(" column=\"" + p.getColumnName() + "\"");
 
-    // disabled for now as sometimes database values are null
-    // while they are required in the application dictionary
-    // this has to do with the way that mandatory is used for
-    // field definitions.
-    // if (p.isMandatory()) {
-    // sb.append(" not-null=\"true\"");
-    // }
+    if (p.isMandatory()) {
+      sb.append(" not-null=\"true\"");
+    }
 
-    // ignoring isUpdatable for now as this is primarily used 
+    // ignoring isUpdatable for now as this is primarily used
     // for ui and not for background processes
     // if (!p.isUpdatable() || p.isInactive()) {
     if (p.isInactive()) {
@@ -211,15 +212,17 @@ public class DalMappingGenerator implements OBSingleton {
       sb.append(TAB2 + "<many-to-one name=\"" + p.getName() + "\" column=\"" + p.getColumnName()
           + "\""); // cascade=\
       // "save-update\"
-      // disabled for now as sometimes database values are null
-      // while they are required in the application dictionary
-      // this has to do with the way that mandatory is used for
-      // field definitions
-      // if (p.isMandatory()) {
-      // sb.append(" not-null=\"true\"");
-      // }
+      if (p.isMandatory()) {
+        sb.append(" not-null=\"true\"");
+      }
     }
     // sb.append(" cascade=\"save-update\"");
+
+    // to prevent cascade errors that the parent is saved after the child
+    // COMMENTED out: this is handled by the DataImportService.insertObjectGraph
+    // if (p.isParent() && p.isMandatory()) {
+    // sb.append(" cascade=\"save-update\"");
+    // }
 
     sb.append(" entity-name=\"" + p.getTargetEntity().getName() + "\"");
 
@@ -247,7 +250,8 @@ public class DalMappingGenerator implements OBSingleton {
       }
       sb.append(TAB2 + "<bag name=\"" + p.getName() + "\" cascade=\"all,delete-orphan\" " + order
           + getAccessorAttribute() + " inverse=\"true\">" + NL);
-      sb.append(TAB3 + "<key column=\"" + p.getReferencedProperty().getColumnName() + "\"/>" + NL);
+      sb.append(TAB3 + "<key column=\"" + p.getReferencedProperty().getColumnName() + "\""
+          + (p.getReferencedProperty().isMandatory() ? " not-null=\"true\"" : "") + "/>" + NL);
       sb.append(TAB3 + "<one-to-many entity-name=\"" + p.getTargetEntity().getName() + "\"/>" + NL);
       sb.append(TAB2 + "</bag>" + NL);
     }

@@ -117,10 +117,8 @@ dojo.declare(
 
 		postCreate: function(){
 			dojo.style(this.domNode, {
-				visibility:"hidden",
-				position:"absolute",
-				display:"",
-				top:"-9999px"
+				display: "none",
+				position:"absolute"
 			});
 			dojo.body().appendChild(this.domNode);
 
@@ -184,16 +182,16 @@ dojo.declare(
 				"class": dojo.map(this["class"].split(/\s/), function(s){ return s+"_underlay"; }).join(" ")
 			};
 			
-			var underlay = dijit._underlay;
-			if(!underlay){ 
-				underlay = dijit._underlay = new dijit.DialogUnderlay(underlayAttrs); 
-			}
-			
 			this._fadeIn = dojo.fadeIn({
 				node: node,
 				duration: this.duration,
 				beforeBegin: function(){
-					underlay.attr(underlayAttrs);
+					var underlay = dijit._underlay;
+					if(!underlay){ 
+						underlay = dijit._underlay = new dijit.DialogUnderlay(underlayAttrs); 
+					}else{
+						underlay.attr(underlayAttrs);
+					}
 					underlay.show();
 				},
 				onEnd:	dojo.hitch(this, function(){
@@ -210,8 +208,7 @@ dojo.declare(
 				node: node,
 				duration: this.duration,
 				onEnd: function(){
-					node.style.visibility="hidden";
-					node.style.top = "-9999px";
+					node.style.display = "none";
 					dijit._underlay.hide();
 				}
 			 });
@@ -233,6 +230,7 @@ dojo.declare(
 			if(this._moveable){
 				this._moveable.destroy();
 			}
+			this.inherited(arguments);
 		},
 
 		_size: function(){
@@ -262,18 +260,20 @@ dojo.declare(
 			// tags:
 			//		private
 			if(!dojo.hasClass(dojo.body(),"dojoMove")){
-				var node = this.domNode;
-				var viewport = dijit.getViewport();
-					var p = this._relativePosition;
-					var mb = p ? null : dojo.marginBox(node);
-					dojo.style(node,{
-						left: Math.floor(viewport.l + (p ? p.l : (viewport.w - mb.w) / 2)) + "px",
-						top: Math.floor(viewport.t + (p ? p.t : (viewport.h - mb.h) / 2)) + "px"
-					});
-				}
-
+				var node = this.domNode,
+					viewport = dijit.getViewport(),
+					p = this._relativePosition,
+					mb = p ? null : dojo.marginBox(node),
+					l = Math.floor(viewport.l + (p ? p.l : (viewport.w - mb.w) / 2)),
+					t = Math.floor(viewport.t + (p ? p.t : (viewport.h - mb.h) / 2))
+				;
+				dojo.style(node,{
+					left: l + "px",
+					top: t + "px"
+				});
+			}
 		},
-
+		
 		_onKey: function(/*Event*/ evt){
 			// summary:
 			//		Handles the keyboard events for accessibility reasons
@@ -300,7 +300,7 @@ dojo.declare(
 				}else{
 					// see if the key is for the dialog
 					while(node){
-						if(node == this.domNode){
+						if(node == this.domNode || dojo.hasClass(node, "dijitPopup")){
 							if(evt.charOrCode == dk.ESCAPE){
 								this.onCancel(); 
 							}else{
@@ -353,7 +353,7 @@ dojo.declare(
 
 			dojo.style(this.domNode, {
 				opacity:0,
-				visibility:""
+				display:""
 			});
 			
 			if(this._fixSizes){
@@ -400,6 +400,7 @@ dojo.declare(
 				delete this._relativePosition;	
 			}
 			this.open = false;
+			this.onHide();
 		},
 
 		layout: function() {
@@ -407,7 +408,7 @@ dojo.declare(
 			//		Position the Dialog and the underlay
 			// tags:
 			//		private
-			if(this.domNode.style.visibility != "hidden"){
+			if(this.domNode.style.display != "none"){
 				dijit._underlay.layout();
 				this._position();
 			}

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,13 +21,28 @@ package org.openbravo.erpCommon.utility;
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
+//examples for the types of postgres messages to be parsed by this class
+
+// example for unique constraint
+// ORA-00001: unique constraint (TADPI.AD_USER_UN_USERNAME) violated
+
+// example for raise_application_error(-20000), from inside a trigger
+// ORA-20000: @HCMC_OneDefaultRecord@
+// ORA-06512: at "TADPI.HCMC_DEFAULT_TRG", line 35
+// ORA-04088: error during execution of trigger 'TADPI.HCMC_DEFAULT_TRG'
+
+// example for oracle raised error from inside/about a trigger
+// ORA-04091: table TADPI.AD_MODULE is mutating, trigger/function may not see it
+// ORA-06512: at "TADPI.AD_MODULE_DEPENDENCY_MOD_TRG", line 30
+// ORA-04088: error during execution of trigger 'TADPI.AD_MODULE_DEPENDENCY_MOD_TRG'
+
 /**
  * @author Fernando Iriazabal
  * 
  *         Instance of the Abstract class, ErrorTextParser, that implements the error parsing for
  *         ORACLE RDBMS.
  */
-public class ErrorTextParserORACLE extends ErrorTextParser {
+class ErrorTextParserORACLE extends ErrorTextParser {
   static Logger log4j = Logger.getLogger(ErrorTextParserORACLE.class);
 
   /*
@@ -47,6 +62,7 @@ public class ErrorTextParserORACLE extends ErrorTextParser {
     String myMessage = getMessage();
     if (log4j.isDebugEnabled())
       log4j.debug("Message: " + myMessage);
+
     // BEGIN Checking if it's a DB error
     int pos = myMessage.indexOf("ORA-");
     if (pos != -1) {
@@ -72,8 +88,16 @@ public class ErrorTextParserORACLE extends ErrorTextParser {
         } else if (errorCode >= 20000 && errorCode <= 30000) {
           myError = new OBError();
           myError.setType("Error");
+
+          String toTranslate = myMessage.replace(errorCodeText + ": ", "");
+          // assumption incoming error message useful part is completely contained in the first line
+          pos = toTranslate.indexOf("\n");
+          if (pos != -1) {
+            toTranslate = toTranslate.substring(0, pos);
+          }
+
           String messageAux = Utility.parseTranslation(getConnection(), getVars(), getLanguage(),
-              myMessage.replace(errorCodeText + ": ", ""));
+              toTranslate);
           if (log4j.isDebugEnabled())
             log4j.debug("Message parsed: " + messageAux);
           myError.setMessage(messageAux);

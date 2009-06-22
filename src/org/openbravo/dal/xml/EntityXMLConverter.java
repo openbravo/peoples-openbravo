@@ -219,7 +219,9 @@ public class EntityXMLConverter implements OBNotSingleton {
       xmlHandler.startDocument();
 
       final AttributesImpl rootAttrs = new AttributesImpl();
-      xmlHandler.startElement("http://www.openbravo.com", XMLConstants.OB_ROOT_ELEMENT, "ob:"
+      rootAttrs.addAttribute("", "", "xmlns:xsi", "CDATA", XMLConstants.XSI_NAMESPACE);
+
+      xmlHandler.startElement(XMLConstants.OPENBRAVO_NAMESPACE, XMLConstants.OB_ROOT_ELEMENT, "ob:"
           + XMLConstants.OB_ROOT_ELEMENT, rootAttrs);
 
       boolean firstRound = true;
@@ -329,6 +331,7 @@ public class EntityXMLConverter implements OBNotSingleton {
 
       // will result in an empty tag if null
       if (value == null) {
+        propertyAttrs.addAttribute("", "", "xsi:nil", "CDATA", "true");
         xmlHandler.startElement("", "", p.getName(), propertyAttrs);
         xmlHandler.endElement("", "", p.getName());
         continue;
@@ -347,17 +350,16 @@ public class EntityXMLConverter implements OBNotSingleton {
         // handle a special case the tree node
         // both the parent and the node should be added to the export list
         if (value != null && obObject instanceof TreeNode) {
-          final boolean isReferingProperty = p.getName().equals(TreeNode.PROPERTY_REPORTSET)
-              || p.getName().equals(TreeNode.PROPERTY_NODE);
-          if (isReferingProperty && value != null && !value.equals("0")) {
+          if (PrimitiveReferenceHandler.getInstance().isPrimitiveReference(p) && value != null
+              && !value.equals("0")) {
             final String strValue = (String) value;
-            final TreeNode treeNode = (TreeNode) obObject;
-            final Entity referedEntity = ModelProvider.getInstance().getEntityFromTreeType(
-                treeNode.getTree().getTypeArea());
+            final Entity referedEntity = PrimitiveReferenceHandler.getInstance()
+                .getPrimitiveReferencedEntity(obObject, p);
             final BaseOBObject obValue = OBDal.getInstance().get(referedEntity.getName(), strValue);
             if (obValue == null) {
-              log.error("TreeNode: The value " + strValue + " used in treeNode " + treeNode.getId()
-                  + " is not valid, there is no " + referedEntity.getName() + " with that id");
+              log.error("Object (with id:" + obObject.getId() + "): The value " + strValue
+                  + " used in this object is not valid, there is no " + referedEntity.getName()
+                  + " with that id");
               // Check.isNotNull(obValue, "The value " + strValue + " used in treeNode "
               // + treeNode.getId() + " is not valid, there is no " + referedEntity.getName()
               // + " with that id");

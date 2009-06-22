@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -41,6 +43,12 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class DebtPayment extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "BPARTNER", "ORDERNO", "INVOICE", "DATEPLANNED",
+      "AMOUNT", "WRITEOFFAMT", "CURRENCY", "PAYMENTRULE", "DEBTCANCEL", "DEBTGENERATE",
+      "C_DEBT_PAYMENT_ID", "ROWKEY" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -79,18 +87,18 @@ public class DebtPayment extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-      String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
 
       printGridData(response, vars, strBpartnerId, strDateFrom, strDateTo, strCal1, strCal2,
-          strPaymentRule, strIsReceipt, strIsPaid, strIsPending, strOrder, strInvoice, strSortCols
-              + " " + strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
+          strPaymentRule, strIsReceipt, strIsPaid, strIsPending, strOrder, strInvoice, strSortCols,
+          strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
     } else
       pageError(response);
   }
 
-  void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPageFS(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: DebtPayments seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -102,7 +110,7 @@ public class DebtPayment extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of the DebtPayments seeker");
@@ -144,7 +152,7 @@ public class DebtPayment extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
+  private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page structure");
@@ -172,8 +180,6 @@ public class DebtPayment extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "BPARTNER", "ORDERNO", "INVOICE", "DATEPLANNED", "AMOUNT", "WRITEOFFAMT",
-        "CURRENCY", "PAYMENTRULE", "DEBTCANCEL", "DEBTGENERATE", "C_DEBT_PAYMENT_ID", "ROWKEY" };
     boolean[] colSortable = { true, true, true, true, true, true, true, false, false, false, false,
         false };
     String[] colWidths = { "113", "59", "57", "60", "65", "62", "55", "81", "110", "110", "0", "0" };
@@ -199,11 +205,12 @@ public class DebtPayment extends HttpSecureAppServlet {
     return data;
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strBpartnerId,
-      String strDateFrom, String strDateTo, String strCal1, String strCal2, String strPaymentRule,
-      String strIsReceipt, String strIsPaid, String strIsPending, String strOrder,
-      String strInvoice, String strOrderBy, String strOffset, String strPageSize,
-      String strNewFilter, String strOrg) throws IOException, ServletException {
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars,
+      String strBpartnerId, String strDateFrom, String strDateTo, String strCal1, String strCal2,
+      String strPaymentRule, String strIsReceipt, String strIsPaid, String strIsPending,
+      String strOrder, String strInvoice, String strOrderCols, String strOrderDirs,
+      String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -213,12 +220,17 @@ public class DebtPayment extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int offset = Integer.valueOf(strOffset).intValue();
+    int pageSize = Integer.valueOf(strPageSize).intValue();
 
     // adjust to either pending or any other state then pending
     strIsPending = strIsPending.equals("P") ? "= 'P'" : "<> 'P'";
 
     if (headers != null) {
       try {
+        // build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
+
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or
@@ -235,17 +247,14 @@ public class DebtPayment extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (Integer.valueOf(strOffset) + 1)
-              + " AND "
-              + String
-                  .valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = DebtPaymentData.select(this, vars.getLanguage(), "ROWNUM", Utility.getContext(
               this, vars, "#User_Client", "DebtPayment"), Utility.getSelectorOrgs(this, vars,
               strOrg), strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
               strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder,
               strIsPending, strOrderBy, oraLimit, "");
         } else {
-          String pgLimit = strPageSize + " OFFSET " + strOffset;
+          String pgLimit = pageSize + " OFFSET " + offset;
           data = DebtPaymentData.select(this, vars.getLanguage(), "1", Utility.getContext(this,
               vars, "#User_Client", "DebtPayment"), Utility.getSelectorOrgs(this, vars, strOrg),
               strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,

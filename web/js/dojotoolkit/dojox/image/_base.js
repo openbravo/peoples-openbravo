@@ -8,7 +8,6 @@
 if(!dojo._hasResource["dojox.image._base"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojox.image._base"] = true;
 dojo.provide("dojox.image._base");
-// dojo . require("dijit._Widget");
 
 // summary: Core Image-related functionality 
 ;(function(d){
@@ -29,16 +28,19 @@ dojo.provide("dojox.image._base");
 		//	|	var djConfig = {
 		//	|		preloadImages:["bar.png", "baz.png", "http://example.com/icon.gif"]
 		//	|	};	
+		//
+		// returns: Array
+		//		An Array of DomNodes that have been cached. 
 		
 		if(!cacheNode){ 
 			cacheNode = d.create("div", {
-				style:{ position:"absolute", top:"-9999px", display:"none" }
+				style:{ position:"absolute", top:"-9999px", height:"1px", overflow:"hidden" }
 			}, d.body());
 		}
 
 		// place them in the hidden cachenode
-		d.forEach(urls, function(url){
-			d.create("img", { src: url }, cacheNode);
+		return d.map(urls, function(url){
+			return d.create("img", { src: url }, cacheNode);
 		});
 	
 	};
@@ -54,9 +56,9 @@ dojo.provide("dojox.image._base");
 	if(d.config.preloadImages){
 		d.addOnLoad(function(){
 			dojox.image.preload(d.config.preloadImages);
-		})
+		});
 	}
-	
+		
 //	dojo.declare("dojox.image.Image", dijit._Widget, {
 //		// summary: an Image widget
 //		//

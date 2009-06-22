@@ -40,7 +40,7 @@
     Cur_Parameter RECORD;
     -- Parameter Variables
     --
-    v_NextNo VARCHAR2(32);
+    v_NextNo NUMBER;
     v_Count NUMBER:=0;
   BEGIN
     --  Update AD_PInstance

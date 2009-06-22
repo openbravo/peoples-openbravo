@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -47,7 +48,7 @@ public class ReportInvoiceDiscount extends HttpSecureAppServlet {
           "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceDiscount|dateTo", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceDiscount|partner", "");
+          "ReportInvoiceDiscount|partner", "", IsIDFilter.instance);
       String strDiscount = vars.getGlobalVariable("inpDiscount", "ReportInvoiceDiscount|discount",
           "N");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strDiscount);
@@ -56,7 +57,7 @@ public class ReportInvoiceDiscount extends HttpSecureAppServlet {
           "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceDiscount|dateTo", "");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceDiscount|partner");
+          "ReportInvoiceDiscount|partner", IsIDFilter.instance);
       String strDiscount = vars.getRequestGlobalVariable("inpDiscount",
           "ReportInvoiceDiscount|discount");
       printPageDataHtml(response, vars, strDateFrom, strDateTo, strcBpartnerId, strDiscount);
@@ -64,9 +65,9 @@ public class ReportInvoiceDiscount extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom,
-      String strDateTo, String strcBpartnerId, String strDiscount) throws IOException,
-      ServletException {
+  private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateFrom, String strDateTo, String strcBpartnerId, String strDiscount)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
 
@@ -84,15 +85,15 @@ public class ReportInvoiceDiscount extends HttpSecureAppServlet {
     String strCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     xmlDocument.setData("structure1", ReportInvoiceDiscountData.select(this, strCurrencyId, Utility
         .getContext(this, vars, "#User_Client", "ReportInvoiceDiscount"), Utility.getContext(this,
-        vars, "#AccessibleOrgTree", "ReportInvoiceDiscount"), strDateFrom, strDateTo, strcBpartnerId,
-        (strDiscount.equals("N")) ? "" : "discount"));
+        vars, "#AccessibleOrgTree", "ReportInvoiceDiscount"), strDateFrom, strDateTo,
+        strcBpartnerId, (strDiscount.equals("N")) ? "" : "discount"));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strcBpartnerId, String strDiscount)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -144,8 +145,8 @@ public class ReportInvoiceDiscount extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("discount", strDiscount);
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-        ReportInvoiceDiscountData.selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInvoiceDiscountData
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#User_Client",
             "ReportInvoiceDiscount"), strcBpartnerId));
 
@@ -187,14 +188,15 @@ public class ReportInvoiceDiscount extends HttpSecureAppServlet {
    * xmlDocument.setParameter("dateFrom", strDateFrom); xmlDocument.setParameter("dateTo",
    * strDateTo); xmlDocument.setParameter("discount", strDiscount);
    * xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-   * ReportInvoiceDiscountData.selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-   * "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#User_Client",
+   * ReportInvoiceDiscountData.selectBpartner(this, Utility.getContext(this, vars,
+   * "#AccessibleOrgTree", "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#User_Client",
    * "ReportInvoiceDiscount"), strcBpartnerId)); xmlDocument.setData("structure1",
    * ReportInvoiceDiscountData.select(this, Utility.getContext(this, vars, "#User_Client",
-   * "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscount"),
-   * strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strcBpartnerId,
-   * (strDiscount.equals("N"))?"":"discount")); response.setContentType("text/html; charset=UTF-8");
-   * PrintWriter out = response.getWriter(); out.println(xmlDocument.print()); out.close(); }
+   * "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#AccessibleOrgTree",
+   * "ReportInvoiceDiscount"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"),
+   * strcBpartnerId, (strDiscount.equals("N"))?"":"discount"));
+   * response.setContentType("text/html; charset=UTF-8"); PrintWriter out = response.getWriter();
+   * out.println(xmlDocument.print()); out.close(); }
    */
 
   public String getServletInfo() {

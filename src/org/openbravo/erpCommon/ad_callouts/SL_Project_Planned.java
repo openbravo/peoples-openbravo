@@ -61,7 +61,7 @@ public class SL_Project_Planned extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strPlannedQty,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strPlannedQty,
       String strPlannedPrice, String strPlannedPurchasePrice, String strPlannedMargin,
       String strcProjectLineId, String strTabId, String strChanged) throws IOException,
       ServletException {

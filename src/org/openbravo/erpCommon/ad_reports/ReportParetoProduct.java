@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -86,7 +86,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
+  private void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strWarehouse, String strAD_Org_ID, String strClient,
       String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -193,8 +193,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-            "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProduct"), Utility
-                .getContext(this, vars, "#User_Client", "ReportParetoProduct"), 0);
+            "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProduct"),
+            Utility.getContext(this, vars, "#User_Client", "ReportParetoProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
             strAD_Org_ID);
         xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
@@ -206,8 +206,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProduct"), Utility
-                .getContext(this, vars, "#User_Client", "ReportParetoProduct"), 0);
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProduct"),
+            Utility.getContext(this, vars, "#User_Client", "ReportParetoProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
             strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -216,7 +216,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
         throw new ServletException(ex);
       }
 
-      xmlDocument.setParameter("warehouseArray", arrayDobleEntrada("arrWarehouse",
+      xmlDocument.setParameter("warehouseArray", Utility.arrayDobleEntrada("arrWarehouse",
           ReportParetoProductData.selectWarehouseDouble(this, Utility.getContext(this, vars,
               "#User_Client", "ReportParetoProduct"))));
 
@@ -229,8 +229,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
     }
   }
 
-  OBError mUpdateParetoProduct(VariablesSecureApp vars, String strWarehouse, String strAD_Org_ID,
-      String strAD_Client_ID) throws IOException, ServletException {
+  private OBError mUpdateParetoProduct(VariablesSecureApp vars, String strWarehouse,
+      String strAD_Org_ID, String strAD_Client_ID) throws IOException, ServletException {
     String pinstance = SequenceIdData.getUUID();
 
     PInstanceProcessData.insertPInstance(this, pinstance, "1000500001", "0", "N", vars.getUser(),

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -52,23 +53,23 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
       String strcProjectId = vars.getGlobalVariable("inpcProjectId",
           "ReportProjectBuildingSite|cProjectId", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportProjectBuildingSite|cBPartnerId_IN", "");
+          "ReportProjectBuildingSite|cBPartnerId_IN", "", IsIDFilter.instance);
       String strmCategoryId = vars.getInGlobalVariable("inpmProductCategoryId",
-          "ReportProjectBuildingSite|mCategoryId", "");
+          "ReportProjectBuildingSite|mCategoryId", "", IsIDFilter.instance);
       String strProjectkind = vars.getInGlobalVariable("inpProjectkind",
-          "ReportProjectBuildingSite|Projectkind", "");
+          "ReportProjectBuildingSite|Projectkind", "", IsIDFilter.instance);
       String strProjectstatus = vars.getInGlobalVariable("inpProjectstatus",
-          "ReportProjectBuildingSite|Projectstatus", "");
+          "ReportProjectBuildingSite|Projectstatus", "", IsIDFilter.instance);
       String strProjectphase = vars.getInGlobalVariable("inpProjectphase",
-          "ReportProjectBuildingSite|Projectphase", "");
+          "ReportProjectBuildingSite|Projectphase", "", IsIDFilter.instance);
       String strProduct = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportProjectBuildingSite|mProductId_IN", "");
+          "ReportProjectBuildingSite|mProductId_IN", "", IsIDFilter.instance);
       String strProjectpublic = vars.getGlobalVariable("inpProjectpublic",
           "ReportProjectBuildingSite|Projectpublic", "");
       String strSalesRep = vars.getGlobalVariable("inpSalesRepId",
           "ReportProjectBuildingSite|SalesRepId", "");
       String strcRegionId = vars.getInGlobalVariable("inpcRegionId",
-          "ReportProjectBuildingSite|cRegionId", "");
+          "ReportProjectBuildingSite|cRegionId", "", IsIDFilter.instance);
       printPageDataSheet(response, vars, strdateFrom, strdateTo, strcBpartnerId, strcProjectId,
           strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic,
           strcRegionId, strSalesRep, strProduct);
@@ -80,23 +81,23 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId",
           "ReportProjectBuildingSite|cProjectId");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportProjectBuildingSite|cBPartnerId_IN");
+          "ReportProjectBuildingSite|cBPartnerId_IN", IsIDFilter.instance);
       String strmCategoryId = vars.getRequestInGlobalVariable("inpmProductCategoryId",
-          "ReportProjectBuildingSite|mCategoryId");
+          "ReportProjectBuildingSite|mCategoryId", IsIDFilter.instance);
       String strProjectkind = vars.getRequestInGlobalVariable("inpProjectkind",
-          "ReportProjectBuildingSite|Projectkind");
+          "ReportProjectBuildingSite|Projectkind", IsIDFilter.instance);
       String strProjectstatus = vars.getRequestInGlobalVariable("inpProjectstatus",
-          "ReportProjectBuildingSite|Projectstatus");
+          "ReportProjectBuildingSite|Projectstatus", IsIDFilter.instance);
       String strProjectphase = vars.getRequestInGlobalVariable("inpProjectphase",
-          "ReportProjectBuildingSite|Projectphase");
+          "ReportProjectBuildingSite|Projectphase", IsIDFilter.instance);
       String strProduct = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportProjectBuildingSite|mProductId_IN");
+          "ReportProjectBuildingSite|mProductId_IN", IsIDFilter.instance);
       String strProjectpublic = vars.getRequestGlobalVariable("inpProjectpublic",
           "ReportProjectBuildingSite|Projectpublic");
       String strSalesRep = vars.getRequestGlobalVariable("inpSalesRepId",
           "ReportProjectBuildingSite|SalesRepId");
       String strcRegionId = vars.getRequestInGlobalVariable("inpcRegionId",
-          "ReportProjectBuildingSite|cRegionId");
+          "ReportProjectBuildingSite|cRegionId", IsIDFilter.instance);
       printPageDataSheet(response, vars, strdateFrom, strdateTo, strcBpartnerId, strcProjectId,
           strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic,
           strcRegionId, strSalesRep, strProduct);
@@ -108,23 +109,23 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId",
           "ReportProjectBuildingSite|cProjectId");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportProjectBuildingSite|cBPartnerId_IN");
+          "ReportProjectBuildingSite|cBPartnerId_IN", IsIDFilter.instance);
       String strmCategoryId = vars.getRequestInGlobalVariable("inpmProductCategoryId",
-          "ReportProjectBuildingSite|mCategoryId");
+          "ReportProjectBuildingSite|mCategoryId", IsIDFilter.instance);
       String strProjectkind = vars.getRequestInGlobalVariable("inpProjectkind",
-          "ReportProjectBuildingSite|Projectkind");
+          "ReportProjectBuildingSite|Projectkind", IsIDFilter.instance);
       String strProjectstatus = vars.getRequestInGlobalVariable("inpProjectstatus",
-          "ReportProjectBuildingSite|Projectstatus");
+          "ReportProjectBuildingSite|Projectstatus", IsIDFilter.instance);
       String strProjectphase = vars.getRequestInGlobalVariable("inpProjectphase",
-          "ReportProjectBuildingSite|Projectphase");
+          "ReportProjectBuildingSite|Projectphase", IsIDFilter.instance);
       String strProduct = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportProjectBuildingSite|mProductId_IN");
+          "ReportProjectBuildingSite|mProductId_IN", IsIDFilter.instance);
       String strProjectpublic = vars.getRequestGlobalVariable("inpProjectpublic",
           "ReportProjectBuildingSite|Projectpublic");
       String strSalesRep = vars.getRequestGlobalVariable("inpSalesRepId",
           "ReportProjectBuildingSite|SalesRepId");
       String strcRegionId = vars.getRequestInGlobalVariable("inpcRegionId",
-          "ReportProjectBuildingSite|cRegionId");
+          "ReportProjectBuildingSite|cRegionId", IsIDFilter.instance);
       printPageDataPDF(response, vars, strdateFrom, strdateTo, strcBpartnerId, strcProjectId,
           strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic,
           strcRegionId, strSalesRep, strProduct);
@@ -132,7 +133,7 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcBpartnerId, String strcProjectId,
       String strmCategoryId, String strProjectkind, String strProjectphase,
       String strProjectstatus, String strProjectpublic, String strcRegionId, String strSalesRep,
@@ -256,13 +257,15 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
       }
 
       xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", SubCategoryProductData
-          .select(this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSite"),
-              Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSite")));
+          .select(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportProjectBuildingSite"), Utility.getContext(this, vars, "#User_Client",
+              "ReportProjectBuildingSite")));
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Region_ID",
-            "", "C_Region of Country", Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
-            Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderProvided"), 0);
+            "", "C_Region of Country", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "Account"), Utility.getContext(this, vars, "#User_Client",
+                "ReportSalesOrderProvided"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderProvided",
             strcRegionId);
         xmlDocument.setData("reportC_REGIONID", "liststructure", comboTableData.select(false));
@@ -296,10 +299,10 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
       ReportProjectBuildingSiteData[] data = ReportProjectBuildingSiteData.select(this,
           strCurrencyId, Utility
               .getContext(this, vars, "#User_Client", "ReportProjectBuildingSite"), Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSite"), strdateFrom,
-          DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId, strcProjectId,
-          strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic,
-          strcRegionId, strSalesRep, strProduct);
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSite"),
+          strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId,
+          strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus,
+          strProjectpublic, strcRegionId, strSalesRep, strProduct);
 
       if (data == null || data.length == 0) {
         xmlDocument = xmlEngine.readXmlTemplate(
@@ -338,11 +341,11 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom,
-      String strdateTo, String strcBpartnerId, String strcProjectId, String strmCategoryId,
-      String strProjectkind, String strProjectphase, String strProjectstatus,
-      String strProjectpublic, String strcRegionId, String strSalesRep, String strProduct)
-      throws IOException, ServletException {
+  private void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strdateFrom, String strdateTo, String strcBpartnerId, String strcProjectId,
+      String strmCategoryId, String strProjectkind, String strProjectphase,
+      String strProjectstatus, String strProjectpublic, String strcRegionId, String strSalesRep,
+      String strProduct) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PDF");
     String discard[] = { "sectionPartner" };
@@ -353,8 +356,8 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
     String strCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     ReportProjectBuildingSiteData[] data = ReportProjectBuildingSiteData.select(this,
         strCurrencyId, Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSite"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSite"), strdateFrom,
-        DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId, strcProjectId,
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSite"),
+        strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId, strcProjectId,
         strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic,
         strcRegionId, strSalesRep, strProduct);
 

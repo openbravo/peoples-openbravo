@@ -50,7 +50,7 @@ public class RptM_Inout extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars, String strmInoutId)
+  private void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars, String strmInoutId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
