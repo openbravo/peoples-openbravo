@@ -161,6 +161,7 @@
   <FIELD id="ButtonRealName1">realname</FIELD>
   <FIELD id="ButtonMapping1">mappingname</FIELD>
   <FIELD id="FieldsLoad1">htmltext</FIELD>
+  <FIELD id="SetSession1">setsession</FIELD>
   <FIELD id="FieldsLoadName1">htmlfields</FIELD>
   <FIELD id="comboParameters1">comboparacode</FIELD>
   <SECTION id="sectionActionButtons1"/>
@@ -172,6 +173,7 @@
   <FIELD id="ButtonRealName4">realname</FIELD>
   <FIELD id="ButtonMapping4">mappingname</FIELD>
   <FIELD id="FieldsLoad4">htmltext</FIELD>
+  <FIELD id="SetSessionJava1">setsession</FIELD>
   <FIELD id="FieldsLoadName4">htmlfields</FIELD>
   <FIELD id="comboParametersJava1">comboparacode</FIELD>
   <SECTION id="sectionActionButtonsJava1"/>

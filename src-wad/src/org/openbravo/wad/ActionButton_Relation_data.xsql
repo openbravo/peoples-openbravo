@@ -29,7 +29,7 @@
       '' AS htmlfields, '' AS htmltext, '' AS htmlfields_Header, AD_COLUMN.AD_TABLE_ID, '' AS javacode, 
       AD_COLUMN.ad_reference_value_id, '' AS process_Params, '' AS process_code, '' AS additional_code, 
       '' AS process_Params_Code, AD_COLUMN.AD_PROCESS_ID AS xmlid, mo.classname, mom.mappingname,
-      '' AS isjasper, '' as total, '' as comboparacode
+      '' AS isjasper, '' as total, '' as comboparacode, '' as  setsession
       FROM AD_FIELD, AD_COLUMN
             left join ad_model_object mo on ad_column.ad_process_id = mo.ad_process_id 
                           and mo.isactive = 'Y' 

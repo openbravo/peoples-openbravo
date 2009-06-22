@@ -115,6 +115,7 @@ public class WadActionButton {
           fab[i].xmlid = "";
         fab[i].realname = FormatUtilities.replace(fab[i].realname);
         fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
+        fab[i].setsession = getFieldsSession(fab[i]);
         fab[i].htmltext = getFieldsLoad(fab[i], vecFields, vecTotalFields);
         fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, isSOTrx, window,
             tabName, false, fab[i].adProcessId);
@@ -367,9 +368,11 @@ public class WadActionButton {
       Vector<Object> vecTotalFields) {
     if (fd == null)
       return "";
+    String processId = fd.adProcessId;
     final StringBuffer html = new StringBuffer();
     if (fd.columnname.equalsIgnoreCase("DocAction")) {
-      html.append("String strdocstatus = vars.getRequiredStringParameter(\"inpdocstatus\");\n");
+      html.append("String strdocstatus = vars.getSessionValue(\"button").append(processId).append(
+          ".inpdocstatus\");\n");
       vecFields.addElement("strdocstatus");
       vecTotalFields.addElement("DocStatus");
       html.append("String stradTableId = \"" + fd.adTableId + "\";\n");
@@ -384,12 +387,27 @@ public class WadActionButton {
       vecFields.addElement("stradTableId");
       vecTotalFields.addElement("AD_Table_ID");
     } else if (fd.columnname.equalsIgnoreCase("ChangeProjectStatus")) {
-      html
-          .append("String strprojectstatus = vars.getRequiredStringParameter(\"inpprojectstatus\");\n");
+      html.append("String strprojectstatus = vars.getSessionValue(\"button").append(processId)
+          .append(".inpprojectstatus\");\n");
       vecFields.addElement("strprojectstatus");
       vecTotalFields.addElement("ProjectStatus");
     }
     return html.toString();
+  }
+
+  private static String getFieldsSession(ActionButtonRelationData fd) {
+    if (fd == null)
+      return "";
+    String processId = fd.adProcessId;
+    final StringBuffer result = new StringBuffer();
+    if (fd.columnname.equalsIgnoreCase("DocAction")) {
+      result.append("vars.setSessionValue(\"button").append(processId).append(
+          ".inpdocstatus\", vars.getRequiredStringParameter(\"inpdocstatus\"));\n");
+    } else if (fd.columnname.equalsIgnoreCase("ChangeProjectStatus")) {
+      result.append("vars.setSessionValue(\"button").append(processId).append(
+          ".inpprojectstatus\", vars.getRequiredStringParameter(\"inpprojectstatus\"));\n");
+    }
+    return result.toString();
   }
 
   /**

@@ -393,6 +393,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         vars.setSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.strProcessing", vars.getStringParameter("inpprocessing", "Y"));
         vars.setSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.strOrg", vars.getStringParameter("inpadOrgId"));
         vars.setSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.strClient", vars.getStringParameter("inpadClientId"));
+        <FIELD_TMP id="SetSession1"></FIELD_TMP>
         
         HashMap&lt;String, String&gt; p = new HashMap&lt;String, String&gt;();
         <FIELD_TMP id="comboParameters1"></FIELD_TMP>
@@ -421,12 +422,13 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         vars.setSessionValue("button<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>.strProcessing", vars.getStringParameter("inpprocessing", "Y"));
         vars.setSessionValue("button<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>.strOrg", vars.getStringParameter("inpadOrgId"));
         vars.setSessionValue("button<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>.strClient", vars.getStringParameter("inpadClientId"));
+        <FIELD_TMP id="SetSessionJava1"></FIELD_TMP>
         
         HashMap&lt;String, String&gt; p = new HashMap&lt;String, String&gt;();
         <FIELD_TMP id="comboParametersJava1"></FIELD_TMP>
         
         //Save in session needed params for combos if needed
-        vars.setSessionObject("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.originalParams", FieldProviderFactory.getFieldProvider(p));
+        vars.setSessionObject("button<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>.originalParams", FieldProviderFactory.getFieldProvider(p));
         printPageButtonFS(response, vars, "<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>", request.getServletPath());
       } else if (vars.commandIn("BUTTON<FIELD_TMP id="ProcessID4">button</FIELD_TMP>")) {
         String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
