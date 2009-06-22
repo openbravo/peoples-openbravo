@@ -47,7 +47,7 @@ context.name=openbravo
 source.path=/opt/openbravo
 
 # Openbravo ERP version
-application.version=2.50
+application.version=2.50MP2
 
 #Deploy mode: valid values [class, war]
 deploy.mode=class
