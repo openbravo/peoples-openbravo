@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
@@ -46,6 +47,19 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final RequestFilter columnNameFilter = new RequestFilter() {
+    @Override
+    public boolean accept(String value) {
+      for (int i = 0; i < value.length(); i++) {
+        int c = value.codePointAt(i);
+        if (Character.isLetter(c) || Character.isDigit(c) || value.charAt(i) == '_') {
+          return true;
+        }
+      }
+      return false;
+    }
+  };
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -69,7 +83,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
           "ReportAccountingCountDimensionalAnalyses|mProductId", "", IsIDFilter.instance);
       String strShown = vars.getInGlobalVariable("inpShown",
-          "ReportAccountingCountDimensionalAnalyses|shown", "");
+          "ReportAccountingCountDimensionalAnalyses|shown", "", columnNameFilter);
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportAccountingCountDimensionalAnalyses|org", "0");
       String strcProjectId = vars.getGlobalVariable("inpcProjectId",
@@ -104,7 +118,7 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
           "ReportAccountingCountDimensionalAnalyses|mProductId", IsIDFilter.instance);
       String strShown = vars.getRequestInGlobalVariable("inpShown",
-          "ReportAccountingCountDimensionalAnalyses|shown");
+          "ReportAccountingCountDimensionalAnalyses|shown", columnNameFilter);
       String strOrg = vars.getGlobalVariable("inpOrg",
           "ReportAccountingCountDimensionalAnalyses|org", "0");
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId",
