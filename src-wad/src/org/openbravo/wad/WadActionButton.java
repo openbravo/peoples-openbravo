@@ -188,6 +188,7 @@ public class WadActionButton {
         fab[i].realname = FormatUtilities.replace(fab[i].realname);
         fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
         fab[i].htmltext = getFieldsLoad(fab[i], vecFields, vecTotalFields);
+        fab[i].setsession = getFieldsSession(fab[i]);
         fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, isSOTrx, window,
             tabName, false, fab[i].adProcessId);
         fab[i].comboparacode = getComboParaCode(conn, fab[i].adProcessId, strTab);
