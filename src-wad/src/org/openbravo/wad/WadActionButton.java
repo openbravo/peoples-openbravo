@@ -932,16 +932,8 @@ public class WadActionButton {
 
       script.append("\nfunction reloadComboReloads").append(fd.reference).append(
           "(changedField) {\n");
-      script.append("  var action;\n");
-      script.append("  if (document.forms[0]) {\n");
-      script.append("    action = document.forms[0].action;\n");
-      script.append("  }\n");
-
       script
           .append("  submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloadsProcessHelper.html', 'hiddenFrame', null, null, true);\n");
-      script.append("  if (document.forms[0]) {\n");
-      script.append("    document.forms[0].action = action;\n");
-      script.append("  }\n");
       script.append("  return true;\n");
       script.append("}\n");
 
