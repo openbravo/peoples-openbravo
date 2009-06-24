@@ -51,6 +51,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
   private boolean isInitialized = false;
   private Map<String, Set<String>> naturalTreesByOrgID = new HashMap<String, Set<String>>();
+  private Map<String, String> parentByOrganizationID = new HashMap<String, String>();
   private String clientId;
 
   /**
@@ -95,6 +96,13 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
     for (final OrgNode on : orgNodes) {
       on.resolve(orgNodes);
+    }
+
+    for (final OrgNode on : orgNodes) {
+      if (on.getParent() != null) {
+        parentByOrganizationID.put(on.getTreeNode().getNode(), on.getParent().getTreeNode()
+            .getNode());
+      }
     }
 
     for (final OrgNode on : orgNodes) {
@@ -146,6 +154,42 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     Check.isNotNull(ids, "Organization with id " + id1
         + " does not have a computed natural tree, does this organization exist?");
     return ids.contains(id2);
+  }
+
+  /**
+   * Returns the parent organizations tree of an organization.
+   * 
+   * @param orgId
+   *          the id of the organization for which the parent organization tree is determined.
+   * @param includeOrg
+   *          if true, returns also the given organization as part of the tree
+   * @return the parent organizations tree of the organization.
+   */
+  public Set<String> getParentTree(String orgId, boolean includeOrg) {
+    initialize();
+    String parentOrg = this.getParentOrg(orgId);
+    Set<String> result = new HashSet<String>();
+
+    if (includeOrg)
+      result.add(orgId);
+
+    while (parentOrg != null) {
+      result.add(parentOrg);
+      parentOrg = this.getParentOrg(parentOrg);
+    }
+    return result;
+  }
+
+  /**
+   * Returns the parent organization of an organization.
+   * 
+   * @param orgId
+   *          the id of the organization for which the parent organization is determined.
+   * @return the parent organization.
+   */
+  public String getParentOrg(String orgId) {
+    initialize();
+    return parentByOrganizationID.get(orgId);
   }
 
   class OrgNode {

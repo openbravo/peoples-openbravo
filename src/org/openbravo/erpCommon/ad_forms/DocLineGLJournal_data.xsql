@@ -31,12 +31,12 @@
         j.DateAcct,jl.AmtAcctDr,jl.AmtAcctCr,jl.C_UOM_ID,jl.Qty,vc.C_AcctSchema_ID,vc.C_ValidCombination_ID,
         vc.Account_ID,vc.M_Product_ID,vc.C_BPartner_ID,vc.AD_OrgTrx_ID,vc.C_LocFrom_ID,vc.C_LocTo_ID,
         vc.C_SalesRegion_ID,vc.C_Project_ID,vc.C_Campaign_ID,vc.C_Activity_ID,vc.User1_ID,vc.User2_ID,
-        jl.C_DEBT_PAYMENT_ID
+        jl.C_DEBT_PAYMENT_ID, jl.C_WithHolding_ID, jl.C_Tax_ID
         FROM C_ValidCombination vc, GL_JournalLine jl , GL_Journal j
         WHERE j.GL_JOURNAL_ID = jl.GL_JOURNAL_ID
         and vc.C_ValidCombination_ID=jl.C_ValidCombination_ID
         AND jl.GL_Journal_ID = ?
-        AND jl.IsActive='Y' 
+        AND jl.IsActive='Y'
         AND vc.IsFullyQualified='Y'
         ORDER BY jl.Line
      ]]>

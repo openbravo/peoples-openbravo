@@ -237,30 +237,34 @@ public class DocPayment extends AcctServer {
           if (log4j.isDebugEnabled())
             log4j.debug("Manual DP - amount:" + amount + " - transitoryAmount:" + transitoryAmount
                 + " - Receipt:" + line.isReceipt);
+          // Line is cloned to add withholding and/or tax info
+          DocLine_Payment lineAux = DocLine_Payment.clone(line);
+          lineAux.setM_C_WithHolding_ID(data[0].cWithholdingId);
+          lineAux.setM_C_Tax_ID(data[0].cTaxId);
           // Depending on the stt type and the signum of DP it will be
           // posted on credit or debit
           if (amount.signum() == 1) {
-            fact.createLine(line, new Account(conn,
-                (line.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
-                C_Currency_ID, (line.isReceipt.equals("Y") ? transitoryAmount.abs().toString()
-                    : "0"), (line.isReceipt.equals("Y") ? "0" : transitoryAmount.abs().toString()),
-                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            fact.createLine(lineAux, new Account(conn,
+                (lineAux.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
+                C_Currency_ID, (lineAux.isReceipt.equals("Y") ? transitoryAmount.abs().toString()
+                    : "0"), (lineAux.isReceipt.equals("Y") ? "0" : transitoryAmount.abs()
+                    .toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
             if ((!changeGenerate && line.isReceipt.equals("N"))
                 || (changeGenerate && line.isReceipt.equals("Y")))
               amount = amount.negate();
           } else {
-            fact.createLine(line, new Account(conn,
-                (line.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
-                C_Currency_ID, (line.isReceipt.equals("Y") ? "0" : transitoryAmount.abs()
-                    .toString()), (line.isReceipt.equals("Y") ? transitoryAmount.abs().toString()
-                    : "0"), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            fact.createLine(lineAux, new Account(conn,
+                (lineAux.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
+                C_Currency_ID, (lineAux.isReceipt.equals("Y") ? "0" : transitoryAmount.abs()
+                    .toString()), (lineAux.isReceipt.equals("Y") ? transitoryAmount.abs()
+                    .toString() : "0"), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
             if ((!changeGenerate && line.isReceipt.equals("Y"))
                 || (changeGenerate && line.isReceipt.equals("N")))
               amount = amount.negate();
           }
         }
         // 4 Manual Sett + Cancelation Sett (no direct posting)
-        // conceptos contables
+        // G/L items
         if (SettlementType.equals("I") || line.IsDirectPosting.equals("N")) {
           DocPaymentData[] data = DocPaymentData.selectManual(conn, as.m_C_AcctSchema_ID,
               line.Line_ID);
@@ -272,8 +276,12 @@ public class DocPayment extends AcctServer {
             if (log4j.isDebugEnabled())
               log4j.debug("DocPayment - createFact - Conceptos - AmountDebit: " + amountdebit
                   + " - AmountCredit: " + amountcredit);
-            fact.createLine(line, new Account(conn,
-                (line.isReceipt.equals("Y") ? data[j].creditAcct : data[j].debitAcct)),
+            // Line is cloned to add withholding and/or tax info
+            DocLine_Payment lineAux = DocLine_Payment.clone(line);
+            lineAux.setM_C_WithHolding_ID(data[j].cWithholdingId);
+            lineAux.setM_C_Tax_ID(data[j].cTaxId);
+            fact.createLine(lineAux, new Account(conn,
+                (lineAux.isReceipt.equals("Y") ? data[j].creditAcct : data[j].debitAcct)),
                 C_Currency_ID, (amountdebit.equals("0") ? "" : amountdebit), (amountcredit
                     .equals("0") ? "" : amountcredit), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
                 DocumentType, conn);
