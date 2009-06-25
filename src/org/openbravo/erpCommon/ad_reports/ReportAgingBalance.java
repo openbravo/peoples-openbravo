@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -57,7 +58,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       String strcolumn3 = vars.getGlobalVariable("inpColumn3", "ReportAgingBalance|Column3", "30");
       String strcolumn4 = vars.getGlobalVariable("inpColumn4", "ReportAgingBalance|Column4", "60");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAgingBalance|cBpartnerId", "");
+          "ReportAgingBalance|cBpartnerId", "", IsIDFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportAgingBalance|Org", "");
       printPageDataSheet(response, vars, strisReceipt, strcolumn1, strcolumn2, strcolumn3,
           strcolumn4, strcBpartnerId, strOrg, "Y");
@@ -69,7 +70,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       String strcolumn3 = vars.getRequestGlobalVariable("inpColumn3", "ReportAgingBalance|Column3");
       String strcolumn4 = vars.getRequestGlobalVariable("inpColumn4", "ReportAgingBalance|Column4");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAgingBalance|cBpartnerId");
+          "ReportAgingBalance|cBpartnerId", IsIDFilter.instance);
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportAgingBalance|Org");
       printPageDataSheet(response, vars, strisReceipt, strcolumn1, strcolumn2, strcolumn3,
           strcolumn4, strcBpartnerId, strOrg, "N");
@@ -81,7 +82,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       String strcolumn3 = vars.getRequestGlobalVariable("inpColumn3", "ReportAgingBalance|Column3");
       String strcolumn4 = vars.getRequestGlobalVariable("inpColumn4", "ReportAgingBalance|Column4");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportAgingBalance|cBpartnerId");
+          "ReportAgingBalance|cBpartnerId", IsIDFilter.instance);
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportAgingBalance|Org");
       printPageDataPdf(response, vars, strisReceipt, strcolumn1, strcolumn2, strcolumn3,
           strcolumn4, strcBpartnerId, strOrg, "N");
@@ -89,10 +90,10 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars, String strisReceipt,
-      String strcolumn1, String strcolumn2, String strcolumn3, String strcolumn4,
-      String strcBpartnerId, String strOrgTrx, String strfirstPrint) throws IOException,
-      ServletException {
+  private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
+      String strisReceipt, String strcolumn1, String strcolumn2, String strcolumn3,
+      String strcolumn4, String strcBpartnerId, String strOrgTrx, String strfirstPrint)
+      throws IOException, ServletException {
     ReportAgingBalanceData[] data = null;
     // Jarenor
     /*
@@ -250,7 +251,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     out.close();
   }
 
-  private  String getFamily(String strTree, String strChild) throws IOException, ServletException {
+  private String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, strChild);
     /*
      * ReportGeneralLedgerData [] data = ReportGeneralLedgerData.selectChildren(this, strTree,

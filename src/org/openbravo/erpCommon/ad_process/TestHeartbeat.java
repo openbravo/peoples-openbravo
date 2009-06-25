@@ -123,6 +123,9 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         sysInfo.setTestHeartbeat("Y");
         OBDal.getInstance().save(sysInfo);
 
+        // Committing because sqlc uses a different connection
+        OBDal.getInstance().commitAndClose();
+
         // Making the first beat
         ProcessBundle bundle = new ProcessBundle(HB_Process_ID, vars).init(this);
         final String beatExecutionId = new ProcessRunner(bundle).execute(this);

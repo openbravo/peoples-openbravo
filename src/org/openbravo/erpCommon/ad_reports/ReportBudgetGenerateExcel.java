@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -52,29 +53,29 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
       vars.removeSessionValue("ReportBudgetGenerateExcel|inpTabId");
       String strBPartner = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportBudgetGenerateExcel|inpcBPartnerId_IN");
+          "ReportBudgetGenerateExcel|inpcBPartnerId_IN", IsIDFilter.instance);
       String strBPGroup = vars.getRequestInGlobalVariable("inpcBPGroupID",
-          "ReportBudgetGenerateExcel|inpcBPGroupID");
+          "ReportBudgetGenerateExcel|inpcBPGroupID", IsIDFilter.instance);
       String strProduct = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportBudgetGenerateExcel|inpmProductId_IN");
+          "ReportBudgetGenerateExcel|inpmProductId_IN", IsIDFilter.instance);
       String strProdCategory = vars.getRequestInGlobalVariable("inpmProductCategoryId",
-          "ReportBudgetGenerateExcel|inpmProductCategoryId");
+          "ReportBudgetGenerateExcel|inpmProductCategoryId", IsIDFilter.instance);
       // String strUser1 = vars.getRequestInGlobalVariable("inpUser1",
       // "ReportBudgetGenerateExcel|inpUser1");
       // String strUser2 = vars.getRequestInGlobalVariable("inpUser2",
       // "ReportBudgetGenerateExcel|inpUser2");
       String strSalesRegion = vars.getRequestInGlobalVariable("inpcSalesRegionId",
-          "ReportBudgetGenerateExcel|inpcSalesRegionId");
+          "ReportBudgetGenerateExcel|inpcSalesRegionId", IsIDFilter.instance);
       String strCampaign = vars.getRequestInGlobalVariable("inpcCampaingId",
-          "ReportBudgetGenerateExcel|inpcCampaingId");
+          "ReportBudgetGenerateExcel|inpcCampaingId", IsIDFilter.instance);
       String strActivity = vars.getRequestInGlobalVariable("inpcActivityId",
-          "ReportBudgetGenerateExcel|inpcActivityId");
+          "ReportBudgetGenerateExcel|inpcActivityId", IsIDFilter.instance);
       String strProject = vars.getRequestInGlobalVariable("inpcProjectId",
-          "ReportBudgetGenerateExcel|inpcProjectId");
+          "ReportBudgetGenerateExcel|inpcProjectId", IsIDFilter.instance);
       String strTrxOrg = vars.getRequestInGlobalVariable("inpTrxOrg",
-          "ReportBudgetGenerateExcel|inpTrxOrg");
+          "ReportBudgetGenerateExcel|inpTrxOrg", IsIDFilter.instance);
       String strMonth = vars.getRequestInGlobalVariable("inpMonth",
-          "ReportBudgetGenerateExcel|inpMonthId");
+          "ReportBudgetGenerateExcel|inpMonthId", IsIDFilter.instance);
       String strAccount = vars.getRequestGlobalVariable("paramAccountSelect",
           "ReportBudgetGenerateExcel|cAccountId");
       String strcAcctSchemaId = vars.getStringParameter("inpcAcctSchemaId", "");

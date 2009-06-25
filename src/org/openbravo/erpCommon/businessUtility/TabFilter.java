@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
@@ -36,6 +37,19 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class TabFilter extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final RequestFilter columnNameFilter = new RequestFilter() {
+    @Override
+    public boolean accept(String value) {
+      for (int i = 0; i < value.length(); i++) {
+        int c = value.codePointAt(i);
+        if (Character.isLetter(c) || Character.isDigit(c) || value.charAt(i) == '_') {
+          return true;
+        }
+      }
+      return false;
+    }
+  };
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -53,7 +67,7 @@ public class TabFilter extends HttpSecureAppServlet {
       String strOrderBy = vars.getSessionValue(strTab + "|orderby");
       printPage(response, vars, strTab, strWindow, strWindowId, strOrderBy);
     } else if (vars.commandIn("ORDERBY", "ORDERBY_CLEAR")) {
-      String strOrderBy = vars.getInStringParameter("inpSelectedField");
+      String strOrderBy = vars.getInStringParameter("inpSelectedField", columnNameFilter);
       String strTab = vars.getStringParameter("inpTabId");
       ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
       String strWindowPath = "";

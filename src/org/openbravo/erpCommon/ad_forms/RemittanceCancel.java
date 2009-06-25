@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -83,7 +84,7 @@ public class RemittanceCancel extends HttpSecureAppServlet {
             + strRemittanceId);
       printPage(response, vars, strDesde, strHasta, strRemittanceId);
     } else if (vars.commandIn("CANCEL")) {
-      String strRemittanceLineId = vars.getInStringParameter("inpcRLId");
+      String strRemittanceLineId = vars.getInStringParameter("inpcRLId", IsIDFilter.instance);
       String strDateAcct = vars.getRequiredStringParameter("inpDateAcct");
       OBError myMessage = processCancel(vars, strRemittanceLineId, strDateAcct);
       vars.setMessage("RemittanceCancel", myMessage);
@@ -93,7 +94,7 @@ public class RemittanceCancel extends HttpSecureAppServlet {
           "RemittanceCancel.inpRemittanceId", "");
       printPage(response, vars, strDesde, strHasta, strRemittanceId);
     } else if (vars.commandIn("RETURN")) {
-      String strRemittanceLineId = vars.getInStringParameter("inpcRLId");
+      String strRemittanceLineId = vars.getInStringParameter("inpcRLId", IsIDFilter.instance);
       String strDateAcct = vars.getRequiredStringParameter("inpDateAcct");
       OBError myMessage = processReturn(vars, strRemittanceLineId, strDateAcct);
       vars.setMessage("RemittanceCancel", myMessage);

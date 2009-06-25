@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,8 +67,8 @@
       ]]></Sql>
         <Field name="position" value="count"/>
         <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
-        <Parameter name="key" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="name" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="key" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = ? ]]></Parameter>
         <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
         <Parameter name="adRoleId"/>
@@ -104,8 +104,8 @@
         AND (T.QtyOnHand <> 0 OR COALESCE(T.QtyOrderOnHand, 0) <> 0) 
       ]]></Sql>
         <Field name="position" value="count"/>
-        <Parameter name="key" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="name" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="key" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = ? ]]></Parameter>
         <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
         <Parameter name="adRoleId"/>
@@ -157,8 +157,8 @@
         <Field name="position" value="count"/>
         <Parameter name="adLanguage"/>
         <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
-        <Parameter name="key" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="name" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="key" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = ? ]]></Parameter>
         <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
         <Parameter name="adRoleId"/>
@@ -182,8 +182,8 @@
         AND P.ISACTIVE = 'Y'
       ]]></Sql>
         <Field name="position" value="count"/>
-        <Parameter name="key" optional="true" after="WHERE "><![CDATA[ UPPER(P.Value) LIKE UPPER(?) AND ]]></Parameter>
-        <Parameter name="name" optional="true" after="WHERE "><![CDATA[ UPPER(P.Name) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="key" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Value) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="P.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/>
@@ -215,8 +215,8 @@
       ]]></Sql>
         <Field name="position" value="count"/>
         <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
-        <Parameter name="key" optional="true" after="WHERE "><![CDATA[ UPPER(P.Value) LIKE UPPER(?) AND ]]></Parameter>
-        <Parameter name="name" optional="true" after="WHERE "><![CDATA[ UPPER(P.Name) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="key" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Value) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="P.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/>
@@ -241,8 +241,8 @@
       ]]></Sql>
         <Field name="position" value="count"/>
         <Parameter name="adLanguage"/>
-        <Parameter name="key" optional="true" after="WHERE "><![CDATA[ UPPER(P.Value) LIKE UPPER(?) AND ]]></Parameter>
-        <Parameter name="name" optional="true" after="WHERE "><![CDATA[ UPPER(P.Name) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="key" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Value) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="P.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/> 
@@ -276,8 +276,8 @@
         <Field name="position" value="count"/>
         <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adLanguage"/>
-        <Parameter name="key" optional="true" after="WHERE "><![CDATA[ UPPER(P.Value) LIKE UPPER(?) AND ]]></Parameter>
-        <Parameter name="name" optional="true" after="WHERE "><![CDATA[ UPPER(P.Name) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="key" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Value) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="P.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/> 

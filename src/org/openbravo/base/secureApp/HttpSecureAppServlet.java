@@ -1004,7 +1004,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
         }
       } catch (final Exception e) {
-        throw new ServletException(e.getCause().getMessage());
+        throw new ServletException(e.getMessage(), e);
       } finally {
         releaseRollbackConnection(con);
       }
@@ -1041,7 +1041,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       }
     } catch (final JRException e) {
       log4j.error("JR: Error: ", e);
-      throw new ServletException(e.getMessage());
+      throw new ServletException(e.getMessage(), e);
     } catch (IOException ioe) {
       try {
         FileUtility f = new FileUtility(globalParameters.strFTPDirectory, strFileName + "-"

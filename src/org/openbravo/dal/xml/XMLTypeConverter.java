@@ -19,12 +19,13 @@
 
 package org.openbravo.dal.xml;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.axis.encoding.Base64;
+import org.apache.commons.codec.binary.Base64;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
@@ -105,7 +106,12 @@ public class XMLTypeConverter implements OBSingleton {
       return toXML((Boolean) o);
     }
     if (o instanceof byte[]) {
-      return Base64.encode((byte[]) o);
+      try {
+        return new String(Base64.encodeBase64((byte[]) o), "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
     return o.toString();
     // throw new OBException("Type " + o.getClass().getName() +
@@ -154,7 +160,7 @@ public class XMLTypeConverter implements OBSingleton {
         return (T) new Float(xml);
       }
       if (byte[].class == targetClass) {
-        return (T) Base64.decode(xml);
+        return (T) Base64.decodeBase64(xml.getBytes("UTF-8"));
       }
     } catch (final Exception e) {
       throw new EntityXMLException("Value " + xml + " can not be parsed to an instance of class "
@@ -190,6 +196,9 @@ public class XMLTypeConverter implements OBSingleton {
     }
     if (Float.class == targetClass) {
       return "ob:float";
+    }
+    if (byte[].class == targetClass) {
+      return "ob:base64Binary";
     }
     if (Object.class == targetClass) {
       // TODO catch this

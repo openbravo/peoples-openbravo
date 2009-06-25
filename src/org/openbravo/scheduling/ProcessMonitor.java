@@ -100,8 +100,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final String executionId = SequenceIdData.getUUID();
     try {
       ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
-          ctx.getUser(), executionId, PROCESSING, format(jec.getFireTime()), null, null, jec
-              .getJobDetail().getName());
+          ctx.getUser(), executionId, PROCESSING, null, null, jec.getJobDetail().getName());
 
       jec.put(EXECUTION_ID, executionId);
       jec.put(ProcessBundle.CONNECTION, getConnection());
@@ -120,14 +119,14 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final ProcessContext ctx = bundle.getContext();
     try {
       final String executionId = (String) jec.get(EXECUTION_ID);
-      final String log = bundle.getLog().length() >= 4000 ? bundle.getLog().substring(0, 3999)
+      final String executionLog = bundle.getLog().length() >= 4000 ? bundle.getLog().substring(0, 3999)
           : bundle.getLog();
       if (jee == null) {
-        ProcessRunData.update(getConnection(), ctx.getUser(), SUCCESS, format(new Date()),
-            getDuration(jec.getJobRunTime()), log, executionId);
+        ProcessRunData.update(getConnection(), ctx.getUser(), SUCCESS, getDuration(jec
+            .getJobRunTime()), executionLog, executionId);
       } else {
-        ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, format(new Date()),
-            getDuration(jec.getJobRunTime()), log, executionId);
+        ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, getDuration(jec
+            .getJobRunTime()), executionLog, executionId);
       }
 
     } catch (final ServletException e) {

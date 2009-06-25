@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -51,7 +52,8 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
           "ReportInvoiceDiscountJR|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceDiscountJR|dateTo", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceDiscountJR|partner", "");
+          "ReportInvoiceDiscountJR|partner", "", IsIDFilter.instance);
+
       String strDiscount = vars.getGlobalVariable("inpDiscount",
           "ReportInvoiceDiscountJR|discount", "N");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
@@ -64,7 +66,7 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
           "ReportInvoiceDiscountJR|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceDiscountJR|dateTo", "");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportInvoiceDiscountJR|partner");
+          "ReportInvoiceDiscountJR|partner", IsIDFilter.instance);
       String strDiscount = vars.getRequestGlobalVariable("inpDiscount",
           "ReportInvoiceDiscountJR|discount");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",

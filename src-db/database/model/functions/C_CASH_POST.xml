@@ -67,7 +67,7 @@
     v_count NUMBER;
     v_SettlementDocType_ID VARCHAR2(32) ;
     v_settlementID varchar2(32) ;
-    v_DocumentNo NUMBER(10) ;
+    v_DocumentNo VARCHAR(40) ;
     v_line C_CASHLINE.LINE%TYPE;
     -- CashBook
     v_CB_Currency_ID VARCHAR2(32) ;

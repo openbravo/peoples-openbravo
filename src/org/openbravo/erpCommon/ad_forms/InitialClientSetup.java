@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -86,7 +87,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars);
     } else if (vars.commandIn("OK")) {
-      String strModules = vars.getInStringParameter("inpNodes");
+      String strModules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
       m_info.delete(0, m_info.length());
       String strResultado = process(request, response, vars, strModules);
       log4j.debug("InitialClientSetup - after processFile");
@@ -1416,7 +1417,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the error. "" if there is no error
-   *
+   * 
    * @param conn
    * @param vars
    * @param strClient
@@ -1474,7 +1475,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
             if (myFiles[j].getName().endsWith(".xml"))
               myTargetFiles.add(myFiles[j]);
           }
-          myFiles = new File [myTargetFiles.size()];
+          myFiles = new File[myTargetFiles.size()];
           myFiles = myTargetFiles.toArray(myFiles);
           StringBuffer strError = new StringBuffer("");
           for (int j = 0; j < myFiles.length; j++) {
@@ -1525,7 +1526,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
   /**
    * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   *
+   * 
    * @param modules
    * @return
    */

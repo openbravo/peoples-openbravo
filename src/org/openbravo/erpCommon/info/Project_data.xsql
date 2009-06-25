@@ -49,8 +49,8 @@
         <Parameter name="language"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="P.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/>
-        <Parameter name="key" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="name" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="key" ignoreValue="%" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="bpartner" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.C_BPARTNER_ID = ? ]]></Parameter>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="P.VALUE" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>

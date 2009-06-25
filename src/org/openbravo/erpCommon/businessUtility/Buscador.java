@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -52,12 +53,27 @@ public class Buscador extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strTab = vars.getRequiredStringParameter("inpTabId");
-      String strWindow = vars.getRequiredStringParameter("inpWindow");
-      String strWindowId = vars.getStringParameter("inpWindowId");
+      vars.setSessionValue("Buscador.inpTabId", vars.getRequiredStringParameter("inpTabId"));
+      vars.setSessionValue("Buscador.inpWindow", vars.getRequiredStringParameter("inpWindow"));
+      vars.setSessionValue("Buscador.inpWindowId", vars.getStringParameter("inpWindowId"));
+
+      printPageFS(response, vars);
+    }
+
+    if (vars.commandIn("FRAME1")) {
+      String strTab = vars.getSessionValue("Buscador.inpTabId");
+      String strWindow = vars.getSessionValue("Buscador.inpWindow");
+      String strWindowId = vars.getSessionValue("Buscador.inpWindowId");
       String strIsSOTrx = vars.getSessionValue(strWindowId + "|issotrxtab");
       String strShowAudit = Utility.getContext(this, vars, "ShowAudit", strWindowId);
       BuscadorData[] data;
+
+      // assumption Buscador servlet is only called from generated windows
+      // get url path working on windows in core & modules and use this instead
+      // of the incoming window path
+      // always use _Relation form url as it matches old behavior in ToolBar.java and
+      // both views are mapped to the same servlet
+      strWindow = Utility.getTabURL(this, strTab, "R");
 
       if (!BuscadorData.hasSelectionColumns(this, strTab).equals("0"))
         data = BuscadorData.select(this, vars.getLanguage(), strTab, strShowAudit);
@@ -90,6 +106,18 @@ public class Buscador extends HttpSecureAppServlet {
       }
     } else
       pageError(response);
+  }
+
+  private void printPageFS(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/businessUtility/Buscador_FS").createXmlDocument();
+
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
   }
 
   private BuscadorData[] removeParents(BuscadorData[] data, String strTab) throws ServletException {
@@ -324,12 +352,20 @@ public class Buscador extends HttpSecureAppServlet {
       }
     }
     strHtml.append("\n").append(paramsData);
-    strHtml.append("  if (window.opener.selectFilters) window.opener.selectFilters(paramsData);\n");
-    strHtml.append("  else window.opener.submitFormGetParams(\"SEARCH\", \"../" + strWindow + "\""
-        + params.toString() + ");\n");
-    strHtml.append("  window.close();\n");
+    strHtml
+        .append("  if (parent.window.opener.selectFilters) parent.window.opener.selectFilters(paramsData);\n");
+    strHtml.append("  else parent.window.opener.submitFormGetParams(\"SEARCH\", \"" + strWindow
+        + "\"" + params.toString() + ");\n");
+    strHtml.append("  parent.window.close();\n");
     strHtml.append("  return true;\n");
     strHtml.append("}\n");
+
+    strHtml.append("\nfunction reloadComboReloads(changedField) {\n");
+    strHtml.append("  submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloads"
+        + strTab + ".html', 'hiddenFrame', null, null, true);\n");
+    strHtml.append("  return true;\n");
+    strHtml.append("}\n");
+
     strHtml.append("function onloadFunctions() {\n");
     strHtml.append("  enableLocalShortcuts();\n");
     strHtml.append(strCombo);
@@ -356,6 +392,10 @@ public class Buscador extends HttpSecureAppServlet {
     int randomId4Num3 = 0;
     Random rnd = new Random();
     Vector<Object> vecKeys = new Vector<Object>();
+
+    // get list of fields with comboreloads
+    Vector<String> comboReloadFields = getComboReloadFields(this, strTab);
+
     for (int i = 0; i < fields.length; i++) {
       randomId4Num1 = rnd.nextInt(10000);
       randomId4Num2 = rnd.nextInt(10000);
@@ -379,8 +419,14 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("<select ");
         strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname))
             .append("\" ");
-        strHtml.append("onchange=\"return true; \" id=\"idParam").append(
-            FormatUtilities.replace(fields[i].columnname)).append("\" ");
+        // attach comboReload call if needed
+        if (isInVector(comboReloadFields, fields[i].columnname)) {
+          strHtml.append("onchange=\"reloadComboReloads(this.name);return true; \" id=\"idParam")
+              .append(FormatUtilities.replace(fields[i].columnname)).append("\" ");
+        } else {
+          strHtml.append("onchange=\"return true; \" id=\"idParam").append(
+              FormatUtilities.replace(fields[i].columnname)).append("\" ");
+        }
         if (Integer.valueOf(fields[i].fieldlength).intValue() < (MAX_TEXTBOX_LENGTH / 4)) {
           strHtml.append("class=\"Combo Combo_OneCell_width\"");
         } else if (Integer.valueOf(fields[i].fieldlength).intValue() < (MAX_TEXTBOX_LENGTH / 2)) {
@@ -395,7 +441,7 @@ public class Buscador extends HttpSecureAppServlet {
               fields[i].columnname, fields[i].referencevalue, fields[i].adValRuleId, Utility
                   .getContext(this, vars, "#AccessibleOrgTree", strWindow), Utility.getContext(
                   this, vars, "#User_Client", strWindow), 0);
-          Utility.fillSQLParameters(this, vars, null, comboTableData, strWindow, fields[i].value);
+          comboTableData.fillParametersFromSearch(strTab, strWindow);
           FieldProvider[] data = comboTableData.select(false);
           comboTableData = null;
           for (int j = 0; j < data.length; j++) {
@@ -885,8 +931,8 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  private String searchsCommand(BuscadorData efd, boolean fromButton, String tabId, String windowId,
-      String strIsSOTrx) {
+  private String searchsCommand(BuscadorData efd, boolean fromButton, String tabId,
+      String windowId, String strIsSOTrx) {
     StringBuffer params = new StringBuffer();
     StringBuffer html = new StringBuffer();
     String strMethodName = "openSearch";
@@ -1009,8 +1055,66 @@ public class Buscador extends HttpSecureAppServlet {
     return html.toString();
   }
 
+  /**
+   * Gets list of fields which have a comboReload associated to trigger reloads of dependent combos.
+   * Change in logic needs to be synchronized with copy in wad
+   * 
+   * @return List of columnnames of fields with have a comboReload associated
+   */
+  private static Vector<String> getComboReloadFields(ConnectionProvider pool, String strTab)
+      throws ServletException {
+    final BuscadorData[] dataReload = BuscadorData.selectValidationTab(pool, strTab);
+
+    final Vector<String> vecReloads = new Vector<String>();
+    if (dataReload != null && dataReload.length > 0) {
+      for (int z = 0; z < dataReload.length; z++) {
+        String code = dataReload[z].whereclause
+            + ((!dataReload[z].whereclause.equals("") && !dataReload[z].referencevalue.equals("")) ? " AND "
+                : "") + dataReload[z].referencevalue;
+
+        if (code.equals("") && dataReload[z].type.equals("R"))
+          code = "@AD_Org_ID@";
+        getComboReloadText(code, vecReloads, dataReload[z].columnname);
+      }
+    }
+    return vecReloads;
+  }
+
+  private static void getComboReloadText(String token, Vector<String> vecComboReload,
+      String columnname) {
+    int i = token.indexOf("@");
+    while (i != -1) {
+      token = token.substring(i + 1);
+      if (!token.startsWith("SQL")) {
+        i = token.indexOf("@");
+        if (i != -1) {
+          String strAux = token.substring(0, i);
+          token = token.substring(i + 1);
+          getComboReloadTextTranslate(strAux, vecComboReload, columnname);
+        }
+      }
+      i = token.indexOf("@");
+    }
+  }
+
+  private static void getComboReloadTextTranslate(String token, Vector<String> vecComboReload,
+      String columnname) {
+    if (token == null || token.trim().equals(""))
+      return;
+    if (!token.equalsIgnoreCase(columnname))
+      if (!isInVector(vecComboReload, token))
+        vecComboReload.addElement(token);
+  }
+
+  private static boolean isInVector(Vector<String> vec, String field) {
+    for (String aux : vec) {
+      if (aux.equalsIgnoreCase(field))
+        return true;
+    }
+    return false;
+  }
+
   public String getServletInfo() {
-    // FIXME: Should be in English
-    return "Servlet que presenta el buscador";
-  } // end of getServletInfo() method
+    return "Servlet to render the search popup";
+  }
 }

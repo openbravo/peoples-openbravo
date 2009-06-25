@@ -225,6 +225,7 @@ public class ModelXMLConverter implements OBSingleton {
     addSimpleTypeDeclaration(schema, "decimal");
     addSimpleTypeDeclaration(schema, "long");
     addSimpleTypeDeclaration(schema, "float");
+    addSimpleTypeDeclaration(schema, "base64Binary");
   }
 
   private void addSimpleTypeDeclaration(Element schema, String typeName) {

@@ -85,9 +85,12 @@ public class OBContext implements OBNotSingleton {
   private static OBContext adminContext = null;
 
   /**
-   * Sets the context to the 0 (SystemAdmin) user. Note overrides the current OBContext. This method
-   * should be used in case there is no real user context yet because the user still has to login
-   * (for example).
+   * Sets the context to the 0 (SystemAdmin) user.
+   * 
+   * Note overwrites the current OBContext! This method should be used in case there is no real user
+   * context yet because the user still has to login (for example).
+   * 
+   * In all other cases use the method {@link #setInAdministratorMode(boolean)}.
    */
   public static void setAdminContext() {
     if (adminContext == null) {
@@ -114,7 +117,7 @@ public class OBContext implements OBNotSingleton {
     if (context == null) {
       context = new OBContext();
       if (context.setFromRequest(request)) {
-        request.getSession().setAttribute(CONTEXT_PARAM, context);
+        setOBContextInSession(request, context);
         setOBContext(context);
       }
     } else {
@@ -123,6 +126,18 @@ public class OBContext implements OBNotSingleton {
       }
       setOBContext(context);
     }
+  }
+
+  /**
+   * Sets the passed OBContext in the http session.
+   * 
+   * @param request
+   *          the http request used to get the http session
+   * @param context
+   *          the context which will be stored in the session
+   */
+  public static void setOBContextInSession(HttpServletRequest request, OBContext context) {
+    request.getSession().setAttribute(CONTEXT_PARAM, context);
   }
 
   /**

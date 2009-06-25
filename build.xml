@@ -102,7 +102,10 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="chekPerms" value="false" />
   <property name="force" value="false" />
   <property name="local" value="true" />
+  <property name="apply.modules.complete.compilation" value="false" />
 
+
+  
   <available file=".hg" property="is.hg" />
 
 
@@ -542,7 +545,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="core.lib" />
     <ant dir="${base.db}" target="update.database.mod" inheritAll="true" inheritRefs="true" />
     <antcall target="db.apply.modules" />
-    <antcall target="generate.entities.quick" />
+    <antcall target="generate.entities" />
   </target>
 
   <target name="update.customized.database" depends="init,code.rev">
@@ -620,11 +623,39 @@ compare.database.structure: refer to compare.database.structure target of databa
       <classpath refid="project.class.path" />
     </taskdef>
     <antcall target="update.database.mod" />
-    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" reinitializemodel="true" />
-    <antcall target="compile.deploy" />
-    <!--antcall target="deploy.context"/-->
+    <!-- 
+    Note: set reinitializeModel to false because otherwise the dal is re-initialized with classes and a model
+    which are not in sync (see issue: https://issues.openbravo.com/view.php?id=9376)
+    Note: applyModule can also be moved to a java task to fork it (to prevent this from occuring)
+    but then no output is visible for the user.
+    -->
+    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" reinitializemodel="false"/>
+    
+    <condition property="apply.modules.complete.compilation.var">
+      <istrue value="${apply.modules.complete.compilation}"  />
+    </condition>
+    
+    <condition property="apply.modules.simple.compilation.var">
+      <isfalse value="${apply.modules.complete.compilation.var}" />
+    </condition>
+    
+    <antcall target="apply.modules.compile"/>
   </target>
-
+  
+  
+  <target name="apply.modules.compile">
+    <antcall target="apply.modules.compile.simple"/>
+    <antcall target="apply.modules.compile.complete"/>
+  </target>
+  
+  <target name="apply.modules.compile.simple" if="apply.modules.simple.compilation.var">
+    <antcall target="compile.deploy" />
+  </target>
+  
+  <target name="apply.modules.compile.complete" if="apply.modules.complete.compilation.var">
+     <antcall target="compile.complete.deploy" />
+  </target>
+  
   <!-- 
 		apparently this does not overwrite the default catalina_opts, only
 		if it is not set will it be set to the value below 
@@ -759,7 +790,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <condition property="osname" value="osx">
       <contains string="${os.name}" substring="OS X" />
     </condition>
-    <condition property="os.is.solaris">
+    <condition property="osname" value="solaris">
       <or>
         <contains string="${os.name}" substring="Solaris" />
         <contains string="${os.name}" substring="SunOS" />

@@ -46,100 +46,12 @@
     </resource-ref>
   </FIELDS_TMP>
 
-
+  <FIELDS_TMP id="sectionContextParams">
   <context-param>
-    <param-name>BaseConfigPath</param-name>
-    <param-value>WEB-INF</param-value>
+    <param-name><FIELD_TMP id="paramName">codigo</FIELD_TMP></param-name>
+    <param-value><FIELD_TMP id="paramValue">codigo</FIELD_TMP></param-value>
   </context-param>
-  <context-param>
-    <param-name>BaseDesignPath</param-name>
-    <param-value>src-loc</param-value>
-  </context-param>
-  <context-param>
-    <param-name>DefaultDesignPath</param-name>
-    <param-value>design</param-value>
-  </context-param>
-  <context-param>
-    <param-name>Version</param-name>
-    <param-value>38.7</param-value>
-  </context-param>
-  <context-param>
-    <param-name>Parent_Version</param-name>
-    <param-value></param-value>
-  </context-param>
-  <context-param>
-    <param-name>ReplaceWhat</param-name>
-    <param-value>../../../../../web</param-value>
-  </context-param>
-  <context-param>
-    <param-name>ReplaceWith</param-name>
-    <param-value>
-      <PARAMETER_TMP id="paramWebPath">http://tecnicia14/web</PARAMETER_TMP>
-    </param-value>
-  </context-param>
-  <context-param>
-    <param-name>TextDividedByZero</param-name>
-    <param-value>.../0</param-value>
-  </context-param>
-  <context-param>
-    <param-name>log4j-init-file</param-name>
-    <param-value>log4j.lcf</param-value>
-  </context-param>
-  <context-param>
-    <param-name>PoolFile</param-name>
-    <param-value>Openbravo.properties</param-value>
-  </context-param>
-  <context-param>
-    <param-name>FormatFile</param-name>
-    <param-value>Format.xml</param-value>
-  </context-param>
-  <context-param>
-    <param-name>FOPConfig</param-name>
-    <param-value>userconfig.xml</param-value>
-  </context-param>
-  <context-param>
-    <param-name>DefaultServlet</param-name>
-    <param-value>/utility/Home.html</param-value>
-  </context-param>
-  <context-param>
-    <param-name>ServletSinIdentificar</param-name>
-    <param-value>/utility/Log.html</param-value>
-  </context-param>
-  <context-param>
-    <param-name>AttachmentDirectory</param-name>
-    <param-value>
-      <PARAMETER_TMP id="paramAttachPath">C:\\AppsAttachment</PARAMETER_TMP>
-    </param-value>
-  </context-param>
-  <context-param>
-    <param-name>PeriodicBackgroundTime</param-name>
-    <param-value>10</param-value>
-  </context-param>
-  <context-param>
-    <param-name>LogFileAcctServer</param-name>
-    <param-value>AcctServer.log</param-value>
-  </context-param>
-  <context-param>
-    <param-name>ServidorRenderFo</param-name>
-    <param-value></param-value>
-  </context-param>
-  <!-- Quartz context params -->
-  <context-param>
-    <param-name>config-file</param-name>
-    <param-value>quartz.properties</param-value>
-  </context-param>
-  <context-param>
-    <param-name>shutdown-on-unload</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <context-param>
-    <param-name>start-scheduler-on-load</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <context-param>
-    <param-name>start-delay-seconds</param-name>
-    <param-value>30</param-value>
-  </context-param>
+  </FIELDS_TMP>
 
   <FIELDS_TMP id="sectionDetail1">
     <servlet>

@@ -88,6 +88,22 @@ public class OBProvider {
   }
 
   /**
+   * Register an actual instance for an internal Openbravo class (the registrationClass).
+   * 
+   * @param registrationClass
+   *          the original Openbravo class
+   * @param instanceObj
+   *          the instance to use when the class is requested.
+   * @param overwrite
+   *          true overwrite a current registration, false a current registration is not overwritten
+   */
+  public void registerInstance(Class<?> registrationClass, Object instanceObj, boolean overwrite) {
+    register(registrationClass.getName(), instanceObj.getClass(), overwrite);
+    final Registration reg = registrations.get(registrationClass.getName());
+    reg.setInstance(instanceObj);
+  }
+
+  /**
    * Register an instance for an internal Openbravo class (the registrationClass).
    * 
    * @param registrationClass
@@ -216,6 +232,9 @@ public class OBProvider {
     }
 
     public Object getInstance() {
+      // there are cases that the instance is set explicitly in that
+      // case always that instance should be returned so
+      // no singleton check!
       if (theInstance != null) {
         return theInstance;
       }

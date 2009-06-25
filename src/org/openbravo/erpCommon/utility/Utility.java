@@ -92,6 +92,7 @@ public class Utility {
     autosaveExcludedClasses = new ArrayList<String>();
     autosaveExcludedPackages.add("org.openbravo.erpCommon.info");
     autosaveExcludedPackages.add("org.openbravo.erpCommon.ad_callouts");
+    autosaveExcludedClasses.add("org.openbravo.erpCommon.utility.PopupLoading");
   }
 
   /**
@@ -1160,26 +1161,13 @@ public class Utility {
    * @param actual_value
    *          actual value for the combo.
    * @throws ServletException
+   * @see org.openbravo.erpCommon.utility.ComboTableData#fillParameters(FieldProvider, String,
+   *      String)
    */
   public static void fillSQLParameters(ConnectionProvider conn, VariablesSecureApp vars,
       FieldProvider data, ComboTableData cmb, String window, String actual_value)
       throws ServletException {
-    final Vector<String> vAux = cmb.getParameters();
-    if (vAux != null && vAux.size() > 0) {
-      if (log4j.isDebugEnabled())
-        log4j.debug("Combo Parameters: " + vAux.size());
-      for (int i = 0; i < vAux.size(); i++) {
-        final String strAux = vAux.elementAt(i);
-        try {
-          final String value = parseParameterValue(conn, vars, data, strAux, window, actual_value);
-          if (log4j.isDebugEnabled())
-            log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
-          cmb.setParameter(strAux, value);
-        } catch (final Exception ex) {
-          throw new ServletException(ex);
-        }
-      }
-    }
+    cmb.fillSQLParameters(conn, vars, data, "", window, actual_value, false);
   }
 
   /**
@@ -1207,7 +1195,7 @@ public class Utility {
       for (int i = 0; i < vAux.size(); i++) {
         final String strAux = vAux.elementAt(i);
         try {
-          final String value = parseParameterValue(conn, vars, data, strAux, window, "");
+          final String value = parseParameterValue(conn, vars, data, strAux, "", window, "", false);
           if (log4j.isDebugEnabled())
             log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
           cmb.setParameter(strAux, value);
@@ -1221,6 +1209,9 @@ public class Utility {
   /**
    * Auxiliar method, used by fillSQLParameters and fillTableSQLParameters to get the values for
    * each parameter.
+   * 
+   * Deprecated as only internal utility function for ComboTableData and TableSQLData code, should
+   * never be used directly by other code.
    * 
    * @param conn
    *          Handler for the database connection.
@@ -1237,6 +1228,7 @@ public class Utility {
    * @return String with the parsed parameter.
    * @throws Exception
    */
+  @Deprecated
   public static String parseParameterValue(ConnectionProvider conn, VariablesSecureApp vars,
       FieldProvider data, String name, String window, String actual_value) throws Exception {
     String strAux = null;
@@ -1251,6 +1243,60 @@ public class Utility {
             + Sqlc.TransformaNombreColumna(name) + "): " + strAux);
       if (strAux == null || strAux.equals(""))
         strAux = getContext(conn, vars, name, window);
+    }
+    return strAux;
+  }
+
+  /**
+   * Auxiliary method, used by fillSQLParameters and fillTableSQLParameters to get the values for
+   * each parameter.
+   * 
+   * @param conn
+   *          Handler for the database connection.
+   * @param vars
+   *          Handler for the session info.
+   * @param data
+   *          FieldProvider with the columns values.
+   * @param name
+   *          Name of the parameter.
+   * @param window
+   *          Window id.
+   * @param actual_value
+   *          Actual value.
+   * @param fromSearch
+   *          If the combo is used from the search popup (servlet). If true, then the pattern for
+   *          obtaining the parameter values if changed to conform with the search popup naming.
+   * @return String with the parsed parameter.
+   * @throws Exception
+   */
+  static String parseParameterValue(ConnectionProvider conn, VariablesSecureApp vars,
+      FieldProvider data, String name, String tab, String window, String actual_value,
+      boolean fromSearch) throws Exception {
+    String strAux = null;
+    if (name.equalsIgnoreCase("@ACTUAL_VALUE@"))
+      return actual_value;
+    if (data != null)
+      strAux = data.getField(name);
+    if (strAux == null) {
+      if (fromSearch) {
+        // search popup has different incoming parameter name pattern
+        // also preferences (getContext) should not be used for combos in the search popup,
+        strAux = vars.getStringParameter("inpParam" + name);
+        log4j.debug("parseParameterValues - getStringParameter(inpParam" + name + "): " + strAux);
+        // but as search popup 'remembers' old values via the session the read from there needs
+        // to be made here, as we disabled getContext (where it was before)
+        if (strAux == null || strAux.equals(""))
+          strAux = vars.getSessionValue(tab + "|param" + name);
+        // strAux = vars.getSessionValue(window + "|" + name);
+        // strAux = Utility.getContext(conn, vars, name, window);
+      } else {
+        strAux = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(name));
+        if (log4j.isDebugEnabled())
+          log4j.debug("parseParameterValues - getStringParameter(inp"
+              + Sqlc.TransformaNombreColumna(name) + "): " + strAux);
+        if (strAux == null || strAux.equals(""))
+          strAux = Utility.getContext(conn, vars, name, window);
+      }
     }
     return strAux;
   }

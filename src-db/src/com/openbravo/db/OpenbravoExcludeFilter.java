@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2008 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -28,7 +28,7 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
   public String[] getExcludedViews() {
     return new String[] { "DUAL", "USER_CONS_COLUMNS", "USER_TABLES", "USER_CONSTRAINTS",
         "USER_INDEXES", "USER_IND_COLUMNS", "USER_OBJECTS", "USER_TAB_COLUMNS", "USER_TRIGGERS",
-        "V$VERSION" };
+        "V$VERSION", "AD_INTEGER" };
   }
 
   public String[] getExcludedFunctions() {

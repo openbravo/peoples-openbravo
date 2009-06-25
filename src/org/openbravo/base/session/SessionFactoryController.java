@@ -85,7 +85,7 @@ public abstract class SessionFactoryController {
     } else {
       log.debug("Nullifying session factory controller");
     }
-    if (instance != null) {
+    if (instance != null && instance.isInitialized()) {
       // TODO: we should ensure that there are no open sessions....
       instance.getSessionFactory().close();
     }
@@ -104,6 +104,10 @@ public abstract class SessionFactoryController {
   public Configuration getConfiguration() {
     initialize();
     return configuration;
+  }
+
+  public boolean isInitialized() {
+    return sessionFactory != null;
   }
 
   /**
@@ -155,7 +159,7 @@ public abstract class SessionFactoryController {
 
   protected abstract void mapModel(Configuration theConfiguration);
 
-  private Properties getOpenbravoProperties() {
+  protected Properties getOpenbravoProperties() {
     final Properties props = new Properties();
     final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
     if (obProps == null) {

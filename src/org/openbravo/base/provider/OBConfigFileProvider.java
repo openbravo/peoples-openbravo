@@ -73,6 +73,11 @@ public class OBConfigFileProvider implements OBSingleton {
     this.classPathLocation = classPathLocation;
   }
 
+  /**
+   * This method will read the ob-provider config files (with bean specifications) and pass them to
+   * the {@link OBProvider}. It reads the file from the class path or from a file location.
+   * Depending on what is set: {@link #getClassPathLocation()} and/or {@link #getFileLocation()}.
+   */
   public void setConfigInProvider() {
     log.debug("Reading config files for setting the provider");
     if (classPathLocation != null) {

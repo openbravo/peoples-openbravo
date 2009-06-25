@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.utils.FormatUtilities;
@@ -89,7 +90,8 @@ public class PrinterReports extends HttpSecureAppServlet {
     if (!strHiddenValue.equals(""))
       vars.setSessionValue(strPDFPath + "." + strHiddenKey, "('" + strHiddenValue + "')");
     else
-      vars.getRequestInGlobalVariable(strHiddenKey, strPDFPath + "." + strHiddenKey);
+      vars.getRequestInGlobalVariable(strHiddenKey, strPDFPath + "." + strHiddenKey,
+          IsIDFilter.instance);
 
     // vars.getRequestInGlobalVariable(strHiddenKey + "_R", mapping + "." +
     // strHiddenKey + "_R");

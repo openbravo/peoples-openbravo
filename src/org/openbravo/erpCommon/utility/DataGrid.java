@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -519,7 +520,7 @@ public class DataGrid extends HttpSecureAppServlet {
       TableSQLData tableSQL) throws ServletException, IOException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page column total");
-    String rows = vars.getInStringParameter("rows");
+    String rows = vars.getInStringParameter("rows", IsIDFilter.instance);
     String columnname = vars.getStringParameter("columnName");
     FieldProvider[] data = null;
     if (tableSQL != null) {
@@ -585,7 +586,7 @@ public class DataGrid extends HttpSecureAppServlet {
       description = Utility.messageBD(this, "NoWriteAccess", vars.getLanguage());
     } else {
       Vector<String> parametersData = null;
-      String rows = vars.getInStringParameter("rows");
+      String rows = vars.getInStringParameter("rows", IsIDFilter.instance);
       StringBuffer SqlDataBuffer = new StringBuffer();
       SqlDataBuffer.append("DELETE FROM ").append(tableSQL.getTableName()).append(" \n");
       SqlDataBuffer.append("WHERE ").append(tableSQL.getKeyColumn()).append(" \n");

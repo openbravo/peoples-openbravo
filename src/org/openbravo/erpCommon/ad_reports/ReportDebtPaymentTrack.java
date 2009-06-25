@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -47,7 +48,7 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
           "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportDebtPaymentTrack|DateTo", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-          "ReportDebtPaymentTrack|cBpartnerId", "");
+          "ReportDebtPaymentTrack|cBpartnerId", "", IsIDFilter.instance);
       String strAmtFrom = vars
           .getGlobalVariable("inpAmtFrom", "ReportDebtPaymentTrack|AmtFrom", "");
       String strAmtTo = vars.getGlobalVariable("inpAmtTo", "ReportDebtPaymentTrack|AmtTo", "");
@@ -68,7 +69,7 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       String strDateTo = vars
           .getRequestGlobalVariable("inpDateTo", "ReportDebtPaymentTrack|DateTo");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportDebtPaymentTrack|cBpartnerId");
+          "ReportDebtPaymentTrack|cBpartnerId", IsIDFilter.instance);
       String strAmtFrom = vars.getRequestGlobalVariable("inpAmtFrom",
           "ReportDebtPaymentTrack|AmtFrom");
       String strAmtTo = vars.getRequestGlobalVariable("inpAmtTo", "ReportDebtPaymentTrack|AmtTo");
@@ -90,7 +91,7 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       String strDateTo = vars
           .getRequestGlobalVariable("inpDateTo", "ReportDebtPaymentTrack|DateTo");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportDebtPaymentTrack|cBpartnerId");
+          "ReportDebtPaymentTrack|cBpartnerId", IsIDFilter.instance);
       String strAmtFrom = vars.getRequestGlobalVariable("inpAmtFrom",
           "ReportDebtPaymentTrack|AmtFrom");
       String strAmtTo = vars.getRequestGlobalVariable("inpAmtTo", "ReportDebtPaymentTrack|AmtTo");

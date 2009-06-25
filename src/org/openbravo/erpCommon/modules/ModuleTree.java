@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2008 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -22,20 +22,21 @@ import javax.servlet.ServletException;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.GenericTree;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
  * Manages the tree of installed modules.
- * 
+ *
  * It implements GenericTree, detailed description is in that API doc.
  */
 public class ModuleTree extends GenericTree {
 
   /**
    * Constructor to generate a root tree
-   * 
+   *
    * @param base
    */
   public ModuleTree(HttpBaseServlet base) {
@@ -45,7 +46,7 @@ public class ModuleTree extends GenericTree {
 
   /**
    * Constructor to generate a root tree
-   * 
+   *
    * @param base
    * @param bSmall
    *          Normal size or small size (true)
@@ -78,7 +79,7 @@ public class ModuleTree extends GenericTree {
 
   /**
    * Generates a subtree with nodeId as root node
-   * 
+   *
    * @param nodeId
    */
   public void setSubTree(String nodeId, String level) {
@@ -96,7 +97,7 @@ public class ModuleTree extends GenericTree {
 
   /**
    * Returns a HTML with the description for the given node
-   * 
+   *
    * @param node
    * @return a HTML String with the description for the given node
    */
@@ -162,7 +163,7 @@ public class ModuleTree extends GenericTree {
 
   /**
    * Set the icons (module type) and subicons (update available) for each node
-   * 
+   *
    * @param modules
    */
   private void setIcons(FieldProvider[] modules) {
@@ -170,11 +171,11 @@ public class ModuleTree extends GenericTree {
       return;
     for (int i = 0; i < modules.length; i++) {
       if (modules[i].getField("type").equals("M"))
-        ((ModuleTreeData) modules[i]).icon = "Tree_Icon_Module";
+    	  FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Module");
       if (modules[i].getField("type").equals("P"))
-        ((ModuleTreeData) modules[i]).icon = "Tree_Icon_Pack";
+    	  FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Pack");
       if (modules[i].getField("type").equals("T"))
-        ((ModuleTreeData) modules[i]).icon = "Tree_Icon_Template";
+    	  FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Template");
 
       boolean updateAvailable = modules[i].getField("updateAvailable") != null
           && !modules[i].getField("updateAvailable").equals("");
@@ -188,7 +189,7 @@ public class ModuleTree extends GenericTree {
 
   /**
    * Returns true in case one of the descendant of the current node has an update available
-   * 
+   *
    * @param node
    * @return
    */
@@ -235,7 +236,7 @@ public class ModuleTree extends GenericTree {
 
   /**
    * Returns the node id for the parent of the passed node
-   * 
+   *
    * @param node
    * @return
    */

@@ -50,6 +50,36 @@
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
 <script language="JavaScript" type="text/javascript">
+function displayLogic() {
+     var frm = document.frmMain;
+     if (frm.inpcElementvalueId.value.substring(0,1) == 'N') {
+           displayLogicElement('tdFromDateLabel', true);
+           displayLogicElement('tdFromDate', true);
+           displayLogicElement('tdToDateLabel', true);
+           displayLogicElement('tdToDate', true);
+           displayLogicElement('tdFromRefDateLabel', true);
+           displayLogicElement('tdFromRefDate', true);
+           displayLogicElement('tdToRefDateLabel', true);
+           displayLogicElement('tdToRefDate', true);
+           displayLogicElement('tdAsToDateLabel', false);
+           displayLogicElement('tdAsToDate', false);
+           displayLogicElement('tdAsToRefDateLabel', false);
+           displayLogicElement('tdAsToRefDate', false);
+     } else {
+           displayLogicElement('tdFromDateLabel', false);
+           displayLogicElement('tdFromDate', false);
+           displayLogicElement('tdToDateLabel', false);
+           displayLogicElement('tdToDate', false);
+           displayLogicElement('tdFromRefDateLabel', false);
+           displayLogicElement('tdFromRefDate', false);
+           displayLogicElement('tdToRefDateLabel', false);
+           displayLogicElement('tdToRefDate', false);
+           displayLogicElement('tdAsToDateLabel', true);
+           displayLogicElement('tdAsToDate', true);
+           displayLogicElement('tdAsToRefDateLabel', true);
+           displayLogicElement('tdAsToRefDate', true);
+     }
+}
 
 function validate(command) {
 	var frm = document.frmMain;
@@ -81,30 +111,43 @@ function validate(command) {
 	return true;
 }
 
-function refreshAccountingReports() {
-  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
-  var cmbAccountingReports = document.frmMain.inpcElementvalueId;  
-  changeComboData(cmbAccountingReports, arrAccountingReports, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
+function refreshComboReports() {
+  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;
+  var cmbAccountingReports = document.frmMain.inpcElementvalueId;
+  var cmbOrganization = document.frmMain.inpOrganizacion;
+  var cmbYear = document.frmMain.inpAgno;
+  var cmbYearRef = document.frmMain.inpAgnoRef;
+  changeComboData(cmbAccountingReports, arrAccountingReports, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, true);
+  changeComboData(cmbOrganization, arrOrgs, "", true);
+  changeComboData(cmbYear, arrOrgs, "", true);
+  changeComboData(cmbYearRef, arrOrgs, "", true);
+  return true;
+}
+
+function refreshComboOrgs() {
+  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;
+  var cmbAccountingReports = document.frmMain.inpcElementvalueId;
+  var cmbOrganization = document.frmMain.inpOrganizacion;
+  var cmbYear = document.frmMain.inpAgno;
+  var cmbYearRef = document.frmMain.inpAgnoRef;
+  changeComboData(cmbOrganization, arrOrgs, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value+cmbAccountingReports.options[cmbAccountingReports.selectedIndex].value.substring(1), true);
+  changeComboData(cmbYear, arrOrgs, "", true);
+  changeComboData(cmbYearRef, arrOrgs, "", true);
+  return true;
+}
+
+function refreshComboYears() {
+  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;
+  var cmbAccountingReports = document.frmMain.inpcElementvalueId;
+  var cmbOrganization = document.frmMain.inpOrganizacion;
+  var cmbYear = document.frmMain.inpAgno;
+  var cmbYearRef = document.frmMain.inpAgnoRef;
+  changeComboData(cmbYear, arrYears, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);
+  changeComboData(cmbYearRef, arrYears, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);
   return true;
 }
 
 function onloadFunctions() {
-}
-
-function validateOrgCombo() {
-  var id = document.frmMain.inpcElementvalueId.value;
-  var cmbOrganization = document.frmMain.inpOrganizacion; 
-  
-  for (i = 0; i < arrReportIsBalanced.length; i++) {
-	  if (id == arrReportIsBalanced[i][0] && arrReportIsBalanced[i][2]=='N') {
-		  fillCombo(cmbOrganization, arrAllOrg, false, false);
-	  }
-	  if (id == arrReportIsBalanced[i][0] && arrReportIsBalanced[i][2]=='Y') {
-		  fillCombo(cmbOrganization, arrBalancedOrg, false, false);
-	  }
-  }
-
-  return true;
 }
 </script>
 
@@ -112,41 +155,38 @@ function validateOrgCombo() {
 var arrAccountingReports=null;
 </script>
 
-<script language="JavaScript" type="text/javascript" id="paramArrayBalancedOrg">
-var arrBalancedOrg=null;
+<script language="JavaScript" type="text/javascript" id="paramArrayOrg">
+var arrOrgs=null;
 </script>
 
-<script language="JavaScript" type="text/javascript" id="paramArrayAllOrg">
-var arrAllOrg=null;
+<script language="JavaScript" type="text/javascript" id="paramArrayYears">
+var arrYears=null;
 </script>
 
-<script language="JavaScript" type="text/javascript" id="paramArrayReportIsBalanced">
-var arrReportIsBalanced = null;
+<script language="JavaScript" type="text/javascript">
+function onLoadDo(){
+	this.windowTables = new Array(
+	  new windowTableId('client', 'buttonPDF')
+	);
+	setWindowTableParentElement();
+	this.tabsTables = new Array(
+	  new tabTableId('tdtopTabs')
+	);
+	setTabTableParentElement();
+	enableShortcuts('edition');
+	setBrowserAutoComplete(false);
+	
+	resizeArea();
+	updateMenuIcon('buttonMenu');
+
+	setWindowElementFocus('firstElement');
+       displayLogic();
+}
+
+function onResizeDo(){
+	resizeArea();
+}
 </script>
-
-	<script language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-		this.windowTables = new Array(
-		  new windowTableId('client', 'buttonPDF')
-		);
-		setWindowTableParentElement();
-		this.tabsTables = new Array(
-		  new tabTableId('tdtopTabs')
-		);
-		setTabTableParentElement();
-		enableShortcuts('edition');
-		setBrowserAutoComplete(false);
-		
-		resizeArea();
-		updateMenuIcon('buttonMenu');
-
-		setWindowElementFocus('firstElement');
-	}
-
-	function onResizeDo(){
-		resizeArea();
-	}
-	</script>
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
       <form method="post" action="GeneralAccountingReports.pdf" name="frmMain" target="_blank" id="form">
@@ -280,6 +320,58 @@ var arrReportIsBalanced = null;
                     <tr class="FieldGroup_TopMargin"/>
                     <tr>
                       <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                      <td class="FieldGroupTitle">Report Options</td>
+                      <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                      <td class="FieldGroupContent"/>
+                    </tr>
+                    <tr class="FieldGroup_BottomMargin"/>
+                  </tbody>
+                  </table>
+                </td>
+                </tr>
+
+                <tr>
+                  <td class="TitleCell"> <span class="LabelText">Accounting schema</span></td>
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="refreshComboReports(); logChanges(this); return true;">
+                    <option value=""></option><div id="reportC_ACCTSCHEMA_ID"></div>
+                  </select></td>
+                  <td class="ContentCell"></td>
+                  <td class="TitleCell"><span class="LabelText">Show only accounts with value</span></td>
+                  <td class="Radio_Check_ContentCell"><input name="inpConImporte" type="checkbox" id="fieldConImporte" value="Y"></input></td>
+                </tr>
+
+                <tr>
+                  <td class="TitleCell"><span class="LabelText">Accounting Report</span></td>
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcElementvalueId" id="inpcElementvalueId" class="ComboKey Combo_TwoCells_width" onchange="displayLogic(); refreshComboOrgs(); logChanges(this); return true;">
+                    <option value=""></option><div id="reportC_ElementValue_ID"></div>
+                  </select></td>
+                  <td class="ContentCell"></td>
+                  <td class="TitleCell"><span class="LabelText">Show Account codes</span></td>
+                  <td class="Radio_Check_ContentCell"><input name="inpConCodigo" type="checkbox" id="fieldConCodigo" value="Y"></input></td>
+                </tr>
+
+                <tr>
+                  <td class="TitleCell"><span class="LabelText">Organization</span></td>
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width" onchange="refreshComboYears(); logChanges(this); return true;">
+                      <option value=""></option><div id="reportC_Org_ID"></div>
+                    </select></td>
+                </tr>
+                <td class="TitleCell"><span class="LabelText">Account Level</span></td>
+                  <td class="Combo_ContentCell"> <select name="inpLevel" id="inpLevel" class="ComboKey Combo_OneCell_width" onchange="logChanges(this);return true;">
+                    <option value=""></option><div id="reportLevel"></div>
+                  </select></td>
+                  <td class="ContentCell"></td>
+                <tr>
+                
+                </tr>
+
+                <tr>
+                <td colspan="6">
+                  <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                  <tbody>
+                    <tr class="FieldGroup_TopMargin"/>
+                    <tr>
+                      <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                       <td class="FieldGroupTitle">Primary Filters</td>
                       <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                       <td class="FieldGroupContent"/>
@@ -291,9 +383,11 @@ var arrReportIsBalanced = null;
                 </tr>
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Year</span></td>
-                  <td class="TextBox_ContentCell"><input dojoType="openbravo:ValidationTextbox" name="inpAgno" type="text" maxlength="4" value="" id="paramAgno" class="required TextBox_OneCell_width" required="true" onchange="logChanges(this);return true;"></input><script>djConfig.searchIds.push("paramAgno");</script>
-                  <td class="TitleCell"><span class="LabelText">From Date</span></td>
-                  <td class="TextBox_btn_ContentCell">
+                  <td class="Combo_ContentCell"> <SELECT name="inpAgno" id="paramAgno" class="ComboKey Combo_OneCell_width" onchange="displayLogic(); return true;">
+                      <OPTION value=""></OPTION>
+                    </SELECT></TD>
+                  <td class="TitleCell" id="tdFromDateLabel"><SPAN class="LabelText">From Date</SPAN></td>
+                  <TD class="TextBox_btn_ContentCell" id="tdFromDate">
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td>
@@ -313,8 +407,8 @@ var arrReportIsBalanced = null;
                       </tr>
                     </table>
                  </td>
-                  <td class="TitleCell"><span class="LabelText">To Date</span></td>
-                  <td class="TextBox_btn_ContentCell">
+                  <td class="TitleCell" id="tdToDateLabel"><span class="LabelText">To Date</span></td>
+                  <td class="TextBox_btn_ContentCell" id="tdToDate">
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td>
@@ -334,13 +428,36 @@ var arrReportIsBalanced = null;
                       </tr>
                     </table>
                   </td>
+                  <td class="TitleCell" id="tdAsToDateLabel" colspan="2"><SPAN class="LabelText">As of Date</SPAN></td>
+                  <TD class="TextBox_btn_ContentCell" id="tdAsToDate">
+                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <TR>
+                        <TD>
+                          <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpAsDateTo" id="paramAsDateTo" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramAsDateTo");</script>
+                        </TD>
+                        <TD valign="top">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpAsDateTo', document.frmMain.inpAsDateTo.value, false);return false;" >
+                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <TR>
+                              <TD class="FieldButton_bg">
+                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+                              </TD>
+                            </TR>
+                          </TABLE>
+                          </a>
+                        </TD>
+                      </TR>
+                    </TABLE>
+                  </TD>
                 </tr>
 
                 <tr>
                 <td class="TitleCell"><span class="LabelText">Reference Year</span></td>
-                  <td class="TextBox_ContentCell"><input dojoType="openbravo:ValidationTextbox" name="inpAgnoRef" type="text" maxlength="4" value="" id="paramAgnoRef" class="required TextBox_OneCell_width" required="true" onchange="logChanges(this);return true;"></input><script>djConfig.searchIds.push("paramAgnoRef");</script>
-                  <td class="TitleCell"><span class="LabelText">From Reference Date</span></td>
-                  <td class="TextBox_btn_ContentCell">
+                  <td class="Combo_ContentCell"> <SELECT name="inpAgnoRef" id="paramAgnoRef" class="ComboKey Combo_OneCell_width" onchange="displayLogic(); return true;">
+                      <OPTION value=""></OPTION>
+                    </SELECT></TD>
+                  <td class="TitleCell" id="tdFromRefDateLabel"><SPAN class="LabelText">From Reference Date</SPAN></td>
+                  <TD class="TextBox_btn_ContentCell" id="tdFromRefDate">
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td>
@@ -360,8 +477,8 @@ var arrReportIsBalanced = null;
                       </tr>
                     </table>
                   </td>
-                  <td class="TitleCell"><span class="LabelText">To Reference Date</span></td>
-                  <td class="TextBox_btn_ContentCell">
+                  <td class="TitleCell" id="tdToRefDateLabel"><span class="LabelText">To Reference Date</span></td>
+                  <td class="TextBox_btn_ContentCell" id="tdToRefDate">
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td>
@@ -381,58 +498,27 @@ var arrReportIsBalanced = null;
                       </tr>
                     </table>
                   </td>
-                </tr>
-
-                <tr>
-                <td colspan="6">
-                  <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
-                  <tbody>
-                    <tr class="FieldGroup_TopMargin"/>
-                    <tr>
-                      <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                      <td class="FieldGroupTitle">Report Options</td>
-                      <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                      <td class="FieldGroupContent"/>
-                    </tr>
-                    <tr class="FieldGroup_BottomMargin"/>
-                  </tbody>
-                  </table>
-                </td>
-                </tr>
-
-                <tr>
-                  <td class="TitleCell"> <span class="LabelText">Accounting schema</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="refreshAccountingReports(); validateOrgCombo(); logChanges(this); return true;">
-                    <option value=""></option><div id="reportC_ACCTSCHEMA_ID"></div>
-                  </select></td>
-                  <td class="ContentCell"></td>
-                  <td class="TitleCell"><span class="LabelText">Show only accounts with value</span></td>
-                  <td class="Radio_Check_ContentCell"><input name="inpConImporte" type="checkbox" id="fieldConImporte" value="Y"></input></td>
-                </tr>
-
-                <tr>
-                  <td class="TitleCell"><span class="LabelText">Accounting Report</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcElementvalueId" id="inpcElementvalueId" class="ComboKey Combo_TwoCells_width" onchange="validateOrgCombo(); logChanges(this); return true;">
-                    <option value=""></option><div id="reportC_ElementValue_ID"></div>
-                  </select></td>
-                  <td class="ContentCell"></td>
-                  <td class="TitleCell"><span class="LabelText">Show Account codes</span></td>
-                  <td class="Radio_Check_ContentCell"><input name="inpConCodigo" type="checkbox" id="fieldConCodigo" value="Y"></input></td>
-                </tr>
-
-                <tr>
-				  <td class="TitleCell"><span class="LabelText">Organization</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width">
-                      <option value=""></option><div id="reportC_Org_ID"></div>
-                    </select></td>
-                </tr>
-                <td class="TitleCell"><span class="LabelText">Account Level</span></td>
-                  <td class="Combo_ContentCell"> <select name="inpLevel" id="inpLevel" class="ComboKey Combo_OneCell_width" onchange="logChanges(this);return true;">
-                    <option value=""></option><div id="reportLevel"></div>
-                  </select></td>
-                  <td class="ContentCell"></td>
-                <tr>
-                
+                  <td class="TitleCell" id="tdAsToRefDateLabel" colspan="2"><SPAN class="LabelText">As of Reference Date</SPAN></td>
+                  <TD class="TextBox_btn_ContentCell" id="tdAsToRefDate">
+                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <TR>
+                        <TD>
+                          <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpAsDateToRef" id="paramAsDateToRef" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramAsDateToRef");</script>
+                        </TD>
+                        <TD valign="top">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpAsDateToRef', document.frmMain.inpAsDateToRef.value, false);return false;">
+                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <TR>
+                              <TD class="FieldButton_bg">
+                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+                              </TD>
+                            </TR>
+                          </TABLE>
+                          </a>
+                        </TD>
+                      </TR>
+                    </TABLE>
+                  </TD>
                 </tr>
 
                 <tr>

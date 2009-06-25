@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,6 +69,13 @@
         <Parameter name="adLanguage"/>
         <Parameter name="adTabId"/>
         <Parameter name="showAudit"/>
+        <Field name="id" value="void"/>
+        <Field name="whereclause" value="void"/>
+        <Field name="nameref" value="void"/>
+        <Field name="defaultvalue" value="void"/>
+        <Field name="isdisplayed" value="void"/>
+        <Field name="istranslated" value="void"/>
+        <Field name="type" value="void"/>
    </SqlMethod>
    
    <SqlMethod name="hasSelectionColumns" type="preparedStatement" return="string">
@@ -202,4 +209,25 @@
       ]]></Sql>
       <Parameter name="ad_reference_id"/>
   </SqlMethod>
+
+  <SqlMethod name="selectValidationTab" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Method need to be synchronized with src-wad/src/org/openbravo/wad/Fields_data.xsql::selectValidationTab</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT c.ad_column_id as id, c.columnname, t.WHERECLAUSE as whereClause, v.code as referencevalue, c.ad_reference_id as reference,
+        c.ad_reference_value_id as NameRef, c.ad_val_rule_id as defaultvalue, f.isdisplayed, c.istranslated, c.columnname as name,
+        (case when t.whereclause is not null or v.code is not null then 'C' else 'R' end) as type /*Combo reaload or Reference*/ 
+        FROM AD_FIELD f, 
+             AD_COLUMN c left join  AD_VAL_RULE v on c.AD_VAL_RULE_ID = v.AD_VAL_RULE_ID
+                         left join AD_REF_TABLE t on (CASE c.ad_reference_id WHEN '18' THEN c.AD_REFERENCE_VALUE_ID ELSE '0' END) = t.AD_REFERENCE_ID     
+        WHERE f.AD_COLUMN_ID = c.ad_column_id
+        AND f.ad_tab_id = ? 
+        AND (t.whereclause IS NOT NULL
+            OR v.code IS NOT NULL
+            OR c.ad_reference_id in ('19','18','17'))
+      ]]>
+    </Sql>
+    <Parameter name="tab"/>
+  </SqlMethod>
+
 </SqlClass>

@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -186,7 +187,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
       VariablesSecureApp vars) throws IOException, ServletException {
 
     String strOrganization = vars.getStringParameter("inpOrganization");
-    String strModules = vars.getInStringParameter("inpNodes");
+    String strModules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
     String strModule = vars.getStringParameter("inpNodeId");
     if (strModules == null || strModules.equals(""))
       strModules = "('" + strModule + "')";

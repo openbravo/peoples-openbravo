@@ -453,24 +453,24 @@ public class ImportOrder extends ImportProcess {
             corder.cBpartnerId = data[i].cBpartnerId;
             corder.billtoId = data[i].billtoId;
             corder.cBpartnerLocationId = data[i].cBpartnerLocationId;
-            if (!data[i].adUserId.equals("") && Integer.parseInt(data[i].adUserId) != 0)
+            if (!data[i].adUserId.equals(""))
               corder.adUserId = data[i].adUserId;
             else
               corder.adUserId = vars.getUser();
             corder.cPaymenttermId = data[i].cPaymenttermId;
             corder.mPricelistId = data[i].mPricelistId;
             corder.mWarehouseId = data[i].mWarehouseId;
-            if (!data[i].mShipperId.equals("") && Integer.parseInt(data[i].mShipperId) != 0)
+            if (!data[i].mShipperId.equals(""))
               corder.mShipperId = data[i].mShipperId;
-            if (!data[i].salesrepId.equals("") && Integer.parseInt(data[i].salesrepId) != 0)
+            if (!data[i].salesrepId.equals(""))
               corder.salesrepId = data[i].salesrepId;
-            if (!data[i].adOrgtrxId.equals("") && Integer.parseInt(data[i].adOrgtrxId) != 0)
+            if (!data[i].adOrgtrxId.equals(""))
               corder.adOrgtrxId = data[i].adOrgtrxId;
-            if (!data[i].cActivityId.equals("") && Integer.parseInt(data[i].cActivityId) != 0)
+            if (!data[i].cActivityId.equals(""))
               corder.cActivityId = data[i].cActivityId;
-            if (!data[i].cCampaignId.equals("") && Integer.parseInt(data[i].cCampaignId) != 0)
+            if (!data[i].cCampaignId.equals(""))
               corder.cCampaignId = data[i].cCampaignId;
-            if (!data[i].cProjectId.equals("") && Integer.parseInt(data[i].cProjectId) != 0)
+            if (!data[i].cProjectId.equals(""))
               corder.cProjectId = data[i].cProjectId;
             if (data[i].dateordered != null && !data[i].dateordered.equals(""))
               corder.dateordered = data[i].dateordered;
@@ -607,8 +607,7 @@ public class ImportOrder extends ImportProcess {
         line.cBpartnerId = corder_cbpartnerid;
         line.cBpartnerLocationId = corder_cbpartnerlocationid;
         lineNo += 10;
-        if (data[i].mProductId != null && !data[i].mProductId.equals("")
-            && Integer.parseInt(data[i].mProductId) != 0)
+        if (data[i].mProductId != null && !data[i].mProductId.equals(""))
           line.mProductId = data[i].mProductId;
         line.qtyordered = data[i].qtyordered;
         // set price
@@ -635,8 +634,7 @@ public class ImportOrder extends ImportProcess {
         if (data[i].priceactual != null && !data[i].priceactual.equals("")
             && new BigDecimal(data[i].priceactual).compareTo(BigDecimal.ZERO) != 0)
           line.priceactual = data[i].priceactual;
-        if (data[i].cTaxId != null && !data[i].cTaxId.equals("")
-            && Integer.parseInt(data[i].cTaxId) != 0)
+        if (data[i].cTaxId != null && !data[i].cTaxId.equals(""))
           line.cTaxId = data[i].cTaxId;
         else {
           try {

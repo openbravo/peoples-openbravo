@@ -108,7 +108,8 @@ public class HttpsUtils {
     return ks;
   }
 
-  private static void installCert(URL url, String alias, String passphrase) throws GeneralSecurityException {
+  private static void installCert(URL url, String alias, String passphrase)
+      throws GeneralSecurityException {
 
     KeyStore ks = null;
     SSLContext context = null;
@@ -343,13 +344,17 @@ public class HttpsUtils {
   public static boolean isInternetAvailable(String proxyHost, int proxyPort) {
     if (proxyHost != null && !proxyHost.equals("")) {
       System.getProperties().put("proxySet", true);
-      System.getProperties().put("proxyPort", proxyPort);
-      System.getProperties().put("proxyHost", proxyHost);
+      System.getProperties().put("http.proxyHost", proxyHost);
+      System.getProperties().put("https.proxyHost", proxyHost);
+      System.getProperties().put("http.proxyPort", String.valueOf(proxyPort));
+      System.getProperties().put("https.proxyPort", String.valueOf(proxyPort));
       System.setProperty("java.net.useSystemProxies", "true");
     } else {
       System.getProperties().put("proxySet", false);
-      System.getProperties().remove("proxyPort");
-      System.getProperties().remove("proxyHost");
+      System.getProperties().remove("http.proxyHost");
+      System.getProperties().remove("http.proxyPort");
+      System.getProperties().remove("https.proxyHost");
+      System.getProperties().remove("https.proxyPort");
       System.setProperty("java.net.useSystemProxies", "false");
     }
     try {
@@ -358,7 +363,7 @@ public class HttpsUtils {
       log4j.info("Addr: " + address.getHostAddress());
       log4j.info("Reach: " + address.isReachable(3000));
       // Double check.
-      URL url = new URL("http://openbravo.com");
+      URL url = new URL("http://www.openbravo.com");
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setConnectTimeout(3000);
       conn.connect();

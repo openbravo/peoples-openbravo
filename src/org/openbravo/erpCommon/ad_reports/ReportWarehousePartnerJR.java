@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -51,7 +52,7 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
       String strProductCategory = vars.getGlobalVariable("inpProductCategory",
           "ReportWarehousePartnerJR|productCategory", "");
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportWarehousePartnerJR|mProductId", "");
+          "ReportWarehousePartnerJR|mProductId", "", IsIDFilter.instance);
       String strX = vars.getGlobalVariable("inpX", "ReportWarehousePartnerJR|X", "");
       String strY = vars.getGlobalVariable("inpY", "ReportWarehousePartnerJR|Y", "");
       String strZ = vars.getGlobalVariable("inpZ", "ReportWarehousePartnerJR|Z", "");
@@ -62,7 +63,7 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportWarehousePartnerJR|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportWarehousePartnerJR|mProductId");
+          "ReportWarehousePartnerJR|mProductId", IsIDFilter.instance);
       String strX = vars.getRequestGlobalVariable("inpX", "ReportWarehousePartnerJR|X");
       String strY = vars.getRequestGlobalVariable("inpY", "ReportWarehousePartnerJR|Y");
       String strZ = vars.getRequestGlobalVariable("inpZ", "ReportWarehousePartnerJR|Z");
@@ -74,7 +75,7 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
           "ReportWarehousePartnerJR|productCategory");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportWarehousePartnerJR|mProductId");
+          "ReportWarehousePartnerJR|mProductId", IsIDFilter.instance);
       String strX = vars.getRequestGlobalVariable("inpX", "ReportWarehousePartnerJR|X");
       String strY = vars.getRequestGlobalVariable("inpY", "ReportWarehousePartnerJR|Y");
       String strZ = vars.getRequestGlobalVariable("inpZ", "ReportWarehousePartnerJR|Z");

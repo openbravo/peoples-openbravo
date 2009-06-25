@@ -33,6 +33,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -87,7 +88,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars);
     } else if (vars.commandIn("OK")) {
-      final String strModules = vars.getInStringParameter("inpNodes");
+      final String strModules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
       m_info.delete(0, m_info.length());
       final String strResult = process(request, response, vars, strModules);
       log4j.debug("InitialOrgSetup - after processFile");

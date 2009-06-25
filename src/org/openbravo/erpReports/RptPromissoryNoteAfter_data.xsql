@@ -58,7 +58,7 @@
         SELECT C_BANKACCOUNT_ID AS BANK FROM C_DEBT_PAYMENT WHERE C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID IN ('1')
         ]]>
         </Sql>
-        <Parameter name="cDebtPaymenntId" type="replace" optional="true" after="WHERE C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID IN (" text="'1'"/>
+        <Parameter name="cDebtPaymenntId" type="replace" optional="true" after="WHERE C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID IN ('" text="1"/>
    </SqlMethod>
 
    <SqlMethod name="selectPromissoryformat" type="preparedStatement" return="string">

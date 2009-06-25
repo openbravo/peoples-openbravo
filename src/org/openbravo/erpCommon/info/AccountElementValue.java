@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -39,6 +41,11 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class AccountElementValue extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "Value", "NAME", "AD_ORG_ID_D", "C_ELEMENTVALUE_ID",
+      "ROWKEY" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -93,8 +100,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getInStringParameter("sort_cols");
-      String strSortDirs = vars.getInStringParameter("sort_dirs");
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       printGridData(response, vars, strValue, strName, strOrganization, strAccountElementValue,
           strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter, strAcctSchema);
     } else if (vars.commandIn("KEY")) {
@@ -144,7 +151,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
     out.close();
   }
 
-  private String generateResult(AccountElementValueData[] data) throws IOException, ServletException {
+  private String generateResult(AccountElementValueData[] data) throws IOException,
+      ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -233,7 +241,6 @@ public class AccountElementValue extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "Value", "NAME", "AD_ORG_ID_D", "C_ELEMENTVALUE_ID", "ROWKEY" };
     String[] colWidths = { "204", "401", "151", "0", "0" };
     for (int i = 0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
@@ -256,10 +263,10 @@ public class AccountElementValue extends HttpSecureAppServlet {
     return data;
   }
 
-  private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strValue,
-      String strName, String strOrganization, String strAccountElementValue, String strOrderCols,
-      String strOrderDirs, String strOffset, String strPageSize, String strNewFilter,
-      String strAcctSchema) throws IOException, ServletException {
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars,
+      String strValue, String strName, String strOrganization, String strAccountElementValue,
+      String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
+      String strNewFilter, String strAcctSchema) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -274,12 +281,9 @@ public class AccountElementValue extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
-        // validate orderby parameters and build sql orderBy clause
-        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+        // build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
-        strAcctSchema = (strAcctSchema.equals("%") ? "" : strAcctSchema);
-        strValue = (strValue.equals("%") ? "" : strValue);
-        strName = (strName.equals("%") ? "" : strName);
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or

@@ -2451,7 +2451,7 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--300-->  <TABLENAME><![CDATA[C_DocType_Trl]]></TABLENAME>
 <!--300-->  <CLASSNAME><![CDATA[DocumentTypeTrl]]></CLASSNAME>
 <!--300-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--300-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--300-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--300-->  <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
 <!--300-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--300-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>

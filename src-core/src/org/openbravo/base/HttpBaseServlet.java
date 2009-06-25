@@ -195,6 +195,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
       strLanguage = "";
     }
     xmlEngine.fileBaseLocation = new File(getBaseDesignPath(strLanguage));
+    xmlEngine.sessionLanguage = strLanguage;
     strReplaceWith = globalParameters.strLocalReplaceWith.replace("@actual_url@", strActualUrl)
         .replace("@actual_url_context@", strDireccion);
     strReplaceWithFull = strReplaceWith;

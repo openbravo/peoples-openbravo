@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -344,7 +345,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Shipment");
-    String strStorageDetail = vars.getInStringParameter("inpmStorageDetailId");
+    String strStorageDetail = vars.getInStringParameter("inpmStorageDetailId", IsIDFilter.instance);
     if (strStorageDetail.equals(""))
       return null;
     OBError myMessage = null;

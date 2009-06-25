@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -47,7 +48,7 @@ public class DebtPaymentUnapply extends HttpSecureAppServlet {
       String strWindow = vars.getStringParameter("inpwindowId");
       printPageDataSheet(response, vars, strWindow);
     } else if (vars.commandIn("PROCESS")) {
-      String strCDebtPaymentId = vars.getInStringParameter("inpDebtPayment");
+      String strCDebtPaymentId = vars.getInStringParameter("inpDebtPayment", IsIDFilter.instance);
       OBError myMessage = updateSelection(vars, strCDebtPaymentId);
       vars.setMessage("DebtPaymentUnapply", myMessage);
       response.sendRedirect(strDireccion + request.getServletPath());

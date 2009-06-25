@@ -20,8 +20,6 @@ package org.openbravo.erpCommon.info;
 
 import javax.servlet.ServletException;
 
-import org.openbravo.erpCommon.utility.SQLReturnObject;
-
 /**
  * Common utility functions to be used by the different selectors.
  * 
@@ -38,14 +36,12 @@ class SelectorUtility {
    *          String with list of orderBy columns from getInStringParameter
    * @param strOrderDirs
    *          String with list of orderBy directions from getInStringParameter
-   * @param headers
-   *          array with DataGrid header information to get valid columnnames
    * @return String to be passed after sql "ORDER BY"
    * @throws ServletException
    *           on malformed input
    */
-  static String buildOrderByClause(String strOrderCols, String strOrderDirs,
-      SQLReturnObject[] headers) throws ServletException {
+  static String buildOrderByClause(String strOrderCols, String strOrderDirs)
+      throws ServletException {
     if (strOrderCols.length() <= 2 || strOrderCols.charAt(0) != '('
         || strOrderCols.charAt(strOrderCols.length() - 1) != ')') {
       throw new ServletException("Illegal orderBy specification: " + strOrderCols);
@@ -66,24 +62,6 @@ class SelectorUtility {
       col = col.substring(1, col.length() - 1);
       dir = dir.substring(1, dir.length() - 1);
 
-      // validate columnname
-      boolean found = false;
-      for (int j = 0; j < headers.length; j++) {
-        String validColumnName = headers[j].getData("columnname");
-        if (col.equalsIgnoreCase(validColumnName)) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        throw new ServletException(
-            "Error building orderBy clause, could not find a valid column for input: " + col);
-      }
-
-      // validate direction
-      if (!dir.equalsIgnoreCase("ASC") && !dir.equalsIgnoreCase("DESC")) {
-        throw new ServletException("Error building orderBy clause, invalid direction: " + dir);
-      }
       order.append(col);
       order.append(" ");
       order.append(dir);

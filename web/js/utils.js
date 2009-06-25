@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '3954';
+  var number = '4032';
   return number;
 }
 
@@ -284,6 +284,14 @@ function reloadOpener() {
  }
 }
 
+ /**
+  * Removes the onunload function reference
+  * @return
+  */
+function removeOnUnload() {
+	window.onunload = null;
+}
+
 /**
 * Check for changes in a Form. This function requires the inpLastFieldChanged field. Is a complementary function to {@link #setChangedField}
 * @param {Form} f Reference to a form where the inpLastFieldChanged is located.
@@ -335,14 +343,14 @@ function checkForChanges(f) {
 		var promptConfirmation = typeof top.appFrame.confirmOnChanges == 'undefined' ? true : top.appFrame.confirmOnChanges;
 		var hasUserChanges = typeof top.appFrame.isUserChanges == 'undefined' ? false : top.appFrame.isUserChanges;
 		if (form.inpLastFieldChanged && (hasUserChanges || isButtonClick || isTabClick)) { // if the inpLastFieldChanged exists and there is a user change
-			var autoSave = true;		
-			if (promptConfirmation) {
-				autoSave = showJSMessage(25);
-				if(typeof top.appFrame.confirmOnChanges != 'undefined' && autoSave) {
+			var autoSaveFlag = autosave;		
+			if (promptConfirmation && hasUserChanges) {
+				autoSaveFlag = showJSMessage(25);
+				if(typeof top.appFrame.confirmOnChanges != 'undefined' && autoSaveFlag) {
 					top.appFrame.confirmOnChanges = false;
 				}
 			}
-			if (autoSave) {
+			if (autoSaveFlag) {
 				if(form.autosave) {
 					form.autosave.value = 'Y';
 				}
@@ -2200,6 +2208,8 @@ function executeWindowButton(id,focus) {
     appWindow = top.frames['frameSuperior'];
   } else if (top.frames['frameButton']) {
     appWindow = top.frames['frameButton'];
+  } else if (top.frames['mainframe']) {
+    appWindow = top.frames['mainframe'];
   }
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
     if (focus==true) appWindow.document.getElementById(id).focus();

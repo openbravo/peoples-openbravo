@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -49,7 +50,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
       String strPricelistversionId = vars.getGlobalVariable("inpmPricelistVersion",
           "ReportPricelist|pricelistversion", "");
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportPricelist|mProductId", "");
+          "ReportPricelist|mProductId", "", IsIDFilter.instance);
       printPageDataSheet(response, vars, strProductCategory, strPricelistversionId, strmProductId);
       /*
        * } else if (vars.commandIn("DIRECT")) { String strDateFrom =
@@ -66,7 +67,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
       String strPricelistversionId = vars.getRequestGlobalVariable("inpmPricelistVersion",
           "ReportPricelist|pricelistversion");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportPricelist|mProductId");
+          "ReportPricelist|mProductId", IsIDFilter.instance);
       /* setHistoryCommand(request, "DIRECT"); */
       printPageDataSheet(response, vars, strProductCategory, strPricelistversionId, strmProductId);
     } else if (vars.commandIn("EDIT_PDF")) {
@@ -75,7 +76,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
       String strPricelistversionId = vars.getRequestGlobalVariable("inpmPricelistVersion",
           "ReportPricelist|pricelistversion");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
-          "ReportPricelist|mProductId");
+          "ReportPricelist|mProductId", IsIDFilter.instance);
       printPagePdf(response, vars, strProductCategory, strPricelistversionId, strmProductId);
     } else
       pageError(response);

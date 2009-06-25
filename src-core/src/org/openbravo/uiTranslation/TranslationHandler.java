@@ -160,7 +160,13 @@ public class TranslationHandler {
       log4j.debug("Error caught tryng to read file into InputStream: " + e.getMessage());
       e.printStackTrace();
     }
-    InputStreamReader inpRe = new InputStreamReader(inputStream);
+    InputStreamReader inpRe = null;
+    try {
+      inpRe = new InputStreamReader(inputStream, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      log4j.error(e);
+      e.printStackTrace();
+    }
     StringBuffer buffer = new StringBuffer();
     BufferedReader bre = new BufferedReader(inpRe);
     String inputLine = null;
@@ -194,11 +200,14 @@ public class TranslationHandler {
   }
 
   private void processTranslations() {
+
     if (documentTypeId != null && !documentTypeId.equals("")) {
       setProcessLabels();
-    } else if (tabId != null && !tabId.equals("")) {
+    }
+    if (tabId != null && !tabId.equals("")) {
       setTabLabels();
     } else if (fileName != null && !fileName.equals("")) {
+      // look for fileName for all manual windows (including processes)
       String textFileName = fileName.replace(baseDesignPath, "");
       if (textFileName.contains("?")) {
         String suffix = textFileName.substring(textFileName.lastIndexOf("."));

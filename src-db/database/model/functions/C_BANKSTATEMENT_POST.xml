@@ -68,11 +68,12 @@
     -- Parameter Variables
     --  Parameter Variables
     v_Processed CHAR(1) ;
-    v_Posted CHAR(1) ;
+		v_Posted CHAR(1) ;
+		v_Processing CHAR(1) ;
     v_count NUMBER;
     v_SettlementDocType_ID VARCHAR2(32) ;
     v_settlementID varchar2(32) ;
-    v_DocumentNo NUMBER(10) ;
+    v_DocumentNo VARCHAR2(50);
     v_line C_CASHLINE.LINE%TYPE;
     -- BankAccount
     v_BA_Currency_ID VARCHAR2(32) ;
@@ -107,17 +108,22 @@
     END LOOP; --  Get Parameter
     SELECT PROCESSED,
       POSTED,
+			PROCESSING,
       AD_Client_ID,
       AD_Org_ID
     INTO v_Processed,
       v_Posted,
+			v_Processing,
       v_AD_Client_ID,
       v_AD_Org_ID
     FROM C_BANKSTATEMENT
     WHERE C_BankStatement_ID=v_Record_ID;
-    IF(v_Posted='Y') THEN
-      RAISE_APPLICATION_ERROR(-20000, '@BankStatementDocumentPosted@') ;
-    END IF;
+		IF(v_Processing='Y') THEN
+		RAISE_APPLICATION_ERROR(-20000, '@OtherProcessActive@') ;
+		END IF;
+		IF(v_Posted='Y') THEN
+		RAISE_APPLICATION_ERROR(-20000, '@BankStatementDocumentPosted@') ;
+		END IF;
     IF(NOT FINISH_PROCESS) THEN
       DECLARE
         Cur_AutomaticSettlementCancel RECORD;
@@ -219,46 +225,46 @@
       END IF;
       IF (v_is_tr_allow='N') THEN
         RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
-      END IF;    
-      
+      END IF;
+
       SELECT AD_ORG_CHK_DOCUMENTS('C_BANKSTATEMENT', 'C_BANKSTATEMENTLINE', v_Record_ID, 'C_BANKSTATEMENT_ID', 'C_BANKSTATEMENT_ID') INTO v_is_included FROM dual;
       IF (v_is_included=-1) THEN
         RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
       END IF;
-      
+
       SELECT AD_ORG_CHK_DOC_PAYMENTS('C_BANKSTATEMENT', 'C_BANKSTATEMENTLINE', v_Record_ID, 'C_BANKSTATEMENT_ID', 'C_BANKSTATEMENT_ID', 'C_DEBT_PAYMENT_ID') INTO v_is_included FROM dual;
       IF (v_is_included=-1) THEN
         RAISE_APPLICATION_ERROR(-20000, '@PaymentsAndHeaderDifferentLEorBU@');
       END IF;
-      
+
       -- Check the period control is opened (only if it is legal entity with accounting)
       SELECT StatementDate
       INTO v_BS_Date
       FROM C_BankStatement
       WHERE C_BankStatement_ID=v_Record_ID;
-      
+
       -- Gets the BU or LE of the document
       SELECT AD_GET_DOC_LE_BU('C_BANKSTATEMENT', v_Record_ID, 'C_BANKSTATEMENT_ID', 'LE')
       INTO v_org_bule_id
       FROM DUAL;
-      
+
       SELECT AD_OrgType.IsAcctLegalEntity
       INTO v_isacctle
       FROM AD_OrgType, AD_Org
       WHERE AD_Org.AD_OrgType_ID = AD_OrgType.AD_OrgType_ID
       AND AD_Org.AD_Org_ID=v_org_bule_id;
-      
+
       IF (v_isacctle='Y') THEN
-        SELECT C_CHK_OPEN_PERIOD(v_AD_Org_ID, v_BS_Date, 'CMB', NULL) 
+        SELECT C_CHK_OPEN_PERIOD(v_AD_Org_ID, v_BS_Date, 'CMB', NULL)
         INTO v_available_period
         FROM DUAL;
-        
+
         IF (v_available_period<>1) THEN
           RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
         END IF;
       END IF;
-       
-      
+
+
       v_ResultStr:='CheckingRestrictions - C_BANKSTATEMENT ORG IS IN C_BANKACCOUNT ORG TREE';
       SELECT COUNT(*)
       INTO v_count

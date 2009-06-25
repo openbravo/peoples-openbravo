@@ -595,7 +595,7 @@
     <Parameter name="tab"/>
   </SqlMethod>
   <SqlMethod name="selectValidationTab" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
+    <SqlMethodComment>Method need to be synchronized with src/org/openbravo/erpCommon/businessUtility/Buscador_data.xsql::selectValidationTab</SqlMethodComment>
     <Sql>
       <![CDATA[
         SELECT c.ad_column_id as id, c.columnname, t.WHERECLAUSE as whereClause, v.code as referencevalue, c.ad_reference_id as reference,
@@ -613,6 +613,39 @@
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
+  
+  <SqlMethod name="selectProcessesWithReloads" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Obtains all processes that might require combo reload</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+         SELECT distinct c.AD_PROCESS_id as id
+        FROM AD_PROCESS_PARA c left join  AD_VAL_RULE v on c.AD_VAL_RULE_ID = v.AD_VAL_RULE_ID
+                         left join AD_REF_TABLE t on (CASE c.ad_reference_id WHEN '18' THEN c.AD_REFERENCE_VALUE_ID ELSE '0' END) = t.AD_REFERENCE_ID     
+        WHERE (t.whereclause IS NOT NULL
+            OR v.code IS NOT NULL
+            OR c.ad_reference_id in ('19','18','17'))
+      ]]>
+    </Sql>
+  </SqlMethod>
+  
+  <SqlMethod name="selectValidationProcess" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Obtains all param for processes that might require combo reload</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+         SELECT c.AD_PROCESS_PARA_id as id, c.columnname, t.WHERECLAUSE as whereClause, v.code as referencevalue, c.ad_reference_id as reference,
+        c.ad_reference_value_id as NameRef, c.ad_val_rule_id as defaultvalue,  c.columnname as name,
+        (case when t.whereclause is not null or v.code is not null then 'C' else 'R' end) as type /*Combo reaload or Reference*/ 
+        FROM AD_PROCESS_PARA c left join  AD_VAL_RULE v on c.AD_VAL_RULE_ID = v.AD_VAL_RULE_ID
+                         left join AD_REF_TABLE t on (CASE c.ad_reference_id WHEN '18' THEN c.AD_REFERENCE_VALUE_ID ELSE '0' END) = t.AD_REFERENCE_ID     
+        WHERE (t.whereclause IS NOT NULL
+            OR v.code IS NOT NULL
+            OR c.ad_reference_id in ('19','18','17'))
+         AND c.AD_Process_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="processId"/>
+  </SqlMethod>
+  
   <SqlMethod name="selectColumnTable" type="preparedStatement" return="multiple">
     <SqlMethodComment>Fields of reference table in a tab</SqlMethodComment>
     <Sql>
@@ -632,6 +665,24 @@
     <Parameter name="adTabId"/>
     <Parameter name="adColumnId"/>
   </SqlMethod>
+  
+  <SqlMethod name="selectColumnTableProcess" type="preparedStatement" return="multiple">
+    <Sql>
+      SELECT ColumnName As Name, 'x' as xmltext, ad_reference_value_id as referencevalue, 
+      ad_val_rule.CODE as defaultValue, ad_val_rule.AD_VAL_RULE_ID as columnname,
+      ad_ref_table.WHERECLAUSE, ad_table.tablename, 'TableList' as tablenametrl, ad_table.name as nameref, 
+      '18' as reference, 'Y' as required, 'N'as istranslated 
+      FROM ad_process_para p left join ad_val_rule on p.AD_VAL_RULE_ID = ad_val_rule.AD_VAL_RULE_ID, 
+           ad_ref_table, 
+           ad_table 
+      WHERE ad_ref_table.ad_table_id = ad_table.ad_table_id 
+      AND p.AD_REFERENCE_VALUE_ID = ad_ref_table.AD_REFERENCE_ID  
+      AND p.ad_process_para_id = ?
+      AND p.ad_reference_id = '18'
+    </Sql>
+    <Parameter name="processParaId"/>
+  </SqlMethod>
+  
   <SqlMethod name="selectColumnTableDir" type="preparedStatement" return="multiple">
     <SqlMethodComment>Fields of reference table in a tab</SqlMethodComment>
     <Sql>
@@ -649,6 +700,19 @@
     <Parameter name="adTabId"/>
     <Parameter name="adColumnId"/>
   </SqlMethod>
+  
+  <SqlMethod name="selectColumnTableDirProcess" type="preparedStatement" return="multiple">
+    <Sql>
+      SELECT ColumnName As Name, 'x' as xmltext, ColumnName as referencevalue, 
+      ad_val_rule.CODE as defaultValue, ad_val_rule.AD_VAL_RULE_ID as columnname,  
+      'TableDir' as tablenametrl, '' as WHERECLAUSE, '19' as reference, 'N' as istranslated 
+      FROM ad_process_para p left join ad_val_rule on p.AD_VAL_RULE_ID = ad_val_rule.AD_VAL_RULE_ID
+      WHERE p.ad_process_para_id = ?
+      AND ad_reference_id = '19'
+    </Sql>
+    <Parameter name="processParaId"/>
+  </SqlMethod>
+  
   <SqlMethod name="columnName" type="preparedStatement" return="String" default="">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>

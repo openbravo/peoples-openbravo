@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,14 +56,14 @@
         <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="bp.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="bp.AD_Org_ID IN (" text="'1'"/>
-        <Parameter name="key" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(bp.Value) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="name" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND C_IGNORE_ACCENT(bp.Name) LIKE C_IGNORE_ACCENT(?) ]]></Parameter>
-        <Parameter name="contact" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(COALESCE(c.name,u.name)) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="codigoPostal" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.Postal) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="provincia" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(r.NAME) LIKE UPPER(?)]]></Parameter>
+        <Parameter name="key" ignoreValue="%" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(bp.Value) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND C_IGNORE_ACCENT(bp.Name) LIKE C_IGNORE_ACCENT(?) ]]></Parameter>
+        <Parameter name="contact" ignoreValue="%" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(COALESCE(c.name,u.name)) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="codigoPostal" ignoreValue="%" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.Postal) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="provincia" ignoreValue="%" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(r.NAME) LIKE UPPER(?)]]></Parameter>
         <Parameter name="clients" optional="true" type="none" after="AND bp.IsActive='Y'"><![CDATA[AND ISCUSTOMER = 'Y' ]]></Parameter>
         <Parameter name="vendors" optional="true" type="none" after="AND bp.IsActive='Y'"><![CDATA[AND ISVENDOR ='Y']]></Parameter>
-        <Parameter name="ciudad" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.City) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="ciudad" ignoreValue="%" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.City) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="bp.value" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
@@ -90,14 +90,14 @@
         <Field name="position" value="count"/>       
         <Parameter name="adUserClient" type="replace" optional="true" after="bp.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="bp.AD_Org_ID IN (" text="'1'"/>
-        <Parameter name="key" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(bp.Value) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="name" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND C_IGNORE_ACCENT(bp.Name) LIKE C_IGNORE_ACCENT(?) ]]></Parameter>
-        <Parameter name="contact" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(COALESCE(c.name,u.name)) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="codigoPostal" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.Postal) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="provincia" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(r.NAME) LIKE UPPER(?)]]></Parameter>
+        <Parameter name="key" ignoreValue="%" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(bp.Value) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND C_IGNORE_ACCENT(bp.Name) LIKE C_IGNORE_ACCENT(?) ]]></Parameter>
+        <Parameter name="contact" ignoreValue="%" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(COALESCE(c.name,u.name)) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="codigoPostal" ignoreValue="%" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.Postal) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="provincia" ignoreValue="%" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(r.NAME) LIKE UPPER(?)]]></Parameter>
         <Parameter name="clients" optional="true" type="none" after="AND bp.IsActive='Y'"><![CDATA[AND ISCUSTOMER = 'Y' ]]></Parameter>
         <Parameter name="vendors" optional="true" type="none" after="AND bp.IsActive='Y'"><![CDATA[AND ISVENDOR ='Y']]></Parameter>
-        <Parameter name="ciudad" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.City) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="ciudad" ignoreValue="%" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.City) LIKE UPPER(?) ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

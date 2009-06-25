@@ -355,10 +355,12 @@ public class Wad extends DefaultHandler {
       // If generateTabs parameter is true, the action buttons must be
       // generated
       if (generateTabs) {
-        if (!quick || ProcessRelationData.generateActionButton(wad.pool))
+        if (!quick || ProcessRelationData.generateActionButton(wad.pool)) {
+          wad.processProcessComboReloads(fileFinReloads);
           wad.processActionButton(fileReference);
-        else
+        } else {
           log4j.info("No changes in ActionButton_data.xml");
+        }
         if (!quick || FieldsData.buildActionButton(wad.pool)) {
           wad.processActionButtonXml(fileActionButton);
           wad.processActionButtonHtml(fileActionButton);
@@ -497,9 +499,28 @@ public class Wad extends DefaultHandler {
       if (fd != null) {
         for (int i = 0; i < fd.length; i++) {
           final Vector<Object> vecFields = new Vector<Object>();
+
+          // calculate fields that need combo reload
+          final FieldsData[] dataReload = FieldsData.selectValidationTab(pool, fd[i].reference);
+
+          final Vector<Object> vecReloads = new Vector<Object>();
+          if (dataReload != null && dataReload.length > 0) {
+            for (int z = 0; z < dataReload.length; z++) {
+              String code = dataReload[z].whereclause
+                  + ((!dataReload[z].whereclause.equals("") && !dataReload[z].referencevalue
+                      .equals("")) ? " AND " : "") + dataReload[z].referencevalue;
+
+              if (code.equals("") && dataReload[z].type.equals("R"))
+                code = "@AD_Org_ID@";
+              WadUtility.getComboReloadText(code, vecFields, null, vecReloads, "",
+                  dataReload[z].columnname);
+            }
+          }
+
+          // build the html template
           WadActionButton.buildHtml(pool, xmlEngine, fileReference, fd[i], vecFields,
               MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", false, calendarDescription,
-              clockDescription, calculatorDescription, jsDateFormat);
+              clockDescription, calculatorDescription, jsDateFormat, vecFields);
         }
       }
     } catch (final ServletException e) {
@@ -590,9 +611,28 @@ public class Wad extends DefaultHandler {
       if (fd != null) {
         for (int i = 0; i < fd.length; i++) {
           final Vector<Object> vecFields = new Vector<Object>();
+
+          // calculate fields that need combo reload
+          final FieldsData[] dataReload = FieldsData.selectValidationTab(pool, fd[i].reference);
+
+          final Vector<Object> vecReloads = new Vector<Object>();
+          if (dataReload != null && dataReload.length > 0) {
+            for (int z = 0; z < dataReload.length; z++) {
+              String code = dataReload[z].whereclause
+                  + ((!dataReload[z].whereclause.equals("") && !dataReload[z].referencevalue
+                      .equals("")) ? " AND " : "") + dataReload[z].referencevalue;
+
+              if (code.equals("") && dataReload[z].type.equals("R"))
+                code = "@AD_Org_ID@";
+              WadUtility.getComboReloadText(code, vecFields, null, vecReloads, "",
+                  dataReload[z].columnname);
+            }
+          }
+
+          // build the html template
           WadActionButton.buildHtml(pool, xmlEngine, fileReference, fd[i], vecFields,
               MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", true, calendarDescription,
-              clockDescription, calculatorDescription, jsDateFormat);
+              clockDescription, calculatorDescription, jsDateFormat, vecFields);
         }
       }
     } catch (final ServletException e) {
@@ -657,6 +697,10 @@ public class Wad extends DefaultHandler {
         filterParams = new WadData[0][0];
       xmlDocument.setData("structureFilter", filters);
       xmlDocument.setDataArray("reportFilterParams", "structure1", filterParams);
+
+      WadData[] contextParams = WadData.selectContextParams(pool);
+      xmlDocument.setData("structureContextParams", contextParams);
+
       final WadData[] servlets = WadData.select(pool);
       WadData[][] servletParams = null;
       if (servlets != null && servlets.length > 0) {
@@ -673,8 +717,12 @@ public class Wad extends DefaultHandler {
       xmlDocument.setDataArray("reportServletParams", "structure1", servletParams);
       xmlDocument.setData("structureFilterMapping", WadData.selectFilterMapping(pool));
       xmlDocument.setData("structure2", WadData.selectMapping(pool));
-      WadUtility.writeFile(fileWebXml, "web.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-          + xmlDocument.print());
+
+      String webXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print();
+      webXml = webXml.replace("${attachPath}", attachPath);
+      webXml = webXml.replace("${webPath}", webPath);
+
+      WadUtility.writeFile(fileWebXml, "web.xml", webXml);
     } catch (final IOException e) {
       e.printStackTrace();
       log4j.error("Problem of IOException in process of Web.xml");
@@ -812,11 +860,11 @@ public class Wad extends DefaultHandler {
         if (totalParameters < vecTotalParameters.size()) {
           ArrayList<String> usedParameters = new ArrayList<String>();
           for (int h = totalParameters; h < vecTotalParameters.size(); h++) {
-            String strParam = (String) vecTotalParameters.elementAt(h);
-            vecParameters.addElement(strParam);
+            String strParam = WadUtility.getWhereParameter(vecTotalParameters.elementAt(h), false);
+            vecParameters.addElement(WadUtility.getWhereParameter(vecTotalParameters.elementAt(h),
+                true));
             if (!usedParameters.contains(strParam)) {
               usedParameters.add(strParam);
-              strParam = strParam.substring(17, strParam.lastIndexOf("\""));
               whereClauseParams += ", Utility.getContext(this, vars, \"" + strParam
                   + "\", windowId)";
             }
@@ -867,8 +915,8 @@ public class Wad extends DefaultHandler {
         if (vecParametersParent.size() > 0) {
           ArrayList<String> usedParameters = new ArrayList<String>();
           for (int h = 0; h < vecParametersParent.size(); h++) {
-            String strParam = (String) vecParametersParent.elementAt(h);
-            strParam = strParam.substring(17, strParam.lastIndexOf("\""));
+            String strParam = WadUtility.getWhereParameter(vecParametersParent.get(h), false);
+
             if (!usedParameters.contains(strParam)) {
               usedParameters.add(strParam);
               parentwhereclause += ", Utility.getContext(this, vars, \"" + strParam
@@ -2399,8 +2447,7 @@ public class Wad extends DefaultHandler {
     while (pos != -1) {
       result.append(strWhere.substring(0, pos));
       strWhere = strWhere.substring(pos + 1);
-      String strParam = (String) vecParameters.elementAt(questNumber);
-      strParam = strParam.substring(17, strParam.lastIndexOf("\""));
+      String strParam = WadUtility.getWhereParameter(vecParameters.elementAt(questNumber), false);
       questNumber++;
       if (strParam.equalsIgnoreCase("paramLanguage"))
         result.append(" '\" + vars.getLanguage() + \"' ");
@@ -2810,7 +2857,7 @@ public class Wad extends DefaultHandler {
             vecParametros);
         final StringBuffer parametros = new StringBuffer();
         for (final Enumeration<Object> e = vecParametros.elements(); e.hasMoreElements();) {
-          final String paramsElement = (String) e.nextElement();
+          String paramsElement = WadUtility.getWhereParameter(e.nextElement(), true);
           parametros.append("\n" + paramsElement);
         }
         fieldsAux[i].whereclause = parametros.toString();
@@ -2829,7 +2876,7 @@ public class Wad extends DefaultHandler {
               vecParametros);
           final StringBuffer parametros = new StringBuffer();
           for (final Enumeration<Object> e = vecParametros.elements(); e.hasMoreElements();) {
-            final String paramsElement = (String) e.nextElement();
+            String paramsElement = WadUtility.getWhereParameter(e.nextElement(), true);
             parametros.append("\n" + paramsElement);
           }
           fieldsDef[i].whereclause = parametros.toString();
@@ -2984,7 +3031,7 @@ public class Wad extends DefaultHandler {
               vecParametros);
           final StringBuffer parametros = new StringBuffer();
           for (final Enumeration<Object> e = vecParametros.elements(); e.hasMoreElements();) {
-            final String paramsElement = (String) e.nextElement();
+            final String paramsElement = WadUtility.getWhereParameter(e.nextElement(), true);
             parametros.append("\n" + paramsElement);
           }
           fieldsAux[i].whereclause = parametros.toString();
@@ -3289,6 +3336,163 @@ public class Wad extends DefaultHandler {
     if (vecTotal == null || vecTotal.size() == 0)
       return;
     WadUtility.writeFile(fileDir, "ComboReloads" + strTab + ".java", xmlDocument.print());
+  }
+
+  /**
+   * Generates combo reloads for all action buttons
+   * 
+   * @param fileDir
+   *          Directory to save the generated java
+   * @throws ServletException
+   * @throws IOException
+   */
+  private void processProcessComboReloads(File fileDir) throws ServletException, IOException {
+    log4j.info("Processig combo reloads for action buttons ");
+    Vector<FieldsData> generatedProcesses = new Vector<FieldsData>();
+    Vector<FieldsData[]> processCode = new Vector<FieldsData[]>();
+    FieldsData[] processes = FieldsData.selectProcessesWithReloads(pool);
+
+    for (FieldsData process : processes) {
+
+      String processId = process.id;
+
+      final FieldsData[] data = FieldsData.selectValidationProcess(pool, processId);
+      if (data == null || data.length == 0)
+        return;
+
+      final Vector<Object> vecReloads = new Vector<Object>();
+      final Vector<Object> vecTotal = new Vector<Object>();
+
+      FieldsData[] result = null;
+
+      for (int i = 0; i < data.length; i++) {
+
+        final String code = data[i].whereclause
+            + ((!data[i].whereclause.equals("") && !data[i].referencevalue.equals("")) ? " AND "
+                : "") + data[i].referencevalue;
+        data[i].columnname = "inp" + Sqlc.TransformaNombreColumna(data[i].columnname);
+        data[i].whereclause = WadUtility.getComboReloadText(code, null, null, vecReloads, "inp");
+        if (data[i].whereclause.equals("") && data[i].type.equals("R"))
+          data[i].whereclause = "\"inpadOrgId\"";
+        if (data[i].reference.equals("17") && data[i].whereclause.equals(""))
+          data[i].whereclause = "\"inp" + data[i].columnname + "\"";
+        if (!data[i].whereclause.equals("")
+            && (data[i].reference.equals("17") || data[i].reference.equals("18") || data[i].reference
+                .equals("19"))) {
+
+          data[i].orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
+
+          if (data[i].reference.equals("17")) { // List
+            data[i].tablename = "List";
+            data[i].tablenametrl = "List";
+            data[i].htmltext = "select";
+            data[i].htmltexttrl = "selectLanguage";
+            data[i].xmltext = ", \"" + data[i].nameref + "\"";
+            data[i].xmltexttrl = data[i].xmltext + ", vars.getLanguage()";
+            data[i].xmltext += ", \"\"";
+            data[i].xmltexttrl += ", \"\"";
+          } else if (data[i].reference.equals("18")) { // Table
+            final FieldsData[] tables = FieldsData.selectColumnTableProcess(pool, data[i].id);
+            if (tables == null || tables.length == 0)
+              throw new ServletException("No se ha encontrado la Table para la columnId: "
+                  + data[i].id);
+            final StringBuffer where = new StringBuffer();
+            final Vector<Object> vecFields1 = new Vector<Object>();
+            final Vector<Object> vecTables = new Vector<Object>();
+            final Vector<Object> vecWhere = new Vector<Object>();
+            final Vector<Object> vecParameters = new Vector<Object>();
+            final Vector<Object> vecTableParameters = new Vector<Object>();
+            WadUtility.columnIdentifier(pool, tables[0].tablename, true, tables[0], 0, 0, true,
+                vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+            where.append(tables[0].whereclause);
+            data[i].tablename = "TableList";
+            data[i].htmltext = "select" + tables[0].referencevalue;
+            if (!tables[0].columnname.equals("")) {
+              data[i].htmltext += "_" + tables[0].columnname;
+              data[i].tablename = "TableListVal";
+              if (!where.toString().equals(""))
+                where.append(" AND ");
+              where.append(tables[0].defaultvalue);
+            }
+            data[i].tablenametrl = data[i].tablename + "Trl";
+            data[i].htmltexttrl = data[i].htmltext;
+            data[i].xmltext = "";
+            if (vecTableParameters.size() > 0) {
+              data[i].xmltext = ", vars.getLanguage()";
+            }
+            data[i].xmltext += ", Utility.getContext(this, vars, \"#User_Org\", windowId), Utility.getContext(this, vars, \"#User_Client\", windowId)";
+            data[i].xmltext += WadUtility.getWadComboReloadContext(where.toString(), "N");
+            data[i].xmltexttrl = data[i].xmltext;
+            if (vecParameters.size() > 0 && vecTableParameters.size() == 0) {
+              data[i].xmltext += ", vars.getLanguage()";
+              data[i].xmltexttrl += ", vars.getLanguage()";
+            }
+            data[i].xmltext += ", \"\"";
+            data[i].xmltexttrl += ", \"\"";
+          } else if (data[i].reference.equals("19")) { // TableDir
+            final FieldsData[] tableDir = FieldsData.selectColumnTableDirProcess(pool, data[i].id);
+            if (tableDir == null || tableDir.length == 0)
+              throw new ServletException("No se ha encontrado la TableDir para la columnId: "
+                  + data[i].id);
+            data[i].tablename = "TableDir";
+            data[i].htmltext = "select" + tableDir[0].referencevalue;
+            final String table_Name = tableDir[0].name.substring(0, tableDir[0].name.length() - 3);
+            final Vector<Object> vecFields1 = new Vector<Object>();
+            final Vector<Object> vecTables = new Vector<Object>();
+            final Vector<Object> vecWhere = new Vector<Object>();
+            final Vector<Object> vecParameters = new Vector<Object>();
+            final Vector<Object> vecTableParameters = new Vector<Object>();
+            WadUtility.columnIdentifier(pool, table_Name, true, tableDir[0], 0, 0, true,
+                vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+            data[i].xmltext = "";
+            if (vecTableParameters.size() > 0) {
+              data[i].xmltext = ", vars.getLanguage()";
+            }
+            data[i].xmltext += ", Utility.getContext(this, vars, \"#User_Org\", windowId), Utility.getContext(this, vars, \"#User_Client\", windowId)";
+            if (!tableDir[0].columnname.equals("")) {
+              data[i].htmltext += "_" + tableDir[0].columnname;
+              data[i].tablename = "TableDirVal";
+              data[i].xmltext += WadUtility.getWadComboReloadContext(tableDir[0].defaultvalue, "N");
+            } else {
+              data[i].tablename = "TableDir";
+            }
+            data[i].tablenametrl = data[i].tablename + "Trl";
+            data[i].htmltexttrl = data[i].htmltext;
+            data[i].xmltexttrl = data[i].xmltext;
+            if (vecParameters.size() > 0 && vecTableParameters.size() == 0) {
+              data[i].xmltext += ", vars.getLanguage()";
+              data[i].xmltexttrl += ", vars.getLanguage()";
+            }
+            data[i].xmltext += ", \"\"";
+            data[i].xmltexttrl += ", \"\"";
+          }
+          vecTotal.addElement(data[i]);
+        }
+      }
+      if (vecTotal != null && vecTotal.size() > 0) {
+        result = new FieldsData[vecTotal.size()];
+        vecTotal.copyInto(result);
+        processCode.add(result);
+        generatedProcesses.add(process);
+      }
+
+    }
+    if (generatedProcesses.size() > 0) {
+      // create the helper class, it is a servlet that manages all combo reloads
+      XmlDocument xmlDocumentHelper = xmlEngine.readXmlTemplate(
+          "org/openbravo/wad/ComboReloadsProcessHelper").createXmlDocument();
+      FieldsData[] processesGenerated = new FieldsData[generatedProcesses.size()];
+      generatedProcesses.copyInto(processesGenerated);
+      FieldsData[][] processData = new FieldsData[generatedProcesses.size()][];
+      for (int i = 0; i < generatedProcesses.size(); i++) {
+        processData[i] = processCode.get(i);
+      }
+
+      xmlDocumentHelper.setData("structure1", processesGenerated);
+      xmlDocumentHelper.setDataArray("reportComboReloadsProcess", "structure1", processData);
+      WadUtility.writeFile(fileDir, "ComboReloadsProcessHelper.java", xmlDocumentHelper.print());
+      log4j.debug("created :" + fileDir + "/ComboReloadsProcessHelper.java");
+    }
   }
 
   /**

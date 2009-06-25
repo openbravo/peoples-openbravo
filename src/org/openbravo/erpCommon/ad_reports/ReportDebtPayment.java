@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -66,7 +67,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
           // strcBpartnerId =
           // vars.getInStringParameter("inpcBPartnerId_IN");
           strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
-              "ReportAgingBalance|cBpartnerId", "");
+              "ReportAgingBalance|cBpartnerId", "", IsIDFilter.instance);
           vars.setSessionValue("ReportDebtPayment|C_BPartner_ID", strcBpartnerId);
         }
       } else {
@@ -106,7 +107,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       String strcbankaccount = vars.getRequestGlobalVariable("inpcBankAccountId",
           "ReportDebtPayment|C_Bankaccount_ID");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportDebtPayment|inpcBPartnerId_IN");
+          "ReportDebtPayment|inpcBPartnerId_IN", IsIDFilter.instance);
       // String strC_BPartner_ID =
       // vars.getRequestGlobalVariable("inpBpartnerId",
       // "ReportDebtPayment|C_BPartner_ID");
@@ -139,7 +140,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       String strcbankaccount = vars.getRequestGlobalVariable("inpcBankAccountId",
           "ReportDebtPayment|C_Bankaccount_ID");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportDebtPayment|inpcBPartnerId_IN");
+          "ReportDebtPayment|inpcBPartnerId_IN", IsIDFilter.instance);
       // String strC_BPartner_ID = vars.getRequestGlobalVariable("inpBpartnerId",
       // "ReportDebtPayment|C_BPartner_ID");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",

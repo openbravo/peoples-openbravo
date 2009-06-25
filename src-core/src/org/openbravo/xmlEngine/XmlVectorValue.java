@@ -48,10 +48,12 @@ class XmlVectorValue extends Vector<Object> {
       XmlComponentValue xmlComponentValue = (XmlComponentValue) e.nextElement();
       String result = "";
       if (textMap != null) {
+
         if (xmlComponentValue.print() != null && !xmlComponentValue.print().startsWith("<")
             && !xmlComponentValue.print().equals("")) {
+
           boolean isTranslated = false;
-          result = xmlComponentValue.print();
+          result = xmlComponentValue.print().trim();
           log4jXmlVectorValue.debug("printStringBuffer(HashMap<String, String> textMap) - result: "
               + result);
           log4jXmlVectorValue.debug("checking for existence of text in textdata: " + result);

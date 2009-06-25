@@ -24,8 +24,6 @@ import static org.openbravo.scheduling.Process.PROCESSING;
 import static org.openbravo.scheduling.Process.SCHEDULED;
 import static org.openbravo.scheduling.Process.SUCCESS;
 
-import java.util.Date;
-
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
@@ -77,8 +75,7 @@ public class ProcessRunner {
 
     status = PROCESSING;
     ProcessRunData.insert(conn, ctx.getOrganization(), ctx.getClient(), ctx.getUser(), ctx
-        .getUser(), executionId, status, OBScheduler.format(new Date(startTime)), null, bundle
-        .getLog(), requestId);
+        .getUser(), executionId, status, null, bundle.getLog(), requestId);
 
     try {
       log.debug("Calling execute on process " + requestId);
@@ -94,8 +91,7 @@ public class ProcessRunner {
 
     final String duration = ProcessMonitor.getDuration(endTime - startTime);
     ProcessRequestData.update(conn, COMPLETE, requestId);
-    final String end = OBScheduler.format(new Date(endTime));
-    ProcessRunData.update(conn, ctx.getUser(), status, end, duration, bundle.getLog().toString(),
+    ProcessRunData.update(conn, ctx.getUser(), status, duration, bundle.getLog().toString(),
         executionId);
 
     return executionId;

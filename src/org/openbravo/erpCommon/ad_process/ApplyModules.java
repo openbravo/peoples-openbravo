@@ -216,6 +216,12 @@ public class ApplyModules extends HttpSecureAppServlet {
         tasks.add("compile.complete.deploy");
         ant.setProperty("apply.on.create", "true");
       } else {
+        if (ApplyModulesData.compileCompleteNeeded(this)) {
+          // compile complete is needed for templates because in this case it is not needed which
+          // elements belong to the template and for uninistalling modules in order to remove old
+          // files and references
+          ant.setProperty("apply.modules.complete.compilation", "true");
+        }
         ant.setProperty("force", "true");
         tasks.add("apply.modules");
         ant.setProperty("module", unnappliedModules);

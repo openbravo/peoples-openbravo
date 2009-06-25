@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -47,13 +48,13 @@ public class ReportOffer extends HttpSecureAppServlet {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportOffer|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportOffer|dateTo", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN", "ReportOffer|partner",
-          "");
+          "", IsIDFilter.instance);
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId);
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportOffer|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportOffer|dateTo", "");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
-          "ReportOffer|partner");
+          "ReportOffer|partner", IsIDFilter.instance);
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId);
     } else if (vars.commandIn("OPENAJAX")) {
       String strOfferId = vars.getRequiredStringParameter("inpOfferAjax");

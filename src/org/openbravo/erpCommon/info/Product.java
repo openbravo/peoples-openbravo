@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -39,6 +41,11 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Product extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String[] colNames = { "value", "name", "qtyavailable", "pricelist",
+      "pricestd", "qtyonhand", "qtyordered", "margin", "pricelimit", "rowkey" };
+  private static final RequestFilter columnFilter = new ValueListFilter(colNames);
+  private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -141,7 +148,7 @@ public class Product extends HttpSecureAppServlet {
       vars.setSessionValue("Product.priceListVersion", strPriceListVersion);
       ProductData[] data = ProductData.select(this, strWarehouse, "1", strKeyValue + "%", "",
           Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars,
-              "#User_Org", "Product"), strPriceListVersion, "1", "", "");
+              "#User_Org", "Product"), strPriceListVersion, "1", "", "", "");
       if (data != null && data.length == 1)
         printPageKey(response, vars, data, strWarehouse, strPriceListVersion);
       else
@@ -164,8 +171,8 @@ public class Product extends HttpSecureAppServlet {
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
-      String strSortCols = vars.getInStringParameter("sort_cols");
-      String strSortDirs = vars.getInStringParameter("sort_dirs");
+      String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
+      String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       printGridData(response, vars, strKey, strName, strOrg, strWarehouse, strPriceListVersion,
           strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter);
     } else
@@ -302,8 +309,6 @@ public class Product extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "value", "name", "qtyavailable", "pricelist", "pricestd", "qtyonhand",
-        "qtyordered", "margin", "pricelimit", "rowkey" };
     boolean[] colSortable = { true, true, false, false, false, false, false, false, false, false };
     // String[] gridNames = {"Key", "Name","Disp. Credit","Credit used",
     // "Contact", "Phone no.", "Zip", "City", "Income", "c_bpartner_id",
@@ -349,8 +354,8 @@ public class Product extends HttpSecureAppServlet {
 
     if (headers != null) {
       try {
-        // validate orderby parameters and build sql orderBy clause
-        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs, headers);
+        // build sql orderBy clause
+        String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
@@ -367,15 +372,16 @@ public class Product extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
+          String oraLimit1 = String.valueOf(offset + pageSize);
+          String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
           data = ProductData.select(this, strWarehouse, "ROWNUM", strKey, strName, Utility
               .getContext(this, vars, "#User_Client", "Product"), Utility.getSelectorOrgs(this,
-              vars, strOrg), strPriceListVersion, strOrderBy, oraLimit, "");
+              vars, strOrg), strPriceListVersion, strOrderBy, oraLimit1, oraLimit2, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
           data = ProductData.select(this, strWarehouse, "1", strKey, strName, Utility.getContext(
               this, vars, "#User_Client", "Product"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strPriceListVersion, strOrderBy, "", pgLimit);
+              strPriceListVersion, strOrderBy, "", "", pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);

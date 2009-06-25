@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,7 @@
   <SqlMethod name="selectCombo" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT A_O.AD_ORG_ID AS ID, A_O.NAME, '' as pagebreak, '' AS PADRE, '' AS ISBALANCED
+        SELECT A_O.AD_ORG_ID AS ID, A_O.NAME, '' as pagebreak, '' AS PADRE, '' AS ISBALANCED, '' AS BEGINING, '' AS END, '' AS PREVIOUS_YEAR, '' AS PREVIOUS_YEAR_ID
         FROM AD_ORG A_O, AD_ROLE_ORGACCESS A_R_O, AD_ROLE R
         WHERE A_R_O.AD_ORG_ID = A_O.AD_ORG_ID 
         AND A_R_O.ISACTIVE = 'Y' 
@@ -41,7 +41,7 @@
    <SqlMethod name="selectRpt" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-		SELECT C_ACCT_RPT_ID AS ID, NAME, ISORGBALANCED AS ISBALANCED
+		SELECT COALESCE(REPORTTYPE,'N') || C_ACCT_RPT_ID AS ID, NAME, ISORGBALANCED AS ISBALANCED
 		FROM C_ACCT_RPT
 		WHERE AD_ORG_ID IN ('1')
 		AND AD_CLIENT_ID IN ('1')
@@ -55,7 +55,7 @@
    <SqlMethod name="selectRptDouble" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-		SELECT C_ACCT_RPT.C_ACCTSCHEMA_ID AS PADRE, C_ACCT_RPT.C_ACCT_RPT_ID AS ID, C_ACCT_RPT.NAME AS NAME 
+		SELECT C_ACCT_RPT.C_ACCTSCHEMA_ID AS PADRE, COALESCE(REPORTTYPE,'N') || C_ACCT_RPT.C_ACCT_RPT_ID AS ID, C_ACCT_RPT.NAME AS NAME 
 		FROM C_ACCT_RPT
 		ORDER BY NAME
       </Sql>
@@ -152,28 +152,6 @@
     <Parameter name="client"/>
   </SqlMethod>
 
-  <SqlMethod name="yearStartDate" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-        select to_char(min(startdate),?) from c_period
-        inner join c_year on c_period.c_year_id = c_year.c_year_id
-        where c_year.year=?
-    </Sql>
-    <Parameter name="dateFormat"/>
-    <Parameter name="year"/>
-  </SqlMethod>
-
-  <SqlMethod name="yearEndDate" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-        select to_char(max(enddate),?) from c_period
-        inner join c_year on c_period.c_year_id = c_year.c_year_id
-        where c_year.year=?
-    </Sql>
-    <Parameter name="dateFormat"/>
-    <Parameter name="year"/>
-  </SqlMethod>
-
   <SqlMethod name="incomesummary" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -199,14 +177,140 @@
      AND FACT_ACCT.ACCOUNT_ID = AA.C_ELEMENTVALUE_ID
      AND FACT_ACCT.FACTACCTTYPE <> 'R'
      AND 1=1
-     AND C_YEAR.YEAR = ?
+     AND C_YEAR.YEAR IN ('1')
      AND FACT_ACCT.AD_ORG_ID IN ('1')
       ]]></Sql>
         <Parameter name="accountType"/>
         <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
         <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = ?]]></Parameter>
-        <Parameter name="year"/>
+        <Parameter name="year" optional="true" type="replace" after="AND C_YEAR.YEAR IN (" text="'1'"/>
         <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
+   </SqlMethod>
+   <SqlMethod name="checkFiscalYears" type="preparedStatement" return="multiple" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT CASE WHEN C.CLOSE_FACT_ACCT_GROUP_ID IS NULL THEN 'N' ELSE 'Y' END || SELECTED.C_YEAR_ID AS ID,
+          C_YEAR.YEAR AS NAME
+        FROM C_PERIOD PREVIOUS, C_PERIOD SELECTED, C_YEAR LEFT JOIN AD_ORG_CLOSING C ON C.C_YEAR_ID = C_YEAR.C_YEAR_ID
+        WHERE PREVIOUS.AD_CLIENT_ID = ?
+          AND SELECTED.AD_CLIENT_ID = ?
+          AND SELECTED.ISACTIVE = 'Y'
+          AND C_YEAR.ISACTIVE = 'Y'
+          AND PREVIOUS.ENDDATE = SELECTED.STARTDATE-1
+          AND PREVIOUS.ENDDATE IN (
+            SELECT MAX(P.ENDDATE) AS END
+            FROM C_PERIOD P, C_YEAR Y
+            WHERE P.AD_CLIENT_ID = ?
+              AND Y.C_YEAR_ID = P.C_YEAR_ID
+            GROUP BY Y.YEAR, P.C_YEAR_ID
+          )
+          AND C_YEAR.C_YEAR_ID = SELECTED.C_YEAR_ID
+        UNION
+        SELECT 'M'||Y.C_YEAR_ID AS ID, Y.YEAR AS NAME
+        FROM C_PERIOD P, C_YEAR Y
+        WHERE P.AD_CLIENT_ID=?
+          AND P.C_YEAR_ID = Y.C_YEAR_ID
+          AND P.ISACTIVE = 'Y'
+          AND Y.ISACTIVE = 'Y'
+          AND P.STARTDATE-1 NOT IN (
+                SELECT ENDDATE
+                FROM C_PERIOD
+                WHERE C_PERIOD.AD_CLIENT_ID = ?
+          )
+        ORDER BY NAME DESC
+        ]]></Sql>
+        <Parameter name="adClientId"/>
+        <Parameter name="adClientId"/>
+        <Parameter name="adClientId"/>
+        <Parameter name="adClientId"/>
+        <Parameter name="adClientId"/>
+   </SqlMethod>
+   <SqlMethod name="previousYear" type="preparedStatement" return="multiple" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT A.ID, A.NAME, Y.YEAR AS PREVIOUS_YEAR, Y.C_YEAR_ID AS PREVIOUS_YEAR_ID
+        FROM (
+                SELECT MIN(P.STARTDATE) AS BEGINING, MAX(P.ENDDATE) AS END, Y.YEAR AS NAME, Y.C_YEAR_ID AS ID
+                FROM C_PERIOD P, C_YEAR Y
+                WHERE P.AD_CLIENT_ID = ?
+                  AND Y.C_YEAR_ID = P.C_YEAR_ID
+                GROUP BY Y.C_YEAR_ID, Y.YEAR
+             ) A, C_YEAR Y, C_PERIOD P
+        WHERE P.ENDDATE = A.BEGINING-1
+          AND Y.AD_CLIENT_ID = ?
+          AND P.AD_CLIENT_ID = ?
+          AND P.C_YEAR_ID = Y.C_YEAR_ID
+        ]]></Sql>
+        <Parameter name="adClientId"/>
+        <Parameter name="adClientId"/>
+        <Parameter name="adClientId"/>
+   </SqlMethod>
+   <SqlMethod name="startEndYear" type="preparedStatement" return="multiple" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+          SELECT MIN(P.STARTDATE) AS BEGINING, MAX(P.ENDDATE) AS END, Y.YEAR AS NAME, Y.C_YEAR_ID AS ID
+          FROM C_PERIOD P, C_YEAR Y
+          WHERE P.AD_CLIENT_ID=?
+            AND Y.C_YEAR_ID = P.C_YEAR_ID
+            AND Y.C_YEAR_ID IN ('1')
+          GROUP BY Y.C_YEAR_ID, Y.YEAR
+        ]]></Sql>
+        <Parameter name="adClientId"/>
+        <Parameter name="cYearId" optional="true" type="replace" after="AND Y.C_YEAR_ID IN (" text="'1'"/>
+   </SqlMethod>
+   <SqlMethod name="selectCalculateOpening" type="preparedStatement" return="String" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+          SELECT COALESCE(REPORTTYPE,'N') FROM C_ACCT_RPT WHERE C_ACCT_RPT_ID=?
+        ]]></Sql>
+        <Parameter name="cAcctRptId"/>
+   </SqlMethod>
+   <SqlMethod name="selectOrgsDouble" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+      SELECT S.C_ACCTSCHEMA_ID||R.C_ACCT_RPT_ID AS PADRE, O.AD_ORG_ID AS ID, O.NAME AS NAME
+      FROM C_ACCT_RPT R, AD_ORG_ACCTSCHEMA S, (
+                                              SELECT AD_ORG.AD_ORG_ID, AD_ORG.NAME, AD_ORG.AD_CLIENT_ID,
+                                                (CASE WHEN AD_ORGTYPE.ISBUSINESSUNIT='Y' OR AD_ORGTYPE.ISLEGALENTITY='Y' THEN 'Y' ELSE 'N' END) AS BALANCED
+                                              FROM AD_ORG, AD_ORGTYPE
+                                              WHERE AD_ORGTYPE.AD_ORGTYPE_ID = AD_ORG.AD_ORGTYPE_ID
+                                             ) O
+      WHERE R.C_ACCTSCHEMA_ID = S.C_ACCTSCHEMA_ID
+        AND AD_ISORGINCLUDED(O.AD_ORG_ID, S.AD_ORG_ID, S.AD_CLIENT_ID) <> -1
+        AND AD_ISORGINCLUDED(O.AD_ORG_ID, R.AD_ORG_ID, R.AD_CLIENT_ID) <> -1
+        AND S.AD_CLIENT_ID = ?
+        AND (R.ISORGBALANCED <> 'N' OR COALESCE(R.REPORTTYPE,'N') <> 'N')
+        AND O.BALANCED = 'Y'
+      UNION
+      SELECT S.C_ACCTSCHEMA_ID||R.C_ACCT_RPT_ID AS PADRE, O.AD_ORG_ID AS ID, O.NAME AS NAME
+      FROM C_ACCT_RPT R, AD_ORG_ACCTSCHEMA S, (
+                                              SELECT AD_ORG.AD_ORG_ID, AD_ORG.NAME, AD_ORG.AD_CLIENT_ID,
+                                                (CASE WHEN AD_ORGTYPE.ISBUSINESSUNIT='Y' OR AD_ORGTYPE.ISLEGALENTITY='Y' THEN 'Y' ELSE 'N' END) AS BALANCED
+                                              FROM AD_ORG, AD_ORGTYPE
+                                              WHERE AD_ORGTYPE.AD_ORGTYPE_ID = AD_ORG.AD_ORGTYPE_ID
+                                             ) O
+      WHERE R.C_ACCTSCHEMA_ID = S.C_ACCTSCHEMA_ID
+        AND (AD_ISORGINCLUDED(O.AD_ORG_ID, S.AD_ORG_ID, S.AD_CLIENT_ID) <> -1
+        OR AD_ISORGINCLUDED(S.AD_ORG_ID, O.AD_ORG_ID, S.AD_CLIENT_ID) <> -1)
+        AND (AD_ISORGINCLUDED(O.AD_ORG_ID, R.AD_ORG_ID, R.AD_CLIENT_ID) <> -1
+        OR AD_ISORGINCLUDED(R.AD_ORG_ID, O.AD_ORG_ID, R.AD_CLIENT_ID) <> -1)
+        AND S.AD_CLIENT_ID = ?
+        AND R.ISORGBALANCED = 'N' 
+        AND COALESCE(R.REPORTTYPE,'N') = 'N'
+      ORDER BY PADRE
+        ]]></Sql>
+        <Parameter name="adClient"/>
+        <Parameter name="adClient"/>
+   </SqlMethod>
+   <SqlMethod name="selectYearsDouble" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT O.AD_ORG_ID AS PADRE, Y.C_YEAR_ID AS ID, Y.YEAR AS NAME
+        FROM C_YEAR Y, C_CALENDAR C, AD_ORG O
+        WHERE C.C_CALENDAR_ID = Y.C_CALENDAR_ID
+          AND C.C_CALENDAR_ID=(SELECT AD_ORG.C_CALENDAR_ID FROM AD_ORG WHERE AD_ORG_GETCALENDAROWNER(O.AD_ORG_ID) = AD_ORG.AD_ORG_ID)
+        ORDER BY O.AD_ORG_ID, Y.YEAR
+        ]]></Sql>
    </SqlMethod>
 </SqlClass>

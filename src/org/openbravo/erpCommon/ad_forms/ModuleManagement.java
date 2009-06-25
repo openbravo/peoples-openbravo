@@ -29,8 +29,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ImportModule;
@@ -39,11 +41,13 @@ import org.openbravo.erpCommon.modules.UninstallModule;
 import org.openbravo.erpCommon.modules.VersionUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
+import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.SimpleModule;
@@ -117,7 +121,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       printPageInstallFile(response, vars);
 
     } else if (vars.commandIn("UNINSTALL")) {
-      final String modules = vars.getInStringParameter("inpNodes");
+      final String modules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
       final UninstallModule um = new UninstallModule(this, vars.getSessionValue("#sourcePath"),
           vars);
       um.execute(modules);
@@ -819,7 +823,23 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private String getSearchResults(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String text) {
     SimpleModule[] modules = null;
+    SystemInformation info = OBDal.getInstance().get(SystemInformation.class, "0");
     try {
+      if (info.isProxyRequired() && !info.getProxyServer().equals("") && info.getProxyPort() > 0) {
+        if (!HttpsUtils.isInternetAvailable(info.getProxyServer(), info.getProxyPort().intValue())) {
+          final OBError message = new OBError();
+          message.setType("Error");
+          message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+          message.setMessage(Utility.messageBD(this, "WSError", vars.getLanguage()));
+          vars.setMessage("ModuleManagement", message);
+          try {
+            response
+                .sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
+          } catch (final Exception ex) {
+            ex.printStackTrace();
+          }
+        }
+      }
       final WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
       final WebServiceImpl ws = loc.getWebService();
       modules = ws.moduleSearch(text, getInstalledModules());
