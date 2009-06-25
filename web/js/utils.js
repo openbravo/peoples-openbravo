@@ -3922,7 +3922,7 @@ function changeAuditIcon(newStatus) {
 	var logo = null;
 	if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
 		if(top.opener != null) { // is a pop-up window
-			logo = top.opener.document.getElementById('openbravoLogo');
+			logo = document.getElementById('openbravoLogo');
 		    if (logo == null && top.mainframe) {
 		    	logo = top.mainframe.document.getElementById('openbravoLogo');
 		    }
