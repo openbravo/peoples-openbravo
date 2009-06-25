@@ -115,8 +115,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
     xmlDocument.setParameter("autosave", "var autosave = "
         + (vars.getSessionValue("#Autosave").equals("")
             || vars.getSessionValue("#Autosave").equalsIgnoreCase("N") ? "false" : "true") + ";");
-    xmlDocument
-        .setParameter("opsinstance", "var opsisntance = " + ActivationKey.isActiveInstance());
+    xmlDocument.setParameter("opsinstance", "var opsInstance = " + ActivationKey.isActiveInstance()
+        + ";");
     final StringBuffer menu = new StringBuffer();
     menu.append(generarMenuVertical(dataMenu, strDireccion, "0", open));
     menu.append(generateMenuSearchs(vars, open));
