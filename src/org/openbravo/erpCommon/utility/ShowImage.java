@@ -60,6 +60,7 @@ public class ShowImage extends HttpSecureAppServlet {
     if (img != null) {
       byte[] imageBytes = img.getBindaryData();
       if (imageBytes != null) {
+        response.addHeader("Expires", "Sun, 17 Jan 2038 19:14:07 GMT");
         response.setContentLength(imageBytes.length);
         OutputStream out = response.getOutputStream();
         out.write(imageBytes);

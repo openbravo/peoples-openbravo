@@ -20,13 +20,18 @@
 package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ops.ActivationKey;
+import org.openbravo.model.ad.utility.Image;
 
 /**
  * 
@@ -43,6 +48,27 @@ public class ShowLogo extends HttpSecureAppServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     String id = ActivationKey.isActiveInstance() ? "2" : "1";
-    response.sendRedirect(strDireccion + "/utility/ShowImage?id=" + id);
+    // response.sendRedirect(strDireccion + "/utility/ShowImage?id=" + id);
+
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    if (id == null || id.equals("")) {
+      return;
+    }
+    boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
+    OBContext.getOBContext().setInAdministratorMode(true);
+
+    Image img = OBDal.getInstance().get(Image.class, id);
+    if (img != null) {
+      byte[] imageBytes = img.getBindaryData();
+      if (imageBytes != null) {
+        response.addHeader("Expires", "Sun, 17 Jan 2038 19:14:07 GMT");
+        response.setContentLength(imageBytes.length);
+        OutputStream out = response.getOutputStream();
+        out.write(imageBytes);
+        out.close();
+      }
+    }
+    OBContext.getOBContext().setInAdministratorMode(adminMode);
   }
 }
