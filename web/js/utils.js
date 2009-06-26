@@ -3933,10 +3933,12 @@ function changeAuditIcon(newStatus) {
 		opsInstance = top.frameMenu.opsInstance;
 	}
 	
-	if (logo != null && opsInstance) {
-		logo.className = logo.className + "_OPS";
+	if (logo != null && opsInstance ) {
+	    className = logo.className;
+	    if (className.length>4 && className.substring(className.length-4) != "_OPS") {
+		  logo.className = logo.className + "_OPS";
+	    }
 	}
-	
   }
 
 
