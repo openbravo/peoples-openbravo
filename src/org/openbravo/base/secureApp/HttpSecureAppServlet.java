@@ -461,6 +461,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       // finally invalidate the session (this event will be caught by the session listener
       session.invalidate();
     }
+    m_AuthManager.logout(request, response);
   }
 
   /**
