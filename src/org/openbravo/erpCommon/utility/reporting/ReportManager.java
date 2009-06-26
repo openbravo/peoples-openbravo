@@ -96,7 +96,6 @@ public class ReportManager {
 
     final HashMap<String, Object> designParameters = populateDesignParameters(variables, report);
     designParameters.put("TEMPLATE_LOCATION", templateLocation);
-
     JasperPrint jasperPrint = null;
 
     try {
@@ -131,7 +130,12 @@ public class ReportManager {
       JRFormatFactory jrFormatFactory = new JRFormatFactory();
       jrFormatFactory.setDatePattern(variables.getJavaDateFormat());
       designParameters.put(JRParameter.REPORT_FORMAT_FACTORY, jrFormatFactory);
-
+      String salesOrder=report.getCheckSalesOrder();
+      if(salesOrder!=null && salesOrder.equals("Y")){
+    	  designParameters.put("DOCUMENT_NAME", Utility.messageBD(_connectionProvider, "Sales", language)+" "+Utility.messageBD(_connectionProvider, "Invoice", language));
+      }else{
+    	  designParameters.put("DOCUMENT_NAME", Utility.messageBD(_connectionProvider, "Purchase", language)+" "+Utility.messageBD(_connectionProvider, "Invoice", language));
+      }
       jasperPrint = fillReport(designParameters, jasperReport);
 
     } catch (final JRException exception) {

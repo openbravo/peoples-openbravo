@@ -391,7 +391,7 @@
 						style="Report_Title"
 						x="14"
 						y="1"
-						width="152"
+						width="266"
 						height="46"
 						forecolor="#666666"
 						key="staticText-29"/>
@@ -402,9 +402,9 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Left">
-						<font fontName="Bitstream Vera Sans" size="36"/>
+						<font fontName="Bitstream Vera Sans" size="26"/>
 					</textElement>
-				<text><![CDATA[ORDER]]></text>
+				<text><![CDATA[PURCHASE ORDER]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
