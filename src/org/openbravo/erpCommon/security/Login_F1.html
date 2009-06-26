@@ -27,18 +27,18 @@
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</script>
-<script language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</script>
+<script language="JavaScript" type="text/javascript" id="paramLanguage">    defaultLang = "en_US";</script>
 <script language="JavaScript" type="text/javascript">
 
 function validate(action)
 {
-	var frm = document.forms[0];
-	//Se controla que haya rellenado todos los campos
-	if (frm.user.value==null || frm.password.value==null || frm.user.value=="" || frm.password.value=="") {
-		showJSMessage(1);
-		return false;
-	}
-	return true;
+    var frm = document.forms[0];
+    //Se controla que haya rellenado todos los campos
+    if (frm.user.value==null || frm.password.value==null || frm.user.value=="" || frm.password.value=="") {
+        showJSMessage(1);
+        return false;
+    }
+    return true;
 }
 function onloadFunctions() {
 }
@@ -100,7 +100,7 @@ function redirectWhenPopup() {
             <tr class="Main_NavBar_bg">
               <td width="100%"></td>
               <td><div class="Main_NavBar_bg_logo_left" /></td>
-              <td class="Main_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><div class="Login_NavBar_logo" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" /></td>
+              <td class="Main_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><div class="Main_NavBar_logo" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" /></td>
               <td><div class="Main_NavBar_bg_logo_right" /></td>
             </tr>
           </table>
