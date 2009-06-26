@@ -21,10 +21,11 @@ package org.openbravo.erpCommon.ops;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.PublicKey;
+import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -45,6 +46,8 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 
 public class ActivationKey {
+
+  private final static String OB_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPwCM5RfisLvWhujHajnLEjEpLC7DOXLySuJmHBqcQ8AQ63yZjlcv3JMkHMsPqvoHF3s2ztxRcxBRLc9C2T3uXQg0PTH5IAxsV4tv05S+tNXMIajwTeYh1LCoQyeidiid7FwuhtQNQST9/FqffK1oVFBnWUfgZKLMO2ZSHoEAORwIDAQAB";
 
   private boolean isActive = false;
   private boolean hasActivationKey = false;
@@ -85,6 +88,10 @@ public class ActivationKey {
     }
     hasActivationKey = true;
     try {
+      PublicKey obPk = getPublicKey(OB_PUBLIC_KEY); // get OB public key to check signature
+      Signature signer = Signature.getInstance("MD5withRSA");
+      signer.initVerify(obPk);
+
       Cipher cipher = Cipher.getInstance("RSA");
 
       ByteArrayInputStream bis = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64
@@ -93,10 +100,35 @@ public class ActivationKey {
 
       // Encryptation only accepts 128B size, it must be chuncked
       final byte[] buf = new byte[128];
+      final byte[] signature = new byte[128];
+
+      // read the signature
+      if (!(bis.read(signature) > 0)) {
+        isActive = false;
+        errorMessage = "@NotSigned@";
+        setLogger();
+        return;
+      }
+
+      // decrypt
       while ((bis.read(buf)) > 0) {
         cipher.init(Cipher.DECRYPT_MODE, pk);
         bos.write(cipher.doFinal(buf));
       }
+
+      // verify signature
+      signer.update(bos.toByteArray());
+      boolean signed = signer.verify(signature);
+      log.debug("signature length:" + buf.length);
+      log.debug("singature:" + (new BigInteger(signature).toString(16).toUpperCase()));
+      log.debug("signed:" + signed);
+      if (!signed) {
+        isActive = false;
+        errorMessage = "@NotSigned@";
+        setLogger();
+        return;
+      }
+
       byte[] props = bos.toByteArray();
 
       ByteArrayInputStream isProps = new ByteArrayInputStream(props);
@@ -121,7 +153,7 @@ public class ActivationKey {
       if (getProperty("enddate") != null)
         endDate = sd.parse(getProperty("enddate"));
 
-    } catch (ParseException e) {
+    } catch (Exception e) {
       errorMessage = "@ErrorReadingDates@";
       isActive = false;
       log.error(e);
@@ -244,14 +276,6 @@ public class ActivationKey {
       return LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE;
 
     if (getProperty("lincensetype").equals("USR")) {
-      boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
-      OBContext.getOBContext().setInAdministratorMode(true);
-
-      OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
-      obCriteria.add(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true));
-      int currentSessions = obCriteria.list().size();
-      OBContext.getOBContext().setInAdministratorMode(adminMode);
-
       Long softUsers = null;
       if (getProperty("limituserswarn") != null) {
         softUsers = new Long(getProperty("limituserswarn"));
@@ -259,12 +283,23 @@ public class ActivationKey {
 
       Long maxUsers = new Long(getProperty("limitusers"));
 
-      if (currentSessions >= maxUsers) {
-        return LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED;
-      }
+      if (maxUsers != 0) {
 
-      if (softUsers != null && currentSessions >= softUsers) {
-        return LicenseRestriction.NUMBER_OF_SOFT_USERS_REACHED;
+        boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
+        OBContext.getOBContext().setInAdministratorMode(true);
+
+        OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
+        obCriteria.add(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true));
+        int currentSessions = obCriteria.list().size();
+        OBContext.getOBContext().setInAdministratorMode(adminMode);
+
+        if (currentSessions >= maxUsers) {
+          return LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED;
+        }
+
+        if (softUsers != null && currentSessions >= softUsers) {
+          return LicenseRestriction.NUMBER_OF_SOFT_USERS_REACHED;
+        }
       }
     }
     return LicenseRestriction.NO_RESTRICTION;
