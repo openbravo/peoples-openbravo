@@ -91,10 +91,16 @@ public class ActiveInstanceProcess implements Process {
       content += "&instanceNo=" + instanceNo;
 
     URL url = new URL(BUTLER_URL);
-    String result = HttpsUtils.sendSecure(url, content, CERT_ALIAS, "changeit");
-    java.lang.System.out.println(result);
+    try {
+      String result = HttpsUtils.sendSecure(url, content, CERT_ALIAS, "changeit");
+      log.debug("Activation key response:" + result);
 
-    return result.split("\n");
+      return result.split("\n");
+    } catch (Exception e) {
+      String result[] = { "@HB_SECURE_CONNECTION_ERROR@", "" };
+      log.error("Error connecting server", e);
+      return result;
+    }
 
   }
 }
