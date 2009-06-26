@@ -19,15 +19,12 @@
 
 package org.openbravo.erpCommon.ops;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
 import org.apache.log4j.Logger;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.ad.system.System;
 import org.openbravo.scheduling.Process;
@@ -36,8 +33,8 @@ import org.openbravo.scheduling.ProcessBundle;
 public class ActiveInstanceProcess implements Process {
 
   private static final Logger log = Logger.getLogger(ActiveInstanceProcess.class);
-  // TODO: change this testing machine by actual butler one
-  private static final String BUTLER_URL = "http://localhost2:8882/openbravo/activate";
+  private static final String BUTLER_URL = "https://butler.openbravo.com:443/heartbeat-server/activate";
+  private static final String CERT_ALIAS = "openbravo-butler";
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -48,19 +45,6 @@ public class ActiveInstanceProcess implements Process {
 
     bundle.setResult(msg);
 
-    // HeartbeatProcess hp = new HeartbeatProcess();
-    // // System.out.println("in: " + hp.isInternetAvailable(bundle.getConnection()));
-    // String CERT_ALIAS = "openbravo-butler";
-    //
-    // URL url = null;
-    // try {
-    // url = new URL("http://localhost:8881/butler/activate");
-    // } catch (MalformedURLException e) { // Won't happen
-    // log.error(e.getMessage(), e);
-    // }
-    //
-    // System.out.println("r:" + HttpsUtils.sendSecure(url, "oo", CERT_ALIAS, "changeit"));
-    // TODO: once actual machine is ready do ssl call
     String[] result = send(publicKey, purpose, instanceNo);
 
     if (result.length == 2 && result[0] != null && result[1] != null
@@ -86,6 +70,19 @@ public class ActiveInstanceProcess implements Process {
 
   }
 
+  /**
+   * Sends the request for the activation key.
+   * 
+   * @param publickey
+   *          Instance's public key
+   * @param purpose
+   *          Instance's purpose
+   * @param instanceNo
+   *          current instance number (for reactivation purposes)
+   * @return returns a String[] with 2 elements, the first one in the message (@Success@ in case of
+   *         success) and the second one the activation key
+   * @throws Exception
+   */
   private String[] send(String publickey, String purpose, String instanceNo) throws Exception {
     log.debug("Sending request");
     String content = "publickey=" + URLEncoder.encode(publickey, "utf-8");
@@ -94,38 +91,10 @@ public class ActiveInstanceProcess implements Process {
       content += "&instanceNo=" + instanceNo;
 
     URL url = new URL(BUTLER_URL);
-    HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+    String result = HttpsUtils.sendSecure(url, content, CERT_ALIAS, "changeit");
+    java.lang.System.out.println(result);
 
-    urlConn.setRequestProperty("Keep-Alive", "300");
-    urlConn.setRequestProperty("Connection", "keep-alive");
-    urlConn.setRequestMethod("POST");
-    urlConn.setDoInput(true);
-    urlConn.setDoOutput(true);
-    urlConn.setUseCaches(false);
-    urlConn.setAllowUserInteraction(false);
-
-    urlConn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
-    urlConn.setRequestProperty("Content-length", "" + content.length());
-
-    DataOutputStream out = new DataOutputStream(urlConn.getOutputStream());
-
-    out.writeBytes(content);
-    out.flush();
-    out.close();
-    // get input connection
-    BufferedReader in = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
-    String msg = in.readLine();
-    String result[] = new String[2];
-    result[0] = msg;
-    String line;
-
-    log.debug("Response message:" + msg);
-    while ((line = in.readLine()) != null) {
-      log.debug("Content:" + line);
-      result[1] = line;
-    }
-    in.close();
-    return result;
+    return result.split("\n");
 
   }
 }
