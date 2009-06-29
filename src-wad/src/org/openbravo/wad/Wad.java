@@ -501,7 +501,7 @@ public class Wad extends DefaultHandler {
           final Vector<Object> vecFields = new Vector<Object>();
 
           // calculate fields that need combo reload
-          final FieldsData[] dataReload = FieldsData.selectValidationTab(pool, fd[i].reference);
+          final FieldsData[] dataReload = FieldsData.selectValidationProcess(pool, fd[i].reference);
 
           final Vector<Object> vecReloads = new Vector<Object>();
           if (dataReload != null && dataReload.length > 0) {
@@ -520,7 +520,7 @@ public class Wad extends DefaultHandler {
           // build the html template
           WadActionButton.buildHtml(pool, xmlEngine, fileReference, fd[i], vecFields,
               MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", false, calendarDescription,
-              clockDescription, calculatorDescription, jsDateFormat, vecFields);
+              clockDescription, calculatorDescription, jsDateFormat, vecReloads);
         }
       }
     } catch (final ServletException e) {
@@ -613,7 +613,7 @@ public class Wad extends DefaultHandler {
           final Vector<Object> vecFields = new Vector<Object>();
 
           // calculate fields that need combo reload
-          final FieldsData[] dataReload = FieldsData.selectValidationTab(pool, fd[i].reference);
+          final FieldsData[] dataReload = FieldsData.selectValidationProcess(pool, fd[i].reference);
 
           final Vector<Object> vecReloads = new Vector<Object>();
           if (dataReload != null && dataReload.length > 0) {
@@ -632,7 +632,7 @@ public class Wad extends DefaultHandler {
           // build the html template
           WadActionButton.buildHtml(pool, xmlEngine, fileReference, fd[i], vecFields,
               MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", true, calendarDescription,
-              clockDescription, calculatorDescription, jsDateFormat, vecFields);
+              clockDescription, calculatorDescription, jsDateFormat, vecReloads);
         }
       }
     } catch (final ServletException e) {
