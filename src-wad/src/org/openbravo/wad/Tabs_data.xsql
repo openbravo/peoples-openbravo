@@ -29,7 +29,7 @@
         AD_TAB.AD_WINDOW_ID AS KEY, '' AS TD_Class, '' AS href, '' AS Td_Height, '' AS Parent_Key, 
         AD_WINDOW.NAME AS realWindowName, AD_TAB.whereclause, AD_WINDOW.windowtype, ad_tab.issorttab, ad_tab.AD_COLUMNSORTORDER_ID, 
         ad_tab.AD_COLUMNSORTYESNO_ID,
-        AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, AD_TAB.ISREADONLY, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
+        AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, (CASE WHEN AD_TAB.UIPATTERN = 'RO' THEN 'Y' ELSE 'N' END) AS ISREADONLY, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
         '' as tabNameTrl, AD_TABLE.ad_table_id AS table_Id, ad_tab.isInfoTab, ad_tab.isTranslationTab, '' AS NameTab, 
         replace(replace(AD_TAB.FILTERCLAUSE, CHR(10), ' '), CHR(13), ' ') AS FILTERCLAUSE, AD_TAB.EDITREFERENCE, AD_MODEL_OBJECT.CLASSNAME,
         (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE
@@ -68,7 +68,7 @@
         AD_TAB.AD_WINDOW_ID AS KEY, '' AS TD_Class, '' AS href, '' AS Td_Height, '' AS Parent_Key, 
         AD_WINDOW.NAME AS realWindowName, AD_TAB.whereclause, AD_WINDOW.windowtype, ad_tab.issorttab, ad_tab.AD_COLUMNSORTORDER_ID, 
         ad_tab.AD_COLUMNSORTYESNO_ID,
-        AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, AD_TAB.ISREADONLY, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
+        AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, (CASE WHEN AD_TAB.UIPATTERN = 'RO' THEN 'Y' ELSE 'N' END) AS ISREADONLY, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
         '' as tabNameTrl, AD_TABLE.ad_table_id AS table_Id, ad_tab.isInfoTab, ad_tab.isTranslationTab, '' AS NameTab, 
         replace(replace(AD_TAB.FILTERCLAUSE, CHR(10), ' '), CHR(13), ' ') AS FILTERCLAUSE, AD_TAB.EDITREFERENCE, AD_MODEL_OBJECT.CLASSNAME,
         (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE
@@ -145,7 +145,7 @@
         AD_TAB.AD_WINDOW_ID AS KEY, '' AS TD_Class, '' AS href, '' AS Td_Height, '' AS Parent_Key, 
         AD_WINDOW.NAME AS realWindowName, AD_TAB.whereclause, AD_WINDOW.windowtype, ad_tab.issorttab, ad_tab.AD_COLUMNSORTORDER_ID, 
         ad_tab.AD_COLUMNSORTYESNO_ID,
-        AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, AD_TAB.ISREADONLY, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
+        AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, (CASE WHEN AD_TAB.UIPATTERN = 'RO' THEN 'Y' ELSE 'N' END) AS ISREADONLY, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
         '' as tabNameTrl, AD_TABLE.ad_table_id AS table_Id, ad_tab.isInfoTab, ad_tab.isTranslationTab, '' AS NameTab, 
         replace(replace(AD_TAB.FILTERCLAUSE, CHR(10), ' '), CHR(13), ' ') AS FILTERCLAUSE, AD_TAB.EDITREFERENCE, AD_MODEL_OBJECT.CLASSNAME,
         (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE
