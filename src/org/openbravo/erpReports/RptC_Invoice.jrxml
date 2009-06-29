@@ -185,6 +185,9 @@
 	<parameter name="DOCUMENT_ID" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["'1000032'"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="DOCUMENT_NAME" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["'INVOICE'"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="ATTACH" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="BASE_DESIGN" isForPrompting="false" class="java.lang.String">
@@ -314,26 +317,7 @@
 					</textElement>
 				<text><![CDATA[Invoice Number]]></text>
 				</staticText>
-				<staticText>
-					<reportElement
-						style="Report_Title"
-						x="8"
-						y="0"
-						width="182"
-						height="50"
-						forecolor="#666666"
-						key="staticText-5"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Left">
-						<font fontName="Bitstream Vera Sans" size="36"/>
-					</textElement>
-				<text><![CDATA[INVOICE]]></text>
-				</staticText>
+				
 				<staticText>
 					<reportElement
 						style="Group_Data_Label"
@@ -415,7 +399,16 @@
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
+				
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ENTITY}]]></textFieldExpression>
+				</textField>
+				
+				<textField>
+					<reportElement x="15" y="14" width="305" height="37"/>
+					<textElement>
+						<font size="26"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{DOCUMENT_NAME}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

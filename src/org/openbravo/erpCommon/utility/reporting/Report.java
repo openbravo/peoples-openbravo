@@ -58,6 +58,7 @@ public class Report {
   private String orgId;
   private boolean deleteReport = false;
   private boolean multiReports = false;
+  private String checkSalesOrder;
 
   public String getDocTypeId() {
     return docTypeId;
@@ -101,6 +102,7 @@ public class Report {
 
     multiReports = multiReport;
     if (reportData.length == 1) {
+      checkSalesOrder=reportData[0].getField("isSalesOrderTransaction");
       orgId = reportData[0].getField("ad_Org_Id");
       docTypeId = reportData[0].getField("docTypeTargetId");
 
@@ -225,6 +227,13 @@ public class Report {
 
   public void setDeleteable(boolean deleteable) {
     deleteReport = deleteable;
+  }
+  public String getCheckSalesOrder() {
+		return checkSalesOrder;
+  }
+
+  public void setCheckSalesOrder(String checkSalesOrder) {
+	this.checkSalesOrder = checkSalesOrder;
   }
 
 }

@@ -204,6 +204,7 @@ public class ImportProduct extends ImportProcess {
       strcTaxcategoryId = ImportProductData.selectTaxCategory(conn, getAD_Client_ID());
       if (log4j.isDebugEnabled())
         log4j.debug("ImportProduct C_TaxCategory_ID =" + strcTaxcategoryId);
+      conn.releaseCommitConnection(con);
       if (strcTaxcategoryId == null || strcTaxcategoryId.equals("")) {
         // Default Tax category doesn't exist
         addLog(Utility.messageBD(conn, "MarkDefaultTaxCategory", vars.getLanguage()));
@@ -213,7 +214,6 @@ public class ImportProduct extends ImportProcess {
         return myError;
       }
 
-      conn.releaseCommitConnection(con);
     } catch (Exception se) {
       try {
         conn.releaseRollbackConnection(con);

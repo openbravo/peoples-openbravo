@@ -100,6 +100,7 @@ cWithHoldId varchar2(32);
     v_RDocumentNo C_INVOICE.DocumentNo%TYPE;
     v_NextNo VARCHAR2(32);
     v_count NUMBER;
+    V_InvoiceLines_count NUMBER;
     v_AD_Org_ID VARCHAR2(32);
     v_POReference NVARCHAR2(40) ;
     --
@@ -221,6 +222,27 @@ cWithHoldId varchar2(32);
     IF(v_DocStatus IN('VO', 'CL', 'RE')) THEN
       RAISE_APPLICATION_ERROR(-20000, '@AlreadyPosted@');
     END IF;
+    --Allow to complete an invoice only in these cases:
+    --* There are invoice lines
+    --* There are tax lines
+    --* There are both invoice and tax lines 
+    IF((v_DocStatus='DR' AND v_DocAction='CO')
+       OR (v_DocStatus='CO' AND v_DocAction='RE')) THEN
+          SELECT COUNT(*)
+          INTO V_InvoiceLines_count
+          FROM C_INVOICE
+          WHERE C_INVOICE_ID=v_Record_ID 
+          AND (EXISTS (SELECT 1
+                        FROM C_INVOICELINE
+                       WHERE C_INVOICE_ID=v_Record_ID)
+          OR EXISTS (SELECT 1
+                           FROM C_INVOICETAX
+                          WHERE C_INVOICE_ID=v_Record_ID));
+
+          IF V_InvoiceLines_count=0 THEN
+            RAISE_APPLICATION_ERROR(-20000, '@InvoicesNeedLines@');
+          END IF;
+    END IF;    
     IF(NOT FINISH_PROCESS) THEN
       /**
       * Unlock

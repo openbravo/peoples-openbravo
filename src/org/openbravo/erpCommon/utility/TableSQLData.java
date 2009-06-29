@@ -1518,8 +1518,8 @@ public class TableSQLData implements Serializable {
    *          String identifying tableName.fieldName, this is maintained through recursivity
    * @throws Exception
    */
-  void identifier(String parentTableName, Properties field, String identifierName,
-      String realName) throws Exception {
+  void identifier(String parentTableName, Properties field, String identifierName, String realName)
+      throws Exception {
     String reference;
     if (field == null)
       return;
@@ -2478,38 +2478,24 @@ public class TableSQLData implements Serializable {
         txtAuxWhere.append(")\n");
       if (hasRange) {
         // wrap end SQL
+        // calc positions
+        String rangeStart = Integer.toString(startPosition + 1);
+        String rangeEnd = Integer.toString(startPosition + rangeLength);
         if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
-          txtAuxWhere.append("A)\n");
+          txtAuxWhere.append("A");
+          if (hasRangeLimit)
+            txtAuxWhere.append(" WHERE ROWNUM <= " + rangeEnd);
+          txtAuxWhere.append(")\n");
           txtAuxWhere.append("  WHERE rn1 ");
           if (hasRangeLimit)
-            txtAuxWhere.append("BETWEEN ? AND ?");
+            txtAuxWhere.append("BETWEEN " + rangeStart + " AND " + rangeEnd);
           else
             txtAuxWhere.append(">= ?");
           txtAuxWhere.append(")\n");
         } else {
           if (hasRangeLimit)
-            txtAuxWhere.append(" LIMIT TO_NUMBER(?)");
-          txtAuxWhere.append(" OFFSET TO_NUMBER(?))\n");
-        }
-        // wrap parameters
-        try {
-          if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
-            addWrapperParameter("ORAstartPosition", "RANGE", "");
-            setParameter("ORAstartPosition", Integer.toString(startPosition + 1));
-            if (hasRangeLimit) {
-              addWrapperParameter("ORArangeLimit", "RANGE", "");
-              setParameter("ORArangeLimit", Integer.toString(startPosition + rangeLength));
-            }
-          } else {
-            if (hasRangeLimit) {
-              addWrapperParameter("PGrangeLength", "RANGE", "");
-              setParameter("PGrangeLength", Integer.toString(rangeLength));
-              addWrapperParameter("PGstart", "RANGE", "");
-              setParameter("PGstart", Integer.toString(startPosition));
-            }
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
+            txtAuxWhere.append(" LIMIT " + Integer.toString(rangeLength));
+          txtAuxWhere.append(" OFFSET " + Integer.toString(startPosition) + ")\n");
         }
       }
 

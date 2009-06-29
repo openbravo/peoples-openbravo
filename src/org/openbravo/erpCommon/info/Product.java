@@ -146,9 +146,22 @@ public class Product extends HttpSecureAppServlet {
 
       String strPriceListVersion = getPriceListVersion(vars, strPriceList, strDate);
       vars.setSessionValue("Product.priceListVersion", strPriceListVersion);
-      ProductData[] data = ProductData.select(this, strWarehouse, "1", strKeyValue + "%", "",
+
+      // two cases are interesting in the result:
+      // - exactly one row (and row content is needed)
+      // - zero or more than one row (row content not needed)
+      // so limit <= 2 records to get both info from result without needing to fetch all rows
+      String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+        oraLimit1 = "2";
+        oraLimit2 = "1 AND 2";
+        rownum = "ROWNUM";
+      } else {
+        pgLimit = "2";
+      }
+      ProductData[] data = ProductData.select(this, strWarehouse, rownum, strKeyValue + "%", "",
           Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars,
-              "#User_Org", "Product"), strPriceListVersion, "1", "", "", "");
+              "#User_Org", "Product"), strPriceListVersion, "1", oraLimit1, oraLimit2, pgLimit);
       if (data != null && data.length == 1)
         printPageKey(response, vars, data, strWarehouse, strPriceListVersion);
       else
