@@ -875,11 +875,11 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--145-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--145-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--145-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--145-->  <COMMITWARNING><![CDATA[Create a new client via "Initial Client Setup". You should only change information here.]]></COMMITWARNING>
+<!--145-->  <COMMITWARNING><![CDATA[Create a new client via ]]></COMMITWARNING>
 <!--145-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--145-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--145-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--145-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--145-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--145--></AD_TAB>
 
 <!--146--><AD_TAB>
@@ -1248,7 +1248,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--169-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--169-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--169-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--169-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--169-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--169--></AD_TAB>
 
 <!--170--><AD_TAB>
