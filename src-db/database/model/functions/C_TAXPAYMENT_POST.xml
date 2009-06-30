@@ -55,7 +55,7 @@ v_taxregistertotal NUMBER;
 v_date DATE;
 v_settlementid varchar2(32);
 v_settlementdoctype_ID VARCHAR2(32);
-v_sdocumentno NUMBER;
+v_sdocumentno VARCHAR(40);
 v_debtpaymentid varchar2(32);
 v_debtpaymentbalancingid varchar2(32);
 v_paymentrule VARCHAR2(30);
@@ -63,10 +63,10 @@ v_bpartner_ID VARCHAR2(32);
 
 
 v_gl_journalbatchid varchar2(32);
-v_gljbdocumentno NUMBER;
+v_gljbdocumentno VARCHAR(40);
 v_gl_journaldoctype_ID VARCHAR2(32);
 v_gl_journalid varchar2(32);
-v_gljdocumentno NUMBER;
+v_gljdocumentno VARCHAR(40);
 v_gl_journallineid varchar2(32);
 v_line NUMBER;
 v_validcombination_ID VARCHAR2(32);
