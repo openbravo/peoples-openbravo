@@ -64,7 +64,7 @@
             AND tb.AD_Tab_ID = ?
             AND t.IsActive = 'Y'
             AND t.IsExclude = 'N'
-            AND t.UIPattern = 'RO'
+            AND (t.IsReadOnly = 'Y' OR tb.UIPattern = 'RO')
         UNION
         SELECT 1
           FROM AD_Window_Access w,
@@ -82,7 +82,7 @@
     <Parameter name="adTabId"/>
   </SqlMethod>
   
-     <SqlMethod name="hasNoDeleteAccess" type="preparedStatement" return="boolean">
+     <SqlMethod name="hasNotDeleteAccess" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       SELECT COUNT(*) AS TOTAL
@@ -95,7 +95,7 @@
             AND tb.AD_Tab_ID = ?
             AND t.IsActive = 'Y'
             AND t.IsExclude = 'N'
-            AND t.UIPattern IN ('RO', 'SR')
+            AND (t.IsReadOnly = 'Y' OR tb.UIPattern IN ('RO', 'SR'))
         UNION
         SELECT 1
           FROM AD_Window_Access w,
