@@ -24477,8 +24477,7 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--6BDD5E11747C51DAE040007F01013550-->  <NAME><![CDATA[Report Type]]></NAME>
 <!--6BDD5E11747C51DAE040007F01013550-->  <PRINTNAME><![CDATA[Report Type]]></PRINTNAME>
 <!--6BDD5E11747C51DAE040007F01013550-->  <DESCRIPTION><![CDATA[Indicates whether the report is "Point in time" (needs to calculate an opening balance if it does not exist) or a "Periodic" report (in this case that calculation is not needed)]]></DESCRIPTION>
-<!--6BDD5E11747C51DAE040007F01013550-->  <HELP><![CDATA[Indicates whether the report is a "Point in Time" or a "Periodic" report.
-A Point in Time report is obtained as of a given date, taking into account the whole historical financial movements; an example of point in time report is the Balance Sheet.<br> A periodic report is executed for a date range and it does not carry forward the balance of accounting movements previous to the range; an example of periodic report is the Income Statement.]]></HELP>
+<!--6BDD5E11747C51DAE040007F01013550-->  <HELP><![CDATA[Indicates whether the report is a "Point in Time" or a "Periodic" report.<br>A Point in Time report is obtained as of a given date, taking into account the whole historical financial movements; an example of point in time report is the Balance Sheet.<br>A periodic report is executed for a date range and it does not carry forward the balance of accounting movements previous to the range; an example of periodic report is the Income Statement.]]></HELP>
 <!--6BDD5E11747C51DAE040007F01013550-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6BDD5E11747C51DAE040007F01013550--></AD_ELEMENT>
 
