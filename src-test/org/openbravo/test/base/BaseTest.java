@@ -82,19 +82,26 @@ public class BaseTest extends TestCase {
     // get the location of the current class file
     final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
     File f = new File(url.getPath());
-    // go up 7 levels
-    for (int i = 0; i < 7; i++) {
+    File propertiesFile = null;
+    while (f.getParentFile() != null && f.getParentFile().exists()) {
       f = f.getParentFile();
+      final File configDirectory = new File(f, "config");
+      if (configDirectory.exists()) {
+        propertiesFile = new File(configDirectory, "Openbravo.properties");
+        if (propertiesFile.exists()) {
+          // found it and break
+          break;
+        }
+      }
     }
-    final File configDirectory = new File(f, "config");
-    f = new File(configDirectory, "Openbravo.properties");
-    if (!f.exists()) {
+    if (propertiesFile == null) {
       throw new OBException("The testrun assumes that it is run from "
           + "within eclipse and that the Openbravo.properties "
           + "file is located as a grandchild of the 7th ancestor " + "of this class");
     }
-    OBPropertiesProvider.getInstance().setProperties(f.getAbsolutePath());
-    OBConfigFileProvider.getInstance().setFileLocation(configDirectory.getAbsolutePath());
+    OBPropertiesProvider.getInstance().setProperties(propertiesFile.getAbsolutePath());
+    OBConfigFileProvider.getInstance().setFileLocation(
+        propertiesFile.getParentFile().getAbsolutePath());
   }
 
   /**
