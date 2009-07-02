@@ -8953,7 +8953,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800223-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800223-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800223-->  <VALUE><![CDATA[C_INVOICELINE_CHECK2]]></VALUE>
-<!--800223-->  <MSGTEXT><![CDATA[Line Net  containts a value other than zero. Select a  Tax]]></MSGTEXT>
+<!--800223-->  <MSGTEXT><![CDATA[Line Net  contains a value other than zero. Select a  Tax]]></MSGTEXT>
 <!--800223-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800223-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800223--></AD_MESSAGE>
