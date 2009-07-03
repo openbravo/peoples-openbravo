@@ -98,7 +98,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
       String strProject = vars.getRequestGlobalVariable("inpcProjectId",
           "ReportProjectProgress|Project");
       String strProjectStatus = vars.getRequestInGlobalVariable("inpProjectstatus",
-          "ReportProjectProgress|Projectstatus", IsIDFilter.instance);
+          "ReportProjectProgress|Projectstatus", null);
       String strBPartner = vars.getRequestGlobalVariable("inpcBPartnerId",
           "ReportProjectProgress|Partner");
       String strResponsible = vars.getRequestGlobalVariable("inpResponsible",

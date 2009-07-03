@@ -442,15 +442,30 @@ public class ImportModule {
         }
         Utility.deleteDir(core);
       } else { // updating a module different than core
+
+        // take the info from module in db instead from modulesToUpdate because it can be
+        // different
+        ImportModuleData moduleInDB = null;
         try {
-          Zip.zip(obDir + "/modules/" + modulesToUpdate[i].getPackageName(), obDir
-              + "/backup_install/" + modulesToUpdate[i].getPackageName() + "-"
-              + modulesToUpdate[i].getVersionNo() + ".zip");
-        } catch (final Exception e) {
-          e.printStackTrace();
+          moduleInDB = ImportModuleData.getModule(pool, modulesToUpdate[i].getModuleID());
+        } catch (Exception e) {
+          log4j.error(e);
         }
-        // Delete directory to be updated
-        Utility.deleteDir(new File(obDir + "/modules/" + modulesToUpdate[i].getPackageName()));
+
+        if (moduleInDB != null) {
+          try {
+            Zip.zip(obDir + "/modules/" + moduleInDB.javapackage, obDir + "/backup_install/"
+                + moduleInDB.javapackage + "-" + moduleInDB.version + ".zip");
+            // Delete directory to be updated
+            Utility.deleteDir(new File(obDir + "/modules/" + moduleInDB.javapackage));
+          } catch (final Exception e) {
+            log4j.error(e);
+          }
+        } else {
+          log4j.error("module " + modulesToUpdate[i].getName()
+              + " not found in DB. Backup and old package skipped!");
+        }
+
       }
     }
 

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,6 +83,8 @@ public class Property {
 
   private Module module;
 
+  private boolean isDatetime;
+
   // keeps track of the index of this property in the entity.getProperties()
   // gives a lot of performance/memory improvements when getting property values
   private int indexInEntity;
@@ -98,6 +100,7 @@ public class Property {
     setId(fromColumn.isKey());
     setPrimitive(fromColumn.isPrimitiveType());
     setPrimitiveType(fromColumn.getPrimitiveType());
+    setDatetime(fromColumn.getReference().isDatetime());
     setIdentifier(fromColumn.isIdentifier());
     setParent(fromColumn.isParent());
     setColumnName(fromColumn.getColumnName());
@@ -919,5 +922,13 @@ public class Property {
 
   public void setIndexInEntity(int indexInEntity) {
     this.indexInEntity = indexInEntity;
+  }
+
+  public boolean isDatetime() {
+    return isDatetime;
+  }
+
+  public void setDatetime(boolean isDatetime) {
+    this.isDatetime = isDatetime;
   }
 }

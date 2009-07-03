@@ -31,7 +31,7 @@
     v_C_Order_ID VARCHAR2(32);
     v_C_OrderLine_ID VARCHAR2(32);
     v_C_DOCTYPE_ID VARCHAR2(32);
-    v_DocumentNo NUMBER;
+    v_DocumentNo VARCHAR(40);
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;

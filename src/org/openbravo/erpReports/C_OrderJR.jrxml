@@ -197,7 +197,7 @@
 					<reportElement
 						x="2"
 						y="39"
-						width="120"
+						width="158"
 						height="26"
 						key="staticText-2"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -208,7 +208,7 @@
 					<textElement>
 						<font size="20"/>
 					</textElement>
-				<text><![CDATA[ORDER]]></text>
+				<text><![CDATA[SALES ORDER]]></text>
 				</staticText>
 				<staticText>
 					<reportElement

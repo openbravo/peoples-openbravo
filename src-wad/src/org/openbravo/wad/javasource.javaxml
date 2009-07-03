@@ -494,6 +494,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
           <FIELD_TMP id="ProcessCode3j">execute process</FIELD_TMP>
           myMessage = (OBError) pb.getResult();
           myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), myMessage.getMessage()));
+          myMessage.setTitle(Utility.parseTranslation(this, vars, vars.getLanguage(), myMessage.getTitle()));
         } catch (Exception ex) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           log4j.error(ex);

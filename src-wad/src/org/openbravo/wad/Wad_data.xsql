@@ -62,8 +62,8 @@
       FROM AD_MODEL_OBJECT 
       WHERE ISACTIVE = 'Y' 
       AND OBJECT_TYPE = 'F'
-      GROUP BY CLASSNAME
-      ORDER BY NAME
+      GROUP BY SEQNO,CLASSNAME
+      ORDER BY SEQNO,NAME
       ]]>
     </Sql>
   </SqlMethod>
@@ -94,8 +94,22 @@
       AND MO.OBJECT_TYPE = 'F' 
       AND MO.AD_MODEL_OBJECT_ID = MOM.AD_MODEL_OBJECT_ID 
       AND MOM.ISACTIVE = 'Y'
-      GROUP BY MO.CLASSNAME, MOM.MAPPINGNAME 
-      ORDER BY NAME
+      GROUP BY MO.CLASSNAME, MOM.MAPPINGNAME, MO.SEQNO 
+      ORDER BY SEQNO,NAME
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="selectContextParams" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Selects all model object parameters of object type C</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT P.NAME, P.VALUE
+      FROM AD_MODEL_OBJECT MO, AD_MODEL_OBJECT_PARA P
+      WHERE MO.ISACTIVE = 'Y'
+      AND MO.OBJECT_TYPE = 'C' 
+      AND MO.AD_MODEL_OBJECT_ID = P.AD_MODEL_OBJECT_ID 
+      AND P.ISACTIVE = 'Y'
+      ORDER BY MO.SEQNO, P.LINE, P.NAME
       ]]>
     </Sql>
   </SqlMethod>

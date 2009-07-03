@@ -39,7 +39,8 @@
 				'' as ourreference,
 				'' as cusreference,
 				'' as bpartner_id,
-				'' as bpartner_language
+				'' as bpartner_language,
+				'' as isSalesOrderTransaction
 			from
 				c_order
 			where
@@ -90,6 +91,7 @@
 				c_invoice.documentno as ourreference,
 				c_invoice.poreference as cusreference,
 				c_invoice.c_bpartner_id as bpartner_id,
+				c_invoice.issotrx as isSalesOrderTransaction,
 				c_bpartner.ad_language as bpartner_language
 			from
 				c_invoice left join c_doctype on c_invoice.c_doctypetarget_id = c_doctype.c_doctype_id

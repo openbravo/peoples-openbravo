@@ -69,7 +69,7 @@
     v_Status_to VARCHAR(60) ;
     v_Consolidate VARCHAR(60) ;
     v_SettlementID varchar2(32) ;
-    v_DocumentNo NUMBER;
+    v_DocumentNo VARCHAR(40);
     v_DPMId varchar2(32);
     v_DPId varchar2(32);
     v_DPMLineId varchar2(32);

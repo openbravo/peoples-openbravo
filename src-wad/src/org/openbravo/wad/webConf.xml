@@ -49,6 +49,12 @@
     <SUBREPORT id="reportFilterParams" name="reportFilterParams" report="org/openbravo/wad/webParams" />
   </structure>
 
+  <structure name="structureContextParams">
+    <FIELD id="paramName">name</FIELD>
+    <FIELD id="paramValue">value</FIELD>
+    <SECTION id="sectionContextParams" />
+  </structure>
+
   <structure name="structure1">
     <FIELD id="fieldDisplayName">displayname</FIELD>
     <FIELD id="fieldName">name</FIELD>

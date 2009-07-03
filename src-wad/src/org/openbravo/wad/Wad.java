@@ -697,6 +697,10 @@ public class Wad extends DefaultHandler {
         filterParams = new WadData[0][0];
       xmlDocument.setData("structureFilter", filters);
       xmlDocument.setDataArray("reportFilterParams", "structure1", filterParams);
+
+      WadData[] contextParams = WadData.selectContextParams(pool);
+      xmlDocument.setData("structureContextParams", contextParams);
+
       final WadData[] servlets = WadData.select(pool);
       WadData[][] servletParams = null;
       if (servlets != null && servlets.length > 0) {
@@ -713,8 +717,12 @@ public class Wad extends DefaultHandler {
       xmlDocument.setDataArray("reportServletParams", "structure1", servletParams);
       xmlDocument.setData("structureFilterMapping", WadData.selectFilterMapping(pool));
       xmlDocument.setData("structure2", WadData.selectMapping(pool));
-      WadUtility.writeFile(fileWebXml, "web.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-          + xmlDocument.print());
+
+      String webXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print();
+      webXml = webXml.replace("${attachPath}", attachPath);
+      webXml = webXml.replace("${webPath}", webPath);
+
+      WadUtility.writeFile(fileWebXml, "web.xml", webXml);
     } catch (final IOException e) {
       e.printStackTrace();
       log4j.error("Problem of IOException in process of Web.xml");
