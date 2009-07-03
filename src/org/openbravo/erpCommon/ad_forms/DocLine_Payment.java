@@ -382,6 +382,77 @@ public class DocLine_Payment extends DocLine {
     m_Record_Id2 = Line_ID;
   }
 
+  /**
+   * Clone DocLine (DocLine)
+   * 
+   * @param docLine
+   */
+  public static DocLine_Payment clone(DocLine_Payment docLine) {
+    DocLine_Payment lineAux = new DocLine_Payment(docLine.p_DocumentType, docLine.m_TrxHeader_ID,
+        docLine.m_TrxLine_ID);
+    lineAux.m_Record_Id2 = docLine.m_Record_Id2;
+    lineAux.m_AD_Org_ID = docLine.m_AD_Org_ID;
+    lineAux.m_C_BPartner_ID = docLine.m_C_BPartner_ID;
+    lineAux.m_M_Product_ID = docLine.m_M_Product_ID;
+    lineAux.m_AD_OrgTrx_ID = docLine.m_AD_OrgTrx_ID;
+    lineAux.m_C_SalesRegion_ID = docLine.m_C_SalesRegion_ID;
+    lineAux.m_C_Project_ID = docLine.m_C_Project_ID;
+    lineAux.m_A_Asset_ID = docLine.m_A_Asset_ID;
+    lineAux.m_C_Campaign_ID = docLine.m_C_Campaign_ID;
+    lineAux.m_C_Activity_ID = docLine.m_C_Activity_ID;
+    lineAux.m_C_LocFrom_ID = docLine.m_C_LocFrom_ID;
+    lineAux.m_C_LocTo_ID = docLine.m_C_LocTo_ID;
+    lineAux.m_User1_ID = docLine.m_User1_ID;
+    lineAux.m_User2_ID = docLine.m_User2_ID;
+    // Line, Description, Currency
+    lineAux.m_Line = docLine.m_Line;
+    lineAux.m_description = docLine.m_description;
+    lineAux.m_C_Currency_ID = docLine.m_C_Currency_ID;
+    // Qty
+    lineAux.m_C_UOM_ID = docLine.m_C_UOM_ID;
+    lineAux.m_qty = docLine.m_qty;
+    //
+    lineAux.m_C_Tax_ID = docLine.m_C_Tax_ID;
+    lineAux.m_C_WithHolding_ID = docLine.m_C_WithHolding_ID;
+    lineAux.m_C_Charge_ID = docLine.m_C_Charge_ID;
+    lineAux.m_ChargeAmt = docLine.m_ChargeAmt;
+    //
+    lineAux.m_DateAcct = docLine.m_DateAcct;
+    lineAux.m_DateDoc = docLine.m_DateDoc;
+    //
+    lineAux.m_AmtSourceDr = docLine.m_AmtSourceDr;
+    lineAux.m_AmtSourceCr = docLine.m_AmtSourceCr;
+    //
+    lineAux.m_AmtAcctDr = docLine.m_AmtAcctDr;
+    lineAux.m_AmtAcctCr = docLine.m_AmtAcctCr;
+    //
+    lineAux.m_C_AcctSchema_ID = docLine.m_C_AcctSchema_ID;
+    //
+    lineAux.m_account = docLine.m_account;
+    //
+    // Product Info
+    lineAux.p_productInfo = docLine.p_productInfo;
+
+    lineAux.Line_ID = docLine.Line_ID;
+    lineAux.Amount = docLine.Amount;
+    lineAux.WriteOffAmt = docLine.WriteOffAmt;
+    lineAux.isManual = docLine.isManual;
+    lineAux.isReceipt = docLine.isReceipt;
+    lineAux.isPaid = docLine.isPaid;
+    lineAux.C_Settlement_Cancel_ID = docLine.C_Settlement_Cancel_ID;
+    lineAux.C_Settlement_Generate_ID = docLine.C_Settlement_Generate_ID;
+    lineAux.C_GLItem_ID = docLine.C_GLItem_ID;
+    lineAux.IsDirectPosting = docLine.IsDirectPosting;
+    lineAux.dpStatus = docLine.dpStatus;
+    lineAux.C_Currency_ID_From = docLine.C_Currency_ID_From;
+    lineAux.conversionDate = docLine.conversionDate;
+    lineAux.C_INVOICE_ID = docLine.C_INVOICE_ID;
+    lineAux.C_BPARTNER_ID = docLine.C_BPARTNER_ID;
+    lineAux.C_WITHHOLDING_ID = docLine.C_WITHHOLDING_ID;
+
+    return lineAux;
+  } // clone
+
   public String getServletInfo() {
     return "Servlet for accounting";
   } // end of getServletInfo() method

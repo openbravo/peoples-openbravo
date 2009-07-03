@@ -5,15 +5,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
@@ -28,7 +28,7 @@
         '' AS PROCESSING, '' AS PROCESSED, '' AS POSTED, '' AS C_PROJECT_ID, '' AS C_CAMPAIGN_ID, '' AS C_ACTIVITY_ID,
         '' AS USER1_ID, '' AS USER2_ID, '' AS CREATEFROM, '' AS C_CURRENCY_ID, '' AS CANCELEDNOTCHARGEAMT, '' AS GENERATEDAMT,
         '' AS CHARGEDAMT, '' AS DESCRIPTION, '' AS CREATEFILE, '' AS DATEACCT, '' AS SETTLEMENTTYPE, '' AS CREDIT_ACCT, '' AS DEBIT_ACCT,
-        '' AS AMOUNTDEBIT, '' AS AMOUNTCREDIT, '' AS AMOUNT
+        '' AS AMOUNTDEBIT, '' AS AMOUNTCREDIT, '' AS AMOUNT, '' AS C_TAX_ID, '' AS C_WITHHOLDING_ID
         FROM DUAL
      ]]>
      </Sql>
@@ -41,7 +41,7 @@
         S.USER1_ID, S.USER2_ID, S.DOCUMENTNO, S.DATEACCT, S.C_CURRENCY_ID, S.C_DOCTYPE_ID,
         S.CHARGEDAMT, S.POSTED, S.DATETRX, S.SETTLEMENTTYPE
         FROM C_SETTLEMENT S
-        WHERE AD_Client_ID=? 
+        WHERE AD_Client_ID=?
         AND C_SETTLEMENT_ID=?
      ]]>
      </Sql>
@@ -53,12 +53,12 @@
     <Sql>
       <![CDATA[
         SELECT COALESCE(
-          (SELECT C_RECEIVABLE_ACCT 
+          (SELECT C_RECEIVABLE_ACCT
           FROM C_BP_CUSTOMER_ACCT
           WHERE C_BPARTNER_ID = ?
           AND C_ACCTSCHEMA_ID = ?
           AND STATUS = ?),
-          (SELECT C_RECEIVABLE_ACCT 
+          (SELECT C_RECEIVABLE_ACCT
           FROM C_BP_CUSTOMER_ACCT
           WHERE C_BPARTNER_ID = ?
           AND C_ACCTSCHEMA_ID = ?
@@ -67,7 +67,7 @@
      ]]>
      </Sql>
      <Parameter name="C_BPARTNER_ID"/>
-     <Parameter name="C_ACCTSCHEMA_ID"/>     
+     <Parameter name="C_ACCTSCHEMA_ID"/>
      <Parameter name="STATUS"/>
      <Parameter name="C_BPARTNER_ID"/>
      <Parameter name="C_ACCTSCHEMA_ID"/>
@@ -77,7 +77,7 @@
     <Sql>
       <![CDATA[
         SELECT COALESCE(
-          (SELECT V_LIABILITY_ACCT 
+          (SELECT V_LIABILITY_ACCT
           FROM C_BP_VENDOR_ACCT
           WHERE C_BPARTNER_ID = ?
           AND C_ACCTSCHEMA_ID = ?
@@ -90,10 +90,10 @@
      ]]>
      </Sql>
      <Parameter name="C_BPARTNER_ID"/>
-     <Parameter name="C_ACCTSCHEMA_ID"/>     
+     <Parameter name="C_ACCTSCHEMA_ID"/>
      <Parameter name="STATUS"/>
      <Parameter name="C_BPARTNER_ID"/>
-     <Parameter name="C_ACCTSCHEMA_ID"/>     
+     <Parameter name="C_ACCTSCHEMA_ID"/>
    </SqlMethod>
   <SqlMethod name="selectBankStatementLineAcct" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -109,7 +109,7 @@
      ]]>
      </Sql>
      <Parameter name="C_BANKSTATEMENTLINE_ID"/>
-     <Parameter name="C_ACCTSCHEMA_ID"/>     
+     <Parameter name="C_ACCTSCHEMA_ID"/>
    </SqlMethod>
   <SqlMethod name="selectCashLineAcct" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -125,7 +125,7 @@
      ]]>
      </Sql>
      <Parameter name="C_CASHLINE_ID"/>
-     <Parameter name="C_ACCTSCHEMA_ID"/>     
+     <Parameter name="C_ACCTSCHEMA_ID"/>
    </SqlMethod>
   <SqlMethod name="selectCancelManual" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -147,7 +147,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT B.AMOUNTCREDIT AS AMOUNTCREDIT, B.AMOUNTDEBIT AS AMOUNTDEBIT, GA.Glitem_Credit_Acct AS CREDIT_ACCT, GA.Glitem_Debit_Acct AS DEBIT_ACCT
+        SELECT B.AMOUNTCREDIT AS AMOUNTCREDIT, B.AMOUNTDEBIT AS AMOUNTDEBIT, GA.Glitem_Credit_Acct AS CREDIT_ACCT, GA.Glitem_Debit_Acct AS DEBIT_ACCT,
+        G.C_TAX_ID, G.C_WITHHOLDING_ID
         FROM C_DEBT_PAYMENT D, C_DEBT_PAYMENT_BALANCING B, C_GLITEM G, C_Glitem_Acct GA
         WHERE D.C_DEBT_PAYMENT_ID = B.C_DEBT_PAYMENT_ID
         AND B.C_GLITEM_ID = G.C_GLITEM_ID
@@ -164,9 +165,11 @@
     <Sql>
       <![CDATA[
         SELECT C_GLITEM_ACCT.GLITEM_CREDIT_ACCT AS CREDIT_ACCT,
-        C_GLITEM_ACCT.GLITEM_DEBIT_ACCT AS DEBIT_ACCT, C_DEBT_PAYMENT.AMOUNT AS AMOUNT
-        FROM C_DEBT_PAYMENT, C_GLITEM_ACCT
-        WHERE C_GLITEM_ACCT.C_GLITEM_ID = C_DEBT_PAYMENT.C_GLITEM_ID
+        C_GLITEM_ACCT.GLITEM_DEBIT_ACCT AS DEBIT_ACCT, C_DEBT_PAYMENT.AMOUNT AS AMOUNT,
+        G.C_TAX_ID, G.C_WITHHOLDING_ID
+        FROM C_DEBT_PAYMENT, C_GLITEM G, C_GLITEM_ACCT
+        WHERE G.C_GLITEM_ID = C_GLITEM_ACCT.C_GLITEM_ID
+        AND G.C_GLITEM_ID = C_DEBT_PAYMENT.C_GLITEM_ID
         AND C_GLITEM_ACCT.C_ACCTSCHEMA_ID = ?
         AND C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID = ?
      ]]>

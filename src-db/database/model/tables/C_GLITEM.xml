@@ -45,12 +45,27 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="C_TAX_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_WITHHOLDING_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CGLITEM">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CGLITEM">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_TAX" name="CTAX_CGLITEM">
+        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_WITHHOLDING" name="CWITHHOLDING_CGLITEM">
+        <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
+      </foreign-key>
       <check name="C_GLITEM_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_GLITEM_TAXANDWH_CHECK"><![CDATA[(C_TAX_ID IS NULL) OR (C_WITHHOLDING_ID IS NULL)]]></check>
     </table>
   </database>
