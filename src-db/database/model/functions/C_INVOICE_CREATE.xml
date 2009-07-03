@@ -1032,7 +1032,16 @@
                   DateAcct=v_DateInvoiced
                 WHERE C_Invoice_ID=p_Invoice_ID;
                 C_INVOICE_POST(NULL, p_Invoice_ID) ;
-              END IF;
+	            IF(p_Invoice_ID='0') THEN
+          	  	  RAISE_APPLICATION_ERROR(-20000, '@InvoiceCreateFailed@');
+			    ELSE
+			  	  SELECT documentno
+	    	  	  INTO v_DocumentNo
+	    	  	  FROM C_INVOICE
+	    	  	  WHERE C_INVOICE_ID = p_Invoice_ID;
+	    	  	  v_Message:=v_Message||', '||'@InvoiceDocumentno@ ' || v_DocumentNo;
+        	    END IF;
+			  END IF;
             END IF;--FINISH_PROCESS
           END; -- Block
         END IF; -- PInstance not null
