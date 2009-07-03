@@ -103,15 +103,15 @@
       </column>
       <column name="HASCHARTOFACCOUNTS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault><![CDATA[N]]></onCreateDefault>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="ISTRANSLATIONMODULE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault><![CDATA[N]]></onCreateDefault>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="HASREFERENCEDATA" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault><![CDATA[N]]></onCreateDefault>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="ISREGISTERED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
