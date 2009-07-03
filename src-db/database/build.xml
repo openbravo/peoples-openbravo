@@ -105,9 +105,8 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
   <target name="create.database">
     <antcall target="clean.database.${bbdd.rdbms}" />
     <antcall target="prepare.database" />
-    <antcall target="create.database.structure" />
+    <antcall target="create.database.all" />
     <antcall target="database.preimport.${bbdd.rdbms}" />
-    <importdata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" filter="com.openbravo.db.OpenbravoMetadataFilter" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" basedir="${base.db}/../.." input="src-db/database/sourcedata,modules/*/src-db/database/sourcedata" verbosity="${bbdd.verbosity}" />
     <antcall target="database.postimport.${bbdd.rdbms}" />
     <antcall target="database.postcreate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
@@ -268,8 +267,8 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
     <antcall target="${bbdd.rdbms}.structure" />
   </target>
 
-  <target name="create.database.structure">
-    <createdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="model" object="${bbdd.object}" dropfirst="false" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.modules}/" dirFilter="*/src-db/database/model">
+  <target name="create.database.all">
+    <createdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="model" object="${bbdd.object}" dropfirst="false" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.modules}/" modulesDir="${base.modules}/" dirFilter="*/src-db/database/model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="src-db/database/sourcedata,modules/*/src-db/database/sourcedata">
     </createdatabase>
     <antcall target="database.poststructure.${bbdd.rdbms}" />
   </target>
