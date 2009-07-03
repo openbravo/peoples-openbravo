@@ -49,7 +49,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_Year.C_Year_ID AS ID, C_Year.Year as Name
+        SELECT DISTINCT(C_Year.C_Year_ID) AS ID, C_Year.Year as Name
         FROM C_Year, AD_Org
         WHERE AD_Org.C_Calendar_ID=C_Year.C_Calendar_ID
         AND AD_Org.C_Calendar_ID=?
