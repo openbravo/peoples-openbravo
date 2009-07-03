@@ -136,7 +136,7 @@ public class ModuleValidator implements SystemValidator {
       // check all children
       for (File file : curDir.listFiles()) {
         // ignore hidden files
-        if (file.getName().startsWith(".")) {
+        if (file.isHidden()) {
           continue;
         }
         // allow properties files in the root
