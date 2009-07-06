@@ -853,7 +853,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <chmod file="config/setup-properties-${osname}${osarch}.${bin.ext}" perm="+x" />
   </target>
 
-  <target name="package.core" depends="set.version.number">
+  <target name="package.core" depends="init, set.version.number">
 	<property name="tmpdir" value="${java.io.tmpdir}/ob.core${core.rev}" />
    
   	<exec executable="hg" >
@@ -865,6 +865,8 @@ compare.database.structure: refer to compare.database.structure target of databa
                    match="(VERSION.*\[CDATA\[).*\..*\.(.*)(\]\])"
                    replace="\1${core.rev}\3"
                    byline="true"/>
+    
+    <echo message="${hg.id}" file="${tmpdir}/config/instance.revision"/>
     
     <zip destfile="${basedir}/core-${core.rev}.obx" basedir="${tmpdir}"/>
     
