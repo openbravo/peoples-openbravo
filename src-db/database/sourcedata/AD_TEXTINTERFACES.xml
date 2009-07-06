@@ -6458,7 +6458,7 @@
 <!--805810-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--805810-->  <TEXT><![CDATA[Awaiting Bank Reconciliation]]></TEXT>
 <!--805810-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportDebtPayment.html]]></FILENAME>
-<!--805810-->  <ISUSED><![CDATA[Y]]></ISUSED>
+<!--805810-->  <ISUSED><![CDATA[N]]></ISUSED>
 <!--805810-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--805810--></AD_TEXTINTERFACES>
 
