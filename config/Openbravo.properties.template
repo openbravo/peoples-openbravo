@@ -46,9 +46,6 @@ context.name=openbravo
 # Root sources directory, used by modularity
 source.path=/opt/openbravo
 
-# Openbravo ERP version
-application.version=2.50MP2
-
 #Deploy mode: valid values [class, war]
 deploy.mode=class
 
