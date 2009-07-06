@@ -504,11 +504,9 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="trl.lib" />
 
     <antcall target="compile.complete.deploy" />
-    <echo message="applying modules" />
-    <taskdef name="applyModule" classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" />
+    
+    <echo message="applying modules" />    
+    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <antcall target="import.sample.data" />
 
@@ -525,11 +523,8 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="eclipse.wad.lib"/>
     <antcall target="eclipse.trl.lib"/>
     <antcall target="eclipse.compile.complete"/>
-    <echo message="applying modules" />
-    <taskdef name="applyModule" classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" />
+    <echo message="applying modules" />    
+    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
   </target>
 
@@ -544,16 +539,14 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="database.lib" />
     <antcall target="core.lib" />
     <ant dir="${base.db}" target="update.database" inheritAll="true" inheritRefs="true" />
-    <antcall target="db.apply.modules" />
     <antcall target="generate.entities.quick" />
+    <antcall target="db.apply.modules" />
   </target>
 
   <target name="update.database.mod" depends="init,code.rev">
     <antcall target="database.lib" />
     <antcall target="core.lib" />
     <ant dir="${base.db}" target="update.database.mod" inheritAll="true" inheritRefs="true" />
-    <antcall target="db.apply.modules" />
-    <antcall target="generate.entities" />
   </target>
 
   <target name="update.customized.database" depends="init,code.rev">
@@ -609,36 +602,25 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="db.apply.modules" if="apply.modules.on.create">
-    <echo message="applying modules" />
-    <taskdef name="applyModule" classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" />
+    <echo message="applying modules" />    
+    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
   </target>
 
   <target name="db.apply.modules.sampledata" if="apply.modules.on.create">
-    <echo message="applying modules" />
-    <taskdef name="applyModule" classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" />
+    <echo message="applying modules" />    
+    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
   </target>
 
+
   <target name="apply.modules">
     <echo>Applying ${module} modules...</echo>
-    <taskdef name="applyModule" classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
     <antcall target="update.database.mod" />
-    <!-- 
-    Note: set reinitializeModel to false because otherwise the dal is re-initialized with classes and a model
-    which are not in sync (see issue: https://issues.openbravo.com/view.php?id=9376)
-    Note: applyModule can also be moved to a java task to fork it (to prevent this from occuring)
-    but then no output is visible for the user.
-    -->
-    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" reinitializemodel="false"/>
     
+    <antcall target="generate.entities" />
+    
+    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
+
     <condition property="apply.modules.complete.compilation.var">
       <istrue value="${apply.modules.complete.compilation}"  />
     </condition>
@@ -650,6 +632,25 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="apply.modules.compile"/>
   </target>
   
+  <target name="apply.module.forked">
+    <!-- 
+    Note: set reinitializeModel to false because otherwise the dal is re-initialized with classes and a model
+    which are not in sync (see issue: https://issues.openbravo.com/view.php?id=9376)
+    Note: applyModule can also be moved to a java task to fork it (to prevent this from occuring)
+    but then no output is visible for the user.
+    -->
+    <taskdef name="applyModule" classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties"/>
+  </target>
+
+  <target name="apply.module">
+    <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}">
+      <arg line="${base.src}" />
+      <classpath refid="project.class.path" />
+    </java>
+  </target>
   
   <target name="apply.modules.compile">
     <antcall target="apply.modules.compile.simple"/>

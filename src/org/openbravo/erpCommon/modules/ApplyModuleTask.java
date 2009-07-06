@@ -19,9 +19,13 @@
 
 package org.openbravo.erpCommon.modules;
 
+import java.io.File;
+
 import org.apache.tools.ant.BuildException;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalInitializingTask;
 import org.openbravo.database.CPStandAlone;
+import org.openbravo.erpCommon.utility.AntExecutor;
 
 /**
  * Ant task for ApplyModule class
@@ -30,6 +34,19 @@ import org.openbravo.database.CPStandAlone;
 public class ApplyModuleTask extends DalInitializingTask {
   // private String propertiesFile;
   private String obDir;
+
+  public static void main(String[] args) throws Exception {
+    final String srcPath = args[0];
+    final File srcDir = new File(srcPath);
+    final File baseDir = srcDir.getParentFile();
+    try {
+      final AntExecutor antExecutor = new AntExecutor(baseDir.getAbsolutePath());
+      antExecutor.runTask("apply.module.forked");
+    } catch (final Exception e) {
+      e.printStackTrace(System.err);
+      throw new OBException(e);
+    }
+  }
 
   @Override
   public void doExecute() {
@@ -51,14 +68,14 @@ public class ApplyModuleTask extends DalInitializingTask {
   public void setObDir(String obDir) {
     this.obDir = obDir;
   }
-
-  public static void main(String[] args) {
-    final ApplyModuleTask t = new ApplyModuleTask();
-    t.setObDir("/ws/trunk/openbravo");
-    t.setUserId("0");
-    t.setPropertiesFile("/ws/trunk/openbravo/config/Openbravo.properties");
-    t.execute();
-
-  }
+  //
+  // public static void main(String[] args) {
+  // final ApplyModuleTask t = new ApplyModuleTask();
+  // t.setObDir("/ws/trunk/openbravo");
+  // t.setUserId("0");
+  // t.setPropertiesFile("/ws/trunk/openbravo/config/Openbravo.properties");
+  // t.execute();
+  //
+  // }
 
 }

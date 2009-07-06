@@ -182,7 +182,7 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="generate.entities" depends="compile.src.gen,clean.src.gen">
-      <taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
+    <taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
     <!-- debug="true" will perform the in-memory model initialization before generating entities
 	if an error occurs then, then a stacktrace is printed. -->
     <workflow debug="false" srcGenPath="${base.src.gen}" propertiesFile="${base.config}/Openbravo.properties" file="${base.src}/org/openbravo/base/gen/gen_entity.oaw" fork="true" maxmemory="${build.maxmemory}">
