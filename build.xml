@@ -845,4 +845,33 @@ compare.database.structure: refer to compare.database.structure target of databa
     <chmod file="config/setup-properties-${osname}${osarch}.${bin.ext}" perm="+x" />
   </target>
 
+  <target name="package.core">
+    <exec executable="hg" outputproperty="hg.idno" failifexecutionfails="false">
+      <arg value="id"/>
+      <arg value="-n"/>
+    </exec>
+    
+    <taskdef name="CoreRevision" classname="org.openbravo.erpCommon.utility.CalculateCoreRevision">
+        <classpath refid="project.class.path" />
+      </taskdef>
+
+    <CoreRevision hgRevNo="${hg.idno}" revision="core.rev"/>
+    
+	<property name="tmpdir" value="${java.io.tmpdir}/ob.core${core.rev}" />
+   
+  	<exec executable="hg" >
+  		<arg value="archive"/>
+  		<arg value="${tmpdir}"/>
+  	</exec>
+  	
+  	<replaceregexp file="${tmpdir}/src-db/database/sourcedata/AD_MODULE.xml"
+                   match="(VERSION.*\[CDATA\[.*\..*\.)(.*)(\]\])"
+                   replace="\1${core.rev}\3"
+                   byline="true"/>
+    
+    <zip destfile="${basedir}/core-2.50.${core.rev}.obx" basedir="${tmpdir}"/>
+    
+    <delete dir="${tmpdir}"/>
+
+   </target>
 </project>
