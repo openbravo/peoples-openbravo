@@ -103,12 +103,20 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="force" value="false" />
   <property name="local" value="true" />
   <property name="apply.modules.complete.compilation" value="false" />
+  <property name="calculate.core.revision" value="true"/>
 
 
   
   <available file=".hg" property="is.hg" />
 
-
+  <condition property="calculate.core.rev">
+   <istrue value="${calculate.core.revision}"/>
+  </condition>
+  
+  <condition property="xml.core.rev">
+     <isfalse value="${calculate.core.revision}"/>
+  </condition>
+  
   <condition property="deploy.mode" value="class">
     <not>
       <isset property="${deploy.mode}" />
@@ -845,18 +853,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <chmod file="config/setup-properties-${osname}${osarch}.${bin.ext}" perm="+x" />
   </target>
 
-  <target name="package.core">
-    <exec executable="hg" outputproperty="hg.idno" failifexecutionfails="false">
-      <arg value="id"/>
-      <arg value="-n"/>
-    </exec>
-    
-    <taskdef name="CoreRevision" classname="org.openbravo.erpCommon.utility.CalculateCoreRevision">
-        <classpath refid="project.class.path" />
-      </taskdef>
-
-    <CoreRevision hgRevNo="${hg.idno}" revision="core.rev"/>
-    
+  <target name="package.core" depends="set.version.number">
 	<property name="tmpdir" value="${java.io.tmpdir}/ob.core${core.rev}" />
    
   	<exec executable="hg" >
@@ -865,13 +862,42 @@ compare.database.structure: refer to compare.database.structure target of databa
   	</exec>
   	
   	<replaceregexp file="${tmpdir}/src-db/database/sourcedata/AD_MODULE.xml"
-                   match="(VERSION.*\[CDATA\[.*\..*\.)(.*)(\]\])"
+                   match="(VERSION.*\[CDATA\[).*\..*\.(.*)(\]\])"
                    replace="\1${core.rev}\3"
                    byline="true"/>
     
-    <zip destfile="${basedir}/core-2.50.${core.rev}.obx" basedir="${tmpdir}"/>
+    <zip destfile="${basedir}/core-${core.rev}.obx" basedir="${tmpdir}"/>
     
     <delete dir="${tmpdir}"/>
 
    </target>
+ 
+  <target name="set.version.number" depends="set.version.from.file, set.version.calculated"/>
+  
+  <target name="set.version.calculated" if="calculate.core.rev">
+    <echo message="calculating core revision..."/>
+    <exec executable="hg" outputproperty="hg.idno" failifexecutionfails="false">
+      <arg value="id"/>
+      <arg value="-n"/>
+    </exec>
+    <taskdef name="CoreRevision" classname="org.openbravo.erpCommon.utility.CalculateCoreRevision">
+            <classpath refid="project.class.path" />
+          </taskdef>
+
+    <CoreRevision hgRevNo="${hg.idno}" revision="core.rev"/>
+  </target>
+  
+  <target name="set.version.from.file" if="xml.core.rev">
+    <echo message="reading core revision from xml file..."/>
+    <loadfile property="core.rev" srcfile="${basedir}/src-db/database/sourcedata/AD_MODULE.xml">
+      <filterchain>
+        <linecontains>
+          <contains value="VERSION>"/>
+        </linecontains>
+        <tokenfilter>
+            <replaceregex pattern="(.*VERSION.*\[CDATA\[)(.*\..*\..*)(\]\].*)" replace="\2"/>
+        </tokenfilter>
+      </filterchain>
+    </loadfile>
+  </target>
 </project>

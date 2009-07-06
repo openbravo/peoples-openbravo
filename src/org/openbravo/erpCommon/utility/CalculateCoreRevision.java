@@ -22,6 +22,13 @@ package org.openbravo.erpCommon.utility;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
+/**
+ * Calculates the version number for core.
+ * 
+ * It is used when extracting obx for core
+ * 
+ * 
+ */
 public class CalculateCoreRevision extends Task {
   private String revision;
   private String hgRevNo;
@@ -33,7 +40,7 @@ public class CalculateCoreRevision extends Task {
 
     Integer revNo = new Integer(hgRevNo);
     revNo += 10000;
-    getProject().setProperty(revision, revNo.toString());
+    getProject().setProperty(revision, "2.50." + revNo.toString());
   }
 
   public String getRevision() {
