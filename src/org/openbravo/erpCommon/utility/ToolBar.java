@@ -379,15 +379,8 @@ public class ToolBar {
       removeAllTests();
   }
 
-  public void prepareEditionTemplateNoSearch(boolean hasTree, boolean isFiltered, boolean isTest,
-      boolean isReadOnly, boolean isAuditEnabled) {
-    removeElement("SEARCH");
-    removeElement("SEARCH_FILTERED");
-    prepareEditionTemplate(hasTree, isFiltered, isTest, isReadOnly, isAuditEnabled);
-  }
-
   public void prepareEditionTemplate(boolean hasTree, boolean isFiltered, boolean isTest,
-      boolean isReadOnly, boolean isAuditEnabled) {
+      String uiPattern, boolean isAuditEnabled) {
     removeElement("EDIT");
     removeElement("RELATION");
     removeElement("DELETE_RELATION");
@@ -435,8 +428,51 @@ public class ToolBar {
       removeElement("SEARCH_FILTERED");
     if (!isTest)
       removeAllTests();
-    if (isReadOnly)
+    if (uiPattern.equals("RO")) // read-only
       removeReadOnly();
+    if (uiPattern.equals("SR")) // single record
+      removeSingleRecord();
+  }
+
+  public void prepareEditionTemplateNoSearch(boolean hasTree, boolean isFiltered, boolean isTest,
+      String uiPattern, boolean isAuditEnabled) {
+    removeElement("SEARCH");
+    removeElement("SEARCH_FILTERED");
+    prepareEditionTemplate(hasTree, isFiltered, isTest, uiPattern, isAuditEnabled);
+  }
+
+  /**
+   * Deprecated 2.50 use instead
+   * {@link ToolBar#prepareEditionTemplateNoSearch(boolean, boolean, boolean, String, boolean)}
+   * 
+   * @param hasTree
+   * @param isFiltered
+   * @param isTest
+   * @param isReadOnly
+   * @param isAuditEnabled
+   */
+  @Deprecated
+  public void prepareEditionTemplateNoSearch(boolean hasTree, boolean isFiltered, boolean isTest,
+      boolean isReadOnly, boolean isAuditEnabled) {
+    removeElement("SEARCH");
+    removeElement("SEARCH_FILTERED");
+    prepareEditionTemplate(hasTree, isFiltered, isTest, isReadOnly, isAuditEnabled);
+  }
+
+  /**
+   * Deprecated 2.50 used instead
+   * {@link ToolBar#prepareEditionTemplate(boolean hasTree, boolean isFiltered, boolean isTest, String uiPattern, boolean isAuditEnabled)}
+   * 
+   * @param hasTree
+   * @param isFiltered
+   * @param isTest
+   * @param isReadOnly
+   * @param isAuditEnabled
+   */
+  @Deprecated
+  public void prepareEditionTemplate(boolean hasTree, boolean isFiltered, boolean isTest,
+      boolean isReadOnly, boolean isAuditEnabled) {
+    prepareEditionTemplate(hasTree, isFiltered, isTest, (isReadOnly ? "RO" : "STD"), isAuditEnabled);
   }
 
   public void prepareRelationTemplateNoSearch(boolean hasTree, boolean isFiltered, boolean isTest,
@@ -838,10 +874,14 @@ public class ToolBar {
   }
 
   private void removeReadOnly() {
+    removeSingleRecord();
+    removeElement("SAVE_EDIT");
+  }
+
+  private void removeSingleRecord() {
     removeElement("NEW");
     removeElement("SAVE_NEW");
     removeElement("SAVE_RELATION");
-    removeElement("SAVE_EDIT");
     removeElement("SAVE_NEXT");
     removeElement("DELETE");
     removeElement("DELETE_RELATION");
@@ -937,7 +977,7 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("FIRST"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("FIRST_RELATION"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("PREVIOUS"), lastType, false));
-      //toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
+      // toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
       // );
       toolbar.append(transformElementsToString(buttons.get("NEXT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("LAST"), lastType, false));

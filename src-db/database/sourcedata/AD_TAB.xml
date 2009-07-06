@@ -20,6 +20,7 @@
 <!--100-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--100-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--100-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--100-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--100--></AD_TAB>
 
 <!--101--><AD_TAB>
@@ -42,6 +43,7 @@
 <!--101-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--101-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--101-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--101-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--101--></AD_TAB>
 
 <!--102--><AD_TAB>
@@ -64,6 +66,7 @@
 <!--102-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--102-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--102-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--102-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--102--></AD_TAB>
 
 <!--103--><AD_TAB>
@@ -86,6 +89,7 @@
 <!--103-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--103-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--103-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--103-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--103--></AD_TAB>
 
 <!--104--><AD_TAB>
@@ -108,6 +112,7 @@
 <!--104-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--104-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--104-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--104-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--104--></AD_TAB>
 
 <!--105--><AD_TAB>
@@ -130,6 +135,7 @@
 <!--105-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--105-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--105-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--105-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--105--></AD_TAB>
 
 <!--106--><AD_TAB>
@@ -152,6 +158,7 @@
 <!--106-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--106-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--106-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--106-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--106--></AD_TAB>
 
 <!--107--><AD_TAB>
@@ -175,6 +182,7 @@
 <!--107-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--107-->  <FILTERCLAUSE><![CDATA[AD_Field.isDisplayed = 'Y']]></FILTERCLAUSE>
 <!--107-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--107-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--107--></AD_TAB>
 
 <!--108--><AD_TAB>
@@ -197,6 +205,7 @@
 <!--108-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--108-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--108-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--108-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--108--></AD_TAB>
 
 <!--109--><AD_TAB>
@@ -219,6 +228,7 @@
 <!--109-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--109-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--109-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--109-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--109--></AD_TAB>
 
 <!--110--><AD_TAB>
@@ -241,6 +251,7 @@
 <!--110-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--110-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--110-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--110-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--110--></AD_TAB>
 
 <!--111--><AD_TAB>
@@ -263,6 +274,7 @@
 <!--111-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--111-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--111-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--111-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--111--></AD_TAB>
 
 <!--112--><AD_TAB>
@@ -285,6 +297,7 @@
 <!--112-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--112-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--112-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--112-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--112--></AD_TAB>
 
 <!--113--><AD_TAB>
@@ -307,6 +320,7 @@
 <!--113-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--113-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--113-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--113-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--113--></AD_TAB>
 
 <!--115--><AD_TAB>
@@ -329,6 +343,7 @@
 <!--115-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--115-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--115-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--115-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--115--></AD_TAB>
 
 <!--116--><AD_TAB>
@@ -351,6 +366,7 @@
 <!--116-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--116-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--116-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--116-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--116--></AD_TAB>
 
 <!--117--><AD_TAB>
@@ -373,6 +389,7 @@
 <!--117-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--117-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--117-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--117-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--117--></AD_TAB>
 
 <!--118--><AD_TAB>
@@ -397,6 +414,7 @@
 <!--118-->  <FILTERCLAUSE><![CDATA[(EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND (bp.IsEmployee='Y' OR bp.IsSalesRep='Y'))
 OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--118-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--118-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--118--></AD_TAB>
 
 <!--119--><AD_TAB>
@@ -419,6 +437,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--119-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--119-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--119-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--119-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--119--></AD_TAB>
 
 <!--120--><AD_TAB>
@@ -442,6 +461,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--120-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--120-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--120-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--120-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--120--></AD_TAB>
 
 <!--121--><AD_TAB>
@@ -465,6 +485,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--121-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--121-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--121-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--121-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--121--></AD_TAB>
 
 <!--122--><AD_TAB>
@@ -487,6 +508,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--122-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--122-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--122-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--122-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--122--></AD_TAB>
 
 <!--123--><AD_TAB>
@@ -509,6 +531,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--123-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--123-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--123-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--123-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--123--></AD_TAB>
 
 <!--124--><AD_TAB>
@@ -531,6 +554,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--124-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--124-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--124-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--124-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--124--></AD_TAB>
 
 <!--125--><AD_TAB>
@@ -551,6 +575,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--125-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--125-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--125-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--125-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--125--></AD_TAB>
 
 <!--126--><AD_TAB>
@@ -573,6 +598,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--126-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--126-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--126-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--126-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--126--></AD_TAB>
 
 <!--127--><AD_TAB>
@@ -597,6 +623,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--127-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--127-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--127-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--127-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--127--></AD_TAB>
 
 <!--128--><AD_TAB>
@@ -619,6 +646,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--128-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--128-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--128-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--128-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--128--></AD_TAB>
 
 <!--129--><AD_TAB>
@@ -641,6 +669,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--129-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--129-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--129-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--129-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--129--></AD_TAB>
 
 <!--130--><AD_TAB>
@@ -663,6 +692,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--130-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--130-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--130-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--130-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--130--></AD_TAB>
 
 <!--131--><AD_TAB>
@@ -685,6 +715,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--131-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--131-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--131-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--131-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--131--></AD_TAB>
 
 <!--132--><AD_TAB>
@@ -707,6 +738,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--132-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--132-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--132-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--132-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--132--></AD_TAB>
 
 <!--133--><AD_TAB>
@@ -729,6 +761,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--133-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--133-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--133-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--133-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--133--></AD_TAB>
 
 <!--134--><AD_TAB>
@@ -752,6 +785,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--134-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--134-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--134-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--134-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--134--></AD_TAB>
 
 <!--135--><AD_TAB>
@@ -774,6 +808,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--135-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--135-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--135-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--135-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--135--></AD_TAB>
 
 <!--136--><AD_TAB>
@@ -796,6 +831,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--136-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--136-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--136-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--136-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--136--></AD_TAB>
 
 <!--143--><AD_TAB>
@@ -819,6 +855,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--143-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--143-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--143-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--143-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--143--></AD_TAB>
 
 <!--145--><AD_TAB>
@@ -838,10 +875,11 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--145-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--145-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--145-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--145-->  <COMMITWARNING><![CDATA[Create a new client via "Initial Client Setup". You should only change information here.]]></COMMITWARNING>
+<!--145-->  <COMMITWARNING><![CDATA[Create a new client via ]]></COMMITWARNING>
 <!--145-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--145-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--145-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--145-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--145--></AD_TAB>
 
 <!--146--><AD_TAB>
@@ -864,6 +902,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--146-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--146-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--146-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--146-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--146--></AD_TAB>
 
 <!--148--><AD_TAB>
@@ -886,6 +925,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--148-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--148-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--148-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--148-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--148--></AD_TAB>
 
 <!--149--><AD_TAB>
@@ -908,6 +948,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--149-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--149-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--149-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--149-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--149--></AD_TAB>
 
 <!--150--><AD_TAB>
@@ -930,6 +971,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--150-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--150-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--150-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--150-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--150--></AD_TAB>
 
 <!--151--><AD_TAB>
@@ -952,6 +994,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--151-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--151-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--151-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--151-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--151--></AD_TAB>
 
 <!--152--><AD_TAB>
@@ -974,6 +1017,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--152-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--152-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--152-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--152-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--152--></AD_TAB>
 
 <!--153--><AD_TAB>
@@ -996,6 +1040,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--153-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--153-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--153-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--153-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--153--></AD_TAB>
 
 <!--154--><AD_TAB>
@@ -1018,6 +1063,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--154-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--154-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--154-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--154-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--154--></AD_TAB>
 
 <!--156--><AD_TAB>
@@ -1040,6 +1086,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--156-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--156-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--156-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--156-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--156--></AD_TAB>
 
 <!--157--><AD_TAB>
@@ -1063,6 +1110,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--157-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--157-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--157-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--157-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--157--></AD_TAB>
 
 <!--158--><AD_TAB>
@@ -1085,6 +1133,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--158-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--158-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--158-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--158-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--158--></AD_TAB>
 
 <!--159--><AD_TAB>
@@ -1107,6 +1156,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--159-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--159-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--159-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--159-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--159--></AD_TAB>
 
 <!--160--><AD_TAB>
@@ -1129,6 +1179,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--160-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--160-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--160-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--160--></AD_TAB>
 
 <!--161--><AD_TAB>
@@ -1151,6 +1202,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--161-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--161-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--161-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--161--></AD_TAB>
 
 <!--167--><AD_TAB>
@@ -1173,6 +1225,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--167-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--167-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--167-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--167-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--167--></AD_TAB>
 
 <!--169--><AD_TAB>
@@ -1195,6 +1248,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--169-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--169-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--169-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--169-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--169--></AD_TAB>
 
 <!--170--><AD_TAB>
@@ -1217,6 +1271,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--170-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--170-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--170-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--170-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--170--></AD_TAB>
 
 <!--171--><AD_TAB>
@@ -1239,6 +1294,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--171-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--171-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--171-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--171--></AD_TAB>
 
 <!--172--><AD_TAB>
@@ -1261,6 +1317,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--172-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--172-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--172-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--172-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--172--></AD_TAB>
 
 <!--173--><AD_TAB>
@@ -1283,6 +1340,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--173-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--173-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--173-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--173-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--173--></AD_TAB>
 
 <!--174--><AD_TAB>
@@ -1305,6 +1363,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--174-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--174-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--174-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--174--></AD_TAB>
 
 <!--176--><AD_TAB>
@@ -1327,6 +1386,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--176-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--176-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--176-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--176--></AD_TAB>
 
 <!--177--><AD_TAB>
@@ -1349,6 +1409,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--177-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--177-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--177-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--177-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--177--></AD_TAB>
 
 <!--178--><AD_TAB>
@@ -1371,6 +1432,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--178-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--178-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--178-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--178-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--178--></AD_TAB>
 
 <!--179--><AD_TAB>
@@ -1394,6 +1456,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--179-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--179-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--179-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--179-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--179--></AD_TAB>
 
 <!--180--><AD_TAB>
@@ -1416,6 +1479,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--180-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--180-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--180-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--180-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--180--></AD_TAB>
 
 <!--181--><AD_TAB>
@@ -1438,6 +1502,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--181-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--181-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--181-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--181-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--181--></AD_TAB>
 
 <!--182--><AD_TAB>
@@ -1460,6 +1525,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--182-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--182-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--182-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--182-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--182--></AD_TAB>
 
 <!--183--><AD_TAB>
@@ -1483,6 +1549,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--183-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--183-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--183-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--183-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--183--></AD_TAB>
 
 <!--184--><AD_TAB>
@@ -1505,6 +1572,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--184-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--184-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--184-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--184-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--184--></AD_TAB>
 
 <!--185--><AD_TAB>
@@ -1527,6 +1595,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--185-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--185-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--185-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--185-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--185--></AD_TAB>
 
 <!--186--><AD_TAB>
@@ -1551,6 +1620,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--186-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--186-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--186-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--186-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--186--></AD_TAB>
 
 <!--187--><AD_TAB>
@@ -1573,6 +1643,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--187-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--187-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--187-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--187-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--187--></AD_TAB>
 
 <!--189--><AD_TAB>
@@ -1595,6 +1666,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--189-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--189-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--189-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--189-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--189--></AD_TAB>
 
 <!--191--><AD_TAB>
@@ -1617,6 +1689,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--191-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--191-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--191-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--191-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--191--></AD_TAB>
 
 <!--192--><AD_TAB>
@@ -1640,6 +1713,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--192-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--192-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--192-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--192-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--192--></AD_TAB>
 
 <!--193--><AD_TAB>
@@ -1662,6 +1736,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--193-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--193-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--193-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--193-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--193--></AD_TAB>
 
 <!--198--><AD_TAB>
@@ -1684,6 +1759,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--198-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--198-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--198-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--198-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--198--></AD_TAB>
 
 <!--199--><AD_TAB>
@@ -1707,6 +1783,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--199-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--199-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--199-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--199-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--199--></AD_TAB>
 
 <!--200--><AD_TAB>
@@ -1731,6 +1808,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--200-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--200-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--200-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--200-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--200--></AD_TAB>
 
 <!--201--><AD_TAB>
@@ -1753,6 +1831,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--201-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--201-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--201-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--201-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--201--></AD_TAB>
 
 <!--202--><AD_TAB>
@@ -1775,6 +1854,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--202-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--202-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--202-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--202-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--202--></AD_TAB>
 
 <!--203--><AD_TAB>
@@ -1797,6 +1877,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--203-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--203-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--203-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--203--></AD_TAB>
 
 <!--204--><AD_TAB>
@@ -1819,6 +1900,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--204-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--204-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--204-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--204-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--204--></AD_TAB>
 
 <!--205--><AD_TAB>
@@ -1841,6 +1923,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--205-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--205-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--205-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--205-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--205--></AD_TAB>
 
 <!--206--><AD_TAB>
@@ -1863,6 +1946,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--206-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--206-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--206-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--206-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--206--></AD_TAB>
 
 <!--207--><AD_TAB>
@@ -1885,6 +1969,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--207-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--207-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--207-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--207-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--207--></AD_TAB>
 
 <!--209--><AD_TAB>
@@ -1907,6 +1992,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--209-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--209-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--209-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--209-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--209--></AD_TAB>
 
 <!--210--><AD_TAB>
@@ -1929,6 +2015,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--210-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--210-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--210-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--210-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--210--></AD_TAB>
 
 <!--211--><AD_TAB>
@@ -1951,6 +2038,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--211-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--211-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--211-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--211-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--211--></AD_TAB>
 
 <!--212--><AD_TAB>
@@ -1974,6 +2062,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--212-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--212-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--212-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--212-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--212--></AD_TAB>
 
 <!--213--><AD_TAB>
@@ -1997,6 +2086,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--213-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--213-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--213-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--213-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--213--></AD_TAB>
 
 <!--214--><AD_TAB>
@@ -2019,6 +2109,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--214-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--214-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--214-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--214-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--214--></AD_TAB>
 
 <!--215--><AD_TAB>
@@ -2041,6 +2132,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--215-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--215-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--215-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--215-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--215--></AD_TAB>
 
 <!--217--><AD_TAB>
@@ -2065,6 +2157,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--217-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--217-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--217-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--217-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--217--></AD_TAB>
 
 <!--220--><AD_TAB>
@@ -2088,6 +2181,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--220-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--220-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--220-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--220--></AD_TAB>
 
 <!--222--><AD_TAB>
@@ -2110,6 +2204,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--222-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--222-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--222-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--222-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--222--></AD_TAB>
 
 <!--223--><AD_TAB>
@@ -2133,6 +2228,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--223-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--223-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--223-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--223-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--223--></AD_TAB>
 
 <!--224--><AD_TAB>
@@ -2156,6 +2252,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--224-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--224-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--224-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--224-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--224--></AD_TAB>
 
 <!--225--><AD_TAB>
@@ -2179,6 +2276,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--225-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--225-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--225-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--225-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--225--></AD_TAB>
 
 <!--226--><AD_TAB>
@@ -2201,6 +2299,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--226-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--226-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--226-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--226-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--226--></AD_TAB>
 
 <!--227--><AD_TAB>
@@ -2223,6 +2322,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--227-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--227-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--227-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--227-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--227--></AD_TAB>
 
 <!--228--><AD_TAB>
@@ -2245,6 +2345,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--228-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--228-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--228-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--228-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--228--></AD_TAB>
 
 <!--229--><AD_TAB>
@@ -2268,6 +2369,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--229-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--229-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--229-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--229-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--229--></AD_TAB>
 
 <!--230--><AD_TAB>
@@ -2290,6 +2392,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--230-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--230-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--230-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--230-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--230--></AD_TAB>
 
 <!--232--><AD_TAB>
@@ -2312,6 +2415,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--232-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--232-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--232-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--232-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--232--></AD_TAB>
 
 <!--233--><AD_TAB>
@@ -2334,6 +2438,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--233-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--233-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--233-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--233-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--233--></AD_TAB>
 
 <!--235--><AD_TAB>
@@ -2356,6 +2461,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--235-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--235-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--235-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--235-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--235--></AD_TAB>
 
 <!--236--><AD_TAB>
@@ -2379,6 +2485,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--236-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--236-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--236-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--236-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--236--></AD_TAB>
 
 <!--237--><AD_TAB>
@@ -2401,6 +2508,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--237-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--237-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--237-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--237-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--237--></AD_TAB>
 
 <!--238--><AD_TAB>
@@ -2423,6 +2531,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--238-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--238-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--238-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--238-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--238--></AD_TAB>
 
 <!--239--><AD_TAB>
@@ -2446,6 +2555,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--239-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--239-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--239-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--239-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--239--></AD_TAB>
 
 <!--241--><AD_TAB>
@@ -2468,6 +2578,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--241-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--241-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--241-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--241-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--241--></AD_TAB>
 
 <!--242--><AD_TAB>
@@ -2490,6 +2601,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--242-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--242-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--242-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--242-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--242--></AD_TAB>
 
 <!--243--><AD_TAB>
@@ -2512,6 +2624,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--243-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--243-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--243-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--243-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--243--></AD_TAB>
 
 <!--245--><AD_TAB>
@@ -2534,6 +2647,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--245-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--245-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--245-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--245-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--245--></AD_TAB>
 
 <!--246--><AD_TAB>
@@ -2556,6 +2670,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--246-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--246-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--246-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--246-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--246--></AD_TAB>
 
 <!--247--><AD_TAB>
@@ -2578,6 +2693,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--247-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--247-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--247-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--247-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--247--></AD_TAB>
 
 <!--248--><AD_TAB>
@@ -2600,6 +2716,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--248-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--248-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--248-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--248-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--248--></AD_TAB>
 
 <!--249--><AD_TAB>
@@ -2621,6 +2738,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--249-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--249-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--249-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--249-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--249--></AD_TAB>
 
 <!--252--><AD_TAB>
@@ -2644,6 +2762,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--252-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--252-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--252-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--252-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--252--></AD_TAB>
 
 <!--255--><AD_TAB>
@@ -2666,6 +2785,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--255-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--255-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--255-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--255-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--255--></AD_TAB>
 
 <!--256--><AD_TAB>
@@ -2688,6 +2808,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--256-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--256-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--256-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--256-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--256--></AD_TAB>
 
 <!--257--><AD_TAB>
@@ -2712,6 +2833,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--257-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--257-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--257-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--257-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--257--></AD_TAB>
 
 <!--258--><AD_TAB>
@@ -2734,6 +2856,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--258-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--258-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--258-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--258-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--258--></AD_TAB>
 
 <!--259--><AD_TAB>
@@ -2756,6 +2879,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--259-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--259-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--259-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--259-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--259--></AD_TAB>
 
 <!--260--><AD_TAB>
@@ -2779,6 +2903,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--260-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--260-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--260-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--260-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--260--></AD_TAB>
 
 <!--262--><AD_TAB>
@@ -2803,6 +2928,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--262-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--262-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--262-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--262-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--262--></AD_TAB>
 
 <!--263--><AD_TAB>
@@ -2827,6 +2953,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--263-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--263-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--263-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--263-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--263--></AD_TAB>
 
 <!--270--><AD_TAB>
@@ -2849,6 +2976,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--270-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--270-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--270-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--270-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--270--></AD_TAB>
 
 <!--271--><AD_TAB>
@@ -2872,6 +3000,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--271-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--271-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--271-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--271-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--271--></AD_TAB>
 
 <!--272--><AD_TAB>
@@ -2894,6 +3023,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--272-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--272-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--272-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--272-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--272--></AD_TAB>
 
 <!--273--><AD_TAB>
@@ -2916,6 +3046,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--273-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--273-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--273-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--273-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--273--></AD_TAB>
 
 <!--275--><AD_TAB>
@@ -2936,6 +3067,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--275-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--275-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--275-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--275-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--275--></AD_TAB>
 
 <!--276--><AD_TAB>
@@ -2959,6 +3091,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--276-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--276-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--276-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--276-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--276--></AD_TAB>
 
 <!--278--><AD_TAB>
@@ -2982,6 +3115,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--278-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--278-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--278-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--278-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--278--></AD_TAB>
 
 <!--282--><AD_TAB>
@@ -3003,6 +3137,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--282-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--282-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--282-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--282-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--282--></AD_TAB>
 
 <!--283--><AD_TAB>
@@ -3024,6 +3159,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--283-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--283-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--283-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--283-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--283--></AD_TAB>
 
 <!--284--><AD_TAB>
@@ -3045,6 +3181,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--284-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--284-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--284-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--284-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--284--></AD_TAB>
 
 <!--289--><AD_TAB>
@@ -3069,6 +3206,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--289-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--289-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--289-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--289-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--289--></AD_TAB>
 
 <!--290--><AD_TAB>
@@ -3093,6 +3231,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--290-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--290-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--290-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--290-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--290--></AD_TAB>
 
 <!--291--><AD_TAB>
@@ -3115,6 +3254,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--291-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--291-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--291-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--291-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--291--></AD_TAB>
 
 <!--292--><AD_TAB>
@@ -3138,6 +3278,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--292-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--292-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--292-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--292-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--292--></AD_TAB>
 
 <!--293--><AD_TAB>
@@ -3160,6 +3301,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--293-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--293-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--293-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--293-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--293--></AD_TAB>
 
 <!--294--><AD_TAB>
@@ -3184,6 +3326,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--294-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--294-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--294-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--294-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--294--></AD_TAB>
 
 <!--295--><AD_TAB>
@@ -3207,6 +3350,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--295-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--295-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--295-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--295-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--295--></AD_TAB>
 
 <!--296--><AD_TAB>
@@ -3231,6 +3375,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--296-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--296-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--296-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--296-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--296--></AD_TAB>
 
 <!--297--><AD_TAB>
@@ -3253,6 +3398,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--297-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--297-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--297-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--297-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--297--></AD_TAB>
 
 <!--302--><AD_TAB>
@@ -3275,6 +3421,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--302-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--302-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--302-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--302-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--302--></AD_TAB>
 
 <!--303--><AD_TAB>
@@ -3297,6 +3444,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--303-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--303-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--303-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--303-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--303--></AD_TAB>
 
 <!--304--><AD_TAB>
@@ -3320,6 +3468,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--304-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--304-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--304-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--304-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--304--></AD_TAB>
 
 <!--305--><AD_TAB>
@@ -3343,6 +3492,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--305-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--305-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--305-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--305-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--305--></AD_TAB>
 
 <!--306--><AD_TAB>
@@ -3366,6 +3516,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--306-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--306-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--306-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--306-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--306--></AD_TAB>
 
 <!--307--><AD_TAB>
@@ -3389,6 +3540,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--307-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--307-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--307-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--307-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--307--></AD_TAB>
 
 <!--308--><AD_TAB>
@@ -3412,6 +3564,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--308-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--308-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--308-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--308-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--308--></AD_TAB>
 
 <!--309--><AD_TAB>
@@ -3435,6 +3588,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--309-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--309-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--309-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--309-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--309--></AD_TAB>
 
 <!--310--><AD_TAB>
@@ -3458,6 +3612,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--310-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--310-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--310-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--310-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--310--></AD_TAB>
 
 <!--311--><AD_TAB>
@@ -3481,6 +3636,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--311-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--311-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--311-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--311-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--311--></AD_TAB>
 
 <!--312--><AD_TAB>
@@ -3504,6 +3660,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--312-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--312-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--312-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--312-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--312--></AD_TAB>
 
 <!--313--><AD_TAB>
@@ -3527,6 +3684,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--313-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--313-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--313-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--313-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--313--></AD_TAB>
 
 <!--315--><AD_TAB>
@@ -3549,6 +3707,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--315-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--315-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--315-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--315-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--315--></AD_TAB>
 
 <!--316--><AD_TAB>
@@ -3571,6 +3730,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--316-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--316-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--316-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--316-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--316--></AD_TAB>
 
 <!--317--><AD_TAB>
@@ -3593,6 +3753,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--317-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--317-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--317-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--317-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--317--></AD_TAB>
 
 <!--319--><AD_TAB>
@@ -3616,6 +3777,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--319-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--319-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--319-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--319-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--319--></AD_TAB>
 
 <!--320--><AD_TAB>
@@ -3638,6 +3800,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--320-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--320-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--320-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--320-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--320--></AD_TAB>
 
 <!--321--><AD_TAB>
@@ -3660,6 +3823,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--321-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--321-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--321-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--321-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--321--></AD_TAB>
 
 <!--322--><AD_TAB>
@@ -3682,6 +3846,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--322-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--322-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--322-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--322-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--322--></AD_TAB>
 
 <!--323--><AD_TAB>
@@ -3705,6 +3870,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--323-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--323-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--323-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--323-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--323--></AD_TAB>
 
 <!--324--><AD_TAB>
@@ -3727,6 +3893,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--324-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--324-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--324-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--324-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--324--></AD_TAB>
 
 <!--325--><AD_TAB>
@@ -3750,6 +3917,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--325-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--325-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--325-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--325-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--325--></AD_TAB>
 
 <!--327--><AD_TAB>
@@ -3772,6 +3940,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--327-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--327-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--327-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--327-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--327--></AD_TAB>
 
 <!--328--><AD_TAB>
@@ -3794,6 +3963,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--328-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--328-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--328-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--328-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--328--></AD_TAB>
 
 <!--329--><AD_TAB>
@@ -3816,6 +3986,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--329-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--329-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--329-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--329-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--329--></AD_TAB>
 
 <!--331--><AD_TAB>
@@ -3838,6 +4009,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--331-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--331-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--331-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--331-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--331--></AD_TAB>
 
 <!--332--><AD_TAB>
@@ -3860,6 +4032,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--332-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--332-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--332-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--332-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--332--></AD_TAB>
 
 <!--333--><AD_TAB>
@@ -3882,6 +4055,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--333-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--333-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--333-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--333-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--333--></AD_TAB>
 
 <!--334--><AD_TAB>
@@ -3904,6 +4078,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--334-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--334-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--334-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--334-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--334--></AD_TAB>
 
 <!--336--><AD_TAB>
@@ -3926,6 +4101,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--336-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--336-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--336-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--336-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--336--></AD_TAB>
 
 <!--337--><AD_TAB>
@@ -3948,6 +4124,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--337-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--337-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--337-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--337-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--337--></AD_TAB>
 
 <!--338--><AD_TAB>
@@ -3970,6 +4147,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--338-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--338-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--338-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--338-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--338--></AD_TAB>
 
 <!--339--><AD_TAB>
@@ -3992,6 +4170,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--339-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--339-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--339-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--339-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--339--></AD_TAB>
 
 <!--342--><AD_TAB>
@@ -4014,6 +4193,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--342-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--342-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--342-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--342-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--342--></AD_TAB>
 
 <!--343--><AD_TAB>
@@ -4036,6 +4216,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--343-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--343-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--343-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--343-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--343--></AD_TAB>
 
 <!--344--><AD_TAB>
@@ -4059,6 +4240,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--344-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--344-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--344-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--344-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--344--></AD_TAB>
 
 <!--346--><AD_TAB>
@@ -4081,6 +4263,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--346-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--346-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--346-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--346-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--346--></AD_TAB>
 
 <!--347--><AD_TAB>
@@ -4103,6 +4286,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--347-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--347-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--347-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--347-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--347--></AD_TAB>
 
 <!--348--><AD_TAB>
@@ -4125,6 +4309,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--348-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--348-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--348-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--348-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--348--></AD_TAB>
 
 <!--351--><AD_TAB>
@@ -4147,6 +4332,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--351-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--351-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--351-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--351-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--351--></AD_TAB>
 
 <!--355--><AD_TAB>
@@ -4169,6 +4355,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--355-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--355-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--355-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--355-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--355--></AD_TAB>
 
 <!--356--><AD_TAB>
@@ -4191,6 +4378,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--356-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--356-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--356-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--356-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--356--></AD_TAB>
 
 <!--361--><AD_TAB>
@@ -4213,6 +4401,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--361-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--361-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--361-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--361-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--361--></AD_TAB>
 
 <!--362--><AD_TAB>
@@ -4235,6 +4424,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--362-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--362-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--362-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--362-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--362--></AD_TAB>
 
 <!--363--><AD_TAB>
@@ -4257,6 +4447,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--363-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--363-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--363-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--363-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--363--></AD_TAB>
 
 <!--364--><AD_TAB>
@@ -4280,6 +4471,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--364-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--364-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--364-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--364-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--364--></AD_TAB>
 
 <!--365--><AD_TAB>
@@ -4302,6 +4494,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--365-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--365-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--365-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--365-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--365--></AD_TAB>
 
 <!--378--><AD_TAB>
@@ -4324,6 +4517,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--378-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--378-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--378-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--378-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--378--></AD_TAB>
 
 <!--379--><AD_TAB>
@@ -4345,6 +4539,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--379-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--379-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--379-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--379-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--379--></AD_TAB>
 
 <!--380--><AD_TAB>
@@ -4367,6 +4562,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--380-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--380-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--380-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--380-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--380--></AD_TAB>
 
 <!--381--><AD_TAB>
@@ -4389,6 +4585,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--381-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--381-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--381-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--381-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--381--></AD_TAB>
 
 <!--384--><AD_TAB>
@@ -4411,6 +4608,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--384-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--384-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--384-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--384-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--384--></AD_TAB>
 
 <!--391--><AD_TAB>
@@ -4433,6 +4631,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--391-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--391-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--391-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--391-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--391--></AD_TAB>
 
 <!--401--><AD_TAB>
@@ -4456,6 +4655,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--401-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--401-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--401-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--401-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--401--></AD_TAB>
 
 <!--402--><AD_TAB>
@@ -4478,6 +4678,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--402-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--402-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--402-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--402-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--402--></AD_TAB>
 
 <!--403--><AD_TAB>
@@ -4500,6 +4701,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--403-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--403-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--403-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--403-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--403--></AD_TAB>
 
 <!--404--><AD_TAB>
@@ -4523,6 +4725,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--404-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--404-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--404-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--404-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--404--></AD_TAB>
 
 <!--405--><AD_TAB>
@@ -4546,6 +4749,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--405-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--405-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--405-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--405-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--405--></AD_TAB>
 
 <!--407--><AD_TAB>
@@ -4571,6 +4775,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--407-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--407-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--407-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--407-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--407--></AD_TAB>
 
 <!--408--><AD_TAB>
@@ -4594,6 +4799,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--408-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--408-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--408-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--408-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--408--></AD_TAB>
 
 <!--409--><AD_TAB>
@@ -4617,6 +4823,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--409-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--409-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--409-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--409-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--409--></AD_TAB>
 
 <!--410--><AD_TAB>
@@ -4640,6 +4847,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--410-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--410-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--410-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--410-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--410--></AD_TAB>
 
 <!--411--><AD_TAB>
@@ -4664,6 +4872,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--411-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--411-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--411-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--411-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--411--></AD_TAB>
 
 <!--412--><AD_TAB>
@@ -4687,6 +4896,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--412-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--412-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--412-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--412-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--412--></AD_TAB>
 
 <!--413--><AD_TAB>
@@ -4710,6 +4920,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--413-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--413-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--413-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--413-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--413--></AD_TAB>
 
 <!--414--><AD_TAB>
@@ -4733,6 +4944,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--414-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--414-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--414-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--414-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--414--></AD_TAB>
 
 <!--415--><AD_TAB>
@@ -4757,6 +4969,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--415-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--415-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--415-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--415-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--415--></AD_TAB>
 
 <!--416--><AD_TAB>
@@ -4780,6 +4993,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--416-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--416-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--416-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--416-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--416--></AD_TAB>
 
 <!--417--><AD_TAB>
@@ -4804,6 +5018,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--417-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--417-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--417-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--417-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--417--></AD_TAB>
 
 <!--418--><AD_TAB>
@@ -4827,6 +5042,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--418-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--418-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--418-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--418-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--418--></AD_TAB>
 
 <!--419--><AD_TAB>
@@ -4851,6 +5067,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--419-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--419-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--419-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--419-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--419--></AD_TAB>
 
 <!--420--><AD_TAB>
@@ -4875,6 +5092,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--420-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--420-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--420-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--420-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--420--></AD_TAB>
 
 <!--421--><AD_TAB>
@@ -4899,6 +5117,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--421-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--421-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--421-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--421-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--421--></AD_TAB>
 
 <!--422--><AD_TAB>
@@ -4923,6 +5142,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--422-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--422-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--422-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--422-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--422--></AD_TAB>
 
 <!--430--><AD_TAB>
@@ -4948,6 +5168,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--430-->  <AD_COLUMNSORTYESNO_ID><![CDATA[176]]></AD_COLUMNSORTYESNO_ID>
 <!--430-->  <ISSORTTAB><![CDATA[Y]]></ISSORTTAB>
 <!--430-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--430-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--430--></AD_TAB>
 
 <!--431--><AD_TAB>
@@ -4973,6 +5194,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--431-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--431-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--431-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--431-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--431--></AD_TAB>
 
 <!--432--><AD_TAB>
@@ -4997,6 +5219,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--432-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--432-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--432-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--432-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--432--></AD_TAB>
 
 <!--437--><AD_TAB>
@@ -5020,6 +5243,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--437-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--437-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--437-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--437-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--437--></AD_TAB>
 
 <!--438--><AD_TAB>
@@ -5043,6 +5267,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--438-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--438-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--438-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--438-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--438--></AD_TAB>
 
 <!--439--><AD_TAB>
@@ -5066,6 +5291,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--439-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--439-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--439-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--439-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--439--></AD_TAB>
 
 <!--440--><AD_TAB>
@@ -5089,6 +5315,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--440-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--440-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--440-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--440-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--440--></AD_TAB>
 
 <!--441--><AD_TAB>
@@ -5112,6 +5339,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--441-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--441-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--441-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--441-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--441--></AD_TAB>
 
 <!--442--><AD_TAB>
@@ -5135,6 +5363,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--442-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--442-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--442-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--442-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--442--></AD_TAB>
 
 <!--443--><AD_TAB>
@@ -5158,6 +5387,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--443-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--443-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--443-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--443-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--443--></AD_TAB>
 
 <!--445--><AD_TAB>
@@ -5182,6 +5412,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--445-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--445-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--445-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--445-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--445--></AD_TAB>
 
 <!--446--><AD_TAB>
@@ -5206,6 +5437,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--446-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--446-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--446-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--446-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--446--></AD_TAB>
 
 <!--447--><AD_TAB>
@@ -5230,6 +5462,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--447-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--447-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--447-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--447-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--447--></AD_TAB>
 
 <!--448--><AD_TAB>
@@ -5254,6 +5487,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--448-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--448-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--448-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--448-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--448--></AD_TAB>
 
 <!--449--><AD_TAB>
@@ -5278,6 +5512,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--449-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--449-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--449-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--449-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--449--></AD_TAB>
 
 <!--450--><AD_TAB>
@@ -5301,6 +5536,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--450-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--450-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--450-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--450-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--450--></AD_TAB>
 
 <!--452--><AD_TAB>
@@ -5324,6 +5560,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--452-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--452-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--452-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--452-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--452--></AD_TAB>
 
 <!--456--><AD_TAB>
@@ -5347,6 +5584,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--456-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--456-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--456-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--456-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--456--></AD_TAB>
 
 <!--457--><AD_TAB>
@@ -5371,6 +5609,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--457-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--457-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--457-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--457-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--457--></AD_TAB>
 
 <!--458--><AD_TAB>
@@ -5395,6 +5634,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--458-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--458-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--458-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--458-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--458--></AD_TAB>
 
 <!--461--><AD_TAB>
@@ -5418,6 +5658,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--461-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--461-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--461-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--461-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--461--></AD_TAB>
 
 <!--462--><AD_TAB>
@@ -5441,6 +5682,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--462-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--462-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--462-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--462-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--462--></AD_TAB>
 
 <!--463--><AD_TAB>
@@ -5464,6 +5706,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--463-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--463-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--463-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--463-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--463--></AD_TAB>
 
 <!--464--><AD_TAB>
@@ -5487,6 +5730,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--464-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--464-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--464-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--464-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--464--></AD_TAB>
 
 <!--465--><AD_TAB>
@@ -5510,6 +5754,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--465-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--465-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--465-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--465-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--465--></AD_TAB>
 
 <!--466--><AD_TAB>
@@ -5533,6 +5778,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--466-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--466-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--466-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--466-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--466--></AD_TAB>
 
 <!--467--><AD_TAB>
@@ -5557,6 +5803,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--467-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--467-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--467-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--467-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--467--></AD_TAB>
 
 <!--470--><AD_TAB>
@@ -5582,6 +5829,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--470-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--470-->  <INCLUDED_TAB_ID><![CDATA[471]]></INCLUDED_TAB_ID>
 <!--470-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--470-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--470--></AD_TAB>
 
 <!--471--><AD_TAB>
@@ -5605,6 +5853,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--471-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--471-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--471-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--471-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--471--></AD_TAB>
 
 <!--475--><AD_TAB>
@@ -5628,6 +5877,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--475-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--475-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--475-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--475-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--475--></AD_TAB>
 
 <!--476--><AD_TAB>
@@ -5651,6 +5901,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--476-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--476-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--476-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--476-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--476--></AD_TAB>
 
 <!--477--><AD_TAB>
@@ -5674,6 +5925,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--477-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--477-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--477-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--477-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--477--></AD_TAB>
 
 <!--478--><AD_TAB>
@@ -5697,6 +5949,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--478-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--478-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--478-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--478-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--478--></AD_TAB>
 
 <!--481--><AD_TAB>
@@ -5720,6 +5973,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--481-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--481-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--481-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--481-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--481--></AD_TAB>
 
 <!--482--><AD_TAB>
@@ -5744,6 +5998,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--482-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--482-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--482-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--482-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--482--></AD_TAB>
 
 <!--483--><AD_TAB>
@@ -5768,6 +6023,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--483-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--483-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--483-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--483-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--483--></AD_TAB>
 
 <!--484--><AD_TAB>
@@ -5792,6 +6048,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--484-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--484-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--484-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--484-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--484--></AD_TAB>
 
 <!--485--><AD_TAB>
@@ -5815,6 +6072,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--485-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--485-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--485-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--485-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--485--></AD_TAB>
 
 <!--487--><AD_TAB>
@@ -5839,6 +6097,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--487-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--487-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--487-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--487-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--487--></AD_TAB>
 
 <!--488--><AD_TAB>
@@ -5862,6 +6121,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--488-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--488-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--488-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--488-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--488--></AD_TAB>
 
 <!--490--><AD_TAB>
@@ -5885,6 +6145,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--490-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--490-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--490-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--490-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--490--></AD_TAB>
 
 <!--492--><AD_TAB>
@@ -5908,6 +6169,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--492-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--492-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--492-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--492-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--492--></AD_TAB>
 
 <!--493--><AD_TAB>
@@ -5931,6 +6193,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--493-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--493-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--493-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--493-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--493--></AD_TAB>
 
 <!--495--><AD_TAB>
@@ -5954,6 +6217,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--495-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--495-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--495-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--495-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--495--></AD_TAB>
 
 <!--496--><AD_TAB>
@@ -5978,6 +6242,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--496-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--496-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--496-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--496-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--496--></AD_TAB>
 
 <!--501--><AD_TAB>
@@ -6002,6 +6267,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--501-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--501-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--501-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--501-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--501--></AD_TAB>
 
 <!--507--><AD_TAB>
@@ -6024,6 +6290,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--507-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--507-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--507-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--507-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--507--></AD_TAB>
 
 <!--508--><AD_TAB>
@@ -6047,6 +6314,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--508-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--508-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--508-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--508-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--508--></AD_TAB>
 
 <!--510--><AD_TAB>
@@ -6070,6 +6338,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--510-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--510-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--510-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--510-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--510--></AD_TAB>
 
 <!--512--><AD_TAB>
@@ -6093,6 +6362,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--512-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--512-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--512-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--512-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--512--></AD_TAB>
 
 <!--513--><AD_TAB>
@@ -6116,6 +6386,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--513-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--513-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--513-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--513-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--513--></AD_TAB>
 
 <!--514--><AD_TAB>
@@ -6139,6 +6410,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--514-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--514-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--514-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--514-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--514--></AD_TAB>
 
 <!--515--><AD_TAB>
@@ -6162,6 +6434,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--515-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--515-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--515-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--515-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--515--></AD_TAB>
 
 <!--516--><AD_TAB>
@@ -6185,6 +6458,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--516-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--516-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--516-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--516-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--516--></AD_TAB>
 
 <!--517--><AD_TAB>
@@ -6208,6 +6482,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--517-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--517-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--517-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--517-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--517--></AD_TAB>
 
 <!--518--><AD_TAB>
@@ -6231,6 +6506,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--518-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--518-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--518-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--518-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--518--></AD_TAB>
 
 <!--519--><AD_TAB>
@@ -6254,6 +6530,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--519-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--519-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--519-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--519-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--519--></AD_TAB>
 
 <!--520--><AD_TAB>
@@ -6277,6 +6554,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--520-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--520-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--520-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--520-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--520--></AD_TAB>
 
 <!--526--><AD_TAB>
@@ -6300,6 +6578,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--526-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--526-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--526-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--526-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--526--></AD_TAB>
 
 <!--527--><AD_TAB>
@@ -6324,6 +6603,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--527-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--527-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--527-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--527-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--527--></AD_TAB>
 
 <!--528--><AD_TAB>
@@ -6348,6 +6628,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--528-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--528-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--528-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--528-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--528--></AD_TAB>
 
 <!--529--><AD_TAB>
@@ -6372,6 +6653,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--529-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--529-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--529-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--529-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--529--></AD_TAB>
 
 <!--530--><AD_TAB>
@@ -6396,6 +6678,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--530-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--530-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--530-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--530-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--530--></AD_TAB>
 
 <!--531--><AD_TAB>
@@ -6420,6 +6703,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--531-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--531-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--531-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--531-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--531--></AD_TAB>
 
 <!--532--><AD_TAB>
@@ -6444,6 +6728,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--532-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--532-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--532-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--532-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--532--></AD_TAB>
 
 <!--533--><AD_TAB>
@@ -6468,6 +6753,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--533-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--533-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--533-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--533-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--533--></AD_TAB>
 
 <!--534--><AD_TAB>
@@ -6492,6 +6778,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--534-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--534-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--534-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--534-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--534--></AD_TAB>
 
 <!--535--><AD_TAB>
@@ -6516,6 +6803,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--535-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--535-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--535-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--535-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--535--></AD_TAB>
 
 <!--536--><AD_TAB>
@@ -6540,6 +6828,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--536-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--536-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--536-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--536-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--536--></AD_TAB>
 
 <!--537--><AD_TAB>
@@ -6564,6 +6853,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--537-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--537-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--537-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--537-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--537--></AD_TAB>
 
 <!--538--><AD_TAB>
@@ -6587,6 +6877,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--538-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--538-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--538-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--538-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--538--></AD_TAB>
 
 <!--549--><AD_TAB>
@@ -6611,6 +6902,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--549-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--549-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--549-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--549-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--549--></AD_TAB>
 
 <!--550--><AD_TAB>
@@ -6634,6 +6926,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--550-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--550-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--550-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--550-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--550--></AD_TAB>
 
 <!--551--><AD_TAB>
@@ -6658,6 +6951,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--551-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--551-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--551-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--551-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--551--></AD_TAB>
 
 <!--552--><AD_TAB>
@@ -6682,6 +6976,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--552-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--552-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--552-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--552-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--552--></AD_TAB>
 
 <!--553--><AD_TAB>
@@ -6706,6 +7001,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--553-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--553-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--553-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--553-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--553--></AD_TAB>
 
 <!--555--><AD_TAB>
@@ -6730,6 +7026,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--555-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--555-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--555-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--555-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--555--></AD_TAB>
 
 <!--556--><AD_TAB>
@@ -6754,6 +7051,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--556-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--556-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--556-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--556-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--556--></AD_TAB>
 
 <!--557--><AD_TAB>
@@ -6778,6 +7076,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--557-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--557-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--557-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--557-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--557--></AD_TAB>
 
 <!--558--><AD_TAB>
@@ -6801,6 +7100,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--558-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--558-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--558-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--558-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--558--></AD_TAB>
 
 <!--800000--><AD_TAB>
@@ -6824,6 +7124,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800000-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800000--></AD_TAB>
 
 <!--800001--><AD_TAB>
@@ -6847,6 +7148,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800001-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800001-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800001-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800001--></AD_TAB>
 
 <!--800002--><AD_TAB>
@@ -6871,6 +7173,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800002-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800002-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800002-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800002--></AD_TAB>
 
 <!--800003--><AD_TAB>
@@ -6895,6 +7198,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800003-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800003-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800003-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800003--></AD_TAB>
 
 <!--800004--><AD_TAB>
@@ -6919,6 +7223,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800004-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800004-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800004-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800004-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800004--></AD_TAB>
 
 <!--800005--><AD_TAB>
@@ -6942,6 +7247,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800005-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800005-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800005-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800005--></AD_TAB>
 
 <!--800006--><AD_TAB>
@@ -6965,6 +7271,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800006-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800006-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800006-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800006-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800006--></AD_TAB>
 
 <!--800007--><AD_TAB>
@@ -6988,6 +7295,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800007-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800007-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800007-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800007-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800007--></AD_TAB>
 
 <!--800008--><AD_TAB>
@@ -7011,6 +7319,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800008-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800008-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800008-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800008-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800008--></AD_TAB>
 
 <!--800009--><AD_TAB>
@@ -7035,6 +7344,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800009-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800009-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800009-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800009-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800009--></AD_TAB>
 
 <!--800012--><AD_TAB>
@@ -7058,6 +7368,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800012-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800012-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800012-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800012-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800012--></AD_TAB>
 
 <!--800013--><AD_TAB>
@@ -7081,6 +7392,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800013-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800013-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800013-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800013-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800013--></AD_TAB>
 
 <!--800014--><AD_TAB>
@@ -7104,6 +7416,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800014-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800014-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800014-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800014-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800014--></AD_TAB>
 
 <!--800015--><AD_TAB>
@@ -7127,6 +7440,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800015-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800015-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800015-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800015-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800015--></AD_TAB>
 
 <!--800016--><AD_TAB>
@@ -7151,6 +7465,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800016-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800016-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800016-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800016-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800016--></AD_TAB>
 
 <!--800017--><AD_TAB>
@@ -7174,6 +7489,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800017-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800017-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800017-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800017-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800017--></AD_TAB>
 
 <!--800018--><AD_TAB>
@@ -7198,6 +7514,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800018-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800018-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800018-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800018-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800018--></AD_TAB>
 
 <!--800019--><AD_TAB>
@@ -7221,6 +7538,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800019-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800019-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800019-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800019-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800019--></AD_TAB>
 
 <!--800020--><AD_TAB>
@@ -7245,6 +7563,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800020-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800020-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800020-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800020-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800020--></AD_TAB>
 
 <!--800021--><AD_TAB>
@@ -7268,6 +7587,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800021-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800021-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800021-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800021-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800021--></AD_TAB>
 
 <!--800022--><AD_TAB>
@@ -7290,6 +7610,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800022-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800022-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800022-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800022-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800022--></AD_TAB>
 
 <!--800025--><AD_TAB>
@@ -7316,6 +7637,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800025-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800025-->  <FILTERCLAUSE><![CDATA[C_Settlement.settlementtype='C']]></FILTERCLAUSE>
 <!--800025-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800025-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800025--></AD_TAB>
 
 <!--800026--><AD_TAB>
@@ -7339,6 +7661,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800026-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800026-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800026-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800026-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800026--></AD_TAB>
 
 <!--800027--><AD_TAB>
@@ -7364,6 +7687,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800027-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800027-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800027-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800027-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800027--></AD_TAB>
 
 <!--800028--><AD_TAB>
@@ -7388,6 +7712,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800028-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800028-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800028-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800028-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800028--></AD_TAB>
 
 <!--800029--><AD_TAB>
@@ -7411,6 +7736,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800029-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800029-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800029-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800029-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800029--></AD_TAB>
 
 <!--800031--><AD_TAB>
@@ -7434,6 +7760,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800031-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800031-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800031-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800031-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800031--></AD_TAB>
 
 <!--800032--><AD_TAB>
@@ -7457,6 +7784,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800032-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800032-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800032-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800032-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800032--></AD_TAB>
 
 <!--800033--><AD_TAB>
@@ -7480,6 +7808,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800033-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800033-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800033-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800033-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800033--></AD_TAB>
 
 <!--800034--><AD_TAB>
@@ -7503,6 +7832,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800034-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800034-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800034-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800034-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800034--></AD_TAB>
 
 <!--800035--><AD_TAB>
@@ -7526,6 +7856,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800035-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800035-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800035-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800035-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800035--></AD_TAB>
 
 <!--800036--><AD_TAB>
@@ -7550,6 +7881,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800036-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800036-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800036-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800036-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800036--></AD_TAB>
 
 <!--800038--><AD_TAB>
@@ -7573,6 +7905,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800038-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800038-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800038-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800038-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800038--></AD_TAB>
 
 <!--800041--><AD_TAB>
@@ -7596,6 +7929,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800041-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800041-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800041-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800041-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800041--></AD_TAB>
 
 <!--800043--><AD_TAB>
@@ -7618,6 +7952,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800043-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800043-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800043-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800043-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800043--></AD_TAB>
 
 <!--800044--><AD_TAB>
@@ -7639,6 +7974,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800044-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800044-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800044-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800044-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800044--></AD_TAB>
 
 <!--800045--><AD_TAB>
@@ -7660,6 +7996,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800045-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800045-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800045-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800045-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800045--></AD_TAB>
 
 <!--800046--><AD_TAB>
@@ -7681,6 +8018,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800046-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800046-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800046-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800046-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800046--></AD_TAB>
 
 <!--800048--><AD_TAB>
@@ -7704,6 +8042,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800048-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800048-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800048-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800048-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800048--></AD_TAB>
 
 <!--800049--><AD_TAB>
@@ -7726,6 +8065,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800049-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800049-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800049-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800049-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800049--></AD_TAB>
 
 <!--800050--><AD_TAB>
@@ -7750,6 +8090,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800050-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800050-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800050-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800050-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800050--></AD_TAB>
 
 <!--800051--><AD_TAB>
@@ -7774,6 +8115,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800051-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800051-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800051-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800051-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800051--></AD_TAB>
 
 <!--800052--><AD_TAB>
@@ -7796,6 +8138,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800052-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800052-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800052-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800052-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800052--></AD_TAB>
 
 <!--800054--><AD_TAB>
@@ -7819,6 +8162,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800054-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800054-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800054-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800054-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800054--></AD_TAB>
 
 <!--800055--><AD_TAB>
@@ -7842,6 +8186,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800055-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800055-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800055-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800055-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800055--></AD_TAB>
 
 <!--800056--><AD_TAB>
@@ -7865,6 +8210,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800056-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800056-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800056-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800056-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800056--></AD_TAB>
 
 <!--800057--><AD_TAB>
@@ -7889,6 +8235,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800057-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800057-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800057-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800057-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800057--></AD_TAB>
 
 <!--800058--><AD_TAB>
@@ -7913,6 +8260,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800058-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800058-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800058-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800058-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800058--></AD_TAB>
 
 <!--800059--><AD_TAB>
@@ -7934,6 +8282,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800059-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800059-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800059-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800059-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800059--></AD_TAB>
 
 <!--800060--><AD_TAB>
@@ -7957,6 +8306,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800060-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800060-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800060-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800060-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800060--></AD_TAB>
 
 <!--800061--><AD_TAB>
@@ -7980,6 +8330,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800061-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800061-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800061-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800061-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800061--></AD_TAB>
 
 <!--800062--><AD_TAB>
@@ -8003,6 +8354,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800062-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800062-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800062-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800062-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800062--></AD_TAB>
 
 <!--800063--><AD_TAB>
@@ -8027,6 +8379,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800063-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800063-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800063-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800063-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800063--></AD_TAB>
 
 <!--800064--><AD_TAB>
@@ -8050,6 +8403,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800064-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800064-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800064-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800064-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800064--></AD_TAB>
 
 <!--800065--><AD_TAB>
@@ -8075,6 +8429,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800065-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800065-->  <EDITREFERENCE><![CDATA[800010]]></EDITREFERENCE>
 <!--800065-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800065-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800065--></AD_TAB>
 
 <!--800066--><AD_TAB>
@@ -8098,6 +8453,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800066-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800066-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800066-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800066-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800066--></AD_TAB>
 
 <!--800067--><AD_TAB>
@@ -8121,6 +8477,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800067-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800067-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800067-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800067-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800067--></AD_TAB>
 
 <!--800069--><AD_TAB>
@@ -8144,6 +8501,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800069-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800069-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800069-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800069-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800069--></AD_TAB>
 
 <!--800070--><AD_TAB>
@@ -8167,6 +8525,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800070-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800070-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800070-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800070-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800070--></AD_TAB>
 
 <!--800071--><AD_TAB>
@@ -8190,6 +8549,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800071-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800071-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800071-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800071-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800071--></AD_TAB>
 
 <!--800072--><AD_TAB>
@@ -8213,6 +8573,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800072-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800072-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800072-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800072-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800072--></AD_TAB>
 
 <!--800073--><AD_TAB>
@@ -8236,6 +8597,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800073-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800073-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800073-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800073-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800073--></AD_TAB>
 
 <!--800074--><AD_TAB>
@@ -8259,6 +8621,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800074-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800074-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800074-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800074-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800074--></AD_TAB>
 
 <!--800075--><AD_TAB>
@@ -8282,6 +8645,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800075-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800075-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800075-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800075-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800075--></AD_TAB>
 
 <!--800076--><AD_TAB>
@@ -8305,6 +8669,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800076-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800076-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800076-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800076-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800076--></AD_TAB>
 
 <!--800077--><AD_TAB>
@@ -8328,6 +8693,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800077-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800077-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800077-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800077-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800077--></AD_TAB>
 
 <!--800078--><AD_TAB>
@@ -8352,6 +8718,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800078-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800078-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800078-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800078-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800078--></AD_TAB>
 
 <!--800079--><AD_TAB>
@@ -8375,6 +8742,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800079-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800079-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800079-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800079-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800079--></AD_TAB>
 
 <!--800080--><AD_TAB>
@@ -8398,6 +8766,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800080-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800080-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800080-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800080-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800080--></AD_TAB>
 
 <!--800081--><AD_TAB>
@@ -8421,6 +8790,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800081-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800081-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800081-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800081-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800081--></AD_TAB>
 
 <!--800082--><AD_TAB>
@@ -8444,6 +8814,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800082-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800082-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800082-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800082-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800082--></AD_TAB>
 
 <!--800083--><AD_TAB>
@@ -8467,6 +8838,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800083-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800083-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800083-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800083-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800083--></AD_TAB>
 
 <!--800084--><AD_TAB>
@@ -8490,6 +8862,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800084-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800084-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800084-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800084-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800084--></AD_TAB>
 
 <!--800085--><AD_TAB>
@@ -8513,6 +8886,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800085-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800085-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800085-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800085-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800085--></AD_TAB>
 
 <!--800086--><AD_TAB>
@@ -8536,6 +8910,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800086-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800086-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800086-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800086-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800086--></AD_TAB>
 
 <!--800087--><AD_TAB>
@@ -8559,6 +8934,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800087-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800087-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800087-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800087-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800087--></AD_TAB>
 
 <!--800088--><AD_TAB>
@@ -8582,6 +8958,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800088-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800088-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800088-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800088-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800088--></AD_TAB>
 
 <!--800089--><AD_TAB>
@@ -8605,6 +8982,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800089-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800089-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800089-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800089-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800089--></AD_TAB>
 
 <!--800096--><AD_TAB>
@@ -8628,6 +9006,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800096-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800096-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800096-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800096-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800096--></AD_TAB>
 
 <!--800097--><AD_TAB>
@@ -8651,6 +9030,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800097-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800097-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800097-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800097-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800097--></AD_TAB>
 
 <!--800098--><AD_TAB>
@@ -8674,6 +9054,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800098-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800098-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800098-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800098-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800098--></AD_TAB>
 
 <!--800104--><AD_TAB>
@@ -8697,6 +9078,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800104-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800104-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800104-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800104-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800104--></AD_TAB>
 
 <!--800108--><AD_TAB>
@@ -8721,6 +9103,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800108-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800108-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800108-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800108-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800108--></AD_TAB>
 
 <!--800109--><AD_TAB>
@@ -8744,6 +9127,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800109-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800109-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800109-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800109-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800109--></AD_TAB>
 
 <!--800110--><AD_TAB>
@@ -8767,6 +9151,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800110-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800110-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800110-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800110-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800110--></AD_TAB>
 
 <!--800111--><AD_TAB>
@@ -8792,6 +9177,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800111-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800111-->  <FILTERCLAUSE><![CDATA[MA_WorkRequirement.Closed='N']]></FILTERCLAUSE>
 <!--800111-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800111-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800111--></AD_TAB>
 
 <!--800112--><AD_TAB>
@@ -8815,6 +9201,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800112-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800112-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800112-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800112-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800112--></AD_TAB>
 
 <!--800113--><AD_TAB>
@@ -8838,6 +9225,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800113-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800113-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800113-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800113-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800113--></AD_TAB>
 
 <!--800114--><AD_TAB>
@@ -8863,6 +9251,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800114-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800114-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800114-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800114-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800114--></AD_TAB>
 
 <!--800115--><AD_TAB>
@@ -8886,6 +9275,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800115-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800115-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800115-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800115-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800115--></AD_TAB>
 
 <!--800116--><AD_TAB>
@@ -8910,6 +9300,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800116-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800116-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800116-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800116-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800116--></AD_TAB>
 
 <!--800117--><AD_TAB>
@@ -8934,6 +9325,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800117-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800117-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800117-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800117-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800117--></AD_TAB>
 
 <!--800118--><AD_TAB>
@@ -8957,6 +9349,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800118-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800118-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800118-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800118-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800118--></AD_TAB>
 
 <!--800119--><AD_TAB>
@@ -8981,6 +9374,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800119-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800119-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800119-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800119-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800119--></AD_TAB>
 
 <!--800143--><AD_TAB>
@@ -9003,6 +9397,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800143-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800143-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800143-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800143-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800143--></AD_TAB>
 
 <!--800144--><AD_TAB>
@@ -9025,6 +9420,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800144-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800144-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800144-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800144-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800144--></AD_TAB>
 
 <!--800146--><AD_TAB>
@@ -9049,6 +9445,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800146-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800146-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800146-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800146-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800146--></AD_TAB>
 
 <!--800151--><AD_TAB>
@@ -9073,6 +9470,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800151-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800151-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800151-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800151-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800151--></AD_TAB>
 
 <!--800152--><AD_TAB>
@@ -9096,6 +9494,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800152-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800152-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800152-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800152-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800152--></AD_TAB>
 
 <!--800153--><AD_TAB>
@@ -9120,6 +9519,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800153-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800153-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800153-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800153-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800153--></AD_TAB>
 
 <!--800154--><AD_TAB>
@@ -9144,6 +9544,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800154-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800154-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800154-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800154-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800154--></AD_TAB>
 
 <!--800155--><AD_TAB>
@@ -9168,6 +9569,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800155-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800155-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800155-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800155-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800155--></AD_TAB>
 
 <!--800158--><AD_TAB>
@@ -9193,6 +9595,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800158-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800158-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800158-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800158-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800158--></AD_TAB>
 
 <!--800159--><AD_TAB>
@@ -9216,6 +9619,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800159-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800159-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800159-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800159-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800159--></AD_TAB>
 
 <!--800160--><AD_TAB>
@@ -9239,6 +9643,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800160-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800160-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800160-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800160--></AD_TAB>
 
 <!--800161--><AD_TAB>
@@ -9262,6 +9667,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800161-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800161-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800161-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800161--></AD_TAB>
 
 <!--800162--><AD_TAB>
@@ -9286,6 +9692,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800162-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800162-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800162-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800162-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800162--></AD_TAB>
 
 <!--800163--><AD_TAB>
@@ -9309,6 +9716,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800163-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800163-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800163-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800163-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800163--></AD_TAB>
 
 <!--800165--><AD_TAB>
@@ -9333,6 +9741,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800165-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800165-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800165-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800165-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800165--></AD_TAB>
 
 <!--800167--><AD_TAB>
@@ -9356,6 +9765,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800167-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800167-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800167-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800167-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800167--></AD_TAB>
 
 <!--800168--><AD_TAB>
@@ -9379,6 +9789,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800168-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800168-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800168-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800168-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800168--></AD_TAB>
 
 <!--800170--><AD_TAB>
@@ -9403,6 +9814,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800170-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800170-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800170-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800170-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800170--></AD_TAB>
 
 <!--800171--><AD_TAB>
@@ -9426,6 +9838,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800171-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800171-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800171-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800171--></AD_TAB>
 
 <!--800172--><AD_TAB>
@@ -9450,6 +9863,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800172-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800172-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800172-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800172-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800172--></AD_TAB>
 
 <!--800173--><AD_TAB>
@@ -9473,6 +9887,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800173-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800173-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800173-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800173-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800173--></AD_TAB>
 
 <!--800174--><AD_TAB>
@@ -9496,6 +9911,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800174-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800174-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800174-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800174--></AD_TAB>
 
 <!--800175--><AD_TAB>
@@ -9519,6 +9935,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800175-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800175-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800175-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800175-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800175--></AD_TAB>
 
 <!--800176--><AD_TAB>
@@ -9542,6 +9959,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800176-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800176-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800176-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800176--></AD_TAB>
 
 <!--800177--><AD_TAB>
@@ -9566,6 +9984,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800177-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800177-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800177-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800177-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800177--></AD_TAB>
 
 <!--800178--><AD_TAB>
@@ -9589,6 +10008,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800178-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800178-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800178-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800178-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800178--></AD_TAB>
 
 <!--800179--><AD_TAB>
@@ -9612,6 +10032,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800179-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800179-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800179-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800179-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800179--></AD_TAB>
 
 <!--800180--><AD_TAB>
@@ -9635,6 +10056,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800180-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800180-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800180-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800180-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800180--></AD_TAB>
 
 <!--800181--><AD_TAB>
@@ -9658,6 +10080,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800181-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800181-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800181-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800181-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800181--></AD_TAB>
 
 <!--800182--><AD_TAB>
@@ -9681,6 +10104,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800182-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800182-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800182-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800182-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800182--></AD_TAB>
 
 <!--800183--><AD_TAB>
@@ -9704,6 +10128,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800183-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800183-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800183-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800183-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800183--></AD_TAB>
 
 <!--800184--><AD_TAB>
@@ -9727,6 +10152,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800184-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800184-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800184-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800184-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800184--></AD_TAB>
 
 <!--800185--><AD_TAB>
@@ -9750,6 +10176,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800185-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800185-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800185-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800185-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800185--></AD_TAB>
 
 <!--800186--><AD_TAB>
@@ -9773,6 +10200,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800186-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800186-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800186-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800186-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800186--></AD_TAB>
 
 <!--800188--><AD_TAB>
@@ -9798,6 +10226,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800188-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800188-->  <FILTERCLAUSE><![CDATA[MA_Maint_Scheduled.MA_Maint_Part_ID IS NULL]]></FILTERCLAUSE>
 <!--800188-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800188-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800188--></AD_TAB>
 
 <!--800189--><AD_TAB>
@@ -9821,6 +10250,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800189-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800189-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800189-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800189-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800189--></AD_TAB>
 
 <!--800190--><AD_TAB>
@@ -9844,6 +10274,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800190-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800190-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800190-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800190-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800190--></AD_TAB>
 
 <!--800191--><AD_TAB>
@@ -9867,6 +10298,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800191-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800191-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800191-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800191-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800191--></AD_TAB>
 
 <!--800192--><AD_TAB>
@@ -9890,6 +10322,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800192-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800192-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800192-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800192-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800192--></AD_TAB>
 
 <!--800194--><AD_TAB>
@@ -9913,6 +10346,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800194-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800194-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800194-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800194-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800194--></AD_TAB>
 
 <!--800195--><AD_TAB>
@@ -9937,6 +10371,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800195-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800195-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800195-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800195-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800195--></AD_TAB>
 
 <!--800196--><AD_TAB>
@@ -9960,6 +10395,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800196-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800196-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800196-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800196-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800196--></AD_TAB>
 
 <!--800198--><AD_TAB>
@@ -9983,6 +10419,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800198-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800198-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800198-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800198-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800198--></AD_TAB>
 
 <!--800199--><AD_TAB>
@@ -10006,6 +10443,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800199-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800199-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800199-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800199-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800199--></AD_TAB>
 
 <!--800200--><AD_TAB>
@@ -10030,6 +10468,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800200-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800200-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800200-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800200-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800200--></AD_TAB>
 
 <!--800201--><AD_TAB>
@@ -10053,6 +10492,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800201-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800201-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800201-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800201-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800201--></AD_TAB>
 
 <!--800202--><AD_TAB>
@@ -10076,6 +10516,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800202-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800202-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800202-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800202-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800202--></AD_TAB>
 
 <!--800203--><AD_TAB>
@@ -10099,6 +10540,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800203-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800203-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800203-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800203--></AD_TAB>
 
 <!--800204--><AD_TAB>
@@ -10122,6 +10564,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800204-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800204-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800204-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800204-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800204--></AD_TAB>
 
 <!--800205--><AD_TAB>
@@ -10145,6 +10588,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800205-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800205-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800205-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800205-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800205--></AD_TAB>
 
 <!--800206--><AD_TAB>
@@ -10168,6 +10612,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800206-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800206-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800206-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800206-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800206--></AD_TAB>
 
 <!--800208--><AD_TAB>
@@ -10191,6 +10636,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800208-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800208-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800208-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800208-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800208--></AD_TAB>
 
 <!--800209--><AD_TAB>
@@ -10215,6 +10661,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800209-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800209-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800209-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800209-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800209--></AD_TAB>
 
 <!--800210--><AD_TAB>
@@ -10239,6 +10686,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800210-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800210-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800210-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800210-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800210--></AD_TAB>
 
 <!--800211--><AD_TAB>
@@ -10262,6 +10710,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800211-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800211-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800211-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800211-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800211--></AD_TAB>
 
 <!--800212--><AD_TAB>
@@ -10286,6 +10735,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800212-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800212-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800212-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800212-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800212--></AD_TAB>
 
 <!--800213--><AD_TAB>
@@ -10311,6 +10761,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800213-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800213-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800213-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800213-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800213--></AD_TAB>
 
 <!--800214--><AD_TAB>
@@ -10335,6 +10786,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800214-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800214-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800214-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800214-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800214--></AD_TAB>
 
 <!--800215--><AD_TAB>
@@ -10359,6 +10811,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800215-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800215-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800215-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800215-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800215--></AD_TAB>
 
 <!--800216--><AD_TAB>
@@ -10383,6 +10836,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800216-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800216-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800216-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800216-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800216--></AD_TAB>
 
 <!--800217--><AD_TAB>
@@ -10407,6 +10861,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800217-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800217-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800217-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800217-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800217--></AD_TAB>
 
 <!--800218--><AD_TAB>
@@ -10430,6 +10885,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800218-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800218-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800218-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800218-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800218--></AD_TAB>
 
 <!--800219--><AD_TAB>
@@ -10453,6 +10909,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800219-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800219-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800219-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800219-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800219--></AD_TAB>
 
 <!--800220--><AD_TAB>
@@ -10476,6 +10933,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800220-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800220-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800220-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800220--></AD_TAB>
 
 <!--800221--><AD_TAB>
@@ -10500,6 +10958,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800221-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800221-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800221-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800221-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800221--></AD_TAB>
 
 <!--800222--><AD_TAB>
@@ -10523,6 +10982,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800222-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800222-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800222-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800222-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800222--></AD_TAB>
 
 <!--800223--><AD_TAB>
@@ -10546,6 +11006,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800223-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800223-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800223-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800223-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800223--></AD_TAB>
 
 <!--800224--><AD_TAB>
@@ -10569,6 +11030,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800224-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800224-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800224-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800224-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800224--></AD_TAB>
 
 <!--800225--><AD_TAB>
@@ -10592,6 +11054,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800225-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800225-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800225-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800225-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800225--></AD_TAB>
 
 <!--800226--><AD_TAB>
@@ -10615,6 +11078,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800226-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800226-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800226-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800226-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800226--></AD_TAB>
 
 <!--800227--><AD_TAB>
@@ -10638,6 +11102,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800227-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800227-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800227-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800227-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800227--></AD_TAB>
 
 <!--800228--><AD_TAB>
@@ -10661,6 +11126,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800228-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800228-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800228-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800228-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800228--></AD_TAB>
 
 <!--800229--><AD_TAB>
@@ -10684,6 +11150,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800229-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800229-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800229-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800229-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800229--></AD_TAB>
 
 <!--800230--><AD_TAB>
@@ -10707,6 +11174,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800230-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800230-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800230-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800230-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800230--></AD_TAB>
 
 <!--800231--><AD_TAB>
@@ -10731,6 +11199,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800231-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800231-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800231-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800231-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800231--></AD_TAB>
 
 <!--800232--><AD_TAB>
@@ -10754,6 +11223,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800232-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800232-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800232-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800232-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800232--></AD_TAB>
 
 <!--800233--><AD_TAB>
@@ -10777,6 +11247,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800233-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800233-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800233-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800233-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800233--></AD_TAB>
 
 <!--800234--><AD_TAB>
@@ -10800,6 +11271,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800234-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800234-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800234-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800234-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800234--></AD_TAB>
 
 <!--800235--><AD_TAB>
@@ -10823,6 +11295,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800235-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800235-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800235-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800235-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800235--></AD_TAB>
 
 <!--800236--><AD_TAB>
@@ -10847,6 +11320,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800236-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800236-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800236-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800236-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800236--></AD_TAB>
 
 <!--800237--><AD_TAB>
@@ -10870,6 +11344,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800237-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800237-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800237-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800237-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800237--></AD_TAB>
 
 <!--800238--><AD_TAB>
@@ -10893,6 +11368,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800238-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800238-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800238-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800238-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800238--></AD_TAB>
 
 <!--800239--><AD_TAB>
@@ -10916,6 +11392,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800239-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800239-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800239-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800239-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800239--></AD_TAB>
 
 <!--800241--><AD_TAB>
@@ -10939,6 +11416,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800241-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800241-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800241-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800241-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800241--></AD_TAB>
 
 <!--800242--><AD_TAB>
@@ -10962,6 +11440,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800242-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800242-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800242-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800242-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800242--></AD_TAB>
 
 <!--800243--><AD_TAB>
@@ -10985,6 +11464,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800243-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800243-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800243-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800243-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800243--></AD_TAB>
 
 <!--800244--><AD_TAB>
@@ -11008,6 +11488,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800244-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800244-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800244-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800244-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800244--></AD_TAB>
 
 <!--800245--><AD_TAB>
@@ -11031,6 +11512,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800245-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800245-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800245-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800245-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800245--></AD_TAB>
 
 <!--800246--><AD_TAB>
@@ -11054,6 +11536,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800246-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800246-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800246-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800246-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800246--></AD_TAB>
 
 <!--800248--><AD_TAB>
@@ -11076,6 +11559,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800248-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800248-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800248-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800248-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800248--></AD_TAB>
 
 <!--800249--><AD_TAB>
@@ -11101,6 +11585,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800249-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800249-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800249-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800249-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800249--></AD_TAB>
 
 <!--800251--><AD_TAB>
@@ -11125,6 +11610,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800251-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800251-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800251-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800251-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800251--></AD_TAB>
 
 <!--800252--><AD_TAB>
@@ -11148,6 +11634,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800252-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800252-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800252-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800252-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800252--></AD_TAB>
 
 <!--800253--><AD_TAB>
@@ -11171,6 +11658,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800253-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800253-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800253-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800253-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800253--></AD_TAB>
 
 <!--800255--><AD_TAB>
@@ -11194,6 +11682,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800255-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800255-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800255-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800255-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800255--></AD_TAB>
 
 <!--800257--><AD_TAB>
@@ -11217,6 +11706,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800257-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800257-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800257-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800257-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800257--></AD_TAB>
 
 <!--800258--><AD_TAB>
@@ -11240,6 +11730,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800258-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800258-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800258-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800258-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800258--></AD_TAB>
 
 <!--800259--><AD_TAB>
@@ -11263,6 +11754,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800259-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800259-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800259-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800259-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800259--></AD_TAB>
 
 <!--800260--><AD_TAB>
@@ -11286,6 +11778,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800260-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800260-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800260-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800260-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800260--></AD_TAB>
 
 <!--800261--><AD_TAB>
@@ -11309,6 +11802,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800261-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800261-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800261-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800261-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800261--></AD_TAB>
 
 <!--800262--><AD_TAB>
@@ -11333,6 +11827,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800262-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800262-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800262-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800262-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800262--></AD_TAB>
 
 <!--800263--><AD_TAB>
@@ -11357,6 +11852,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800263-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800263-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800263-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800263-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800263--></AD_TAB>
 
 <!--800264--><AD_TAB>
@@ -11381,6 +11877,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800264-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800264-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800264-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800264-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800264--></AD_TAB>
 
 <!--800265--><AD_TAB>
@@ -11404,6 +11901,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800265-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800265-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800265-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800265-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800265--></AD_TAB>
 
 <!--800266--><AD_TAB>
@@ -11427,6 +11925,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800266-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800266-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800266-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800266-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800266--></AD_TAB>
 
 <!--800267--><AD_TAB>
@@ -11450,6 +11949,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800267-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800267-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800267-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800267-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800267--></AD_TAB>
 
 <!--800268--><AD_TAB>
@@ -11473,6 +11973,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800268-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800268-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800268-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800268-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800268--></AD_TAB>
 
 <!--1000500000--><AD_TAB>
@@ -11496,6 +11997,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500000-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1000500000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1000500000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1000500000--></AD_TAB>
 
 <!--1000500001--><AD_TAB>
@@ -11521,6 +12023,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500001-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1000500001-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1000500001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500001-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1000500001--></AD_TAB>
 
 <!--1000500002--><AD_TAB>
@@ -11546,6 +12049,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500002-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1000500002-->  <INCLUDED_TAB_ID><![CDATA[1000500001]]></INCLUDED_TAB_ID>
 <!--1000500002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500002-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1000500002--></AD_TAB>
 
 <!--1002100000--><AD_TAB>
@@ -11568,6 +12072,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100000-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1002100000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1002100000--></AD_TAB>
 
 <!--1002100005--><AD_TAB>
@@ -11590,6 +12095,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100005-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1002100005-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100005-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1002100005--></AD_TAB>
 
 <!--1002100009--><AD_TAB>
@@ -11613,6 +12119,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100009-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1002100009-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100009-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100009-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1002100009--></AD_TAB>
 
 <!--1002100010--><AD_TAB>
@@ -11636,6 +12143,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100010-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1002100010-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100010-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100010-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1002100010--></AD_TAB>
 
 <!--1002100011--><AD_TAB>
@@ -11660,6 +12168,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100011-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1002100011-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100011-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100011-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1002100011--></AD_TAB>
 
 <!--1002100012--><AD_TAB>
@@ -11684,6 +12193,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100012-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1002100012-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100012-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100012-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1002100012--></AD_TAB>
 
 <!--1002100013--><AD_TAB>
@@ -11707,6 +12217,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100013-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1002100013-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100013-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100013-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1002100013--></AD_TAB>
 
 <!--1004400000--><AD_TAB>
@@ -11730,6 +12241,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400000-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1004400000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1004400000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1004400000-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--1004400000--></AD_TAB>
 
 <!--1004400001--><AD_TAB>
@@ -11753,6 +12265,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400001-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1004400001-->  <FILTERCLAUSE><![CDATA[M_Requisition.DocStatus = 'CO']]></FILTERCLAUSE>
 <!--1004400001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1004400001-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1004400001--></AD_TAB>
 
 <!--1004400002--><AD_TAB>
@@ -11775,6 +12288,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400002-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1004400002-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1004400002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1004400002-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1004400002--></AD_TAB>
 
 <!--1004400003--><AD_TAB>
@@ -11796,6 +12310,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400003-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1004400003-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1004400003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1004400003-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1004400003--></AD_TAB>
 
 <!--1005100000--><AD_TAB>
@@ -11819,6 +12334,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1005100000-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1005100000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1005100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1005100000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1005100000--></AD_TAB>
 
 <!--1005400005--><AD_TAB>
@@ -11842,6 +12358,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1005400005-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1005400005-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1005400005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1005400005-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--1005400005--></AD_TAB>
 
 <!--1005400006--><AD_TAB>
@@ -11865,6 +12382,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1005400006-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1005400006-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1005400006-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1005400006-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--1005400006--></AD_TAB>
 
 <!--1007400000--><AD_TAB>
@@ -11888,6 +12406,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1007400000-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1007400000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1007400000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1007400000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1007400000--></AD_TAB>
 
 <!--1011100000--><AD_TAB>
@@ -11909,6 +12428,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1011100000-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1011100000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1011100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1011100000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1011100000--></AD_TAB>
 
 <!--1011100001--><AD_TAB>
@@ -11930,6 +12450,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1011100001-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1011100001-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1011100001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1011100001-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1011100001--></AD_TAB>
 
 <!--134DE6BD8CD34FDFB6DC940BF857BC25--><AD_TAB>
@@ -11954,6 +12475,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--134DE6BD8CD34FDFB6DC940BF857BC25-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--134DE6BD8CD34FDFB6DC940BF857BC25-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--134DE6BD8CD34FDFB6DC940BF857BC25-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--134DE6BD8CD34FDFB6DC940BF857BC25-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--134DE6BD8CD34FDFB6DC940BF857BC25--></AD_TAB>
 
 <!--1705E06D88D14A0DB0907E5B0A61D8D2--><AD_TAB>
@@ -11977,6 +12499,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1705E06D88D14A0DB0907E5B0A61D8D2-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--1705E06D88D14A0DB0907E5B0A61D8D2-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1705E06D88D14A0DB0907E5B0A61D8D2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1705E06D88D14A0DB0907E5B0A61D8D2-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1705E06D88D14A0DB0907E5B0A61D8D2--></AD_TAB>
 
 <!--29021BB9A96244BDA7E8AEBA71ADFB11--><AD_TAB>
@@ -12007,6 +12530,7 @@ The corresponding tables have then the following setting:
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--29021BB9A96244BDA7E8AEBA71ADFB11-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11--></AD_TAB>
 
 <!--39B3DB3BF4C44EE192BE3F6CA69903C0--><AD_TAB>
@@ -12030,6 +12554,7 @@ The corresponding tables have then the following setting:
 <!--39B3DB3BF4C44EE192BE3F6CA69903C0-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--39B3DB3BF4C44EE192BE3F6CA69903C0-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--39B3DB3BF4C44EE192BE3F6CA69903C0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--39B3DB3BF4C44EE192BE3F6CA69903C0-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--39B3DB3BF4C44EE192BE3F6CA69903C0--></AD_TAB>
 
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1--><AD_TAB>
@@ -12054,6 +12579,7 @@ The corresponding tables have then the following setting:
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1--></AD_TAB>
 
 <!--4A00053300254EBC8868ABADEBD95525--><AD_TAB>
@@ -12077,6 +12603,7 @@ The corresponding tables have then the following setting:
 <!--4A00053300254EBC8868ABADEBD95525-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--4A00053300254EBC8868ABADEBD95525-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--4A00053300254EBC8868ABADEBD95525-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--4A00053300254EBC8868ABADEBD95525-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--4A00053300254EBC8868ABADEBD95525--></AD_TAB>
 
 <!--4DE17FC05C3843C4959166BB67967486--><AD_TAB>
@@ -12100,6 +12627,7 @@ The corresponding tables have then the following setting:
 <!--4DE17FC05C3843C4959166BB67967486-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--4DE17FC05C3843C4959166BB67967486-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--4DE17FC05C3843C4959166BB67967486-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--4DE17FC05C3843C4959166BB67967486-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--4DE17FC05C3843C4959166BB67967486--></AD_TAB>
 
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918--><AD_TAB>
@@ -12130,6 +12658,7 @@ AD_Model_Object.AD_FORM_ID       is null and
 AD_Model_Object.AD_REFERENCE_ID  is null and
 AD_Model_Object.AD_CALLOUT_ID    is null ]]></FILTERCLAUSE>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918--></AD_TAB>
 
 <!--5DD4A4D36D71411FB3BE2783C3D55473--><AD_TAB>
@@ -12154,6 +12683,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--5DD4A4D36D71411FB3BE2783C3D55473-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--5DD4A4D36D71411FB3BE2783C3D55473-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--5DD4A4D36D71411FB3BE2783C3D55473-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--5DD4A4D36D71411FB3BE2783C3D55473-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--5DD4A4D36D71411FB3BE2783C3D55473--></AD_TAB>
 
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA--><AD_TAB>
@@ -12179,6 +12709,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA--></AD_TAB>
 
 <!--7580F9AE37704571BB0D3935252CAC5A--><AD_TAB>
@@ -12203,6 +12734,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--7580F9AE37704571BB0D3935252CAC5A-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--7580F9AE37704571BB0D3935252CAC5A--></AD_TAB>
 
 <!--81F3CB82FABC4208BA76DEBB3728A14B--><AD_TAB>
@@ -12224,6 +12756,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--81F3CB82FABC4208BA76DEBB3728A14B-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--81F3CB82FABC4208BA76DEBB3728A14B-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--81F3CB82FABC4208BA76DEBB3728A14B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--81F3CB82FABC4208BA76DEBB3728A14B-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--81F3CB82FABC4208BA76DEBB3728A14B--></AD_TAB>
 
 <!--8652BB9E40664869A5132CEB8A907B9B--><AD_TAB>
@@ -12247,6 +12780,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--8652BB9E40664869A5132CEB8A907B9B-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--8652BB9E40664869A5132CEB8A907B9B-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--8652BB9E40664869A5132CEB8A907B9B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--8652BB9E40664869A5132CEB8A907B9B-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--8652BB9E40664869A5132CEB8A907B9B--></AD_TAB>
 
 <!--8E5972CF3664486D9D887BDEDA88627D--><AD_TAB>
@@ -12272,6 +12806,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <FILTERCLAUSE><![CDATA[AD_Process_Execution_V.isrolesecurity = 'Y' OR AD_Process_Execution_V.AD_User_ID = @AD_User_ID@]]></FILTERCLAUSE>
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--8E5972CF3664486D9D887BDEDA88627D-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--8E5972CF3664486D9D887BDEDA88627D--></AD_TAB>
 
 <!--99DCADEC674D4ECCB158CA5F3DDBFF83--><AD_TAB>
@@ -12295,6 +12830,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--99DCADEC674D4ECCB158CA5F3DDBFF83-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--99DCADEC674D4ECCB158CA5F3DDBFF83-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--99DCADEC674D4ECCB158CA5F3DDBFF83-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--99DCADEC674D4ECCB158CA5F3DDBFF83-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--99DCADEC674D4ECCB158CA5F3DDBFF83--></AD_TAB>
 
 <!--A9F3CB2CCAA0406AB97E73274DF60B93--><AD_TAB>
@@ -12318,6 +12854,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--A9F3CB2CCAA0406AB97E73274DF60B93-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--A9F3CB2CCAA0406AB97E73274DF60B93-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--A9F3CB2CCAA0406AB97E73274DF60B93-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--A9F3CB2CCAA0406AB97E73274DF60B93-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--A9F3CB2CCAA0406AB97E73274DF60B93--></AD_TAB>
 
 <!--B30CF79CF71245339E94B4B332BAABF1--><AD_TAB>
@@ -12342,6 +12879,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--B30CF79CF71245339E94B4B332BAABF1-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--B30CF79CF71245339E94B4B332BAABF1-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--B30CF79CF71245339E94B4B332BAABF1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--B30CF79CF71245339E94B4B332BAABF1-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--B30CF79CF71245339E94B4B332BAABF1--></AD_TAB>
 
 <!--B3B9080A60E443C58F9476506EEE3D4E--><AD_TAB>
@@ -12365,6 +12903,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--B3B9080A60E443C58F9476506EEE3D4E-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--B3B9080A60E443C58F9476506EEE3D4E-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--B3B9080A60E443C58F9476506EEE3D4E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--B3B9080A60E443C58F9476506EEE3D4E-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--B3B9080A60E443C58F9476506EEE3D4E--></AD_TAB>
 
 <!--C53967BA96E64FC6B2E4166A7C945168--><AD_TAB>
@@ -12388,6 +12927,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--C53967BA96E64FC6B2E4166A7C945168-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--C53967BA96E64FC6B2E4166A7C945168-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--C53967BA96E64FC6B2E4166A7C945168-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--C53967BA96E64FC6B2E4166A7C945168-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--C53967BA96E64FC6B2E4166A7C945168--></AD_TAB>
 
 <!--CD573DF1E351485EA2B2DE487DCACA6F--><AD_TAB>
@@ -12413,6 +12953,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <FILTERCLAUSE><![CDATA[AD_Process_Request.Channel = 'Process Scheduler']]></FILTERCLAUSE>
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--CD573DF1E351485EA2B2DE487DCACA6F-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--CD573DF1E351485EA2B2DE487DCACA6F--></AD_TAB>
 
 <!--F53E35A11C564F20BE4082A7B8CFF6B7--><AD_TAB>
@@ -12436,6 +12977,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--F53E35A11C564F20BE4082A7B8CFF6B7-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--F53E35A11C564F20BE4082A7B8CFF6B7-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--F53E35A11C564F20BE4082A7B8CFF6B7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--F53E35A11C564F20BE4082A7B8CFF6B7-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--F53E35A11C564F20BE4082A7B8CFF6B7--></AD_TAB>
 
 <!--FD79A6D6DB094BE88F2F0E0333A399B2--><AD_TAB>
@@ -12459,6 +13001,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--FD79A6D6DB094BE88F2F0E0333A399B2-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--FD79A6D6DB094BE88F2F0E0333A399B2-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--FD79A6D6DB094BE88F2F0E0333A399B2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--FD79A6D6DB094BE88F2F0E0333A399B2-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--FD79A6D6DB094BE88F2F0E0333A399B2--></AD_TAB>
 
 </data>
