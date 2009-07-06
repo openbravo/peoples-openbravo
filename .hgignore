@@ -19,6 +19,7 @@ config/Openbravo.properties
 config/log4j.lcf
 config/setup*
 config/checksums
+config/instance.revision
 src/result.xml
 
 src-db/database/lib/dbmanager.jar
