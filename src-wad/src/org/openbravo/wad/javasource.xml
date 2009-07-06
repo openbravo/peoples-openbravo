@@ -66,6 +66,7 @@
   <PARAMETER id="paramReportDirectPrint" name="reportDirectPrint" default=""/>
   <PARAMETER id="paramHasTree" name="hasTree" default=""/>
   <PARAMETER id="paramIsReadOnly" name="isReadOnly" default=""/>
+  <PARAMETER id="paramUIPattern" name="uiPattern" default=""/>
   <FIELD id="fieldName">Name</FIELD>
   <FIELD id="fieldType">type</FIELD>
   <FIELD id="fieldDefault">xmltext</FIELD>

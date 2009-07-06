@@ -63,7 +63,7 @@
     <SqlMethod name="isReadOnly" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT isReadOnly
+        SELECT (CASE WHEN UIPattern IN ('SR', 'RO') then 'Y' else 'N' END) AS isReadOnly
           FROM AD_Tab
          WHERE AD_Tab_ID = ? 
       </Sql>

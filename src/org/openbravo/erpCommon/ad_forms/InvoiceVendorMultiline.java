@@ -250,7 +250,7 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
         .equals("NEW") || (data == null || data.length == 0)), "document.frmMain.inpcInvoiceId",
         "", "", "".equals("Y"), "ExpenseInvoice", strReplaceWith, true);
     toolbar.prepareEditionTemplate("N".equals("Y"), false, vars.getSessionValue("#ShowTest", "N")
-        .equals("Y"), "N".equals("Y"), false);
+        .equals("Y"), "STD", false);
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {

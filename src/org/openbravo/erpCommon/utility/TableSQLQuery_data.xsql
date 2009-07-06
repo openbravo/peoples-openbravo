@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,8 @@
        f.AD_FieldGroup_ID, f.IsDisplayed, f.DisplayLogic, f.DisplayLength, f.IsReadOnly, 
        f.SortNo, f.IsSameLine, f.IsFieldOnly, f.ShowInRelation, 
        c.AD_Table_ID, t.TabLevel, t.HasTree, t.WhereClause, t.OrderByClause, 
-       t.AD_ColumnSortOrder_ID, t.AD_ColumnSortYESNO_ID, t.IsSortTab, t.IsReadOnly AS IsTabReadOnly, 
+       t.AD_ColumnSortOrder_ID, t.AD_ColumnSortYESNO_ID, t.IsSortTab, 
+       (CASE WHEN UIPATTERN='RO' THEN 'Y' ELSE 'N' END) AS IsTabReadOnly, 
        t.FilterClause, t.EditReference, w.WindowType, w.IsSOTrx, w.name AS Window_Name, 
        '' AS Window_Name_Trl, t.name AS Tab_Name, '' AS Tab_Name_Trl, t.AD_Window_ID, '' AS TableName, 
        REPLACE(replace(REPLACE(REPLACE(REPLACE(REPLACE(c.columnname, 'C_Settlement_Generate_ID', 'C_Settlement_ID'), 'Ref_OrderLine_ID', 'C_OrderLine_ID'), 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as columnname_Search
@@ -82,7 +83,7 @@
         f.AD_FieldGroup_ID, f.IsDisplayed, f.DisplayLogic, f.DisplayLength, f.IsReadOnly,
         f.SortNo, f.IsSameLine, f.IsFieldOnly, f.ShowInRelation,
         c.AD_Table_ID, t.TabLevel, t.HasTree, t.WhereClause, t.OrderByClause,
-        t.AD_ColumnSortOrder_ID, t.AD_ColumnSortYESNO_ID, t.IsSortTab, t.IsReadOnly AS IsTabReadOnly,
+        t.AD_ColumnSortOrder_ID, t.AD_ColumnSortYESNO_ID, t.IsSortTab, (CASE WHEN UIPATTERN='RO' THEN 'Y' ELSE 'N' END) AS IsTabReadOnly,
         t.FilterClause, t.EditReference,
         '' AS WindowType, '' AS IsSOTrx, ''AS Window_Name,
         '' AS Window_Name_Trl, t.name AS Tab_Name, '' AS Tab_Name_Trl, t.AD_Window_ID, '' AS TableName,
@@ -113,7 +114,7 @@
         f.AD_FieldGroup_ID, 'Y' as IsDisplayed, f.DisplayLogic, 22 as DisplayLength, f.IsReadOnly,
         f.SortNo, f.IsSameLine, f.IsFieldOnly, 'Y' as ShowInRelation,
         c.AD_Table_ID, t.TabLevel, t.HasTree, t.WhereClause, t.OrderByClause,
-        t.AD_ColumnSortOrder_ID, t.AD_ColumnSortYESNO_ID, t.IsSortTab, t.IsReadOnly AS IsTabReadOnly,
+        t.AD_ColumnSortOrder_ID, t.AD_ColumnSortYESNO_ID, t.IsSortTab, (CASE WHEN UIPATTERN='RO' THEN 'Y' ELSE 'N' END) AS IsTabReadOnly,
         t.FilterClause, t.EditReference,
         '' AS WindowType, '' AS IsSOTrx, ''AS Window_Name,
         '' AS Window_Name_Trl, t.name AS Tab_Name, '' AS Tab_Name_Trl, t.AD_Window_ID, '' AS TableName,
@@ -140,7 +141,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-       SELECT t.AD_Table_ID, t.TabLevel, t.IsReadOnly, t.HasTree, t.WhereClause, t.OrderByClause, t.AD_Process_ID, 
+       SELECT t.AD_Table_ID, t.TabLevel, (CASE WHEN UIPATTERN='RO' THEN 'Y' ELSE 'N' END) AS IsReadOnly, t.HasTree, t.WhereClause, t.OrderByClause, t.AD_Process_ID, 
        t.AD_ColumnSortOrder_ID, t.AD_ColumnSortYESNO_ID, t.IsSortTab, t.FilterClause, t.EditReference, 
        w.WindowType, w.IsSOTrx, w.Name AS Window_Name, COALESCE(w_trl.Name, w.Name) AS Window_Name_Trl, 
        t.Name AS Tab_Name, COALESCE(t_trl.Name, t.Name) AS Tab_Name_Trl, w.AD_Window_ID, 
