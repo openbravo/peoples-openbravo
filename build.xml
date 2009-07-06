@@ -201,7 +201,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <taskdef resource="axis-tasks.properties" classpathref="project.class.path" />
 
-  <target name="init">
+  <target name="init" depends="code.rev">
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set." />
   </target>
 
