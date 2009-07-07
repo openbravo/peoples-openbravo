@@ -42,7 +42,7 @@
         <onCreateDefault/>
       </column>
       <column name="STRTIME" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false">
-      	 <default/>
+        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAINCIDENCE">
