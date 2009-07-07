@@ -234,6 +234,14 @@ compare.database.structure: refer to compare.database.structure target of databa
     <property name="smart.mode" value="true" />
     <property name="onlyIfModified" value="true" />
     <antcall target="core.lib" />
+    
+    <condition property="no.local">
+      <not>
+        <istrue value="${local}" />
+      </not>
+    </condition>
+    <antcall target="update.database.if.no.local" />
+    
     <antcall target="wad.lib" />
 
     <checksum file="${base.src.wad}/lib/openbravo-wad.jar" algorithm="MD5" property="test.md5.wad" />
@@ -245,14 +253,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     </condition>
 
     <antcall target="trl.lib" />
-
-
-    <condition property="no.local">
-      <not>
-        <istrue value="${local}" />
-      </not>
-    </condition>
-    <antcall target="update.database.if.no.local" />
+    
     <antcall inheritall="true" inheritrefs="true" target="generate.entities.quick" />
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
