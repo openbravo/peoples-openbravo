@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,8 +75,8 @@
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND  FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="orden2" type="replace" optional="true" after="GROUP BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
     <Parameter name="orden2" type="replace" optional="true" after="ORDER  BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
     <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT.DESCRIPTION"><![CDATA[ LIMIT ]]></Parameter>
@@ -144,8 +144,8 @@
     <Parameter name="parDateTo2" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND  FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="orden2" type="replace" optional="true" after="GROUP BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
     <Parameter name="orden2" type="replace" optional="true" after="ORDER  BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
     <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT.DESCRIPTION"><![CDATA[ LIMIT ]]></Parameter>
@@ -195,8 +195,8 @@
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND  FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="orden2" type="replace" optional="true" after="GROUP BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
     <Parameter name="orden2" type="replace" optional="true" after="ORDER  BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
     <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT.DESCRIPTION"><![CDATA[ LIMIT ]]></Parameter>
@@ -255,8 +255,8 @@
     <Parameter name="parDateTo2" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND  FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="orden2" type="replace" optional="true" after="GROUP BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
     <Parameter name="orden2" type="replace" optional="true" after="ORDER  BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
     <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT.DESCRIPTION"><![CDATA[ LIMIT ]]></Parameter>
