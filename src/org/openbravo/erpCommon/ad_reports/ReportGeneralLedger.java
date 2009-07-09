@@ -675,7 +675,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     }
     parameters.put("ReportData", jasperReportLines);
 
-    parameters.put("Title", classInfo.name);
     parameters.put("ShowPartner", new Boolean(!(strcBpartnerId.equals("") && strAll.equals(""))));
     parameters.put("REPORT_SUBTITLE", Utility.messageBD(this, "GL_Previous", strLanguage));
     parameters.put("Final", Utility.messageBD(this, "Final", strLanguage));
