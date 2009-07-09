@@ -98,7 +98,7 @@
      </Sql>
      <Parameter name="client"/>
    </SqlMethod>
-  <SqlMethod name="delete" type="preparedStatement" return="rowCount">
+  <SqlMethod name="delete" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
