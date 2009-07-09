@@ -281,7 +281,7 @@ public class XmlDocument implements XmlComponentValue {
       if (strBlank != null && !strBlank.equals("")) {
         elementDataValue.executeBlank(strBlank);
       } else {
-        elementDataValue.printGenerated();
+        elementDataValue.printGenerated(xmlVectorValue.getTextMap());
       }
     }
 
