@@ -395,8 +395,13 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("accountingSchema", ReportTrialBalanceData.selectAcctSchemaName(this,
         strcAcctSchemaId));
     if (strLevel.equals("S"))
-      xmlDocument.setParameter("accounting", "From Account: "
-          + ReportTrialBalanceData.selectAccountingName(this, strAccountFrom) + " - To Account: "
+      xmlDocument.setParameter("accounting", Utility.messageBD(this, "FromAccount", vars
+          .getLanguage())
+          + ": "
+          + ReportTrialBalanceData.selectAccountingName(this, strAccountFrom)
+          + " - "
+          + Utility.messageBD(this, "ToAccount", vars.getLanguage())
+          + ": "
           + ReportTrialBalanceData.selectAccountingName(this, strAccountTo));
     else
       xmlDocument.setParameter("accounting", "");

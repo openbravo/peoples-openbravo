@@ -55,6 +55,7 @@
       </foreign-key>
       <unique name="C_EXTPOSPROD_PRODUCT_UN">
         <unique-column name="M_PRODUCT_ID"/>
+        <unique-column name="C_EXTERNALPOS_ID"/>
       </unique>
     </table>
   </database>

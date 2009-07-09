@@ -962,7 +962,7 @@ public class Wad extends DefaultHandler {
         gridProps.setProperty("ShowLineNumbers", "true");
         gridProps.setProperty("editable", "false");
         gridProps.setProperty("sortable", "true");
-        gridProps.setProperty("deleteable", (!tabsData.isreadonly.equals("Y") ? "true" : "false"));
+        gridProps.setProperty("deleteable", (tabsData.uipattern.equals("STD") ? "true" : "false"));
         gridProps.setProperty("onScrollFunction", "updateHeader");
         gridProps.setProperty("onLoadFunction", "onGridLoadDo");
         gridProps.setProperty("AD_Window_ID", tabsData.key);
@@ -986,7 +986,7 @@ public class Wad extends DefaultHandler {
                 .toString(), vecFields, isSOTrx, allTabs, tabsData.key, tabsData.accesslevel,
             selCol, isSecondaryKey, grandfatherField, tabsData.tablevel, tabsData.tableId,
             tabsData.windowtype, tabsData.adColumnsortorderId, whereClauseParams,
-            parentwhereclause, strProcess, strDirectPrint, tabsData.isreadonly.equals("Y"),
+            parentwhereclause, strProcess, strDirectPrint, !tabsData.uipattern.equals("STD"),
             vecParameters, vecTableParameters, tabsData.javapackage);
         /************************************************
          * XML of the SORT TAB
@@ -1006,10 +1006,9 @@ public class Wad extends DefaultHandler {
             tableName, windowName, keyColumnName, strTables.toString(), strOrder.toString(),
             strWhere.toString(), tabsData.filterclause, vecFields, vecParameters, isSOTrx, allTabs,
             tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey, grandfatherField,
-            tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.isreadonly
-                .equals("Y"), whereClauseParams, parentwhereclause, tabsData.editreference,
-            strProcess, strDirectPrint, vecTableParameters, fieldsData, gridControl,
-            tabsData.javapackage);
+            tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.uipattern,
+            whereClauseParams, parentwhereclause, tabsData.editreference, strProcess,
+            strDirectPrint, vecTableParameters, fieldsData, gridControl, tabsData.javapackage);
 
         /************************************************
          * XSQL
@@ -1036,24 +1035,25 @@ public class Wad extends DefaultHandler {
          * HTML in Relation view
          *************************************************/
         processTabHtmlRelation(parentsFieldsData, fileDir, tabsData.tabid, tabName, keyColumnName,
-            tabsData.isreadonly.equals("Y"), strParentNameDescription, gridControl, false, "",
+            tabsData.uipattern.equals("RO"), strParentNameDescription, gridControl, false, "",
             tabNamePresentation, tabsData.tableId, tabsData.accesslevel);
 
         /************************************************
          * XML in Edition view
          *************************************************/
-        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.isreadonly
-            .equals("Y"), efd, efdauxiliar, isSecondaryKey);
+        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.uipattern
+            .equals("RO"), efd, efdauxiliar, isSecondaryKey);
 
         /************************************************
          * HTML in Edition view
          *************************************************/
         processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName,
-            tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly
-                .equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "", true, isSecondaryKey);
+            tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.uipattern
+                .equals("RO"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "", true, isSecondaryKey);
         processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName,
-            tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly
-                .equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "", false, isSecondaryKey);
+            tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.uipattern
+                .equals("RO"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "", false,
+            isSecondaryKey);
       }
 
     } catch (final ServletException e) {
@@ -1721,8 +1721,8 @@ public class Wad extends DefaultHandler {
    *          The id of the tab's table.
    * @param windowType
    *          The tab's window type.
-   * @param strReadOnly
-   *          If the tab is readonly (Y | N).
+   * @param uiPattern
+   *          The patter for the tab.
    * @param whereClauseParams
    *          Array of where clause's parameters.
    * @param parentwhereclause
@@ -1748,7 +1748,7 @@ public class Wad extends DefaultHandler {
       String strWhere, String strFilter, Vector<Object> vecFields, Vector<Object> vecParametersTop,
       String isSOTrx, TabsData[] allTabs, String strWindow, String accesslevel,
       EditionFieldsData[] selCol, boolean isSecondaryKey, String grandfatherField, String tablevel,
-      String tableId, String windowType, boolean strReadOnly, String whereClauseParams,
+      String tableId, String windowType, String uiPattern, String whereClauseParams,
       String parentwhereclause, String editReference, String strProcess, String strDirectPrint,
       Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
       WADControl relationControl, String javaPackage) throws ServletException, IOException {
@@ -1879,7 +1879,7 @@ public class Wad extends DefaultHandler {
       discard[15] = "isTransactional";
     if (strFilter.trim().equals(""))
       discard[16] = "sectionFilter";
-    if (!strReadOnly)
+    if (uiPattern.equals("STD"))
       discard[17] = "sectionReadOnly";
     if (!hasEncryption)
       discard[20] = "encryptionsFields";
@@ -1960,7 +1960,11 @@ public class Wad extends DefaultHandler {
         ((Integer.valueOf(postedProcess).intValue() > 0) ? postedProcess : ""));
     xmlDocument.setParameter("editReference", TabsData.formClassName(pool, editReference));
     xmlDocument.setParameter("hasTree", hasTree);
-    xmlDocument.setParameter("isReadOnly", (strReadOnly ? "Y" : "N"));
+    // read only for relation toolbar: it is the same for Single Record and Read Only
+    xmlDocument.setParameter("isReadOnly", uiPattern.equals("STD") ? "false" : "true");
+
+    // UI Patter for edition toolbar
+    xmlDocument.setParameter("uiPattern", uiPattern);
 
     String strHighVolume = "", strParamHighVolume = "", strHighVolumeComp = "";
 
@@ -2393,8 +2397,8 @@ public class Wad extends DefaultHandler {
     for (int i = 0; i < allfields.length; i++) {
       WADControl auxControl = null;
       try {
-        auxControl = WadUtility.getControl(pool, allfields[i], strReadOnly, tabName, "", xmlEngine,
-            false, false, false, hasParentsFields);
+        auxControl = WadUtility.getControl(pool, allfields[i], uiPattern.equals("RO"), tabName, "",
+            xmlEngine, false, false, false, hasParentsFields);
       } catch (final Exception ex) {
         throw new ServletException(ex);
       }

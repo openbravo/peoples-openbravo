@@ -197,33 +197,18 @@
     DBMS_OUTPUT.PUT_LINE('  rows deleted: ' || v_rowcount) ;
     DBMS_OUTPUT.PUT_LINE('Creating link from Column to Element') ;
     --Updates ad_column: element id and name (name is only updated first time)
+    --Name is updated with the value in the element regardless the language
     UPDATE AD_COLUMN c
       SET AD_Element_id=(SELECT MAX(AD_Element_ID)
                            FROM AD_ELEMENT e 
                           WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
                             AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y'),
-                   Name=(SELECT COALESCE(T.NAME, E.NAME) AS N
-                           FROM AD_MODULE M,
-                                AD_ELEMENT E LEFT JOIN AD_ELEMENT_TRL T
-                                                    ON E.AD_ELEMENT_ID = T.AD_ELEMENT_ID
-                           WHERE e.AD_Element_ID=(SELECT MAX(AD_Element_ID)
-                                                    FROM AD_ELEMENT e
-                                                    WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
-                                                     AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y')
-                               AND c.AD_MODULE_ID = M.AD_MODULE_ID
-                               AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL)
-                          UNION
-                         SELECT E.NAME AS N
-                           FROM AD_MODULE M,
-                                AD_MODULE M2,
-                                AD_ELEMENT E 
-                           WHERE e.AD_Element_ID=(SELECT MAX(AD_Element_ID)
-                                                    FROM AD_ELEMENT e
-                                                    WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
-                                                     AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y')
-                               AND c.AD_MODULE_ID = M.AD_MODULE_ID
-                               AND M2.AD_MODULE_ID = E.AD_MODULE_ID
-                               AND M.AD_LANGUAGE = M2.AD_LANGUAGE)
+                   Name=(SELECT NAME
+                           FROM AD_ELEMENT
+                          WHERE AD_ELEMENT_ID = (SELECT MAX(AD_Element_ID)
+                                                   FROM AD_ELEMENT e 
+                                                  WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
+                                                    AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y'))
     WHERE AD_Element_ID IS NULL
       AND EXISTS (SELECT 1 
                     FROM AD_MODULE M

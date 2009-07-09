@@ -48,7 +48,6 @@
          and C_InvoiceTax.C_Tax_ID = C_Tax.C_Tax_ID
          and C_Invoice.IsSoTrx=C_TaxRegister_Type.IsSoTrx
          and C_TaxRegister_Type_Lines.C_TaxRegister_Type_ID=C_TaxRegister_Type.C_TaxRegister_Type_ID
-         and C_Invoice.DocStatus in ('CO','CL')
          and C_Invoice.Processed= 'Y'
          and 1=1
               ]]>

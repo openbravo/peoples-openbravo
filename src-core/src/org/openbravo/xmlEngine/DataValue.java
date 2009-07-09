@@ -17,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -128,7 +129,7 @@ class DataValue implements XmlComponentValue {
     iArray = 0;
   }
 
-  public String printGenerated() {
+  public String printGenerated(Map<String, String> map) {
     if (firstSectionValue == null) {
       return "";
     } else {
@@ -147,7 +148,7 @@ class DataValue implements XmlComponentValue {
           data = dataArray[iArray];
           iArray++;
         }
-        return executeArray();
+        return executeArray(map);
       }
     }
   }
@@ -200,7 +201,7 @@ class DataValue implements XmlComponentValue {
     return new String(firstSectionValue.strSection);
   }
 
-  public String executeArray() {
+  public String executeArray(Map<String, String> map) {
     int i = 0;
     // init();
     if (log4jDataValue.isDebugEnabled())
@@ -217,7 +218,7 @@ class DataValue implements XmlComponentValue {
       acumulate(); // changing the order of these two columns when the
       // AddFunction, SubtractFunction, EqualFunction
       // functions are added
-      printDetail();
+      printDetail(map);
     }
     if (data.length > 0) {
       firstValues();
@@ -396,10 +397,31 @@ class DataValue implements XmlComponentValue {
     }
   }
 
-  public void printDetail() {
+  private void printDetail() {
+    printDetail(null);
+  }
+
+  /**
+   * Prints all components in the processed template
+   * 
+   * @param map
+   *          Contains all possible translation strings for the current template
+   */
+  public void printDetail(Map<String, String> map) {
     for (Enumeration<Object> e = vecDetailValue.elements(); e.hasMoreElements();) {
       XmlComponentValue xmlComponentValue = (XmlComponentValue) e.nextElement();
-      strDetailValue.append(xmlComponentValue.print());
+
+      String text = xmlComponentValue.print();
+
+      // Some tag values are not translated yet, let's translate them now
+      if (map != null && xmlComponentValue instanceof CharacterComponent) {
+        String trl = map.get(text);
+        if (trl != null) {
+          text = trl;
+        }
+
+      }
+      strDetailValue.append(text);
     }
 
     // strDetailValue.append("\n");

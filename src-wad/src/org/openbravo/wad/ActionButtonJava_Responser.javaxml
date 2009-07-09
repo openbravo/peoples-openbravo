@@ -81,17 +81,22 @@ public class ActionButtonJava_Responser extends HttpSecureAppServlet {
         <FIELD_TMP id="FieldsLoadParams3">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>
         
         pb.setParams(params);
-       
+        OBError myMessage = null;
         try {
           <FIELD_TMP id="ProcessCode3">execute process</FIELD_TMP>
-        } catch (Exception e) {
-          //do nothing...
-          e.printStackTrace();
+          myMessage = (OBError) pb.getResult();
+          myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), myMessage.getMessage()));
+          myMessage.setTitle(Utility.parseTranslation(this, vars, vars.getLanguage(), myMessage.getTitle()));
+        } catch (Exception ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          log4j.error(ex);
+          if (!myMessage.isConnectionAvailable()) {
+            bdErrorConnection(response);
+            return;
+          }
         }
-        
- 
 
-        processButtonHelper(request, response, vars, (OBError)pb.getResult());        
+        processButtonHelper(request, response, vars, myMessage);        
 </FIELDS_TMP>
     } else pageErrorPopUp(response);
   }

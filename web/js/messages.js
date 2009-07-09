@@ -28,6 +28,24 @@
 //var defaultLang = "en_US";
 var gDefaultType = 0;
 
+/*
+ * The menu frame contains a call to MessagesJS and thus contains the
+ * arrMessages and arrTypes information. Use this to avoid the need for an extra
+ * http call to MessagesJS in most places, by getting the two arrays from the
+ * menu if they are not found in the local page
+ */
+if (typeof arrMessages == "undefined") {
+	var arrMessages;
+	var arrTypes;
+	if (top.frameMenu) {
+		arrMessages = top.frameMenu.arrMessages;
+		arrTypes = top.frameMenu.arrTypes;
+	} else if (top.opener.top.frameMenu) {
+		arrMessages = top.opener.top.frameMenu.arrMessages;
+		arrTypes = top.opener.top.frameMenu.arrTypes;
+	}
+}
+
 function messageType(_messageID, _messageType) {
 	this.id = _messageID;
 	this.type = _messageType;

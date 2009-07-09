@@ -40,7 +40,7 @@ BEGIN
     SELECT COUNT(C_Period_ID)
     INTO v_available_period
     FROM C_Period
-    WHERE p_date BETWEEN STARTDATE AND ENDDATE
+    WHERE p_date>=STARTDATE AND p_date<ENDDATE+1
     AND EXISTS (SELECT 1
                 FROM C_PeriodControl
                 WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID
@@ -52,7 +52,7 @@ BEGIN
     SELECT COUNT(C_Period_ID)
     INTO v_available_period
     FROM C_Period
-    WHERE p_date BETWEEN STARTDATE AND ENDDATE
+    WHERE p_date>=STARTDATE AND p_date<ENDDATE+1
     AND EXISTS (SELECT 1
                 FROM C_PeriodControl
                 WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID

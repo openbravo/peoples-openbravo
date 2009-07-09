@@ -26,7 +26,7 @@
     <PARAMETER id="paramLicensedTo" name="paramLicensedTo" default=""/>
     <PARAMETER id="paraOPSPurpose" name="paraOPSPurpose" default=""/>
     <PARAMETER id="paraOPSType" name="paraOPSType" default=""/>
-  <structure name="structure1">
+    <structure name="structure1">
         <FIELD id="fieldLang">lang</FIELD>
         <FIELD id="fieldTranslator">translatedby</FIELD>
         <FIELD id="fieldDocumentno">documentno</FIELD>

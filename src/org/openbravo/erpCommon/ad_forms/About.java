@@ -56,7 +56,7 @@ public class About extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     String discard[] = { "", "" };
     AboutData[] data = AboutData.selectTranslators(this);
-    AboutData[] ver = AboutData.select(this);
+    AboutData ver = AboutData.select(this);
     XmlDocument xmlDocument = null;
     if (data.length == 0) {
       discard[0] = "discard";
@@ -74,12 +74,17 @@ public class About extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/About", discard)
         .createXmlDocument();
 
+    String version = ver.version.substring(0, ver.version.lastIndexOf(".")) + " "
+        + ver.versionLabel;
+
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("paramLicensedTo", licenseInfo);
     xmlDocument.setData("structure1", data);
-    xmlDocument.setParameter("ver", ver[0].ver);
+    xmlDocument.setParameter("ver", version);
+    xmlDocument.setParameter("versionId", ver.versionId);
+    xmlDocument.setParameter("versionNo", ver.version);
 
     if (ak.isActiveInstance()) {
       xmlDocument.setParameter("paraOPSPurpose", ak.getPurpose(vars.getLanguage()));

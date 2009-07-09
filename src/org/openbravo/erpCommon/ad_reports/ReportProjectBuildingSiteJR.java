@@ -90,11 +90,11 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       String strmCategoryId = vars.getRequestInGlobalVariable("inpmProductCategoryId",
           "ReportProjectBuildingSiteJR|mCategoryId", IsIDFilter.instance);
       String strProjectkind = vars.getRequestInGlobalVariable("inpProjectkind",
-          "ReportProjectBuildingSiteJR|Projectkind", IsIDFilter.instance);
+          "ReportProjectBuildingSiteJR|Projectkind", null);
       String strProjectstatus = vars.getRequestInGlobalVariable("inpProjectstatus",
-          "ReportProjectBuildingSiteJR|Projectstatus", IsIDFilter.instance);
+          "ReportProjectBuildingSiteJR|Projectstatus", null);
       String strProjectphase = vars.getRequestInGlobalVariable("inpProjectphase",
-          "ReportProjectBuildingSiteJR|Projectphase", IsIDFilter.instance);
+          "ReportProjectBuildingSiteJR|Projectphase", null);
       String strProduct = vars.getRequestInGlobalVariable("inpmProductId_IN",
           "ReportProjectBuildingSiteJR|mProductId_IN", IsIDFilter.instance);
       String strProjectpublic = vars.getRequestGlobalVariable("inpProjectpublic",

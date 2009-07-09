@@ -130,11 +130,15 @@ public class ReportManager {
       JRFormatFactory jrFormatFactory = new JRFormatFactory();
       jrFormatFactory.setDatePattern(variables.getJavaDateFormat());
       designParameters.put(JRParameter.REPORT_FORMAT_FACTORY, jrFormatFactory);
-      String salesOrder=report.getCheckSalesOrder();
-      if(salesOrder!=null && salesOrder.equals("Y")){
-    	  designParameters.put("DOCUMENT_NAME", Utility.messageBD(_connectionProvider, "Sales", language)+" "+Utility.messageBD(_connectionProvider, "Invoice", language));
-      }else{
-    	  designParameters.put("DOCUMENT_NAME", Utility.messageBD(_connectionProvider, "Purchase", language)+" "+Utility.messageBD(_connectionProvider, "Invoice", language));
+      String salesOrder = report.getCheckSalesOrder();
+      if (salesOrder != null && salesOrder.equals("Y")) {
+        designParameters.put("DOCUMENT_NAME", Utility.messageBD(_connectionProvider, "Sales",
+            language)
+            + " " + Utility.messageBD(_connectionProvider, "Invoice", language));
+      } else {
+        designParameters.put("DOCUMENT_NAME", Utility.messageBD(_connectionProvider, "Purchase",
+            language)
+            + " " + Utility.messageBD(_connectionProvider, "Invoice", language));
       }
       jasperPrint = fillReport(designParameters, jasperReport);
 
@@ -278,12 +282,14 @@ public class ReportManager {
 
   private HashMap<String, Object> populateDesignParameters(VariablesSecureApp variables,
       Report report) {
+    final String baseDesignPath = _prefix + "/" + _strBaseDesignPath + "/" + _strDefaultDesignPath;
     final HashMap<String, Object> designParameters = new HashMap<String, Object>();
 
     designParameters.put("DOCUMENT_ID", report.getDocumentId());
 
     designParameters.put("BASE_ATTACH", _strAttachmentPath);
     designParameters.put("BASE_WEB", _strBaseWeb);
+    designParameters.put("BASE_DESIGN", baseDesignPath);
     designParameters.put("IS_IGNORE_PAGINATION", false);
     designParameters.put("USER_CLIENT", Utility.getContext(_connectionProvider, variables,
         "#User_Client", ""));

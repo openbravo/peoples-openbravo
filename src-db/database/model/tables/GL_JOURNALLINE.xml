@@ -97,6 +97,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_WITHHOLDING_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_TAX_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_GLJOURNALLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -109,16 +117,23 @@
       <foreign-key foreignTable="C_DEBT_PAYMENT" name="CDEBTPAYMENT_GLJOURNALLINE">
         <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_TAX" name="CTAX_GLJOURNALLINE">
+        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_UOM" name="CUOM_GLJOURNALLINE">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVC_GLJOURNALLINE">
         <reference local="C_VALIDCOMBINATION_ID" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_WITHHOLDING" name="CWITHHOLDING_GLJOURNALLINE">
+        <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="GL_JOURNAL" name="GLJOURNAL_GLJOURNALLINE">
         <reference local="GL_JOURNAL_ID" foreign="GL_JOURNAL_ID"/>
       </foreign-key>
       <check name="GL_JOURNALLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="GLJOURNLINE_ISGENERATED_CHECK"><![CDATA[ISGENERATED IN ('Y', 'N')]]></check>
+      <check name="GLJOURNLINE_WHANDTAX_CHECK"><![CDATA[(C_TAX_ID IS NULL) OR (C_WITHHOLDING_ID IS NULL)]]></check>
     </table>
   </database>

@@ -24512,9 +24512,35 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--6BDD5E11747C51DAE040007F01013550-->  <NAME><![CDATA[Report Type]]></NAME>
 <!--6BDD5E11747C51DAE040007F01013550-->  <PRINTNAME><![CDATA[Report Type]]></PRINTNAME>
 <!--6BDD5E11747C51DAE040007F01013550-->  <DESCRIPTION><![CDATA[Indicates whether the report is "Point in time" (needs to calculate an opening balance if it does not exist) or a "Periodic" report (in this case that calculation is not needed)]]></DESCRIPTION>
-<!--6BDD5E11747C51DAE040007F01013550-->  <HELP><![CDATA[Indicates whether the report is "Point in time" (needs to calculate an opening balance if it does not exist) or a "Periodic" report (in this case that calculation is not needed)]]></HELP>
+<!--6BDD5E11747C51DAE040007F01013550-->  <HELP><![CDATA[Indicates whether the report is a "Point in Time" or a "Periodic" report.<br>A Point in Time report is obtained as of a given date, taking into account the whole historical financial movements; an example of point in time report is the Balance Sheet.<br>A periodic report is executed for a date range and it does not carry forward the balance of accounting movements previous to the range; an example of periodic report is the Income Statement.]]></HELP>
 <!--6BDD5E11747C51DAE040007F01013550-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6BDD5E11747C51DAE040007F01013550--></AD_ELEMENT>
+
+<!--6DC905999D47BFC7E040007F01012E68--><AD_ELEMENT>
+<!--6DC905999D47BFC7E040007F01012E68-->  <AD_ELEMENT_ID><![CDATA[6DC905999D47BFC7E040007F01012E68]]></AD_ELEMENT_ID>
+<!--6DC905999D47BFC7E040007F01012E68-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--6DC905999D47BFC7E040007F01012E68-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--6DC905999D47BFC7E040007F01012E68-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--6DC905999D47BFC7E040007F01012E68-->  <COLUMNNAME><![CDATA[Version_Label]]></COLUMNNAME>
+<!--6DC905999D47BFC7E040007F01012E68-->  <NAME><![CDATA[Version Label]]></NAME>
+<!--6DC905999D47BFC7E040007F01012E68-->  <PRINTNAME><![CDATA[Version Label]]></PRINTNAME>
+<!--6DC905999D47BFC7E040007F01012E68-->  <DESCRIPTION><![CDATA[Human readable version identifer]]></DESCRIPTION>
+<!--6DC905999D47BFC7E040007F01012E68-->  <HELP><![CDATA[It is a human understandable identifier for the version, it will be used with version number. Value examples this field can take are: MP1, dev, alpha...]]></HELP>
+<!--6DC905999D47BFC7E040007F01012E68-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--6DC905999D47BFC7E040007F01012E68--></AD_ELEMENT>
+
+<!--6DC905999D48BFC7E040007F01012E68--><AD_ELEMENT>
+<!--6DC905999D48BFC7E040007F01012E68-->  <AD_ELEMENT_ID><![CDATA[6DC905999D48BFC7E040007F01012E68]]></AD_ELEMENT_ID>
+<!--6DC905999D48BFC7E040007F01012E68-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--6DC905999D48BFC7E040007F01012E68-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--6DC905999D48BFC7E040007F01012E68-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--6DC905999D48BFC7E040007F01012E68-->  <COLUMNNAME><![CDATA[Version_ID]]></COLUMNNAME>
+<!--6DC905999D48BFC7E040007F01012E68-->  <NAME><![CDATA[Version ID]]></NAME>
+<!--6DC905999D48BFC7E040007F01012E68-->  <PRINTNAME><![CDATA[Version ID]]></PRINTNAME>
+<!--6DC905999D48BFC7E040007F01012E68-->  <DESCRIPTION><![CDATA[Version identifier]]></DESCRIPTION>
+<!--6DC905999D48BFC7E040007F01012E68-->  <HELP><![CDATA[It is an identifier for the version. In core module this is automatically calculated when it is build in a mercurial working copy, being in this case the last changeset in the working copy.]]></HELP>
+<!--6DC905999D48BFC7E040007F01012E68-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--6DC905999D48BFC7E040007F01012E68--></AD_ELEMENT>
 
 <!--8F16AEFC996311DD812A001D09C4A2FE--><AD_ELEMENT>
 <!--8F16AEFC996311DD812A001D09C4A2FE-->  <AD_ELEMENT_ID><![CDATA[8F16AEFC996311DD812A001D09C4A2FE]]></AD_ELEMENT_ID>
@@ -24573,7 +24599,7 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--AC84AE28C06C11DD80E0001B388C61A4-->  <NAME><![CDATA[UI Pattern]]></NAME>
 <!--AC84AE28C06C11DD80E0001B388C61A4-->  <PRINTNAME><![CDATA[UI Pattern]]></PRINTNAME>
 <!--AC84AE28C06C11DD80E0001B388C61A4-->  <DESCRIPTION><![CDATA[Defines the UI Pattern]]></DESCRIPTION>
-<!--AC84AE28C06C11DD80E0001B388C61A4-->  <HELP><![CDATA[Defines the UI Pattern that the process has.]]></HELP>
+<!--AC84AE28C06C11DD80E0001B388C61A4-->  <HELP><![CDATA[Defines the UI Pattern that the object implements.]]></HELP>
 <!--AC84AE28C06C11DD80E0001B388C61A4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--AC84AE28C06C11DD80E0001B388C61A4--></AD_ELEMENT>
 

@@ -150,7 +150,7 @@ public class ModelSQLGeneration {
           if (!aux.equals("%")
               || (!prop.getProperty("AD_Reference_ID").equals("10")
                   && !prop.getProperty("AD_Reference_ID").equals("14")
-                  && !prop.getProperty("AD_Reference_ID").equals("34") || !prop.getProperty(
+                  && !prop.getProperty("AD_Reference_ID").equals("34") && !prop.getProperty(
                   "AD_Reference_ID").equals("35"))) {
             filter.addElement(formatFilter(tableSQL.getTableName(), prop.getProperty("ColumnName"),
                 prop.getProperty("AD_Reference_ID"), true));

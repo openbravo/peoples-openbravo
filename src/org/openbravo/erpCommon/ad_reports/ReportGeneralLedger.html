@@ -53,8 +53,7 @@
       </script>
 <script language="JavaScript" type="text/javascript">
 
-function imprimir()
-{
+function imprimir() {
 	var frm = document.frmMain;
 	markCheckedAllElements(frm.inpcBPartnerId_IN);
 	openPDFFiltered("ReportGeneralLedgerPDF.pdf?Command=PDF","PDF");
@@ -62,7 +61,7 @@ function imprimir()
 }
 
 
-function validate(){
+function validate() {
 	var frm = document.frmMain;
 	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
 		setWindowElementFocus(frm.inpDateFrom);
@@ -82,6 +81,8 @@ function validate(){
 }
 
 function onloadFunctions() {
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value, 'Command', 'KEY');", "inpElementValueIdFrom_DES", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdTo', 'inpElementValueIdTo_DES', document.frmMain.inpElementValueIdTo_DES.value, 'Command', 'KEY');", "inpElementValueIdTo_DES", "null");
 }
 
 </script>
@@ -99,6 +100,9 @@ function onloadFunctions() {
 		enableShortcuts('edition');
 		setBrowserAutoComplete(false);
 
+		try {
+		  onloadFunctions();
+		} catch (e) {}
 		resizeArea();
 		updateMenuIcon('buttonMenu');
 
@@ -112,7 +116,7 @@ function onloadFunctions() {
 
 
 <script language="JavaScript" type="text/javascript" id="paramArrayAccountFrom">
-var arrAccountFrom=null;
+  var arrAccountFrom=null;
 </script>
 
 

@@ -59,7 +59,7 @@
       </column>
       <column name="EXPORTALLOWED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
-        <onCreateDefault><![CDATA[Y]]></onCreateDefault>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_MODULE" name="AD_DATASET_AD_MODULE">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>

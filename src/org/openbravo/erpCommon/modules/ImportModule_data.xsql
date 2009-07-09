@@ -26,14 +26,14 @@
         SELECT M.AD_MODULE_ID, 
                COALESCE(MI.VERSION, M.VERSION) AS VERSION, 
                COALESCE(MI.NAME, M.NAME) AS NAME, 
-               '' AS TOTAL 
+               '' AS TOTAL, '' AS JAVAPACKAGE
          FROM AD_MODULE M LEFT JOIN AD_MODULE_INSTALL MI
                                  ON MI.AD_MODULE_ID = M.AD_MODULE_ID
         UNION
         SELECT M.AD_MODULE_ID, 
                M.VERSION, 
                M.NAME, 
-               '' AS TOTAL 
+               '' AS TOTAL, '' AS JAVAPACKAGE
          FROM AD_MODULE_INSTALL M
       </Sql>
    </SqlMethod>
@@ -262,6 +262,15 @@
          <Sql>
             DELETE FROM AD_MODULE_DEPENDENCY_INST
               WHERE AD_MODULE_ID = ?
+         </Sql>
+         <Parameter name="mouleId"/> 
+     </SqlMethod>
+     
+     <SqlMethod name="getModule" type="preparedStatement" return="single">
+         <Sql>
+            SELECT JAVAPACKAGE, VERSION
+              FROM AD_MODULE
+             WHERE AD_MODULE_ID = ?
          </Sql>
          <Parameter name="mouleId"/> 
      </SqlMethod>
