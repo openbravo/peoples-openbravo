@@ -20,6 +20,8 @@
 <REPORT>
     <template file="About.html"/>
     <PARAMETER id="paramVer" name="ver"/>
+    <PARAMETER id="versionNo" name="versionNo"/>
+    <PARAMETER id="versionId" name="versionId"/>
     <PARAMETER id="paramDirectory" name="directory" default=""/>
     <PARAMETER id="paramLanguage" name="language" default=""/>
     <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
