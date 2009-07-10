@@ -73,6 +73,8 @@ public class LoginHandler extends HttpBaseServlet {
         msg += "You can wait until one or more users log out or you can contact your system adiministrator for advice";
         goToRetry(res, vars, msg, "Maximum number of concurrent users reached");
         break;
+      case EXPIRED:
+        // do nothing by the moment
       case NUMBER_OF_SOFT_USERS_REACHED:
         // do nothing by the moment
       case OPS_INSTANCE_NOT_ACTIVE:

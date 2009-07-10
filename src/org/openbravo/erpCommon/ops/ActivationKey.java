@@ -61,7 +61,7 @@ public class ActivationKey {
   private boolean hasExpired = false;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, EXPIRED
   }
 
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -271,6 +271,9 @@ public class ActivationKey {
   public LicenseRestriction checkOPSLimitations() {
     if (!isOPSInstance())
       return LicenseRestriction.NO_RESTRICTION;
+
+    if (hasExpired())
+      return LicenseRestriction.EXPIRED;
 
     if (!isActive)
       return LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE;
