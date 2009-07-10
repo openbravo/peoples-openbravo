@@ -676,24 +676,26 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="installWebService" depends="init" if="wsdd">
-    <java classname="org.apache.axis.client.AdminClient" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}">
-      <arg line="-l${context.url}/servlet/AxisServlet ${src}/deploy.wsdd" />
+    <taskdef name="wsAdmin" classname="org.openbravo.erpCommon.utility.WebServiceAdmin">
       <classpath refid="project.class.path" />
-    </java>
+    </taskdef>
+    <wsAdmin axisServlet="${context.url}/servlet/AxisServlet"
+             baseDir="${source.path}"
+             action="deploy"/>
   </target>
 
+  <target name="uninstallWebService" depends="init">
+    <taskdef name="wsAdmin" classname="org.openbravo.erpCommon.utility.WebServiceAdmin">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <wsAdmin axisServlet="${context.url}/servlet/AxisServlet"
+             baseDir="${source.path}"
+             action="undeploy"/>
+  </target>
 
   <target name="compile.translate">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}/Openbravo.properties' ${extension} '${basedir}'" />
-      <classpath refid="project.class.path" />
-    </java>
-  </target>
-
-
-  <target name="uninstallWebService" depends="init">
-    <java classname="org.apache.axis.client.AdminClient" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}">
-      <arg line="-l${context.url}/servlet/AxisServlet ${src}/undeploy.wsdd" />
       <classpath refid="project.class.path" />
     </java>
   </target>
