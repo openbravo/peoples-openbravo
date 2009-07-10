@@ -56,7 +56,8 @@ public class LoginHandler extends HttpBaseServlet {
         req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
         checkLicenseAndGo(res, vars);
       } else {
-        goToRetry(res, vars, null, "Identification failure. Try again.");
+        goToRetry(res, vars, null, "Identification failure. Try again.", "Error",
+            "../security/Login_FS.html");
       }
     }
   }
@@ -71,12 +72,24 @@ public class LoginHandler extends HttpBaseServlet {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
         String msg = "At this moment you cannot log in because the maximum number of users that can be logged in at the same time, was reached.<br/>";
         msg += "You can wait until one or more users log out or you can contact your system adiministrator for advice";
-        goToRetry(res, vars, msg, "Maximum number of concurrent users reached");
+        String msgType = "Error";
+        String action = "../security/Login_FS.html";
+        goToRetry(res, vars, msg, "Maximum number of concurrent users reached", msgType, action);
         break;
       case NUMBER_OF_SOFT_USERS_REACHED:
-        // do nothing by the moment
+        msg = "You have exceeded the number of Global Concurrent Users available.<br/>";
+        msg += "Please contact your assigned partner to purchase a subscription for additional users.";
+        action = "../security/Menu.html";
+        msgType = "Warning";
+        goToRetry(res, vars, msg, "Maximum number of concurrent users reached", msgType, action);
+        break;
       case OPS_INSTANCE_NOT_ACTIVE:
-        // do nothing by the moment
+        msg = "Your Professional Subscription has expired. However no data has been lost.<br/>";
+        msg += "To renew your Professional Subscription, contact your assigned partner.";
+        action = "../security/Menu.html";
+        msgType = "Warning";
+        goToRetry(res, vars, msg, "Expired subscription", msgType, action);
+        break;
       default:
         goToTarget(res, vars);
       }
@@ -97,13 +110,22 @@ public class LoginHandler extends HttpBaseServlet {
   }
 
   private void goToRetry(HttpServletResponse response, VariablesSecureApp vars, String message,
-      String title) throws IOException {
+      String title, String msgType, String action) throws IOException {
+    String discard[] = { "" };
+
+    if (msgType.equals("Error")) {
+      discard[0] = "continueButton";
+    } else {
+      discard[0] = "backButton";
+    }
+
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
+        "org/openbravo/base/secureApp/HtmlErrorLogin", discard).createXmlDocument();
 
     // pass relevant mesasge to show inside the error page
     xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("messageType", "Error");
+    xmlDocument.setParameter("messageType", msgType);
+    xmlDocument.setParameter("action", action);
     xmlDocument.setParameter("messageTitle", title);
     xmlDocument
         .setParameter(
