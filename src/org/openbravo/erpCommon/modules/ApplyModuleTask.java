@@ -35,7 +35,7 @@ public class ApplyModuleTask extends DalInitializingTask {
   // private String propertiesFile;
   private String obDir;
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     final String srcPath = args[0];
     final File srcDir = new File(srcPath);
     final File baseDir = srcDir.getParentFile();
@@ -68,14 +68,4 @@ public class ApplyModuleTask extends DalInitializingTask {
   public void setObDir(String obDir) {
     this.obDir = obDir;
   }
-  //
-  // public static void main(String[] args) {
-  // final ApplyModuleTask t = new ApplyModuleTask();
-  // t.setObDir("/ws/trunk/openbravo");
-  // t.setUserId("0");
-  // t.setPropertiesFile("/ws/trunk/openbravo/config/Openbravo.properties");
-  // t.execute();
-  //
-  // }
-
 }

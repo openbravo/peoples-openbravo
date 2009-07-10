@@ -822,21 +822,6 @@
 		</title>
 		<pageHeader>
 			<band height="45"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Report_Title"
-						mode="Transparent"
-						x="0"
-						y="0"
-						width="535"
-						height="20"
-						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{Title}]]></textFieldExpression>
-				</textField>
 				<line direction="TopDown">
 					<reportElement
 						x="0"
@@ -860,6 +845,20 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{REPORT_SUBTITLE}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement
+						style="Report_Title"
+						x="0"
+						y="-5"
+						width="535"
+						height="25"
+						key="staticText-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="SansSerif" size="18"/>
+					</textElement>
+				<text><![CDATA[General Ledger Report]]></text>
+				</staticText>
 			</band>
 		</pageHeader>
 		<columnHeader>

@@ -236,7 +236,7 @@ public abstract class AcctServer {
 
   /**
    * Cosntructor
-   * 
+   *
    * @param m_AD_Client_ID
    *          Client ID of these Documents
    * @param connectionProvider
@@ -291,7 +291,7 @@ public abstract class AcctServer {
 
   /**
    * Factory - Create Posting document
-   * 
+   *
    * @param AD_Table_ID
    *          Table ID of Documents
    * @param AD_Client_ID
@@ -534,7 +534,7 @@ public abstract class AcctServer {
 
   /**
    * Post Commit. Save Facts & Document
-   * 
+   *
    * @param status
    *          status
    * @return Posting Status
@@ -547,7 +547,7 @@ public abstract class AcctServer {
     try {
       // *** Transaction Start ***
       // Commit Facts
-      if (status.equals(AcctServer.STATUS_Posted)) {
+      if (Status.equals(AcctServer.STATUS_Posted)) {
         if (m_fact != null && m_fact.length != 0) {
           log4j.debug("AcctServer - postCommit - m_fact.length = " + m_fact.length);
           for (int i = 0; i < m_fact.length; i++) {
@@ -556,7 +556,7 @@ public abstract class AcctServer {
             else {
               // conn.releaseRollbackConnection(con);
               unlock(conn, con);
-              return AcctServer.STATUS_Error;
+              Status = AcctServer.STATUS_Error;
             }
           }
         }
@@ -565,22 +565,22 @@ public abstract class AcctServer {
       if (!save(conn, con)) { // contains unlock
         // conn.releaseRollbackConnection(con);
         unlock(conn, con);
-        return AcctServer.STATUS_Error;
+        Status = AcctServer.STATUS_Error;
       }
       // conn.releaseCommitConnection(con);
       // *** Transaction End ***
     } catch (Exception e) {
       log4j.warn("AcctServer - postCommit" + e);
-      status = AcctServer.STATUS_Error;
+      Status = AcctServer.STATUS_Error;
       // conn.releaseRollbackConnection(con);
       unlock(conn, con);
     }
-    return status;
+    return Status;
   } // postCommit
 
   /**
    * Save to Disk - set posted flag
-   * 
+   *
    * @param con
    *          connection
    * @return true if saved
@@ -591,6 +591,9 @@ public abstract class AcctServer {
     int no = 0;
     try {
       no = AcctServerData.updateSave(con, conn, tableName, Status, Record_ID);
+      //If Status is not posted (Error...) then the created accounting is deleted
+      if(!Status.equals(AcctServer.STATUS_Posted))
+    	AcctServerData.delete(con, connectionProvider, AD_Table_ID, Record_ID);
     } catch (ServletException e) {
       log4j.warn(e);
     }
@@ -611,7 +614,19 @@ public abstract class AcctServer {
      */
   } // unlock
 
+  @Deprecated
+  //Deprecated in 2.50 because of a missing connection needed
   public boolean loadDocument(FieldProvider[] data, boolean force, ConnectionProvider conn) {
+	try{
+	  Connection con = conn.getConnection();
+	  return loadDocument(data, force, conn, con);
+	}catch(NoConnectionAvailableException e){
+	  log4j.warn(e);
+	  return false;
+	}
+  }
+
+  public boolean loadDocument(FieldProvider[] data, boolean force, ConnectionProvider conn, Connection con) {
     if (log4j.isDebugEnabled())
       log4j.debug("loadDocument " + data.length);
 
@@ -695,7 +710,7 @@ public abstract class AcctServer {
       }
       // delete it
       try {
-        AcctServerData.delete(connectionProvider, tableName, Record_ID);
+        AcctServerData.delete(con, connectionProvider, AD_Table_ID, Record_ID);
       } catch (ServletException e) {
         log4j.warn(e);
       }
@@ -789,7 +804,7 @@ public abstract class AcctServer {
 
   /**
    * Posting logic for Accounting Schema index
-   * 
+   *
    * @param index
    *          Accounting Schema index
    * @return posting status/error code
@@ -847,7 +862,7 @@ public abstract class AcctServer {
 
   /**
    * Is the Source Document Balanced
-   * 
+   *
    * @return true if (source) baanced
    */
   public boolean isBalanced() {
@@ -866,7 +881,7 @@ public abstract class AcctServer {
 
   /**
    * Is Document convertible to currency and Conversion Type
-   * 
+   *
    * @param acctSchema
    *          accounting schema
    * @return true, if vonvertable to accounting currency
@@ -926,7 +941,7 @@ public abstract class AcctServer {
 
   /**
    * Get the Amount (loaded in loadDocumentDetails)
-   * 
+   *
    * @param AmtType
    *          see AMTTYPE_*
    * @return Amount
@@ -939,7 +954,7 @@ public abstract class AcctServer {
 
   /**
    * Get Amount with index 0
-   * 
+   *
    * @return Amount (primary document amount)
    */
   public String getAmount() {
@@ -948,7 +963,7 @@ public abstract class AcctServer {
 
   /**
    * Convert an amount
-   * 
+   *
    * @param CurFrom_ID
    *          The C_Currency_ID FROM
    * @param CurTo_ID
@@ -1007,7 +1022,7 @@ public abstract class AcctServer {
 
   /**
    * Is Period Open
-   * 
+   *
    * @return true if period is open
    */
   public boolean isPeriodOpen() {
@@ -1053,7 +1068,7 @@ public abstract class AcctServer {
 
   /**
    * Matching
-   * 
+   *
    * <pre>
    *  Derive Invoice-Receipt Match from PO-Invoice and PO-Receipt
    *  Purchase Order (20)
@@ -1067,10 +1082,10 @@ public abstract class AcctServer {
    *  (b) Creates Indirects
    *      - Invoice1 - Receipt2 (5)
    *  (Not imlemented)
-   * 
-   * 
+   *
+   *
    * </pre>
-   * 
+   *
    * @return number of records created
    */
   public int match(VariablesSecureApp vars, ConnectionProvider conn, Connection con) {
@@ -1125,7 +1140,7 @@ public abstract class AcctServer {
 
   /**
    * Create MatchInv record
-   * 
+   *
    * @param AD_Client_ID
    *          Client
    * @param AD_Org_ID
@@ -1163,7 +1178,7 @@ public abstract class AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   * 
+   *
    * @param AcctType
    *          see ACCTTYPE_*
    * @param as
@@ -1319,14 +1334,14 @@ public abstract class AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line (and tax) amounts from total - no rounding
-   * 
+   *
    * @return positive amount, if total header is bigger than lines
    */
   public abstract BigDecimal getBalance();
 
   /**
    * Create Facts (the accounting logic)
-   * 
+   *
    * @param as
    *          accounting schema
    * @return Fact

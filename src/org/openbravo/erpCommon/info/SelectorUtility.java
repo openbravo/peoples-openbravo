@@ -26,11 +26,10 @@ import javax.servlet.ServletException;
  * @author huehner
  * 
  */
-class SelectorUtility {
+public class SelectorUtility {
 
   /**
    * Builds an sql orderBy clause constructed out of list of order by column names and directions.
-   * The column names and directions are validated against list of allowed values.
    * 
    * @param strOrderCols
    *          String with list of orderBy columns from getInStringParameter
@@ -40,7 +39,7 @@ class SelectorUtility {
    * @throws ServletException
    *           on malformed input
    */
-  static String buildOrderByClause(String strOrderCols, String strOrderDirs)
+  public static String buildOrderByClause(String strOrderCols, String strOrderDirs)
       throws ServletException {
     if (strOrderCols.length() <= 2 || strOrderCols.charAt(0) != '('
         || strOrderCols.charAt(strOrderCols.length() - 1) != ')') {
