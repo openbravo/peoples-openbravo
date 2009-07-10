@@ -144,13 +144,24 @@ public class InstanceManagement extends HttpSecureAppServlet {
       throws IOException {
 
     ActivationKey ak = new ActivationKey();
-    String discard[] = { "" };
+    String discard[] = { "", "" };
 
     if (ak.isOPSInstance()) {
-      discard[0] = "OPSActivate";
+      if (ak.hasExpired()) {
+        // Renew
+        discard[0] = "OPSActivate";
+        discard[1] = "OPSRefresh";
+      } else {
+        // Refresh
+        discard[0] = "OPSActivate";
+        discard[1] = "OPSRefresh";
+      }
     } else {
-      discard[0] = "OPSReactivate";
+      // Activate
+      discard[0] = "OPSRefresh";
+      discard[1] = "OPSRenew";
     }
+
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_forms/InstanceManagementActivateLocal", discard)
         .createXmlDocument();
@@ -170,7 +181,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageActive(HttpServletResponse response, VariablesSecureApp vars,
       ActivationKey activationKey) throws IOException, ServletException {
     response.setContentType("text/html; charset=UTF-8");
-    String discard[] = { "", "", "" };
+    String discard[] = { "", "", "", "" };
     if (activationKey.isOPSInstance()) {
       discard[0] = "CEInstance";
       if (activationKey.hasExpired()) {
@@ -184,6 +195,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
     } else {
       discard[0] = "OPSInstance";
       discard[1] = "OPSActive";
+      discard[2] = "OPSExpired";
     }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -254,11 +266,21 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     ActivationKey activationKey = new ActivationKey();
     response.setContentType("text/html; charset=UTF-8");
-    String discard[] = { "" };
+    String discard[] = { "", "" };
     if (activationKey.isOPSInstance()) {
-      discard[0] = "OPSActivate";
+      if (activationKey.hasExpired()) {
+        // Renew
+        discard[0] = "OPSActivate";
+        discard[1] = "OPSRefresh";
+      } else {
+        // Refresh
+        discard[0] = "OPSActivate";
+        discard[1] = "OPSRefresh";
+      }
     } else {
-      discard[0] = "OPSReactivate";
+      // Activate
+      discard[0] = "OPSRefresh";
+      discard[1] = "OPSRenew";
     }
 
     final PrintWriter out = response.getWriter();

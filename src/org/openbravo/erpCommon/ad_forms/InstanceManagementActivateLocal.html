@@ -100,8 +100,9 @@
             <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
             <td class="Popup_NavBar_Popup_title_cell">
-              <span id="OPSActivate">Activate Instance using a File from File System</span>
-              <span id="OPSReactivate">Rectivate Instance using a File from File System</span>
+              <span id="OPSActivate">Activate from Activation File</span>
+              <span id="OPSRefresh">Refresh with Activation File</span>
+              <span id="OPSRenew">Renew with Activation File</span>
             </td>
             <td class="Popup_NavBar_separator_cell"></td>
           </tr>
@@ -126,8 +127,10 @@
             <td class="Popup_InfoBar_text_table">
               <table>
                 <tr>
-                  <td class="Popup_InfoBar_text" id="OPSActivate">To activate your instance you need to provide the activation file you downloaded from butler.openbravo.com and the public key you received by email when you subscribed.</TD>
-                  <td class="Popup_InfoBar_text" id="OPSReactivate">To reactivate your instance you need to provide the activation file you downloaded from butler.openbravo.com and the public key you received by email when you subscribed.</TD>
+                  <td class="Popup_InfoBar_text">
+                    <p>Activate the instance with the Activation File you downloaded and the System Key you received upon purchasing of an Openbravo Professional Subscription.</p>
+                    <p>Paste the System Key in the area below, declare what is the main purpose of the Instance you want to activate and upload the Activation File.</p>
+                  </td>
                 </tr>
               </table>
             </td>
@@ -281,12 +284,12 @@
             <tr><td height="20px"></td></tr>
             <tr>
               <td/>
-              <td class="Button_RightAlign_ContentCell">
+              <td class="Button_LeftAlign_ContentCell" colspan="2">
                 <div>
                   <button type="button" 
                     id="buttonOK" 
                     class="ButtonLink" 
-                    onclick="submitCommandForm('INSTALLFILE', true, null, 'InstanceManagement.html', '_self', null, false);return false;" 
+                    onclick="submitCommandForm('INSTALLFILE', false, null, 'InstanceManagement.html', '_self', null, false);return false;" 
                     onfocus="buttonEvent('onfocus', this); window.status='Continue'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 
@@ -299,7 +302,9 @@
                     <table class="Button">
                       <tr>
                         <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Continue" title="Continue" src="../../../../../web/images/blank.gif" border="0" /></td>
-                        <td class="Button_text Button_width">Continue</td>
+                        <td class="Button_text" id="OPSActivate">Activate Instance</td>
+                        <td class="Button_text" id="OPSRefresh">Refresh Instance</td>
+                        <td class="Button_text" id="OPSRenew">Renew Activation</td>
                         <td class="Button_right"></td>
                       </tr>
                     </table>
@@ -331,7 +336,6 @@
                   </button>
                 </div>
               </td>
-              <td/>
               <td/>
             </tr>
             

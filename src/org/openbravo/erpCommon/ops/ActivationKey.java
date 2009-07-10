@@ -310,28 +310,36 @@ public class ActivationKey {
     if (instanceProperties != null) {
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
           .append("</td><td>").append(getProperty("customer")).append("</td></tr>");
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstanceNo", lang)).append(
-          "</td><td>").append(getProperty("instanceno")).append("\n");
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang)).append(
           "</td><td>").append(
           Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang)).append(
           "</td></tr>");
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstancePurpose", lang)).append(
-          "</td><td>").append(
-          Utility.getListValueName("InstancePurpose", getProperty("purpose"), lang)).append(
-          "</td></tr>");
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang)).append(
           "</td><td>").append(getProperty("startdate")).append("</td></tr>");
-      if (getProperty("enddate") != null) {
-        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSEndDate", lang)).append(
-            "</td><td>").append(getProperty("enddate")).append("</td></tr>");
-      }
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSEndDate", lang)).append("</td><td>")
+          .append(
+              (getProperty("enddate") == null ? Utility.messageBD(conn, "OPSNoEndDate", lang)
+                  : getProperty("enddate"))).append("</td></tr>");
+
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsers", lang)).append(
-          "</td><td>").append(getProperty("limitusers")).append("</td></tr>");
+          "</td><td>").append(
+          (getProperty("limitusers") == null || getProperty("limitusers").equals("0")) ? Utility
+              .messageBD(conn, "OPSUnlimitedUsers", lang) : getProperty("limitusers")).append(
+          "</td></tr>");
       if (getProperty("limituserswarn") != null) {
         sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
             .append("</td><td>").append(getProperty("limituserswarn")).append("</td></tr>");
       }
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstanceNo", lang)).append(
+          "</td><td>").append(getProperty("instanceno")).append("\n");
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstancePurpose", lang)).append(
+          "</td><td>").append(
+          Utility.getListValueName("InstancePurpose", getProperty("purpose"), lang)).append(
+          "</td></tr>");
+
     } else {
       sb.append(Utility.messageBD(conn, "OPSNonActiveInstance", lang));
     }

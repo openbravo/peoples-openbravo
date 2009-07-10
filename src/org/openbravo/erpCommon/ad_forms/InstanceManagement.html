@@ -260,22 +260,29 @@ var baseDirectory = "../../../../../web/";
                 </tr>
                 <tr id="OPSInstance">
                  <td class="TitleCell">
-                    <span class="LabelText">Instance Status</span>
+                    <span class="LabelText">Subscription Status</span>
                   </td>
                   <td id="OPSActive" colspan="5" class="TitleCell" style="text-align:left;">
                     <span class="Label_ReadOnly_Text" ><span style="color:green;">Active</span>.<span id="OPSExpirationTime">&nbsp;You have&nbsp;<span id="OPSdaysLeft">xx</span>&nbsp;days left before your&nbsp;<a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Openbravo Professional Subscription</a>&nbsp;expires.</span></span>
                   </td>
                   <td id="OPSExpired" colspan="5" class="TitleCell" style="text-align:left;">
-                    <span class="Label_ReadOnly_Text" ><span style="color:red;">Your Openbravo instance has expired</span>.<span id="OPSExpirationTime"> You need to renew your&nbsp;<a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Openbravo Professional Subscription</a>&nbsp;to reactivate the instance.</span></span>
+                    <p class="Label_ReadOnly_Text"><span class="Label_ReadOnly_Text" ><span style="color:red;">Expired</span>.</p>
+                    <p class="Label_ReadOnly_Text"><span id="OPSExpirationTime">You need to renew the System’s Openbravo Professional Subscription. Users will not be able to login, until you do so.</span></p>
                   </td>
                 </tr>
                 
                 <tr id="CEInstance">
-                 <td/>
+                  <td class="TitleCell">
+                    <span class="LabelText">Subscription Status</span>
+                  </td>
                   <td colspan="5" class="TitleCell" style="text-align:left;">
-                    <p class="Label_ReadOnly_Text">Your instance is not activated as you are now running Openbravo ERP Community Edition. In order to activate an Openbravo  ERP instance, you will need to upgrade to Openbravo Professional Edition. This subscription lets you access to extended updates, support, add-ons and warranties that will save you time, money and hassle.</p>
+                    <p class="Label_ReadOnly_Text"><span style="color:red;">Inactive</span>.</p>
+                    <p class="Label_ReadOnly_Text">You are now running Openbravo ERP Community. Openbravo provides this software as is, without any warranties of any kind.</p>
+                    <p class="Label_ReadOnly_Text">If you are looking for a professional supported system, you should upgrade to Openbravo ERP Professional.</p>
                     <p>&nbsp;</p>
                     <p class="Label_ReadOnly_Text"><a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Learn more about Openbravo Professional Subscription options</a></p>
+                    <p>&nbsp;</p>
+                    <p class="Label_ReadOnly_Text">Contact an&nbsp;<a class="LabelLink_noicon" href="http://www.openbravo.com/partners" target="_blank">Openbravo Business Partner</a>&nbsp; to purchase a subscription.</p>
                   </td>
                 </tr>
                 
@@ -316,9 +323,22 @@ var baseDirectory = "../../../../../web/";
                 <tr>
                 <td/>
                   <td colspan="5" class="TitleCell" style="text-align:left;">
-                    <span id="OPSInstance" class="Label_ReadOnly_Text" >To reactivate you need the Public Key that you receive when you renew your Openbravo Professional Subscription. 
-                    You can reactivate online if you are connected to the internet. If you are not connected, you can use an activation file that you downloaded from&nbsp;<a class="LabelLink_noicon" href="https://butler.openbravo.com/heartbeat-server/DownloadActivationKey.html" target="_blank">butler.openbravo.com</a></span>
-                    <span id="CEInstance" class="Label_ReadOnly_Text" >A Public Key is needed to activate the Openbravo ERP instance. You will receive a Public Key when you purchase an&nbsp;<a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Openbravo Professional Subscription</a>. You can activate online if you are connected to the internet. If you are not connected, you can use an activation file that you downloaded from&nbsp;<a class="LabelLink_noicon" href="http://butler.openbravo.com/heartbeat-server/DownloadActivationKey.html" target="_blank">butler.openbravo.com</a>. 
+                    <span id="CEInstance" class="Label_ReadOnly_Text">
+                        <p class="Label_ReadOnly_Text">A System Key is required to activate an Openbravo Professional Subscription.</p>
+                        <p class="Label_ReadOnly_Text">You will receive a System Key when you purchase a subscription.</p>
+                        <p class="Label_ReadOnly_Text">If you are connected to the Internet, you can activate the system online.</p> 
+                        <p class="Label_ReadOnly_Text">Otherwise, you need to provide a valid Activation File that can be downloaded from &nbsp;<a class="LabelLink_noicon" href="http://butler.openbravo.com/heartbeat-server/DownloadActivationKey.html" target="_blank">Openbravo Butler</a>.</p>
+                    </span>
+                    <span id="OPSActive" class="Label_ReadOnly_Text" >
+                        <p class="Label_ReadOnly_Text">If you have changed your subscription details, the Activation must be refreshed for them to be in place.</p>
+                        <p class="Label_ReadOnly_Text">If you are connected to the Internet, you can do so online.</p>
+                        <p class="Label_ReadOnly_Text">Otherwise, you need to provide a new Activation File that can be downloaded from &nbsp;<a class="LabelLink_noicon" href="http://butler.openbravo.com/heartbeat-server/DownloadActivationKey.html" target="_blank">Openbravo Butler</a>.</p>
+                     </span>
+                     <span id="OPSExpired" class="Label_ReadOnly_Text" >
+                        <p class="Label_ReadOnly_Text">To reactivate an expired Professional Subscription, you need to refresh your Activation File.</p>
+                        <p class="Label_ReadOnly_Text">If you are connected to the Internet, you can do so online.</p>
+                        <p class="Label_ReadOnly_Text">Otherwise, you need to provide a new Activation File that can be downloaded from &nbsp;<a class="LabelLink_noicon" href="http://butler.openbravo.com/heartbeat-server/DownloadActivationKey.html" target="_blank">Openbravo Butler</a>.</p>
+                     </span>
                   </td>
                 </tr>
                 <tr>
@@ -344,8 +364,9 @@ var baseDirectory = "../../../../../web/";
                         <table class="Button">
                           <tr>
                             <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Browse File System" title="Browse File System" src="../../../../../web/images/blank.gif" border="0" /></td>
-                            <td class="Button_text" id="OPSActive">Reactivate Online</td>
-                            <td class="Button_text" id="OPSExpired">Activate Online</td>
+                            <td class="Button_text" id="CEInstance">Activate Online</td>
+                            <td class="Button_text" id="OPSActive">Refresh Online</td>
+                            <td class="Button_text" id="OPSExpired">Reactivate Online</td>
                             <td class="Button_right"></td>
                           </tr>
                         </table>
@@ -370,7 +391,9 @@ var baseDirectory = "../../../../../web/";
                         <table class="Button">
                           <tr>
                             <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Browse File System" title="Browse File System" src="../../../../../web/images/blank.gif" border="0" /></td>
-                            <td class="Button_text">Browse File System for Activation File</td>
+                            <td class="Button_text" id="CEInstance">Activate with Activation File</td>
+                            <td class="Button_text" id="OPSActive">Refresh with Activation File</td>
+                            <td class="Button_text" id="OPSExpired">Reactivate with Activation File</td>
                             <td class="Button_right"></td>
                           </tr>
                         </table>
@@ -386,7 +409,11 @@ var baseDirectory = "../../../../../web/";
                 <tr>
                   <td/>
                   <td colspan="5" class="TitleCell" style="text-align:left;">
-                    <span class="Label_ReadOnly_Text" >You can temporarily deactivate this this instance. Please note that you will need to re-enter the Public Key when you want to reactivate later.</span>
+                    <span class="Label_ReadOnly_Text" >
+                    <p class="Label_ReadOnly_Text">To deactivate this Instance from a Professional Subscription System, press the button below.</p>
+                    <p class="Label_ReadOnly_Text">Please note that all commercial features without a valid perpetual subscription will become inactive in this Instance.</p>
+                    <p class="Label_ReadOnly_Text">Please note that all commercial features will become inactive in this Instance.</p>
+                    </span>
                   </td>
                 </tr>
                 <tr>
