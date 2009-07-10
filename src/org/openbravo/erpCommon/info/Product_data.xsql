@@ -79,9 +79,9 @@
         <Parameter name="adUserOrg" type="replace" optional="true" after="ip.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="priceListVersion"/>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="ip.Value" />
+        <Parameter name="pgLimit" type="argument" optional="true" after="ORDER BY ip.Value"><![CDATA[LIMIT ]]></Parameter>
         <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
         <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
-        <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
         <Parameter name="priceListVersion"/>
         <Parameter name="orderBy" type="replace" optional="true" after="A ORDER BY " text="Value" />
    </SqlMethod>
@@ -90,14 +90,12 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
         SELECT count(*) as value
-        FROM M_Product p, M_ProductPrice pr,  M_Pricelist pl, M_PriceList_Version pv
+        FROM M_Product p, M_ProductPrice pr
         WHERE p.M_Product_ID=pr.M_Product_ID 
         AND p.IsSummary='N' 
         AND p.IsActive='Y' 
         AND pr.IsActive='Y'
         AND pr.M_PriceList_Version_ID = ?
-        AND pr.M_PriceList_Version_ID=pv.M_PriceList_Version_ID
-        AND pv.M_PriceList_ID=pl.M_PriceList_ID
         AND p.AD_Client_ID IN ('1') 
         AND p.AD_Org_ID IN ('1') 
       ]]></Sql>

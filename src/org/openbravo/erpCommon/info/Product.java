@@ -161,7 +161,7 @@ public class Product extends HttpSecureAppServlet {
       }
       ProductData[] data = ProductData.select(this, strWarehouse, rownum, strKeyValue + "%", "",
           Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars,
-              "#User_Org", "Product"), strPriceListVersion, "1", oraLimit1, oraLimit2, pgLimit);
+              "#User_Org", "Product"), strPriceListVersion, "1", pgLimit, oraLimit1, oraLimit2);
       if (data != null && data.length == 1)
         printPageKey(response, vars, data, strWarehouse, strPriceListVersion);
       else
@@ -389,12 +389,12 @@ public class Product extends HttpSecureAppServlet {
           String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
           data = ProductData.select(this, strWarehouse, "ROWNUM", strKey, strName, Utility
               .getContext(this, vars, "#User_Client", "Product"), Utility.getSelectorOrgs(this,
-              vars, strOrg), strPriceListVersion, strOrderBy, oraLimit1, oraLimit2, "");
+              vars, strOrg), strPriceListVersion, strOrderBy, "", oraLimit1, oraLimit2);
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
           data = ProductData.select(this, strWarehouse, "1", strKey, strName, Utility.getContext(
               this, vars, "#User_Client", "Product"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strPriceListVersion, strOrderBy, "", "", pgLimit);
+              strPriceListVersion, strOrderBy, pgLimit, "", "");
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
