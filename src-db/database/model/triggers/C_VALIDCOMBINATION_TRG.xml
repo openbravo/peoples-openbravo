@@ -118,19 +118,29 @@ BEGIN
    END IF;
    CLOSE Cur_AC;
   ELSIF (Cur_Elements.ElementType = 'PR') THEN
-   OPEN Cur_PR;
-   FETCH Cur_PR INTO v_TempValue, v_TempName;
-   IF (Cur_PR%NOTFOUND AND Cur_Elements.IsMandatory='Y') THEN
-    v_IsFullyQualified := 'N';
+   IF (:NEW.M_PRODUCT_ID IS NOT NULL) THEN
+     OPEN Cur_PR;
+     FETCH Cur_PR INTO v_TempValue, v_TempName;
+     IF (Cur_PR%NOTFOUND AND Cur_Elements.IsMandatory='Y') THEN
+      v_IsFullyQualified := 'N';
+     END IF;
+     CLOSE Cur_PR;
+   ELSE
+     v_TempValue:= ''; 
+     v_TempName:='';
    END IF;
-   CLOSE Cur_PR;
   ELSIF (Cur_Elements.ElementType = 'BP') THEN
-   OPEN Cur_BP;
-   FETCH Cur_BP INTO v_TempValue, v_TempName;
-   IF (Cur_BP%NOTFOUND AND Cur_Elements.IsMandatory='Y') THEN
-    v_IsFullyQualified := 'N';
+   IF (:NEW.C_BPARTNER_ID IS NOT NULL) THEN
+      OPEN Cur_BP;
+      FETCH Cur_BP INTO v_TempValue, v_TempName;
+      IF (Cur_BP%NOTFOUND AND Cur_Elements.IsMandatory='Y') THEN
+        v_IsFullyQualified := 'N';
+      END IF;
+      CLOSE Cur_BP;
+   ELSE
+     v_TempValue:= ''; 
+     v_TempName:='';
    END IF;
-   CLOSE Cur_BP;
   ELSIF (Cur_Elements.ElementType = 'TO') THEN
    OPEN Cur_TO;
    FETCH Cur_TO INTO v_TempValue, v_TempName;

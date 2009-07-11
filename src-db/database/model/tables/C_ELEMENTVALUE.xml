@@ -135,10 +135,6 @@
       <index name="C_ELEMENTVALUE_NAME" unique="false">
         <index-column name="NAME"/>
       </index>
-      <unique name="C_ELEMENTVALUE_VALUE">
-        <unique-column name="C_ELEMENT_ID"/>
-        <unique-column name="VALUE"/>
-      </unique>
       <check name="C_ELEMENTVALUE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="CELEMVAL_ISBANKACCOUNT_CHECK"><![CDATA[ISBANKACCOUNT IN ('Y', 'N')]]></check>
       <check name="CELEMVAL_ISDOCCONTROL_CHECK"><![CDATA[ISDOCCONTROLLED IN ('Y', 'N')]]></check>
