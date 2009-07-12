@@ -3015,6 +3015,11 @@ table.MessageBoxERROR .MessageBox_RightTrans {
   height: 100%;
 }
 
+table.MessageBoxERROR .MessageBox_LeftTrans {
+  width: 9px;
+  height: 100%;
+}
+
 table.MessageBoxERROR td.MessageBox_BottomRight {
   width: 9px;
   height: 9px;
@@ -3136,6 +3141,11 @@ table.MessageBoxINFO .MessageBox_Right {
 }
 
 table.MessageBoxINFO .MessageBox_RightTrans {
+  width: 9px;
+  height: 100%;
+}
+
+table.MessageBoxINFO .MessageBox_LeftTrans {
   width: 9px;
   height: 100%;
 }
@@ -3265,6 +3275,11 @@ table.MessageBoxSUCCESS .MessageBox_RightTrans {
   height: 100%;
 }
 
+table.MessageBoxSUCCESS .MessageBox_LeftTrans {
+  width: 9px;
+  height: 100%;
+}
+
 table.MessageBoxSUCCESS td.MessageBox_BottomRight {
   width: 9px;
   height: 9px;
@@ -3386,6 +3401,11 @@ table.MessageBoxWARNING .MessageBox_Right {
 }
 
 table.MessageBoxWARNING .MessageBox_RightTrans {
+  width: 9px;
+  height: 100%;
+}
+
+table.MessageBoxWARNING .MessageBox_LeftTrans {
   width: 9px;
   height: 100%;
 }
