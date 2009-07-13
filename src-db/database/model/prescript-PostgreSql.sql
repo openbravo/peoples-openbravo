@@ -1189,7 +1189,8 @@ CREATE OR REPLACE VIEW user_tab_columns AS
  SELECT upper(pg_class.relname::text) AS table_name, upper(pg_attribute.attname::text) AS column_name, 
         (CASE WHEN upper(pg_type.typname::text)='NUMERIC' 
              THEN 'NUMBER'
-             ELSE upper(pg_type.typname::text)) AS data_type,
+             ELSE upper(pg_type.typname::text)
+          END) AS data_type,
         CASE pg_type.typname
             WHEN 'varchar'::name THEN pg_attribute.atttypmod - 4
             WHEN 'bpchar'::name THEN pg_attribute.atttypmod - 4
