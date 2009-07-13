@@ -139,40 +139,6 @@ public class ProductMultiple extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars,
-      String strKeyValue, String strNameValue) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: Frame 1 of the multiple products seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/ProductMultiple_F1").createXmlDocument();
-    if (strKeyValue.equals("") && strNameValue.equals("")) {
-      xmlDocument.setParameter("key", "%");
-    } else {
-      xmlDocument.setParameter("key", strKeyValue);
-    }
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("name", strNameValue);
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ProductMultiple"),
-          Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ProductMultiple", "");
-      xmlDocument.setData("reportM_Product_Category_ID", "liststructure", comboTableData
-          .select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -249,10 +215,9 @@ public class ProductMultiple extends HttpSecureAppServlet {
           // or
           // first
           // load
-          data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory, Utility
-              .getContext(this, vars, "#User_Client", "ProductMultiple"), Utility.getSelectorOrgs(
-              this, vars, strOrg), strOrderBy, "", "");
-          strNumRows = String.valueOf(data.length);
+          strNumRows = ProductMultipleData.countRows(this, strKey, strName, strProductCategory,
+              Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), Utility
+                  .getSelectorOrgs(this, vars, strOrg));
           vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
@@ -260,15 +225,16 @@ public class ProductMultiple extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
+          String oraLimit1 = String.valueOf(offset + pageSize);
+          String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
           data = ProductMultipleData.select(this, "ROWNUM", strKey, strName, strProductCategory,
               Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), Utility
-                  .getSelectorOrgs(this, vars, strOrg), strOrderBy, oraLimit, "");
+                  .getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
           data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory, Utility
               .getContext(this, vars, "#User_Client", "ProductMultiple"), Utility.getSelectorOrgs(
-              this, vars, strOrg), strOrderBy, "", pgLimit);
+              this, vars, strOrg), strOrderBy, pgLimit, "", "");
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -367,23 +333,23 @@ public class ProductMultiple extends HttpSecureAppServlet {
     FieldProvider[] data = null;
     FieldProvider[] res = null;
     try {
-      SQLReturnObject[] headers = getHeaders(vars);
       // build sql orderBy clause
       String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
       // Filtering result
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        String oraLimit = (minOffset + 1) + " AND " + maxOffset;
+        String oraLimit1 = String.valueOf(maxOffset);
+        String oraLimit2 = (minOffset + 1) + " AND " + oraLimit1;
         data = ProductMultipleData.select(this, "ROWNUM", strKey, strName, strProductCategory,
             Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), Utility
-                .getSelectorOrgs(this, vars, strOrg), strOrderBy, oraLimit, "");
+                .getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
       } else {
         // minOffset and maxOffset are zero based so pageSize is difference +1
         int pageSize = maxOffset - minOffset + 1;
         String pgLimit = pageSize + " OFFSET " + minOffset;
         data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory, Utility
             .getContext(this, vars, "#User_Client", "ProductMultiple"), Utility.getSelectorOrgs(
-            this, vars, strOrg), strOrderBy, "", pgLimit);
+            this, vars, strOrg), strOrderBy, pgLimit, "", "");
 
       }
 
