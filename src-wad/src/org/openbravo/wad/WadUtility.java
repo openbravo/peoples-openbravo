@@ -1678,7 +1678,8 @@ public class WadUtility {
         strAux1 = strAux;
         if (strAux.substring(strAux.length() - 1).equals("("))
           strAux = strAux.substring(0, strAux.length() - 1).toUpperCase().trim();
-        if (strAux.substring(strAux.length() - 3, strAux.length()).equals(" IN")) {
+        if (strAux.length() > 3
+            && strAux.substring(strAux.length() - 3, strAux.length()).equals(" IN")) {
           strAux = " type=\"replace\" optional=\"true\" after=\"" + strAux1 + "\" text=\"'" + i
               + "'\"";
         } else {
