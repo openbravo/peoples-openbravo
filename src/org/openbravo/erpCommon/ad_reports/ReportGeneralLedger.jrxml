@@ -187,14 +187,9 @@
 	<parameter name="USER_ORG" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["'1000000','1000001'"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="Title" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["REPORT TITLE"]]></defaultValueExpression>
-	</parameter>
 	<parameter name="REPORT_SUBTITLE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="ReportData" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
-	<parameter name="SUBREPORT_DIR" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA[$P{BASE_DESIGN}+"/org/openbravo/erpCommon/ad_reports/"]]></defaultValueExpression>
-	</parameter>
+	<parameter name="SR_PREVIOUS" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
 	<parameter name="dateTo" isForPrompting="false" class="java.util.Date">
 		<defaultValueExpression ><![CDATA[new SimpleDateFormat("dd-MM-yyyy").parse("31-12-2006")]]></defaultValueExpression>
 	</parameter>
@@ -224,6 +219,8 @@
 	<parameter name="strDateFormat" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["dd/MM/yyyy"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="Previous" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="Total" isForPrompting="false" class="java.lang.String"/>
 	<queryString><![CDATA[SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, DATEACCT, FACT_ACCT.ACCTDESCRIPTION AS NAME,
         AMTACCTDR, AMTACCTCR, FACT_ACCT_GROUP_ID, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID,
         FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID, 0 AS TOTALDR,
@@ -532,9 +529,6 @@
 					<subreportParameter  name="AcctID">
 						<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter  name="Title">
-						<subreportParameterExpression><![CDATA[new String("Previous")]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter  name="Partner">
 						<subreportParameterExpression><![CDATA[$F{c_bpartner_id}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -574,11 +568,14 @@
 					<subreportParameter  name="strDateFormat">
 						<subreportParameterExpression><![CDATA[$P{strDateFormat}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter  name="Title">
+						<subreportParameterExpression><![CDATA[$P{Previous}]]></subreportParameterExpression>
+					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<returnValue subreportVariable="PreviousBalance" toVariable="PreviousBalance"/>
 					<returnValue subreportVariable="PreviousDebit" toVariable="PreviousDebit"/>
 					<returnValue subreportVariable="PreviousCredit" toVariable="PreviousCredit"/>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"ReportGeneralLedger_Previous.jasper"]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_PREVIOUS}]]></subreportExpression>
 				</subreport>
 				<line direction="TopDown">
 					<reportElement
@@ -709,7 +706,7 @@
 					<textElement>
 						<font size="10"/>
 					</textElement>
-				<text><![CDATA[Total]]></text>
+				<text><![CDATA[Subtotal]]></text>
 				</staticText>
 				<subreport  isUsingCache="true">
 					<reportElement
@@ -723,7 +720,7 @@
 						<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Title">
-						<subreportParameterExpression><![CDATA[new String("Final")]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$P{Total}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Partner">
 						<subreportParameterExpression><![CDATA[$F{c_bpartner_id}]]></subreportParameterExpression>
@@ -765,7 +762,7 @@
 						<subreportParameterExpression><![CDATA[$P{strDateFormat}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"ReportGeneralLedger_Previous.jasper"]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_PREVIOUS}]]></subreportExpression>
 				</subreport>
 				<line direction="TopDown">
 					<reportElement
