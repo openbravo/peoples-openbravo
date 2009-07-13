@@ -57,7 +57,7 @@ import rmi.RenderFoI;
 public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
   private static final long serialVersionUID = 1L;
   protected ConnectionProvider myPool;
-  public String strDireccion;
+  public static String strDireccion;
   protected String strReplaceWith;
   protected String strReplaceWithFull;
   protected String strDefaultServlet;

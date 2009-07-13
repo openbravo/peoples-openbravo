@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 
 /**
  * @author Fernando
@@ -635,7 +634,7 @@ public class WindowTabs {
         if (this.newRecord) {
           if (this.level >= _level) {
             text.append("isUserChanges"); // Validate when click parent or sibling tab, when user
-                                          // has changed something
+            // has changed something
           } else {
             text.append("true"); // Always validate when are in NEW record and clicking a child tab
           }
@@ -646,8 +645,7 @@ public class WindowTabs {
         text.append("false"); // Don't validate in Grid mode
       }
       text.append(", null, '");
-      text.append(FormatUtilities.replace(_tabName)).append(
-          "_Relation.html', '_self', null, true);");
+      text.append(Utility.getTabURL(conn, _tabId, _tabName)).append("', '_self', null, true);");
     }
     text.append("return false;");
     return text.toString();
