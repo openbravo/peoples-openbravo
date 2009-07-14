@@ -20,12 +20,10 @@
 package org.openbravo.erpCommon.modules;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import net.sf.cglib.transform.impl.FieldProvider;
-
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.base.exception.OBException;
@@ -64,21 +62,23 @@ public class ApplyModule {
   }
 
   /**
-   * Process the Installed but not applied modules, the treatement for these modules is:
-   * *Translation modules In case the module contains translations the process will: -Sets the
-   * module language as system -Populates the trl tables calling the verify language process (this
-   * is done just once for all the modules with translations. -Imports the xml files with
-   * translations into trl tables.
+   * Process the Installed but not applied modules, the treatement for these modules is: Translation
+   * modules In case the module contains translations the process will: <br/>
+   * -Sets the module language as system -Populates the trl tables calling the verify language
+   * process (this is done just once for all the modules with translations.<br/>
+   * -Imports the xml files with translations into trl tables.
    * 
-   * *Reference data modules for client system Loads the reference data in client system (TODO:
-   * implement it)
+   * Reference data modules for client system Loads the reference data in client system
    * 
-   * *All modules Sets them as installed
+   * All modules Sets them as installed
    * 
-   * *Uninstalled modules Deletes them
+   * Uninstalled modules Deletes them
    */
   public void execute() {
     PropertyConfigurator.configure(obDir + "/src/log4j.lcf");
+    if (log4j.getLevel() == null || log4j.getLevel().isGreaterOrEqual(Level.INFO)) {
+      log4j.setLevel(Level.INFO);
+    }
     try {
       // **************** Translation modules ************************
       // Check whether modules to install are translations
@@ -123,67 +123,60 @@ public class ApplyModule {
           Translation.importTrlDirectory(obDir + "/modules/" + data[i].javapackage
               + "/referencedata/translation", data[i].adLanguage, "0", null);
         }
-
       }
+      // ************ Reference data for system client modules ************
 
-      // **************** Reference data for system client modules
-      // ************************
       log4j.info("Looking for reference data modules");
-      final ApplyModuleData[] ds = orderModuleByDependency(ApplyModuleData
-          .selectClientReferenceModules(pool));
+
+      final ApplyModuleData[] ds = ApplyModuleData.selectClientReferenceModules(pool);
+      ModuleUtiltiy.orderModuleByDependency(pool, ds);
 
       if (ds != null && ds.length > 0) {
-        log4j.info(ds.length + " System reference data modules found");
+        log4j.info(ds.length
+            + " System reference possible datasets found. Checking if they are present...");
         for (int i = 0; i < ds.length; i++) {
-          log4j.info("Importing data from module " + ds[i].name);
+
           String strPath;
           if (ds[i].adModuleId.equals("0"))
             strPath = obDir + "/referencedata/standard";
           else
             strPath = obDir + "/modules/" + ds[i].javapackage + "/referencedata/standard";
 
-          final File myDir = new File(strPath);
-          if (!myDir.exists()) {
+          // Obtain dataset xml file and check whether it is present
+          File datasetFile = new File(strPath + "/" + Utility.wikifiedName(ds[i].dsName) + ".xml");
+          if (!datasetFile.exists()) {
             continue;
           }
-          final File[] myFiles = myDir.listFiles();
-          final ArrayList<File> myTargetFiles = new ArrayList<File>();
-          for (int j = 0; j < myFiles.length; j++) {
-            if (myFiles[j].getName().endsWith(".xml"))
-              myTargetFiles.add(myFiles[j]);
-          }
+          log4j.info("Importing data from module " + ds[i].name + ". Dataset: "
+              + Utility.wikifiedName(ds[i].dsName) + ".xml");
 
-          for (final File myF : myTargetFiles) {
-
-            final String strXml = Utility.fileToString(myF.getPath());
-            final DataImportService importService = DataImportService.getInstance();
-            final ImportResult result = importService.importDataFromXML(OBDal.getInstance().get(
-                Client.class, "0"), OBDal.getInstance().get(Organization.class, "0"), strXml, OBDal
-                .getInstance().get(Module.class, ds[i].adModuleId));
-            if (result.hasErrorOccured()) {
-              log4j.error(result.getErrorMessages());
-              if (result.getException() != null) {
-                throw new OBException(result.getException());
-              } else {
-                throw new OBException(result.getErrorMessages());
-              }
+          // Import data from the xml file
+          final String strXml = Utility.fileToString(datasetFile.getPath());
+          final DataImportService importService = DataImportService.getInstance();
+          final ImportResult result = importService.importDataFromXML(OBDal.getInstance().get(
+              Client.class, "0"), OBDal.getInstance().get(Organization.class, "0"), strXml, OBDal
+              .getInstance().get(Module.class, ds[i].adModuleId));
+          if (result.hasErrorOccured()) {
+            log4j.error(result.getErrorMessages());
+            if (result.getException() != null) {
+              throw new OBException(result.getException());
+            } else {
+              throw new OBException(result.getErrorMessages());
             }
-
-            String msg = result.getWarningMessages();
-            if (msg != null && msg.length() > 0)
-              log4j.warn(msg);
-
-            msg = result.getLogMessages();
-            if (msg != null && msg.length() > 0)
-              log4j.debug(msg);
           }
 
+          String msg = result.getWarningMessages();
+          if (msg != null && msg.length() > 0)
+            log4j.warn(msg);
+
+          msg = result.getLogMessages();
+          if (msg != null && msg.length() > 0)
+            log4j.debug(msg);
         }
         OBDal.getInstance().commitAndClose();
       }
 
-      // **************** Set applied as installed and delete
-      // uninstalled************************
+      // ************ Set applied as installed and delete uninstalled ************
       log4j.info("Set modules as installed");
       ApplyModuleData.setInstalled(pool);
       ApplyModuleData.deleteUninstalled(pool);
@@ -193,30 +186,6 @@ public class ApplyModule {
       e.printStackTrace();
       throw new OBException(e);
     }
-  }
-
-  /**
-   * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   * 
-   * @param modules
-   * @return
-   */
-  private ApplyModuleData[] orderModuleByDependency(ApplyModuleData[] modules) {
-    if (modules == null || modules.length == 0)
-      return null;
-    final ArrayList<String> list = new ArrayList<String>();
-    for (int i = 0; i < modules.length; i++) {
-      list.add(modules[i].adModuleId);
-    }
-    final ArrayList<String> orderList = ModuleUtiltiy.orderByDependency(pool, list);
-    final ApplyModuleData[] rt = new ApplyModuleData[orderList.size()];
-    for (int i = 0; i < orderList.size(); i++) {
-      int j = 0;
-      while (j < modules.length && !modules[j].adModuleId.equals(orderList.get(i)))
-        j++;
-      rt[i] = modules[j];
-    }
-    return rt;
   }
 
   public static void main(String[] args) {

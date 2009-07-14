@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2008 Openbravo SL
+ * All portions are Copyright (C) 2008-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,7 @@
     <Sql>
       <![CDATA[
       SELECT '' AS ID, '' AS NAME, '' AS HASCHARTOFACCOUNTS, '' AS ISTRANSLATIONMODULE, '' AS AD_MODULE_ID, '' AS PATH,
-      '' AS DATASETNAME, '' AS JAVAPACKAGE, '' AS VERSION
+      '' AS DATASETNAME, '' AS JAVAPACKAGE, '' AS VERSION, '' AS TOTAL
       FROM DUAL
       ]]>
     </Sql>
@@ -784,22 +784,37 @@
       </Sql>
       <Parameter name="AD_Client_ID"/>
    </SqlMethod>
-  <SqlMethod name="selectModules" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
+   
+   <SqlMethod name="selectCOAModules" type="preparedStatement" return="multiple">
+    <SqlMethodComment>selects chart of accounts modules</SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT AD_MODULE.NAME, AD_MODULE.HASCHARTOFACCOUNTS, AD_MODULE.ISTRANSLATIONMODULE,
-      AD_MODULE.AD_MODULE_ID , '/' ||AD_MODULE.JAVAPACKAGE || '/referencedata/accounts/COA.csv' AS PATH,
-      AD_MODULE.JAVAPACKAGE, AD_DATASET.NAME AS DATASETNAME, AD_MODULE.VERSION
-      FROM AD_MODULE, AD_DATASET
-      WHERE AD_MODULE.AD_MODULE_ID = AD_DATASET.AD_MODULE_ID
-      AND AD_MODULE.AD_MODULE_ID IN ('1')
-      AND AD_DATASET.ACCESSLEVEL IN ('3','1')
+      SELECT AD_MODULE_ID , '/' ||JAVAPACKAGE || '/referencedata/accounts/COA.csv' AS PATH, VERSION
+        FROM AD_MODULE
+       WHERE AD_MODULE.AD_MODULE_ID IN ('1')
+         AND HASCHARTOFACCOUNTS = 'Y'
       ORDER BY AD_MODULE.AD_MODULE_ID
       ]]>
     </Sql>
     <Parameter name="modules" optional="true" type="replace" after="AD_MODULE_ID IN (" text="'1'"/>
   </SqlMethod>
+   
+  <SqlMethod name="selectRDModules" type="preparedStatement" return="multiple">
+    <SqlMethodComment>select reference data modules</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT AD_MODULE.NAME, AD_MODULE.AD_MODULE_ID, AD_MODULE.JAVAPACKAGE, AD_DATASET.NAME AS DATASETNAME, AD_MODULE.VERSION
+      FROM AD_MODULE, AD_DATASET
+      WHERE AD_MODULE.AD_MODULE_ID = AD_DATASET.AD_MODULE_ID
+      AND AD_MODULE.AD_MODULE_ID IN ('1')
+      AND AD_DATASET.ACCESSLEVEL IN ('3','1')
+      AND HASREFERENCEDATA = 'Y'
+      ORDER BY AD_MODULE.AD_MODULE_ID
+      ]]>
+    </Sql>
+    <Parameter name="modules" optional="true" type="replace" after="AD_MODULE_ID IN (" text="'1'"/>
+  </SqlMethod> 
+   
   <SqlMethod name="selectOrgType" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -827,6 +842,22 @@
     <Parameter name="language"/>
     <Parameter name="client"/>
   </SqlMethod>
+  
+  <SqlMethod name="existsOrgModule" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      SELECT COUNT(*) AS TOTAL
+        FROM AD_ORGMODULE
+       WHERE AD_CLIENT_ID = ?
+         AND AD_ORG_ID = ?
+         AND AD_MODULE_ID = ?
+    </Sql>
+    <Parameter name="AD_Client_ID"/>
+    <Parameter name="AD_Org_ID"/>
+    <Parameter name="AD_Module_ID"/>
+
+  </SqlMethod>
+  
   <SqlMethod name="insertOrgModule" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -841,6 +872,7 @@
     <Parameter name="AD_Module_ID"/>
     <Parameter name="version"/>
   </SqlMethod>
+  
   <SqlMethod name="insertOrgAcctSchema" connection="true" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
