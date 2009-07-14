@@ -36,14 +36,12 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT M.JAVAPACKAGE, M.NAME, M.AD_MODULE_ID
-        FROM AD_MODULE M
-       WHERE (M.STATUS = 'I' OR STATUS = 'P')
+      SELECT M.JAVAPACKAGE, M.NAME, M.AD_MODULE_ID, D.NAME as DS_NAME
+        FROM AD_MODULE M, AD_DATASET D
+       WHERE (M.STATUS = 'I' OR M.STATUS = 'P')
          AND M.HASREFERENCEDATA = 'Y'
-         AND EXISTS (SELECT 1 
-                       FROM AD_DATASET
-                       WHERE AD_MODULE_ID = M.AD_MODULE_ID
-                       AND ACCESSLEVEL = '4')
+         AND D.AD_MODULE_ID = M.AD_MODULE_ID
+         AND D.ACCESSLEVEL = '4'
     ]]></Sql>
   </SqlMethod>
   
