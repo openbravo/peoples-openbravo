@@ -38,7 +38,12 @@
   v_xParent_ID                varchar2(32);
   v_BP_Acct_ID                varchar2(32);
   v_C_Receivable_Acct         varchar2(32);
+  v_C_Prepayment_Acct         varchar2(32);
   v_V_Liability_Acct          varchar2(32);
+  v_V_Liability_Services_Acct varchar2(32);
+  v_V_Prepayment_Acct         varchar2(32);
+  v_E_Expense_Acct            varchar2(32);
+  v_E_Prepayment_Acct         varchar2(32);
   v_seq_name		              varchar2(32);
   v_Sequence_No		            varchar2(32);
   v_C_AcctSchema_ID	          VARCHAR2(32);
@@ -88,6 +93,12 @@ BEGIN
               AD_Sequence_Doc(v_seq_name, Cur_Defaults.AD_Client_ID, 'Y', v_Sequence_No);
               v_C_Receivable_Acct:=c_validcombination_clone(Cur_Defaults.C_Receivable_Acct, v_Sequence_No, :new.Name,
               Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
+              
+               /*
+                  Retrieving the prepayment account NUMBER
+               */
+               v_C_Prepayment_Acct:=c_validcombination_clone(Cur_Defaults.C_Prepayment_Acct, v_Sequence_No, :new.Name,
+               Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
 			            
              /*
                   Inserting the new account NUMBER
@@ -99,7 +110,7 @@ BEGIN
               VALUES
               (v_BP_Acct_ID,:new.C_BPartner_ID, Cur_Defaults.C_AcctSchema_ID,
               :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
-              v_C_Receivable_Acct, Cur_Defaults.C_Prepayment_Acct, Cur_Defaults.Status);
+              v_C_Receivable_Acct, v_C_Prepayment_Acct, Cur_Defaults.Status);
          ELSE
         			/*
                 Creating default account
@@ -125,9 +136,18 @@ BEGIN
 	            /*
                 Retrieving the liability account NUMBER 
               */
-              AD_Sequence_Doc(v_seq_name, Cur_Defaults.AD_Client_ID, 'Y', v_Sequence_No);
               v_V_Liability_Acct:= c_validcombination_clone(Cur_Defaults.V_Liability_Acct, v_Sequence_No, :new.Name,
               Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
+               /*
+                 Retrieving the liability services account NUMBER
+               */ 
+        			 v_V_Liability_Services_Acct:=c_validcombination_clone(Cur_Defaults.V_Liability_Services_Acct, v_Sequence_No, :new.Name,
+               Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
+			   			 /*
+                 Retrieving the prepayment account NUMBER
+              */
+               v_V_Prepayment_Acct:=c_validcombination_clone(Cur_Defaults.V_Prepayment_Acct, v_Sequence_No, :new.Name,
+               Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
 			    		/*
                  Inserting the new account NUMBER
                */
@@ -138,7 +158,7 @@ BEGIN
               VALUES
               (v_BP_Acct_ID,:new.C_BPartner_ID, Cur_Defaults.C_AcctSchema_ID,
               :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
-              v_V_Liability_Acct, Cur_Defaults.V_Liability_Services_Acct, Cur_Defaults.V_Prepayment_Acct, Cur_Defaults.Status);
+              v_V_Liability_Acct, v_V_Liability_Services_Acct, v_V_Prepayment_Acct, Cur_Defaults.Status);
 		     ELSE
               /*
                 Creating default account
@@ -156,23 +176,63 @@ BEGIN
   END IF;
   END LOOP;
 -- Employee
-  FOR Cur_Defaults2 IN (
-		SELECT d2.* FROM C_AcctSchema_Default d2
-		WHERE EXISTS (SELECT 1 FROM AD_Org_AcctSchema oa
-		WHERE d2.C_AcctSchema_ID = oa.C_AcctSchema_ID
-		AND (AD_IsOrgIncluded(oa.AD_Org_ID, :new.AD_Org_ID, :new.AD_Client_ID)<>-1
-		OR AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Client_ID)<>-1))			
-		) 
-		 LOOP
+  v_C_AcctSchema_ID:=null;
+              FOR Cur_Defaults2 IN (
+              SELECT AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Org_ID),
+              oa.ad_sequence_bp_id, oa.isbpnewaccount, oa.acct_length, oa.subacct_length, oa.createdby, oa.updatedby,
+              d2.E_Expense_Acct, d2.E_Prepayment_Acct, d2.AD_Client_ID, d2.C_AcctSchema_ID
+              FROM C_AcctSchema_Default d2, AD_Org_AcctSchema oa 
+              WHERE d2.C_AcctSchema_ID = oa.C_AcctSchema_ID
+              AND oA.AD_Client_ID = d2.AD_Client_ID
+              AND (AD_IsOrgIncluded(oa.AD_Org_ID, :new.AD_Org_ID, :new.AD_Org_ID)<>-1
+              OR AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Org_ID)<>-1)
+              ORDER BY 1 DESC			
+	) 
+  LOOP
+	
+	   /*
+	    Employee
+	   */
+			 /*
+        Creating new sub account
+       */
+		 IF (v_C_AcctSchema_ID is null or v_C_AcctSchema_ID <> Cur_Defaults2.C_AcctSchema_ID) THEN
+         IF (Cur_Defaults2.IsBPNewAccount='Y') THEN
+             /*
+                Retrieving the Expense account NUMBER
+             */
+             v_E_Expense_Acct:= c_validcombination_clone(Cur_Defaults2.E_Expense_Acct,  v_Sequence_No, :new.Name,
+             Cur_Defaults2.acct_length, Cur_Defaults2.subacct_length);
+             /*
+                 Retrieving the Prepayment account NUMBER
+             */
+             v_E_Prepayment_Acct:=c_validcombination_clone(Cur_Defaults2.E_Prepayment_Acct,  v_Sequence_No, :new.Name,
+             Cur_Defaults2.acct_length, Cur_Defaults2.subacct_length);
+        		 /*
+                 Inserting the new account NUMBER 
+             */
 	 		
-	    INSERT INTO C_BP_Employee_Acct
-			(C_BP_Employee_Acct_ID, C_BPartner_ID, C_AcctSchema_ID,
-			AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
-			E_Expense_Acct, E_Prepayment_Acct)
-		  VALUES
-			(get_uuid(), :new.C_BPartner_ID, Cur_Defaults2.C_AcctSchema_ID,
-			:new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
-			Cur_Defaults2.E_Expense_Acct, Cur_Defaults2.E_Prepayment_Acct);
+              INSERT INTO C_BP_Employee_Acct
+                (C_BP_Employee_Acct_ID, C_BPartner_ID, C_AcctSchema_ID,
+                AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
+                E_Expense_Acct, E_Prepayment_Acct)
+               VALUES
+                (get_uuid(), :new.C_BPartner_ID, Cur_Defaults2.C_AcctSchema_ID,
+                :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
+                v_E_Expense_Acct, v_E_Prepayment_Acct);
+            ELSE
+                INSERT INTO C_BP_Employee_Acct
+                (C_BP_Employee_Acct_ID, C_BPartner_ID, C_AcctSchema_ID,
+                AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
+                E_Expense_Acct, E_Prepayment_Acct)
+               VALUES
+                (get_uuid(), :new.C_BPartner_ID, Cur_Defaults2.C_AcctSchema_ID,
+                :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
+                Cur_Defaults2.E_Expense_Acct, Cur_Defaults2.E_Prepayment_Acct);
+            
+            END IF;
+             v_C_AcctSchema_ID:=Cur_Defaults2.C_AcctSchema_ID;
+      END IF;
     
      END LOOP;
 

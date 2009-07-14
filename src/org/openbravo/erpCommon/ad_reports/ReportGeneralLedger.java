@@ -666,18 +666,19 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
     JasperReport jasperReportLines;
     try {
-      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/ReportGeneralLedger_Previous.jrxml");
-      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+      jasperReportLines = Utility.getTranslatedJasperReport(this, strBaseDesign
+          + "/org/openbravo/erpCommon/ad_reports/ReportGeneralLedger_Previous.jrxml", vars
+          .getLanguage(), strBaseDesign);
     } catch (JRException e) {
       e.printStackTrace();
       throw new ServletException(e.getMessage());
     }
-    parameters.put("ReportData", jasperReportLines);
+    parameters.put("SR_PREVIOUS", jasperReportLines);
 
     parameters.put("ShowPartner", new Boolean(!(strcBpartnerId.equals("") && strAll.equals(""))));
     parameters.put("REPORT_SUBTITLE", Utility.messageBD(this, "GL_Previous", strLanguage));
-    parameters.put("Final", Utility.messageBD(this, "Final", strLanguage));
+    parameters.put("Previous", Utility.messageBD(this, "GL_Previous", strLanguage));
+    parameters.put("Total", Utility.messageBD(this, "Total", strLanguage));
     String strDateFormat;
     strDateFormat = vars.getJavaDateFormat();
     SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);

@@ -183,7 +183,7 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
     xmlDocument.setParameter("adOrgId", strOrg);
     xmlDocument.setData("structure1", data);
 
-    xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData
+    xmlDocument.setData("reportAD_ORG_ID", "liststructure", GeneralAccountingReportsData
         .selectCombo(this, vars.getRole()));
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
