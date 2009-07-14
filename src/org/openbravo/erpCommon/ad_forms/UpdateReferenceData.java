@@ -195,70 +195,61 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
     if (strModules != null && !strModules.equals("")) {
       UpdateReferenceDataData[] data = UpdateReferenceDataData.selectModules(this, strModules,
           strOrganization);
-      data = orderModuleByDependency(data);
+      ModuleUtiltiy.orderModuleByDependency(this, data);
       if (data != null && data.length != 0) {
         DataImportService myData = DataImportService.getInstance();
         m_info.append(SALTO_LINEA).append(
             Utility.messageBD(this, "StartingReferenceData", vars.getLanguage())).append(
             SALTO_LINEA);
-        for (int i = 0; i < data.length; i++) {
-          String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules/" + data[i].javapackage
+
+        StringBuffer strError = new StringBuffer("");
+        for (int j = 0; j < data.length; j++) {
+          String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules/" + data[j].javapackage
               + "/referencedata/standard";
-          File myDir = new File(strPath);
-          File[] myFiles = myDir.listFiles();
-          ArrayList<File> myTargetFiles = new ArrayList<File>();
-          // if the directory does not exist then it will throw an exception
-          if (myFiles != null) {
-            for (int j = 0; j < myFiles.length; j++) {
-              if (myFiles[j].getName().endsWith(".xml"))
-                myTargetFiles.add(myFiles[j]);
-            }
-            myFiles = new File[myTargetFiles.size()];
-            myFiles = myTargetFiles.toArray(myFiles);
-          } else {
-            myFiles = new File[] {};
+          File datasetFile = new File(strPath + "/" + Utility.wikifiedName(data[j].datasetname)
+              + ".xml");
+          if (!datasetFile.exists()) {
+            continue;
           }
-          StringBuffer strError = new StringBuffer("");
-          for (int j = 0; j < myFiles.length; j++) {
-            String strXml = Utility.fileToString(myFiles[j].getPath());
-            ImportResult myResult = myData.importDataFromXML((Client) OBDal.getInstance().get(
-                Client.class, vars.getClient()), (Organization) OBDal.getInstance().get(
-                Organization.class, strOrganization), strXml, (Module) OBDal.getInstance().get(
-                Module.class, data[i].adModuleId));
-            m_info.append(SALTO_LINEA).append("File: ").append(myFiles[j].getName()).append(":")
-                .append(SALTO_LINEA);
-            if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
-                && !myResult.getLogMessages().equals("null")) {
-              m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getLogMessages())).append(
-                  SALTO_LINEA);
-            }
-            if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
-                && !myResult.getWarningMessages().equals("null")) {
-              m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getWarningMessages())).append(
-                  SALTO_LINEA);
-            }
-            if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
-                && !myResult.getErrorMessages().equals("null")) {
-              m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getErrorMessages())).append(
-                  SALTO_LINEA);
-            }
-            if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
-                && !myResult.getErrorMessages().equals("null"))
-              strError = strError.append(myResult.getErrorMessages());
+
+          String strXml = Utility.fileToString(datasetFile.getPath());
+          ImportResult myResult = myData.importDataFromXML((Client) OBDal.getInstance().get(
+              Client.class, vars.getClient()), (Organization) OBDal.getInstance().get(
+              Organization.class, strOrganization), strXml, (Module) OBDal.getInstance().get(
+              Module.class, data[j].adModuleId));
+          m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
+              .append(SALTO_LINEA);
+          if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
+              && !myResult.getLogMessages().equals("null")) {
+            m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(replaceNL(myResult.getLogMessages())).append(
+                SALTO_LINEA);
           }
+          if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
+              && !myResult.getWarningMessages().equals("null")) {
+            m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(replaceNL(myResult.getWarningMessages())).append(
+                SALTO_LINEA);
+          }
+          if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
+              && !myResult.getErrorMessages().equals("null")) {
+            m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(replaceNL(myResult.getErrorMessages())).append(
+                SALTO_LINEA);
+          }
+          if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
+              && !myResult.getErrorMessages().equals("null"))
+            strError = strError.append(myResult.getErrorMessages());
           if (!strError.toString().equals(""))
             return strError.toString();
           else {
-            if (UpdateReferenceDataData.selectRegister(this, data[i].adModuleId, strOrganization)
+            if (UpdateReferenceDataData.selectRegister(this, data[j].adModuleId, strOrganization)
                 .equals("0"))
               InitialOrgSetupData.insertOrgModule(this, vars.getClient(), strOrganization, vars
-                  .getUser(), data[i].adModuleId, data[i].version);
+                  .getUser(), data[j].adModuleId, data[j].version);
             else
-              UpdateReferenceDataData.updateOrgModule(this, data[i].version, vars.getUser(), vars
-                  .getClient(), strOrganization, data[i].adModuleId);
+              UpdateReferenceDataData.updateOrgModule(this, data[j].version, vars.getUser(), vars
+                  .getClient(), strOrganization, data[j].adModuleId);
             m_info.append(SALTO_LINEA).append(
                 Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
                 SALTO_LINEA);
