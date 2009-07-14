@@ -350,7 +350,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       }
     }
 
-    //==============================================================================================
+    // ==============================================================================================
 
     if (strModules != null && !strModules.equals("")) {
       try {
@@ -391,7 +391,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
         }
       }
     }
-    //==============================================================================================
+    // ==============================================================================================
     log4j.debug("InitialOrgSetup - after createEntities");
     if (isOK)
       strError = Utility.messageBD(this, "Success", vars.getLanguage());
@@ -1048,71 +1048,76 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
         strModules = strModules.substring(1, strModules.length());
       if (strModules.charAt(strModules.length() - 1) == ')')
         strModules = strModules.substring(0, strModules.length() - 1);
-      InitialOrgSetupData[] data = InitialOrgSetupData.selectModules(this, strModules);
-      data = orderModuleByDependency(data);
+
+      // import coa
+      if (!strCreateAccounting.equals("")) {
+        InitialOrgSetupData[] dataCOA = InitialOrgSetupData.selectCOAModules(this, strModules);
+        ModuleUtiltiy.orderModuleByDependency(this, dataCOA);
+
+        final DataImportService myData = DataImportService.getInstance();
+        for (int i = 0; i < dataCOA.length; i++) {
+          final String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules" + dataCOA[i].path;
+          final FileInputStream in = new FileInputStream(strPath);
+          final AccountingValueData av = new AccountingValueData(vars, in, true, "C");
+          m_info.append(SALTO_LINEA).append(
+              Utility.messageBD(this, "StartingAccounting", vars.getLanguage()))
+              .append(SALTO_LINEA);
+          if (!createAccounting(vars, strOrganization, C_Currency_ID, InitialOrgSetupData.currency(
+              this, C_Currency_ID), hasProduct, hasBPartner, hasProject, hasMCampaign, hasSRegion,
+              av.getFieldProvider())) {
+            m_info.append(SALTO_LINEA).append(
+                Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(
+                SALTO_LINEA);
+          }
+        }
+      }
+      // import rd
+      InitialOrgSetupData[] data = InitialOrgSetupData.selectRDModules(this, strModules);
+      ModuleUtiltiy.orderModuleByDependency(this, data);
       if (data != null && data.length != 0) {
         final DataImportService myData = DataImportService.getInstance();
-        for (int i = 0; i < data.length; i++) {
-          if (data[i].haschartofaccounts.equals("Y") && !strCreateAccounting.equals("")) {
-            final String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules" + data[i].path;
-            final FileInputStream in = new FileInputStream(strPath);
-            final AccountingValueData av = new AccountingValueData(vars, in, true, "C");
-            m_info.append(SALTO_LINEA).append(
-                Utility.messageBD(this, "StartingAccounting", vars.getLanguage())).append(
-                SALTO_LINEA);
-            if (!createAccounting(vars, strOrganization, C_Currency_ID, InitialOrgSetupData
-                .currency(this, C_Currency_ID), hasProduct, hasBPartner, hasProject, hasMCampaign,
-                hasSRegion, av.getFieldProvider())) {
-              m_info.append(SALTO_LINEA).append(
-                  Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(
-                  SALTO_LINEA);
-            }
-          }
+        StringBuffer strError = new StringBuffer("");
+
+        for (int j = 0; j < data.length; j++) {
+
           final String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules/"
-              + data[i].javapackage + "/referencedata/standard";
-          final File myDir = new File(strPath);
-          File[] myFiles = myDir.listFiles();
-          final ArrayList<File> myTargetFiles = new ArrayList<File>();
-          if (myFiles == null)
+              + data[j].javapackage + "/referencedata/standard";
+          File datasetFile = new File(strPath + "/" + Utility.wikifiedName(data[j].datasetname)
+              + ".xml");
+          if (!datasetFile.exists()) {
             continue;
-          for (int j = 0; j < myFiles.length; j++) {
-            if (myFiles[j].getName().endsWith(".xml"))
-              myTargetFiles.add(myFiles[j]);
           }
-          myFiles = new File[myTargetFiles.size()];
-          myFiles = myTargetFiles.toArray(myFiles);
-          StringBuffer strError = new StringBuffer("");
-          for (int j = 0; j < myFiles.length; j++) {
-            final String strXml = Utility.fileToString(myFiles[j].getPath());
-            final ImportResult myResult = myData.importDataFromXML(OBDal.getInstance().get(
-                Client.class, strClient), OBDal.getInstance().get(Organization.class, AD_Org_ID),
-                strXml, OBDal.getInstance().get(Module.class, data[i].adModuleId));
-            m_info.append(SALTO_LINEA).append("File: ").append(myFiles[j].getName()).append(":")
-                .append(SALTO_LINEA);
-            if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
-                && !myResult.getLogMessages().equals("null")) {
-              m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(myResult.getLogMessages()).append(SALTO_LINEA);
-            }
-            if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
-                && !myResult.getWarningMessages().equals("null")) {
-              m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(myResult.getWarningMessages()).append(SALTO_LINEA);
-            }
-            if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
-                && !myResult.getErrorMessages().equals("null")) {
-              m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(myResult.getErrorMessages()).append(SALTO_LINEA);
-            }
-            if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
-                && !myResult.getErrorMessages().equals("null"))
-              strError = strError.append(myResult.getErrorMessages());
+
+          final String strXml = Utility.fileToString(datasetFile.getPath());
+          final ImportResult myResult = myData.importDataFromXML(OBDal.getInstance().get(
+              Client.class, strClient), OBDal.getInstance().get(Organization.class, AD_Org_ID),
+              strXml, OBDal.getInstance().get(Module.class, data[j].adModuleId));
+          m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
+              .append(SALTO_LINEA);
+          if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
+              && !myResult.getLogMessages().equals("null")) {
+            m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(myResult.getLogMessages()).append(SALTO_LINEA);
           }
+          if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
+              && !myResult.getWarningMessages().equals("null")) {
+            m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(myResult.getWarningMessages()).append(SALTO_LINEA);
+          }
+          if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
+              && !myResult.getErrorMessages().equals("null")) {
+            m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(myResult.getErrorMessages()).append(SALTO_LINEA);
+          }
+          if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
+              && !myResult.getErrorMessages().equals("null"))
+            strError = strError.append(myResult.getErrorMessages());
+
           if (!strError.toString().equals(""))
             return strError.toString();
           else {
             InitialOrgSetupData.insertOrgModule(this, strClient, AD_Org_ID, vars.getUser(),
-                data[i].adModuleId, data[i].version);
+                data[j].adModuleId, data[j].version);
             m_info.append(SALTO_LINEA).append(
                 Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
                 SALTO_LINEA);
