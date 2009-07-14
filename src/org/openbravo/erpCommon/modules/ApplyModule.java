@@ -20,11 +20,8 @@
 package org.openbravo.erpCommon.modules;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
-
-import net.sf.cglib.transform.impl.FieldProvider;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -127,12 +124,12 @@ public class ApplyModule {
               + "/referencedata/translation", data[i].adLanguage, "0", null);
         }
       }
-
       // ************ Reference data for system client modules ************
 
       log4j.info("Looking for reference data modules");
-      final ApplyModuleData[] ds = orderModuleByDependency(ApplyModuleData
-          .selectClientReferenceModules(pool));
+
+      final ApplyModuleData[] ds = ApplyModuleData.selectClientReferenceModules(pool);
+      Utility.orderModuleByDependency(pool, ds);
 
       if (ds != null && ds.length > 0) {
         log4j.info(ds.length
@@ -147,7 +144,6 @@ public class ApplyModule {
 
           // Obtain dataset xml file and check whether it is present
           File datasetFile = new File(strPath + "/" + Utility.wikifiedName(ds[i].dsName) + ".xml");
-          // properly
           if (!datasetFile.exists()) {
             continue;
           }
@@ -176,7 +172,6 @@ public class ApplyModule {
           msg = result.getLogMessages();
           if (msg != null && msg.length() > 0)
             log4j.debug(msg);
-
         }
         OBDal.getInstance().commitAndClose();
       }
@@ -191,33 +186,6 @@ public class ApplyModule {
       e.printStackTrace();
       throw new OBException(e);
     }
-  }
-
-  /**
-   * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   * 
-   * @param modules
-   * @return
-   */
-  private ApplyModuleData[] orderModuleByDependency(ApplyModuleData[] modules) {
-    if (modules == null || modules.length == 0)
-      return null;
-    final ArrayList<String> list = new ArrayList<String>();
-    for (int i = 0; i < modules.length; i++) {
-      list.add(modules[i].adModuleId);
-    }
-    final ArrayList<String> orderList = ModuleUtiltiy.orderByDependency(pool, list);
-    final ApplyModuleData[] rt = new ApplyModuleData[modules.length];
-    int j = 0;
-    for (int i = 0; i < orderList.size(); i++) {
-      for (ApplyModuleData module : modules) {
-        if (module.adModuleId.equals(orderList.get(i))) {
-          rt[j] = module;
-          j++;
-        }
-      }
-    }
-    return rt;
   }
 
   public static void main(String[] args) {

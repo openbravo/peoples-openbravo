@@ -63,6 +63,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.modules.ModuleUtiltiy;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.uiTranslation.TranslationHandler;
@@ -2335,6 +2336,36 @@ public class Utility {
     }
     strArray = strArray + ");";
     return strArray;
+  }
+
+  /**
+   * Modifies the passed modules {@link FieldProvider} parameter ordering it taking into account
+   * dependencies.
+   * 
+   * @param modules
+   *          {@link FieldProvider} that will be sorted. It must contain at least a field named
+   *          <i>adModuleId</i>
+   */
+  public static void orderModuleByDependency(ConnectionProvider pool, FieldProvider[] modules) {
+    if (modules == null || modules.length == 0)
+      return;
+    final ArrayList<String> list = new ArrayList<String>();
+    for (int i = 0; i < modules.length; i++) {
+      list.add((String) modules[i].getField("adModuleId"));
+    }
+    final ArrayList<String> orderList = ModuleUtiltiy.orderByDependency(pool, list);
+    final FieldProvider[] rt = new FieldProvider[modules.length];
+    int j = 0;
+    for (int i = 0; i < orderList.size(); i++) {
+      for (FieldProvider module : modules) {
+        if (module.getField("adModuleId").equals(orderList.get(i))) {
+          rt[j] = module;
+          j++;
+        }
+      }
+    }
+    modules = rt;
+    return;
   }
 
 }
