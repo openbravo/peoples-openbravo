@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
+import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 
 /**
@@ -99,5 +100,35 @@ public class ModuleUtiltiy {
         checkTree(conn, parents[i].adModuleId, rt, list, checked);
       }
     }
+  }
+
+  /**
+   * Modifies the passed modules {@link FieldProvider} parameter ordering it taking into account
+   * dependencies.
+   * 
+   * @param modules
+   *          {@link FieldProvider} that will be sorted. It must contain at least a field named
+   *          <i>adModuleId</i>
+   */
+  public static void orderModuleByDependency(ConnectionProvider pool, FieldProvider[] modules) {
+    if (modules == null || modules.length == 0)
+      return;
+    final ArrayList<String> list = new ArrayList<String>();
+    for (int i = 0; i < modules.length; i++) {
+      list.add((String) modules[i].getField("adModuleId"));
+    }
+    final ArrayList<String> orderList = orderByDependency(pool, list);
+    final FieldProvider[] rt = new FieldProvider[modules.length];
+    int j = 0;
+    for (int i = 0; i < orderList.size(); i++) {
+      for (FieldProvider module : modules) {
+        if (module.getField("adModuleId").equals(orderList.get(i))) {
+          rt[j] = module;
+          j++;
+        }
+      }
+    }
+    modules = rt;
+    return;
   }
 }

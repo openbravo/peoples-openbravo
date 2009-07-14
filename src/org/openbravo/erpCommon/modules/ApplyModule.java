@@ -129,7 +129,7 @@ public class ApplyModule {
       log4j.info("Looking for reference data modules");
 
       final ApplyModuleData[] ds = ApplyModuleData.selectClientReferenceModules(pool);
-      Utility.orderModuleByDependency(pool, ds);
+      ModuleUtiltiy.orderModuleByDependency(pool, ds);
 
       if (ds != null && ds.length > 0) {
         log4j.info(ds.length
