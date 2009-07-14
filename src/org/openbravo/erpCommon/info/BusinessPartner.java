@@ -115,10 +115,22 @@ public class BusinessPartner extends HttpSecureAppServlet {
       else
         strSelected = "all";
       vars.setSessionValue("BusinessPartner.bpartner", strSelected);
+
+      // two cases are interesting in the result:
+      // - exactly one row (and row content is needed)
+      // - zero or more than one row (row content not needed)
+      // so limit <= 2 records to get both info from result without needing to fetch all rows
+      String rownum = "0", oraLimit1 = null, pgLimit = null;
+      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+        oraLimit1 = "2";
+      } else {
+        pgLimit = "2";
+      }
+
       final BusinessPartnerData[] data = BusinessPartnerData.selectKey(this, Utility.getContext(
           this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars,
           strOrg), (strSelected.equals("customer") ? "clients" : ""),
-          (strSelected.equals("vendor") ? "vendors" : ""), strKeyValue + "%");
+          (strSelected.equals("vendor") ? "vendors" : ""), strKeyValue + "%", pgLimit, oraLimit1);
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
       } else
@@ -303,19 +315,22 @@ public class BusinessPartner extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          final String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
+          String oraLimit1 = String.valueOf(offset + pageSize);
+          String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
           data = BusinessPartnerData.select(this, "ROWNUM", Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
               strKey, strName, strContact, strZIP, strProvincia,
               (strBpartners.equals("customer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, oraLimit, "");
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", oraLimit1,
+              oraLimit2);
         } else {
           final String pgLimit = pageSize + " OFFSET " + offset;
           data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
               strKey, strName, strContact, strZIP, strProvincia,
               (strBpartners.equals("customer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", pgLimit);
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit, "",
+              "");
         }
       } catch (final ServletException e) {
         log4j.error("Error in print page data: " + e);
