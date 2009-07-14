@@ -42,7 +42,7 @@
   	<PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   	<PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   	<PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>  
- 	<PARAMETER id="paramAD_ORGID" name="adOrgId"/>
+ 	<PARAMETER id="paramAD_ORG_ID" name="adOrgId"/>
  	<PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>
  	<PARAMETER id="paramA_Asset_Group_ID" name="cAssetCategoryId"/>
   	<SUBREPORT id="reportC_ACCTSCHEMA_ID" name="reportC_ACCTSCHEMA_ID" report="org/openbravo/erpCommon/reference/List">
@@ -51,8 +51,8 @@
   	<SUBREPORT id="reportA_ASSET_GROUP_ID" name="reportA_ASSET_GROUP_ID" report="org/openbravo/erpCommon/reference/List"> 
   		<ARGUMENT name="parameterListSelected" withId="paramA_Asset_Group_ID"/> 
  	</SUBREPORT>
- 	<SUBREPORT id="reportAD_ORGID" name="reportAD_ORGID" report="org/openbravo/erpCommon/reference/List">
-    	<ARGUMENT name="parameterListSelected" withId="paramAD_ORGID"/>
+ 	<SUBREPORT id="reportAD_ORG_ID" name="reportAD_ORG_ID" report="org/openbravo/erpCommon/reference/List">
+    	<ARGUMENT name="parameterListSelected" withId="paramAD_ORG_ID"/>
  	</SUBREPORT> 
    	<structure name="structure1">
 		<FIELD id="fieldFiscalYear">fieldFiscalYear</FIELD>
