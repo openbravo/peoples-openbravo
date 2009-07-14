@@ -1213,24 +1213,46 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
     // Base DocumentTypes
     createDocType(vars, "GL Journal", "Journal", "GLJ", "", "0", "0", "1000", GL_GL, "224");
+
     String DT_I = createDocType(vars, "AR Invoice", "Invoice", "ARI", "", "0", "0", "100000",
         GL_ARI, "318");
+    createDocTypeTemplate(vars, DT_I, "AR Invoice Report template",
+        "@basedesign@/org/openbravo/erpReports", "Sales Invoice-@our_ref@", "RptC_Invoice.jrxml");
+
     String DT_II = createDocType(vars, "AR Invoice Indirect", "Invoice Indirect.", "ARI", "", "0",
         "0", "200000", GL_ARI, "318");
-    createDocType(vars, "AR Credit Memo", "Credit Memo", "ARC", "", "0", "0", "300000", GL_ARI,
-        "318");
+    createDocTypeTemplate(vars, DT_II, "AR Invoice Indirect Report template",
+        "@basedesign@/org/openbravo/erpReports", "Sales Invoice-@our_ref@", "RptC_Invoice.jrxml");
+
+    String arcDoctypeId = createDocType(vars, "AR Credit Memo", "Credit Memo", "ARC", "", "0", "0",
+        "300000", GL_ARI, "318");
+    createDocTypeTemplate(vars, arcDoctypeId, "AR Credit Memo Report template",
+        "@basedesign@/org/openbravo/erpReports", "Sales Invoice-@our_ref@", "RptC_Invoice.jrxml");
+
     createDocType(vars, "AR Receipt", "Receipt", "ARR", "", "0", "0", "400000", GL_ARR, "");
     String DT_S = createDocType(vars, "MM Shipment", "Delivery Note", "MMS", "", "0", "0",
         "500000", GL_MM, "319");
     String DT_SI = createDocType(vars, "MM Shipment Indirect", "Delivery Note", "MMS", "", "0",
         "0", "600000", GL_MM, "319");
     createDocType(vars, "MM Receipt", "Vendor Delivery", "MMR", "", "0", "0", "0", GL_MM, "319");
-    createDocType(vars, "AP Invoice", "Vendor Invoice", "API", "", "0", "0", "0", GL_API, "318");
-    createDocType(vars, "AP CreditMemo", "Vendor Credit Memo", "APC", "", "0", "0", "0", GL_API,
-        "318");
+
+    String apiDoctypeId = createDocType(vars, "AP Invoice", "Vendor Invoice", "API", "", "0", "0",
+        "0", GL_API, "318");
+    createDocTypeTemplate(vars, apiDoctypeId, "AP Invoice Report template",
+        "@basedesign@/org/openbravo/erpReports", "Invoice-@our_ref@", "RptC_Invoice.jrxml");
+
+    String apcDoctypeId = createDocType(vars, "AP CreditMemo", "Vendor Credit Memo", "APC", "",
+        "0", "0", "0", GL_API, "318");
+    createDocTypeTemplate(vars, apcDoctypeId, "AP Credit Report template",
+        "@basedesign@/org/openbravo/erpReports", "Purchase Invoice-@our_ref@", "RptC_Invoice.jrxml");
+
     createDocType(vars, "AP Payment", "Vendor Payment", "APP", "", "0", "0", "700000", GL_APP, "");
-    createDocType(vars, "Purchase Order", "Purchase Order", "POO", "", "0", "0", "800000", GL_None,
-        "259");
+
+    String pooDoctypeId = createDocType(vars, "Purchase Order", "Purchase Order", "POO", "", "0",
+        "0", "800000", GL_None, "259");
+    createDocTypeTemplate(vars, pooDoctypeId, "Purchase Order Report template",
+        "@basedesign@/org/openbravo/erpReports", "Purchase Order-@our_ref@", "RptC_OrderPO.jrxml");
+
     createDocType(vars, "Purchase Requisition", "Purchase Requisition", "POR", "", "0", "0",
         "900000", GL_None, "259");
 
@@ -1256,22 +1278,46 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         "800060");
 
     // Order Entry
-    createDocType(vars, "Quotation", "Binding offer", "SOO", "OB", "0", "0", "10000", GL_None,
-        "259");
-    createDocType(vars, "Proposal", "Non binding offer", "SOO", "ON", "0", "0", "20000", GL_None,
-        "259");
-    createDocType(vars, "Prepay Order", "Prepay Order", "SOO", "PR", DT_S, DT_I, "30000", GL_None,
-        "259");
-    createDocType(vars, "Return Material", "Return Material Authorization", "SOO", "RM", DT_S,
-        DT_I, "40000", GL_None, "259");
-    createDocType(vars, "Standard Order", "Order Confirmation", "SOO", "SO", DT_S, DT_I, "50000",
-        GL_None, "259");
-    createDocType(vars, "Credit Order", "Order Confirmation", "SOO", "WI", DT_SI, DT_I, "60000",
-        GL_None, "259"); // RE
+    String sooDoctypeId2 = createDocType(vars, "Quotation", "Binding offer", "SOO", "OB", "0", "0",
+        "10000", GL_None, "259");
+    createDocTypeTemplate(vars, sooDoctypeId2, "Quotation Report template",
+        "@basedesign@/org/openbravo/erpReports", "Sales Order-@our_ref@", "C_OrderJR.jrxml");
+
+    String sooDoctypeId4 = createDocType(vars, "Proposal", "Non binding offer", "SOO", "ON", "0",
+        "0", "20000", GL_None, "259");
+    createDocTypeTemplate(vars, sooDoctypeId4, "Proposal Report template",
+        "@basedesign@/org/openbravo/erpReports", "Sales Order-@our_ref@", "C_OrderJR.jrxml");
+
+    String sooDoctypeId1 = createDocType(vars, "Prepay Order", "Prepay Order", "SOO", "PR", DT_S,
+        DT_I, "30000", GL_None, "259");
+    createDocTypeTemplate(vars, sooDoctypeId1, "Prepay Order Report template",
+        "@basedesign@/org/openbravo/erpReports", "Sales Order-@our_ref@", "C_OrderJR.jrxml");
+
+    String sooDoctypeId5 = createDocType(vars, "Return Material", "Return Material Authorization",
+        "SOO", "RM", DT_S, DT_I, "40000", GL_None, "259");
+    createDocTypeTemplate(vars, sooDoctypeId5, "Return Material Report template",
+        "@basedesign@/org/openbravo/erpReports", "Sales Order-@our_ref@", "C_OrderJR.jrxml");
+
+    String sooDoctypeId3 = createDocType(vars, "Standard Order", "Order Confirmation", "SOO", "SO",
+        DT_S, DT_I, "50000", GL_None, "259");
+    createDocTypeTemplate(vars, sooDoctypeId3, "Standard order report template",
+        "@basedesign@/org/openbravo/erpReports", "StandardOrder-@our_ref@", "C_OrderJR.jrxml");
+
+    String sooDoctypeId6 = createDocType(vars, "Credit Order", "Order Confirmation", "SOO", "WI",
+        DT_SI, DT_I, "60000", GL_None, "259"); // RE
+    createDocTypeTemplate(vars, sooDoctypeId6, "On Credit Order Report template",
+        "@basedesign@/org/openbravo/erpReports", "Sales Order-@our_ref@", "C_OrderJR.jrxml");
+
     String DT_WO = createDocType(vars, "Warehouse Order", "Order Confirmation", "SOO", "WP", DT_S,
         DT_I, "70000", GL_None, "259"); // LS
+    createDocTypeTemplate(vars, DT_WO, "Warehouse Order Memo Report template",
+        "@basedesign@/org/openbravo/erpReports", "Sales Order-@our_ref@", "C_OrderJR.jrxml");
+
     String DT = createDocType(vars, "POS Order", "Order Confirmation", "SOO", "WR", DT_SI, DT_II,
         "80000", GL_None, "259"); // Bar
+    createDocTypeTemplate(vars, DT, "POS Order Report template",
+        "@basedesign@/org/openbravo/erpReports", "Sales Order-@our_ref@", "C_OrderJR.jrxml");
+
     createPreference(vars, "C_DocTypeTarget_ID", DT, "143");
     createPreference(vars, "C_DocTypeTarget_ID", DT_WO, "800004");
     if (log4j.isDebugEnabled())
@@ -1570,4 +1616,32 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     return C_ValidCombination_ID;
   }
 
+  private void createDocTypeTemplate(VariablesSecureApp vars, String doctypeId, String name,
+      String templateLocation, String reportFilename, String templateFilename)
+      throws ServletException {
+    Connection conn = null;
+    try {
+      conn = this.getTransactionConnection();
+      if (InitialClientSetupData.insertDoctypeTemplate(conn, this, AD_Client_ID, doctypeId, name,
+          templateLocation, reportFilename, templateFilename) != 1)
+        log4j.warn("InitialClientSetup - createDocTypeTemplate - DocType Template NOT created - "
+            + name);
+      m_info.append(Utility.messageBD(this, "Template", vars.getLanguage())).append("=").append(
+          name).append(SALTO_LINEA);
+    } catch (NoConnectionAvailableException ex) {
+      throw new ServletException("@CODE=NoConnectionAvailable");
+    } catch (SQLException ex2) {
+      throw new ServletException("@CODE=" + Integer.toString(ex2.getErrorCode()) + "@"
+          + ex2.getMessage());
+    } catch (Exception ex3) {
+      throw new ServletException("@CODE=@" + ex3.getMessage());
+    } finally {
+      try {
+        releaseCommitConnection(conn);
+      } catch (Exception ignored) {
+        ignored.printStackTrace();
+      }
+    }
+
+  }
 }

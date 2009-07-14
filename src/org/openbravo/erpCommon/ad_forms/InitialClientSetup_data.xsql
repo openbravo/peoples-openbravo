@@ -1045,4 +1045,24 @@
     <Parameter name="AD_Module_ID"/>
     <Parameter name="version"/>
   </SqlMethod>
+  <SqlMethod name="insertDoctypeTemplate" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      INSERT INTO c_poc_doctype_template(
+            c_poc_doctype_template_id, ad_client_id, ad_org_id, isactive, 
+            created, createdby, updated, updatedby, c_doctype_id, name, 
+            templatelocation, reportfilename, templatefilename)
+      VALUES (GET_UUID(), ?, '0', 'Y', 
+            now(), '0', now(), '0', ?, ?, 
+            ?, ?, ?);
+      ]]>
+    </Sql>
+    <Parameter name="clientId"/>
+    <Parameter name="doctypeId"/>
+    <Parameter name="name"/>
+    <Parameter name="templatelocation"/>
+    <Parameter name="reportfilename"/>
+    <Parameter name="templatefilename"/>
+  </SqlMethod>
 </SqlClass>
