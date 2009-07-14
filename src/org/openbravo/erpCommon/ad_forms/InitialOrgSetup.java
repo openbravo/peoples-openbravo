@@ -1068,6 +1068,18 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             m_info.append(SALTO_LINEA).append(
                 Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(
                 SALTO_LINEA);
+          } else {
+            if (!InitialOrgSetupData.existsOrgModule(this, strClient, AD_Org_ID,
+                dataCOA[i].adModuleId)) {
+              InitialOrgSetupData.insertOrgModule(this, strClient, AD_Org_ID, vars.getUser(),
+                  dataCOA[i].adModuleId, dataCOA[i].version);
+            }
+            m_info.append(SALTO_LINEA).append(
+                Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
+                SALTO_LINEA);
+            strSummary.append(SALTO_LINEA).append(
+                Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
+                SALTO_LINEA);
           }
         }
       }
@@ -1116,8 +1128,11 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
           if (!strError.toString().equals(""))
             return strError.toString();
           else {
-            InitialOrgSetupData.insertOrgModule(this, strClient, AD_Org_ID, vars.getUser(),
-                data[j].adModuleId, data[j].version);
+            if (!InitialOrgSetupData
+                .existsOrgModule(this, strClient, AD_Org_ID, data[j].adModuleId)) {
+              InitialOrgSetupData.insertOrgModule(this, strClient, AD_Org_ID, vars.getUser(),
+                  data[j].adModuleId, data[j].version);
+            }
             m_info.append(SALTO_LINEA).append(
                 Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
                 SALTO_LINEA);

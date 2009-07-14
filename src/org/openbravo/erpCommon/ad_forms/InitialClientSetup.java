@@ -1464,6 +1464,18 @@ public class InitialClientSetup extends HttpSecureAppServlet {
               m_info.append(SALTO_LINEA).append(
                   Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(
                   SALTO_LINEA);
+            } else {
+              if (!InitialClientSetupData
+                  .existsClientModule(this, strClient, dataCOA[i].adModuleId)) {
+                InitialClientSetupData.insertClientModule(this, strClient, vars.getUser(),
+                    dataCOA[i].adModuleId, dataCOA[i].version);
+              }
+              m_info.append(SALTO_LINEA).append(
+                  Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage()))
+                  .append(SALTO_LINEA);
+              strSummary.append(SALTO_LINEA).append(
+                  Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage()))
+                  .append(SALTO_LINEA);
             }
           }
         }
@@ -1513,8 +1525,10 @@ public class InitialClientSetup extends HttpSecureAppServlet {
           if (!strError.toString().equals(""))
             return strError.toString();
           else {
-            InitialClientSetupData.insertClientModule(this, strClient, vars.getUser(),
-                data[j].adModuleId, data[j].version);
+            if (!InitialClientSetupData.existsClientModule(this, strClient, data[j].adModuleId)) {
+              InitialClientSetupData.insertClientModule(this, strClient, vars.getUser(),
+                  data[j].adModuleId, data[j].version);
+            }
             m_info.append(SALTO_LINEA).append(
                 Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
                 SALTO_LINEA);
