@@ -183,7 +183,7 @@ public class ModuleTree extends GenericTree {
           && hasChildUpdate(modules[i].getField("nodeId"));
 
       if (updateAvailable || updateAvailableInChildNode)
-        ((ModuleTreeData) modules[i]).icon2 = "Tree_Icon_Update";
+      	FieldProviderFactory.setField(modules[i], "icon2", "Tree_Icon_Update");
     }
   }
 

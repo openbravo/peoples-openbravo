@@ -25,7 +25,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-         SELECT M.Type, M.AD_Module_ID as Node_ID, AD_Column_Identifier('AD_Module',M.AD_Module_ID, ?) as Name,
+           SELECT M.Type, M.AD_Module_ID as Node_ID, AD_Column_Identifier('AD_Module',M.AD_Module_ID, ?) as Name,
                  (SELECT CASE WHEN COUNT(*)>0 THEN 'block' ELSE 'none' END
                     FROM AD_Module_Dependency
                    WHERE AD_Module_ID = M.AD_Module_ID
@@ -40,6 +40,7 @@
                      help,
                      author,
                      url,
+                     M.SeqNo,
                      '' as levelno,
                      '' as leveltree,
                      '' as icon,
@@ -47,20 +48,21 @@
                      '' as endline,
                      '' as updateversion,
                      '' as updatedescription,
-                     '' as position,
-                     '' as seqno
-           FROM AD_Module M, AD_DATASET
-          WHERE M.TYPE = 'M'
-            AND M.ISACTIVE = 'Y'
-            AND 1=1
-            AND M.HASREFERENCEDATA = 'Y'
-            AND NOT EXISTS (SELECT 1 FROM AD_CLIENTMODULE CM
-                            WHERE CM.ad_module_id = M.ad_module_id
-                            AND AD_CLIENT_ID = ?)
-            AND EXPORTALLOWED = 'Y'
-            AND M.ad_module_id = AD_DATASET.ad_module_id
-            AND AD_DATASET.ACCESSLEVEL IN ('3','1')
-          ORDER BY M.SeqNo
+                     '' as position
+            FROM AD_Module M
+			WHERE M.TYPE = 'M'
+			AND M.ISACTIVE = 'Y'
+			AND 1=1
+			AND ((EXISTS (SELECT 1 FROM ad_dataset
+							WHERE M.ad_module_id = AD_DATASET.ad_module_id
+							AND AD_DATASET.ACCESSLEVEL IN ('3','1')
+							AND AD_DATASET.EXPORTALLOWED = 'Y')
+						AND M.HASREFERENCEDATA = 'Y')
+						OR M.haschartofaccounts = 'Y')
+			AND NOT EXISTS (SELECT 1 FROM AD_CLIENTMODULE CM
+				    WHERE CM.ad_module_id = M.ad_module_id
+				    AND AD_CLIENT_ID = ?)
+			ORDER BY M.SeqNo
           ]]>
       </Sql>
       <Parameter name="lang"/>
@@ -76,33 +78,31 @@
                     FROM AD_Module_Dependency
                    WHERE AD_Module_ID = M.AD_Module_ID
                      AND IsIncluded = 'Y')                as display, m.Status, m.help, m.author, m.url,
-                     CASE WHEN COALESCE(AD_ORGMODULE.VERSION,M.VERSION) <> M.VERSION THEN 'Y' ELSE 'N' END AS Update_Available,
+                     CASE WHEN COALESCE(AD_ORGMODULE.VERSION,M.VERSION) <> M.VERSION THEN 'Y' ELSE '' END AS Update_Available,
                      seqno
-           FROM AD_Module M LEFT JOIN AD_ORGMODULE ON M.AD_MODULE_ID = AD_ORGMODULE.AD_MODULE_ID
-           , AD_DATASET
-          WHERE M.ad_module_id = AD_DATASET.ad_module_id
-            AND m.ISACTIVE = 'Y'
-            AND m.HASCHARTOFACCOUNTS = 'N'
+           FROM AD_Module M left join AD_DATASET on M.ad_module_id = AD_DATASET.ad_module_id
+			    LEFT JOIN AD_ORGMODULE ON M.AD_MODULE_ID = AD_ORGMODULE.AD_MODULE_ID
+          WHERE M.TYPE = 'M'
+            AND M.ISACTIVE = 'Y'
             AND 1=1
-            AND HASREFERENCEDATA = 'Y'
-            AND AD_DATASET.ACCESSLEVEL IN ('3','1')
+            AND M.HASREFERENCEDATA = 'Y'
+            AND AD_DATASET.ACCESSLEVEL IN ('3','6') AND EXPORTALLOWED = 'Y'
             AND NOT EXISTS (SELECT 1 FROM AD_CLIENTMODULE CM
                             WHERE CM.ad_module_id = M.ad_module_id
-                            AND AD_CLIENT_ID = ?)
+                            AND CM.AD_CLIENT_ID = ?)
             AND NOT EXISTS (SELECT 1 FROM AD_ORGMODULE OM
                             WHERE OM.ad_module_id = M.ad_module_id
-                            AND AD_CLIENT_ID = ?
-                            AND AD_ORG_ID = ?
-                            AND VERSION = M.VERSION)
-            AND EXISTS (SELECT 1 FROM AD_DATASET
-                        WHERE AD_DATASET.AD_MODULE_ID = M.AD_MODULE_ID
-                        AND EXPORTALLOWED = 'Y')) A
+                            AND OM.AD_CLIENT_ID = ?
+                            AND AD_IsOrgIncluded(?, OM.AD_Org_ID, OM.AD_Client_ID)<>-1
+                            AND AD_IsOrgIncluded(OM.AD_Org_ID, ?, OM.AD_Client_ID)<>-1
+                            AND VERSION = M.VERSION))A
           ORDER BY A.SeqNo
           ]]>
       </Sql>
       <Parameter name="lang"/>
       <Parameter name="client"/>
       <Parameter name="client"/>
+      <Parameter name="org"/>
       <Parameter name="org"/>
    </SqlMethod>
 

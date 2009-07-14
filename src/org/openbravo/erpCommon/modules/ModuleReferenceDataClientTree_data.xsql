@@ -39,6 +39,7 @@
                      help,
                      author,
                      url,
+                     M.SeqNo,
                      '' as levelno,
                      '' as leveltree,
                      '' as icon,
@@ -47,14 +48,16 @@
                      '' as updateversion,
                      '' as updatedescription,
                      '' as position
-           FROM AD_Module M, AD_DATASET
+           FROM AD_Module M
           WHERE M.TYPE = 'M'
             AND M.ISACTIVE = 'Y'
             AND 1=1
-            AND M.HASREFERENCEDATA = 'Y'
-            AND EXPORTALLOWED = 'Y'
-            AND M.ad_module_id = AD_DATASET.ad_module_id
-            AND AD_DATASET.ACCESSLEVEL IN ('3','6')
+            AND ((EXISTS (SELECT 1 FROM ad_dataset
+						WHERE M.ad_module_id = AD_DATASET.ad_module_id
+						AND AD_DATASET.ACCESSLEVEL IN ('3','6')
+						AND AD_DATASET.EXPORTALLOWED = 'Y')
+					AND M.HASREFERENCEDATA = 'Y')
+					OR M.haschartofaccounts = 'Y')
           ORDER BY M.SeqNo
       </Sql>
       <Parameter name="lang"/>

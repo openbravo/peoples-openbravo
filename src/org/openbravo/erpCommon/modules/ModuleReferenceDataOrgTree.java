@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2008 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -26,14 +26,14 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 /**
  * Manages the tree of installed modules.
- * 
+ *
  * It implements GenericTree, detailed description is in that API doc.
  */
 public class ModuleReferenceDataOrgTree extends ModuleTree {
 
   /**
    * Constructor to generate a root tree
-   * 
+   *
    * @param base
    * @param bSmall
    *          Normal size or small size (true)
@@ -47,6 +47,26 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
   }
 
   /**
+   * Constructor to generate a root tree
+   *
+   * @param base
+   * @param strClient
+   *          Client ID
+   * @param strOrg
+   *          Org ID
+   * @param bAddLinks
+   *          if true then adds links to the current sets of nodes, these links can be Update or
+   *          Apply
+   * @param bSmall
+   *          Normal size or small size (true)
+   */
+  public ModuleReferenceDataOrgTree(HttpBaseServlet base, String strClient, String strOrg, boolean bAddLinks,
+      boolean bSmall) {
+    super(base, bSmall);
+    setRootTree(strClient, strOrg, bAddLinks);
+  }
+
+  /**
    * Default constructor without parameters. It is needed to be able to create instances by
    * GenericTreeServlet, it must be implemented also by subclases.
    */
@@ -55,7 +75,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
 
   /**
    * Constructor to generate a root tree
-   * 
+   *
    * @param base
    * @param strClient
    *          Client ID
@@ -140,7 +160,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
 
   /**
    * Returns a HTML with the description for the given node
-   * 
+   *
    * @param node
    * @return a HTML String with the description for the given node
    */
@@ -173,7 +193,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
 
   /**
    * Generates a subtree with nodeId as root node
-   * 
+   *
    * @param nodeId
    */
   public void setSubTree(String nodeId, String level) {
