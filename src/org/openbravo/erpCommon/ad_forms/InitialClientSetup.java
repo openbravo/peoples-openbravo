@@ -23,7 +23,6 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -365,7 +364,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
     }
 
-    //==============================================================================================
+    // ==============================================================================================
     if (!strModules.equals("")) {
       try {
         m_info.append(SALTO_LINEA).append("*****************************************************")
@@ -411,7 +410,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
     }
 
-    //==============================================================================================
+    // ==============================================================================================
 
     log4j.debug("InitialClientSetup - after createEntities");
     if (isOK)
@@ -1442,13 +1441,16 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         strModules = strModules.substring(1, strModules.length());
       if (strModules.charAt(strModules.length() - 1) == ')')
         strModules = strModules.substring(0, strModules.length() - 1);
-      InitialClientSetupData[] data = InitialClientSetupData.selectModules(this, strModules);
-      data = orderModuleByDependency(data);
-      if (data != null && data.length != 0) {
-        DataImportService myData = DataImportService.getInstance();
-        for (int i = 0; i < data.length; i++) {
-          if (data[i].haschartofaccounts.equals("Y") && bCreateAccounting) {
-            String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules" + data[i].path;
+
+      // Import Charts of accounts
+      InitialClientSetupData[] dataCOA = null;
+      if (bCreateAccounting) {
+        dataCOA = InitialClientSetupData.selectCOAModules(this, strModules);
+        ModuleUtiltiy.orderModuleByDependency(this, dataCOA);
+        if (dataCOA != null && dataCOA.length != 0) {
+          DataImportService myData = DataImportService.getInstance();
+          for (int i = 0; i < dataCOA.length; i++) {
+            String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules" + dataCOA[i].path;
             FileInputStream in = new FileInputStream(strPath);
             AccountingValueData av = new AccountingValueData(vars, in, true, "C");
             m_info.append(SALTO_LINEA).append(
@@ -1464,51 +1466,55 @@ public class InitialClientSetup extends HttpSecureAppServlet {
                   SALTO_LINEA);
             }
           }
-          String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules/" + data[i].javapackage
+        }
+      }
+
+      // Import Reference data
+      InitialClientSetupData[] data = InitialClientSetupData.selectRDModules(this, strModules);
+      ModuleUtiltiy.orderModuleByDependency(this, data);
+
+      if (data != null && data.length != 0) {
+        DataImportService myData = DataImportService.getInstance();
+        StringBuffer strError = new StringBuffer("");
+
+        for (int j = 0; j < data.length; j++) {
+          String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules/" + data[j].javapackage
               + "/referencedata/standard";
-          File myDir = new File(strPath);
-          File[] myFiles = myDir.listFiles();
-          ArrayList<File> myTargetFiles = new ArrayList<File>();
-          if (myFiles == null)
+          File datasetFile = new File(strPath + "/" + Utility.wikifiedName(data[j].datasetname)
+              + ".xml");
+          if (!datasetFile.exists()) {
             continue;
-          for (int j = 0; myFiles != null && j < myFiles.length; j++) {
-            if (myFiles[j].getName().endsWith(".xml"))
-              myTargetFiles.add(myFiles[j]);
           }
-          myFiles = new File[myTargetFiles.size()];
-          myFiles = myTargetFiles.toArray(myFiles);
-          StringBuffer strError = new StringBuffer("");
-          for (int j = 0; j < myFiles.length; j++) {
-            String strXml = Utility.fileToString(myFiles[j].getPath());
-            ImportResult myResult = myData.importDataFromXML((Client) OBDal.getInstance().get(
-                Client.class, strClient), (Organization) OBDal.getInstance().get(
-                Organization.class, "0"), strXml, (Module) OBDal.getInstance().get(Module.class,
-                data[i].adModuleId));
-            m_info.append(SALTO_LINEA).append("File: ").append(myFiles[j].getName()).append(":")
-                .append(SALTO_LINEA);
-            if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
-                && !myResult.getLogMessages().equals("null")) {
-              m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(myResult.getLogMessages()).append(SALTO_LINEA);
-            }
-            if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
-                && !myResult.getWarningMessages().equals("null")) {
-              m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(myResult.getWarningMessages()).append(SALTO_LINEA);
-            }
-            if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
-                && !myResult.getErrorMessages().equals("null")) {
-              m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(myResult.getErrorMessages()).append(SALTO_LINEA);
-            }
-            if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals(""))
-              strError = strError.append(myResult.getErrorMessages());
+
+          String strXml = Utility.fileToString(datasetFile.getPath());
+          ImportResult myResult = myData.importDataFromXML((Client) OBDal.getInstance().get(
+              Client.class, strClient), (Organization) OBDal.getInstance().get(Organization.class,
+              "0"), strXml, (Module) OBDal.getInstance().get(Module.class, data[j].adModuleId));
+          m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
+              .append(SALTO_LINEA);
+          if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
+              && !myResult.getLogMessages().equals("null")) {
+            m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(myResult.getLogMessages()).append(SALTO_LINEA);
           }
+          if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
+              && !myResult.getWarningMessages().equals("null")) {
+            m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(myResult.getWarningMessages()).append(SALTO_LINEA);
+          }
+          if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
+              && !myResult.getErrorMessages().equals("null")) {
+            m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(myResult.getErrorMessages()).append(SALTO_LINEA);
+          }
+          if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals(""))
+            strError = strError.append(myResult.getErrorMessages());
+
           if (!strError.toString().equals(""))
             return strError.toString();
           else {
             InitialClientSetupData.insertClientModule(this, strClient, vars.getUser(),
-                data[i].adModuleId, data[i].version);
+                data[j].adModuleId, data[j].version);
             m_info.append(SALTO_LINEA).append(
                 Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
                 SALTO_LINEA);
@@ -1517,35 +1523,15 @@ public class InitialClientSetup extends HttpSecureAppServlet {
                 SALTO_LINEA);
           }
         }
-      } else
-        return "WrongModules";
+      } else {
+        // wrong modules in case no coa and not rd
+        if (dataCOA == null || dataCOA.length == 0) {
+          return "WrongModules";
+        }
+      }
     } else
       return "NoModules";
     return "";
-  }
-
-  /**
-   * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   * 
-   * @param modules
-   * @return
-   */
-  private InitialClientSetupData[] orderModuleByDependency(InitialClientSetupData[] modules) {
-    if (modules == null || modules.length == 0)
-      return null;
-    ArrayList<String> list = new ArrayList<String>();
-    for (int i = 0; i < modules.length; i++) {
-      list.add(modules[i].adModuleId);
-    }
-    ArrayList<String> orderList = ModuleUtiltiy.orderByDependency(this, list);
-    InitialClientSetupData[] rt = new InitialClientSetupData[orderList.size()];
-    for (int i = 0; i < orderList.size(); i++) {
-      int j = 0;
-      while (j < modules.length && !modules[j].adModuleId.equals(orderList.get(i)))
-        j++;
-      rt[i] = modules[j];
-    }
-    return rt;
   }
 
   private String getAcct(Connection conn, AccountingValueData[] data, String key)
