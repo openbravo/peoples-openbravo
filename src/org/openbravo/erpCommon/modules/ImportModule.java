@@ -981,29 +981,47 @@ public class ImportModule {
 
         if (!entry.isDirectory()) {
           // It is a file
-          byte entryBytes[] = getBytesCurrentEntryStream(obxInputStream);
-
+          byte[] entryBytes = null;
+          boolean found = false;
           // Read the xml file to obtain module info
           if (entry.getName().replace("\\", "/").endsWith(
               "src-db/database/sourcedata/AD_MODULE.xml")) {
+            entryBytes = getBytesCurrentEntryStream(obxInputStream);
             final Vector<DynaBean> module = getEntryDynaBeans(entryBytes);
             dModulesToInstall.addAll(module);
             moduleID = (String) module.get(0).get("AD_MODULE_ID");
             obxInputStream.closeEntry();
+            found = true;
           } else if (entry.getName().replace("\\", "/").endsWith(
               "src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml")) {
+            entryBytes = getBytesCurrentEntryStream(obxInputStream);
             dDependencies.addAll(getEntryDynaBeans(entryBytes));
             obxInputStream.closeEntry();
+            found = true;
           } else if (entry.getName().replace("\\", "/").endsWith(
               "src-db/database/sourcedata/AD_MODULE_DBPREFIX.xml")) {
+            entryBytes = getBytesCurrentEntryStream(obxInputStream);
             dDBprefix.addAll(getEntryDynaBeans(entryBytes));
             obxInputStream.closeEntry();
+            found = true;
           }
 
           // Unzip the file
           log4j.info("Installing " + fileName);
+
           final FileOutputStream fout = new FileOutputStream(entryFile);
-          fout.write(entryBytes);
+
+          if (found) {
+            // the entry is already read as a byte[]
+            fout.write(entryBytes);
+          } else {
+            final byte[] buf = new byte[4096];
+            int len;
+            while ((len = obxInputStream.read(buf)) > 0) {
+              fout.write(buf, 0, len);
+            }
+          }
+
           fout.close();
         }
 
