@@ -80,7 +80,7 @@ import org.w3c.dom.Node;
  * 
  */
 public class ImportModule {
-  private static ConnectionProvider pool;
+  static ConnectionProvider pool;
   static Logger log4j = Logger.getLogger(ImportModule.class);
   private String obDir;
   private Database db;
@@ -92,7 +92,7 @@ public class ImportModule {
   private Module[] modulesToUpdate = null;
   private StringBuffer log = new StringBuffer();
   private int logLevel = 0;
-  private VariablesSecureApp vars;
+  VariablesSecureApp vars;
 
   public static final int MSG_SUCCESS = 0;
   public static final int MSG_WARN = 1;
@@ -278,7 +278,11 @@ public class ImportModule {
               .getModuleID()
               : modulesToUpdate[0].getModuleID();
 
-          installModule(file, moduleToInstallID);
+          final Vector<DynaBean> dynMod = new Vector<DynaBean>();
+          final Vector<DynaBean> dynDep = new Vector<DynaBean>();
+          final Vector<DynaBean> dynDbPrefix = new Vector<DynaBean>();
+
+          installModule(file, moduleToInstallID, dynMod, dynDep, dynDbPrefix);
 
           if (moduleToInstallID.equals("0"))
             Utility.mergeOpenbravoProperties(obDir + "/config/Openbravo.properties", obDir
@@ -347,16 +351,19 @@ public class ImportModule {
       if (modulesToInstall != null) {
         for (int i = 0; i < modulesToInstall.length; i++) {
           try {
-            final byte[] getMod = ws.getModule(modulesToInstall[i].getModuleVersionID());
-            ByteArrayInputStream obx = new ByteArrayInputStream(getMod);
+            // get remote module obx
+            InputStream obx = ModuleUtiltiy.getRemoteModule(this, modulesToInstall[i]
+                .getModuleVersionID());
+            if (obx == null) {
+              return;
+            }
 
-            installModule(obx, modulesToInstall[i].getModuleID());
-            // Add entries in .classpath for eclipse users
             final Vector<DynaBean> dynMod = new Vector<DynaBean>();
             final Vector<DynaBean> dynDep = new Vector<DynaBean>();
             final Vector<DynaBean> dynDbPrefix = new Vector<DynaBean>();
-            obx = new ByteArrayInputStream(getMod);
-            getModulesFromObx(dynMod, dynDep, dynDbPrefix, obx);
+            installModule(obx, modulesToInstall[i].getModuleID(), dynMod, dynDep, dynDbPrefix);
+
+            // Add entries in .classpath for eclipse users
             insertDynaModulesInDB(dynMod, dynDep, dynDbPrefix);
             addDynaClasspathEntries(dynMod);
           } catch (final Exception e) {
@@ -380,14 +387,18 @@ public class ImportModule {
       if (modulesToUpdate != null) {
         for (int i = 0; i < modulesToUpdate.length; i++) {
           try {
-            final byte[] getMod = ws.getModule(modulesToUpdate[i].getModuleVersionID());
-            installModule(new ByteArrayInputStream(getMod), modulesToUpdate[i].getModuleID());
+            // get remote module obx
+            InputStream obx = ModuleUtiltiy.getRemoteModule(this, modulesToInstall[i]
+                .getModuleVersionID());
+            if (obx == null) {
+              return;
+            }
 
             final Vector<DynaBean> dynMod = new Vector<DynaBean>();
             final Vector<DynaBean> dynDep = new Vector<DynaBean>();
             final Vector<DynaBean> dynDBPrefix = new Vector<DynaBean>();
+            installModule(obx, modulesToUpdate[i].getModuleID(), dynMod, dynDep, dynDBPrefix);
 
-            getModulesFromObx(dynMod, dynDep, dynDBPrefix, new ByteArrayInputStream(getMod));
             insertDynaModulesInDB(dynMod, dynDep, dynDBPrefix);
 
             if (modulesToUpdate[i].getModuleID().equals("0"))
@@ -626,7 +637,7 @@ public class ImportModule {
    * Adds a message with a log level to the current instance log.
    * 
    */
-  private void addLog(String m, int level) {
+  void addLog(String m, int level) {
     log4j.info(m);
     if (level > logLevel) {
       logLevel = level;
@@ -762,6 +773,18 @@ public class ImportModule {
     return ba;
   }
 
+  private byte[] getBytesCurrentEntryStream(ZipInputStream obxInputStream) throws Exception {
+    final ByteArrayOutputStream fout = new ByteArrayOutputStream();
+    final byte[] buf = new byte[1024];
+    int len;
+    while ((len = obxInputStream.read(buf)) > 0) {
+      fout.write(buf, 0, len);
+    }
+
+    fout.close();
+    return fout.toByteArray();
+  }
+
   /**
    * Inserts in database the Vector<DynaBean> with its dependencies
    * 
@@ -842,6 +865,8 @@ public class ImportModule {
   /**
    * Returns all the modules and dependencies described within the obx file (as InputStream)
    * 
+   * Used to check dependencies in local intallation
+   * 
    * @param dModulesToInstall
    * @param dDependencies
    * @param obx
@@ -864,7 +889,7 @@ public class ImportModule {
         getModulesFromObx(dModulesToInstall, dDependencies, dDBprefix, ba);
       } else if (entry.getName().replace("\\", "/").endsWith(
           "src-db/database/sourcedata/AD_MODULE.xml")) {
-        final Vector<DynaBean> module = getEntryDynaBeans(obxInputStream);
+        final Vector<DynaBean> module = getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream));
         boolean isPackage = false;
         if (module != null && module.size() > 0) {
           isPackage = !((String) module.get(0).get("TYPE")).equals("M");
@@ -874,12 +899,12 @@ public class ImportModule {
         foundModule = true && !isPackage;
       } else if (entry.getName().replace("\\", "/").endsWith(
           "src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml")) {
-        dDependencies.addAll(getEntryDynaBeans(obxInputStream));
+        dDependencies.addAll(getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream)));
         obxInputStream.closeEntry();
         foundDependency = true;
       } else if (entry.getName().replace("\\", "/").endsWith(
           "src-db/database/sourcedata/AD_MODULE_DBPREFIX.xml")) {
-        dDBprefix.addAll(getEntryDynaBeans(obxInputStream));
+        dDBprefix.addAll(getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream)));
         obxInputStream.closeEntry();
         foundPrefix = true;
       } else
@@ -896,8 +921,9 @@ public class ImportModule {
    * @return
    * @throws Exception
    */
-  private Vector<DynaBean> getEntryDynaBeans(ZipInputStream obxInputStream) throws Exception {
-    final ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
+  private Vector<DynaBean> getEntryDynaBeans(byte[] obxEntryBytes) throws Exception {
+    final ByteArrayInputStream ba = new ByteArrayInputStream(obxEntryBytes);
+
     final DatabaseDataIO io = new DatabaseDataIO();
     final DataReader dr = io.getConfiguredCompareDataReader(db);
     dr.getSink().start();
@@ -913,7 +939,8 @@ public class ImportModule {
    *          The ID for the current module to install
    * @throws Exception
    */
-  private void installModule(InputStream obx, String moduleID) throws Exception {
+  private void installModule(InputStream obx, String moduleID, Vector<DynaBean> dModulesToInstall,
+      Vector<DynaBean> dDependencies, Vector<DynaBean> dDBprefix) throws Exception {
     if (!(new File(obDir + "/modules").canWrite())) {
       addLog("@CannotWriteDirectory@ " + obDir + "/modules. ", MSG_ERROR);
       throw new PermissionException("Cannot write on directory: " + obDir + "/modules");
@@ -925,28 +952,15 @@ public class ImportModule {
       if (entry.getName().endsWith(".obx")) { // If it is a new module
         // install it
         if (installLocally) {
-          final ByteArrayOutputStream fout = new ByteArrayOutputStream();
-          final byte[] buf = new byte[1024];
-          int len;
-          while ((len = obxInputStream.read(buf)) > 0) {
-            fout.write(buf, 0, len);
-          }
+          final ByteArrayInputStream ba = new ByteArrayInputStream(
+              getBytesCurrentEntryStream(obxInputStream));
 
-          fout.close();
-          final ByteArrayInputStream ba = new ByteArrayInputStream(fout.toByteArray());
-          final ByteArrayInputStream ba1 = new ByteArrayInputStream(fout.toByteArray());
-
-          // Obtain the ID for the module to be installed (this is
-          // done for core)
-          final Vector<DynaBean> obxModule = new Vector<DynaBean>();
-          getModulesFromObx(obxModule, new Vector<DynaBean>(), new Vector<DynaBean>(), ba1);
-
-          installModule(ba, (String) obxModule.get(0).get("AD_MODULE_ID"));
+          installModule(ba, moduleID, dModulesToInstall, dDependencies, dDBprefix);
         } // If install remotely it is no necessary to install the .obx
         // because it will be get from CR
         obxInputStream.closeEntry();
       } else {
-
+        // Unzip the contents
         final String fileName = obDir + (moduleID.equals("0") ? "/" : "/modules/")
             + entry.getName().replace("\\", "/");
         final File entryFile = new File(fileName);
@@ -966,17 +980,33 @@ public class ImportModule {
         }
 
         if (!entry.isDirectory()) {
+          // It is a file
+          byte entryBytes[] = getBytesCurrentEntryStream(obxInputStream);
+
+          // Read the xml file to obtain module info
+          if (entry.getName().replace("\\", "/").endsWith(
+              "src-db/database/sourcedata/AD_MODULE.xml")) {
+            final Vector<DynaBean> module = getEntryDynaBeans(entryBytes);
+            dModulesToInstall.addAll(module);
+            moduleID = (String) module.get(0).get("AD_MODULE_ID");
+            obxInputStream.closeEntry();
+          } else if (entry.getName().replace("\\", "/").endsWith(
+              "src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml")) {
+            dDependencies.addAll(getEntryDynaBeans(entryBytes));
+            obxInputStream.closeEntry();
+          } else if (entry.getName().replace("\\", "/").endsWith(
+              "src-db/database/sourcedata/AD_MODULE_DBPREFIX.xml")) {
+            dDBprefix.addAll(getEntryDynaBeans(entryBytes));
+            obxInputStream.closeEntry();
+          }
+
           // Unzip the file
           log4j.info("Installing " + fileName);
           final FileOutputStream fout = new FileOutputStream(entryFile);
-          final byte[] buf = new byte[1024];
-
-          int len;
-          while ((len = obxInputStream.read(buf)) > 0) {
-            fout.write(buf, 0, len);
-          }
+          fout.write(entryBytes);
           fout.close();
         }
+
         obxInputStream.closeEntry();
       }
     }
