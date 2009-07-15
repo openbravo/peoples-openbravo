@@ -33,7 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="LASTREGACCUMAMT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="LASTREGACCUMAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TAXTOTALAMT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="TAXTOTALAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

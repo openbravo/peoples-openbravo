@@ -49,19 +49,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TAXBASEAMT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="TAXBASEAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TAXAMT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="TAXAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TOTALAMT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="TOTALAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TAXUNDAMT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="TAXUNDAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -69,11 +69,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="EXEMPTAMT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="EXEMPTAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="NOVATAMT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="NOVATAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
