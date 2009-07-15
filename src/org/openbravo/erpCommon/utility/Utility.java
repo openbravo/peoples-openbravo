@@ -2337,4 +2337,28 @@ public class Utility {
     return strArray;
   }
 
+  /**
+   * Gets the reference list for a particular reference id
+   * 
+   * @param connectionProvider
+   * @param language
+   * @param referenceId
+   * @return refValues string array containing reference values
+   * @throws ServletException
+   */
+  public static String[] getReferenceValues(ConnectionProvider connectionProvider, String language,
+      String referenceId) throws ServletException {
+    String[] refValues = null;
+    if (referenceId != null) {
+      UtilityData[] datas = UtilityData.selectReference(connectionProvider, language, referenceId);
+      if (datas != null) {
+        int i = 0;
+        refValues = new String[datas.length];
+        for (UtilityData reference : datas) {
+          refValues[i++] = reference.getField("value");
+        }
+      }
+    }
+    return refValues;
+  }
 }

@@ -29,7 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -40,6 +40,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.UtilityData;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportProjectProgress extends HttpSecureAppServlet {
@@ -48,7 +49,9 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
+    String referenceId = UtilityData.getReferenceId(this, "ProjectStatus");
+    String[] referenceValues = Utility.getReferenceValues(this, vars.getLanguage(), referenceId);
+    ValueListFilter valueFilter = new ValueListFilter(referenceValues);
     if (vars.commandIn("DEFAULT")) {
       String strRefDate = vars.getGlobalVariable("inpRefDate", "ReportProjectProgress|RefDateFrom",
           DateTimeData.today(this));
@@ -68,7 +71,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
       String strProject = vars.getGlobalVariable("inpcProjectId", "ReportProjectProgress|Project",
           "");
       String strProjectStatus = vars.getInGlobalVariable("inpProjectstatus",
-          "ReportProjectProgress|Projectstatus", "", IsIDFilter.instance);
+          "ReportProjectProgress|Projectstatus", "", valueFilter);
       String strBPartner = vars.getGlobalVariable("inpcBPartnerId",
           "ReportProjectProgress|Partner", "");
       String strResponsible = vars.getGlobalVariable("inpResponsible",
@@ -98,7 +101,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
       String strProject = vars.getRequestGlobalVariable("inpcProjectId",
           "ReportProjectProgress|Project");
       String strProjectStatus = vars.getRequestInGlobalVariable("inpProjectstatus",
-          "ReportProjectProgress|Projectstatus", null);
+          "ReportProjectProgress|Projectstatus", valueFilter);
       String strBPartner = vars.getRequestGlobalVariable("inpcBPartnerId",
           "ReportProjectProgress|Partner");
       String strResponsible = vars.getRequestGlobalVariable("inpResponsible",

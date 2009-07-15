@@ -139,4 +139,13 @@
       </Sql>
       <Parameter name="cCurrencyId"/>
    </SqlMethod>
+   <SqlMethod name="getReferenceId" type="preparedStatement" return="String" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT ad_reference_id
+          FROM ad_reference
+        WHERE name = ?
+     </Sql>
+      <Parameter name="referenceName"/>      
+   </SqlMethod>
 </SqlClass>
