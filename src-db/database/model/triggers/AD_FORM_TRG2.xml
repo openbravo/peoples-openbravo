@@ -25,7 +25,7 @@
   v_ID VARCHAR2(32) ;
   v_ID_MAP     VARCHAR2(32) ;
   v_WindowName VARCHAR2(60):='ad_forms';
-  v_ClassName  VARCHAR2(60) ;
+  v_ClassName  AD_MODEL_OBJECT.classname%TYPE;
     
 BEGIN
     
