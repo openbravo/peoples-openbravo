@@ -1055,7 +1055,7 @@
             templatelocation, reportfilename, templatefilename)
       VALUES (GET_UUID(), ?, '0', 'Y', 
             now(), '0', now(), '0', ?, ?, 
-            ?, ?, ?);
+            ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="clientId"/>
