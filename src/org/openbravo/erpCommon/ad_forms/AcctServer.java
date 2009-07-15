@@ -840,7 +840,7 @@ public abstract class AcctServer {
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Before balanceSource");
     // balanceSource
-    if (!m_fact[index].isSourceBalanced())
+    if (!m_fact[index].isSourceBalanced() && !MultiCurrency)
       m_fact[index].balanceSource(conn);
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - After balanceSource");
@@ -848,7 +848,7 @@ public abstract class AcctServer {
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Before isSegmentBalanced");
     // balanceSegments
-    if (!m_fact[index].isSegmentBalanced(conn))
+    if (!m_fact[index].isSegmentBalanced(conn) && !MultiCurrency)
       m_fact[index].balanceSegments(conn);
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - After isSegmentBalanced");
