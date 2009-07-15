@@ -244,6 +244,7 @@ public class ImportModule {
     modulesToInstall = mid.getModulesToInstall();
     modulesToUpdate = mid.getModulesToUpdate();
     checked = mid.isValidConfiguration();
+
     return checked;
   }
 
@@ -388,7 +389,7 @@ public class ImportModule {
         for (int i = 0; i < modulesToUpdate.length; i++) {
           try {
             // get remote module obx
-            InputStream obx = ModuleUtiltiy.getRemoteModule(this, modulesToInstall[i]
+            InputStream obx = ModuleUtiltiy.getRemoteModule(this, modulesToUpdate[i]
                 .getModuleVersionID());
             if (obx == null) {
               return;
@@ -451,6 +452,7 @@ public class ImportModule {
         } catch (final Exception e) {
           e.printStackTrace();
         }
+        log4j.info("deleting files...");
         Utility.deleteDir(core);
       } else { // updating a module different than core
 
@@ -468,6 +470,7 @@ public class ImportModule {
             Zip.zip(obDir + "/modules/" + moduleInDB.javapackage, obDir + "/backup_install/"
                 + moduleInDB.javapackage + "-" + moduleInDB.version + ".zip");
             // Delete directory to be updated
+            log4j.info("deleting files...");
             Utility.deleteDir(new File(obDir + "/modules/" + moduleInDB.javapackage));
           } catch (final Exception e) {
             log4j.error(e);

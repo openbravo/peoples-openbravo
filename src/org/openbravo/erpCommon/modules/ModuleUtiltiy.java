@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.services.webservice.WebServiceImpl;
@@ -38,6 +39,7 @@ import org.openbravo.services.webservice.WebServiceImplServiceLocator;
  * 
  */
 public class ModuleUtiltiy {
+  protected static Logger log4j = Logger.getLogger(ModuleUtiltiy.class);
 
   /**
    * It receives an ArrayList<String> with modules IDs and returns the same list ordered taking into
@@ -171,6 +173,7 @@ public class ModuleUtiltiy {
       }
     } else { // TODO: just testing...
       try {
+        log4j.info("getting core");
         URL url = new URL(
             "http://sourceforge.net/projects/openbravo/files/03-openbravo-updates/OpenbravoERP-2.50.14184.obx/download");
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
