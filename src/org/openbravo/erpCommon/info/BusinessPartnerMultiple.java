@@ -215,12 +215,11 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
           // or
           // first
           // load
-          data = BusinessPartnerMultipleData.select(this, "1", Utility.getContext(this, vars,
+          strNumRows = BusinessPartnerMultipleData.countRows(this, Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
               "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
               strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
-                  .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", "");
-          strNumRows = String.valueOf(data.length);
+                  .equals("vendor") ? "vendors" : ""), strCity);
           vars.setSessionValue("BusinessPartnerMultipleInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerMultipleInfo.numrows");
@@ -228,19 +227,21 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
 
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
+          String oraLimit1 = String.valueOf(offset + pageSize);
+          String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
           data = BusinessPartnerMultipleData.select(this, "ROWNUM", Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
               "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
               strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
-                  .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, oraLimit, "");
+                  .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", oraLimit1,
+              oraLimit2);
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
           data = BusinessPartnerMultipleData.select(this, "1", Utility.getContext(this, vars,
               "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
               "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
               strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
-                  .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", pgLimit);
+                  .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit, "", "");
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -345,12 +346,13 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
 
       // Filtering result
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        String oraLimit = (minOffset + 1) + " AND " + maxOffset;
+        String oraLimit1 = String.valueOf(maxOffset);
+        String oraLimit2 = (minOffset + 1) + " AND " + oraLimit1;
         data = BusinessPartnerMultipleData.select(this, "ROWNUM", Utility.getContext(this, vars,
             "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
             "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
             strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
-                .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, oraLimit, "");
+                .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", oraLimit1, oraLimit2);
       } else {
         // minOffset and maxOffset are zero based so pageSize is difference +1
         int pageSize = maxOffset - minOffset + 1;
@@ -359,7 +361,7 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
             "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
             "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
             strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
-                .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", pgLimit);
+                .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit, "", "");
       }
 
       // result field has to be named id -> rename by copy the list
