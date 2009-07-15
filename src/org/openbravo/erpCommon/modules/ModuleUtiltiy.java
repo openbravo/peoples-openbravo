@@ -148,7 +148,7 @@ public class ModuleUtiltiy {
    * @return An {@link InputStream} with containing the obx for the module (null if error)
    */
   public static InputStream getRemoteModule(ImportModule im, String moduleVersionID) {
-    if (true) { // TODO: check for web service
+    if (!moduleVersionID.equals("0")) { // TODO: check for web service
       WebServiceImplServiceLocator loc;
       WebServiceImpl ws = null;
       try {
@@ -171,7 +171,8 @@ public class ModuleUtiltiy {
       }
     } else { // TODO: just testing...
       try {
-        URL url = new URL("http://192.168.7.218:8080/");
+        URL url = new URL(
+            "http://sourceforge.net/projects/openbravo/files/03-openbravo-updates/OpenbravoERP-2.50.14184.obx/download");
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
 
         urlConn.setRequestProperty("Keep-Alive", "300");
