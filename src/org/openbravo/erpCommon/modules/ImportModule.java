@@ -259,7 +259,18 @@ public class ImportModule {
     final File file = new File(fileName);
     if (!file.exists())
       throw new Exception("File " + fileName + " do not exist!");
-    execute(new FileInputStream(fileName), new FileInputStream(fileName));
+    execute(new FileInputStream(fileName));
+  }
+
+  /**
+   * Deprecated, use instead ImportModule.execute(InputStream file)
+   * 
+   * @param file
+   * @param file2
+   */
+  @Deprecated
+  public void execute(InputStream file, InputStream file2) {
+    execute(file);
   }
 
   /**
@@ -269,7 +280,7 @@ public class ImportModule {
    * This method receives a InputStream of the obx file
    * 
    */
-  public void execute(InputStream file, InputStream file2) {
+  public void execute(InputStream file) {
     try {
       if (checked || force) {
         if (installLocally) {
