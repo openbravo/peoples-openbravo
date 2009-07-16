@@ -40,6 +40,7 @@ import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -490,8 +491,17 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
-    xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData
-        .selectCombo(this, vars.getRole()));
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
+              .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), '*');
+      comboTableData.fillParameters(null, "ReportGeneralLedger", "");
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("dateFrom", strDateFrom);

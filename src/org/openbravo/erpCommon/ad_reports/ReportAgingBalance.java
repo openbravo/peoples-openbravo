@@ -198,14 +198,11 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("column4", strcolumn4);
     xmlDocument.setParameter("paramAD_ORG_Id", strOrgTrx);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "AD_ORG NAME", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalanceData"), Utility
-              .getContext(this, vars, "#User_Client", "ReportAgingBalanceData"), '*');
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportAgingBalanceData",
-          strOrgTrx);
-      xmlDocument.setData("reportAD_ORGID", "liststructure", ReportAgingBalanceData.selectCombo(
-          this, vars.getRole()));
-      comboTableData = null;
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalanceData"),
+          Utility.getContext(this, vars, "#User_Client", "ReportAgingBalanceData"), '*');
+      comboTableData.fillParameters(null, "ReportAgingBalanceData", strOrgTrx);
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
       throw new ServletException(ex);
     }

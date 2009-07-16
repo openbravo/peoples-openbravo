@@ -260,8 +260,17 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setData("reportAccountTo_ID", "liststructure", ReportTrialBalanceData
         .selectAccount(this, Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
             Utility.getContext(this, vars, "#User_Client", "Account"), "", strcAcctSchemaId));
-    xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData
-        .selectCombo(this, vars.getRole()));
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), Utility
+              .getContext(this, vars, "#User_Client", "ReportTrialBalance"), '*');
+      comboTableData.fillParameters(null, "ReportTrialBalance", "");
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Client",

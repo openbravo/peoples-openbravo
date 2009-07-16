@@ -23,20 +23,6 @@
 
 
 <SqlClass name="GeneralAccountingReportsData" package="org.openbravo.erpCommon.ad_reports">
-  <SqlMethod name="selectCombo" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT A_O.AD_ORG_ID AS ID, A_O.NAME, '' as pagebreak, '' AS PADRE, '' AS ISBALANCED, '' AS BEGINING, '' AS END, '' AS PREVIOUS_YEAR, '' AS PREVIOUS_YEAR_ID
-        FROM AD_ORG A_O, AD_ROLE_ORGACCESS A_R_O, AD_ROLE R
-        WHERE A_R_O.AD_ORG_ID = A_O.AD_ORG_ID 
-        AND A_R_O.ISACTIVE = 'Y' 
-        AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
-        AND R.ISACTIVE = 'Y' 
-        AND A_R_O.AD_ROLE_ID = ? 
-        ORDER BY A_O.NAME
-      ]]></Sql>
-        <Parameter name="rol"/>
-   </SqlMethod>
    
    <SqlMethod name="selectRpt" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -51,6 +37,12 @@
 		<Parameter name="org" optional="true" type="replace" after="WHERE AD_ORG_ID IN (" text="'1'"/>      
 		<Parameter name="client" optional="true" type="replace" after="AND AD_CLIENT_ID IN (" text="'1'"/>      
 		<Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND C_ACCT_RPT.C_ACCTSCHEMA_ID = ?]]></Parameter>
+		<Field name="pagebreak" value="void"/>
+        <Field name="padre" value="void"/>
+        <Field name="begining" value="void"/>
+        <Field name="end" value="void"/>
+        <Field name="previousYear" value="void"/>
+        <Field name="previousYearId" value="void"/>
    </SqlMethod>
    <SqlMethod name="selectRptDouble" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
