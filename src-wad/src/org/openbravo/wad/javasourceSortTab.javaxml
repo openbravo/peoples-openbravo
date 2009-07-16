@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -92,12 +92,13 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
             int end=0;
             int seqno=0;
             int maxSeqno=0;
+            boolean templateInDev = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.isTemplateInDev(this);
             
             while(end &lt; size) {
               start = end;
-              while (start &lt; size &amp;&amp; dataShown[start].isindevelopment.equals("N")) start++;
+              while (start &lt; size &amp;&amp; !templateInDev &amp;&amp; dataShown[start].isindevelopment.equals("N")) start++;
               end = start;
-              while (end &lt; size &amp;&amp; dataShown[end].isindevelopment.equals("Y")) end++;
+              while (end &lt; size &amp;&amp; (templateInDev || dataShown[end].isindevelopment.equals("Y"))) end++;
               
               if (start &gt; 0) seqno = new Integer(dataShown[start-1].seqnoParam).intValue();
               if (end &lt; size) maxSeqno = new Integer(dataShown[end].seqnoParam).intValue();

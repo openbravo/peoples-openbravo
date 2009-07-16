@@ -139,4 +139,13 @@
     <PARAMETER_TMP id="parent">    <Parameter name="param1" id="paramKeyParent"/></PARAMETER_TMP>
     &#60;Parameter name="shown" optional="true" type="argument" after="WHERE 1=1 " text=" AND <PARAMETER_TMP id="key">table</PARAMETER_TMP> NOT IN "/&#62;
   </SqlMethod>
+  
+   <SqlMethod name="isTemplateInDev" type="preparedStatement" return="boolean">
+    <Sql>&#60;&#33;[CDATA[
+        SELECT COUNT(*)
+          FROM AD_MODULE
+         WHERE TYPE='T'
+           AND ISINDEVELOPMENT='Y'
+    ]]&#62;</Sql>
+  </SqlMethod>
 </SqlClass>
