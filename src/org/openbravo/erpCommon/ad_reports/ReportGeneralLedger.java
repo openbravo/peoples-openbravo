@@ -729,25 +729,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     return Tree.getMembers(this, strTree, strChild);
   }
 
-  private String getRange(String accountfrom, String accountto) throws IOException,
-      ServletException {
-
-    ReportGeneralLedgerData[] data = ReportGeneralLedgerData.selectRange(this, accountfrom,
-        accountto);
-
-    boolean bolFirstLine = true;
-    String strText = "";
-    for (int i = 0; i < data.length; i++) {
-      if (bolFirstLine) {
-        bolFirstLine = false;
-        strText = data[i].name;
-      } else {
-        strText = data[i].name + "," + strText;
-      }
-    }
-    return strText;
-  }
-
   public String getServletInfo() {
     return "Servlet ReportGeneralLedger. This Servlet was made by Pablo Sarobe";
   } // end of getServletInfo() method

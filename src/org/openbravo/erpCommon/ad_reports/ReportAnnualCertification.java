@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -301,29 +300,6 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     parameters.put("DateFrom", strDateFrom);
     parameters.put("DateTo", strDateTo);
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
-  }
-
-  private String getFamily(String strTree, String strChild) throws IOException, ServletException {
-    return Tree.getMembers(this, strTree, strChild);
-  }
-
-  private String getRange(String accountfrom, String accountto) throws IOException,
-      ServletException {
-
-    ReportGeneralLedgerData[] data = ReportGeneralLedgerData.selectRange(this, accountfrom,
-        accountto);
-
-    boolean bolFirstLine = true;
-    String strText = "";
-    for (int i = 0; i < data.length; i++) {
-      if (bolFirstLine) {
-        bolFirstLine = false;
-        strText = data[i].name;
-      } else {
-        strText = data[i].name + "," + strText;
-      }
-    }
-    return strText;
   }
 
   public String getServletInfo() {
