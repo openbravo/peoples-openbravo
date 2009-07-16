@@ -50,8 +50,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class UpdateReferenceData extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final String SALTO_LINEA = "<br>\n";
-  private String strError = "";
-  private static StringBuffer m_info = new StringBuffer();
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -60,10 +58,10 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
       String strOrganization = vars.getStringParameter("inpOrganization", "0");
       printPage(response, vars, strOrganization);
     } else if (vars.commandIn("OK")) {
-      m_info.delete(0, m_info.length());
-      String strResultado = updateReferenceData(request, response, vars);
+      StringBuffer m_info = new StringBuffer();
+      String strResultado = updateReferenceData(request, response, vars, m_info);
       log4j.debug("UpdateReferenceData - after processFile");
-      printPageResult(response, vars, strResultado);
+      printPageResult(response, vars, strResultado, m_info);
     } else if (vars.commandIn("CANCEL")) {
     } else
       pageError(response);
@@ -126,7 +124,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
   }
 
   private void printPageResult(HttpServletResponse response, VariablesSecureApp vars,
-      String strResultado) throws IOException, ServletException {
+      String strResultado, StringBuffer m_info) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_forms/Resultado").createXmlDocument();
 
@@ -156,9 +154,6 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
     myMessage.setTitle("");
     if (log4j.isDebugEnabled())
       log4j.debug("UpdateReferenceData - before setMessage");
-    if (strError != null && !strError.equals("")) {
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), strError);
-    }
     if (log4j.isDebugEnabled())
       log4j.debug("UpdateReferenceData - isOK: " + strResultado.equals(""));
     if (strResultado.equals("")) {
@@ -184,7 +179,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
   }
 
   private String updateReferenceData(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars) throws IOException, ServletException {
+      VariablesSecureApp vars, StringBuffer m_info) throws IOException, ServletException {
 
     String strOrganization = vars.getStringParameter("inpOrganization");
     String strModules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
