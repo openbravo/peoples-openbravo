@@ -111,8 +111,9 @@ public class ApplyModules extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    final PrintWriter out = response.getWriter();
     response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+
     out.println(xmlDocument.print());
     out.close();
   }
