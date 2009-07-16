@@ -31,16 +31,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
+import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -211,7 +209,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     ReportGeneralLedgerData[][] subreport = null;
     ReportGeneralLedgerData[][] subreport2 = null;
     ReportGeneralLedgerData[] data = null;
-    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     // String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this, vars
@@ -550,7 +548,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     ReportGeneralLedgerData[] data = null;
     ReportGeneralLedgerData[] subreport = null;
-    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = "";
     strOrgFamily = getFamily(strTreeOrg, strOrg);
     String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this, vars

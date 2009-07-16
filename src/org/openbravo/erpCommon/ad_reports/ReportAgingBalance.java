@@ -31,6 +31,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
+import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -101,7 +102,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
      * strOrg= Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance");
      */
 
-    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrgTrx);
 
     if (strisReceipt.equals(""))
@@ -134,7 +135,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
     ReportAgingBalanceData[] data = null;
 
-    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrgTrx);
 
     if (strisReceipt.equals(""))

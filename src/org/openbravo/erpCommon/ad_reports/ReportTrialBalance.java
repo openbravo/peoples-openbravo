@@ -34,6 +34,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
+import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -137,7 +138,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     }
 
     XmlDocument xmlDocument = null;
-    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
     String strcBpartnerIdAux = strcBpartnerId;
@@ -333,7 +334,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     String discard[] = { "selEliminar", "sectionBP" };
 
     XmlDocument xmlDocument = null;
-    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
     ReportTrialBalanceData[] data = null;
