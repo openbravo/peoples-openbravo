@@ -76,14 +76,6 @@ function onloadFunctions() {
   keyArray[keyArray.length] =  new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null");	
 }
 </script>
-<script language="JavaScript" type="text/javascript" id="paramArrayProduct">
-var array = new Array (
-new Array(1,1,'F1'),
-new Array(1,2,'F2'),
-new Array(2,3,'F3'),
-new Array(2,4,'F4')
-);
-</script>
 	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
@@ -359,7 +351,7 @@ new Array(2,4,'F4')
                 </tr>
                   <tr>
                   <td class="TitleCell"><span class="LabelText">Product Category</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select  name="inpmCategoryId" onchange="changeComboData(frmMain.inpArticulo, array, frmMain.inpmCategoryId.options[frmMain.inpmCategoryId.selectedIndex].value, true);" id="inpmCategoryId" class="Combo Combo_TwoCells_width">
+                  <td class="Combo_ContentCell" colspan="2"> <select  name="inpProductCategory" id="inpProductCategory" class="Combo Combo_TwoCells_width">
                       <option value=""> <div id="reportM_PRODUCT_CATEGORYID"></div></option>
                     </select></td>
                   <td class="TitleCell"><span class="LabelText">Product</span></td>

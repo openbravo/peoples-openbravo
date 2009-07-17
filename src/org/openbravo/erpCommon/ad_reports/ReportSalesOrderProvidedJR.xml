@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SL 
-* All portions are Copyright (C) 2001-2008 Openbravo SL 
+* All portions are Copyright (C) 2001-2009 Openbravo SL 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -41,7 +41,6 @@
   <PARAMETER id="paramBPartnerDescription" name="paramBPartnerDescription" attribute="value"/>
   <PARAMETER id="C_Project_ID" name="cProjectId" attribute="value"/>
   <PARAMETER id="C_Project_ID_D" name="projectName" attribute="value"/>
-  <PARAMETER id="paramArrayProduct" name="product"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
   <PARAMETER id="paramParentTabContainer" name="parentTabContainer" default=" "/>
@@ -51,16 +50,6 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
-  <structure name="structureCategory">
-    <FIELD id="fieldCategoryId" attribute="value">id</FIELD>
-    <FIELD id="fieldDescripcionCategory">name</FIELD>
-    <SECTION id="sectionCategory"/>
-  </structure>
-  <structure name="structureProduct">
-    <FIELD id="fieldClaveProduct" attribute="value">id</FIELD>
-    <FIELD id="fieldDescripcionProduct">name</FIELD>
-    <SECTION id="sectionProduct"/>
-  </structure>
   <SUBREPORT id="reportM_WAREHOUSEID" name="reportM_WAREHOUSEID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramM_WAREHOUSE_ID"/>
   </SUBREPORT>
