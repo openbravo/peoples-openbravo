@@ -184,7 +184,7 @@ BEGIN
                 
 	/*
 		Function call to Retrieve the new account NUMBER for Business Partner or Product. */					
-		SELECT * INTO C_Out_New_Acct_Number FROM C_ValidCombination_Insert( v_Default_Account_Client_ID , v_Org_ID , v_C_AcctSchema_ID,
+		C_ValidCombination_Insert(C_Out_New_Acct_Number, v_Default_Account_Client_ID , v_Org_ID , v_C_AcctSchema_ID,
 	  v_C_ElementValue_ID,NULL,	NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 	  NULL, NULL, NULL, NULL, NULL, NULL, NULL);
     
