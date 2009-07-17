@@ -256,10 +256,17 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
         throw new ServletException(ex);
       }
 
-      xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", SubCategoryProductData
-          .select(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportProjectBuildingSite"), Utility.getContext(this, vars, "#User_Client",
-              "ReportProjectBuildingSite")));
+      try {
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
+            "M_PRODUCT_CATEGORY_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "ReportProjectBuildingSite"), Utility.getContext(this, vars, "#User_Client",
+                "ReportProjectBuildingSite"), 0);
+        comboTableData.fillParameters(null, "ReportProjectBuildingSite", "");
+        xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", comboTableData
+            .select(false));
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Region_ID",

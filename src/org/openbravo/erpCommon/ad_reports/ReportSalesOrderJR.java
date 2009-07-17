@@ -217,9 +217,19 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
     xmlDocument.setData("reportMProductId_IN", "liststructure", ReportProjectBuildingSiteData
         .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
             .getContext(this, vars, "#User_Client", ""), ""));
-    xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", SubCategoryProductData.select(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", "")));
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
+          "M_PRODUCT_CATEGORY_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportSalesOrderJR"), Utility.getContext(this, vars, "#User_Client",
+              "ReportSalesOrderJR"), 0);
+      comboTableData.fillParameters(null, "ReportSalesOrderJR", "");
+      xmlDocument
+          .setData("reportC_PRODUCTCATREGORY", "liststructure", comboTableData.select(false));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
     response.setContentType("text/html; charset=UTF-8");
 
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));

@@ -218,9 +218,17 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", SubCategoryProductData.select(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"),
-        Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR")));
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
+          "M_PRODUCT_CATEGORY_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportInvoiceCustomerJR"), Utility.getContext(this, vars, "#User_Client",
+              "ReportInvoiceCustomerJR"), 0);
+      comboTableData.fillParameters(null, "ReportInvoiceCustomerJR", "");
+      xmlDocument
+          .setData("reportC_PRODUCTCATREGORY", "liststructure", comboTableData.select(false));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "C_REGION_ID", "",
