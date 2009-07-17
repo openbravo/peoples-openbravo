@@ -61,16 +61,6 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
   </SqlMethod>
-  <SqlMethod name="selectMproduct" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-      SELECT M_PRODUCT.NAME
-      FROM M_PRODUCT
-      WHERE M_PRODUCT_ID = ?
-     ]]></Sql>
-     <Parameter name="mProductId"/>
-  </SqlMethod>
   <SqlMethod name="selectMproduct2" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
