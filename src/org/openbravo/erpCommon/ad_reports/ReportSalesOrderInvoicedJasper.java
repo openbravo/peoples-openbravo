@@ -143,7 +143,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       xmlDocument.setParameter("cProjectKind", strProjectkind);
       xmlDocument.setParameter("cRegionId", strcRegionId);
       xmlDocument.setParameter("cProjectPublic", strProjectpublic);
-      xmlDocument.setParameter("projectName", ReportProjectBuildingSiteData.selectProject(this,
+      xmlDocument.setParameter("projectName", ReportSalesOrderInvoicedData.selectProject(this,
           strcProjectId));
       xmlDocument.setParameter("paramBPartnerDescription", ReportSalesOrderInvoicedData
           .bPartnerDescription(this, strcBpartnerId));

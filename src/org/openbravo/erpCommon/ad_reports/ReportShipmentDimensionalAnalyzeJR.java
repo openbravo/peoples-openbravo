@@ -421,11 +421,10 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
           + ReportShipmentDimensionalAnalyzeJRData.selectProductCategory(this, strProductCategory);
     if (!strsalesrepId.equals(""))
       strTitle = strTitle + ", " + Utility.messageBD(this, "TheSalesRep", vars.getLanguage()) + " "
-          + ReportInvoiceCustomerDimensionalAnalysesData.selectSalesrep(this, strsalesrepId);
+          + ReportShipmentDimensionalAnalyzeJRData.selectSalesrep(this, strsalesrepId);
     if (!strPartnerSalesrepId.equals(""))
       strTitle = strTitle + ", " + Utility.messageBD(this, "TheClientSalesRep", vars.getLanguage())
-          + " "
-          + ReportInvoiceCustomerDimensionalAnalysesData.selectSalesrep(this, strPartnerSalesrepId);
+          + " " + ReportShipmentDimensionalAnalyzeJRData.selectSalesrep(this, strPartnerSalesrepId);
     if (!strmWarehouseId.equals(""))
       strTitle = strTitle + " " + Utility.messageBD(this, "And", vars.getLanguage()) + " "
           + Utility.messageBD(this, "TheWarehouse", vars.getLanguage()) + " "

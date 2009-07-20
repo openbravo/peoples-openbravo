@@ -143,7 +143,7 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("cProjectKind", strProjectkind);
       xmlDocument.setParameter("cRegionId", strcRegionId);
       xmlDocument.setParameter("cProjectPublic", strProjectpublic);
-      xmlDocument.setParameter("projectName", ReportProjectBuildingSiteData.selectProject(this,
+      xmlDocument.setParameter("projectName", ReportSalesOrderProvidedData.selectProject(this,
           strcProjectId));
       xmlDocument.setParameter("paramBPartnerDescription", ReportSalesOrderProvidedData
           .bPartnerDescription(this, strcBpartnerId));

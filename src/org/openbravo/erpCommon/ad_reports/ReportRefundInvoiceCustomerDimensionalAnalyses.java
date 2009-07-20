@@ -281,7 +281,7 @@ public class ReportRefundInvoiceCustomerDimensionalAnalyses extends HttpSecureAp
           + ", "
           + Utility.messageBD(this, "ProductCategory", vars.getLanguage())
           + " "
-          + ReportInvoiceCustomerDimensionalAnalysesData.selectProductCategory(this,
+          + ReportRefundInvoiceCustomerDimensionalAnalysesData.selectProductCategory(this,
               strProductCategory);
     if (!strsalesrepId.equals(""))
       strTitle = strTitle + " " + Utility.messageBD(this, "And", vars.getLanguage()) + " "
