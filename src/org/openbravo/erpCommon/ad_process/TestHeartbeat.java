@@ -47,6 +47,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
   private static final String HB_Process_ID = "1005800000";
+  private static final String SystemInfomation_ID = "0";
   private static final String WEEKLY = "5";
   private static final String SCHEDULE = "S";
 
@@ -60,16 +61,11 @@ public class TestHeartbeat extends HttpSecureAppServlet {
       try {
 
         // Getting the process
-        final OBCriteria<Process> obCriteria = OBDal.getInstance().createCriteria(Process.class);
-        obCriteria.add(Expression.eq(Process.PROPERTY_ID, HB_Process_ID));
-        final List<Process> processList = obCriteria.list();
-        final Process HBProcess = processList.get(0);
+        final Process HBProcess = OBDal.getInstance().get(Process.class, HB_Process_ID);
 
         // Deactivating the process at SystemInfo
-        final OBCriteria<SystemInformation> sysInfoCriteria = OBDal.getInstance().createCriteria(
-            SystemInformation.class);
-        final List<SystemInformation> sysInfoList = sysInfoCriteria.list();
-        final SystemInformation sysInfo = sysInfoList.get(0);
+        final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class,
+            SystemInfomation_ID);
         sysInfo.setEnableHeartbeat(false);
         sysInfo.setTestHeartbeat("N");
         OBDal.getInstance().save(sysInfo);
@@ -107,18 +103,13 @@ public class TestHeartbeat extends HttpSecureAppServlet {
       try {
 
         // Activating the process
-        final OBCriteria<Process> obCriteria = OBDal.getInstance().createCriteria(Process.class);
-        obCriteria.add(Expression.eq(Process.PROPERTY_ID, HB_Process_ID));
-        final List<Process> processList = obCriteria.list();
-        final Process HBProcess = processList.get(0);
+        final Process HBProcess = OBDal.getInstance().get(Process.class, HB_Process_ID);
         HBProcess.setActive(true);
         OBDal.getInstance().save(HBProcess);
 
         // Activating the process at SystemInfo
-        final OBCriteria<SystemInformation> sysInfoCriteria = OBDal.getInstance().createCriteria(
-            SystemInformation.class);
-        final List<SystemInformation> sysInfoList = sysInfoCriteria.list();
-        final SystemInformation sysInfo = sysInfoList.get(0);
+        final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class,
+            SystemInfomation_ID);
         sysInfo.setEnableHeartbeat(true);
         sysInfo.setTestHeartbeat("Y");
         OBDal.getInstance().save(sysInfo);

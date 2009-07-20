@@ -106,7 +106,10 @@
    <SqlMethod name="selectCodeRevision" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      	select Code_Revision from ad_system_info
+        select coalesce(m.version_id, s.code_revision, '') as code_revision
+          from ad_system_info s
+          left join ad_module m on s.ad_system_info_id = m.ad_module_id
+           and s.ad_system_info_id = '0';
     ]]></Sql>
    </SqlMethod>
    <SqlMethod name="selectIsheartbeatactive" type="preparedStatement" return="string">
