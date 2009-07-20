@@ -77,7 +77,8 @@ public class OBObjectFieldProvider implements FieldProvider, OBNotSingleton {
    *          {@link FieldProvider} instances
    * @return an array of field providers, one for each passed BaseOBObject
    */
-  public static OBObjectFieldProvider[] createOBObjectFieldProvider(List<BaseOBObject> bobs) {
+  public static <T extends BaseOBObject> OBObjectFieldProvider[] createOBObjectFieldProvider(
+      List<T> bobs) {
     final OBObjectFieldProvider[] result = new OBObjectFieldProvider[bobs.size()];
     int index = 0;
     for (BaseOBObject bob : bobs) {
