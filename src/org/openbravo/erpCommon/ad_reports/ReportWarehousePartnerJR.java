@@ -30,6 +30,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -158,9 +159,9 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("parameterZ", strZ);
     xmlDocument.setParameter("mProductCategoryId", strProductCategory);
 
-    xmlDocument.setData("reportMProductId_IN", "liststructure", ReportWarehousePartnerData
-        .selectMproduct2(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strmProductId));
+    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strmProductId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",

@@ -30,6 +30,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -374,9 +375,9 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
         this, Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility
             .getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment")));
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInOutData.selectBpartner(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", ""), strC_BPartner_ID));
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strC_BPartner_ID));
     // xmlDocument.setParameter("paramBPartnerId", strC_BPartner_ID);
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));

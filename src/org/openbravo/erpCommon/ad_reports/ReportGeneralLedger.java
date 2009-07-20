@@ -40,6 +40,7 @@ import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -520,10 +521,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("inpElementValueIdFrom_DES", strcelementvaluefromdes);
     xmlDocument.setParameter("paramAll0", strAll.equals("") ? "0" : "1");
     xmlDocument.setParameter("paramHide0", strHide.equals("") ? "0" : "1");
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-        ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(
-            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
-            ""), strcBpartnerIdAux));
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strcBpartnerIdAux));
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",

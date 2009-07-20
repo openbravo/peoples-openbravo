@@ -36,6 +36,7 @@ import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -284,14 +285,12 @@ public class ReportPurchaseDimensionalAnalysesJR extends HttpSecureAppServlet {
 
     xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
         vars.getRole()));
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-        ReportPurchaseDimensionalAnalysesJRData.selectBpartner(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strcBpartnerId));
-    xmlDocument.setData("reportMProductId_IN", "liststructure",
-        ReportPurchaseDimensionalAnalysesJRData.selectMproduct(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strmProductId));
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strmProductId));
 
     if (vars.getLanguage().equals("en_US")) {
       xmlDocument.setData("structure1", ReportPurchaseDimensionalAnalysesJRData.selectNotShown(

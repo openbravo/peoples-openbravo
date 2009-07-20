@@ -618,19 +618,4 @@
     <Parameter name="bPartner"/>
   </SqlMethod>
 
-  <SqlMethod name="selectMproduct" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-      SELECT M_PRODUCT.M_PRODUCT_ID AS ID,M_PRODUCT.NAME
-      FROM M_PRODUCT
-      WHERE AD_ORG_ID IN ('1') 
-      AND AD_CLIENT_ID IN ('1') 
-      AND (1=2 )
-     ]]></Sql>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="AD_ORG_ID IN (" text="'1'"/>
-     <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
-     <Parameter name="mProductId" optional="true" type="argument" after="(1=2" text=" OR M_PRODUCT_ID IN"/>
-  </SqlMethod>
-
 </SqlClass>

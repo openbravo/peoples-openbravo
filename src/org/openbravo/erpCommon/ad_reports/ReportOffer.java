@@ -29,6 +29,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -123,9 +124,9 @@ public class ReportOffer extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("today", DateTimeData.today(this));
 
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportOfferData.selectBpartner(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOffer"), Utility
-            .getContext(this, vars, "#User_Client", "ReportOffer"), strcBpartnerId));
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOffer"),
+            Utility.getContext(this, vars, "#User_Client", "ReportOffer"), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     // xmlDocument.setDataArray("reportProduct", "structure1" ,
     // dataProduct);

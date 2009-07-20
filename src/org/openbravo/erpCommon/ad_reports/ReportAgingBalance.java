@@ -33,6 +33,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -241,9 +242,9 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
         DateTimeData.today(this), iAux.toString()));
     xmlDocument.setParameter("dateToCol5", "");
 
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInOutData.selectBpartner(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();

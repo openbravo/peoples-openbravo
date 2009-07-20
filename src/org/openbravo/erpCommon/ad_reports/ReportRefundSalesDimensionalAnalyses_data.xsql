@@ -220,35 +220,6 @@
     <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[AND M_WAREHOUSE.M_WAREHOUSE_ID = ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7" text=", 1"/>
   </SqlMethod>
-  <SqlMethod name="selectBpartner" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-      SELECT C_BPARTNER_ID AS ID, C_BPARTNER.NAME
-      FROM C_BPARTNER
-      WHERE AD_ORG_ID IN ('1') 
-      AND AD_CLIENT_ID IN ('1') 
-      AND (1=2 )
-     ]]></Sql>
-     <Parameter name="adOrgClient" type="replace" optional="true" after="AD_ORG_ID IN (" text="'1'"/>
-     <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
-     <Parameter name="cBpartnerId" optional="true" type="argument" after="(1=2" text=" OR C_BPARTNER_ID IN"/>
-  </SqlMethod>
-
-  <SqlMethod name="selectMproduct" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-      SELECT M_PRODUCT.M_PRODUCT_ID AS ID,M_PRODUCT.NAME
-      FROM M_PRODUCT
-      WHERE AD_ORG_ID IN ('1') 
-      AND AD_CLIENT_ID IN ('1') 
-      AND (1=2 )
-     ]]></Sql>
-     <Parameter name="adOrgClient" type="replace" optional="true" after="AD_ORG_ID IN (" text="'1'"/>
-     <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
-     <Parameter name="mProductId" optional="true" type="argument" after="(1=2" text=" OR M_PRODUCT_ID IN"/>
-  </SqlMethod>
 
   <SqlMethod name="selectBpgroup" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
