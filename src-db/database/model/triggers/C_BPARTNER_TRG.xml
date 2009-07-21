@@ -91,13 +91,13 @@ BEGIN
                   Retrieving the receivable account NUMBER
               */
               AD_Sequence_Doc(v_seq_name, Cur_Defaults.AD_Client_ID, 'Y', v_Sequence_No);
-              v_C_Receivable_Acct:=c_validcombination_clone(Cur_Defaults.C_Receivable_Acct, v_Sequence_No, :new.Name,
+              c_validcombination_clone(v_C_Receivable_Acct,Cur_Defaults.C_Receivable_Acct, v_Sequence_No, :new.Name,
               Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
               
                /*
                   Retrieving the prepayment account NUMBER
                */
-               v_C_Prepayment_Acct:=c_validcombination_clone(Cur_Defaults.C_Prepayment_Acct, v_Sequence_No, :new.Name,
+               c_validcombination_clone(v_C_Prepayment_Acct,Cur_Defaults.C_Prepayment_Acct, v_Sequence_No, :new.Name,
                Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
 			            
              /*
@@ -136,17 +136,17 @@ BEGIN
 	            /*
                 Retrieving the liability account NUMBER 
               */
-              v_V_Liability_Acct:= c_validcombination_clone(Cur_Defaults.V_Liability_Acct, v_Sequence_No, :new.Name,
+              c_validcombination_clone(v_V_Liability_Acct,Cur_Defaults.V_Liability_Acct, v_Sequence_No, :new.Name,
               Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
                /*
                  Retrieving the liability services account NUMBER
                */ 
-        			 v_V_Liability_Services_Acct:=c_validcombination_clone(Cur_Defaults.V_Liability_Services_Acct, v_Sequence_No, :new.Name,
+        			 c_validcombination_clone(v_V_Liability_Services_Acct,Cur_Defaults.V_Liability_Services_Acct, v_Sequence_No, :new.Name,
                Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
 			   			 /*
                  Retrieving the prepayment account NUMBER
               */
-               v_V_Prepayment_Acct:=c_validcombination_clone(Cur_Defaults.V_Prepayment_Acct, v_Sequence_No, :new.Name,
+               c_validcombination_clone(v_V_Prepayment_Acct,Cur_Defaults.V_Prepayment_Acct, v_Sequence_No, :new.Name,
                Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
 			    		/*
                  Inserting the new account NUMBER
@@ -201,12 +201,12 @@ BEGIN
              /*
                 Retrieving the Expense account NUMBER
              */
-             v_E_Expense_Acct:= c_validcombination_clone(Cur_Defaults2.E_Expense_Acct,  v_Sequence_No, :new.Name,
+             c_validcombination_clone(v_E_Expense_Acct,Cur_Defaults2.E_Expense_Acct,  v_Sequence_No, :new.Name,
              Cur_Defaults2.acct_length, Cur_Defaults2.subacct_length);
              /*
                  Retrieving the Prepayment account NUMBER
              */
-             v_E_Prepayment_Acct:=c_validcombination_clone(Cur_Defaults2.E_Prepayment_Acct,  v_Sequence_No, :new.Name,
+             c_validcombination_clone(v_E_Prepayment_Acct, Cur_Defaults2.E_Prepayment_Acct,  v_Sequence_No, :new.Name,
              Cur_Defaults2.acct_length, Cur_Defaults2.subacct_length);
         		 /*
                  Inserting the new account NUMBER 
