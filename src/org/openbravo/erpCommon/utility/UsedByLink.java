@@ -95,10 +95,11 @@ public class UsedByLink extends HttpSecureAppServlet {
     UsedByLinkData[] data = null;
 
     if (vars.getLanguage().equals("en_US"))
-      data = UsedByLinkData.select(this, vars.getClient(), vars.getLanguage(), keyColumn, tableId);
+      data = UsedByLinkData.select(this, vars.getClient(), vars.getLanguage(), vars.getRole(),
+          keyColumn, tableId);
     else
-      data = UsedByLinkData.selectLanguage(this, vars.getClient(), vars.getLanguage(), keyColumn,
-          tableId);
+      data = UsedByLinkData.selectLanguage(this, vars.getClient(), vars.getLanguage(), vars
+          .getRole(), keyColumn, tableId);
 
     if (data != null && data.length > 0) {
       final Vector<Object> vecTotal = new Vector<Object>();
@@ -125,19 +126,24 @@ public class UsedByLink extends HttpSecureAppServlet {
         }
         strWhereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN ("
             + vars.getUserClient() + ")";
-        final int total = Integer.valueOf(
+        int total = Integer.valueOf(
             UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId,
                 strWhereClause)).intValue();
+
         if (log4j.isDebugEnabled())
           log4j.debug("***   Count: " + total);
         data[i].total = Integer.toString(total);
-        if (total > 0) {
+
+        if (data[i].accessible.equals("N") && total > 0) {
+          nonAccessible = true;
+        } else if (total > 0) {
           vecTotal.addElement(data[i]);
         }
       }
       data = new UsedByLinkData[vecTotal.size()];
       vecTotal.copyInto(data);
     }
+
     if (nonAccessible) {
       final OBError myMessage = new OBError();
       myMessage.setType("Warning");

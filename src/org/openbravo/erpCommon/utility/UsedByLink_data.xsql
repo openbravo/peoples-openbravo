@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,8 +30,14 @@
       <![CDATA[
         SELECT AD_PARENT_MENU_ELEMENT(M.AD_MENU_ID, ?, ?) AS ELEMENT_NAME, 
         (W.NAME ||' - ' || TB.NAME) AS NAME, T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID, 
-        TB.NAME AS TABNAME, W.NAME AS WINDOWNAME, '' AS HASTREE, '' AS ID, '' AS WHERECLAUSE, 0 AS TOTAL 
-        FROM AD_TAB TB, AD_WINDOW W, AD_TABLE T, AD_COLUMN C, AD_FIELD F, AD_MENU M,  
+        TB.NAME AS TABNAME, W.NAME AS WINDOWNAME, '' AS HASTREE, '' AS ID, '' AS WHERECLAUSE, 0 AS TOTAL,
+       (CASE WHEN (SELECT COUNT(*)
+                     FROM AD_WINDOW_ACCESS WA
+                    WHERE W.AD_WINDOW_ID = WA.AD_WINDOW_ID
+                      AND WA.AD_ROLE_ID = ?)=0 THEN 'N'
+                                               ELSE 'Y' 
+                                               END) AS ACCESSIBLE
+        FROM AD_TAB TB, AD_WINDOW W, AD_TABLE T, AD_COLUMN C, AD_FIELD F, AD_MENU M,
         (SELECT AD_COLUMN_ID FROM AD_COLUMN 
           WHERE UPPER(COLUMNNAME) = UPPER(?) 
             AND (ISPARENT='Y' OR AD_REFERENCE_ID IN ('19', '35'))
@@ -67,21 +73,18 @@
         AND TB.ISACTIVE = 'Y' 
         AND W.ISACTIVE = 'Y'
         AND (TB.WHERECLAUSE IS NULL OR TB.WHERECLAUSE NOT LIKE '%@%') 
-        GROUP BY M.AD_MENU_ID, W.NAME, TB.NAME, T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID
+        GROUP BY M.AD_MENU_ID, W.NAME, TB.NAME, T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID, W.AD_WINDOW_ID
         ORDER BY 1, W.NAME, TB.NAME, T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
     <Parameter name="adLanguage"/>
+    <Parameter name="role"/>
     <Parameter name="columnname"/>
     <Parameter name="columnname"/>
     <Parameter name="adTableId"/>
     <Parameter name="columnname"/>
     <Parameter name="columnname"/>
-    <!--Parameter name="adClientId"/>
-    <Parameter name="adLanguage"/>
-    <Parameter name="adClientId"/>
-    <Parameter name="adLanguage"/-->
   </SqlMethod>
   <SqlMethod name="selectLanguage" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -92,7 +95,13 @@
         (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end)) AS NAME, 
         T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID, 0 AS TOTAL, 
         (case when Wt.NAME IS NULL then W.NAME else  Wt.NAME end) AS WINDOWNAME, 
-        (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end) AS TABNAME 
+        (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end) AS TABNAME,
+        (CASE WHEN (SELECT COUNT(*)
+                     FROM AD_WINDOW_ACCESS WA
+                    WHERE W.AD_WINDOW_ID = WA.AD_WINDOW_ID
+                      AND WA.AD_ROLE_ID = ?)=0 THEN 'N'
+                                               ELSE 'Y' 
+                                               END) AS ACCESSIBLE
         FROM  (
           SELECT AD_COLUMN_ID FROM AD_COLUMN 
            WHERE UPPER(COLUMNNAME) = UPPER(?) 
@@ -136,13 +145,14 @@
         AND W.ISACTIVE = 'Y' 
         AND (TB.WHERECLAUSE IS NULL OR TB.WHERECLAUSE NOT LIKE '%@%') 
         GROUP BY M.AD_MENU_ID, (case when Wt.NAME IS NULL then W.NAME else  Wt.NAME end), 
-        (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end), T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID
+        (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end), T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID, W.AD_WINDOW_ID
         ORDER BY 1, (case when Wt.NAME IS NULL then W.NAME else  Wt.NAME end), 
         (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end), T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
     <Parameter name="adLanguage"/>
+    <Parameter name="role"/>
     <Parameter name="columnname"/>
     <Parameter name="columnname"/>
     <Parameter name="adTableId"/>
@@ -151,11 +161,9 @@
     <Parameter name="adLanguage"/>
     <Parameter name="adLanguage"/>
     <Parameter name="adLanguage"/>
-    <!--Parameter name="adClientId"/>
-    <Parameter name="adLanguage"/>
-    <Parameter name="adClientId"/>
-    <Parameter name="adLanguage"/-->
   </SqlMethod>
+  
+  
   <SqlMethod name="tabName" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
