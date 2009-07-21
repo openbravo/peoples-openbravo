@@ -37,7 +37,9 @@ public class LoginHandler extends HttpBaseServlet {
   public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException,
       ServletException {
 
-    log4j.info("start doPost");
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("start doPost");
+    }
     final VariablesSecureApp vars = new VariablesSecureApp(req);
 
     // Empty session
