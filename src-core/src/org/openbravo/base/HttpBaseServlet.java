@@ -253,7 +253,9 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @return String with the absolute path on the local drive.
    */
   protected String getBaseDesignPath(String language) {
-    log4j.info("*********************Base path: " + globalParameters.strBaseDesignPath);
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("*********************Base path: " + globalParameters.strBaseDesignPath);
+    }
     String strNewAddBase = globalParameters.strDefaultDesignPath;
     String strFinal = globalParameters.strBaseDesignPath;
     // if (!language.equals("") && !language.equals("en_US")) {
@@ -262,7 +264,9 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
     if (!strFinal.endsWith("/" + strNewAddBase)) {
       strFinal += "/" + strNewAddBase;
     }
-    log4j.info("*********************Base path: " + strFinal);
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("*********************Base path: " + strFinal);
+    }
     return globalParameters.prefix + strFinal;
   }
 

@@ -247,7 +247,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         } else
           variables.updateHistory(request);
       }
-      log4j.info("Call to HttpBaseServlet.service");
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("Call to HttpBaseServlet.service");
+      }
     } catch (final DefaultValidationException d) {
       // Added DefaultValidationException class to catch user login
       // without a valid role

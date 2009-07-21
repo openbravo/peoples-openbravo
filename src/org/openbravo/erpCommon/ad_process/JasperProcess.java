@@ -197,13 +197,17 @@ public class JasperProcess implements Process {
    * @return String with the absolute path on the local drive.
    */
   protected String getBaseDesignPath(ConfigParameters config) {
-    log4j.info("*********************Base path: " + config.strBaseDesignPath);
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("*********************Base path: " + config.strBaseDesignPath);
+    }
     String strNewAddBase = config.strDefaultDesignPath;
     String strFinal = config.strBaseDesignPath;
     if (!strFinal.endsWith("/" + strNewAddBase)) {
       strFinal += "/" + strNewAddBase;
     }
-    log4j.info("*********************Base path: " + strFinal);
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("*********************Base path: " + strFinal);
+    }
     return config.prefix + strFinal;
   }
 
