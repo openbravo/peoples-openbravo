@@ -52,7 +52,6 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
   String[] discard;
   String prefix;
   String uri;
-  String strCharacters = "";
 
   static Logger log4jXmlTemplate = Logger.getLogger(XmlTemplate.class);
 
@@ -320,12 +319,6 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
       }
     } while (!qName.trim().equalsIgnoreCase(stackElement.name().trim()));
 
-    // characters can be read in multiple chunks, add them to the activeXmlVector at the end of the
-    // element
-    CharacterComponent character = new CharacterComponent(strCharacters);
-    activeXmlVector.addElement(character);
-    strCharacters = "";
-
     if (stackElement.isSection()) {
       activeSection = stackElement.section();
       if (activeSection == null) {
@@ -338,6 +331,7 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
 
     log4jXmlTemplate.debug(" strElement (after pop): " + strElement);
 
+    CharacterComponent character;
     if (qName.equals("DIVFO") || qName.endsWith("_TMP")) {
       character = new CharacterComponent("");
     } else {
@@ -364,9 +358,8 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     if (!stackElement.printEnabled())
       return;
     if (!peekElement().skipCharacters()) {
-      String chars = new String(ch, start, length);
-      // characters can be read in multiple chunks, concatenate them here
-      strCharacters += chars;
+      CharacterComponent character = new CharacterComponent(new String(ch, start, length));
+      activeXmlVector.addElement(character);
     }
   }
 
