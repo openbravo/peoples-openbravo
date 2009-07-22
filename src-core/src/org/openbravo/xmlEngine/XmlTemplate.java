@@ -52,6 +52,7 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
   String[] discard;
   String prefix;
   String uri;
+  String strCharacters = "";
 
   static Logger log4jXmlTemplate = Logger.getLogger(XmlTemplate.class);
 
@@ -144,6 +145,14 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     if (log4jXmlTemplate.isDebugEnabled())
       log4jXmlTemplate.debug("XmlTemplate: startElement is called3:" + name + " strElement: "
           + strElement);
+
+    // characters can be read in multiple chunks, add them to the activeXmlVector at the end of the
+    // element
+    if (strCharacters.length() > 0) {
+      CharacterComponent character = new CharacterComponent(strCharacters);
+      activeXmlVector.addElement(character);
+      strCharacters = "";
+    }
     StackElement previousStackElement = peekElement();
     stackElement = new StackElement(qName);
     pushElement(stackElement);
@@ -319,6 +328,11 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
       }
     } while (!qName.trim().equalsIgnoreCase(stackElement.name().trim()));
 
+    // characters can be read in multiple chunks, add them to the activeXmlVector at the end of the
+    // element
+    activeXmlVector.addElement(new CharacterComponent(strCharacters));
+    strCharacters = "";
+
     if (stackElement.isSection()) {
       activeSection = stackElement.section();
       if (activeSection == null) {
@@ -358,8 +372,9 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     if (!stackElement.printEnabled())
       return;
     if (!peekElement().skipCharacters()) {
-      CharacterComponent character = new CharacterComponent(new String(ch, start, length));
-      activeXmlVector.addElement(character);
+      String chars = new String(ch, start, length);
+      // characters can be read in multiple chunks, concatenate them here
+      strCharacters += chars;
     }
   }
 
