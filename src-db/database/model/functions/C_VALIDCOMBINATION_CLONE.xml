@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_VALIDCOMBINATION_CLONE">
     <function name="C_VALIDCOMBINATION_CLONE" type="NULL">
-      <parameter name="p_result" type="VARCHAR" mode="out">
-        <default/>
-      </parameter>
       <parameter name="p_orginal_validcombination" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -17,6 +14,9 @@
         <default/>
       </parameter>
       <parameter name="p_subacct_length" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_result" type="VARCHAR" mode="out">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -186,9 +186,9 @@ BEGIN
                 
 	/*
 		Function call to Retrieve the new account NUMBER for Business Partner or Product. */					
-		C_ValidCombination_Insert(p_Result, v_Default_Account_Client_ID , v_Org_ID , v_C_AcctSchema_ID,
+		C_ValidCombination_Insert(v_Default_Account_Client_ID , v_Org_ID , v_C_AcctSchema_ID,
 	  v_C_ElementValue_ID,NULL,	NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-	  NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	  NULL, NULL, NULL, NULL, NULL, NULL, NULL, p_Result);
 
 END C_VALIDCOMBINATION_CLONE
 ]]></body>
