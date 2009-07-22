@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -34,8 +35,8 @@ import org.openbravo.utils.FormatUtilities;
 /**
  * @author Fernando Iriazabal
  * 
- *         Servlet that prints a javascript with dynamic functions such as the confirmation messages for the check javascript
- *         of the window.
+ *         Servlet that prints a javascript with dynamic functions such as the confirmation messages
+ *         for the check javascript of the window.
  */
 public class DynamicJS extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -113,6 +114,25 @@ public class DynamicJS extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug(arrayType.toString() + array.toString());
     out.println(arrayType.toString() + array.toString());
+
+    final HashMap<String, String> formatMap = (HashMap<String, String>) vars
+        .getSessionObject("#formatMap");
+    // var F = {"formats": [{"name":"euroInform","output":"#,##0.00"},
+    // {"name":"euroRelation","output":"#,##0.00#"}]};")
+    out.print("var F = {\"formats\": [");
+    boolean first = true;
+    for (String key : formatMap.keySet()) {
+      if (!first) {
+        out.print(",");
+      } else {
+        first = false;
+      }
+      out.print("{\"name\":\"" + key + "\",");
+      out.print("\"output\":\"" + formatMap.get(key) + "\"}");
+    }
+    out.println("]};");
+    out
+        .println("F.getFormat=function(name){if(typeof name==='undefined'||name===''){return'undefined';}for(var i=0;i<this.formats.length;i++){if(this.formats[i].name===name){return this.formats[i].output;}}return'undefined';}");
     out.close();
   }
 }
