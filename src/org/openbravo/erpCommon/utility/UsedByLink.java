@@ -76,6 +76,13 @@ public class UsedByLink extends HttpSecureAppServlet {
       ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: UsedBy links for tab: " + TabId);
+
+    // Special case: convert FinancialMgmtDebtPaymentGenerateV view into its
+    // FinancialMgmtDebtPayment table. Fixes issue #0009973
+    if (tableId.equals("800021")) {
+      tableId = "800018";
+    }
+
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/utility/UsedByLink").createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
