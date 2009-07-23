@@ -21,6 +21,7 @@
   <template file="WADNumberXML.html"/>
   <PARAMETER id="xx" name="columnName" attribute="id"/>
   <PARAMETER id="xx" name="columnFormat" attribute="format" default="qtyEdition"/>
+  <PARAMETER id="xx" name="outputFormat" attribute="outputformat" default="qtyEdition"/>
   <PARAMETER id="xx" name="columnName"/>
   <PARAMETER id="xx_PARAM" name="columnName" attribute="id"/>
   <PARAMETER id="xx_PARAM" name="columnName" attribute="name"/>
