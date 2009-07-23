@@ -209,7 +209,9 @@
                         WHERE t3.ad_window_id = t2.ad_window_id
                         AND t3.tablevel = (t2.tablevel -1)
                         AND t3.seqno < t2.seqno))
-                    AND UPPER(c.columnname) = UPPER(AD_COLUMN.columnname))
+                        AND (UPPER(c.columnname) = UPPER(AD_COLUMN.columnname)
+                            OR (UPPER(AD_COLUMN.columnname) LIKE 'EM_%'
+                                AND UPPER(SUBSTR(AD_COLUMN.columnname,4))=UPPER(c.columnname))))
       ]]></Sql>
       <Parameter name="tab"/>
   </SqlMethod>
@@ -226,7 +228,7 @@
                         AND t2.ad_tab_id = AD_FIELD.AD_Tab_ID 
                         AND t1.tablevel = (t2.tablevel -1)
                         AND t1.seqno < t2.seqno
-                        AND t1.ad_table_id = t2.ad_table_id) 
+                        AND t1.ad_table_id = t2.ad_table_id)                        
       ]]></Sql>
       <Parameter name="tab"/>
   </SqlMethod>

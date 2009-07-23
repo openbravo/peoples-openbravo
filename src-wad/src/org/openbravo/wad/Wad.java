@@ -1942,9 +1942,14 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("reportDirectPrint", strDirectPrint);
     xmlDocument.setParameter("relationControl", relationControl.toJava());
     if (parentsFieldsData.length > 0) {
+
       xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
-      xmlDocument.setParameter("keyParentINP", Sqlc
+      xmlDocument.setParameter("keyParentT", Sqlc
           .TransformaNombreColumna(parentsFieldsData[0].name));
+      xmlDocument.setParameter("keyParentINP", Sqlc.TransformaNombreColumna(WadUtility.columnName(
+          parentsFieldsData[0].name, parentsFieldsData[0].tablemodule,
+          parentsFieldsData[0].columnmodule)));
+
       xmlDocument.setParameter("parentTab", parentsFieldsData[0].adTabId);
       xmlDocument.setParameter("parentTabName", parentsFieldsData[0].parentTabName);
     }
@@ -2743,6 +2748,7 @@ public class Wad extends DefaultHandler {
     xmlDocumentXsql.setParameter("table", tableName);
     xmlDocumentXsql.setParameter("key", tableName + "." + keyColumnName);
     if (parentsFieldsData != null && parentsFieldsData.length > 0) {
+
       xmlDocumentXsql.setParameter("keyParent", tableName + "." + parentsFieldsData[0].name);
     }
     xmlDocumentXsql.setParameter("paramKey", Sqlc.TransformaNombreColumna(keyColumnName));
@@ -2752,6 +2758,8 @@ public class Wad extends DefaultHandler {
       if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) {
         xmlDocumentXsql.setParameter("paramKeyParentOrg", "currentAdOrgId");
       }
+      parentsFieldsData[0].name = WadUtility.columnName(parentsFieldsData[0].name,
+          parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule);
     }
 
     xmlDocumentXsql.setParameter("fields", strFields);
@@ -2792,6 +2800,7 @@ public class Wad extends DefaultHandler {
             : ", ")
             + strAux;
       }
+
       fieldsParent[0].defaultvalue += " WHERE " + parentsFieldsData[0].tablename + "."
           + parentsFieldsData[0].name + " = ? ";
       for (int s = 0; s < vecWhere.size(); s++) {
@@ -2833,6 +2842,7 @@ public class Wad extends DefaultHandler {
             : ", ")
             + strAux;
       }
+
       fieldsParent[0].defaultvalue += " WHERE " + parentsFieldsData[0].tablename + "."
           + parentsFieldsData[0].name + " = ? ";
       for (int s = 0; s < vecWhere.size(); s++) {
