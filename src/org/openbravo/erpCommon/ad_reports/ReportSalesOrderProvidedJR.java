@@ -143,7 +143,7 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("cProjectKind", strProjectkind);
       xmlDocument.setParameter("cRegionId", strcRegionId);
       xmlDocument.setParameter("cProjectPublic", strProjectpublic);
-      xmlDocument.setParameter("projectName", ReportProjectBuildingSiteData.selectProject(this,
+      xmlDocument.setParameter("projectName", ReportSalesOrderProvidedData.selectProject(this,
           strcProjectId));
       xmlDocument.setParameter("paramBPartnerDescription", ReportSalesOrderProvidedData
           .bPartnerDescription(this, strcBpartnerId));
@@ -227,20 +227,7 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
         throw new ServletException(ex);
       }
 
-      SubCategoryProductData[] dataSub = SubCategoryProductData.select(this, Utility.getContext(
-          this, vars, "#AccessibleOrgTree", "ReportSalesOrderProvidedJR"), Utility.getContext(this,
-          vars, "#User_Client", "ReportSalesOrderProvidedJR"));
-      xmlDocument.setParameter("product", Utility.arrayDobleEntrada("array", SubCategoryProductData
-          .selectProduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportSalesOrderProvidedJR"), Utility.getContext(this, vars, "#User_Client",
-              "ReportSalesOrderProvidedJR"))));
-
-      if (dataSub != null && dataSub.length != 0) {
-        xmlDocument.setData("structureCategory", dataSub);
-        xmlDocument.setData("structureProduct", SubCategoryProductData.selectCategoryProduct(this,
-            dataSub[0].id));
-      }
-    } else {
+    } else { // command != DEFAULT
       ReportSalesOrderProvidedData[] data = ReportSalesOrderProvidedData.select(this,
           strCurrencyId,
           Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderProvided"), Utility

@@ -241,7 +241,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("bPartnerDescription", ReportProductMovementData.selectBpartner(this,
         strcBpartnerId));
-    xmlDocument.setParameter("productDescription", ReportWarehousePartnerData.selectMproduct(this,
+    xmlDocument.setParameter("productDescription", ReportProductMovementData.selectMproduct(this,
         strmProductId));
     xmlDocument.setParameter("inout", strInout);
     xmlDocument.setParameter("inventory", strInventory);

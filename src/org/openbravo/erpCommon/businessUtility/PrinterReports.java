@@ -86,9 +86,10 @@ public class PrinterReports extends HttpSecureAppServlet {
     // FormatUtilities.replace(PrinterReportsData.select(this, strPDFPath));
     strPDFPath = FormatUtilities.replace(strPDFPath);
     vars.setSessionValue("inpTabID", inptabId);
-    vars.setSessionValue(strPDFPath + "." + strHiddenKey, "('" + strHiddenValue + "')");
+    final String hiddenValue = quouteIds(strHiddenValue);
+    vars.setSessionValue(strPDFPath + "." + strHiddenKey, "(" + hiddenValue + ")");
     if (!strHiddenValue.equals(""))
-      vars.setSessionValue(strPDFPath + "." + strHiddenKey, "('" + strHiddenValue + "')");
+      vars.setSessionValue(strPDFPath + "." + strHiddenKey, "(" + hiddenValue + ")");
     else
       vars.getRequestInGlobalVariable(strHiddenKey, strPDFPath + "." + strHiddenKey,
           IsIDFilter.instance);
@@ -100,5 +101,21 @@ public class PrinterReports extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private String quouteIds(String idList) throws ServletException {
+    final String[] ids = idList.split(",");
+    final StringBuilder quoted = new StringBuilder();
+    for (int i = 0; i < ids.length; i++) {
+      if (!IsIDFilter.instance.accept(ids[i])) {
+        log4j.error("Input: " + idList + " not accepted by filter: IsIDFilter");
+        throw new ServletException("Input: " + idList + " is not an accepted input");
+      }
+      if (i > 0) {
+        quoted.append(",");
+      }
+      quoted.append("'").append(ids[i]).append("'");
+    }
+    return quoted.toString();
   }
 }

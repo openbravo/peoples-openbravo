@@ -29,6 +29,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
@@ -145,7 +146,7 @@ public class ReportInvoiceDiscount extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("discount", strDiscount);
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInvoiceDiscountData
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
         .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#User_Client",
             "ReportInvoiceDiscount"), strcBpartnerId));

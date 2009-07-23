@@ -29,6 +29,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -256,10 +257,17 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
         throw new ServletException(ex);
       }
 
-      xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", SubCategoryProductData
-          .select(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportProjectBuildingSite"), Utility.getContext(this, vars, "#User_Client",
-              "ReportProjectBuildingSite")));
+      try {
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
+            "M_PRODUCT_CATEGORY_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "ReportProjectBuildingSite"), Utility.getContext(this, vars, "#User_Client",
+                "ReportProjectBuildingSite"), 0);
+        comboTableData.fillParameters(null, "ReportProjectBuildingSite", "");
+        xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", comboTableData
+            .select(false));
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Region_ID",
@@ -287,10 +295,10 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
         throw new ServletException(ex);
       }
 
-      xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportProjectBuildingSiteData
+      xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
           .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
               .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
-      xmlDocument.setData("reportMProductId_IN", "liststructure", ReportProjectBuildingSiteData
+      xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData
           .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
               .getContext(this, vars, "#User_Client", ""), strProduct));
     } else {

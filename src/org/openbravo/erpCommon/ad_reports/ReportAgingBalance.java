@@ -31,7 +31,9 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
+import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -101,7 +103,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
      * strOrg= Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance");
      */
 
-    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrgTrx);
 
     if (strisReceipt.equals(""))
@@ -134,7 +136,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
     ReportAgingBalanceData[] data = null;
 
-    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrgTrx);
 
     if (strisReceipt.equals(""))
@@ -197,14 +199,11 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("column4", strcolumn4);
     xmlDocument.setParameter("paramAD_ORG_Id", strOrgTrx);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "AD_ORG NAME", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalanceData"), Utility
-              .getContext(this, vars, "#User_Client", "ReportAgingBalanceData"), '*');
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportAgingBalanceData",
-          strOrgTrx);
-      xmlDocument.setData("reportAD_ORGID", "liststructure", ReportAgingBalanceData.selectCombo(
-          this, vars.getRole()));
-      comboTableData = null;
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalanceData"),
+          Utility.getContext(this, vars, "#User_Client", "ReportAgingBalanceData"), '*');
+      comboTableData.fillParameters(null, "ReportAgingBalanceData", strOrgTrx);
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
@@ -243,9 +242,9 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
         DateTimeData.today(this), iAux.toString()));
     xmlDocument.setParameter("dateToCol5", "");
 
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInOutData.selectBpartner(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();

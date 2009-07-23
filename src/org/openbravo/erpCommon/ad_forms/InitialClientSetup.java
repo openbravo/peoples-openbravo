@@ -1622,12 +1622,17 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     Connection conn = null;
     try {
       conn = this.getTransactionConnection();
-      if (InitialClientSetupData.insertDoctypeTemplate(conn, this, AD_Client_ID, doctypeId, name,
-          templateLocation, reportFilename, templateFilename) != 1)
+      String doctypetemplateId = SequenceIdData.getUUID();
+      if (InitialClientSetupData.insertDoctypeTemplate2(conn, this, doctypetemplateId,
+          AD_Client_ID, doctypeId, name, templateLocation, reportFilename, templateFilename) == 1
+          && InitialClientSetupData.insertEmailDefinition(conn, this, AD_Client_ID,
+              doctypetemplateId) == 1) {
+        m_info.append(Utility.messageBD(this, "Template", vars.getLanguage())).append("=").append(
+            name).append(SALTO_LINEA);
+      } else {
         log4j.warn("InitialClientSetup - createDocTypeTemplate - DocType Template NOT created - "
             + name);
-      m_info.append(Utility.messageBD(this, "Template", vars.getLanguage())).append("=").append(
-          name).append(SALTO_LINEA);
+      }
     } catch (NoConnectionAvailableException ex) {
       throw new ServletException("@CODE=NoConnectionAvailable");
     } catch (SQLException ex2) {

@@ -35,6 +35,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -223,14 +224,12 @@ public class ReportRefundInvoiceCustomerDimensionalAnalyses extends HttpSecureAp
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-        ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(
-            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
-            ""), strcBpartnerId));
-    xmlDocument.setData("reportMProductId_IN", "liststructure",
-        ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(this, Utility.getContext(
-            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
-            ""), strmProductId));
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strmProductId));
 
     if (vars.getLanguage().equals("en_US")) {
       xmlDocument.setData("structure1", ReportRefundInvoiceCustomerDimensionalAnalysesData
@@ -282,7 +281,7 @@ public class ReportRefundInvoiceCustomerDimensionalAnalyses extends HttpSecureAp
           + ", "
           + Utility.messageBD(this, "ProductCategory", vars.getLanguage())
           + " "
-          + ReportInvoiceCustomerDimensionalAnalysesData.selectProductCategory(this,
+          + ReportRefundInvoiceCustomerDimensionalAnalysesData.selectProductCategory(this,
               strProductCategory);
     if (!strsalesrepId.equals(""))
       strTitle = strTitle + " " + Utility.messageBD(this, "And", vars.getLanguage()) + " "

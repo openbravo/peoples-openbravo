@@ -247,7 +247,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         } else
           variables.updateHistory(request);
       }
-      log4j.info("Call to HttpBaseServlet.service");
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("Call to HttpBaseServlet.service");
+      }
     } catch (final DefaultValidationException d) {
       // Added DefaultValidationException class to catch user login
       // without a valid role
@@ -861,26 +863,35 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     // Read properties file.
     final Properties properties = new Properties();
     try {
-      log4j.info("strFileProperties: " + strFileProperties);
+
       properties.load(new FileInputStream(strFileProperties));
       final String javaDateFormat = properties.getProperty("dateFormat.java");
-      log4j.info("javaDateFormat: " + javaDateFormat);
       vars.setSessionValue("#AD_JavaDateFormat", javaDateFormat);
+
       final String javaDateTimeFormat = properties.getProperty("dateTimeFormat.java");
-      log4j.info("javaDateTimeFormat: " + javaDateTimeFormat);
       vars.setSessionValue("#AD_JavaDateTimeFormat", javaDateTimeFormat);
+
       final String jsDateFormat = properties.getProperty("dateFormat.js");
-      log4j.info("jsDateFormat: " + jsDateFormat);
       vars.setSessionValue("#AD_JsDateFormat", jsDateFormat);
+
       final String sqlDateFormat = properties.getProperty("dateFormat.sql");
-      log4j.info("sqlDateFormat: " + sqlDateFormat);
       vars.setSessionValue("#AD_SqlDateFormat", sqlDateFormat);
+
       final String pentahoServer = properties.getProperty("pentahoServer");
-      log4j.info("pentahoServer: " + pentahoServer);
       vars.setSessionValue("#pentahoServer", pentahoServer);
+
       final String sourcePath = properties.getProperty("source.path");
-      log4j.info("sourcePath: " + sourcePath);
       vars.setSessionValue("#sourcePath", sourcePath);
+
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("strFileProperties: " + strFileProperties);
+        log4j.debug("javaDateFormat: " + javaDateFormat);
+        log4j.debug("javaDateTimeFormat: " + javaDateTimeFormat);
+        log4j.debug("jsDateFormat: " + jsDateFormat);
+        log4j.debug("sqlDateFormat: " + sqlDateFormat);
+        log4j.debug("pentahoServer: " + pentahoServer);
+        log4j.debug("sourcePath: " + sourcePath);
+      }
     } catch (final IOException e) {
       // catch possible io errors from readLine()
       log4j.error("Error reading properties", e);

@@ -483,7 +483,8 @@ public abstract class AcctServer {
     // if (log4j.isDebugEnabled()) log4j.debug("POSTLOADING ARRAY: " +
     // AD_Client_ID);
     if (!DocumentType.equals(DOCTYPE_GLJournal))
-      m_as = AcctSchema.getAcctSchemaArray(conn, AD_Client_ID, AD_Org_ID);
+      //m_as = AcctSchema.getAcctSchemaArray(conn, AD_Client_ID, AD_Org_ID);
+      reloadAcctSchemaArray();
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Post - Antes de new Fact - C_CURRENCY_ID = "
     // + C_Currency_ID);

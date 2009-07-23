@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -211,15 +212,21 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportProjectBuildingSiteData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), ""));
-    xmlDocument.setData("reportMProductId_IN", "liststructure", ReportProjectBuildingSiteData
-        .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), ""));
-    xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", SubCategoryProductData.select(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", "")));
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", new FieldProvider[0]);
+    xmlDocument.setData("reportMProductId_IN", "liststructure", new FieldProvider[0]);
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
+          "M_PRODUCT_CATEGORY_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportSalesOrderJR"), Utility.getContext(this, vars, "#User_Client",
+              "ReportSalesOrderJR"), 0);
+      comboTableData.fillParameters(null, "ReportSalesOrderJR", "");
+      xmlDocument
+          .setData("reportC_PRODUCTCATREGORY", "liststructure", comboTableData.select(false));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
     response.setContentType("text/html; charset=UTF-8");
 
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));

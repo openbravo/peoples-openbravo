@@ -34,7 +34,9 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
+import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -137,7 +139,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     }
 
     XmlDocument xmlDocument = null;
-    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
     String strcBpartnerIdAux = strcBpartnerId;
@@ -259,8 +261,17 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setData("reportAccountTo_ID", "liststructure", ReportTrialBalanceData
         .selectAccount(this, Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
             Utility.getContext(this, vars, "#User_Client", "Account"), "", strcAcctSchemaId));
-    xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData
-        .selectCombo(this, vars.getRole()));
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), Utility
+              .getContext(this, vars, "#User_Client", "ReportTrialBalance"), '*');
+      comboTableData.fillParameters(null, "ReportTrialBalance", "");
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Client",
@@ -283,10 +294,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? "" : "alert('" + strMessage
         + "');"));
     xmlDocument.setParameter("paramAll0", strAll.equals("") ? "0" : "1");
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-        ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(
-            this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client",
-            ""), strcBpartnerIdAux));
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strcBpartnerIdAux));
 
     xmlDocument.setParameter("accounFromArray", Utility.arrayDobleEntrada("arrAccountFrom",
         ReportTrialBalanceData.selectAccountDouble(this, Utility.getContext(this, vars,
@@ -333,7 +343,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     String discard[] = { "selEliminar", "sectionBP" };
 
     XmlDocument xmlDocument = null;
-    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
     ReportTrialBalanceData[] data = null;

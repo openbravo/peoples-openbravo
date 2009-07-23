@@ -41,7 +41,9 @@ public class ServletGoBack extends HttpBaseServlet {
   }
 
   public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-    log4j.info("start doPost");
+    if (log4j.isDebugEnabled()) {
+      log4j.info("start doPost");
+    }
     Variables vars = new Variables(req);
     String strUrl = strDireccion + vars.getCurrentServletPath(strServletPorDefecto) + "?Command="
         + vars.getCurrentServletCommand();

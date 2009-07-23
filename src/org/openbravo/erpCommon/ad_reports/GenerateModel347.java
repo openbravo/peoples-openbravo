@@ -33,6 +33,7 @@ import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -127,9 +128,9 @@ public class GenerateModel347 extends HttpSecureAppServlet {
     xmlDocument.setParameter("sustitutiveType", strType);
     xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
         vars.getRole()));
-    xmlDocument.setData("reportMProductId_IN", "liststructure", GenerateModel347Data
-        .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strmProductId));
+    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strmProductId));
     out.println(xmlDocument.print());
     out.close();
   }
@@ -166,9 +167,9 @@ public class GenerateModel347 extends HttpSecureAppServlet {
             .nDaysAfter(this, strDateTo, "1"), Tree.getMembers(this, TreeData.getTreeOrg(this, vars
             .getClient()), strOrg));
 
-      GenerateModel347Data[] products = GenerateModel347Data.selectMproduct(this, Utility
-          .getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
-          "#User_Client", ""), strmProductId);
+      SelectorUtilityData[] products = SelectorUtilityData.selectMproduct(this, Utility.getContext(
+          this, vars, "#AccessibleOrgTree", ""),
+          Utility.getContext(this, vars, "#User_Client", ""), strmProductId);
       String productList = "";
       for (int i = 0; i < products.length; i++) {
         productList += "'" + products[i].id + "',";

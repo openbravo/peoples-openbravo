@@ -30,6 +30,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
+import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -201,7 +202,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     if (vars.commandIn("FIND") || vars.commandIn("DEFAULT")
         && !vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber").equals("0")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening);
-      String strTreeOrg = ReportGeneralLedgerJournalData.treeOrg(this, vars.getClient());
+      String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
       String strOrgFamily = getFamily(strTreeOrg, strOrg);
       if (strRecord.equals("")) {
         data = ReportGeneralLedgerJournalData.select(this, Utility.getContext(this, vars,
@@ -325,8 +326,17 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("document", strDocument);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
-    xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData
-        .selectCombo(this, vars.getRole()));
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedgerJournal"),
+          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedgerJournal"), '*');
+      comboTableData.fillParameters(null, "ReportGeneralLedgerJournal", "");
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
@@ -360,7 +370,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
 
     ReportGeneralLedgerJournalData[] data = null;
 
-    String strTreeOrg = ReportGeneralLedgerJournalData.treeOrg(this, vars.getClient());
+    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
 
     if (strRecord.equals("")) {
@@ -375,7 +385,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord);
 
     String strSubtitle = Utility.messageBD(this, "CompanyName", vars.getLanguage()) + ": "
-        + ReportGeneralLedgerData.selectCompany(this, vars.getClient());
+        + ReportGeneralLedgerJournalData.selectCompany(this, vars.getClient());
 
     if (strDateFrom.equals("") && strDateTo.equals(""))
       strSubtitle += " - " + Utility.messageBD(this, "Period", vars.getLanguage()) + ": "

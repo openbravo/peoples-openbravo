@@ -129,8 +129,7 @@ public class ReportInvoiceCustomerDimensionalPDF extends HttpSecureAppServlet {
         + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strDateTo;
     if (!strPartnerGroup.equals(""))
       strTitle = strTitle + ", " + Utility.messageBD(this, "ForBPartnerGroup", vars.getLanguage())
-          + " "
-          + ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpgroup(this, strPartnerGroup);
+          + " " + ReportInvoiceCustomerDimensionalAnalysesData.selectBpgroup(this, strPartnerGroup);
     // if (!strcBpartnerId.equals("")) strTitle =
     //strTitle+", para el tercero "+ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner
     // (this,
@@ -154,14 +153,11 @@ public class ReportInvoiceCustomerDimensionalPDF extends HttpSecureAppServlet {
               .getLanguage(), strProducttype);
     if (!strsalesrepId.equals(""))
       strTitle = strTitle + ", " + Utility.messageBD(this, "TheSalesRep", vars.getLanguage()) + " "
-          + ReportRefundInvoiceCustomerDimensionalAnalysesData.selectSalesrep(this, strsalesrepId);
+          + ReportInvoiceCustomerDimensionalAnalysesData.selectSalesrep(this, strsalesrepId);
     if (!strPartnerSalesrepId.equals(""))
-      strTitle = strTitle
-          + ", "
-          + Utility.messageBD(this, "TheClientSalesRep", vars.getLanguage())
+      strTitle = strTitle + ", " + Utility.messageBD(this, "TheClientSalesRep", vars.getLanguage())
           + " "
-          + ReportRefundInvoiceCustomerDimensionalAnalysesData.selectSalesrep(this,
-              strPartnerSalesrepId);
+          + ReportInvoiceCustomerDimensionalAnalysesData.selectSalesrep(this, strPartnerSalesrepId);
     ReportInvoiceCustomerDimensionalAnalysesData[] data = null;
     String[] strShownArray = { "", "", "", "", "", "", "", "", "", "" };
     if (strShown.startsWith("("))

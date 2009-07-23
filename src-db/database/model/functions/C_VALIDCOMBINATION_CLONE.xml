@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_VALIDCOMBINATION_CLONE">
-    <function name="C_VALIDCOMBINATION_CLONE" type="VARCHAR">
+    <function name="C_VALIDCOMBINATION_CLONE" type="NULL">
       <parameter name="p_orginal_validcombination" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -16,6 +16,9 @@
       <parameter name="p_subacct_length" type="NUMERIC" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_result" type="VARCHAR" mode="out">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -28,7 +31,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -50,14 +53,13 @@
 	v_Account_ID			            VARCHAR(32); 		--OBTG:varchar2--
 	v_seq_name 			              CHARACTER VARYING(255); --OBTG:varchar2--
 	v_C_AcctSchema_ID		          VARCHAR(32) :=null; 	--OBTG:varchar2--
-	C_Out_New_Acct_Number		      VARCHAR(32) :=null; 	--OBTG:varchar2--
 	v_UpdateSequence		          CHAR;
 	tmp_Subaccout_no		          VARCHAR(32) :=null; 	--OBTG:varchar2--
 	v_C_ElementValue_ID		        VARCHAR(32) :=null; 	--OBTG:varchar2--
 	
 BEGIN
   IF (p_orginal_validcombination IS NULL) THEN
-    RETURN NULL;
+    p_Result:=null;
   END IF;
 	v_C_ElementValue_ID := GET_UUID();
 
@@ -184,11 +186,10 @@ BEGIN
                 
 	/*
 		Function call to Retrieve the new account NUMBER for Business Partner or Product. */					
-		C_ValidCombination_Insert(C_Out_New_Acct_Number, v_Default_Account_Client_ID , v_Org_ID , v_C_AcctSchema_ID,
+		C_ValidCombination_Insert(v_Default_Account_Client_ID , v_Org_ID , v_C_AcctSchema_ID,
 	  v_C_ElementValue_ID,NULL,	NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-	  NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-    
-	return C_Out_New_Acct_Number;
+	  NULL, NULL, NULL, NULL, NULL, NULL, NULL, p_Result);
+
 END C_VALIDCOMBINATION_CLONE
 ]]></body>
     </function>

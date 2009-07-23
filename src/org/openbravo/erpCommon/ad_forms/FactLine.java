@@ -701,7 +701,7 @@ public class FactLine {
             C_LocFrom_ID, C_LocTo_ID, C_SalesRegion_ID, C_Project_ID, C_Campaign_ID, C_Activity_ID,
             User1_ID, User2_ID, description.toString(), m_Fact_Acct_Group_ID, m_SeqNo,
             m_DocBaseType, Record_ID2, (m_docLine != null) ? m_docLine.m_A_Asset_ID : "",
-            (m_docLine != null) ? m_docLine.m_C_WithHolding_ID : "");
+            (m_docLine != null) ? m_docLine.m_C_WithHolding_ID : "", m_docVO.C_DocType_ID);
         log4jFactLine.debug("FactLine - After insertFactAct");
       }
       if (m_docVO.m_IsOpening.equals("Y"))

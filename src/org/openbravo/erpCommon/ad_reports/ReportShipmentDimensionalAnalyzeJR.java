@@ -35,6 +35,7 @@ import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -327,14 +328,12 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
 
     xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
         vars.getRole()));
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-        ReportShipmentDimensionalAnalyzeJRData.selectBpartner(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strcBpartnerId));
-    xmlDocument.setData("reportMProductId_IN", "liststructure",
-        ReportShipmentDimensionalAnalyzeJRData.selectMproduct(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strmProductId));
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strmProductId));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
@@ -422,11 +421,10 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
           + ReportShipmentDimensionalAnalyzeJRData.selectProductCategory(this, strProductCategory);
     if (!strsalesrepId.equals(""))
       strTitle = strTitle + ", " + Utility.messageBD(this, "TheSalesRep", vars.getLanguage()) + " "
-          + ReportInvoiceCustomerDimensionalAnalysesData.selectSalesrep(this, strsalesrepId);
+          + ReportShipmentDimensionalAnalyzeJRData.selectSalesrep(this, strsalesrepId);
     if (!strPartnerSalesrepId.equals(""))
       strTitle = strTitle + ", " + Utility.messageBD(this, "TheClientSalesRep", vars.getLanguage())
-          + " "
-          + ReportInvoiceCustomerDimensionalAnalysesData.selectSalesrep(this, strPartnerSalesrepId);
+          + " " + ReportShipmentDimensionalAnalyzeJRData.selectSalesrep(this, strPartnerSalesrepId);
     if (!strmWarehouseId.equals(""))
       strTitle = strTitle + " " + Utility.messageBD(this, "And", vars.getLanguage()) + " "
           + Utility.messageBD(this, "TheWarehouse", vars.getLanguage()) + " "

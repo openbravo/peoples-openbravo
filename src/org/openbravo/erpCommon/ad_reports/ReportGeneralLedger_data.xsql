@@ -270,65 +270,6 @@
       <Sql></Sql>
   </SqlMethod>
 
-  <SqlMethod name="treeOrg" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-        SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = ?
-    </Sql>
-    <Parameter name="client"/>
-  </SqlMethod>
-
-
-  <SqlMethod name="treeAccount" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-        SELECT AD_TREE_ID FROM AD_TREE
-        WHERE AD_CLIENT_ID = ?
-        AND TREETYPE = 'EV'
-
-    </Sql>
-    <Parameter name="client"/>
-  </SqlMethod>
-
-  <SqlMethod name="selectC_ElementValue_ID" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT C_ElementValue.C_ElementValue_ID as id, ((CASE C_ElementValue.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ElementValue.Value || ' - ' || C_ElementValue.Name) as name FROM C_ElementValue, C_ELEMENT
-      WHERE C_ElementValue.AD_Org_ID IN('1') AND C_ElementValue.AD_Client_ID IN('1')  AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = ? )
-      and c_elementvalue.ELEMENTLEVEL='S'
-      AND C_ELEMENTVALUE.C_ELEMENT_ID = C_ELEMENT.C_ELEMENT_ID
-      AND C_ELEMENT.ISACTIVE = 'Y'
-      AND 1=1
-      ORDER BY name
-    ]]></Sql>
-
-    <Parameter name="adOrgClient" type="replace" optional="true" after="C_ElementValue.AD_Org_ID IN(" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="C_ElementValue.AD_Client_ID IN(" text="'1'"/>
-    <Parameter name="cElementvalueId"/>
-    <Parameter name="schema" optional="true" after="AND 1=1"><![CDATA[ AND (select max(c_element_id) from c_acctschema_element where c_acctschema_id = ? and ELEMENTTYPE = 'AC') = C_ElementValue.c_element_id ]]></Parameter>
-  </SqlMethod>
-
-  <SqlMethod name="selectC_ElementValue_ID_Double" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT c_acctschema_element.c_acctschema_id AS PADRE, C_ElementValue.C_ElementValue_ID as id, ((CASE C_ElementValue.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ElementValue.Value || ' - ' || C_ElementValue.Name) as name
-      FROM C_ElementValue, c_acctschema_element, C_ELEMENT
-      WHERE C_ElementValue.AD_Org_ID IN('1') AND C_ElementValue.AD_Client_ID IN('1')
-      AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = ? )
-      and c_elementvalue.ELEMENTLEVEL='S'
-      AND C_ELEMENTVALUE.C_ELEMENT_ID = C_ELEMENT.C_ELEMENT_ID
-      AND C_ELEMENT.ISACTIVE = 'Y'
-      AND 1=1
-      AND c_acctschema_element.ELEMENTTYPE = 'AC'
-      AND c_acctschema_element.c_element_id = C_ElementValue.c_element_id
-      ORDER BY PADRE ASC, name ASC
-    ]]></Sql>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="C_ElementValue.AD_Org_ID IN(" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="C_ElementValue.AD_Client_ID IN(" text="'1'"/>
-    <Parameter name="cElementvalueId"/>
-  </SqlMethod>
-
   <SqlMethod name="selectCompany" type="preparedStatement" return="string" default="0">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -339,20 +280,6 @@
       ]]></Sql>
     <Parameter name="client"/>
   </SqlMethod>
-
-  <SqlMethod name="selectRange" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-	   SELECT c_elementvalue_id as name
-       FROM C_ELEMENTVALUE
-       WHERE value between (select value from c_elementvalue where c_elementvalue_id = ?)
-       and  (select value from c_elementvalue where c_elementvalue_id = ?)
-	   and c_elementvalue.ELEMENTLEVEL = 'S'
-       ORDER BY value asc
-      ]]></Sql>
-      <Parameter name="accountfrom"/>
-      <Parameter name="accountto"/>
-   </SqlMethod>
 
   <SqlMethod name="selectTotal" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

@@ -94,7 +94,9 @@
    <SqlMethod name="selectObVersion" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      	select OB_Version from ad_system_info
+    select version || version_label as ob_version
+      from ad_module
+     where ad_module_id = '0'
     ]]></Sql>
    </SqlMethod>
    <SqlMethod name="selectObInstallMode" type="preparedStatement" return="string">
@@ -106,7 +108,9 @@
    <SqlMethod name="selectCodeRevision" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      	select Code_Revision from ad_system_info
+   select coalesce(version_id, '') as code_revision
+     from ad_module
+    where ad_module_id = '0'
     ]]></Sql>
    </SqlMethod>
    <SqlMethod name="selectIsheartbeatactive" type="preparedStatement" return="string">

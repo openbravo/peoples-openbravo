@@ -143,7 +143,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       xmlDocument.setParameter("cProjectKind", strProjectkind);
       xmlDocument.setParameter("cRegionId", strcRegionId);
       xmlDocument.setParameter("cProjectPublic", strProjectpublic);
-      xmlDocument.setParameter("projectName", ReportProjectBuildingSiteData.selectProject(this,
+      xmlDocument.setParameter("projectName", ReportSalesOrderInvoicedData.selectProject(this,
           strcProjectId));
       xmlDocument.setParameter("paramBPartnerDescription", ReportSalesOrderInvoicedData
           .bPartnerDescription(this, strcBpartnerId));
@@ -227,21 +227,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
         throw new ServletException(ex);
       }
 
-      SubCategoryProductData[] dataSub = SubCategoryProductData.select(this, Utility.getContext(
-          this, vars, "#AccessibleOrgTree", "ReportSalesOrderInvoicedJasper"), Utility.getContext(
-          this, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"));
-      xmlDocument.setParameter("product", Utility.arrayDobleEntrada("array", SubCategoryProductData
-          .selectProduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client",
-              "ReportSalesOrderInvoicedJasper"))));
-
-      if (dataSub != null && dataSub.length != 0) {
-        xmlDocument.setData("structureCategory", dataSub);
-        xmlDocument.setData("structureProduct", SubCategoryProductData.selectCategoryProduct(this,
-            dataSub[0].id));
-      }
-
-    } else {
+    } else { // command != DEFAULT
       ReportSalesOrderInvoicedData[] data = ReportSalesOrderInvoicedData.select(this,
           strCurrencyId,
           Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoiced"), Utility

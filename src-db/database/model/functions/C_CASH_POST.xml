@@ -269,7 +269,8 @@
       FROM C_CASH,
         C_CASHBOOK
       WHERE C_CASH.C_CASHBOOK_ID=C_CASHBOOK.C_CASHBOOK_ID
-        AND Ad_Isorgincluded(C_CASH.AD_ORG_ID, C_CASHBOOK.AD_ORG_ID, C_CASHBOOK.AD_CLIENT_ID)=-1
+        AND NOT (Ad_Isorgincluded(C_CASH.AD_ORG_ID, C_CASHBOOK.AD_ORG_ID, C_CASHBOOK.AD_CLIENT_ID)<>-1
+	    OR Ad_Isorgincluded(C_CASHBOOK.AD_ORG_ID, C_CASH.AD_ORG_ID, C_CASHBOOK.AD_CLIENT_ID)<>-1)
         AND C_CASH_ID=v_Record_ID;
       IF v_count>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgCashbook@') ;
@@ -289,8 +290,8 @@
         AND c.C_CASH_ID=v_Record_ID
         AND cl.C_ORDER_ID=o.C_ORDER_ID
         AND o.C_BPARTNER_ID=bp.C_BPARTNER_ID
-        AND(Ad_Isorgincluded(o.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1
-        OR Ad_Isorgincluded(o.AD_ORG_ID, c.AD_ORG_ID, c.AD_CLIENT_ID)=-1) ;
+        AND (Ad_Isorgincluded(o.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1
+        OR Ad_Isorgincluded(o.AD_ORG_ID, c.AD_ORG_ID, c.AD_CLIENT_ID)=-1);
       IF v_count>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@NotCorrectOrgOrderCashLine@') ;
       END IF;

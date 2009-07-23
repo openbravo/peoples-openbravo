@@ -284,6 +284,7 @@ public class WadUtility {
       TableRelationData trd[] = TableRelationData.selectRefTable(conn, fields.referencevalue);
       if (log4j.isDebugEnabled())
         log4j.debug(" number of TableRelationData: " + trd.length);
+
       if (tableName != null && tableName.length() != 0) {
         vecTable
             .addElement("left join (select "
@@ -2520,5 +2521,17 @@ public class WadUtility {
       }
     }
     return strParam;
+  }
+
+  public static String columnName(String name, String tableModule, String columnModule) {
+    // If the column is in a different module than the table it will start with EM_
+    String columnName;
+    if (tableModule != null && columnModule != null && !tableModule.equals(columnModule)
+        && name.toLowerCase().startsWith("em_")) {
+      columnName = name.substring(3);
+    } else {
+      columnName = name;
+    }
+    return columnName;
   }
 }

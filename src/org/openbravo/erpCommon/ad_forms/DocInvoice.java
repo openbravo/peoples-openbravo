@@ -37,7 +37,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Constructor
-   * 
+   *
    * @param AD_Client_ID
    *          AD_Client_ID
    */
@@ -217,7 +217,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for ARI, ARC, ARF, API, APC.
-   * 
+   *
    * <pre>
    *  ARI, ARF
    *      Receivables     DR
@@ -240,7 +240,7 @@ public class DocInvoice extends AcctServer {
    *      TaxCredit               CR
    *      Expense                 CR
    * </pre>
-   * 
+   *
    * @param as
    *          accounting schema
    * @return Fact
@@ -296,7 +296,10 @@ public class DocInvoice extends AcctServer {
       // TaxDue CR
       log4jDocInvoice.debug("m_taxes.length: " + m_taxes);
       for (int i = 0; m_taxes != null && i < m_taxes.length; i++) {
-        fact.createLine(null, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
+    	//New docLine created to assign C_Tax_ID value to the entry
+    	DocLine docLine = new DocLine(DocumentType, Record_ID, "");
+    	docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
+        fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
             C_Currency_ID, "", m_taxes[i].m_amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
       }
@@ -451,7 +454,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Update Product Info. - Costing (PriceLastInv) - PO (PriceLastInv)
-   * 
+   *
    * @param C_AcctSchema_ID
    *          accounting schema
    */
@@ -478,7 +481,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line and tax amounts from total - no rounding
-   * 
+   *
    * @return positive amount, if total invoice is bigger than lines
    */
   public BigDecimal getBalance() {
@@ -517,7 +520,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   * 
+   *
    * @param cBPartnerId
    *          business partner id
    * @param as
@@ -564,7 +567,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Get Document Confirmation
-   * 
+   *
    * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {

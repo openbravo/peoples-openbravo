@@ -36,6 +36,7 @@ import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -318,13 +319,12 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
 
     xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
         vars.getRole()));
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-        ReportSalesDimensionalAnalyzeJRData.selectBpartner(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""),
-            strcBpartnerId));
-    xmlDocument.setData("reportMProductId_IN", "liststructure", ReportSalesDimensionalAnalyzeJRData
-        .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strmProductId));
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
+        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
+            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strmProductId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
           "C_BPartner SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
