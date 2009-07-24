@@ -341,14 +341,10 @@ public class OBContext implements OBNotSingleton {
   }
 
   public void setCurrentClient(Client currentClient) {
-    readableOrganizations = null;
-    writableOrganizations = null;
     this.currentClient = currentClient;
   }
 
   public void setCurrentOrganization(Organization currentOrganization) {
-    readableOrganizations = null;
-    writableOrganizations = null;
     this.currentOrganization = currentOrganization;
   }
 
