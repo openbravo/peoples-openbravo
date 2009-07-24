@@ -36,6 +36,7 @@ import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -50,23 +51,26 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")) {
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId","ReportTaxInvoiceJR|currency", strUserCurrencyId);
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportTaxInvoiceJR|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportTaxInvoiceJR|DateTo", "");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportTaxInvoiceJR|Org", "");
       String strDetail = vars.getStringParameter("inpDetalle", "-1");
       String strSales = vars.getStringParameter("inpSales", "S");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales);
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales,strCurrencyId);
     } else if (vars.commandIn("PRINT_HTML")) {
+      String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId","ReportTaxInvoiceJR|currency");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportTaxInvoiceJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTaxInvoiceJR|DateTo");
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTaxInvoiceJR|Org");
       String strDetail = vars.getStringParameter("inpDetalle");
       String strSales = vars.getStringParameter("inpSales");
-      printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "html");
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "html",strCurrencyId);
     } else if (vars.commandIn("PRINT_PDF")) {
+      String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId","ReportTaxInvoiceJR|currency");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportTaxInvoiceJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTaxInvoiceJR|DateTo");
@@ -75,22 +79,23 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
         strOrg = "0";
       String strDetail = vars.getStringParameter("inpDetalle");
       String strSales = vars.getStringParameter("inpSales");
-      printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "pdf");
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "pdf",strCurrencyId);
     } else if (vars.commandIn("RELATION_XLS")) {
+      String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId","ReportTaxInvoiceJR|currency");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportTaxInvoiceJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTaxInvoiceJR|DateTo");
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTaxInvoiceJR|Org");
       String strDetail = vars.getStringParameter("inpDetalle");
       String strSales = vars.getStringParameter("inpSales");
-      printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "xls");
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "xls",strCurrencyId);
     } else
       pageError(response);
   }
 
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales,
-      String strOutput) throws IOException, ServletException {
+      String strOutput,String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -105,7 +110,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
      * if (strSales.equals("S")) strSalesAux = "Y"; else strSalesAux = "N";
      */
     if (strDateFrom.equals("") && strDateTo.equals("") && strDetail.equals("-1")) {
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales);
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales,strCurrencyId);
     } else if (!strDetail.equals("-1")) {
       if (log4j.isDebugEnabled())
         log4j.debug("****** not datailed");
@@ -142,6 +147,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     parameters.put("PURCHASE", strPurchase);
     parameters.put("PARAM_ORG", Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
         strOrg));
+    parameters.put("PARAM_CURRENCY", strCurrencyId);
     String strDateFormat;
     strDateFormat = vars.getJavaDateFormat();
     SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
@@ -185,7 +191,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales)
+      String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales,String strCurrencyId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -237,7 +243,18 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-
+    xmlDocument.setParameter("ccurrencyid", strCurrencyId);
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTaxInvoiceJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportTaxInvoiceJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportTaxInvoiceJR",
+          strCurrencyId);
+      xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -421,7 +438,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
    */
 
   private void printPageDataExcel(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales)
+      String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales,String strCurrencyId)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -456,41 +473,41 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("****** detailed");
       if (strSales.equals("S")) {
-        dataSale = ReportTaxInvoiceData.select(this, Utility.getContext(this, vars, "C_Country_Id",
+        dataSale = ReportTaxInvoiceData.select(this,strCurrencyId,Utility.getContext(this, vars, "C_Country_Id",
             "ReportTaxInvoice"),
             Utility.getContext(this, vars, "#User_Client", "ReportTaxInvoice"), strDateFrom,
             DateTimeData.nDaysAfter(this, strDateTo, "1"), "Y", Tree.getMembers(this, TreeData
                 .getTreeOrg(this, vars.getClient()), strOrg));
-        data2Sale = ReportTaxInvoiceData.selectForeign(this, Utility.getContext(this, vars,
+        data2Sale = ReportTaxInvoiceData.selectForeign(this,strCurrencyId, Utility.getContext(this, vars,
             "C_Country_Id", "ReportTaxInvoice"), Utility.getContext(this, vars, "#User_Client",
             "ReportTaxInvoice"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), "Y",
             Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
         strSale = Utility.messageBD(this, "Sale", vars.getLanguage());
       } else if (strSales.equals("P")) {
-        dataPurchase = ReportTaxInvoiceData.select(this, Utility.getContext(this, vars,
+        dataPurchase = ReportTaxInvoiceData.select(this,strCurrencyId,Utility.getContext(this, vars,
             "C_Country_Id", "ReportTaxInvoice"), Utility.getContext(this, vars, "#User_Client",
             "ReportTaxInvoice"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), "N",
             Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
-        data2Purchase = ReportTaxInvoiceData.selectForeign(this, Utility.getContext(this, vars,
+        data2Purchase = ReportTaxInvoiceData.selectForeign(this,strCurrencyId, Utility.getContext(this, vars,
             "C_Country_Id", "ReportTaxInvoice"), Utility.getContext(this, vars, "#User_Client",
             "ReportTaxInvoice"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), "N",
             Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
         strPurchase = Utility.messageBD(this, "Purchase", vars.getLanguage());
       } else {
-        dataSale = ReportTaxInvoiceData.select(this, Utility.getContext(this, vars, "C_Country_Id",
+        dataSale = ReportTaxInvoiceData.select(this,strCurrencyId,Utility.getContext(this, vars, "C_Country_Id",
             "ReportTaxInvoice"),
             Utility.getContext(this, vars, "#User_Client", "ReportTaxInvoice"), strDateFrom,
             DateTimeData.nDaysAfter(this, strDateTo, "1"), "Y", Tree.getMembers(this, TreeData
                 .getTreeOrg(this, vars.getClient()), strOrg));
-        data2Sale = ReportTaxInvoiceData.selectForeign(this, Utility.getContext(this, vars,
+        data2Sale = ReportTaxInvoiceData.selectForeign(this,strCurrencyId, Utility.getContext(this, vars,
             "C_Country_Id", "ReportTaxInvoice"), Utility.getContext(this, vars, "#User_Client",
             "ReportTaxInvoice"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), "Y",
             Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
-        dataPurchase = ReportTaxInvoiceData.select(this, Utility.getContext(this, vars,
+        dataPurchase = ReportTaxInvoiceData.select(this,strCurrencyId,Utility.getContext(this, vars,
             "C_Country_Id", "ReportTaxInvoice"), Utility.getContext(this, vars, "#User_Client",
             "ReportTaxInvoice"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), "N",
             Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
-        data2Purchase = ReportTaxInvoiceData.selectForeign(this, Utility.getContext(this, vars,
+        data2Purchase = ReportTaxInvoiceData.selectForeign(this,strCurrencyId, Utility.getContext(this, vars,
             "C_Country_Id", "ReportTaxInvoice"), Utility.getContext(this, vars, "#User_Client",
             "ReportTaxInvoice"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), "N",
             Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));

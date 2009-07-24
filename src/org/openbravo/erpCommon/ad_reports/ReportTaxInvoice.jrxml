@@ -206,12 +206,15 @@
 		<defaultValueExpression ><![CDATA["REPORT TITLE"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="REPORT_SUBTITLE" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["Report Subtitle"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA[$P{BASE_DESIGN}+"/org/openbravo/erpCommon/ad_reports/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="cCountryId" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["100"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARAM_CURRENCY" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["100"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="parDateFrom" isForPrompting="true" class="java.util.Date"/>
@@ -277,6 +280,9 @@
 					</subreportParameter>
 					<subreportParameter  name="cCountryId">
 						<subreportParameterExpression><![CDATA[$P{cCountryId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="PARAM_CURRENCY">
+						<subreportParameterExpression><![CDATA[$P{PARAM_CURRENCY}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="parDateFrom">
 						<subreportParameterExpression><![CDATA[$P{parDateFrom}]]></subreportParameterExpression>
@@ -364,6 +370,9 @@
 					<subreportParameter  name="cCountryId">
 						<subreportParameterExpression><![CDATA[$P{cCountryId}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter  name="PARAM_CURRENCY">
+						<subreportParameterExpression><![CDATA[$P{PARAM_CURRENCY}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter  name="parDateFrom">
 						<subreportParameterExpression><![CDATA[$P{parDateFrom}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -450,6 +459,9 @@
 					<subreportParameter  name="cCountryId">
 						<subreportParameterExpression><![CDATA[$P{cCountryId}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter  name="PARAM_CURRENCY">
+						<subreportParameterExpression><![CDATA[$P{PARAM_CURRENCY}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter  name="parDateFrom">
 						<subreportParameterExpression><![CDATA[$P{parDateFrom}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -535,6 +547,9 @@
 					</subreportParameter>
 					<subreportParameter  name="cCountryId">
 						<subreportParameterExpression><![CDATA[$P{cCountryId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="PARAM_CURRENCY">
+						<subreportParameterExpression><![CDATA[$P{PARAM_CURRENCY}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="parDateFrom">
 						<subreportParameterExpression><![CDATA[$P{parDateFrom}]]></subreportParameterExpression>
