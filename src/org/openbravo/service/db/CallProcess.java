@@ -56,8 +56,8 @@ public class CallProcess {
   }
 
   /**
-   * Calls a stored procedure with the specified name. The recordID and parameters can be null.
-   * Parameters are translated into {@link Parameter} instances.
+   * Calls a process with the specified name. The recordID and parameters can be null. Parameters
+   * are translated into {@link Parameter} instances.
    * 
    * @param processName
    *          the name of the stored procedure, must exist in the database, see
@@ -84,8 +84,8 @@ public class CallProcess {
   }
 
   /**
-   * Calls a stored procedure with the specified name. The recordID and parameters can be null.
-   * Parameters are translated into {@link Parameter} instances.
+   * Calls a process. The recordID and parameters can be null. Parameters are translated into
+   * {@link Parameter} instances.
    * 
    * @param process
    *          the process to execute
