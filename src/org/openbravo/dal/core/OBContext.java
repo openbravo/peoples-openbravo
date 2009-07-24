@@ -460,6 +460,7 @@ public class OBContext implements OBNotSingleton {
       Hibernate.initialize(getUser().getClient());
       Hibernate.initialize(getUser().getOrganization());
       Hibernate.initialize(getUser().getDefaultOrganization());
+      Hibernate.initialize(getUser().getDefaultWarehouse());
       Hibernate.initialize(getUser().getDefaultClient());
       Hibernate.initialize(getUser().getDefaultRole());
       Hibernate.initialize(getUser().getDefaultLanguage());
