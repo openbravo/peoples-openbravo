@@ -186,7 +186,7 @@ BEGIN
                 
 	/*
 		Function call to Retrieve the new account NUMBER for Business Partner or Product. */					
-		C_ValidCombination_Insert(v_Default_Account_Client_ID, v_Org_ID, v_C_AcctSchema_ID, v_C_ElementValue_ID, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, p_Result);
+		C_ValidCombination_Insert(p_Result, v_Default_Account_Client_ID, v_Org_ID, v_C_AcctSchema_ID, v_C_ElementValue_ID, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 END C_VALIDCOMBINATION_CLONE
 ]]></body>
     </function>
