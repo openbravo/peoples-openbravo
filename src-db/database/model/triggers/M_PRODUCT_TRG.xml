@@ -110,19 +110,19 @@ BEGIN
             c_validcombination_clone(Cur_Defaults.P_Asset_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_Asset_Acct);
 			
             -- Retrieving the cogs account number.
-            c_validcombination_clone(Cur_Defaults.P_COGS_Acct, v_Sequence_No, :new.Name,Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_COGS_Acct);
+            c_validcombination_clone(Cur_Defaults.P_COGS_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_COGS_Acct);
 			
             -- Retrieving the purchase price variance account number.
             c_validcombination_clone(Cur_Defaults.P_PurchasePriceVariance_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_PurchasePriceVariance_Acct);
 			
             -- Retrieving the invoice price variance account number.
-      			c_validcombination_clone(Cur_Defaults.P_InvoicePriceVariance_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_InvoicePriceVariance_Acct);		
+	    c_validcombination_clone(Cur_Defaults.P_InvoicePriceVariance_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_InvoicePriceVariance_Acct);		
  
             -- Retrieving the trade discount rec account number.
-      			c_validcombination_clone(Cur_Defaults.P_TradeDiscountRec_Acct, v_Sequence_No, :new.Name,Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_TradeDiscountRec_Acct);
+      	    c_validcombination_clone(Cur_Defaults.P_TradeDiscountRec_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_TradeDiscountRec_Acct);
 
             -- Retrieving the trade discount grant account number.
-      			c_validcombination_clone(Cur_Defaults.P_TradeDiscountGrant_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_TradeDiscountGrant_Acct);
+      	    c_validcombination_clone(Cur_Defaults.P_TradeDiscountGrant_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_TradeDiscountGrant_Acct);
                
             
             -- Inserting the new sub account for Product 
