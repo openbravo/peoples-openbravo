@@ -470,7 +470,7 @@ public abstract class AcctServer {
       ConnectionProvider conn, Connection con) throws ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("post data" + C_Currency_ID);
-    if (!loadDocument(data, force, conn)) {
+    if (!loadDocument(data, force, conn, con)) {
       log4j.warn("AcctServer - post - Error loading document");
       return false;
     }
@@ -497,7 +497,7 @@ public abstract class AcctServer {
     for (int i = 0; OK && i < m_as.length; i++) {
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - Post - Before the postLogic - C_CURRENCY_ID = " + C_Currency_ID);
-      Status = postLogic(i, conn, con, vars);
+      Status = postLogic(i, conn, con, vars, m_as[i]);
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - Post - After postLogic");
       if (!Status.equals(STATUS_Posted))
@@ -811,7 +811,7 @@ public abstract class AcctServer {
    * @return posting status/error code
    */
   private final String postLogic(int index, ConnectionProvider conn, Connection con,
-      VariablesSecureApp vars) throws ServletException {
+      VariablesSecureApp vars, AcctSchema as) throws ServletException {
     // rejectUnbalanced
     if (!m_as[index].isSuspenseBalancing() && !isBalanced())
       return STATUS_NotBalanced;
@@ -858,13 +858,31 @@ public abstract class AcctServer {
     if (!m_fact[index].isAcctBalanced())
       m_fact[index].balanceAccounting(conn);
 
+	//Here processes defined to be executed at posting time, when existing, will be executed
+    AcctServerData [] data = AcctServerData.selectAcctProcess(conn, as.m_C_AcctSchema_ID);
+    for(int i=0; data!=null && i<data.length; i++){
+		String strClassname = data[i].classname;
+	    if (!strClassname.equals("")) {
+	      try {
+	        AcctProcessTemplate newTemplate = (AcctProcessTemplate) Class.forName(strClassname)
+	            .newInstance();
+	        if(!newTemplate.execute(this, as, conn, con, vars)){
+	        	Status = AcctServer.STATUS_Error;
+	        	break;
+	        }
+	      } catch (Exception e) {
+	        log4j.error("Error while creating new instance for AcctProcessTemplate - " + e);
+	      }
+	    }
+    }
+
     return STATUS_Posted;
   } // postLogic
 
   /**
    * Is the Source Document Balanced
    *
-   * @return true if (source) baanced
+   * @return true if (source) balanced
    */
   public boolean isBalanced() {
     // Multi-Currency documents are source balanced by definition
