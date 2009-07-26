@@ -140,7 +140,8 @@ public class InvoicePropertySetter {
       invoice.setDocumentNo(documentNo);
     }
 
-    if (invoice.getSalesRepresentative() == null && bp.getSalesRepresentative() != null) {
+    if (invoice.isSalesTransaction() && invoice.getSalesRepresentative() == null
+        && bp.getSalesRepresentative() != null) {
       // taken from AD_User_SalesRep table reference
       // EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND
       // bp.IsSalesRep='Y')
@@ -180,9 +181,9 @@ public class InvoicePropertySetter {
 
     if (invoice.getPriceList() == null) {
       if (invoice.isSalesTransaction()) {
-        invoice.setPriceList(bp.getPurchasePricelist());
-      } else {
         invoice.setPriceList(bp.getPriceList());
+      } else {
+        invoice.setPriceList(bp.getPurchasePricelist());
       }
     }
 
@@ -192,17 +193,17 @@ public class InvoicePropertySetter {
 
     if (invoice.getFormOfPayment() == null) {
       if (invoice.isSalesTransaction()) {
-        invoice.setFormOfPayment(bp.getPOFormOfPayment());
-      } else {
         invoice.setFormOfPayment(bp.getFormOfPayment());
+      } else {
+        invoice.setFormOfPayment(bp.getPOFormOfPayment());
       }
     }
 
     if (invoice.getPaymentTerms() == null) {
       if (invoice.isSalesTransaction()) {
-        invoice.setPaymentTerms(bp.getPOPaymentTerms());
-      } else {
         invoice.setPaymentTerms(bp.getPaymentTerms());
+      } else {
+        invoice.setPaymentTerms(bp.getPOPaymentTerms());
       }
     }
 
