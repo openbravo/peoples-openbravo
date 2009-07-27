@@ -58,7 +58,7 @@ public class WADImageBLOB extends WADControl {
         && !getData("IsUpdateable").equals("N"))
       discard[0] = "paramInactive";
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADImage", discard).createXmlDocument();
+        "org/openbravo/wad/controls/WADImageBLOB", discard).createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -92,7 +92,7 @@ public class WADImageBLOB extends WADControl {
       discard[1] = "xx_R";
     }
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADImageXML", discard).createXmlDocument();
+        "org/openbravo/wad/controls/WADImageBLOBXML", discard).createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     return replaceHTML(xmlDocument.print());

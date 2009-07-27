@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -17,19 +17,17 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-
-<FIELD_TMP>
-<div id="xx_inp">
-  <input type="hidden" name="inpxx" id="xx" value="" onchange="logChanges(this);xx();return true;"/>
-  <table id="buttonxx" onclick="openSearch(null, null, '../info/ImageInfo.html', null, false, 'frmMain', 'inpxx', 'inpyy_R', document.frmMain.inpzz.value);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='xx';return true;" style="cursor: pointer;">
-    <tr>
-      <td><img src="../utility/ShowImage?id=xx" border=0 alt="xx" id="xx_R" title="xx" name="inpxx_R" class="xx"/></td>
-    </tr>
-  </table>
-  <table id="paramInactive">
-    <tr>
-      <td><img src="../utility/ShowImage?id=xx" border=0 alt="xx" id="xx_R" title="xx" name="inpxx_R"/></td>
-    </tr>
-  </table>
-</div>
-</FIELD_TMP>
+<REPORT>
+  <template file="WADImageBLOBXML.html"/>
+  <PARAMETER id="xx" name="columnName" attribute="id"/>
+  <PARAMETER id="xx" name="columnName"/>
+  <PARAMETER id="xx_PARAM" name="columnName" attribute="id"/>
+  <PARAMETER id="xx_PARAM" name="columnName" attribute="name"/>
+  <PARAMETER id="xx_R" name="columnName" attribute="id" replace="xx"/>
+  <PARAMETER id="fieldColumnName" name="columnName"/>
+  <PARAMETER id="xx_PARAM_R" name="columnName" attribute="id" replace="xx_PARAM"/>
+  <PARAMETER id="xx_PARAM_R" name="columnName" attribute="name" replace="xx"/>
+  <PARAMETER id="xx_PARAM_class_R" name="columnName" attribute="id" replace="xx_PARAM_class"/>
+  <PARAMETER id="xx_PARAM_class_R" name="columnName" attribute="name" replace="xx"/>
+  <DISCARD id="discard"/>
+</REPORT>

@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Image;
 
@@ -47,19 +48,26 @@ public class ShowImage extends HttpSecureAppServlet {
       ServletException {
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
+    boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
+    OBContext.getOBContext().setInAdministratorMode(true);
 
     String id = vars.getStringParameter("id");
-    OutputStream out = response.getOutputStream();
-
-    Image img = OBDal.getInstance().get(Image.class, id);
+    Image img = null;
+    try {
+      img = OBDal.getInstance().get(Image.class, id);
+    } catch (Exception e) {
+      log4j.error(e);
+    }
     if (img != null) {
+
       byte[] imageBytes = img.getBindaryData();
       if (imageBytes != null) {
+        OutputStream out = response.getOutputStream();
         response.setContentLength(imageBytes.length);
         out.write(imageBytes);
+        out.close();
       }
     }
-    out.close();
-
+    OBContext.getOBContext().setInAdministratorMode(adminMode);
   }
 }
