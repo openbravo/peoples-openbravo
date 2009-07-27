@@ -22,24 +22,20 @@ import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public interface AcctProcessTemplate {
-  static Logger log4jAcctServer = Logger.getLogger(AcctServer.class);
-
 
   /**
+   * @param acctServer
    * @param as
-   *          Accounting server
-   *          accounting schema
-   *          Connection Provider
-   *          Connection
-   *          VariablesSecureApp
+   * @param conn
+   * @param con
+   * @param vars
    * @return boolean
    */
-  public abstract boolean execute(AcctServer acctServer, AcctSchema as, ConnectionProvider conn,
+  public boolean execute(AcctServer acctServer, AcctSchema as, ConnectionProvider conn,
       Connection con, VariablesSecureApp vars) throws ServletException;
 
 }
