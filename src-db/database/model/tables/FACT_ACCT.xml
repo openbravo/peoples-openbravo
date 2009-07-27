@@ -218,6 +218,9 @@
       <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCY_FACT_ACCT">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_FACT_ACCT">
+        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_LOCATION" name="C_LOCATIONFROM_FACT_ACCT">
         <reference local="C_LOCFROM_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
@@ -266,12 +269,9 @@
       <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_FACTACCT">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
       </foreign-key>
-			<foreign-key foreignTable="C_CAMPAIGN" name="SO_CAMPAIGN_FACT_ACCT">
-				<reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
-			</foreign-key>
-			<foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_FACT_ACCT">
-				<reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
-			</foreign-key>
+      <foreign-key foreignTable="C_CAMPAIGN" name="SO_CAMPAIGN_FACT_ACCT">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
       <index name="FACT_ACCT_ACCOUNT" unique="false">
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="AD_ORG_ID"/>
