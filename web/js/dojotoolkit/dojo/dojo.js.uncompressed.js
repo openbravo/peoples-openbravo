@@ -22859,6 +22859,10 @@ openbravo.widget.DataGrid.io = {
   },
 
   handleError: function(exception, http, kwArgs){
+    // ignore special status == 0, which happens when browser does cancel a request
+    if (exception.status == 0) {
+      return;
+    }
     setValues_MessageBox('messageBoxID',"ERROR", "Error received in IO response:", exception.message);
   }
 };
