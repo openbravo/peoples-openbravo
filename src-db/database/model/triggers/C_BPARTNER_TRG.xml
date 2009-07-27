@@ -91,14 +91,12 @@ BEGIN
                   Retrieving the receivable account NUMBER
               */
               AD_Sequence_Doc(v_seq_name, Cur_Defaults.AD_Client_ID, 'Y', v_Sequence_No);
-              v_C_Receivable_Acct:=c_validcombination_clone(Cur_Defaults.C_Receivable_Acct, v_Sequence_No, :new.Name,
-              Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
+              c_validcombination_clone(Cur_Defaults.C_Receivable_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_C_Receivable_Acct);
               
                /*
                   Retrieving the prepayment account NUMBER
                */
-               v_C_Prepayment_Acct:=c_validcombination_clone(Cur_Defaults.C_Prepayment_Acct, v_Sequence_No, :new.Name,
-               Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
+               c_validcombination_clone(Cur_Defaults.C_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_C_Prepayment_Acct);
 			            
              /*
                   Inserting the new account NUMBER
@@ -130,25 +128,22 @@ BEGIN
                 Creating new sub account
               */
           		Ad_Sequence_Next('C_BP_Vendor_Acct', Cur_Defaults.C_AcctSchema_ID, v_BP_Acct_ID);
-         IF (Cur_Defaults.IsBPNewAccount='Y') THEN
-         
+         IF (Cur_Defaults.IsBPNewAccount='Y') THEN         
                      
-	            /*
+	        /*
                 Retrieving the liability account NUMBER 
-              */
-              v_V_Liability_Acct:= c_validcombination_clone(Cur_Defaults.V_Liability_Acct, v_Sequence_No, :new.Name,
-              Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
+               */
+              c_validcombination_clone(Cur_Defaults.V_Liability_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Liability_Acct);
                /*
                  Retrieving the liability services account NUMBER
                */ 
-        			 v_V_Liability_Services_Acct:=c_validcombination_clone(Cur_Defaults.V_Liability_Services_Acct, v_Sequence_No, :new.Name,
-               Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
-			   			 /*
+		c_validcombination_clone(Cur_Defaults.V_Liability_Services_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Liability_Services_Acct);
+		/*
                  Retrieving the prepayment account NUMBER
               */
-               v_V_Prepayment_Acct:=c_validcombination_clone(Cur_Defaults.V_Prepayment_Acct, v_Sequence_No, :new.Name,
-               Cur_Defaults.acct_length, Cur_Defaults.subacct_length);
-			    		/*
+               c_validcombination_clone(Cur_Defaults.V_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Prepayment_Acct);
+               
+    		/*
                  Inserting the new account NUMBER
                */
               INSERT INTO C_BP_Vendor_Acct
@@ -198,17 +193,18 @@ BEGIN
        */
 		 IF (v_C_AcctSchema_ID is null or v_C_AcctSchema_ID <> Cur_Defaults2.C_AcctSchema_ID) THEN
          IF (Cur_Defaults2.IsBPNewAccount='Y') THEN
+         
              /*
                 Retrieving the Expense account NUMBER
              */
-             v_E_Expense_Acct:= c_validcombination_clone(Cur_Defaults2.E_Expense_Acct,  v_Sequence_No, :new.Name,
-             Cur_Defaults2.acct_length, Cur_Defaults2.subacct_length);
+             c_validcombination_clone(Cur_Defaults2.E_Expense_Acct, v_Sequence_No, :new.Name, Cur_Defaults2.acct_length, Cur_Defaults2.subacct_length, v_E_Expense_Acct);
+             
              /*
                  Retrieving the Prepayment account NUMBER
              */
-             v_E_Prepayment_Acct:=c_validcombination_clone(Cur_Defaults2.E_Prepayment_Acct,  v_Sequence_No, :new.Name,
-             Cur_Defaults2.acct_length, Cur_Defaults2.subacct_length);
-        		 /*
+             c_validcombination_clone(Cur_Defaults2.E_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults2.acct_length, Cur_Defaults2.subacct_length, v_E_Prepayment_Acct);
+
+	      /*
                  Inserting the new account NUMBER 
              */
 	 		
