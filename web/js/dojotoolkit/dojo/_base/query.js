@@ -65,11 +65,11 @@ if(typeof dojo != "undefined"){
 	// 					d.isOpera; // float
 	// 					d.isWebKit; // float
 	// 					d.doc ; // document element
-	var qlc = d._queryListCtor = 		d.NodeList;
-	var isString = 		d.isString;
+	var qlc = d._NodeListCtor = 		d.NodeList;
 
 	var getDoc = function(){ return d.doc; };
-	var cssCaseBug = (d.isWebKit && ((getDoc().compatMode) == "BackCompat"));
+	// NOTE(alex): the spec is idiotic. CSS queries should ALWAYS be case-sensitive, but nooooooo
+	var cssCaseBug = ((d.isWebKit||d.isMozilla) && ((getDoc().compatMode) == "BackCompat"));
 
 	////////////////////////////////////////////////////////////////////////
 	// Global utilities
@@ -415,7 +415,7 @@ if(typeof dojo != "undefined"){
 
 	var getArr = function(i, arr){
 		// helps us avoid array alloc when we don't need it
-		var r = arr||[]; // FIXME: should this be 'new d._queryListCtor()' ?
+		var r = arr||[]; // FIXME: should this be 'new d._NodeListCtor()' ?
 		if(i){ r.push(i); }
 		return r;
 	};
@@ -938,7 +938,6 @@ if(typeof dojo != "undefined"){
 				// isAlien check. Workaround for Prototype.js being totally evil/dumb.
 				/\{\s*\[native code\]\s*\}/.test(String(ecs)) && 
 				query.classes.length &&
-				// WebKit bug where quirks-mode docs select by class w/o case sensitivity
 				!cssCaseBug
 			){
 				// it's a class-based query and we've got a fast way to run it.
@@ -1255,7 +1254,7 @@ if(typeof dojo != "undefined"){
 		if(arr && arr.nozip){ 
 			return (qlc._wrap) ? qlc._wrap(arr) : arr;
 		}
-		// var ret = new d._queryListCtor();
+		// var ret = new d._NodeListCtor();
 		var ret = new qlc();
 		if(!arr || !arr.length){ return ret; }
 		if(arr[0]){
@@ -1446,7 +1445,7 @@ if(typeof dojo != "undefined"){
 
 		//Set list constructor to desired value. This can change
 		//between calls, so always re-assign here.
-		qlc = d._queryListCtor;
+		qlc = d._NodeListCtor;
 
 		if(!query){
 			return new qlc();
@@ -1455,10 +1454,10 @@ if(typeof dojo != "undefined"){
 		if(query.constructor == qlc){
 			return query;
 		}
-		if(!isString(query)){
+		if(typeof query != "string"){ // inline'd type check
 			return new qlc(query); // dojo.NodeList
 		}
-		if(isString(root)){
+		if(typeof root == "string"){ // inline'd type check
 			root = d.byId(root);
 			if(!root){ return new qlc(); }
 		}
@@ -1495,7 +1494,7 @@ if(typeof dojo != "undefined"){
 
 	// one-off function for filtering a NodeList based on a simple selector
 	d._filterQueryResult = function(nodeList, simpleFilter){
-		var tmpNodeList = new d._queryListCtor();
+		var tmpNodeList = new d._NodeListCtor();
 		var filterFunc = getSimpleFilterFunc(getQueryParts(simpleFilter)[0]);
 		for(var x = 0, te; te = nodeList[x]; x++){
 			if(filterFunc(te)){ tmpNodeList.push(te); }

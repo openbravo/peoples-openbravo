@@ -62,19 +62,19 @@ dojo.declare("dijit.form.SimpleTextarea",
 	postCreate: function(){
 		this.inherited(arguments);
 		if(dojo.isIE && this.cols){ // attribute selectors is not supported in IE6
-			dojo.addClass(this.domNode, "dijitTextAreaCols");
+			dojo.addClass(this.textbox, "dijitTextAreaCols");
 		}
 	},
 
 	_previousValue: "",
-	_onInput: function(e){
+	_onInput: function(/*Event?*/ e){
 		// Override TextBox._onInput() to enforce maxLength restriction
 		if(this.maxLength){
 			var maxLength = parseInt(this.maxLength);
 			var value = this.textbox.value.replace(/\r/g,'');
 			var overflow = value.length - maxLength;
 			if(overflow > 0){
-				dojo.stopEvent(e);
+				if(e){ dojo.stopEvent(e); }
 				var textarea = this.textbox;
 				if(textarea.selectionStart){
 					var pos = textarea.selectionStart;

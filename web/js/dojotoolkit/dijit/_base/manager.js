@@ -28,6 +28,7 @@ dojo.declare("dijit.WidgetSet", null, {
 	
 	constructor: function(){
 		this._hash = {};
+		this.length = 0;
 	},
 
 	add: function(/*Widget*/ widget){
@@ -39,52 +40,69 @@ dojo.declare("dijit.WidgetSet", null, {
 		if(this._hash[widget.id]){
 			throw new Error("Tried to register widget with id==" + widget.id + " but that id is already registered");
 		}
-		this._hash[widget.id]=widget;
+		this._hash[widget.id] = widget;
+		this.length++;
 	},
 
 	remove: function(/*String*/ id){
 		// summary:
 		//		Remove a widget from this WidgetSet. Does not destroy the widget; simply
 		//		removes the reference.
-		delete this._hash[id];
+		if(this._hash[id]){
+			delete this._hash[id];
+			this.length--;
+		}
 	},
 
-	forEach: function(/*Function*/ func){
+	forEach: function(/*Function*/ func, /* Object? */thisObj){
 		// summary:
 		//		Call specified function for each widget in this set.
 		//
 		// func:
-		//		A callback function to run for each item. Is passed a the widget.
+		//		A callback function to run for each item. Is passed the widget, the index
+		//		in the iteration, and the full hash, similar to `dojo.forEach`.
+		//
+		// thisObj:
+		//		An optional scope parameter
 		//
 		// example:
 		//		Using the default `dijit.registry` instance:
 		//		|	dijit.registry.forEach(function(widget){
 		//		|		console.log(widget.declaredClass);	
 		//		|	});
-		for(var id in this._hash){
-			func(this._hash[id]);
+		//
+		// returns: dijit.WidgetSet
+		//		Returns self, in order to allow for further chaining. 
+
+		var i = 0, id;
+		for(id in this._hash){
+			func.call(thisObj || dojo.global, this._hash[id], i++, this._hash);
 		}
+		return this;
 	},
 
-	filter: function(/*Function*/ filter){
+	filter: function(/*Function*/ filter, /* Object? */thisObj){
 		// summary:
 		//		Filter down this WidgetSet to a smaller new WidgetSet
 		//		Works the same as `dojo.filter` and `dojo.NodeList.filter`
 		//		
 		// filter:
-		//		Callback function to test truthiness.
+		//		Callback function to test truthiness. Is passed the widget
+		//		reference and the pseudo-index in the object. 
+		//
+		// thisObj: Object?
+		//		Option scope to use for the filter function. 
 		//
 		// example:
 		//		Arbitrary: select the odd widgets in this list
-		//		|	var i = 0;
-		//		|	dijit.registry.filter(function(w){
-		//		|		return ++i % 2 == 0;
+		//		|	dijit.registry.filter(function(w, i){
+		//		|		return i % 2 == 0;
 		//		|	}).forEach(function(w){ /* odd ones */ });
 
 		var res = new dijit.WidgetSet();
-		this.forEach(function(widget){
-			if(filter(widget)){ res.add(widget); }
-		});
+		this.forEach(function(widget, idx){
+			if(filter.call(this, widget, idx)){ res.add(widget); }
+		}, thisObj);
 		return res; // dijit.WidgetSet
 	},
 
@@ -103,13 +121,83 @@ dojo.declare("dijit.WidgetSet", null, {
 
 	byClass: function(/*String*/ cls){
 		// summary:
-		//		Reduce this widgetset to a new WidgetSet of a particular declaredClass
+		//		Reduce this widgetset to a new WidgetSet of a particular `declaredClass`
 		// 
+		// cls: String
+		//		The Class to scan for. Full dot-notated string.
+		//
 		// example:
-		//		Find all titlePane's in a page:
+		//		Find all `dijit.TitlePane`s in a page:
 		//		|	dijit.registry.byClass("dijit.TitlePane").forEach(function(tp){ tp.close(); });
 		
-		return this.filter(function(widget){ return widget.declaredClass==cls; });	// dijit.WidgetSet
+		return this.filter(function(widget){ // dijit.WidgetSet
+			return widget.declaredClass == cls; 
+		});
+	},
+		
+	toArray: function(){
+		// summary: 
+		//		Convert this WidgetSet into a true Array
+		//
+		// example:
+		//		Work with the widget .domNodes in a real Array 
+		//		|	dojo.map(dijit.registry.toArray(), function(w){ return w.domNode; });
+
+		var ar = [];
+		this.forEach(function(w){
+			ar.push(w); // ^ i, ar[i] = w;
+		});
+		return ar; // Array
+	},
+	
+	map: function(/* Function */func, /* Object? */thisObj){
+		// summary: 
+		//		Create a new Array from this WidgetSet, following the same rules as `dojo.map`
+		// example:
+		//		|	var nodes = dijit.registy.map(function(w){ return w.domNode; });
+		//
+		// returns: Array
+		//		A new array of the returned values.
+		return dojo.map(this.toArray(), func, thisObj); // Array
+	},
+	
+	every: function(func, thisObj){
+		// summary:
+		// 		A synthetic clone of `dojo.every` acting explictly on this WidgetSet
+		//
+		// func: Function
+		//		A callback function run for every widget in this list. Exits loop
+		//		when the first false return is encountered.
+		//
+		// thisObj: Object?
+		//		Optional scope parameter to use for the callback
+		var x = 0, i;
+		for(i in this._hash){
+			if(!func.call(thisObj || dojo.global, this._hash[i], x++)){
+				return false; // Boolean
+			}
+		}
+		return true; // Boolean 
+	},
+	
+	some: function(func, thisObj){
+		// summary:
+		// 		A synthetic clone of `dojo.some` acting explictly on this WidgetSet
+		//
+		// func: Function
+		//		A callback function run for every widget in this list. Exits loop
+		//		when the first true return is encountered.
+		//
+		// thisObj: Object?
+		//		Optional scope parameter to use for the callback
+
+		var x = 0, i;
+		for(i in this._hash){
+			if(func.call(thisObj || dojo.global, this._hash[i], x++)){
+				return true; // Boolean
+			}
+		}
+		return false; // Boolean
 	}
 	
 });
@@ -138,8 +226,8 @@ dijit.getUniqueId = function(/*String*/widgetType){
 
 dijit.findWidgets = function(/*DomNode*/ root){
 	// summary:
-	//		Search subtree under root, putting found widgets in outAry.
-	//		Doesn't search for nested widgets (ie, widgets inside other widgets)
+   	//		Search subtree under root returning widgets found.
+	//		Doesn't search for nested widgets (ie, widgets inside other widgets).
 	
 	var outAry = [];
 
@@ -200,7 +288,7 @@ dijit.getEnclosingWidget = function(/* DOMNode */ node){
 	return null;
 };
 
-// elements that are tab-navigable if they have no tabindex value set
+// elements that are tab-navigable if they have no tabIndex value set
 // (except for "a", which must have an href attribute)
 dijit._tabElements = {
 	area: true,
@@ -222,9 +310,9 @@ dijit._isElementShown = function(/*Element*/elem){
 dijit.isTabNavigable = function(/*Element*/elem){
 	// summary:
 	//		Tests if an element is tab-navigable
-	if(dojo.hasAttr(elem, "disabled")){ return false; }
-	var hasTabindex = dojo.hasAttr(elem, "tabindex");
-	var tabindex = dojo.attr(elem, "tabindex");
+	if(dojo.attr(elem, "disabled")){ return false; }
+	var hasTabindex = dojo.hasAttr(elem, "tabIndex");
+	var tabindex = dojo.attr(elem, "tabIndex");
 	if(hasTabindex && tabindex >= 0) {
 		return true; // boolean
 	}
@@ -244,20 +332,20 @@ dijit._getTabNavigable = function(/*DOMNode*/root){
 	// description:
 	//		Finds the following descendants of the specified root node:
 	//		* the first tab-navigable element in document order
-	//		  without a tabindex or with tabindex="0"
+	//		  without a tabIndex or with tabIndex="0"
 	//		* the last tab-navigable element in document order
-	//		  without a tabindex or with tabindex="0"
+	//		  without a tabIndex or with tabIndex="0"
 	//		* the first element in document order with the lowest
-	//		  positive tabindex value
+	//		  positive tabIndex value
 	//		* the last element in document order with the highest
-	//		  positive tabindex value
+	//		  positive tabIndex value
 	var first, last, lowest, lowestTabindex, highest, highestTabindex;
 	var walkTree = function(/*DOMNode*/parent){
 		dojo.query("> *", parent).forEach(function(child){
 			var isShown = dijit._isElementShown(child);
 			if(isShown && dijit.isTabNavigable(child)){
-				var tabindex = dojo.attr(child, "tabindex");
-				if(!dojo.hasAttr(child, "tabindex") || tabindex == 0){
+				var tabindex = dojo.attr(child, "tabIndex");
+				if(!dojo.hasAttr(child, "tabIndex") || tabindex == 0){
 					if(!first){ first = child; }
 					last = child;
 				}else if(tabindex > 0){

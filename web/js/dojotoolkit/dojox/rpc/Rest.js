@@ -68,7 +68,6 @@ dojo.provide("dojox.rpc.Rest");
 		//		Creates a REST service using the provided path.
 		var service;
 		// it should be in the form /Table/
-		path = path.match(/\/$/) ? path : (path + '/');
 		service = function(id, args){
 			return drr._get(service, id, args);
 		};
@@ -85,8 +84,16 @@ dojo.provide("dojox.rpc.Rest");
 		};
 		// the default XHR args creator:
 		service._getRequest = getRequest || function(id, args){
+			if(dojo.isObject(id)){
+				var sort = args.sort && args.sort[0];
+				if(sort && sort.attribute){
+					id.sort = (sort.descending ? '-' : '') + sort.attribute; 
+				}
+				id = dojo.objectToQuery(id);
+				id = id ? "?" + id: "";
+			}		
 			var request = {
-				url: path + (dojo.isObject(id) ? '?' + dojo.objectToQuery(id) : id == null ? "" : id), 
+				url: path + (id == null ? "" : id),
 				handleAs: isJson ? 'json' : 'text', 
 				contentType: isJson ? 'application/json' : 'text/plain',
 				sync: dojox.rpc._sync,

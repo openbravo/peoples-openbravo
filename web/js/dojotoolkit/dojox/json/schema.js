@@ -30,7 +30,7 @@ dojox.json.schema.validate = function(/*Any*/instance,/*Object*/schema){
 	//
 	return this._validate(instance,schema,false);
 };
-dojox.json.schema.checkPropertyChange = function(/*Any*/value,/*Object*/schema){
+dojox.json.schema.checkPropertyChange = function(/*Any*/value,/*Object*/schema, /*String*/ property){
 	// summary:
 	// 		The checkPropertyChange method will check to see if an value can legally be in property with the given schema
 	// 		This is slightly different than the validate method in that it will fail if the schema is readonly and it will
@@ -44,14 +44,14 @@ dojox.json.schema.checkPropertyChange = function(/*Any*/value,/*Object*/schema){
 	// return: 
 	// 		see dojox.validate.jsonSchema.validate
 	//
-	return this._validate(value,schema,true);
+	return this._validate(value,schema, property || "property");
 };
 dojox.json.schema.mustBeValid = function(result){
 	//	summary:
 	//		This checks to ensure that the result is valid and will throw an appropriate error message if it is not
 	// result: the result returned from checkPropertyChange or validate
 	if(!result.valid){
-		throw new Error(dojo.map(result.errors,function(error){return error.property + ' ' + error.message;}).join(","));
+		throw new TypeError(dojo.map(result.errors,function(error){return error.property + ' ' + error.message;}).join(","));
 	}	
 }
 dojox.json.schema._validate = function(/*Any*/instance,/*Object*/schema,/*Boolean*/ _changing){
@@ -59,12 +59,18 @@ dojox.json.schema._validate = function(/*Any*/instance,/*Object*/schema,/*Boolea
 	var errors = [];
 		// validate a value against a property definition
 	function checkProp(value, schema, path,i){
+		var l;
 		path += path ? typeof i == 'number' ? '[' + i + ']' : typeof i == 'undefined' ? '' : '.' + i : i;
 		function addError(message){
 			errors.push({property:path,message:message});
 		}
-		if(typeof schema != 'object' || schema instanceof Array){
-			if(schema){
+		
+		if((typeof schema != 'object' || schema instanceof Array) && (path || typeof schema != 'function')){
+			if(typeof schema == 'function'){
+				if(!(Object(value) instanceof schema)){
+					addError("is not an instance of the class/constructor " + schema.name);
+				}
+			}else if(schema){
 				addError("Invalid schema/property definition " + schema);
 			}
 			return null;
@@ -133,7 +139,7 @@ dojox.json.schema._validate = function(/*Any*/instance,/*Object*/schema,/*Boolea
 					if(schema.maxItems && value.length > schema.maxItems){
 						addError("There must be a maximum of " + schema.maxItems + " in the array");
 					}
-				}else if(schema.properties && typeof value == 'object'){
+				}else if(schema.properties){
 					errors.concat(checkObj(value,schema.properties,path,schema.additionalProperties));
 				}
 				if(schema.pattern && typeof value == 'string' && !value.match(schema.pattern)){
@@ -184,7 +190,7 @@ dojox.json.schema._validate = function(/*Any*/instance,/*Object*/schema,/*Boolea
 			}
 			
 			for(var i in objTypeDef){ 
-				if(objTypeDef.hasOwnProperty(i)){
+				if(objTypeDef.hasOwnProperty(i) && !(i.charAt(0) == '_' && i.charAt(1) == '_')){
 					var value = instance[i];
 					var propDef = objTypeDef[i];
 					checkProp(value,propDef,path,i);
@@ -192,7 +198,7 @@ dojox.json.schema._validate = function(/*Any*/instance,/*Object*/schema,/*Boolea
 			}
 		}
 		for(i in instance){
-			if(instance.hasOwnProperty(i) && (i.charAt(0) != '_' || i.charAt(0) != '_') && objTypeDef && !objTypeDef[i] && additionalProp===false){
+			if(instance.hasOwnProperty(i) && !(i.charAt(0) == '_' && i.charAt(1) == '_') && objTypeDef && !objTypeDef[i] && additionalProp===false){
 				errors.push({property:path,message:(typeof value) + "The property " + i +
 						" is not defined in the schema and the schema does not allow additional properties"});
 			}
@@ -211,7 +217,7 @@ dojox.json.schema._validate = function(/*Any*/instance,/*Object*/schema,/*Boolea
 		return errors;
 	}
 	if(schema){
-		checkProp(instance,schema,'','');
+		checkProp(instance,schema,'',_changing || '');
 	}
 	if(!_changing && instance && instance.$schema){
 		checkProp(instance,instance.$schema,'','');

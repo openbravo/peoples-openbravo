@@ -26,7 +26,7 @@ dojo.declare("dojox.layout.ExpandoPane",
 
 	maxHeight: "",
 	maxWidth: "",
-	splitter: "",
+	splitter: false,
 	
 	templateString:"<div class=\"dojoxExpandoPane\" dojoAttachEvent=\"ondblclick:toggle\" >\n\t<div dojoAttachPoint=\"titleWrapper\" class=\"dojoxExpandoTitle\">\n\t\t<div class=\"dojoxExpandoIcon\" dojoAttachPoint=\"iconNode\" dojoAttachEvent=\"onclick:toggle\"><span class=\"a11yNode\">X</span></div>\t\t\t\n\t\t<span class=\"dojoxExpandoTitleNode\" dojoAttachPoint=\"titleNode\">${title}</span>\n\t</div>\n\t<div class=\"dojoxExpandoWrapper\" dojoAttachPoint=\"cwrapper\" dojoAttachEvent=\"ondblclick:_trap\">\n\t\t<div class=\"dojoxExpandoContent\" dojoAttachPoint=\"containerNode\"></div>\n\t</div>\n</div>\n",
 

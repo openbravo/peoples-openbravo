@@ -86,7 +86,7 @@ dojo.declare(
 	_progressPixelSize: "width",
 
 	_onKeyPress: function(/*Event*/ e){
-		if(this.disabled || this.readOnly || e.altKey || e.ctrlKey){ return; }
+		if(this.disabled || this.readOnly || e.altKey || e.ctrlKey || e.metaKey){ return; }
 		switch(e.charOrCode){
 			case dojo.keys.HOME:
 				this._setValueAttr(this.minimum, true);

@@ -11,7 +11,7 @@ dojo.provide("dijit.form.MultiSelect");
 
 dojo.require("dijit.form._FormWidget");
 
-dojo.declare("dijit.form.MultiSelect", dijit.form._FormWidget, {
+dojo.declare("dijit.form.MultiSelect", dijit.form._FormValueWidget, {
 	// summary:
 	//		Widget version of a <select multiple=true> element,
 	//		for selecting multiple options.

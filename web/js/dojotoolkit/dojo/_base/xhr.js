@@ -15,19 +15,56 @@ dojo.require("dojo._base.query");
 
 (function(){
 	var _d = dojo;
+	var cfg = dojo.config;
+
 	function setValue(/*Object*/obj, /*String*/name, /*String*/value){
 		//summary:
 		//		For the named property in object, set the value. If a value
 		//		already exists and it is a string, convert the value to be an
 		//		array of values.
+
+		//Skip it if there is no value
+		if(value === null){
+			return;
+		}
+
 		var val = obj[name];
-		if(_d.isString(val)){
+		if(typeof val == "string"){ // inline'd type check
 			obj[name] = [val, value];
 		}else if(_d.isArray(val)){
 			val.push(value);
 		}else{
 			obj[name] = value;
 		}
+	}
+	
+	dojo.fieldToObject = function(/*DOMNode||String*/ inputNode){
+		// summary:
+		//		dojo.fieldToObject returns the value encoded in a form field as
+		//		as a string or an array of strings. Disabled form elements
+		//		and unchecked radio and checkboxes are skipped.	Multi-select
+		//		elements are returned as an array of string values.
+		var ret = null;
+		var item = _d.byId(inputNode);
+		if(item){
+			var _in = item.name;
+			var type = (item.type||"").toLowerCase();
+			if(_in && type && !item.disabled){
+				if(type == "radio" || type == "checkbox"){
+					if(item.checked){ ret = item.value }
+				}else if(item.multiple){
+					ret = [];
+					_d.query("option", item).forEach(function(opt){
+						if(opt.selected){
+							ret.push(opt.value);
+						}
+					});
+				}else{
+					ret = item.value;
+				}
+			}
+		}
+		return ret; // Object
 	}
 
 	dojo.formToObject = function(/*DOMNode||String*/ formNode){
@@ -67,20 +104,9 @@ dojo.require("dojo._base.query");
 			var _in = item.name;
 			var type = (item.type||"").toLowerCase();
 			if(_in && type && exclude.indexOf(type) == -1 && !item.disabled){
-				if(type == "radio" || type == "checkbox"){
-					if(item.checked){ setValue(ret, _in, item.value); }
-				}else if(item.multiple){
-					ret[_in] = [];
-					_d.query("option", item).forEach(function(opt){
-						if(opt.selected){
-							setValue(ret, _in, opt.value);
-						}
-					});
-				}else{ 
-					setValue(ret, _in, item.value);
-					if(type == "image"){
-						ret[_in+".x"] = ret[_in+".y"] = ret[_in].x = ret[_in].y = 0;
-					}
+				setValue(ret, _in, _d.fieldToObject(item));
+				if(type == "image"){
+					ret[_in+".x"] = ret[_in+".y"] = ret[_in].x = ret[_in].y = 0;
 				}
 			}
 		});
@@ -169,9 +195,10 @@ dojo.require("dojo._base.query");
 				var parts = item.split("=");
 				var name = dec(parts.shift());
 				var val = dec(parts.join("="));
-				if(_d.isString(ret[name])){
+				if(typeof ret[name] == "string"){ // inline'd type check
 					ret[name] = [ret[name]];
 				}
+
 				if(_d.isArray(ret[name])){
 					ret[name].push(val);
 				}else{
@@ -260,7 +287,7 @@ dojo.require("dojo._base.query");
 
 	dojo._contentHandlers["json-comment-optional"] = function(xhr){
 		var handlers = _d._contentHandlers;
-		if(xhr.responseText && xhr.responseText.indexOf("\/*") != -1){
+		if(xhr.responseText && /^[^{\[]*\/\*/.test(xhr.responseText)){
 			return handlers["json-comment-filtered"](xhr);
 		}else{
 			return handlers["json"](xhr);
@@ -289,6 +316,16 @@ dojo.require("dojo._base.query");
 		//	handleAs: String?
 		//		Acceptable values depend on the type of IO
 		//		transport (see specific IO calls for more information).
+		// 	rawBody: String?
+		// 		Sets the raw body for an HTTP request. If this is used, then the content
+		// 		property is ignored. This is mostly useful for HTTP methods that have
+		// 		a body to their requests, like PUT or POST. This property can be used instead
+		// 		of postData and putData for dojo.rawXhrPost and dojo.rawXhrPut respectively.
+		//	ioPublish: Boolean?
+		//		Set this explicitly to false to prevent publishing of topics related to
+		// 		IO operations. Otherwise, if djConfig.ioPublish is set to true, topics
+		// 		will be published via dojo.publish for different phases of an IO operation.
+		// 		See dojo.__IoPublish for a list of topics that are published.
 		//	load: Function?
 		//		This function will be
 		//		called on a successful HTTP response code.
@@ -308,6 +345,7 @@ dojo.require("dojo._base.query");
 		this.form = form;
 		this.preventCache = preventCache;
 		this.handleAs = handleAs;
+		this.ioPublish = ioPublish;
 		this.load = function(response, ioArgs){
 			// ioArgs: dojo.__IoCallbackArgs
 			//		Provides additional information about the request.
@@ -378,6 +416,45 @@ dojo.require("dojo._base.query");
 	}
 	=====*/
 
+
+	/*=====
+	dojo.__IoPublish = function(){
+		// 	summary:
+		// 		This is a list of IO topics that can be published
+		// 		if djConfig.ioPublish is set to true. IO topics can be
+		// 		published for any Input/Output, network operation. So,
+		// 		dojo.xhr, dojo.io.script and dojo.io.iframe can all
+		// 		trigger these topics to be published.
+		//	start: String
+		//		"/dojo/io/start" is sent when there are no outstanding IO
+		// 		requests, and a new IO request is started. No arguments
+		// 		are passed with this topic.
+		//	send: String
+		//		"/dojo/io/send" is sent whenever a new IO request is started.
+		// 		It passes the dojo.Deferred for the request with the topic.
+		//	load: String
+		//		"/dojo/io/load" is sent whenever an IO request has loaded
+		// 		successfully. It passes the response and the dojo.Deferred
+		// 		for the request with the topic.
+		//	error: String
+		//		"/dojo/io/error" is sent whenever an IO request has errored.
+		// 		It passes the error and the dojo.Deferred
+		// 		for the request with the topic.
+		//	done: String
+		//		"/dojo/io/done" is sent whenever an IO request has completed,
+		// 		either by loading or by erroring. It passes the error and
+		// 		the dojo.Deferred for the request with the topic.
+		//	stop: String
+		//		"/dojo/io/stop" is sent when all outstanding IO requests have
+		// 		finished. No arguments are passed with this topic.
+		this.start = "/dojo/io/start";
+		this.send = "/dojo/io/send";
+		this.load = "/dojo/io/load";
+		this.error = "/dojo/io/error";
+		this.done = "/dojo/io/done";
+		this.stop = "/dojo/io/stop";
+	}
+	=====*/
 
 
 	dojo._ioSetArgs = function(/*dojo.__IoArgs*/args,
@@ -461,7 +538,25 @@ dojo.require("dojo._base.query");
 				return handle.call(args, value, ioArgs);
 			});
 		}
-		
+
+		//Plug in topic publishing, if dojo.publish is loaded.
+		if(cfg.ioPublish && _d["publish"] && ioArgs.args.ioPublish !== false){
+			d.addCallbacks(
+				function(res){
+					_d["publish"]("/dojo/io/load", [d, res]);
+					return res;
+				},
+				function(res){
+					_d["publish"]("/dojo/io/error", [d, res]);
+					return res;
+				}
+			);
+			d.addBoth(function(res){
+				_d["publish"]("/dojo/io/done", [d, res]);
+				return res;
+			});
+		}
+
 		d.ioArgs = ioArgs;
 	
 		// FIXME: need to wire up the xhr object's abort method to something
@@ -502,6 +597,23 @@ dojo.require("dojo._base.query");
 	// something fierece if we don't use unified loops.
 	var _inFlightIntvl = null;
 	var _inFlight = [];
+	
+	
+	//Use a separate count for knowing if we are starting/stopping io calls.
+	//Cannot use _inFlight.length since it can change at a different time than
+	//when we want to do this kind of test. We only want to decrement the count
+	//after a callback/errback has finished, since the callback/errback should be
+	//considered as part of finishing a request.
+	var _pubCount = 0;
+	var _checkPubCount = function(dfd){
+		if(_pubCount <= 0){
+			_pubCount = 0;
+			if(cfg.ioPublish && _d["publish"] && (!dfd || dfd && dfd.ioArgs.args.ioPublish !== false)){
+				_d["publish"]("/dojo/io/stop");
+			}
+		}
+	};
+
 	var _watchInFlight = function(){
 		//summary: 
 		//		internal method that checks each inflight XMLHttpRequest to see
@@ -519,9 +631,11 @@ dojo.require("dojo._base.query");
 				var func = function(){
 					if(!dfd || dfd.canceled || !tif.validCheck(dfd)){
 						_inFlight.splice(i--, 1); 
+						_pubCount -= 1;
 					}else if(tif.ioCheck(dfd)){
 						_inFlight.splice(i--, 1);
 						tif.resHandle(dfd);
+						_pubCount -= 1;
 					}else if(dfd.startTime){
 						//did we timeout?
 						if(dfd.startTime + (dfd.ioArgs.args.timeout || 0) < now){
@@ -531,6 +645,7 @@ dojo.require("dojo._base.query");
 							dfd.errback(err);
 							//Cancel the request so the io module can do appropriate cleanup.
 							dfd.cancel();
+							_pubCount -= 1;
 						}
 					}
 				};
@@ -546,12 +661,13 @@ dojo.require("dojo._base.query");
 			}
 		}
 
+		_checkPubCount(dfd);
+
 		if(!_inFlight.length){
 			clearInterval(_inFlightIntvl);
 			_inFlightIntvl = null;
 			return;
 		}
-
 	}
 
 	dojo._ioCancelAll = function(){
@@ -572,6 +688,23 @@ dojo.require("dojo._base.query");
 		_d.addOnWindowUnload(_d._ioCancelAll);
 	}
 	
+	_d._ioNotifyStart = function(/*Deferred*/dfd){
+		// summary:
+		// 		If dojo.publish is available, publish topics
+		// 		about the start of a request queue and/or the
+		// 		the beginning of request.
+		// description:
+		// 		Used by IO transports. An IO transport should
+		// 		call this method before making the network connection.
+		if(cfg.ioPublish && _d["publish"] && dfd.ioArgs.args.ioPublish !== false){
+			if(!_pubCount){
+				_d["publish"]("/dojo/io/start");
+			}
+			_pubCount += 1;
+			_d["publish"]("/dojo/io/send", [dfd]);
+		}
+	}
+
 	_d._ioWatch = function(/*Deferred*/dfd,
 		/*Function*/validCheck,
 		/*Function*/ioCheck,
@@ -592,6 +725,7 @@ dojo.require("dojo._base.query");
 		if(args.timeout){
 			dfd.startTime = (new Date()).getTime();
 		}
+		
 		_inFlight.push({dfd: dfd, validCheck: validCheck, ioCheck: ioCheck, resHandle: resHandle});
 		if(!_inFlightIntvl){
 			_inFlightIntvl = setInterval(_watchInFlight, 50);
@@ -671,24 +805,31 @@ dojo.require("dojo._base.query");
 
 		//Make the Deferred object for this xhr request.
 		var dfd = _d._ioSetArgs(args, _deferredCancel, _deferredOk, _deferError);
+		var ioArgs = dfd.ioArgs;
 
 		//Pass the args to _xhrObj, to allow xhr iframe proxy interceptions.
-		dfd.ioArgs.xhr = _d._xhrObj(dfd.ioArgs.args);
+		var xhr = dfd.ioArgs.xhr = _d._xhrObj(dfd.ioArgs.args);
+		//If XHR factory fails, cancel the deferred.
+		if(!xhr){
+			dfd.cancel();
+			return dfd;
+		}
 
-		if(hasBody){
-			if("postData" in args){
-				dfd.ioArgs.query = args.postData;
-			}else if("putData" in args){
-				dfd.ioArgs.query = args.putData;
-			}
-		}else{
+		//Allow for specifying the HTTP body completely.
+		if("postData" in args){
+			ioArgs.query = args.postData;
+		}else if("putData" in args){
+			ioArgs.query = args.putData;
+		}else if("rawBody" in args){
+			ioArgs.query = args.rawBody;
+		}else if((arguments.length > 2 && !hasBody) || "POST|PUT".indexOf(method.toUpperCase()) == -1){
+			//Check for hasBody being passed. If no hasBody,
+			//then only append query string if not a POST or PUT request.
 			_d._ioAddQueryToUrl(dfd.ioArgs);
 		}
 
 		// IE 6 is a steaming pile. It won't let you call apply() on the native function (xhr.open).
 		// workaround for IE6's apply() "issues"
-		var ioArgs = dfd.ioArgs;
-		var xhr = ioArgs.xhr;
 		xhr.open(method, ioArgs.url, args.sync !== true, args.user || undefined, args.password || undefined);
 		if(args.headers){
 			for(var hdr in args.headers){
@@ -705,6 +846,7 @@ dojo.require("dojo._base.query");
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 		}
 		// FIXME: set other headers here!
+		_d._ioNotifyStart(dfd);
 		if(dojo.config.debugAtAllCosts){
 			xhr.send(ioArgs.query);
 		}else{

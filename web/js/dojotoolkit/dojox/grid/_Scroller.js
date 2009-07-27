@@ -156,7 +156,7 @@ dojo.provide("dojox.grid._Scroller");
 		},
 		measurePage: function(inPageIndex){
 			var n = this.getDefaultPageNode(inPageIndex);
-			return (n&&n.innerHTML) ? n.offsetHeight : 0;
+			return (n&&n.innerHTML) ? n.offsetHeight : undefined;
 		},
 		positionPage: function(inPageIndex, inPos){
 			for(var i=0; i<this.colCount; i++){
@@ -173,16 +173,12 @@ dojo.provide("dojox.grid._Scroller");
 			//
 			var n = nodes[inPageIndex];
 			var y = (n ? this.getPageNodePosition(n) + this.getPageHeight(inPageIndex) : 0);
-			//console.log('detected height change, repositioning from #%d (%d) @ %d ', inPageIndex + 1, last, y, this.pageHeights[0]);
-			//
 			for(var p=inPageIndex+1; p<=last; p++){
 				n = nodes[p];
 				if(n){
-					//console.log('#%d @ %d', inPageIndex, y, this.getPageNodePosition(n));
 					if(this.getPageNodePosition(n) == y){
 						return;
 					}
-					//console.log('placing page %d at %d', p, y);
 					this.positionPage(p, y);
 				}
 				y += this.getPageHeight(p);
@@ -199,7 +195,6 @@ dojo.provide("dojox.grid._Scroller");
 				var nodes = this.pageNodes[i];
 				var new_p = (p === null ? this.createPageNode() : this.invalidatePageNode(p, nodes));
 				new_p.pageIndex = inPageIndex;
-				new_p.id = (this._pageIdPrefix || "") + 'page-' + inPageIndex;
 				nodes[inPageIndex] = new_p;
 			}
 		},
@@ -264,7 +259,7 @@ dojo.provide("dojox.grid._Scroller");
 			var needPage = (!this._invalidating);
 			if(!needPage){
 				var ah = this.grid.attr("autoHeight");
-				if(typeof ah == "number" && ah < Math.min(this.rowsPerPage, this.rowCount)){
+				if(typeof ah == "number" && ah <= Math.min(this.rowsPerPage, this.rowCount)){
 					needPage = true;
 				}
 			}
@@ -288,24 +283,29 @@ dojo.provide("dojox.grid._Scroller");
 			this.height += inDh;
 			this.resize();
 		},
-		updatePageHeight: function(inPageIndex){
+		updatePageHeight: function(inPageIndex, fromBuild){
 			if(this.pageExists(inPageIndex)){
 				var oh = this.getPageHeight(inPageIndex);
-				var h = (this.measurePage(inPageIndex))||(oh);
+				var h = (this.measurePage(inPageIndex));
+				if(h === undefined){
+					h = oh;
+				}
 				this.pageHeights[inPageIndex] = h;
-				if((h)&&(oh != h)){
+				if(oh != h){
 					this.updateContentHeight(h - oh)
 					var ah = this.grid.attr("autoHeight");
-					if((typeof ah == "number" && ah > this.rowCount)||ah === true){
+					if((typeof ah == "number" && ah > this.rowCount)||(ah === true && !fromBuild)){
 						this.grid.sizeChange();
 					}else{
 						this.repositionPages(inPageIndex);
 					}
 				}
+				return h;
 			}
+			return 0;
 		},
 		rowHeightChanged: function(inRowIndex){
-			this.updatePageHeight(Math.floor(inRowIndex / this.rowsPerPage));
+			this.updatePageHeight(Math.floor(inRowIndex / this.rowsPerPage), false);
 		},
 		// scroller core
 		invalidateNodes: function(){
@@ -356,11 +356,7 @@ dojo.provide("dojox.grid._Scroller");
 			var h = this.getPageHeight(inPageIndex), oh = h;
 			if(!this.pageExists(inPageIndex)){
 				this.buildPage(inPageIndex, this.keepPages&&(this.stack.length >= this.keepPages), inPos);
-				h = this.measurePage(inPageIndex) || h;
-				this.pageHeights[inPageIndex] = h;
-				if(h && (oh != h)){
-					this.updateContentHeight(h - oh)
-				}
+				h = this.updatePageHeight(inPageIndex, true);
 			}else{
 				this.positionPage(inPageIndex, inPos);
 			}

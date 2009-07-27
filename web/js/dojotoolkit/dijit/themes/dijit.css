@@ -57,9 +57,6 @@
 .dj_ie .dijitInputField INPUT { /* try to get rid of IE implicit margin around INPUT */
 	margin: -1px 0 !important;
 }
-.dj_iequirks .dijitInputField INPUT { /* try to get rid of IE implicit margin around INPUT */
-	margin-top: -3px !important;
-}
 
 .dijitInlineTable {
 	/* To inline tables with a given width set (otherwise, use dijitInline above)
@@ -169,8 +166,21 @@
 	cursor: pointer;
 }
 
-.dijit_a11y .dijitCalendarSelectedDate {
-	text-decoration:overline !important;
+/*
+ * Since we can't use shading in a11y mode, and since the underline indicates today's date,
+ * use a border to show the selected date.
+ * Avoid screen jitter when switching selected date by compensating for the selected node's
+ * border w/padding on other nodes.
+ */
+.dijit_a11y .dijitCalendarDateLabel {
+	padding: 1px;
+}
+.dijit_a11y .dijitCalendarSelectedDate .dijitCalendarDateLabel {
+	border: solid 1px black;
+	padding: 0px;
+}
+.dijit_a11y .dijitCalendarDateTemplate {
+	padding-bottom: 0.1em !important;	/* otherwise bottom border doesn't appear on IE */
 }
 
 .dijit_a11y .dijit * {
@@ -943,6 +953,10 @@ img.dijitColorPaletteUnder {
 	vertical-align: middle;
 }
 
+.dijitCalendarMonthLabel {
+	cursor:pointer;
+}
+
 .dijitCalendarDisabledDate {
 	color:gray !important;
 }
@@ -964,7 +978,7 @@ img.dijitColorPaletteUnder {
 	cursor:pointer;
 }
 
-.dijitCalendarMonthLabelSpacer {
+.dijitSpacer {
 	/* don't display it, but make it affect the width */
   	position: relative;
   	height: 1px;
@@ -1241,6 +1255,11 @@ img.dijitColorPaletteUnder {
 }
 
 /* Tree */
+
+.dijitTreeIndent {
+	/* amount to indent each tree node (relative to parent node) */
+	width: 19px;
+}
 
 .dijitTreeRow, .dijitTreeContent {
 	white-space: nowrap;
@@ -1544,6 +1563,9 @@ img.dijitColorPaletteUnder {
 .dijit_a11y .dijitButtonContents .dijitButtonText,
 .dijit_a11y .dijitTab .tabLabel {
 	display: inline !important;
+}
+.dj_ie7 .dijitButtonNode > BUTTON.dijitButtonContents > * {
+	position: relative; /* workaround for IE7 distorted text on scroll */
 }
 
 .dijitTextArea {

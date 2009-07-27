@@ -223,7 +223,7 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 					nodes.push(n[i]);
 				}
 				if(nodes.length){
-					m.startDrag(this, nodes, this.copyState(dojo.dnd.getCopyKeyState(e)));
+					m.startDrag(this, nodes, this.copyState(dojo.isCopyKey(e)));
 				}
 			}
 		}
@@ -403,14 +403,14 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 			}
 
 			dojo.forEach(nodes, function(node, idx){
+				var childTreeNode = dijit.getEnclosingWidget(node),
+					childItem = childTreeNode && childTreeNode.item,
+					oldParentItem = childTreeNode && childTreeNode.getParent().item;
 				if(source == this){
 					// This is a node from my own tree, and we are moving it, not copying.
 					// Remove item from old parent's children attribute.
 					// TODO: dijit.tree.dndSelector should implement deleteSelectedNodes()
 					// and this code should go there.
-					var childTreeNode = dijit.getEnclosingWidget(node),
-						childItem = childTreeNode.item,
-						oldParentItem = childTreeNode.getParent().item;
 
 					if(typeof insertIndex == "number"){
 						if(newParentItem == oldParentItem && childTreeNode.getIndexInParent() < insertIndex){
@@ -418,8 +418,22 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 						}
 					}
 					model.pasteItem(childItem, oldParentItem, newParentItem, copy, insertIndex);
+				}else if(model.isItem(childItem)){
+					// Item from same model
+					model.pasteItem(childItem, oldParentItem, newParentItem, copy, insertIndex);
 				}else{
-					model.newItem(newItemsParams[idx], newParentItem);
+					if(newItemsParams[idx].id){
+						model.fetchItemByIdentity({identity: newItemsParams[idx].id, onItem: function(item){
+							if(item){
+								// There's already a matching item in model, use it
+								model.pasteItem(item, null, newParentItem, true, insertIndex);
+							}else{
+								model.newItem(newItemsParams[idx], newParentItem, insertIndex);
+							}
+						}});
+					}else{
+						model.newItem(newItemsParams[idx], newParentItem, insertIndex);
+					}
 				}
 			}, this);
 

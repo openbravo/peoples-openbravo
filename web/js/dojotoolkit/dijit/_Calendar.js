@@ -40,7 +40,7 @@ dojo.declare(
 	//	example:
 	//	|	<div dojoType="dijit._Calendar"></div>
 
-		templateString:"<table cellspacing=\"0\" cellpadding=\"0\" class=\"dijitCalendarContainer\">\n\t<thead>\n\t\t<tr class=\"dijitReset dijitCalendarMonthContainer\" valign=\"top\">\n\t\t\t<th class='dijitReset' dojoAttachPoint=\"decrementMonth\">\n\t\t\t\t<img src=\"${_blankGif}\" alt=\"\" class=\"dijitCalendarIncrementControl dijitCalendarDecrease\" waiRole=\"presentation\">\n\t\t\t\t<span dojoAttachPoint=\"decreaseArrowNode\" class=\"dijitA11ySideArrow\">-</span>\n\t\t\t</th>\n\t\t\t<th class='dijitReset' colspan=\"5\">\n\t\t\t\t<div dojoAttachPoint=\"monthLabelSpacer\" class=\"dijitCalendarMonthLabelSpacer\"></div>\n\t\t\t\t<div dojoAttachPoint=\"monthLabelNode\" class=\"dijitCalendarMonthLabel\"></div>\n\t\t\t</th>\n\t\t\t<th class='dijitReset' dojoAttachPoint=\"incrementMonth\">\n\t\t\t\t<img src=\"${_blankGif}\" alt=\"\" class=\"dijitCalendarIncrementControl dijitCalendarIncrease\" waiRole=\"presentation\">\n\t\t\t\t<span dojoAttachPoint=\"increaseArrowNode\" class=\"dijitA11ySideArrow\">+</span>\n\t\t\t</th>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<th class=\"dijitReset dijitCalendarDayLabelTemplate\"><span class=\"dijitCalendarDayLabel\"></span></th>\n\t\t</tr>\n\t</thead>\n\t<tbody dojoAttachEvent=\"onclick: _onDayClick, onmouseover: _onDayMouseOver, onmouseout: _onDayMouseOut\" class=\"dijitReset dijitCalendarBodyContainer\">\n\t\t<tr class=\"dijitReset dijitCalendarWeekTemplate\">\n\t\t\t<td class=\"dijitReset dijitCalendarDateTemplate\"><span class=\"dijitCalendarDateLabel\"></span></td>\n\t\t</tr>\n\t</tbody>\n\t<tfoot class=\"dijitReset dijitCalendarYearContainer\">\n\t\t<tr>\n\t\t\t<td class='dijitReset' valign=\"top\" colspan=\"7\">\n\t\t\t\t<h3 class=\"dijitCalendarYearLabel\">\n\t\t\t\t\t<span dojoAttachPoint=\"previousYearLabelNode\" class=\"dijitInline dijitCalendarPreviousYear\"></span>\n\t\t\t\t\t<span dojoAttachPoint=\"currentYearLabelNode\" class=\"dijitInline dijitCalendarSelectedYear\"></span>\n\t\t\t\t\t<span dojoAttachPoint=\"nextYearLabelNode\" class=\"dijitInline dijitCalendarNextYear\"></span>\n\t\t\t\t</h3>\n\t\t\t</td>\n\t\t</tr>\n\t</tfoot>\n</table>\t\n",
+		templateString:"<table cellspacing=\"0\" cellpadding=\"0\" class=\"dijitCalendarContainer\">\n\t<thead>\n\t\t<tr class=\"dijitReset dijitCalendarMonthContainer\" valign=\"top\">\n\t\t\t<th class='dijitReset' dojoAttachPoint=\"decrementMonth\">\n\t\t\t\t<img src=\"${_blankGif}\" alt=\"\" class=\"dijitCalendarIncrementControl dijitCalendarDecrease\" waiRole=\"presentation\">\n\t\t\t\t<span dojoAttachPoint=\"decreaseArrowNode\" class=\"dijitA11ySideArrow\">-</span>\n\t\t\t</th>\n\t\t\t<th class='dijitReset' colspan=\"5\">\n\t\t\t\t<div class=\"dijitPopup dijitMenu dijitMenuPassive dijitHidden\" dojoAttachPoint=\"monthDropDown\" dojoAttachEvent=\"onmouseup: _onMonthSelect, onmouseover: _onMenuHover, onmouseout: _onMenuHover\">\n\t\t\t\t\t<div class=\"dijitCalendarMonthLabelTemplate dijitCalendarMonthLabel\"></div>\n\t\t\t\t</div>\n\t\t\t\t<div dojoAttachPoint=\"monthLabelSpacer\" class=\"dijitSpacer\"></div>\n\t\t\t\t<div dojoAttachPoint=\"monthLabelNode\" class=\"dijitCalendarMonthLabel dijitVisible\" dojoAttachEvent=\"onmousedown: _onMonthToggle\"></div>\n\t\t\t</th>\n\t\t\t<th class='dijitReset' dojoAttachPoint=\"incrementMonth\">\n\t\t\t\t<img src=\"${_blankGif}\" alt=\"\" class=\"dijitCalendarIncrementControl dijitCalendarIncrease\" waiRole=\"presentation\">\n\t\t\t\t<span dojoAttachPoint=\"increaseArrowNode\" class=\"dijitA11ySideArrow\">+</span>\n\t\t\t</th>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<th class=\"dijitReset dijitCalendarDayLabelTemplate\"><span class=\"dijitCalendarDayLabel\"></span></th>\n\t\t</tr>\n\t</thead>\n\t<tbody dojoAttachEvent=\"onclick: _onDayClick, onmouseover: _onDayMouseOver, onmouseout: _onDayMouseOut\" class=\"dijitReset dijitCalendarBodyContainer\">\n\t\t<tr class=\"dijitReset dijitCalendarWeekTemplate\">\n\t\t\t<td class=\"dijitReset dijitCalendarDateTemplate\"><span class=\"dijitCalendarDateLabel\"></span></td>\n\t\t</tr>\n\t</tbody>\n\t<tfoot class=\"dijitReset dijitCalendarYearContainer\">\n\t\t<tr>\n\t\t\t<td class='dijitReset' valign=\"top\" colspan=\"7\">\n\t\t\t\t<h3 class=\"dijitCalendarYearLabel\">\n\t\t\t\t\t<span dojoAttachPoint=\"previousYearLabelNode\" class=\"dijitInline dijitCalendarPreviousYear\"></span>\n\t\t\t\t\t<span dojoAttachPoint=\"currentYearLabelNode\" class=\"dijitInline dijitCalendarSelectedYear\"></span>\n\t\t\t\t\t<span dojoAttachPoint=\"nextYearLabelNode\" class=\"dijitInline dijitCalendarNextYear\"></span>\n\t\t\t\t</h3>\n\t\t\t</td>\n\t\t</tr>\n\t</tfoot>\n</table>\t\n",
 
 		// value: Date
 		//		The currently selected Date
@@ -65,17 +65,23 @@ dojo.declare(
 			this.attr('value', value);
 		},
 
-		_getValueAttr: function(/*String*/ value){
+		_getValueAttr: function(){
 			// summary:
-			//		Hook so attr('value') works.
+			//		Support getter attr('value')
 			var value = new this.dateClassObj(this.value);
-			value.setHours(0, 0, 0, 0);
+			value.setHours(0, 0, 0, 0); // return midnight, local time for back-compat
+
+			// If daylight savings pushes midnight to the previous date, fix the Date
+			// object to point at 1am so it will represent the correct day. See #9366
+			if(value.getDate() < this.value.getDate()){
+				value = this.dateFuncObj.add(value, "hour", 1);
+			}
 			return value;
 		},
 
 		_setValueAttr: function(/*Date*/ value){
 			// summary:
-			//		Hook to make attr("value", ...) work.
+			//		Support setter attr("value", ...)
 			// description:
 			// 		Set the current date and update the UI.  If the date is disabled, the value will
 			//		not change, but the display will change to the corresponding month.
@@ -83,7 +89,7 @@ dojo.declare(
 			//      protected
 			if(!this.value || this.dateFuncObj.compare(value, this.value)){
 				value = new this.dateClassObj(value);
-				value.setHours(1); // to avoid DST issues in Brazil see #8521
+				value.setHours(1); // to avoid issues when DST shift occurs at midnight, see #8521, #9366
 				this.displayMonth = new this.dateClassObj(value);
 				if(!this.isDisabledDate(value, this.lang)){
 					this.value = value;
@@ -112,20 +118,18 @@ dojo.declare(
 			//      private
 			var month = this.displayMonth;
 			month.setDate(1);
-			var firstDay = month.getDay();
-			var daysInMonth = this.dateFuncObj.getDaysInMonth(month);
-			var daysInPreviousMonth = this.dateFuncObj.getDaysInMonth(this.dateFuncObj.add(month, "month", -1));
-			var today = new this.dateClassObj();
-			var selected = this.value;
-
-			var dayOffset = dojo.cldr.supplemental.getFirstDayOfWeek(this.lang);
+			var firstDay = month.getDay(),
+				daysInMonth = this.dateFuncObj.getDaysInMonth(month),
+				daysInPreviousMonth = this.dateFuncObj.getDaysInMonth(this.dateFuncObj.add(month, "month", -1)),
+				today = new this.dateClassObj(),
+				dayOffset = dojo.cldr.supplemental.getFirstDayOfWeek(this.lang);
 			if(dayOffset > firstDay){ dayOffset -= 7; }
 
 			// Iterate through dates in the calendar and fill in date numbers and style info
 			dojo.query(".dijitCalendarDateTemplate", this.domNode).forEach(function(template, i){
 				i += dayOffset;
-				var date = new this.dateClassObj(month);
-				var number, clazz = "dijitCalendar", adj = 0;
+				var date = new this.dateClassObj(month),
+					number, clazz = "dijitCalendar", adj = 0;
 
 				if(i < firstDay){
 					number = daysInPreviousMonth - firstDay + i + 1;
@@ -149,7 +153,7 @@ dojo.declare(
 					clazz = "dijitCalendarCurrentDate " + clazz;
 				}
 
-				if(!this.dateFuncObj.compare(date, selected, "date")){
+				if(this._isSelectedDate(date, this.lang)){
 					clazz = "dijitCalendarSelectedDate " + clazz;
 				}
 
@@ -164,8 +168,9 @@ dojo.declare(
 
 				template.className =  clazz + "Month dijitCalendarDateTemplate";
 				template.dijitDateValue = date.valueOf();
-				var label = dojo.query(".dijitCalendarDateLabel", template)[0];
-				this._setText(label, date.getDate()); 
+				var label = dojo.query(".dijitCalendarDateLabel", template)[0],
+					text = date.getDateLocalized ? date.getDateLocalized(this.lang) : date.getDate();
+				this._setText(label, text);
 			}, this);
 
 			// Fill in localized month name
@@ -210,6 +215,12 @@ dojo.declare(
 			this.dateLocaleModule = dojo.getObject(this.datePackage + ".locale", false);
 		},
 
+		postMixInProperties: function(){
+			// parser.instantiate sometimes passes in NaN for IE.  Use default value in prototype instead.
+			if(isNaN(this.value)){ delete this.value; }
+			this.inherited(arguments);
+		},
+
 		postCreate: function(){
 			this.inherited(arguments);
 			dojo.setSelectable(this.domNode, false);
@@ -235,15 +246,23 @@ dojo.declare(
 				this._setText(label, dayNames[(i + dayOffset) % 7]);
 			}, this);
 
-			// Fill in spacer element with all the month names (invisible) so that the maximum width will affect layout
+			// Fill in spacer/month dropdown element with all the month names (invisible) so that the maximum width will affect layout
 			var monthNames = this.dateLocaleModule.getNames('months', 'wide', 'standAlone', this.lang);
-			dojo.forEach(monthNames, function(name){
-				var monthSpacer = dojo.create("div", null, this.monthLabelSpacer);
-				this._setText(monthSpacer, name);
+			cloneClass(".dijitCalendarMonthLabelTemplate", monthNames.length-1);
+			dojo.query(".dijitCalendarMonthLabelTemplate", this.domNode).forEach(function(node, i){
+				dojo.attr(node, "month", i);
+				this._setText(node, monthNames[i]);
+				dojo.place(node.cloneNode(true), this.monthLabelSpacer);
 			}, this);
 
+			var value = this.value;
 			this.value = null;
-			this.attr('value', new this.dateClassObj());
+			this.attr('value', new this.dateClassObj(value));
+		},
+
+		_onMenuHover: function(e){
+			dojo.stopEvent(e);
+			dojo.toggleClass(e.target, "dijitMenuItemHover");
 		},
 
 		_adjustDisplay: function(/*String*/ part, /*int*/ amount){
@@ -256,6 +275,41 @@ dojo.declare(
 			// tags:
 			//      private
 			this.displayMonth = this.dateFuncObj.add(this.displayMonth, part, amount);
+			this._populateGrid();
+		},
+
+		_onMonthToggle: function(/*Event*/ evt){
+			// summary:
+			//      Handler for when user triggers or dismisses the month list
+			// tags:
+			//      protected
+			dojo.stopEvent(evt);
+
+			if(evt.type == "mousedown"){
+				var coords = dojo.coords(this.monthLabelNode, true);
+				// Size the dropdown's width to match the label in the widget
+				// so that they are horizontally aligned
+				dojo.style(this.monthDropDown, {
+					width: coords.w + "px",
+					top: (coords.y - this.displayMonth.getMonth() * coords.h) + "px"
+				});
+				this._popupHandler = this.connect(document, "onmouseup", "_onMonthToggle");
+			}else{
+				this.disconnect(this._popupHandler);
+				delete this._popupHandler;
+			}
+
+			dojo.toggleClass(this.monthDropDown, "dijitHidden");
+			dojo.toggleClass(this.monthLabelNode, "dijitVisible");
+		},
+
+		_onMonthSelect: function(/*Event*/ evt){
+			// summary:
+			//      Handler for when user selects a month from a list
+			// tags:
+			//      protected
+			this._onMonthToggle(evt);
+			this.displayMonth.setMonth(dojo.attr(evt.target, "month"));
 			this._populateGrid();
 		},
 
@@ -315,6 +369,15 @@ dojo.declare(
 		onChange: function(/*Date*/ date){
 			// summary:
 			//		Called only when the selected date has changed
+		},
+
+		_isSelectedDate: function(/*Date*/ dateObject, /*String?*/ locale){
+			// summary:
+			//		Extension point so developers can subclass Calendar to
+			//		support multiple (concurrently) selected dates
+			// tags:
+			//		protected extension
+			return !this.dateFuncObj.compare(dateObject, this.value, "date")
 		},
 
 		isDisabledDate: function(/*Date*/ dateObject, /*String?*/ locale){

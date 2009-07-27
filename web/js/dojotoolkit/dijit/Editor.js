@@ -208,7 +208,9 @@ dojo.declare(
 			}
 			//in IE, the selection will be lost when other elements get focus,
 			//let's save focus before the editor is deactivated
-			this._saveSelection();
+			if(e.target.tagName != "BODY"){
+				this._saveSelection();
+			}
 	        //console.log('onBeforeDeactivate',this);
 		},
 
@@ -264,18 +266,17 @@ dojo.declare(
 				}
 				try{
 					var r = this.inherited('execCommand', arguments);
-                    if(dojo.isWebKit && cmd=='paste' && !r){ //see #4598: safari does not support invoking paste from js
+					if(dojo.isWebKit && cmd=='paste' && !r){ //see #4598: safari does not support invoking paste from js
 						throw { code: 1011 }; // throw an object like Mozilla's error
-                    }
+					}
 				}catch(e){
 					//TODO: when else might we get an exception?  Do we need the Mozilla test below?
 					if(e.code == 1011 /* Mozilla: service denied */ && /copy|cut|paste/.test(cmd)){
 						// Warn user of platform limitation.  Cannot programmatically access clipboard. See ticket #4136
 						var sub = dojo.string.substitute,
-							accel = {cut:'X', copy:'C', paste:'V'},
-							isMac = navigator.userAgent.indexOf("Macintosh") != -1;
+							accel = {cut:'X', copy:'C', paste:'V'};
 						alert(sub(this.commands.systemShortcut,
-							[this.commands[cmd], sub(this.commands[isMac ? 'appleKey' : 'ctrlKey'], [accel[cmd]])]));
+							[this.commands[cmd], sub(this.commands[dojo.isMac ? 'appleKey' : 'ctrlKey'], [accel[cmd]])]));
 					}
 					r = false;
 				}
@@ -301,15 +302,12 @@ dojo.declare(
 		focus: function(){
 			// summary:
 			//		Set focus inside the editor
-			var restore=0;
 			//console.log('focus',dijit._curFocus==this.editNode)
-			if(this._savedSelection && dojo.isIE){
-				restore = dijit._curFocus!=this.editNode;
+			var restore = !!this._savedSelection && dojo.isIE && dijit._curFocus!=this.editNode;
+			this.inherited(arguments);
+			if(restore){
+				this._restoreSelection();
 			}
-		    this.inherited(arguments);
-		    if(restore){
-		    	this._restoreSelection();
-		    }
 		},
 		_moveToBookmark: function(b){
 			// summary:
@@ -325,7 +323,7 @@ dojo.declare(
 					},this);
 				}
 			}else{//w3c range
-				var r=dijit.range.create();
+				var r=dijit.range.create(this.window);
 				r.setStart(dijit.range.getNode(b.startContainer,this.editNode),b.startOffset);
 				r.setEnd(dijit.range.getNode(b.endContainer,this.editNode),b.endOffset);
 				bookmark=r;
@@ -538,12 +536,12 @@ dojo.declare(
 			//		private
 			if(this._savedSelection){
 				//only restore the selection if the current range is collapsed
-    			//if not collapsed, then it means the editor does not lose 
-    			//selection and there is no need to restore it
-    			//if(dojo.withGlobal(this.window,'isCollapsed',dijit)){
-    				//console.log('_restoreSelection true')
+    				//if not collapsed, then it means the editor does not lose 
+    				//selection and there is no need to restore it
+    				if(dojo.withGlobal(this.window,'isCollapsed',dijit)){
+    					//console.log('_restoreSelection true')
 					this._moveToBookmark(this._savedSelection);
-				//}
+				}
 				delete this._savedSelection;
 			}
 		},

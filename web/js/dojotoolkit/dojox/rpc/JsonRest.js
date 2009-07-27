@@ -27,7 +27,7 @@ dojo.require("dojox.rpc.Rest");
 			index: Rest._index,
 			timeStamps: timeStamp && Rest._timeStamps,
 			time: timeStamp,
-			idPrefix: service.servicePath,
+			idPrefix: service.servicePath.replace(/[^\/]*$/,''),
 			idAttribute: jr.getIdAttribute(service),
 			schemas: jr.schemas,
 			loader:	jr._loader,
@@ -36,6 +36,7 @@ dojo.require("dojox.rpc.Rest");
 		
 	}
 	jr = dojox.rpc.JsonRest={
+		serviceClass: dojox.rpc.Rest,
 		conflictDateHeader: "If-Unmodified-Since",
 		commit: function(kwArgs){
 			// summary:
@@ -192,6 +193,7 @@ dojo.require("dojox.rpc.Rest");
 							}
 						}
 					}
+					delete (object || old).__isDirty;
 					dirtyObjects.splice(i, 1);
 				}
 			}
@@ -256,6 +258,7 @@ dojo.require("dojox.rpc.Rest");
 				var self = this;
 				var args = arguments;
 				var properties;
+				var initializeCalled;
 				function addDefaults(schema){
 					if(schema){
 						addDefaults(schema['extends']);
@@ -267,14 +270,15 @@ dojo.require("dojox.rpc.Rest");
 							}
 						}
 					}
-					if(data){
-						dojo.mixin(self,data);
-					}
 					if(schema && schema.prototype && schema.prototype.initialize){
+						initializeCalled = true;
 						schema.prototype.initialize.apply(self, args);
 					}
 				}
 				addDefaults(service._schema);
+				if(!initializeCalled && data && typeof data == 'object'){
+					dojo.mixin(self,data);
+				}
 				var idAttribute = jr.getIdAttribute(service);
 				Rest._index[this.__id = this.__clientId = 
 						service.servicePath + (this[idAttribute] || 
@@ -315,9 +319,18 @@ dojo.require("dojox.rpc.Rest");
 			// 		is returned as an object with a service property and an id property
 			//	absoluteId:
 			//		This is the absolute id of the object
+			var serviceName = '';
+			
+			for(var service in jr.services){
+				if((absoluteId.substring(0, service.length) == service) && (service.length >= serviceName.length)){
+					serviceName = service;
+				}
+			}
+			if (serviceName){
+				return {service: jr.services[serviceName], id:absoluteId.substring(serviceName.length)};
+			}			
 			var parts = absoluteId.match(/^(.*\/)([^\/]*)$/);
-			var svc = jr.services[parts[1]] || new dojox.rpc.Rest(parts[1], true); // use an existing or create one
-			return { service: svc, id:parts[2] };
+			return {service: new jr.serviceClass(parts[1], true), id:parts[2]};
 		},
 		services:{},
 		schemas:{},
@@ -330,8 +343,7 @@ dojo.require("dojox.rpc.Rest");
 			//		This is the path that is used for all the ids for the objects returned by service
 			//	schema:
 			//		This is a JSON Schema object to associate with objects returned by this service
-			servicePath = servicePath || service.servicePath;
-			servicePath = service.servicePath = servicePath.match(/\/$/) ? servicePath : (servicePath + '/'); // add a trailing / if needed
+			servicePath = service.servicePath = servicePath || service.servicePath;
 			service._schema = jr.schemas[servicePath] = schema || service._schema || {};
 			jr.services[servicePath] = service;
 		},

@@ -99,7 +99,7 @@ dojo.declare("dijit.ColorPalette",
 
 	// templatePath: String
 	//		Path to the template of this widget.
-	templateString:"<div class=\"dijitInline dijitColorPalette\">\n\t<div class=\"dijitColorPaletteInner\" dojoAttachPoint=\"divNode\" waiRole=\"grid\" tabIndex=\"${tabIndex}\">\n\t\t<img class=\"dijitColorPaletteUnder\" dojoAttachPoint=\"imageNode\" waiRole=\"presentation\">\n\t</div>\t\n</div>\n",
+	templateString:"<div class=\"dijitInline dijitColorPalette\">\n\t<div class=\"dijitColorPaletteInner\" dojoAttachPoint=\"divNode\" waiRole=\"grid\" tabIndex=\"${tabIndex}\">\n\t\t<img class=\"dijitColorPaletteUnder\" dojoAttachPoint=\"imageNode\" waiRole=\"presentation\" alt=\"\">\n\t</div>\t\n</div>\n",
 
 	// _paletteDims: [protected] Object
 	//		Size of the supported palettes for alignment purposes.
@@ -132,7 +132,7 @@ dojo.declare("dijit.ColorPalette",
 
                 var cellNode = dojo.create("span", {
 					"class":"dijitPaletteCell",
-					"tabindex":"-1",
+					tabIndex:"-1",
 					title: this.colorNames[color],
 					style:{
 						top: coords.topOffset + (row * coords.cHeight) + "px",
@@ -238,9 +238,9 @@ dojo.declare("dijit.ColorPalette",
 		// tags:
 		//		protected
 
-		// While focus is on the palette, set its tabindex to -1 so that on a
+		// While focus is on the palette, set its tabIndex to -1 so that on a
 		// shift-tab from a cell, the container is not in the tab order
-		dojo.attr(this.divNode, "tabindex", "-1");
+		dojo.attr(this.divNode, "tabIndex", "-1");
 	},
 
 	_onBlur: function(){
@@ -251,9 +251,9 @@ dojo.declare("dijit.ColorPalette",
 
 		this._removeCellHighlight(this._currentFocus);
 
-		// when focus leaves the palette, restore its tabindex, since it was
+		// when focus leaves the palette, restore its tabIndex, since it was
 		// modified by _onFocus().
-		dojo.attr(this.divNode, "tabindex", this.tabIndex);
+		dojo.attr(this.divNode, "tabIndex", this.tabIndex);
 	},
 
 	_onCellDijitclick: function(/*Event*/ evt){

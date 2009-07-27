@@ -29,6 +29,10 @@ dojo.require("dojox.grid._Events");
 dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 (function(){
+	if(!dojo.isCopyKey){
+		// backwards compatibility with 1.3
+		dojo.isCopyKey = dojo.dnd.getCopyKeyState;
+	}
 	/*=====
 	dojox.grid.__CellDef = function(){
 		//	name: String?
@@ -219,6 +223,14 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		// autoWidth: Boolean
 		//		If autoWidth is true, grid width is automatically set to fit the data.
 		autoWidth: false,
+		
+		// initialWidth: String
+		//		A css string to use to set our initial width (only used if autoWidth
+		//		is true).  The first rendering of the grid will be this width, any
+		//		resizing of columns, etc will result in the grid switching to 
+		//		autoWidth mode.  Note, this width will override any styling in a
+		//		stylesheet or directly on the node.
+		initialWidth: "",
 
 		// autoHeight: Boolean|Integer
 		//		If autoHeight is true, grid height is automatically set to fit the data.
@@ -296,6 +308,28 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		//  styled similar to the loading and error messages
 		noDataMessage: "",
 		
+		// escapeHTMLInData: Boolean
+		//		This will escape HTML brackets from the data to prevent HTML from 
+		// 		user-inputted data being rendered with may contain JavaScript and result in 
+		// 		XSS attacks. This is true by default, and it is recommended that it remain 
+		// 		true. Setting this to false will allow data to be displayed in the grid without 
+		// 		filtering, and should be only used if it is known that the data won't contain 
+		// 		malicious scripts. If HTML is needed in grid cells, it is recommended that 
+		// 		you use the formatter function to generate the HTML (the output of 
+		// 		formatter functions is not filtered, even with escapeHTMLInData set to true).
+		escapeHTMLInData: true,	
+		
+		// formatterScope: Object
+		//		An object to execute format functions within.  If not set, the
+		//		format functions will execute within the scope of the cell that
+		//		has a format function.
+		formatterScope: null,
+		
+		// editable: boolean
+		// indicates if the grid contains editable cells, default is false
+		// set to true if editable cell encountered during rendering 
+		editable: false,
+		
 		// private
 		sortInfo: 0,
 		themeable: true,
@@ -329,6 +363,9 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			dojox.html.metrics.initOnFontResize();
 			this.connect(dojox.html.metrics, "onFontResize", "textSizeChanged");
 			dojox.grid.util.funnelEvents(this.domNode, this, 'doKeyEvent', dojox.grid.util.keyEvents);
+			if (this.selectionMode != "none") {
+				dojo.attr(this.domNode, "aria-multiselectable", this.selectionMode == "single" ? "false" : "true");
+			}
 		},
 		
 		postMixInProperties: function(){
@@ -348,6 +385,14 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			this._setHeaderMenuAttr(this.headerMenu);
 			this._setStructureAttr(this.structure);
 			this._click = [];
+			this.inherited(arguments)
+			if(this.domNode && this.autoWidth && this.initialWidth){
+				this.domNode.style.width = this.initialWidth;
+			}
+			if (this.domNode && !this.editable){
+				// default value for aria-readonly is false, set to true if grid is not editable
+				dojo.attr(this.domNode,"aria-readonly", "true");
+			}
 		},
 
 		destroy: function(){
@@ -450,7 +495,6 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			// summary: Creates a new virtual scroller
 			this.scroller = new dojox.grid._Scroller();
 			this.scroller.grid = this;
-			this.scroller._pageIdPrefix = this.id + '-';
 			this.scroller.renderRow = dojo.hitch(this, "renderRow");
 			this.scroller.removeRow = dojo.hitch(this, "rowRemoved");
 		},
@@ -463,6 +507,10 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 
 		onMoveColumn: function(){
 			this.render();
+		},
+		
+		onResizeColumn: function(/*int*/ cellIdx){
+			// Called when a column is resized.
 		},
 
 		// views
@@ -725,11 +773,13 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 
 		adaptWidth: function() {
 			// private: sets width and position for views and update grid width if necessary
-			var w = this.autoWidth ? 0 : this.domNode.clientWidth || (this.domNode.offsetWidth - this._getPadBorder().w),
+			var doAutoWidth = (!this.initialWidth && this.autoWidth);
+			var w = doAutoWidth ? 0 : this.domNode.clientWidth || (this.domNode.offsetWidth - this._getPadBorder().w),
 				vw = this.views.arrange(1, w);
 			this.views.onEach("adaptWidth");
-			if (this.autoWidth)
+			if(doAutoWidth){
 				this.domNode.style.width = vw + "px";
+			}
 		},
 
 		adaptHeight: function(inHeaderHeight){
@@ -819,7 +869,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 
 		renderRow: function(inRowIndex, inNodes){
 			// summary: private, used internally to render rows
-			this.views.renderRow(inRowIndex, inNodes);
+			this.views.renderRow(inRowIndex, inNodes, this._skipRowRenormalize);
 		},
 
 		rowRemoved: function(inRowIndex){
@@ -853,7 +903,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 					this.updateRow(Number(r));
 				}
 			}
-			this.invalidated = null;
+			this.invalidated = [];
 		},
 
 		// update
@@ -908,7 +958,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 				}
 			}else{
 				for(var i=0; i<howMany; i++){
-					this.views.updateRow(i+startIndex);
+					this.views.updateRow(i+startIndex, this._skipRowRenormalize);
 				}
 				this.scroller.rowHeightChanged(startIndex);
 			}
@@ -939,7 +989,19 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			//		Update the styles for a row after it's state has changed.
 			this.views.updateRowStyles(inRowIndex);
 		},
-
+		getRowNode: function(inRowIndex){
+			// summary:
+			//		find the rowNode that is not a rowSelector
+			if (this.focus.focusView && !(this.focus.focusView instanceof dojox.grid._RowSelector)){
+					return this.focus.focusView.rowNodes[inRowIndex];
+			}else{ // search through views
+				for (var i = 0, cView; (cView = this.views.views[i]); i++) {
+					if (!(cView instanceof dojox.grid._RowSelector)) {
+						return cView.rowNodes[inRowIndex];
+					}
+				}
+			}
+		},
 		rowHeightChanged: function(inRowIndex){
 			// summary:
 			//		Update grid when the height of a row has changed. Row height is handled automatically as rows

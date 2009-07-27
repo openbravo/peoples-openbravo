@@ -21,9 +21,9 @@ dojo.declare(
 	null,
 	{
 		// summary:
-		//		Implements the base functionality for ComboBox/FilteringSelect
+		//		Implements the base functionality for `dijit.form.ComboBox`/`dijit.form.FilteringSelect`
 		// description:
-		//		All widgets that mix in dijit.form.ComboBoxMixin must extend dijit.form._FormValueWidget
+		//		All widgets that mix in dijit.form.ComboBoxMixin must extend `dijit.form._FormValueWidget`.
 		// tags:
 		//		protected
 
@@ -157,12 +157,20 @@ dojo.declare(
 			dijit.setWaiState(this.comboNode, "disabled", value);
 		},	
 		
+		_abortQuery: function(){
+			// stop in-progress query
+			if(this._fetchHandle){
+				if(this._fetchHandle.abort){ this._fetchHandle.abort(); }
+				this._fetchHandle = null;
+			}
+		},
+
 		_onKeyPress: function(/*Event*/ evt){
 			// summary:
 			//		Handles keyboard events
 			var key = evt.charOrCode;
 			//except for cutting/pasting case - ctrl + x/v
-			if(evt.altKey || (evt.ctrlKey && (key != 'x' && key != 'v')) || evt.key == dojo.keys.SHIFT){
+			if(evt.altKey || ((evt.ctrlKey||evt.metaKey) && (key != 'x' && key != 'v')) || evt.key == dojo.keys.SHIFT){
 				return; // throw out weird key combinations and spurious events
 			}
 			var doSearch = false;
@@ -277,14 +285,21 @@ dojo.declare(
 					this._prev_key_esc = false;
 					break;
 
-				default: // non char keys (F1-F12 etc..)  shouldn't open list
+				default:
 					this._prev_key_backspace = false;
 					this._prev_key_esc = false;
-					doSearch = typeof key == 'string';
+
+					// Non char keys (F1-F12 etc..)  shouldn't open list.
+					// Ascii characters and IME input (Chinese, Japanese etc.) should.
+					// On IE and safari, IME input produces keycode == 229, and we simulate
+					// it on firefox by attaching to compositionend event (see compositionend method)
+					doSearch = typeof key == 'string' || key == 229;
 			}
 			if(this.searchTimer){
 				clearTimeout(this.searchTimer);
+				this.searchTimer = null;
 			}
+			this._abortQuery();
 			if(doSearch){
 				// need to wait a tad before start search so that the event
 				// bubbles through DOM and we have value visible
@@ -324,6 +339,7 @@ dojo.declare(
 		},
 
 		_openResultList: function(/*Object*/ results, /*Object*/ dataObject){
+			this._fetchHandle = null;
 			if(	this.disabled || 
 				this.readOnly || 
 				(dataObject.query[this.searchAttr] != this._lastQuery)
@@ -421,6 +437,7 @@ dojo.declare(
 		},
 
 		_hideResultList: function(){
+			this._abortQuery();
 			if(this._isShowingNow){
 				dijit.popup.close(this._popupWidget);
 				this._arrowIdle();
@@ -457,6 +474,10 @@ dojo.declare(
 			this._arrowIdle();
 			this.inherited(arguments);
 		},
+		
+		_getAnnounceString: function(/*Node*/ node){
+			return this.store.getValue(node.item, this.searchAttr);
+		},
 
 		_announceOption: function(/*Node*/ node){
 			// summary:
@@ -473,7 +494,7 @@ dojo.declare(
 				node == this._popupWidget.previousButton){
 				newValue = node.innerHTML;
 			}else{
-				newValue = this.store.getValue(node.item, this.searchAttr);
+				newValue = this._getAnnounceString(node);
 			}
 			// get the text that the user manually entered (cut off autocompleted text)
 			this.focusNode.value = this.focusNode.value.substring(0, this._getCaretPos(this.focusNode));
@@ -556,6 +577,7 @@ dojo.declare(
 			// otherwise, if the user types and the last query returns before the timeout,
 			// _lastQuery won't be set and their input gets rewritten
 			this.searchTimer=setTimeout(dojo.hitch(this, function(query, _this){
+				this.searchTimer = null;
 				var fetch = {
 					queryOptions: {
 						ignoreCase: this.ignoreCase, 
@@ -565,6 +587,7 @@ dojo.declare(
 					onBegin: dojo.hitch(this, "_setMaxOptions"),
 					onComplete: dojo.hitch(this, "_openResultList"), 
 					onError: function(errText){
+						_this._fetchHandle = null;
 						console.error('dijit.form.ComboBox: ' + errText);
 						dojo.hitch(_this, "_hideResultList")();
 					},
@@ -572,7 +595,7 @@ dojo.declare(
 					count: this.pageSize
 				};
 				dojo.mixin(fetch, _this.fetchProperties);
-				var dataObject = _this.store.fetch(fetch);
+				this._fetchHandle = _this.store.fetch(fetch);
 
 				var nextSearch = function(dataObject, direction){
 					dataObject.start += dataObject.count*direction;
@@ -580,9 +603,9 @@ dojo.declare(
 					//		tell callback the direction of the paging so the screen
 					//		reader knows which menu option to shout
 					dataObject.direction = direction;
-					this.store.fetch(dataObject);
+					this._fetchHandle = this.store.fetch(dataObject);
 				};
-				this._nextSearch = this._popupWidget.onPage = dojo.hitch(this, nextSearch, dataObject);
+				this._nextSearch = this._popupWidget.onPage = dojo.hitch(this, nextSearch, this._fetchHandle);
 			}, query, this), this.searchDelay);
 		},
 
@@ -617,10 +640,13 @@ dojo.declare(
 			//		When inputting characters using an input method, such as
 			//		Asian languages, it will generate this event instead of
 			//		onKeyDown event.
-			//		Note: this event is only triggered in FF (not in IE)
+			//		Note: this event is only triggered in FF (not in IE/safari)
 			// tags:
 			//		private
-			this._onKeyPress({charCode:-1});
+			
+			// 229 is the code produced by IE and safari while pressing keys during
+			// IME input mode
+			this._onKeyPress({charOrCode: 229});
 		},
 
 		//////////// INITIALIZATION METHODS ///////////////////////////////////////

@@ -138,7 +138,7 @@ dijit.range.atBeginningOfContainer = function(/*DomNode*/container, /*DomNode*/n
 	var atBeginning = false;
 	var offsetAtBeginning = (offset == 0);
 	if(!offsetAtBeginning && node.nodeType==3){ //if this is a text node, check whether the left part is all space
-		if(dojo.trim(node.nodeValue.substr(0,offset))==0){
+		if(/^[\s\xA0]+$/.test(node.nodeValue.substr(0,offset))){
 			offsetAtBeginning = true;
 		}
 	}
@@ -160,7 +160,7 @@ dijit.range.atEndOfContainer = function(/*DomNode*/container, /*DomNode*/node, /
 	var atEnd = false;
 	var offsetAtEnd = (offset == (node.length || node.childNodes.length));
 	if(!offsetAtEnd && node.nodeType==3){ //if this is a text node, check whether the right part is all space
-		if(dojo.trim(node.nodeValue.substr(offset))==0){
+		if(/^[\s\xA0]+$/.test(node.nodeValue.substr(offset))){
 			offsetAtEnd = true;
 		}
 	}
@@ -193,15 +193,15 @@ dijit.range.adjacentNoneTextNode=function(startnode, next){
 }
 
 dijit.range._w3c = Boolean(window['getSelection']);
-dijit.range.create = function(){
+dijit.range.create = function(/*Window?*/win){
 	if(dijit.range._w3c){
-		return dojo.doc.createRange();
+		return (win||dojo.global).document.createRange();
 	}else{//IE
 		return new dijit.range.W3CRange;
 	}
 }
 
-dijit.range.getSelection = function(win, /*Boolean?*/ignoreUpdate){
+dijit.range.getSelection = function(/*Window*/win, /*Boolean?*/ignoreUpdate){
 	if(dijit.range._w3c){
 		return win.getSelection();
 	}else{//IE
@@ -255,7 +255,7 @@ if(!dijit.range._w3c){
 			};
 		},
 		decomposeControlRange: function(range){
-			var firstnode = range.item(0), lastnode = range.item(range.length-1)
+			var firstnode = range.item(0), lastnode = range.item(range.length-1);
 			var startContainer = firstnode.parentNode, endContainer = lastnode.parentNode;
 			var startOffset = dijit.range.getIndex(firstnode, startContainer).o;
 			var endOffset = dijit.range.getIndex(lastnode, endContainer).o+1;
@@ -275,9 +275,9 @@ if(!dijit.range._w3c){
 						atmrange.moveToElementText(node);
 
 						if(atmrange.compareEndPoints(cmpstr,range) > 0){
-							startnode = node.previousSibling;
+							//startnode = node.previousSibling;
 							if(lastNode && lastNode.nodeType == 3){
-								//where share we put the start? in the text node or after?
+								//where shall we put the start? in the text node or after?
 								startnode = lastNode;
 								calOffset = true;
 							}else{
@@ -332,9 +332,10 @@ if(!dijit.range._w3c){
 			//if at the end of startnode and we are dealing with start container, then
 			//move the startnode to nextSibling if it is a text node
 			//TODO: do this for end container?
-			if(!end && startnode.nodeType!=3 && startOffset == startnode.childNodes.length){
-				if(startnode.nextSibling && startnode.nextSibling.nodeType==3){
-					startnode = startnode.nextSibling;
+			if(!end && startnode.nodeType==1 && startOffset == startnode.childNodes.length){
+				var nextnode=startnode.nextSibling;
+				if(nextnode && nextnode.nodeType==3){
+					startnode = nextnode;
 					startOffset = 0;
 				}
 			}
@@ -357,9 +358,10 @@ if(!dijit.range._w3c){
 							//pass through
 						}else{
 							atmrange.moveToElementText(node.nextSibling?node:container);
-							var tempnode=node.parentNode.insertBefore(document.createTextNode(' '),node.nextSibling);
+							var parent = node.parentNode;
+							var tempNode = parent.insertBefore(node.ownerDocument.createTextNode(' '), node.nextSibling);
 							atmrange.collapse(false);
-							tempnode.parentNode.removeChild(tempnode);
+							parent.removeChild(tempNode);
 						}
 					}
 				}else{
@@ -396,26 +398,29 @@ if(!dijit.range._w3c){
 		},
 		decomposeTextRange: function(range){
 			var tmpary = dijit.range.ie.getEndPoint(range);
-			var startContainter = tmpary[0], startOffset = tmpary[1];
-			var endContainter = tmpary[0], endOffset = tmpary[1];
+			var startContainer = tmpary[0], startOffset = tmpary[1];
+			var endContainer = tmpary[0], endOffset = tmpary[1];
 
 			if(range.htmlText.length){
 				if(range.htmlText == range.text){ //in the same text node
 					endOffset = startOffset+range.text.length;
 				}else{
 					tmpary = dijit.range.ie.getEndPoint(range,true);
-					endContainter = tmpary[0], endOffset = tmpary[1];
+					endContainer = tmpary[0], endOffset = tmpary[1];
+//					if(startContainer.tagName == "BODY"){
+//						startContainer = startContainer.firstChild;
+//					}
 				}
 			}
-			return [startContainter, startOffset,endContainter, endOffset];
+			return [startContainer, startOffset, endContainer, endOffset];
 		},
-		setRange: function(range, startContainter,
-			startOffset, endContainter, endOffset, collapsed){
-			var start=dijit.range.ie.setEndPoint(range, startContainter, startOffset);
+		setRange: function(range, startContainer,
+			startOffset, endContainer, endOffset, collapsed){
+			var start=dijit.range.ie.setEndPoint(range, startContainer, startOffset);
 
 			range.setEndPoint('StartToStart',start);
 			if(!collapsed){
-				var end=dijit.range.ie.setEndPoint(range, endContainter, endOffset);	
+				var end=dijit.range.ie.setEndPoint(range, endContainer, endOffset);	
 			}
 			range.setEndPoint('EndToEnd',end||start);
 

@@ -83,25 +83,25 @@ dojo.declare("dijit.tree._dndSelector",
 
 			if(e.button == 2){ return; }	// ignore right-click
 
-			var item = dijit.getEnclosingWidget(this.current).item;
-			var id = this.tree.model.getIdentity(item);
+			var treeNode = dijit.getEnclosingWidget(this.current),
+				id = treeNode.id + "-dnd"	// so id doesn't conflict w/widget
 
 			if (!this.current.id) {
-				this.current.id=id;
+				this.current.id = id;
 			}
 
 			if (!this.current.type) {
 				this.current.type="data";
 			}
 
-			if(!this.singular && !dojo.dnd.getCopyKeyState(e) && !e.shiftKey && (this.current.id in this.selection)){
+			if(!this.singular && !dojo.isCopyKey(e) && !e.shiftKey && (this.current.id in this.selection)){
 				this.simpleSelection = true;
 				dojo.stopEvent(e);
 				return;
 			}
 			if(this.singular){
 				if(this.anchor == this.current){
-					if(dojo.dnd.getCopyKeyState(e)){
+					if(dojo.isCopyKey(e)){
 						this.selectNone();
 					}
 				}else{
@@ -113,13 +113,13 @@ dojo.declare("dijit.tree._dndSelector",
 				}
 			}else{
 				if(!this.singular && e.shiftKey){	
-					if (dojo.dnd.getCopyKeyState(e)){
+					if (dojo.isCopyKey(e)){
 						//TODO add range to selection
 					}else{
 						//TODO select new range from anchor 
 					}
 				}else{
-					if(dojo.dnd.getCopyKeyState(e)){
+					if(dojo.isCopyKey(e)){
 						if(this.anchor == this.current){
 							delete this.selection[this.anchor.id];
 							this._removeAnchor();

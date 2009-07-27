@@ -60,6 +60,9 @@ dojo.declare("dojox.data.GoogleSearchStore",null,{
 			if(args.lang){
 				this._lang = args.lang;
 			}
+			if("urlPreventCache" in args){
+				this.urlPreventCache = args.urlPreventCache?true:false;
+			}
 		}
 		this._id = dojox.data.GoogleSearchStore.prototype._id++;
 	},
@@ -100,6 +103,11 @@ dojo.declare("dojox.data.GoogleSearchStore",null,{
 	// The type of search. Valid values are "web", "local", "video", "blogs", "news", "books", "images".
 	// This should not be set directly. Instead use one of the child classes.
 	_type: "web",
+
+	// urlPreventCache: boolean
+	// Sets whether or not to pass preventCache to dojo.io.script.
+	urlPreventCache: true,
+
 
 	// _queryAttrs: Hash
 	// Maps query hash keys to Google query parameters. 
@@ -290,7 +298,7 @@ dojo.declare("dojox.data.GoogleSearchStore",null,{
 
 		var getArgs = {
 			url: searchUrl,
-			preventCache: true,
+			preventCache: this.urlPreventCache,
 			content: content
 		};
 

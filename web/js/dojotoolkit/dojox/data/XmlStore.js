@@ -36,6 +36,8 @@ dojo.declare("dojox.data.XmlStore", null, {
 		//						{"tag_name.item_attribute_name": "@xml_attribute_name", ...}
 		//		sendQuery:		A boolean indicate to add a query string to the service URL.  
 		//						Default is false.
+		//		urlPreventCache: Parameter to indicate whether or not URL calls should apply 
+		//		                 the preventCache option to the xhr request.
 		if(args){
 			this.url = args.url;
 			this.rootItem = (args.rootItem || args.rootitem || this.rootItem);
@@ -43,6 +45,9 @@ dojo.declare("dojox.data.XmlStore", null, {
 			this._attributeMap = (args.attributeMap || args.attributemap);
 			this.label = args.label || this.label;
 			this.sendQuery = (args.sendQuery || args.sendquery || this.sendQuery);
+			if("urlPreventCache" in args){
+				this.urlPreventCache = args.urlPreventCache?true:false;
+			}
 		}
 		this._newItems = [];
 		this._deletedItems = [];
@@ -54,15 +59,31 @@ dojo.declare("dojox.data.XmlStore", null, {
 	//So the parser knows how to set them.
 	url: "",
 
+	//	A tag name for XML tags to be considered root items in the hierarchy
 	rootItem: "",
 
+	//	An attribute name for a key or an identity (unique identifier)
+	//	Required for serverside fetchByIdentity, etc.  Not required for
+	//	client side fetchItemBIdentity, as it will use an XPath-like
+	//	structure if keyAttribute was not specified.  Recommended to always
+	//	set this, though, for consistent identity behavior.
 	keyAttribute: "",
 
+	//	An attribute of the item to use as the label.
 	label: "",
 
+	//	A boolean indicate to add a query string to the service URL.
+	//	Default is false.
 	sendQuery: false,
 
+	//	An anonymous object that contains properties for attribute mapping, 
+	//	for example {"tag_name.item_attribute_name": "@xml_attribute_name", ...}. 
+	//	This is optional. This is done so that attributes which are actual 
+	//	XML tag attributes (and not sub-tags of an XML tag), can be referenced.
 	attributeMap: null,
+
+	//	Parameter to indicate whether or not URL calls should apply the preventCache option to the xhr request.
+	urlPreventCache: true,
 
 	/* dojo.data.api.Read */
 
@@ -120,7 +141,10 @@ dojo.declare("dojox.data.XmlStore", null, {
 			if(attribute.charAt(0) === '@'){
 				var name = attribute.substring(1);
 				var value = element.getAttribute(name);
-				return (value !== undefined) ? value : defaultValue; //object
+				//Note that getAttribute will return null or empty string for undefined/unset 
+				//attributes, therefore, we should just check the return was valid
+				//non-empty string and not null.
+				return (value) ? value : defaultValue; //object
 			}else{
 				for(i = 0; i < element.childNodes.length; i++){
 					node = element.childNodes[i];
@@ -396,7 +420,7 @@ dojo.declare("dojox.data.XmlStore", null, {
 		var getArgs = {
 				url: url,
 				handleAs: "xml",
-				preventCache: true
+				preventCache: self.urlPreventCache
 			};
 		var getHandler = dojo.xhrGet(getArgs);
 		getHandler.addCallback(function(data){
@@ -501,9 +525,11 @@ dojo.declare("dojox.data.XmlStore", null, {
 			}
 			var item = this._getItem(node);
 			if(query){
-				var found = true;
 				var ignoreCase = request.queryOptions ? request.queryOptions.ignoreCase : false; 
 				var value;
+				var match = false;
+				var j;
+				var emptyQuery = true;
                 
 				//See if there are any string values that can be regexp parsed first to avoid multiple regexp gens on the
 				//same value for each item examined.  Much more efficient.
@@ -515,36 +541,56 @@ dojo.declare("dojox.data.XmlStore", null, {
 					}
 				}
 				for(var attribute in query){
-					value = this.getValue(item, attribute);
-					if(value){
-						var queryValue = query[attribute];
-						if ((typeof value) === "string" && 
-							(regexpList[attribute])){
-							if((value.match(regexpList[attribute])) !== null){
-								continue;
-							}
-						}else if((typeof value) === "object"){
-							if(	value.toString && 
+					emptyQuery = false;
+					var values = this.getValues(item, attribute);
+					for(j = 0; j < values.length; j++){
+						value = values[j];
+						if(value){
+							var queryValue = query[attribute];
+							if ((typeof value) === "string" && 
 								(regexpList[attribute])){
-								var stringValue = value.toString();
-								if((stringValue.match(regexpList[attribute])) !== null){
-									continue;
+								if((value.match(regexpList[attribute])) !== null){
+									match = true;
+								}else{
+									match = false;
 								}
-							}else{
-								if(queryValue === "*" || queryValue === value){
-									continue;
+							}else if((typeof value) === "object"){
+								if(	value.toString && 
+									(regexpList[attribute])){
+									var stringValue = value.toString();
+									if((stringValue.match(regexpList[attribute])) !== null){
+										match = true;
+									}else{
+										match = false;
+									}
+								}else{
+									if(queryValue === "*" || queryValue === value){
+										match = true;
+									}else{
+										match = false;
+									}
 								}
 							}
 						}
+						//One of the multiValue values matched, 
+						//so quit looking.
+						if(match){
+							break;
+						}
 					}
-					found = false;
-					break;
+					if(!match){
+						break;
+					}
 				}
-				if(!found){
-					continue;
+				//Either the query was an empty object {}, which is match all, or 
+				//was an actual match.
+				if(emptyQuery || match){
+					items.push(item);
 				}
+			}else{
+				//No query, everything matches.
+				items.push(item);
 			}
-			items.push(item);
 		}
 		dojo.forEach(items,function(item){
 			if(item.element.parentNode){
@@ -1377,7 +1423,7 @@ dojo.declare("dojox.data.XmlStore", null, {
 			getArgs = {
 				url: url,
 				handleAs: "xml",
-				preventCache: true
+				preventCache: self.urlPreventCache
 			};
 			getHandler = dojo.xhrGet(getArgs);
 			
@@ -1418,7 +1464,7 @@ dojo.declare("dojox.data.XmlStore", null, {
 				getArgs = {
 					url: url,
 					handleAs: "xml",
-					preventCache: true
+					preventCache: self.urlPreventCache
 				};
 				getHandler = dojo.xhrGet(getArgs);
 

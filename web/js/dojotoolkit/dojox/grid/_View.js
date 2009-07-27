@@ -59,7 +59,7 @@ dojo.require("dojo.dnd.Manager");
 		_contentBuilderClass: dojox.grid._ContentBuilder,
 		
 		postMixInProperties: function(){
-			this.rowNodes = [];
+			this.rowNodes = {};
 		},
 
 		postCreate: function(){
@@ -77,8 +77,10 @@ dojo.require("dojo.dnd.Manager");
 		destroy: function(){
 			dojo.destroy(this.headerNode);
 			delete this.headerNode;
-			dojo.forEach(this.rowNodes, dojo.destroy);
-			this.rowNodes = [];
+			for(var i in this.rowNodes){
+				dojo.destroy(this.rowNodes[i]);
+			}
+			this.rowNodes = {};
 			if(this.source){
 				this.source.destroy();
 			}
@@ -115,12 +117,48 @@ dojo.require("dojo.dnd.Manager");
 			this.updateStructure();
 		},
 		
+		_cleanupRowWidgets: function(inRowNode){
+			// Summary:
+			//		Cleans up the widgets for the given row node so that
+			//		we can reattach them if needed
+			if(inRowNode){
+				dojo.forEach(dojo.query("[widgetId]", inRowNode).map(dijit.byNode), function(w){
+					if(w._destroyOnRemove){
+						w.destroy();
+						delete w;
+					}else if(w.domNode && w.domNode.parentNode){
+						w.domNode.parentNode.removeChild(w.domNode);
+					}
+				});
+			}
+		},
+		
 		onBeforeRow: function(inRowIndex, cells){
 			this._onBeforeRow(inRowIndex, cells);
+			if(inRowIndex >= 0){
+				this._cleanupRowWidgets(this.getRowNode(inRowIndex));
+			}
 		},
 		
 		onAfterRow: function(inRowIndex, cells, inRowNode){
 			this._onAfterRow(inRowIndex, cells, inRowNode);
+			var g = this.grid;
+			dojo.forEach(dojo.query(".dojoxGridStubNode", inRowNode), function(n){
+				if(n && n.parentNode){
+					var lw = n.getAttribute("linkWidget");
+					var cellIdx = window.parseInt(dojo.attr(n, "cellIdx"), 10);
+					var cellDef = g.getCell(cellIdx);
+					var w = dijit.byId(lw);
+					if(w){
+						n.parentNode.replaceChild(w.domNode, n);
+						if(!w._started){
+							w.startup();
+						}
+					}else{
+						n.innerHTML = "";
+					}
+				}
+			}, this);
 		},
 
 		testFlexCells: function(){
@@ -247,10 +285,13 @@ dojo.require("dojo.dnd.Manager");
 								dojo.dnd.Source.prototype.onMouseDown.call(this.source, e);
 							}
 						}
-						dojo.style(this.bottomMarker, "visibility", "visible");
-						dojo.style(this.topMarker, "visibility", "visible");
 					}),
-
+					onMouseOver: dojo.hitch(this, function(e){
+						var src = this.source;
+						if(src._getChildByEvent(e)){
+							dojo.dnd.Source.prototype.onMouseOver.apply(src, arguments);
+						}
+					}),
 					_markTargetAnchor: dojo.hitch(this, function(before){
 						var src = this.source;
 						if(src.current == src.targetAnchor && src.before == before){ return; }
@@ -270,6 +311,8 @@ dojo.require("dojo.dnd.Manager");
 						var pos = dojo._abs(target, true);
 						var left = Math.floor(pos.x - this.arrowDim.w/2 + endAdd);
 
+						dojo.style(this.bottomMarker, "visibility", "visible");
+						dojo.style(this.topMarker, "visibility", "visible");
 						dojo.style(this.bottomMarker, {
 							"left": left + "px",
 							"top" : (headerHeight + pos.y) + "px"
@@ -290,6 +333,8 @@ dojo.require("dojo.dnd.Manager");
 						if(src.targetAnchor && getSibling(src.targetAnchor, src.before)){
 							src._removeItemClass(getSibling(src.targetAnchor, src.before), src.before ? "After" : "Before");
 						}
+						this._hide(this.bottomMarker);
+						this._hide(this.topMarker);
 						dojo.dnd.Source.prototype._unmarkTargetAnchor.call(src);
 					}),
 					destroy: dojo.hitch(this, function(){
@@ -426,7 +471,7 @@ dojo.require("dojo.dnd.Manager");
 					}else if(style == "scroll"){
 						this._hasHScroll = true;
 					}else{
-						this._hasHScroll = (this.scrollboxNode.offsetWidth < this.contentNode.offsetWidth);
+						this._hasHScroll = (this.scrollboxNode.offsetWidth - this.getScrollbarWidth() < this.contentNode.offsetWidth );
 					}
 				}
 			}
@@ -448,7 +493,7 @@ dojo.require("dojo.dnd.Manager");
 					}else if(style == "scroll"){
 						this._hasVScroll = true;
 					}else{
-						this._hasVScroll = (this.scrollboxNode.offsetHeight < this.contentNode.offsetHeight);
+						this._hasVScroll = (this.scrollboxNode.scrollHeight > this.scrollboxNode.clientHeight);
 					}
 				}
 			}
@@ -461,6 +506,7 @@ dojo.require("dojo.dnd.Manager");
 		convertColPctToFixed: function(){
 			// Fix any percentage widths to be pixel values
 			var hasPct = false;
+			this.grid.initialWidth = "";
 			var cellNodes = dojo.query("th", this.headerContentNode);
 			var fixedWidths = dojo.map(cellNodes, function(c, vIdx){
 				var w = c.style.width;
@@ -491,7 +537,18 @@ dojo.require("dojo.dnd.Manager");
 		adaptHeight: function(minusScroll){
 			if(!this.grid._autoHeight){
 				var h = this.domNode.clientHeight;
-				if(minusScroll){
+				var self = this;
+				var checkOtherViewScrollers = function(){
+					var v;
+					for(var i in self.grid.views.views){
+						v = self.grid.views.views[i];
+						if(v !== self && v.hasHScrollbar()){
+							return true;
+						}
+					}
+					return false;
+				};
+				if(minusScroll || (this.noscroll && checkOtherViewScrollers())){
 					h -= dojox.html.metrics.getScrollbar().h;
 				}
 				dojox.grid.util.setStyleHeightPx(this.scrollboxNode, h);
@@ -540,7 +597,14 @@ dojo.require("dojo.dnd.Manager");
 		createRowNode: function(inRowIndex){
 			var node = document.createElement("div");
 			node.className = this.classTag + 'Row';
-			dojo.attr(node,"role","row");
+			if (this instanceof dojox.grid._RowSelector){
+				dojo.attr(node,"role","presentation");
+			}else{
+				dojo.attr(node,"role","row");
+				if (this.grid.selectionMode != "none") {
+					dojo.attr(node, "aria-selected", "false"); //rows can be selected so add aria-selected prop
+				}
+			}
 			node[dojox.grid.util.gridViewTag] = this.id;
 			node[dojox.grid.util.rowIndexTag] = inRowIndex;
 			this.rowNodes[inRowIndex] = node;
@@ -566,6 +630,9 @@ dojo.require("dojo.dnd.Manager");
 		},
 
 		rowRemoved:function(inRowIndex){
+			if(inRowIndex >= 0){
+				this._cleanupRowWidgets(this.getRowNode(inRowIndex));
+			}
 			this.grid.edit.save(this, inRowIndex);
 			delete this.rowNodes[inRowIndex];
 		},
