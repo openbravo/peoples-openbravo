@@ -751,7 +751,9 @@ cWithHoldId varchar2(32);
             WHERE C_Invoice_ID=v_Record_ID
               AND COALESCE(IsAutomaticGenerated, 'Y')='N'
               AND C_ORDER_ID IS NULL;
-            C_BP_SOCREDITUSED_REFRESH(v_BPartner_ID) ;
+            IF(v_IsSOTrx='Y') THEN
+		C_BP_SOCREDITUSED_REFRESH(v_BPartner_ID) ;
+	    END IF;
             DELETE
             FROM C_INVOICELINE
             WHERE C_INVOICE_DISCOUNT_ID IS NOT NULL
@@ -1717,7 +1719,7 @@ cWithHoldId varchar2(32);
             END;
           END IF; -- v_GrandTotal <> v_totalCash
         END;
-        IF(NOT FINISH_PROCESS) THEN
+        IF(NOT FINISH_PROCESS AND v_IsSOTrx='Y') THEN
           C_BP_SOCREDITUSED_REFRESH(v_BPartner_ID) ;
         END IF;
       END IF;--FINISH_PROCESS
