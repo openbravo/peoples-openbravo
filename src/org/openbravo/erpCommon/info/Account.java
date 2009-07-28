@@ -235,7 +235,7 @@ public class Account extends HttpSecureAppServlet {
       // accesslevel)
 
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "AD_Org_ID",
-          "AD_Org (Trx)", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
+          "AD_Org (all)", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
           Utility.getContext(this, vars, "#User_Client", "Account"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "Account", "");
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
