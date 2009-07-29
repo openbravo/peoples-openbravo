@@ -62,6 +62,7 @@ public class DynamicJS extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
+  @SuppressWarnings("unchecked")
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -115,10 +116,21 @@ public class DynamicJS extends HttpSecureAppServlet {
       log4j.debug(arrayType.toString() + array.toString());
     out.println(arrayType.toString() + array.toString());
 
+    String globals = "";
+
+    globals += "var decSeparator_global = '"
+        + vars.getSessionValue("#DECIMALSEPARATOR|EUROEDITION") + "';\n";
+    globals += "var groupSeparator_global = '"
+        + vars.getSessionValue("#GROUPSEPARATOR|EUROEDITION") + "';\n";
+    globals += "var groupInterval_global = '3';\n";
+    globals += "var maskNumeric_default = '" + vars.getSessionValue("#FORMATOUTPUT|EUROEDITION")
+        + "';\n";
+
+    out.print(globals);
+
     final HashMap<String, String> formatMap = (HashMap<String, String>) vars
         .getSessionObject("#formatMap");
-    // var F = {"formats": [{"name":"euroInform","output":"#,##0.00"},
-    // {"name":"euroRelation","output":"#,##0.00#"}]};")
+
     out.print("var F = {\"formats\": [");
     boolean first = true;
     for (String key : formatMap.keySet()) {
@@ -132,7 +144,8 @@ public class DynamicJS extends HttpSecureAppServlet {
     }
     out.println("]};");
     out
-        .println("F.getFormat=function(name){if(typeof name==='undefined'||name===''){return'undefined';}for(var i=0;i<this.formats.length;i++){if(this.formats[i].name===name){return this.formats[i].output;}}return'undefined';}");
+        .println("F.getFormat=function(name){if(typeof name==='undefined'||name===''){return'';}for(var i=0;i<this.formats.length;i++){if(this.formats[i].name===name){return this.formats[i].output;}}return'';}");
+
     out.close();
   }
 }
