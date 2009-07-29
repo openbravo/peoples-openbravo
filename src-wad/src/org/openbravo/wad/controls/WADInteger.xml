@@ -25,6 +25,7 @@
   <PARAMETER id="xx_inp" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xx" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xx" name="columnNameInp" attribute="name" replace="xx"/>
+  <PARAMETER id="xx" name="outputFormat" attribute="outputformat" replace="xx"/>
   <PARAMETER id="xx" name="callout" attribute="onchange" replace="xx();"/>
   <PARAMETER id="xx" name="size" attribute="class" replace="yy"/>
   <PARAMETER id="fieldHasButton" name="hasButton" attribute="class"/>
