@@ -1753,7 +1753,7 @@ cWithHoldId varchar2(32);
     IF (v_count=1) THEN
       DECLARE
         v_ep_instance VARCHAR2(32);
-        v_extension_point_id VARCHAR2(32) := 'CB68FC0E8A4547D9943C785761977E77';
+        v_extension_point_id VARCHAR2(32) := 'CBE7DD2E561E4D3D8257ECEA5F19687F';
       BEGIN
         v_ep_instance := get_uuid();
         AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Record_ID',
