@@ -872,6 +872,7 @@ public abstract class AcctServer {
 	        }
 	      } catch (Exception e) {
 	        log4j.error("Error while creating new instance for AcctProcessTemplate - " + e);
+	        return AcctServer.STATUS_Error;
 	      }
 	    }
     }
