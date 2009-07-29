@@ -72,9 +72,14 @@ dojo.require("dojo.dnd.Moveable");
 			var waiPrefix = dojo.isFF<3 ? "wairole:" : "";
 			if(isHeader){
 				var sortInfo = inCell.index != inCell.grid.getSortIndex() ? "" : inCell.grid.sortInfo > 0 ? 'aria-sort="ascending"' : 'aria-sort="descending"';
-				html = ['<th tabIndex="-1" role="', waiPrefix, 'columnheader"', sortInfo];
+				// column headers are not editable, mark as aria-readonly=true
+				html = ['<th tabIndex="-1" aria-readonly="true" role="', waiPrefix, 'columnheader"', sortInfo];
 			}else{
-				html = ['<td tabIndex="-1" role="', waiPrefix, 'gridcell"'];
+				// cells inherit grid aria-readonly property; default value for aria-readonly is false(grid is editable)
+				// if grid is editable (had any editable cells), mark non editable cells as aria-readonly=true
+				// if no editable cells, grid's aria-readonly value will have been set to true and cells will inherit
+				var editInfo = this.grid.editable && !inCell.editable ? 'aria-readonly="true"' : "";
+				html = ['<td tabIndex="-1" role="', waiPrefix, 'gridcell"', editInfo];
 			}
 			inCell.colSpan && html.push(' colspan="', inCell.colSpan, '"');
 			inCell.rowSpan && html.push(' rowspan="', inCell.rowSpan, '"');
@@ -117,8 +122,8 @@ dojo.require("dojo.dnd.Moveable");
 		},
 		
 		getCellNode: function(inRowNode, inCellIndex){
-			for(var i=0, row; row=getTr(inRowNode.firstChild, i); i++){
-				for(var j=0, cell; cell=row.cells[j]; j++){
+			for(var i=0, row; (row=getTr(inRowNode.firstChild, i)); i++){
+				for(var j=0, cell; (cell=row.cells[j]); j++){
 					if(this.getCellNodeIndex(cell) == inCellIndex){
 						return cell;
 					}
@@ -224,6 +229,9 @@ dojo.require("dojo.dnd.Moveable");
 				for(var i=0, cell; (cell=row[i]); i++){
 					cell.get = cell.get || (cell.value == undefined) && defaultGet;
 					cell.markup = this.generateCellMarkup(cell, cell.cellStyles, cell.cellClasses, false);
+					if (!this.grid.editable && cell.editable){
+						this.grid.editable = true;
+					}
 				}
 			}
 		},
@@ -243,7 +251,7 @@ dojo.require("dojo.dnd.Moveable");
 				}
 				html.push(!row.invisible ? '<tr>' : '<tr class="dojoxGridInvisible">');
 				for(var i=0, cell, m, cc, cs; (cell=row[i]); i++){
-					m = cell.markup, cc = cell.customClasses = [], cs = cell.customStyles = [];
+					m = cell.markup; cc = cell.customClasses = []; cs = cell.customStyles = [];
 					// content (format can fill in cc and cs as side-effects)
 					m[5] = cell.format(inRowIndex, item);
 					// classes
@@ -300,12 +308,14 @@ dojo.require("dojo.dnd.Moveable");
 					cell.customClasses = [];
 					cell.customStyles = [];
 					if(this.view.simpleStructure){
-						if(cell.headerClasses){
-							if(cell.headerClasses.indexOf('dojoDndItem') == -1){
-								cell.headerClasses += ' dojoDndItem';
+						if(cell.draggable){
+							if(cell.headerClasses){
+								if(cell.headerClasses.indexOf('dojoDndItem') == -1){
+									cell.headerClasses += ' dojoDndItem';
+								}
+							}else{
+								cell.headerClasses = 'dojoDndItem';
 							}
-						}else{
-							cell.headerClasses = 'dojoDndItem';
 						}
 						if(cell.attrs){
 							if(cell.attrs.indexOf("dndType='gridColumn_") == -1){
@@ -332,16 +342,16 @@ dojo.require("dojo.dnd.Moveable");
 
 		// event helpers
 		getCellX: function(e){
-			var x = e.layerX;
+			var n, x = e.layerX;
 			if(dojo.isMoz){
-				var n = ascendDom(e.target, makeNotTagName("th"));
+				n = ascendDom(e.target, makeNotTagName("th"));
 				x -= (n && n.offsetLeft) || 0;
 				var t = e.sourceView.getScrollbarWidth();
 				if(!dojo._isBodyLtr() && e.sourceView.headerNode.scrollLeft < t)
 					x -= t;
 				//x -= getProp(ascendDom(e.target, mkNotTagName("td")), "offsetLeft") || 0;
 			}
-			var n = ascendDom(e.target, function(){
+			n = ascendDom(e.target, function(){
 				if(!n || n == e.cellNode){
 					return false;
 				}
@@ -431,16 +441,15 @@ dojo.require("dojo.dnd.Moveable");
 		domousemove: function(e){
 			//console.log(e.cellIndex, e.cellX, e.cellNode.offsetWidth);
 			if(!this.moveable){
-				var c = (this.overRightResizeArea(e) ? 'col-resize' : (this.overLeftResizeArea(e) ? 'col-resize' : ''));
+				var c = (this.overRightResizeArea(e) ? 'dojoxGridColResize' : (this.overLeftResizeArea(e) ? 'dojoxGridColResize' : ''));
 				if(c && !this.canResize(e)){
-					c = 'not-allowed';
+					c = 'dojoxGridColNoResize';
 				}
+				dojo.toggleClass(e.sourceView.headerNode, "dojoxGridColNoResize", (c == "dojoxGridColNoResize"));
+				dojo.toggleClass(e.sourceView.headerNode, "dojoxGridColResize", (c == "dojoxGridColResize"));
 				if(dojo.isIE){
 					var t = e.sourceView.headerNode.scrollLeft;
-					e.sourceView.headerNode.style.cursor = c || ''; //'default';
 					e.sourceView.headerNode.scrollLeft = t;
-				}else{
-					e.sourceView.headerNode.style.cursor = c || ''; //'default';
 				}
 				if(c){
 					dojo.stopEvent(e);
@@ -476,7 +485,7 @@ dojo.require("dojo.dnd.Moveable");
 			// Also called from keyboard shift-arrow event when focus is on a header
 			var headContentBox = dojo.contentBox(e.sourceView.headerNode);
 			
-			if (isMouse) {  //IE draws line even with no mouse down so separate from keyboard 
+			if(isMouse){  //IE draws line even with no mouse down so separate from keyboard 
 				this.lineDiv = document.createElement('div');
 				
 				var vw = dojo._abs(e.sourceView.headerNode, true);
@@ -500,7 +509,7 @@ dojo.require("dojo.dnd.Moveable");
 			var adj = dojo._isBodyLtr() ? 1 : -1;
 			var views = e.grid.views.views;
 			var followers = [];
-			for(var i=view.idx+adj, cView; (cView=views[i]); i=i+adj){
+			for(var j=view.idx+adj, cView; (cView=views[j]); j=j+adj){
 				followers.push({ node: cView.headerNode, left: window.parseInt(cView.headerNode.style.left) });
 			}
 			var table = view.headerContentNode.firstChild;
@@ -522,9 +531,10 @@ dojo.require("dojo.dnd.Moveable");
 			this.moverDiv = document.createElement("div");
 			dojo.style(this.moverDiv,{position: "absolute", left:0}); // to make DnD work with dir=rtl
 			dojo.body().appendChild(this.moverDiv);
-			var m = this.moveable = new dojo.dnd.Moveable(this.moverDiv);
+			dojo.addClass(this.grid.domNode, "dojoxGridColumnResizing");
+			var m = (this.moveable = new dojo.dnd.Moveable(this.moverDiv));
 
-			drag =this.colResizeSetup(e,true);
+			drag = this.colResizeSetup(e,true);
 
 			m.onMove = dojo.hitch(this, "doResizeColumn", drag);
 
@@ -536,6 +546,7 @@ dojo.require("dojo.dnd.Moveable");
 				this.moveable.destroy();
 				delete this.moveable;
 				this.moveable = null;
+				dojo.removeClass(this.grid.domNode, "dojoxGridColumnResizing");
 			}));
 
 			if(e.cellNode.setCapture){
@@ -572,6 +583,13 @@ dojo.require("dojo.dnd.Moveable");
 				var leftTop = this.dragRecord.leftTop;
 				var isL2r = dojo._isBodyLtr();
 				var changeX = isL2r ? leftTop.l : -leftTop.l;
+				// Make sure we are not under our minimum
+				// http://bugs.dojotoolkit.org/ticket/9390
+				changeX += Math.max(inDrag.w + changeX, this.minColWidth) - (changeX + inDrag.w);
+				if(dojo.isWebKit && inDrag.spanners.length){
+					// Webkit needs the pad border extents back in
+					changeX += dojo._getPadBorderExtents(inDrag.spanners[0].node).w;
+				}
 				var data = {
 					isLtr: isL2r,
 					deltaX: changeX,
@@ -579,7 +597,6 @@ dojo.require("dojo.dnd.Moveable");
 					vw: inDrag.vw + changeX,
 					tw: inDrag.tw + changeX
 				};			
-				
 				// Only resize the columns when the drag has finished
 				this.doResizeNow(inDrag, data);
 			}
@@ -591,6 +608,7 @@ dojo.require("dojo.dnd.Moveable");
 			this._skipBogusClicks = true;
 			inDrag.view.update();
 			this._skipBogusClicks = false;
+			this.grid.onResizeColumn(inDrag.index);
 		},
 		doResizeNow: function(inDrag, data){
 			inDrag.view.convertColPctToFixed();
@@ -635,12 +653,12 @@ dojo.require("dojo.dnd.Moveable");
 			}
 			// map which columns and rows fill which cells
 			this.map = [];
-			for(var j=0, row; (row=inRows[j]); j++){
-				this.map[j] = [];
+			for(var k=0, row; (row=inRows[k]); k++){
+				this.map[k] = [];
 			}
 			for(var j=0, row; (row=inRows[j]); j++){
 				for(var i=0, x=0, cell, colSpan, rowSpan; (cell=row[i]); i++){
-					while (this.map[j][x]){x++};
+					while(this.map[j][x]){x++};
 					this.map[j][x] = { c: i, r: j };
 					rowSpan = cell.rowSpan || 1;
 					colSpan = cell.colSpan || 1;

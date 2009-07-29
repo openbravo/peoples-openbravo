@@ -517,11 +517,7 @@ public class ImportAccount extends ImportProcess {
       ImportAccountData[] parents = ImportAccountData.selectParents(con, conn, getAD_Client_ID());
       for (int i = 0; i < parents.length; i++) {
         no = ImportAccountData.updateTree(con, conn, parents[i].parentelementvalueId,
-            parents[i].adTreeId, parents[i].cElementvalueId); // FIXME: UUID branch: This
-        // should cause conflict
-        // when mergeing with
-        // trunk, take the code
-        // from trunk...
+            parents[i].seqno, parents[i].adTreeId, parents[i].cElementvalueId);
         noParentUpdate += no;
       }
       addLog("Parent updates: " + noParentUpdate + " ");

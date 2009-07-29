@@ -25,6 +25,7 @@ dojo.require("dojo.data.util.filter");
 	cf = dojo.declare("dojox.data.ClientFilter",
 		null,
 		{
+			cacheByDefault: false,
 			constructor: function(){
 				// summary:
 				//		This is an abstract class that data stores can extend to add updateable result set functionality
@@ -107,6 +108,7 @@ dojo.require("dojo.data.util.filter");
 						// do the sort if needed
 						resultSet.sort(this.makeComparator(request.sort.concat()));
 					}
+					resultSet._fullLength = resultSet.length;
 					if(request.count && updated){
 						// do we really need to do this?
 						// make sure we still find within the defined paging set
@@ -161,15 +163,18 @@ dojo.require("dojo.data.util.filter");
 							defResult.callback(cachedArgs.cacheResults);
 						}
 						defResult.addCallback(function(results){
-							results = self.clientSideFetch({query:clientQuery,sort:args.sort,start:args.start,count:args.count}, results);
+							results = self.clientSideFetch(dojo.mixin(dojo.mixin({}, args),{query:clientQuery}), results);
 							defResult.fullLength = results._fullLength;
 							return results;
 						});
+						args._version = cachedArgs._version;
+						break;
 					}
 				}
 				if(!defResult){
 					var serverArgs = dojo.mixin({}, args);
 					var putInCache = (args.queryOptions || 0).cache;
+					var fetchCache = this._fetchCache;
 					if(putInCache === undefined ? this.cacheByDefault : putInCache){
 						// we are caching this request, so we want to get all the data, and page on the client side
 						if(args.start || args.count){
@@ -181,9 +186,13 @@ dojo.require("dojo.data.util.filter");
 							});
 						}
 						args = serverArgs;
-						this._fetchCache.push(args);
+						fetchCache.push(args);
 					}
 					defResult= args._loading = this._doQuery(args);
+					 
+					defResult.addErrback(function(){
+						fetchCache.splice(dojo.indexOf(fetchCache, args), 1);
+					});
 				}
 				var version = this.serverVersion;
 				
@@ -191,9 +200,12 @@ dojo.require("dojo.data.util.filter");
 					delete args._loading;
 					// update the result set in case anything changed while we were waiting for the fetch
 					if(results){
-						args._version = version;
+						args._version = typeof args._version == "number" ? args._version : version;
 						self.updateResultSet(results,args);
 						args.cacheResults = results;
+						if(!args.count || results.length < args.count){
+							defResult.fullLength = results.length;
+						}
 					}
 					return results;
 				});
@@ -216,6 +228,9 @@ dojo.require("dojo.data.util.filter");
 				//		
 				//	baseResults:
 				//		This provides the result set to start with for client side querying
+				if(request.queryOptions && request.queryOptions.results){
+					baseResults = request.queryOptions.results;
+				}
 				if(request.query){
 					// filter by the query
 					var results = [];
@@ -249,7 +264,7 @@ dojo.require("dojo.data.util.filter");
 					var value = this.getValue(item,i);
 					if((typeof match == 'string' && (match.match(/[\*\.]/) || ignoreCase)) ?
 						!dojo.data.util.filter.patternToRegExp(match, ignoreCase).test(value) :
-						value != match){	  
+						value != match){
 						return false;
 					}
 				}
@@ -263,7 +278,9 @@ dojo.require("dojo.data.util.filter");
 				var current = sort.shift();
 				if(!current){
 					// sort order for ties and no sort orders
-					return function(){}; // keep the order unchanged
+					return function(){
+						return 0;// keep the order unchanged
+					}; 
 				}
 				var attribute = current.attribute;
 				var descending = !!current.descending;

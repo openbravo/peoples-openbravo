@@ -219,10 +219,11 @@ public class DalMappingGenerator implements OBSingleton {
     // sb.append(" cascade=\"save-update\"");
 
     // to prevent cascade errors that the parent is saved after the child
-    // COMMENTED out: this is handled by the DataImportService.insertObjectGraph
-    // if (p.isParent() && p.isMandatory()) {
-    // sb.append(" cascade=\"save-update\"");
-    // }
+    // this is handled by the DataImportService.insertObjectGraph
+    // but other specific code needs it
+    if (p.isParent() && p.isMandatory()) {
+      sb.append(" cascade=\"persist\"");
+    }
 
     sb.append(" entity-name=\"" + p.getTargetEntity().getName() + "\"");
 

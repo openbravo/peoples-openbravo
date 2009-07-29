@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_VALIDCOMBINATION_CLONE">
     <function name="C_VALIDCOMBINATION_CLONE" type="NULL">
-      <parameter name="p_result" type="VARCHAR" mode="out">
-        <default/>
-      </parameter>
       <parameter name="p_orginal_validcombination" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -19,6 +16,9 @@
       <parameter name="p_subacct_length" type="NUMERIC" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_result" type="VARCHAR" mode="out">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -31,7 +31,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -186,10 +186,7 @@ BEGIN
                 
 	/*
 		Function call to Retrieve the new account NUMBER for Business Partner or Product. */					
-		C_ValidCombination_Insert(p_Result, v_Default_Account_Client_ID , v_Org_ID , v_C_AcctSchema_ID,
-	  v_C_ElementValue_ID,NULL,	NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-	  NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
+		C_ValidCombination_Insert(p_Result, v_Default_Account_Client_ID, v_Org_ID, v_C_AcctSchema_ID, v_C_ElementValue_ID, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 END C_VALIDCOMBINATION_CLONE
 ]]></body>
     </function>

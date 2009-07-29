@@ -66,7 +66,7 @@
         <onCreateDefault/>
       </column>
       <column name="ISDOCNOCONTROLLED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
+        <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
       <column name="DOCNOSEQUENCE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">

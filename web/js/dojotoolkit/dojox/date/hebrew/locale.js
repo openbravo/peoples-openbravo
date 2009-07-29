@@ -20,7 +20,7 @@ dojo.require("dojo.i18n");
 
 //Load the bundles containing localization information for
 // names and formats 
-dojo.requireLocalization("dojo.cldr", "hebrew", null, "ROOT,he");
+dojo.requireLocalization("dojo.cldr", "hebrew", null, "ROOT,ar,he");
 
 (function(){
 	// Format a pattern without literals
@@ -34,7 +34,7 @@ dojo.requireLocalization("dojo.cldr", "hebrew", null, "ROOT,he");
 			
 			switch(c){
 				case 'y':
-					if(locale.match(/^he/)){
+					if(locale.match(/^he(?:-.+)?$/)){
 						s = dojox.date.hebrew.numerals.getYearHebrewLetters(dateObject.getFullYear());
 					}else{
 						s = String(dateObject.getFullYear());
@@ -44,7 +44,7 @@ dojo.requireLocalization("dojo.cldr", "hebrew", null, "ROOT,he");
 					var m = dateObject.getMonth();
 					if(l<3){
 						if(!dateObject.isLeapYear(dateObject.getFullYear()) && m>5){m--;}
-						if(locale.match(/^he/)){
+						if(locale.match(/^he(?:-.+)?$/)){
 							s = dojox.date.hebrew.numerals.getMonthHebrewLetters(m);
 						}else{
 							s = m+1; pad = true;
@@ -55,10 +55,10 @@ dojo.requireLocalization("dojo.cldr", "hebrew", null, "ROOT,he");
 					}
 					break;
 				case 'd':
-					if(locale.match(/^he/)){
-						s = "\u202B" /*RLE*/  + dateObject.getDate(); //for  calendar "geresh" position problem
+					if(locale.match(/^he(?:-.+)?$/)){
+						s =  dateObject.getDateLocalized(locale);
 					}else{
-						s = dateObject.getDate(true); pad = true;
+						s = dateObject.getDate(); pad = true;
 					}	
 					break;
 				case 'E':
@@ -138,9 +138,8 @@ dojox.date.hebrew.locale.format = function(/*hebrew.Date*/dateObject, /*object?*
 	var sauce = dojo.hitch(this, formatPattern, dateObject, bundle, locale, options.fullYear);
 	if(options.selector == "year"){
 		var year = dateObject.getFullYear();
-		if(locale.match(/^he/)){ 
-			return dojox.date.hebrew.numerals.getYearHebrewLetters(year);
-		}else{return year;}
+		return locale.match(/^he(?:-.+)?$/) ?
+			dojox.date.hebrew.numerals.getYearHebrewLetters(year) : year;
 	}
 	if(options.selector != "time"){
 		var datePattern = options.datePattern || bundle["dateFormat-"+formatLength];
@@ -239,7 +238,7 @@ dojox.date.hebrew.locale.parse= function(/*String*/value, /*object?*/options){
 		var l=token.length;
 		switch(token.charAt(0)){
 			case 'y':
-				if(locale.match(/^he/)){
+				if(locale.match(/^he(?:-.+)?$/)){
 					result[0] = dojox.date.hebrew.numerals.parseYearHebrewLetters(v);
 				}else{
 					result[0] = Number(v);
@@ -262,7 +261,7 @@ dojox.date.hebrew.locale.parse= function(/*String*/value, /*object?*/options){
 					}
 					mLength = l;
 				}else{
-					if(locale.match(/^he/)){
+					if(locale.match(/^he(?:-.+)?$/)){
 						v = dojox.date.hebrew.numerals.parseMonthHebrewLetters(v); 
 					}else{
 						v--;
@@ -274,11 +273,11 @@ dojox.date.hebrew.locale.parse= function(/*String*/value, /*object?*/options){
 				result[1] = 0;
 				// fallthrough...
 			case 'd':
-				if(locale.match(/^he/)){
+				if(locale.match(/^he(?:-.+)?$/)){
 					result[2] = dojox.date.hebrew.numerals.parseDayHebrewLetters(v);
 				}else{
-					result[2] =  Number(v);
-				}	
+					result[2] = Number(v);
+				}
 				break;
 			case 'a': //am/pm
 				var am = options.am || bundle.am;
@@ -384,22 +383,21 @@ function _buildDateTimeRE  (tokens, bundle, options, pattern){
 					s = '\\S+';
 					break;
 				case 'M':
-					if(locale.match('^he')){
+					if(locale.match('^he(?:-.+)?$')){
 						s = (l>2) ? '\\S+ ?\\S+' : '\\S{1,4}';
 					}else{
 						s = (l>2) ?  '\\S+ ?\\S+' : p2+'[1-9]|1[0-2]';
 					}	
 					break;
 				case 'd':
-					if(locale.match('^he')){
-						//s = '\\S[\'\"\']{1,2}\\S?';
-						s = '.?\\S[\'\"\']{1,2}\\S?'; //for special unicode char - RLE added  - .?
+					if(locale.match('^he(?:-.+)?$')){
+						s = '\\S[\'\"\'\u05F3]{1,2}\\S?';
 					}else{
 						s = '[12]\\d|'+p2+'[1-9]|30';
 					}
 					break;
 				case 'E':
-					if(locale.match('^he')){
+					if(locale.match('^he(?:-.+)?$')){
 						s = (l>3) ? '\\S+ ?\\S+' : '\\S';
 					}else{
 						s = '\\S+';

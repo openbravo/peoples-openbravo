@@ -67,6 +67,8 @@ dojo = {
 	//	isChrome: Number | undefined
 	//		Version as a Number if client is Chrome browser. undefined otherwise.
 	isChrome: 0
+	//	isMac: Boolean
+	//		True if the client runs on Mac
 }
 =====*/
 
@@ -120,6 +122,7 @@ if(typeof window != 'undefined'){
 		d.isKhtml = (dav.indexOf("Konqueror") >= 0) ? tv : 0;
 		d.isWebKit = parseFloat(dua.split("WebKit/")[1]) || undefined;
 		d.isChrome = parseFloat(dua.split("Chrome/")[1]) || undefined;
+		d.isMac = dav.indexOf("Macintosh") >= 0;
 
 		// safari detection derived from:
 		//		http://developer.apple.com/internet/safari/faq.html#anchor2
@@ -197,11 +200,12 @@ if(typeof window != 'undefined'){
 		}
 
 		d._isDocumentOk = function(http){
-			var stat = http.status || 0;
+			var stat = http.status || 0,
+				lp = location.protocol;
 			return (stat >= 200 && stat < 300) || 	// Boolean
 				stat == 304 || 						// allow any 2XX response code
 				stat == 1223 || 						// get it out of the cache
-				(!stat && (location.protocol=="file:" || location.protocol=="chrome:") ); // Internet Explorer mangled the status code
+				(!stat && (lp == "file:" || lp == "chrome:" || lp == "app:") ); // Internet Explorer mangled the status code OR we're Titanium requesting a local file
 		}
 
 		//See if base tag is in use.

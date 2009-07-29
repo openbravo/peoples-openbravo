@@ -101,7 +101,6 @@ dojo.declare(
 		},
 
 		postMixInProperties: function(){
-			//dijit.form.RangeBoundTextBox.prototype.postMixInProperties.apply(this, arguments);
 			this.inherited(arguments);
 
 			if(!this.value || this.value.toString() == dijit.form._DateTimeTextBox.prototype.value.toString()){
@@ -117,7 +116,7 @@ dojo.declare(
 		
 		_onFocus: function(/*Event*/ evt){
 			// summary:
-			//		open the TimePicker popup
+			//		open the popup
 			this._open();
 		},
 
@@ -158,6 +157,7 @@ dojo.declare(
 						// this will cause InlineEditBox and other handlers to do stuff so make sure it's last
 						dijit.form._DateTimeTextBox.superclass._setValueAttr.call(textBox, value, true);
 					},
+					id: this.id + "_popup",
 					lang: textBox.lang,
 					constraints: textBox.constraints,
 
@@ -168,8 +168,8 @@ dojo.declare(
 						// 	disables dates outside of the min/max of the _DateTimeTextBox
 						var compare = dojo.date.compare;
 						var constraints = textBox.constraints;
-						return constraints && (constraints.min && (compare(constraints.min, date, "date") > 0) || 
-							(constraints.max && compare(constraints.max, date, "date") < 0));
+						return constraints && (constraints.min && (compare(constraints.min, date, textBox._selector) > 0) || 
+							(constraints.max && compare(constraints.max, date, textBox._selector) < 0));
 					}
 				});
 				this._picker.attr('value', this.attr('value') || new this.dateClassObj());
@@ -227,6 +227,7 @@ dojo.declare(
 		postCreate: function(){
 			this.inherited(arguments);
 			this.connect(this.focusNode, 'onkeypress', this._onKeyPress);
+			this.connect(this.focusNode, 'onclick', this._open);
 		},
 
 		_onKeyPress: function(/*Event*/ e){
@@ -239,7 +240,7 @@ dojo.declare(
 			if(p && this._opened && p.handleKey){
 				if(p.handleKey(e) === false){ return; }
 			}
-			if(this._opened && e.charOrCode == dk.ESCAPE && !e.shiftKey && !e.ctrlKey && !e.altKey){
+			if(this._opened && e.charOrCode == dk.ESCAPE && !(e.shiftKey || e.ctrlKey || e.altKey || e.metaKey)){
 				this._close();
 				dojo.stopEvent(e);
 			}else if(!this._opened && e.charOrCode == dk.DOWN_ARROW){

@@ -12,7 +12,6 @@ dojo.provide("dojox.data.JsonRestStore");
 dojo.require("dojox.data.ServiceStore");
 dojo.require("dojox.rpc.JsonRest");
 
-
 dojo.declare("dojox.data.JsonRestStore",
 	dojox.data.ServiceStore,
 	{
@@ -118,11 +117,17 @@ dojo.declare("dojox.data.JsonRestStore",
 				}
 			});
 			this.idAttribute = this.idAttribute || 'id';// no options about it, we have to have identity
-			//setup a byId alias to the api call
-			if(typeof options.target == 'string' && !this.service){
-				this.service = dojox.rpc.Rest(this.target,true); // create a default Rest service
+			
+			if(typeof this.target == 'string'){
+				this.target = this.target.match(/\/$/) || this.allowNoTrailingSlash ? this.target : (this.target + '/');
+				if(!this.service){
+					this.service = dojox.rpc.JsonRest.services[this.target] || 
+							dojox.rpc.Rest(this.target, true); 
+					// create a default Rest service
+				}
 			}
-			dojox.rpc.JsonRest.registerService(this.service, options.target, this.schema);
+			
+			dojox.rpc.JsonRest.registerService(this.service, this.target, this.schema);
 			this.schema = this.service._schema = this.schema || this.service._schema || {};
 			// wrap the service with so it goes through JsonRest manager 
 			this.service._store = this;
@@ -135,10 +140,14 @@ dojo.declare("dojox.data.JsonRestStore",
 			}
 			this._constructor.prototype = constructor.prototype;
 			this._index = dojox.rpc.Rest._index;
-			//given a url, load json data from as the store
 		},
 		referenceIntegrity: true,
 		target:"",
+		// summary:
+		// 		Allow no trailing slash on target paths. This is generally discouraged since
+		// 		it creates prevents simple scalar values from being used a relative URLs.
+		// 		Disabled by default.  
+		allowNoTrailingSlash: false,		
 		//Write API Support
 		newItem: function(data, parentInfo){
 			// summary:
@@ -152,7 +161,9 @@ dojo.declare("dojox.data.JsonRestStore",
 				// get the previous value or any empty array
 				var values = this.getValue(parentInfo.parent,parentInfo.attribute,[]);
 				// set the new value
-				this.setValue(parentInfo.parent,parentInfo.attribute,values.concat([data]));
+				values = values.concat([data]);
+				data.__parent = values;
+				this.setValue(parentInfo.parent, parentInfo.attribute, values);
 			}
 			return data;
 		},
@@ -251,6 +262,9 @@ dojo.declare("dojox.data.JsonRestStore",
 			}
 			store.changing(item);
 			item[attribute]=value;
+			if(value && !value.__parent){
+				value.__parent = item;
+			}
 			store.onSet(item,attribute,old,value);
 		},
 		setValues: function(item, attribute, values){
@@ -284,7 +298,11 @@ dojo.declare("dojox.data.JsonRestStore",
 
 			if(!(kwArgs && kwArgs.global)){
 				(kwArgs = kwArgs || {}).service = this.service;
-			} 
+			}
+			if("syncMode" in kwArgs ? kwArgs.syncMode : this.syncMode){
+				dojox.rpc._sync = true;	
+			}
+			
 			var actions = dojox.rpc.JsonRest.commit(kwArgs);
 			this.serverVersion = this._updates && this._updates.length;
 			return actions;
@@ -357,7 +375,7 @@ dojo.declare("dojox.data.JsonRestStore",
 			if(!id){
 				return id;
 			}
-			var prefix = this.service.servicePath;
+			var prefix = this.service.servicePath.replace(/[^\/]*$/,'');
 			// support for relative or absolute referencing with ids 
 			return id.substring(0,prefix.length) != prefix ?  id : id.substring(prefix.length); // String
 		},
@@ -370,7 +388,7 @@ dojo.declare("dojox.data.JsonRestStore",
 				store = serviceAndId.service._store;
 				args.identity = serviceAndId.id; 
 			}
-			args._prefix = store.service.servicePath;
+			args._prefix = store.service.servicePath.replace(/[^\/]*$/,'');
 			return store.inherited(arguments);
 		},
 		//Notifcation Support
@@ -386,16 +404,48 @@ dojo.declare("dojox.data.JsonRestStore",
 			features["dojo.data.api.Write"] = true;
 			features["dojo.data.api.Notification"] = true;
 			return features;
+		},
+		
+		getParent: function(item){
+			//	summary:
+			//		Returns the parent item (or query) for the given item
+			//	item:
+			//		The item to find the parent of
+			
+			return item && item.__parent;
 		}
 
 
 	}
 );
+dojox.data.JsonRestStore.getStore = function(options, Class){
+	//	summary:
+	//		Will retrieve or create a store using the given options (the same options
+	//		that are passed to JsonRestStore constructor. Returns a JsonRestStore instance
+	//	options:
+	//		See the JsonRestStore constructor
+	//	Class:
+	//		Constructor to use (for creating stores from JsonRestStore subclasses). 
+	// 		This is optional and defaults to JsonRestStore.
+	if(typeof options.target == 'string'){
+		options.target = options.target.match(/\/$/) || options.allowNoTrailingSlash ? 
+				options.target : (options.target + '/');
+		var store = (dojox.rpc.JsonRest.services[options.target] || {})._store;
+		if(store){
+			return store;
+		}
+	}
+	return new (Class||dojox.data.JsonRestStore)(options);
+};
 dojox.data._getStoreForItem = function(item){
 	if(item.__id){
-		var servicePath = item.__id.toString().match(/.*\//)[0];
-		var service = dojox.rpc.JsonRest.services[servicePath];
-		return service ? service._store : new dojox.data.JsonRestStore({target:servicePath});
+		var serviceAndId = dojox.rpc.JsonRest.getServiceAndId(item.__id);
+		if(serviceAndId && serviceAndId.service._store){
+			return serviceAndId.service._store;
+		}else{
+			var servicePath = item.__id.toString().match(/.*\//)[0];
+			return new dojox.data.JsonRestStore({target:servicePath});
+		}
 	}
 	return null;
 };

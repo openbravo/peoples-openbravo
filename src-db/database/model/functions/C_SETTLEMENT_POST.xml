@@ -467,7 +467,7 @@
           (SELECT DISTINCT C_BPartner_ID
           FROM C_DEBT_PAYMENT
           WHERE C_Settlement_Cancel_ID=v_Record_ID
-            OR C_Settlement_Generate_ID=v_Record_ID
+            OR C_Settlement_Generate_ID=v_Record_ID AND ISRECEIPT = 'Y'
           )
         LOOP
           C_BP_SOCREDITUSED_REFRESH(Cur_Debts.C_BPartner_ID) ;

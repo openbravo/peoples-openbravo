@@ -32,7 +32,14 @@
         and issotrx = 'Y'
         and 'Y'=(select isactive from c_acctschema_table where ad_table_id='318' and ad_client_id=?)
         union
-        select ad_client_id, documentno, dateacct, ad_column_identifier('C_Bpartner',to_char(C_bpartner_id), TO_CHAR(?)) as name, 0 as GRANDTOTAL, coalesce(to_char((select printname from c_doctype_trl where c_doctype_id=m_inout.c_doctype_id and ad_language=to_char(?) and ad_client_id=?)), 'Goods Receipts') as document
+        select ad_client_id, documentno, dateacct, ad_column_identifier('M_InOut',to_char(m_inout_id), TO_CHAR(?)) as name, 0 as GRANDTOTAL, coalesce(to_char((select printname from c_doctype_trl where c_doctype_id=m_inout.c_doctype_id and ad_language=to_char(?) and ad_client_id=?)), 'Goods Shipments') as document
+        from m_inout
+        where processed = 'Y'
+        and posted = 'N'
+        and issotrx = 'Y'
+        and 'Y'=(select isactive from c_acctschema_table where ad_table_id='319' and ad_client_id=?)
+        union
+        select ad_client_id, documentno, dateacct, ad_column_identifier('M_InOut',to_char(m_inout_id), TO_CHAR(?)) as name, 0 as GRANDTOTAL, coalesce(to_char((select printname from c_doctype_trl where c_doctype_id=m_inout.c_doctype_id and ad_language=to_char(?) and ad_client_id=?)), 'Goods Receipts') as document
         from m_inout
         where processed = 'Y'
         and posted = 'N'
@@ -82,6 +89,10 @@
         and ad_client_id = ?
         order by  document, dateacct, name
       ]]></Sql>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="client"></Parameter>
+    <Parameter name="client"></Parameter>
     <Parameter name="adLanguage"/>
     <Parameter name="adLanguage"/>
     <Parameter name="client"></Parameter>

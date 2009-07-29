@@ -12,7 +12,7 @@ dojo.experimental("dojox.date.IslamicDate");
 
 dojo.require("dojo.date.locale"); //TODO: move dependency to another module?
 dojo.require("dojo.date");
-dojo.requireLocalization("dojo.cldr", "islamic", null, "ROOT,ar");
+dojo.requireLocalization("dojo.cldr", "islamic", null, "ROOT,ar,he");
 
 dojo.declare("dojox.date.IslamicDate", null, {
 	// summary: The component defines the Islamic (Hijri) Calendar Object

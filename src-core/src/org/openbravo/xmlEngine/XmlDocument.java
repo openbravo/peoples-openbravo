@@ -312,9 +312,12 @@ public class XmlDocument implements XmlComponentValue {
                 CharacterComponent charComponent = (CharacterComponent) componentTemplate;
                 if (charComponent.character != null && !charComponent.equals("")) {
                   String original = charComponent.character.trim();
-                  String trl = xmlVectorValue.getTextMap().get(original);
-                  if (trl != null && !trl.equals(""))
-                    charComponent.character = trl;
+                  if (xmlVectorValue != null && xmlVectorValue.getTextMap() != null) {
+                    String trl = xmlVectorValue.getTextMap().get(original);
+
+                    if (trl != null && !trl.equals(""))
+                      charComponent.character = trl;
+                  }
                 }
                 componentTemplate = charComponent;
               }

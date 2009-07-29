@@ -68,7 +68,7 @@ dojo.declare(
 
 		if(this.isExpandable){
 			dijit.setWaiState(this.labelNode, "expanded", this.isExpanded);
-		}		
+		}
 	},
 
 	_setIndentAttr: function(indent){
@@ -80,8 +80,7 @@ dojo.declare(
 		this.indent = indent;
 
 		// Math.max() is to prevent negative padding on hidden root node (when indent == -1)
-		// 19 is the width of the expandoIcon (TODO: get this from CSS instead of hardcoding)
-		var pixels = (Math.max(indent, 0) * 19) + "px";	
+		var pixels = (Math.max(indent, 0) * this.tree._nodePixelIndent) + "px";	
 
 		dojo.style(this.domNode, "backgroundPosition",  pixels + " 0px");
 		dojo.style(this.rowNode, dojo._isBodyLtr() ? "paddingLeft" : "paddingRight", pixels);
@@ -265,23 +264,32 @@ dojo.declare(
 			// released
 			dojo.forEach(items, function(item){
 				var id = model.getIdentity(item),
-					existingNode = tree._itemNodeMap[id],
-					node = 
-						( existingNode && !existingNode.getParent() ) ?
-						existingNode :
-						this.tree._createTreeNode({
+					existingNodes = tree._itemNodesMap[id],
+					node;
+				if(existingNodes){
+					for(var i=0;i<existingNodes.length;i++){
+						if(existingNodes[i] && !existingNodes[i].getParent()){
+							node = existingNodes[i];
+							node.attr('indent', this.indent+1);
+							break;
+						}
+					}
+				}
+				if(!node){
+					node = this.tree._createTreeNode({
 							item: item,
 							tree: tree,
 							isExpandable: model.mayHaveChildren(item),
 							label: tree.getLabel(item),
 							indent: this.indent + 1
 						});
-				if(existingNode){
-					existingNode.attr('indent', this.indent+1);
+					if(existingNodes){
+						existingNodes.push(node);
+					}else{
+						tree._itemNodesMap[id] = [node];
+					}
 				}
 				this.addChild(node);
-				// note: this won't work if there are two nodes for one item (multi-parented items); will be fixed later
-				tree._itemNodeMap[id] = node;
 				if(this.tree._state(item)){
 					tree._expandNode(node);
 				}
@@ -430,6 +438,17 @@ dojo.declare(
 	//		One ore more attributes that holds children of a tree node
 	childrenAttr: ["children"],
 
+	// path: String[] or Item[]
+	//		Full path from rootNode to selected node expressed as array of items or array of ids.
+	path: [],
+
+	// selectedItem: [readonly] Item
+	//		The currently selected item in this tree.
+	//		This property can only be set (via attr('selectedItem', ...)) when that item is already
+	//		visible in the tree.   (I.e. the tree has already been expanded to show that node.)
+	//		Should generally use `path` attribute to set the selected item instead.
+	selectedItem: null,
+
 	// openOnClick: Boolean
 	//		If true, clicking a folder node's label will open it, rather than calling onClick()
 	openOnClick: false,
@@ -438,7 +457,7 @@ dojo.declare(
 	//		If true, double-clicking a folder node's label will open it, rather than calling onDblClick()
 	openOnDblClick: false,
 
-	templateString:"<div class=\"dijitTreeContainer\" waiRole=\"tree\"\n\tdojoAttachEvent=\"onclick:_onClick,onkeypress:_onKeyPress,ondblclick:_onDblClick\">\n</div>\n",
+	templateString:"<div class=\"dijitTreeContainer\" waiRole=\"tree\"\n\tdojoAttachEvent=\"onclick:_onClick,onkeypress:_onKeyPress,ondblclick:_onDblClick\">\n\t<div class=\"dijitInline dijitTreeIndent\" style=\"position: absolute; top: -9999px\" dojoAttachPoint=\"indentDetector\"></div>\n</div>\n",
 
 	// persist: Boolean
 	//		Enables/disables use of cookies for state saving.
@@ -523,6 +542,12 @@ dojo.declare(
 	//		the target node's previous sibling rather than the target node's child.
 	betweenThreshold: 0,
 
+	// _nodePixelIndent: Integer
+	//		Number of pixels to indent tree nodes (relative to parent node).
+	//		Default is 19 but can be overridden by setting CSS class dijitTreeIndent
+	//		and calling resize() or startup() on tree after it's in the DOM.
+	_nodePixelIndent: 19,
+
 	_publish: function(/*String*/ topicName, /*Object*/ message){
 		// summary:
 		//		Publish a message for this widget/topic
@@ -532,7 +557,7 @@ dojo.declare(
 	postMixInProperties: function(){
 		this.tree = this;
 
-		this._itemNodeMap={};
+		this._itemNodesMap={};
 
 		if(!this.cookieName){
 			this.cookieName = this.id + "SaveStateCookie";
@@ -569,6 +594,14 @@ dojo.declare(
 				}
 			}
 			this.dndController = new this.dndController(this, params);
+		}
+	},
+
+	startup: function(){
+		this.inherited(arguments);
+		if(this.path && this.path.length){
+			this.attr("path", this.path);
+			delete this.path;
 		}
 	},
 
@@ -619,7 +652,12 @@ dojo.declare(
 					rn.rowNode.style.display="none";
 				}
 				this.domNode.appendChild(rn.domNode);
-				this._itemNodeMap[this.model.getIdentity(item)] = rn;
+				var identity = this.model.getIdentity(item);
+				if(this._itemNodesMap[identity]){
+					this._itemNodesMap[identity].push(rn);
+				}else{
+					this._itemNodesMap[identity] = [rn];
+				}
 
 				rn._updateLayout();		// sets "dijitTreeIsRoot" CSS classname
 
@@ -630,6 +668,129 @@ dojo.declare(
 				console.error(this, ": error loading root: ", err);
 			}
 		);
+	},
+
+	getNodesByItem: function(/*dojo.data.Item or id*/ item){
+		// summary:
+		//		Returns all tree nodes that refer to an item
+		// returns:
+		//		Array of tree nodes that refer to passed item
+
+		if(!item){ return []; }
+		var identity = dojo.isString(item) ? item : this.model.getIdentity(item);
+		// return a copy so widget don't get messed up by changes to returned array
+		return [].concat(this._itemNodesMap[identity]);
+	},
+
+	_setSelectedItemAttr: function(/*dojo.data.Item or id*/ item){
+		// summary:
+		//		Select a tree node related to passed item.
+		//		WARNING: if model use multi-parented items or desired tree node isn't already loaded
+		//		behavior is not granted. Use 'path' attr instead for full support.
+		var oldValue = this.attr("selectedItem");
+		var identity = (!item || dojo.isString(item)) ? item : this.model.getIdentity(item);
+		if(identity == oldValue ? this.model.getIdentity(oldValue) : null){ return; }
+		var nodes = this._itemNodesMap[identity];
+		if(nodes){
+			// Try first matching tree node and if not selectable try next
+			for(var i = 0; i < nodes.length; i++){
+				if(nodes[i].isSelectable){
+					this.focusNode(nodes[i]);
+					return;
+				}
+			}
+		}
+		if(this.lastFocused){
+			// Select none so deselect current
+			this.lastFocused.setSelected(false);
+			this.lastFocused = null;
+		}
+	},
+
+	_getSelectedItemAttr: function(){
+		// summary:
+		//		Return item related to selected tree node.
+		return this.lastFocused && this.lastFocused.item;
+	},
+	
+	_setPathAttr: function(/*Item[] || String[]*/ path){
+		// summary:
+		//		Select the tree node identified by passed path.
+		// path:
+		//		Array of items or item id's
+
+		// Cleanup in case an error let it connected
+		if(this._recursiveExpansionConn){
+			this.disconnect(this._recursiveExpansionConn);
+			delete this._recursiveExpansionConn;
+		}
+
+		if(path && path.length){
+			if(!this.rootNode){
+				console.debug("!this.rootNode");
+				return;
+			}
+			if(path[0] !== this.rootNode.item && (dojo.isString(path[0]) && path[0] != this.model.getIdentity(this.rootNode.item))){
+				console.error(this, ": path[0] don't match this.rootNode.item. Maybe you are using the wrong tree.");
+				return;
+			}
+			var item = path.shift();
+			var node = this.rootNode;
+			var recursiveExpansion = function(){
+				// Skip already expanded
+				while(path.length && node.isExpanded){
+					item = path.shift();
+					// Find first tree node related to 'item' and child of 'node'
+					var identity = dojo.isString(item) ? item : this.model.getIdentity(item);
+					dojo.some(this._itemNodesMap[identity], function(n){
+						if(n.getParent()==node){
+							node = n;
+							return true;
+						}
+						return false;
+					});
+				}
+				if(path.length){
+					if(node.isExpandable){
+						// Expand and wait for onOpen firing
+						this._expandNode(node);
+					}else{
+						console.error(this, ": problem walking path because !node.isExpandable.", item, node);
+					}
+				}else{
+					// All ancestors are expanded, now cleanup and select last item
+					this.disconnect(this._recursiveExpansionConn);
+					delete this._recursiveExpansionConn;
+					if(this.lastFocused != node){
+						this.focusNode(node);
+					}
+				}
+			};
+			this._recursiveExpansionConn = this.connect(this,"onOpen", function(itemOpened, nodeOpened){
+				if(nodeOpened !== node){ return; }
+				// Node is expanded, go on
+				recursiveExpansion.call(this);
+			});
+			recursiveExpansion.call(this);
+		}else if(this.lastFocused){
+			// Select none so deselect current
+			this.lastFocused.setSelected(false);
+			this.lastFocused = null;
+		}
+	},
+
+	_getPathAttr: function(){
+		// summary:
+		//		Return an array of items that is the path to selected tree node.
+		if(!this.lastFocused){ return; }
+		var res = [];
+		var treeNode = this.lastFocused;
+		while(treeNode && treeNode !== this.rootNode){
+			res.unshift(treeNode.item);
+			treeNode = treeNode.getParent();
+		}
+		res.unshift(this.rootNode.item);
+		return res;
 	},
 
 	////////////// Data store related functions //////////////////////
@@ -718,6 +879,14 @@ dojo.declare(
 				dojo.stopEvent(e);
 			}
 		}else{  // handle non-printables (arrow keys)
+			// clear record of recent printables (being saved for multi-char letter navigation),
+			// because "a", down-arrow, "b" shouldn't search for "ab"
+			if(this._curSearch){
+				console.log("clearing recent input");
+				clearTimeout(this._curSearch.timer);
+				delete this._curSearch;
+			}
+
 			var map = this._keyHandlerMap;
 			if(!map){
 				// setup table mapping keys to events
@@ -732,15 +901,15 @@ dojo.declare(
 				this._keyHandlerMap = map;
 			}
 			if(this._keyHandlerMap[key]){
-				this[this._keyHandlerMap[key]]( { node: treeNode, item: treeNode.item } );	
+				this[this._keyHandlerMap[key]]( { node: treeNode, item: treeNode.item, evt: e } );	
 				dojo.stopEvent(e);
 			}
 		}
 	},
 
-	_onEnterKey: function(/*Object*/ message){
-		this._publish("execute", { item: message.item, node: message.node} );
-		this.onClick(message.item, message.node);
+	_onEnterKey: function(/*Object*/ message, /*Event*/ evt){
+		this._publish("execute", { item: message.item, node: message.node } );
+		this.onClick(message.item, message.node, evt);
 	},
 
 	_onDownArrow: function(/*Object*/ message){
@@ -838,21 +1007,54 @@ dojo.declare(
 		}
 	},
 
+	// multiCharSearchDuration: Number
+	//		If multiple characters are typed where each keystroke happens within
+	//		multiCharSearchDuration of the previous keystroke,
+	//		search for nodes matching all the keystrokes.
+	//
+	//		For example, typing "ab" will search for entries starting with
+	//		"ab" unless the delay between "a" and "b" is greater than multiCharSearchDuration.
+	multiCharSearchDuration: 250,
+
 	_onLetterKeyNav: function(message){
 		// summary:
-		//		Letter key pressed; search for node starting with first char = key
-		var node = message.node, startNode = node, 
-			key = message.key;
+		//		Called when user presses a prinatable key; search for node starting with recently typed letters.
+		// message: Object
+		//		Like { node: TreeNode, key: 'a' } where key is the key the user pressed.
+
+		// Branch depending on whether this key starts a new search, or modifies an existing search
+		var cs = this._curSearch;
+		if(cs){
+			// We are continuing a search.  Ex: user has pressed 'a', and now has pressed
+			// 'b', so we want to search for nodes starting w/"ab".
+			cs.pattern = cs.pattern + message.key;
+			clearTimeout(cs.timer);
+		}else{
+			// We are starting a new search
+			cs = this._curSearch = {
+					pattern: message.key,
+					startNode: message.node
+			};
+		}
+
+		// set/reset timer to forget recent keystrokes
+		var self = this;
+		cs.timer = setTimeout(function(){
+			delete self._curSearch;
+		}, this.multiCharSearchDuration);
+
+		// Navigate to TreeNode matching keystrokes [entered so far].
+		var node = cs.startNode;
 		do{
 			node = this._getNextNode(node);
 			//check for last node, jump to first node if necessary
 			if(!node){
 				node = this._getRootOrFirstNode();
 			}
-		}while(node !== startNode && (node.label.charAt(0).toLowerCase() != key));
+		}while(node !== cs.startNode && (node.label.toLowerCase().substr(0, cs.pattern.length) != cs.pattern));
 		if(node && node.isTreeNode){
 			// no need to set focus if back where we started
-			if(node !== startNode){
+			if(node !== cs.startNode){
 				this.focusNode(node);
 			}
 		}
@@ -876,8 +1078,8 @@ dojo.declare(
 				this._onExpandoClick({node:nodeWidget});
 			}
 		}else{
-			this._publish("execute", { item: nodeWidget.item, node: nodeWidget} );
-			this.onClick(nodeWidget.item, nodeWidget);
+			this._publish("execute", { item: nodeWidget.item, node: nodeWidget, evt: e } );
+			this.onClick(nodeWidget.item, nodeWidget, e);
 			this.focusNode(nodeWidget);
 		}
 		dojo.stopEvent(e);
@@ -900,8 +1102,8 @@ dojo.declare(
 				this._onExpandoClick({node:nodeWidget});
 			}
 		}else{
-			this._publish("execute", { item: nodeWidget.item, node: nodeWidget} );
-			this.onDblClick(nodeWidget.item, nodeWidget);
+			this._publish("execute", { item: nodeWidget.item, node: nodeWidget, evt: e } );
+			this.onDblClick(nodeWidget.item, nodeWidget, e);
 			this.focusNode(nodeWidget);
 		}
 		dojo.stopEvent(e);
@@ -924,13 +1126,13 @@ dojo.declare(
 		}
 	},
 
-	onClick: function(/* dojo.data */ item, /*TreeNode*/ node){
+	onClick: function(/* dojo.data */ item, /*TreeNode*/ node, /*Event*/ evt){
 		// summary:
 		//		Callback when a tree node is clicked
 		// tags:
 		//		callback
 	},
-	onDblClick: function(/* dojo.data */ item, /*TreeNode*/ node){
+	onDblClick: function(/* dojo.data */ item, /*TreeNode*/ node, /*Event*/ evt){
 		// summary:
 		//		Callback when a tree node is double-clicked
 		// tags:
@@ -1086,11 +1288,14 @@ dojo.declare(
 		//		Processes notification of a change to an item's scalar values like label
 		var model = this.model,
 			identity = model.getIdentity(item),
-			node = this._itemNodeMap[identity];
+			nodes = this._itemNodesMap[identity];
 
-		if(node){
-			node.setLabelNode(this.getLabel(item));
-			node._updateItemClasses(item);
+		if(nodes){
+			var self = this;
+			dojo.forEach(nodes,function(node){
+				node.setLabelNode(self.getLabel(item));
+				node._updateItemClasses(item);
+			});
 		}
 	},
 
@@ -1099,10 +1304,12 @@ dojo.declare(
 		//		Processes notification of a change to an item's children
 		var model = this.model,
 			identity = model.getIdentity(parent),
-			parentNode = this._itemNodeMap[identity];
+			parentNodes = this._itemNodesMap[identity];
 
-		if(parentNode){
-			parentNode.setChildItems(newChildrenList);
+		if(parentNodes){
+			dojo.forEach(parentNodes,function(parentNode){
+				parentNode.setChildItems(newChildrenList);
+			});
 		}
 	},
 
@@ -1111,16 +1318,18 @@ dojo.declare(
 		//		Processes notification of a deletion of an item
 		var model = this.model,
 			identity = model.getIdentity(item),
-			node = this._itemNodeMap[identity];
+			nodes = this._itemNodesMap[identity];
 
-		if(node){
-			var parent = node.getParent();
-			if(parent){
-				// if node has not already been orphaned from a _onSetItem(parent, "children", ..) call...
-				parent.removeChild(node);
-			}
-			node.destroyRecursive();
-			delete this._itemNodeMap[identity];
+		if(nodes){
+			dojo.forEach(nodes,function(node){
+				var parent = node.getParent();
+				if(parent){
+					// if node has not already been orphaned from a _onSetItem(parent, "children", ..) call...
+					parent.removeChild(node);
+				}
+				node.destroyRecursive();
+			});
+			delete this._itemNodesMap[identity];
 		}
 	},
 
@@ -1169,6 +1378,10 @@ dojo.declare(
 	},
 
 	destroy: function(){
+		if(this._curSearch){
+			clearTimeout(this._curSearch.timer);
+			delete this._curSearch;
+		}
 		if(this.rootNode){
 			this.rootNode.destroyRecursive();
 		}
@@ -1183,6 +1396,18 @@ dojo.declare(
 		// A tree is treated as a leaf, not as a node with children (like a grid),
 		// but defining destroyRecursive for back-compat.
 		this.destroy();
+	},
+
+	resize: function(){
+		// The only JS sizing involved w/tree is the indentation, which is specified
+		// in CSS and read in through this dummy indentDetector node (tree must be
+		// visible and attached to the DOM to read this)
+		this._nodePixelIndent = dojo.marginBox(this.tree.indentDetector).w;
+		
+		if(this.tree.rootNode){
+			// If tree has already loaded, then reset indent for all the nodes
+			this.tree.rootNode.attr('indent', this.showRoot ? 0 : -1);
+		}
 	},
 
 	_createTreeNode: function(/*Object*/ args){

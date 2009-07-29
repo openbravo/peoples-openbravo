@@ -219,10 +219,12 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       resultado
           .append("new Array(\"inpisdiscountprinted\", \"" + data[0].isdiscountprinted + "\")");
       if (data != null && data.length > 0
-          && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0)
+          && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0 && strIsSOTrx.equals("Y")) {
+        String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
         resultado.append(", new Array('MESSAGE', \""
-            + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage())
-            + data[0].creditavailable + "\")");
+            + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + creditLimitExceed
+            + "\")");
+      }
       resultado.append(");");
     }
     xmlDocument.setParameter("array", resultado.toString());

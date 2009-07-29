@@ -22,9 +22,9 @@ dojo.declare(
 	//		A pane with a title on top, that can be expanded or collapsed.
 	//
 	// description:
-	//		An accessible container with a Title Heading, and a content
+	//		An accessible container with a title Heading, and a content
 	//		section that slides open and closed. TitlePane is an extension to 
-	//		`dijit.layout.ContentPane`, providing all the usesful content-control aspects from it.
+	//		`dijit.layout.ContentPane`, providing all the useful content-control aspects from it.
 	//
 	// example:
 	// | 	// load a TitlePane from remote file:
@@ -49,15 +49,19 @@ dojo.declare(
 	//		Whether pane is opened or closed.
 	open: true,
 
+	// toggleable: Boolean
+	//		Whether pane can be opened or closed by clicking the title bar.
+	toggleable: true,
+
 	// duration: Integer
 	//		Time in milliseconds to fade in/fade out
 	duration: dijit.defaultDuration,
 
 	// baseClass: [protected] String
-	//		The root className to use for the various states of this widget
+	//		The root className to be placed on this widget's domNode.
 	baseClass: "dijitTitlePane",
 
-	templateString:"<div class=\"${baseClass}\">\n\t<div dojoAttachEvent=\"onclick:toggle, onkeypress:_onTitleKey, onfocus:_handleFocus, onblur:_handleFocus, onmouseenter:_onTitleEnter, onmouseleave:_onTitleLeave\" tabindex=\"0\"\n\t\t\twaiRole=\"button\" class=\"dijitTitlePaneTitle\" dojoAttachPoint=\"titleBarNode,focusNode\">\n\t\t<img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint=\"arrowNode\" class=\"dijitArrowNode\" waiRole=\"presentation\"\n\t\t><span dojoAttachPoint=\"arrowNodeInner\" class=\"dijitArrowNodeInner\"></span\n\t\t><span dojoAttachPoint=\"titleNode\" class=\"dijitTitlePaneTextNode\"></span>\n\t</div>\n\t<div class=\"dijitTitlePaneContentOuter\" dojoAttachPoint=\"hideNode\">\n\t\t<div class=\"dijitReset\" dojoAttachPoint=\"wipeNode\">\n\t\t\t<div class=\"dijitTitlePaneContentInner\" dojoAttachPoint=\"containerNode\" waiRole=\"region\" tabindex=\"-1\">\n\t\t\t\t<!-- nested divs because wipeIn()/wipeOut() doesn't work right on node w/padding etc.  Put padding on inner div. -->\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n",
+	templateString:"<div class=\"${baseClass}\">\n\t<div dojoAttachEvent=\"onclick:_onTitleClick, onkeypress:_onTitleKey, onfocus:_handleFocus, onblur:_handleFocus, onmouseenter:_onTitleEnter, onmouseleave:_onTitleLeave\" tabindex=\"0\"\n\t\t\tclass=\"dijitTitlePaneTitle\" dojoAttachPoint=\"titleBarNode,focusNode\">\n\t\t<img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint=\"arrowNode\" class=\"dijitArrowNode\" waiRole=\"presentation\"\n\t\t><span dojoAttachPoint=\"arrowNodeInner\" class=\"dijitArrowNodeInner\"></span\n\t\t><span dojoAttachPoint=\"titleNode\" class=\"dijitTitlePaneTextNode\"></span>\n\t</div>\n\t<div class=\"dijitTitlePaneContentOuter\" dojoAttachPoint=\"hideNode\">\n\t\t<div class=\"dijitReset\" dojoAttachPoint=\"wipeNode\">\n\t\t\t<div class=\"dijitTitlePaneContentInner\" dojoAttachPoint=\"containerNode\" waiRole=\"region\" tabindex=\"-1\">\n\t\t\t\t<!-- nested divs because wipeIn()/wipeOut() doesn't work right on node w/padding etc.  Put padding on inner div. -->\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n",
 
 	attributeMap: dojo.delegate(dijit.layout.ContentPane.prototype.attributeMap, {
 		title: { node: "titleNode", type: "innerHTML" }
@@ -97,6 +101,16 @@ dojo.declare(
 		// open: Boolean
 		//		True if you want to open the pane, false if you want to close it.
 		if(this.open !== open){ this.toggle(); }
+	},
+
+	_setToggleableAttr: function(/* Boolean */ canToggle){
+		// summary:
+		//		Hook to make attr("canToggle", boolean) work.
+		// canToggle: Boolean
+		//		True to allow user to open/close pane by clicking title bar.
+		this.toggleable = canToggle;
+		dijit.setWaiRole(this.focusNode, canToggle ? "button" : "presentation");
+		this._setCss();
 	},
 
 	_setContentAttr: function(content){
@@ -164,13 +178,13 @@ dojo.declare(
 		// tags:
 		//		private
 
-		var classes = ["dijitClosed", "dijitOpen"];
-		var boolIndex = this.open;
 		var node = this.titleBarNode || this.focusNode;
-		dojo.removeClass(node, classes[!boolIndex+0]);
-		node.className += " " + classes[boolIndex+0];
 
-		// provide a character based indicator for images-off mode
+		if(this._titleBarClass){
+			dojo.removeClass(node, this._titleBarClass);
+		}
+		this._titleBarClass = "dijit" + (this.toggleable ? "" : "Fixed") + (this.open ? "Open" : "Closed");
+		dojo.addClass(node, this._titleBarClass);
 		this.arrowNodeInner.innerHTML = this.open ? "-" : "+";
 	},
 
@@ -181,7 +195,9 @@ dojo.declare(
 		//		private
 
 		if(e.charOrCode == dojo.keys.ENTER || e.charOrCode == ' '){
-			this.toggle();
+			if(this.toggleable){
+				this.toggle();
+			}
 		}else if(e.charOrCode == dojo.keys.DOWN_ARROW && this.open){
 			this.containerNode.focus();
 			e.preventDefault();
@@ -193,7 +209,9 @@ dojo.declare(
 		//		Handler for when someone hovers over my title
 		// tags:
 		//		private
-		dojo.addClass(this.focusNode, "dijitTitlePaneTitle-hover");
+		if(this.toggleable){
+			dojo.addClass(this.focusNode, "dijitTitlePaneTitle-hover");
+		}
 	},
 
 	_onTitleLeave: function(){
@@ -201,17 +219,28 @@ dojo.declare(
 		//		Handler when someone stops hovering over my title
 		// tags:
 		//		private
-		dojo.removeClass(this.focusNode, "dijitTitlePaneTitle-hover");
+		if(this.toggleable){
+			dojo.removeClass(this.focusNode, "dijitTitlePaneTitle-hover");
+		}
+	},
+
+	_onTitleClick: function(){
+		// summary:
+		//		Handler when user clicks the title bar
+		// tags:
+		//		private
+		if(this.toggleable){
+			this.toggle();
+		}
 	},
 
 	_handleFocus: function(/*Event*/ e){
 		// summary:
-		//		Handle blur and focus for this widget
+		//		Handle blur and focus events on title bar
 		// tags:
 		//		private
 		
-		// add/removeClass is safe to call without hasClass in this case
-		dojo[(e.type == "focus" ? "addClass" : "removeClass")](this.focusNode, this.baseClass + "Focused");
+		dojo.toggleClass(this.focusNode, this.baseClass + "Focused", e.type == "focus");
 	},
 
 	setTitle: function(/*String*/ title){

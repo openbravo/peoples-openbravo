@@ -15,7 +15,7 @@ dojo.require("dojox.widget.Calendar");
 
 dojo.declare("dojox.widget._CalendarMonth", null, {
 	// summary: Mixin class for adding a view listing all 12 months of the year to the
-	//   dojox.widget._CalendarBase
+	//	 dojox.widget._CalendarBase
 
 
 	constructor: function(){
@@ -28,16 +28,16 @@ dojo.declare("dojox.widget._CalendarMonthView", [dojox.widget._CalendarView, dij
 	// summary: A Calendar view listing the 12 months of the year
 
 	// templatePath: URL
-	//  the path to the template to be used to construct the widget.
+	//	the path to the template to be used to construct the widget.
 	templateString:"<div class=\"dojoxCalendarMonthLabels\" style=\"left: 0px;\"  \n\tdojoAttachPoint=\"monthContainer\" dojoAttachEvent=\"onclick: onClick\">\n    <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"margin: auto;\">\n        <tbody>\n            <tr class=\"dojoxCalendarMonthGroupTemplate\">\n                <td class=\"dojoxCalendarMonthTemplate\">\n                    <div class=\"dojoxCalendarMonthLabel\"></div>\n                </td>\n             </tr>\n        </tbody>\n    </table>\n</div>\n",
 
 	// datePart: String
-	//  Specifies how much to increment the displayed date when the user
-	//  clicks the array button to increment of decrement the view.
+	//	Specifies how much to increment the displayed date when the user
+	//	clicks the array button to increment of decrement the view.
 	datePart: "year",
 
 	// headerClass: String
-	//  Specifies the CSS class to apply to the header node for this view.
+	//	Specifies the CSS class to apply to the header node for this view.
 	headerClass: "dojoxCalendarMonthHeader",
 
 	postCreate: function(){
@@ -59,7 +59,7 @@ dojo.declare("dojox.widget._CalendarMonthView", [dojox.widget._CalendarView, dij
 
 	_populateMonths: dojox.widget._CalendarMonthYearView.prototype._populateMonths,
 
-	onClick: function(evt) {
+	onClick: function(evt){
 		// summary: Handles clicks on month names
 		if(!dojo.hasClass(evt.target, "dojoxCalendarMonthLabel")){dojo.stopEvent(evt); return;}
 		var month = evt.target.parentNode.cellIndex + (evt.target.parentNode.parentNode.rowIndex * 4);
@@ -71,12 +71,12 @@ dojo.declare("dojox.widget._CalendarMonthView", [dojox.widget._CalendarView, dij
 
 dojo.declare("dojox.widget._CalendarYear", null, {
 	// summary: Mixin class for adding a view listing 12 years to the
-	//   dojox.widget._CalendarBase
+	//	 dojox.widget._CalendarBase
 	parent: null,
 
 	constructor: function(){
 		// summary: Adds a dojox.widget._CalendarYearView view to the
-		//  dojo.widget._CalendarBase widget.
+		//	dojo.widget._CalendarBase widget.
 		this._addView(dojox.widget._CalendarYearView);
 	}
 });
@@ -85,7 +85,7 @@ dojo.declare("dojox.widget._CalendarYearView", [dojox.widget._CalendarView, diji
 	// summary: A Calendar view listing 12 years
 
 	// templatePath: URL
-	//  the path to the template to be used to construct the widget.
+	//	the path to the template to be used to construct the widget.
 	templateString:"<div class=\"dojoxCalendarYearLabels\" style=\"left: 0px;\" dojoAttachPoint=\"yearContainer\">\n    <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"margin: auto;\" dojoAttachEvent=\"onclick: onClick\">\n        <tbody>\n            <tr class=\"dojoxCalendarYearGroupTemplate\">\n                <td class=\"dojoxCalendarNextMonth dojoxCalendarYearTemplate\">\n                    <div class=\"dojoxCalendarYearLabel\">\n                    </div>\n                </td>\n            </tr>\n        </tbody>\n    </table>\n</div>\n",
 
 	displayedYears: 6,
@@ -109,7 +109,7 @@ dojo.declare("dojox.widget._CalendarYearView", [dojox.widget._CalendarView, diji
 		return dojo.date.add(date, "year", amount * 12);
 	},
 
-	onClick: function(evt) {
+	onClick: function(evt){
 		// summary: Handles clicks on year values.
 		if(!dojo.hasClass(evt.target, "dojoxCalendarYearLabel")){dojo.stopEvent(evt); return;}
 		var year = Number(evt.target.innerHTML);
@@ -126,7 +126,7 @@ dojo.declare("dojox.widget.Calendar3Pane",
 	 dojox.widget._CalendarMonth,
 	 dojox.widget._CalendarYear], {
 	 	// summary: The Calendar includes day, month and year views.
-		//  No visual effects are included.
+		//	No visual effects are included.
 	 }
 );
 

@@ -11,6 +11,9 @@ dojo.provide("dijit._Widget");
 
 dojo.require( "dijit._base" );
 
+
+// This code is to assist deferring dojo.connect() calls in widgets (connecting to events on the widgets'
+// DOM nodes) until someone actually needs to monitor that event.
 dojo.connect(dojo, "_connect", 
 	function(/*Widget*/ widget, /*String*/ event){
 		if(widget && dojo.isFunction(widget._onConnect)){
@@ -19,6 +22,25 @@ dojo.connect(dojo, "_connect",
 	});
 
 dijit._connectOnUseEventHandler = function(/*Event*/ event){};
+
+//Keep track of where the last keydown event was, to help avoid generating
+//spurious ondijitclick events when:
+//1. focus is on a <button> or <a>
+//2. user presses then releases the ENTER key
+//3. onclick handler fires and shifts focus to another node, with an ondijitclick handler
+//4. onkeyup event fires, causing the ondijitclick handler to fire
+dijit._lastKeyDownNode = null;
+if(dojo.isIE){
+	dojo.doc.attachEvent('onkeydown', function(evt){
+		//console.log("keypress on IE");
+		dijit._lastKeyDownNode = evt.srcElement;
+	});
+}else{
+	dojo.doc.addEventListener('keydown', function(evt){
+		//console.log("keydown,  non-IE", evt.target);
+		dijit._lastKeyDownNode = evt.target;
+	}, true);
+}
 
 (function(){
 
@@ -364,6 +386,10 @@ dojo.declare("dijit._Widget", null, {
 		// Each handle returned from Widget.connect() is an array of handles from dojo.connect()
 		this._connects = [];
 
+		// For garbage collection.  An array of handles returned by Widget.subscribe()
+		// The handle returned from Widget.subscribe() is the handle returned from dojo.subscribe()
+		this._subscribes = [];
+
 		// To avoid double-connects, remove entries from _deferredConnects
 		// that have been setup manually by a subclass (ex, by dojoAttachEvent).
 		// If a subclass has redefined a callback (ex: onClick) then assume it's being
@@ -517,12 +543,18 @@ dojo.declare("dijit._Widget", null, {
 		//		Note: This will not yet work with _Templated widgets
 
 		this.uninitialize();
-		dojo.forEach(this._connects, function(array){
-			dojo.forEach(array, dojo.disconnect);
+		var d = dojo;
+		var dfe = d.forEach;
+		var dun = d.unsubscribe;
+		dfe(this._connects, function(array){
+			dfe(array, d.disconnect);
+		});
+		dfe(this._subscribes, function(handle){
+			dun(handle);
 		});
 
 		// destroy widgets created as part of template, etc.
-		dojo.forEach(this._supportingWidgets||[], function(w){ 
+		dfe(this._supportingWidgets||[], function(w){ 
 			if(w.destroy){
 				w.destroy();
 			}
@@ -877,9 +909,10 @@ dojo.declare("dijit._Widget", null, {
 		//		Provide widget-specific analog to dojo.connect, except with the
 		//		implicit use of this widget as the target object.
 		//		This version of connect also provides a special "ondijitclick"
-		//		event which triggers on a click or space-up, enter-down in IE
-		//		or enter press in FF (since often can't cancel enter onkeydown
-		//		in FF)
+		//		event which triggers on a click or space or enter keyup
+		// returns:
+		//		A handle that can be passed to `disconnect` in order to disconnect before
+		//		the widget is destroyed.
 		// example:
 		//	|	var btn = new dijit.form.Button();
 		//	|	// when foo.bar() is called, call the listener we're going to
@@ -895,52 +928,87 @@ dojo.declare("dijit._Widget", null, {
 		var handles =[];
 		if(event == "ondijitclick"){
 			// add key based click activation for unsupported nodes.
-			if(!this.nodesWithKeyClick[obj.nodeName]){
+			// do all processing onkey up to prevent spurious clicks
+			// for details see comments at top of this file where _lastKeyDownNode is defined
+			if(!this.nodesWithKeyClick[obj.tagName.toLowerCase()]){
 				var m = d.hitch(this, method);
 				handles.push(
 					dc(obj, "onkeydown", this, function(e){
-						if(!d.isFF && e.keyCode == d.keys.ENTER &&
+						//console.log(this.id + ": onkeydown, e.target = ", e.target, ", lastKeyDownNode was ", dijit._lastKeyDownNode, ", equality is ", (e.target === dijit._lastKeyDownNode));
+						if((e.keyCode == d.keys.ENTER || e.keyCode == d.keys.SPACE) &&
 							!e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey){
-							return m(e);
-						}else if(e.keyCode == d.keys.SPACE){
-							// stop space down as it causes IE to scroll
-							// the browser window
-							d.stopEvent(e);
+							// needed on IE for when focus changes between keydown and keyup - otherwise dropdown menus do not work
+							dijit._lastKeyDownNode = e.target;
+							d.stopEvent(e);		// stop event to prevent scrolling on space key in IE
 						}
 			 		}),
 					dc(obj, "onkeyup", this, function(e){
-						if(e.keyCode == d.keys.SPACE && 
-							!e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey){ return m(e); }
+						//console.log(this.id + ": onkeyup, e.target = ", e.target, ", lastKeyDownNode was ", dijit._lastKeyDownNode, ", equality is ", (e.target === dijit._lastKeyDownNode));
+						if( (e.keyCode == d.keys.ENTER || e.keyCode == d.keys.SPACE) &&
+							e.target === dijit._lastKeyDownNode &&
+							!e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey){
+								//need reset here or have problems in FF when focus returns to trigger element after closing popup/alert
+								dijit._lastKeyDownNode = null;  
+								return m(e);
+						}
 					})
 				);
-			 	if(d.isFF){
-					handles.push(
-						dc(obj, "onkeypress", this, function(e){
-							if(e.keyCode == d.keys.ENTER &&
-								!e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey){ return m(e); }
-						})
-					);
-			 	}
 			}
 			event = "onclick";
 		}
 		handles.push(dc(obj, event, this, method));
 
-		// return handles for FormElement and ComboBox
 		this._connects.push(handles);
-		return handles;
+		return handles;		// _Widget.Handle
 	},
 
-	disconnect: function(/*Object*/ handles){
+	disconnect: function(/* _Widget.Handle */ handles){
 		// summary:
-		//		Disconnects handle created by this.connect.
-		//		Also removes handle from this widget's list of connects
+		//		Disconnects handle created by `connect`.
+		//		Also removes handle from this widget's list of connects.
 		// tags:
 		//		protected
 		for(var i=0; i<this._connects.length; i++){
 			if(this._connects[i]==handles){
 				dojo.forEach(handles, dojo.disconnect);
 				this._connects.splice(i, 1);
+				return;
+			}
+		}
+	},
+
+	subscribe: function(
+			/*String*/ topic,
+			/*String|Function*/ method){
+		//	summary:
+		//		Subscribes to the specified topic and calls the specified method
+		//		of this object and registers for unsubscribe() on widget destroy.
+		//	description:
+		//		Provide widget-specific analog to dojo.subscribe, except with the
+		//		implicit use of this widget as the target object.
+		//	example:
+		//	|	var btn = new dijit.form.Button();
+		//	|	// when /my/topic is published, this button changes its label to
+		//	|   // be the parameter of the topic.
+		//	|	btn.subscribe("/my/topic", function(v){
+		//	|		this.attr("label", v);
+		//	|	});
+		var d = dojo;
+		var handle = d.subscribe(topic, this, method);
+
+		// return handles for Any widget that may need them
+		this._subscribes.push(handle);
+		return handle;
+	},
+
+	unsubscribe: function(/*Object*/ handle){
+		// summary:
+		//		Unsubscribes handle created by this.subscribe.
+		//		Also removes handle from this widget's list of subscriptions
+		for(var i=0; i<this._subscribes.length; i++){
+			if(this._subscribes[i] == handle){
+				dojo.unsubscribe(handle);
+				this._subscribes.splice(i, 1);
 				return;
 			}
 		}

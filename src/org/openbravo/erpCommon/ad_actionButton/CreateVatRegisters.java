@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_forms.DocInvoice;
+import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -170,7 +171,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
       TaxRegister[] taxregisters = TaxRegister.selectChild(this, strTaxpaymentID);
       for (TaxRegister taxRegister : taxregisters) {
         CreateVatRegistersData[] invoices = CreateVatRegistersData.select(this, strTaxpaymentID,
-            taxRegister.cTaxregisterTypeId, strDatefrom, strDateto);
+            taxRegister.cTaxregisterTypeId, strDatefrom, DateTimeData.nDaysAfter(this, strDateto,"1"));
         for (CreateVatRegistersData myinvoice : invoices) {
           String strTaxBaseAmt = "0";
           String strTaxAmt = "0";

@@ -122,7 +122,7 @@ $BODY$ DECLARE
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All portions are Copyright (C) 2001-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -138,7 +138,9 @@ BEGIN
     v_seqNo := v_seqNo + 1;
     INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo+100000, 'DELETE FROM '||Cur_Constraints.TABLE_NAME||' WHERE '||Cur_Constraints.COLUMN_NAMES|| 
                     ' IS NOT NULL AND ' ||Cur_Constraints.COLUMN_NAMES|| 
-                    ' NOT IN (SELECT ' ||Cur_Constraints.FK_COLUMN_NAMES || ' FROM ' || Cur_Constraints.FK_TABLE || ')'
+                    ' IN (' ||
+			' SELECT ' ||Cur_Constraints.COLUMN_NAMES || ' FROM ' || Cur_Constraints.TABLE_NAME || ' EXCEPT ' ||
+			' SELECT ' ||Cur_Constraints.FK_COLUMN_NAMES || ' FROM ' || Cur_Constraints.FK_TABLE || ')'
                     );
   END LOOP;
  
@@ -523,5 +525,11 @@ END;   $BODY$
 CREATE OR REPLACE VIEW AD_INTEGER AS
 SELECT a.value::numeric AS value
    FROM generate_series(1, 1024) a(value);
+/-- END
+
+CREATE OR REPLACE FUNCTION uuid_generate_v4()
+RETURNS uuid
+AS '$libdir/uuid-ossp', 'uuid_generate_v4'
+VOLATILE STRICT LANGUAGE C;
 /-- END
 

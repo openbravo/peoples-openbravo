@@ -12,8 +12,10 @@ dojo.provide("dojo.dnd.Avatar");
 dojo.require("dojo.dnd.common");
 
 dojo.declare("dojo.dnd.Avatar", null, {
-	// summary: an object, which represents transferred DnD items visually
-	// manager: Object: a DnD manager object
+	// summary:
+	//		Object that represents transferred DnD items visually
+	// manager: Object
+	//		a DnD manager object
 
 	constructor: function(manager){
 		this.manager = manager;
@@ -22,8 +24,9 @@ dojo.declare("dojo.dnd.Avatar", null, {
 
 	// methods
 	construct: function(){
-		// summary: a constructor function;
-		//	it is separate so it can be (dynamically) overwritten in case of need
+		// summary:
+		//		constructor function;
+		//		it is separate so it can be (dynamically) overwritten in case of need
 		this.isA11y = dojo.hasClass(dojo.body(),"dijit_a11y");
 		var a = dojo.create("table", {
 				"class": "dojoDndAvatar",
@@ -77,12 +80,14 @@ dojo.declare("dojo.dnd.Avatar", null, {
 		this.node = a;
 	},
 	destroy: function(){
-		// summary: a desctructor for the avatar, called to remove all references so it can be garbage-collected
+		// summary:
+		//		destructor for the avatar; called to remove all references so it can be garbage-collected
 		dojo.destroy(this.node);
 		this.node = false;
 	},
 	update: function(){
-		// summary: updates the avatar to reflect the current DnD state
+		// summary:
+		//		updates the avatar to reflect the current DnD state
 		dojo[(this.manager.canDropFlag ? "add" : "remove") + "Class"](this.node, "dojoDndAvatarCanDrop");
 		if (this.isA11y){
 			var icon = dojo.byId("a11yIcon");

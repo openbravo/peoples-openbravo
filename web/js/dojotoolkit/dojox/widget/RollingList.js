@@ -18,7 +18,7 @@ dojo.require("dojox.html.metrics");
 dojo.require("dijit.form.Button");
 
 dojo.require("dojo.i18n"); 
-dojo.requireLocalization("dojox.widget", "RollingList", null, "ROOT"); 
+dojo.requireLocalization("dojox.widget", "RollingList", null, "ROOT,ca,sk,sl,th"); 
 dojo.requireLocalization("dijit", "common", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare("dojox.widget._RollingListPane",

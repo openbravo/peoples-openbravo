@@ -89,7 +89,7 @@ dojo.withDoc = function(	/*DocumentElement*/documentObject,
 		dojo.doc = documentObject;
 		delete dojo._bodyLtr; // uncache
 
-		if(thisObject && dojo.isString(callback)){
+		if(thisObject && typeof callback == "string"){
 			callback = thisObject[callback];
 		}
 

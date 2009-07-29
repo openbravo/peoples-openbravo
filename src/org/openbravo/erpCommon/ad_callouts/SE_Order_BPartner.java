@@ -322,11 +322,13 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
       resultado.append("null");
     resultado.append("\n)");
     if (data != null && data.length > 0
-        && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0) {
+        && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
+        && strIsSOTrx.equals("Y")) {
       if (message.length() > 0)
         message.append("<br>");
+      String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
       message.append(Utility.messageBD(this, "CreditLimitOver", vars.getLanguage())
-          + data[0].creditavailable);
+          + creditLimitExceed);
     }
 
     if (message != null) {

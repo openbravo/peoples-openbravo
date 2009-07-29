@@ -13,11 +13,22 @@ dojo.provide("dojo._base.array");
 (function(){
 	var _getParts = function(arr, obj, cb){
 		return [ 
-			dojo.isString(arr) ? arr.split("") : arr, 
+			(typeof arr == "string") ? arr.split("") : arr, 
 			obj || dojo.global,
 			// FIXME: cache the anonymous functions we create here?
-			dojo.isString(cb) ? new Function("item", "index", "array", cb) : cb
+			(typeof cb == "string") ? new Function("item", "index", "array", cb) : cb
 		];
+	};
+
+	var everyOrSome = function(/*Boolean*/every, /*Array|String*/arr, /*Function|String*/callback, /*Object?*/thisObject){
+		var _p = _getParts(arr, thisObject, callback); arr = _p[0];
+		for(var i=0,l=arr.length; i<l; ++i){
+			var result = !!_p[2].call(_p[1], arr[i], i, arr);
+			if(every ^ result){
+				return result; // Boolean
+			}
+		}
+		return every; // Boolean
 	};
 
 	dojo.mixin(dojo, {
@@ -119,17 +130,6 @@ dojo.provide("dojo._base.array");
 			}
 		},
 
-		_everyOrSome: function(/*Boolean*/every, /*Array|String*/arr, /*Function|String*/callback, /*Object?*/thisObject){
-			var _p = _getParts(arr, thisObject, callback); arr = _p[0];
-			for(var i=0,l=arr.length; i<l; ++i){
-				var result = !!_p[2].call(_p[1], arr[i], i, arr);
-				if(every ^ result){
-					return result; // Boolean
-				}
-			}
-			return every; // Boolean
-		},
-
 		every: function(/*Array|String*/arr, /*Function|String*/callback, /*Object?*/thisObject){
 			// summary:
 			//		Determines whether or not every item in arr satisfies the
@@ -151,7 +151,7 @@ dojo.provide("dojo._base.array");
 			// example:
 			//	|	// returns true 
 			//	|	dojo.every([1, 2, 3, 4], function(item){ return item>0; });
-			return this._everyOrSome(true, arr, callback, thisObject); // Boolean
+			return everyOrSome(true, arr, callback, thisObject); // Boolean
 		},
 
 		some: function(/*Array|String*/arr, /*Function|String*/callback, /*Object?*/thisObject){
@@ -175,7 +175,7 @@ dojo.provide("dojo._base.array");
 			// example:
 			//	|	// is false
 			//	|	dojo.some([1, 2, 3, 4], function(item){ return item<1; });
-			return this._everyOrSome(false, arr, callback, thisObject); // Boolean
+			return everyOrSome(false, arr, callback, thisObject); // Boolean
 		},
 
 		map: function(/*Array|String*/arr, /*Function|String*/callback, /*Function?*/thisObject){

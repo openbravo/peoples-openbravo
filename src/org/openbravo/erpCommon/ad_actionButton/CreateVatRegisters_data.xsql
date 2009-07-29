@@ -58,7 +58,7 @@
         <Parameter name="taxPaymentID"/>
         <Parameter name="parTaxRegType_id" optional="true" after="and 1=1"><![CDATA[ and C_TaxRegister_Type.C_TaxRegister_Type_ID= ?  ]]></Parameter>
         <Parameter name="parDateFrom" optional="true" after="and 1=1"><![CDATA[ and C_Invoice.TaxDate >= to_date(?) ]]></Parameter>
-        <Parameter name="parDateTo" optional="true" after="and 1=1"><![CDATA[ and C_Invoice.TaxDate <= to_date(?)]]></Parameter>
+        <Parameter name="parDateTo" optional="true" after="and 1=1"><![CDATA[ and C_Invoice.TaxDate < to_date(?)]]></Parameter>
       </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

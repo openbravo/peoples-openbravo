@@ -46,7 +46,7 @@
         <onCreateDefault/>
       </column>
       <column name="ONREMAINDER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
+        <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
       <column name="EXCLUDETAX" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">

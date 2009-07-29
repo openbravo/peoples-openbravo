@@ -37,6 +37,9 @@ dojo.declare("dojox.data.AtomReadStore", null, {
 			this.label = args.label || this.label;
 			this.sendQuery = (args.sendQuery || args.sendquery || this.sendQuery);
 			this.unescapeHTML = args.unescapeHTML;
+			if("urlPreventCache" in args){
+				this.urlPreventCache = args.urlPreventCache?true:false;                        
+                        }
 		}
 		if(!this.url){
 			throw new Error("AtomReadStore: a URL must be specified when creating the data store");
@@ -53,6 +56,9 @@ dojo.declare("dojox.data.AtomReadStore", null, {
 	sendQuery: false,
 
 	unescapeHTML: false,
+
+	//Configurable preventCache option for the URL.
+	urlPreventCache: false,
 
 	/* dojo.data.api.Read */
 
@@ -336,8 +342,8 @@ dojo.declare("dojox.data.AtomReadStore", null, {
 		}else{
 			var getArgs = {
 				url: url,
-				handleAs: "xml"//,
-			//	preventCache: true
+				handleAs: "xml",
+				preventCache: this.urlPreventCache
 			};
 			var getHandler = dojo.xhrGet(getArgs);
 			getHandler.addCallback(docHandler);

@@ -37,7 +37,7 @@
         '' AS C_CAMPAIGN_ID, '' AS C_PROJECT_ID, '' AS C_ACTIVITY_ID, '' AS ISPAID, '' AS C_PAYMENT_ID, '' AS C_CASHLINE_ID,
         '' AS CREATEFROM, '' AS GENERATETO, '' AS SENDEMAIL, '' AS AD_USER_ID, '' AS COPYFROM, '' AS ISSELFSERVICE, '' AS AD_ORGTRX_ID,
         '' AS USER1_ID, '' AS USER2_ID, '' AS CONVERTED, '' AS PERIOD, '' AS C_INVOICELINE_ID,'' AS M_INOUTLINE_ID, '' AS M_PRODUCT_ID,
-        '' AS DATETRX1, '' AS DATETRX2, '' AS QTY1, '' AS QTY2, '' AS ACCOUNT_ID, '' AS C_INVOICE_ID, '' AS NAME
+        '' AS DATETRX1, '' AS DATETRX2, '' AS QTY1, '' AS QTY2, '' AS ACCOUNT_ID, '' AS C_INVOICE_ID, '' AS NAME, '' AS CLASSNAME
         FROM C_INVOICE a, ad_org WHERE a.AD_CLIENT_ID=?
         AND ad_org.ad_org_id=a.ad_org_id
         AND AD_ISORGINCLUDED(ad_org.ad_org_id, ?, ad_org.ad_client_id)<>-1
@@ -625,5 +625,15 @@
       </Sql>
       <Parameter name="cAcctschemaId"/>
       <Parameter name="docbasetype"/>
+   </SqlMethod>
+   <SqlMethod name="selectAcctProcess" type="preparedStatement" return="multiple" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      SELECT AD_ACCTPROCESS.CLASSNAME
+      FROM C_ACCTSCHEMA_PROCESS, AD_ACCTPROCESS
+      WHERE C_ACCTSCHEMA_PROCESS.AD_ACCTPROCESS_ID = AD_ACCTPROCESS.AD_ACCTPROCESS_ID
+      AND C_ACCTSCHEMA_PROCESS.C_ACCTSCHEMA_ID = ?
+      </Sql>
+      <Parameter name="cAcctschemaId"/>
    </SqlMethod>
   </SqlClass>

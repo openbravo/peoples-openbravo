@@ -43,10 +43,17 @@ dojo.declare("dojox.data.KeyValueStore", null, {
 		};
 		this._loadInProgress = false;	//Got to track the initial load to prevent duelling loads of the dataset.
 		this._queuedFetches = [];
+		if(keywordParameters && "urlPreventCache" in keywordParameters){
+			this.urlPreventCache = keywordParameters.urlPreventCache?true:false;
+		}
 	},
 	
 	url: "",
 	data: "",
+
+	//urlPreventCache: boolean
+	//Controls if urlPreventCache should be used with underlying xhrGet.
+	urlPreventCache: false, 
 	
 	_assertIsItem: function(/* item */ item){
 		//	summary:
@@ -285,7 +292,8 @@ dojo.declare("dojox.data.KeyValueStore", null, {
 					this._loadInProgress = true;
 					var getArgs = {
 							url: self.url, 
-							handleAs: "json-comment-filtered"
+							handleAs: "json-comment-filtered",
+							preventCache: this.urlPreventCache
 						};
 					var getHandler = dojo.xhrGet(getArgs);
 					getHandler.addCallback(function(data){

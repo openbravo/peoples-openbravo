@@ -63,6 +63,11 @@ function validate()
 		showJSMessage(7);
 		return false;
 	}
+	if (inputValue(document.frmMain.inpCurrencyId) == null || inputValue(document.frmMain.inpCurrencyId) == "") {
+   		 setWindowElementFocus(document.frmMain.inpCurrencyId);
+ 	 	 showJSMessage(7);
+ 	   	 return false;
+ 	}
 	return true;
 }
 
@@ -288,6 +293,18 @@ function onloadFunctions() {
                   <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpDetalle" value="-1" id="paramDetalle" checked=""></input></span></td>
                   <td class="ContentCell"> </td>
                 </tr>
+                <tr>
+                	<td class="TitleCell"><span class="LabelText">Currency</span></td>
+                 	<td class="Combo_ContentCell">
+  		     			<select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+     		      			<option value=""><div id="reportC_Currency_ID"></div></option>
+   		     			</select>
+		   		 	</td> 
+		   		 	<td class="ContentCell"> </td>
+		   		 	<td class="ContentCell"> </td>
+                </tr>
+                
+                
                   <tr>
                     <td colspan="6">
                       <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">

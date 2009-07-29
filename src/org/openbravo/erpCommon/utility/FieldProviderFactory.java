@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.utility;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -114,6 +115,15 @@ public class FieldProviderFactory implements FieldProvider {
     return rt;
   }
 
+  public static <T extends Object> FieldProvider[] getFieldProviderArray(Collection<T> objs) {
+    FieldProvider[] rt = new FieldProviderFactory[objs.size()];
+    int i = 0;
+    for (Object o : objs) {
+      rt[i++] = new FieldProviderFactory(o);
+    }
+    return rt;
+  }
+
   /**
    * Creates a setter for a field provider
    * 
@@ -131,6 +141,13 @@ public class FieldProviderFactory implements FieldProvider {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  public static void setFieldArray(FieldProvider[] fps, String field, String value) {
+    for (FieldProvider fp : fps) {
+      setField(fp, field, value);
+    }
+
   }
 
 }

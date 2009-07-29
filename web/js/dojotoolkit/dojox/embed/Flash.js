@@ -320,7 +320,7 @@ dojo.provide("dojox.embed.Flash");
 			
 			// vars to help determine load status
 			var p = 0, testLoaded=false;
-			this._poller = null; this._pollCount = 0; this._pollMax = 5; this.pollTime = 100;
+			this._poller = null; this._pollCount = 0; this._pollMax = 15; this.pollTime = 100;
 			
 			if(dojox.embed.Flash.initialized){
 				
@@ -339,7 +339,7 @@ dojo.provide("dojox.embed.Flash");
 						}catch(e){
 							/* squelch */
 							console.warn("this.movie.PercentLoaded() failed");
-						};
+						}
 						
 						if(p == 100){
 							// if percent = 100, movie is fully loaded and we're communicating
@@ -383,7 +383,7 @@ dojo.provide("dojox.embed.Flash");
 				}
 			}
 
-			//	pull the movie
+			//	poll the movie
 			if(this._poller){
 				//	wait until onLoad to destroy
 				dojo.connect(this, "onLoad", this, "_destroy");

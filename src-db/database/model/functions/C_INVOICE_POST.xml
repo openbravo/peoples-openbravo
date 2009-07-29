@@ -751,7 +751,9 @@ cWithHoldId varchar2(32);
             WHERE C_Invoice_ID=v_Record_ID
               AND COALESCE(IsAutomaticGenerated, 'Y')='N'
               AND C_ORDER_ID IS NULL;
-            C_BP_SOCREDITUSED_REFRESH(v_BPartner_ID) ;
+            IF(v_IsSOTrx='Y') THEN
+		C_BP_SOCREDITUSED_REFRESH(v_BPartner_ID) ;
+	    END IF;
             DELETE
             FROM C_INVOICELINE
             WHERE C_INVOICE_DISCOUNT_ID IS NOT NULL
@@ -1717,7 +1719,7 @@ cWithHoldId varchar2(32);
             END;
           END IF; -- v_GrandTotal <> v_totalCash
         END;
-        IF(NOT FINISH_PROCESS) THEN
+        IF(NOT FINISH_PROCESS AND v_IsSOTrx='Y') THEN
           C_BP_SOCREDITUSED_REFRESH(v_BPartner_ID) ;
         END IF;
       END IF;--FINISH_PROCESS
@@ -1743,6 +1745,42 @@ cWithHoldId varchar2(32);
         -- Commented by cromero 19102006   COMMIT;
         -- Commented by cromero 19102006 END IF;
       END IF;--FINISH_PROCESS
+
+    --C_Invoice_Post - Finish_Process Extension Point
+    SELECT 1 INTO v_count
+    FROM DUAL
+    where exists (select 1 from ad_ep_procedures where ad_extension_points_id = 'CBE7DD2E561E4D3D8257ECEA5F19687F');
+    IF (v_count=1) THEN
+      DECLARE
+        v_ep_instance VARCHAR2(32);
+        v_extension_point_id VARCHAR2(32) := 'CBE7DD2E561E4D3D8257ECEA5F19687F';
+      BEGIN
+        v_ep_instance := get_uuid();
+        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Record_ID',
+          v_record_id, NULL, NULL, NULL, NULL, NULL, NULL);
+        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'DocAction',
+          v_DocAction, NULL, NULL, NULL, NULL, NULL, NULL);
+        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'User',
+          v_UpdatedBy, NULL, NULL, NULL, NULL, NULL, NULL);
+        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Message',
+          NULL, NULL, NULL, NULL, NULL, NULL, v_Message);
+        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Result',
+          NULL, NULL, v_result, NULL, NULL, NULL, NULL);
+        AD_EXTENSION_POINT_HANDLER(v_ep_instance, v_extension_point_id);
+        SELECT p_number INTO v_Result
+        FROM ad_ep_instance_para
+        WHERE ad_ep_instance_id = v_ep_instance
+          AND parametername LIKE 'Result';
+        SELECT p_text INTO v_Message
+        FROM ad_ep_instance_para
+        WHERE ad_ep_instance_id = v_ep_instance
+          AND parametername LIKE 'Message';
+        
+        DELETE FROM ad_ep_instance_para
+        WHERE ad_ep_instance_id = v_ep_instance;
+      END;
+    END IF;
+
     --<<FINISH_PROCESS>>
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance

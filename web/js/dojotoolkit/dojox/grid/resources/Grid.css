@@ -364,6 +364,17 @@
 	cursor: col-resize;
 	z-index:10000;
 }
+.dojoxGridColNoResize, 
+.dojoxGridColNoResize .dojoDndItemOver {
+	cursor: not-allowed !important;
+}
+.dojoxGridColResize, 
+.dojoxGridColResize .dojoDndItemOver,
+.dojoxGridColumnResizing,
+.dojoxGridColumnResizing .dojoDndItemOver,
+.dojoxGridColumnResizing .dojoxGridHeader {
+	cursor: col-resize !important;
+}
 
 .dojoxGridColPlaceBottom {
 	background: transparent url(images/grid_sort_up.gif) no-repeat scroll left top;
@@ -386,4 +397,20 @@
 	width: 1px;
 	background-color: #777;
 	position: absolute;
+}
+
+/* Tree Grid */
+.dojoxGridExpandoCell {
+	vertical-align: top;
+}
+.dojoxGridSummarySpan {
+	visibility: hidden;
+}
+.dojoxGridSummaryRow .dojoxGridSummarySpan,
+.dojoxGridRowCollapsed .dojoxGridSummarySpan {
+	visibility: visible;
+}
+.dojoxGridNoChildren .dojoxGridExpando {
+	visibility: hidden !important;
+	width: 0px !important;
 }

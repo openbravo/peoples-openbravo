@@ -46,7 +46,7 @@
         <onCreateDefault/>
       </column>
       <column name="PROJECTCATEGORY" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default><![CDATA[N]]></default>
+        <default><![CDATA[S]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CPROJECTTYPE">
