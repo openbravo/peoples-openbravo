@@ -1533,15 +1533,6 @@ IF(NOT FINISH_PROCESS) THEN
       Processed='Y'
     WHERE C_Order_ID=v_Record_ID;
   END IF;
-  IF(p_PInstance_ID IS NOT NULL) THEN
-    v_ResultStr:='UnLockingOrder';
-    UPDATE C_ORDER
-      SET Processing='N',
-      Updated=now(),
-      UpdatedBy=v_User
-    WHERE C_Order_ID=v_Record_ID;
-    COMMIT;
-  END IF;
 END IF;--FINISH_PROCESS
 
 --C_Order_Post - Finish_Process Extension Point
@@ -1578,6 +1569,18 @@ IF (v_count=1) THEN
     WHERE ad_ep_instance_id = v_ep_instance;
   END;
 END IF;
+
+IF(NOT FINISH_PROCESS) THEN
+  IF(p_PInstance_ID IS NOT NULL) THEN
+    v_ResultStr:='UnLockingOrder';
+    UPDATE C_ORDER
+      SET Processing='N',
+      Updated=now(),
+      UpdatedBy=v_User
+    WHERE C_Order_ID=v_Record_ID;
+    COMMIT;
+  END IF;
+END IF;--FINISH_PROCESS
 
 --<<FINISH_PROCESS>>
 IF(p_PInstance_ID IS NOT NULL) THEN
