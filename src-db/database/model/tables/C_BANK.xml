@@ -50,7 +50,7 @@
         <onCreateDefault/>
       </column>
       <column name="ISOWNBANK" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
+        <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
       <column name="CODEBANK" primaryKey="false" required="false" type="NVARCHAR" size="4" autoIncrement="false">
