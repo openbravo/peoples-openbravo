@@ -138,7 +138,9 @@ BEGIN
     v_seqNo := v_seqNo + 1;
     INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo+100000, 'DELETE FROM '||Cur_Constraints.TABLE_NAME||' WHERE '||Cur_Constraints.COLUMN_NAMES|| 
                     ' IS NOT NULL AND ' ||Cur_Constraints.COLUMN_NAMES|| 
-                    ' NOT IN (SELECT ' ||Cur_Constraints.FK_COLUMN_NAMES || ' FROM ' || Cur_Constraints.FK_TABLE || ')'
+                    ' IN (
+			SELECT ' ||Cur_Constraints.COLUMN_NAMES || ' FROM ' || Cur_Constraints.TABLE_NAME || ' EXCEPT ' ||
+			SELECT ' ||Cur_Constraints.FK_COLUMN_NAMES || ' FROM ' || Cur_Constraints.FK_TABLE || ')'
                     );
   END LOOP;
  
