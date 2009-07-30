@@ -101,6 +101,7 @@ function selectFilters(params) {
    client_height = client_height - 20;
    var numRows = (client_height)/(grid_row_height);
    numRows = parseInt(numRows);
+   if (numRows > 1) { numRows -= 1; }
    document.getElementById("grid_sample").style.display = "none";
    return numRows;
  }

@@ -3066,7 +3066,7 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
     var table = this.liveGrid.table;
     var headerHeight = table.parentNode.firstChild.offsetHeight;
     var scrollerStyle = this.scrollerDiv.style;
-    scrollerStyle.top         = headerHeight;
+    scrollerStyle.top         = headerHeight - 17;
     scrollerStyle.height      = visibleHeight + "px";
     var totalHeight = parseInt(visibleHeight * this.metaData.getTotalRows()/this.metaData.getPageSize());
     this.heightDiv.style.height = totalHeight + "px" ;
@@ -3082,6 +3082,44 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
 */
   createScrollBar: function() {
     var table = this.liveGrid.table;
+
+    this.fillGapRange = document.createElement("table");
+    this.fillGapRange.className = "DataGrid_Scroll_icon_prevRange";
+    this.fillGapRange.id = "fillGapRange_table";
+    this.fillGapRange.style.cursor = "default";
+    this.fillGapRange.style.background = "transparent";
+    var fillGapRange_tbody = document.createElement("tbody");
+    var fillGapRange_tr = document.createElement("tr");
+    var fillGapRange_td = document.createElement("td");
+    fillGapRange_tr.appendChild(fillGapRange_td);
+    fillGapRange_tbody.appendChild(fillGapRange_tr);
+    this.fillGapRange.appendChild(fillGapRange_tbody);
+
+    this.prevRange = document.createElement("table");
+    this.prevRange.className = "DataGrid_Scroll_icon_prevRange";
+    this.prevRange.id = "prevRange_table";
+    this.prevRange.onclick = function() { gridMovePage("PREVIOUSPAGE"); };
+    this.prevRange.style.display = "none";
+    var prevRange_tbody = document.createElement("tbody");
+    var prevRange_tr = document.createElement("tr");
+    var prevRange_td = document.createElement("td");
+    prevRange_tr.appendChild(prevRange_td);
+    prevRange_tbody.appendChild(prevRange_tr);
+    this.prevRange.appendChild(prevRange_tbody);
+
+    this.nextRange = document.createElement("table");
+    this.nextRange.className = "DataGrid_Scroll_icon_nextRange";
+    this.nextRange.id = "nextRange_table";
+    this.nextRange.onclick = function() { gridMovePage("NEXTPAGE"); };
+    this.nextRange.style.display = "none";
+    var nextRange_tbody = document.createElement("tbody");
+    var nextRange_tr = document.createElement("tr");
+    var nextRange_td = document.createElement("td");
+    nextRange_tr.appendChild(nextRange_td);
+    nextRange_tbody.appendChild(nextRange_tr);
+    this.nextRange.appendChild(nextRange_tbody);
+
+    this.scrolandRangeDiv  = document.createElement("div");
     this.scrollerDiv  = document.createElement("div");
     var scrollerStyle = this.scrollerDiv.style;
     //scrollerStyle.borderRight = this.liveGrid.options.scrollerBorderRight;  <- Moved to updateHeight()
@@ -3092,9 +3130,13 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
     this.heightDiv = document.createElement("div");
     this.heightDiv.style.width  = "1px";
     this.updateHeight();
+    this.scrolandRangeDiv.appendChild(this.fillGapRange);
+    this.scrolandRangeDiv.appendChild(this.prevRange);
+    this.scrolandRangeDiv.appendChild(this.scrollerDiv);
+    this.scrolandRangeDiv.appendChild(this.nextRange);
     this.scrollerDiv.appendChild(this.heightDiv);
     this.scrollerDiv.onscroll = dojo.hitch(this, "handleScroll");
-    table.parentNode.parentNode.insertBefore( this.scrollerDiv, table.parentNode.nextSibling );
+    table.parentNode.parentNode.insertBefore( this.scrolandRangeDiv, table.parentNode.nextSibling );
     //  if (this.isIE)
     table.parentNode.style.overflowX = "auto";
     var eventName = this.isIE ? "onmousewheel" : "DOMMouseScroll";
