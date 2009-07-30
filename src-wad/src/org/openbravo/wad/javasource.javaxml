@@ -858,12 +858,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    try {
-      KeyMap key = new KeyMap(this, tabId, windowId);
-      xmlDocument.setParameter("keyMap", key.getRelationKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
     {
       OBError myMessage = vars.getMessage(tabId);
       vars.removeMessage(tabId);
@@ -1014,13 +1008,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    try {
-      KeyMap key = new KeyMap(this, tabId, windowId);
-      xmlDocument.setParameter("keyMap", key.getEditionKeyMaps(boolNew));
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
 		
     <LISTS_TMP id="sectionDetailParams">    xmlDocument.setParameter("<LIST_TMP id="paramName">dd</LIST_TMP>", str<LIST_TMP id="paramName">dd</LIST_TMP>);
     </LISTS_TMP>
