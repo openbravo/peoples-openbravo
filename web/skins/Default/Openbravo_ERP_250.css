@@ -1450,6 +1450,28 @@ div.calendar {
   background-image: url(Common/DataGrid/iconDelete.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
 }
 
+.DataGrid_Scroll_icon_prevRange {
+  overflow: auto;
+  position: relative;
+  width: 17px;
+  height: 16px;
+  margin-top: 1px;
+  _left: -1px;
+  cursor: pointer;
+  background-image: url(Common/DataGrid/iconPrevRange.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.DataGrid_Scroll_icon_nextRange {
+  overflow: auto;
+  position: relative;
+  width: 17px;
+  height: 16px;
+  margin-top: 18px;
+  _left: -1px;
+  cursor: pointer;
+  background-image: url(Common/DataGrid/iconNextRange.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
 /* Table */
 
 table.DataGrid_Header_Table {
