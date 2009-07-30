@@ -1458,6 +1458,8 @@ div.calendar {
   margin-top: 1px;
   _left: -1px;
   cursor: pointer;
+  border-collapse:collapse;
+  border: none;
   background-image: url(Common/DataGrid/iconPrevRange.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
 }
 
@@ -1469,6 +1471,8 @@ div.calendar {
   margin-top: 18px;
   _left: -1px;
   cursor: pointer;
+  border-collapse:collapse;
+  border: none;
   background-image: url(Common/DataGrid/iconNextRange.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
 }
 
