@@ -669,6 +669,28 @@ public class VariablesBase {
 
   public String getNumericParameter(String parameter) throws ServletException {
     String value = getStringParameter(parameter);
+
+    if (value.equals("")) {
+      return value;
+    }
+
+    String newValue = transformNumber(value);
+
+    if (!NumberFilter.instance.accept(newValue)) {
+      log4j.error("Input: " + parameter + " not accepted by filter: " + NumberFilter.instance);
+      throw new ServletException("Input: " + parameter + " is not an accepted input");
+    }
+
+    return newValue;
+  }
+
+  public String getNumericParameter(String parameter, String defaultValue) throws ServletException {
+    String value = getStringParameter(parameter, false, defaultValue);
+
+    if (value.equals("")) {
+      return value;
+    }
+
     String newValue = transformNumber(value);
 
     if (!NumberFilter.instance.accept(newValue)) {
@@ -681,6 +703,29 @@ public class VariablesBase {
 
   public String getRequiredNumericParameter(String parameter) throws ServletException {
     String value = getRequiredStringParameter(parameter);
+
+    if (value.equals("")) {
+      return value;
+    }
+
+    String newValue = transformNumber(value);
+
+    if (!NumberFilter.instance.accept(newValue)) {
+      log4j.error("Input: " + parameter + " not accepted by filter: " + NumberFilter.instance);
+      throw new ServletException("Input: " + parameter + " is not an accepted input");
+    }
+
+    return newValue;
+  }
+
+  public String getRequiredNumericParameter(String parameter, String defaultValue)
+      throws ServletException {
+    String value = getStringParameter(parameter, true, defaultValue);
+
+    if (value.equals("")) {
+      return value;
+    }
+
     String newValue = transformNumber(value);
 
     if (!NumberFilter.instance.accept(newValue)) {

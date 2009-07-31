@@ -2110,6 +2110,19 @@ public class Wad extends DefaultHandler {
               && !fieldsData1[i].columnname.equalsIgnoreCase("Value") && !defaultValue) {
             fieldsData1[i].type = "RequiredStringParameter";
           }
+
+          if (WadUtility.isDecimalNumber(fieldsData1[i].reference)
+              || WadUtility.isQtyNumber(fieldsData1[i].reference)
+              || WadUtility.isPriceNumber(fieldsData1[i].reference)
+              || WadUtility.isIntegerNumber(fieldsData1[i].reference)
+              || WadUtility.isGeneralNumber(fieldsData1[i].reference)) {
+            if (fieldsData1[i].required.equals("Y")) {
+              fieldsData1[i].type = "RequiredNumericParameter";
+            } else {
+              fieldsData1[i].type = "NumericParameter";
+            }
+          }
+
           if (fieldsData1[i].iscolumnencrypted.equals("Y")
               && fieldsData1[i].isdesencryptable.equals("Y")) {
             fieldsData1[i].htmltext = "FormatUtilities.encryptDecrypt(";
