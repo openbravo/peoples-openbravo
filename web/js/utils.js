@@ -211,13 +211,11 @@ function submitForm(field, value, form, bolOneFormSubmission, isCallOut, frameNa
       gSubmitted=1;
       if (isCallOut) setGWaitingCallOut(true, frameName);
       field.value = value;
-      sanitizeNumbers(form);
       form.submit();
     }
   } else {
     if (isCallOut) setGWaitingCallOut(true, frameName);
     field.value = value;
-    sanitizeNumbers(form);
     form.submit();
   }
   return true;
@@ -3937,28 +3935,6 @@ function changeAuditIcon(newStatus) {
     return maskNumeric_default;
   }
 
-  function sanitizeNumbers(form) {
-	if(typeof form === 'undefined' || form === null) {
-		return;
-	}
-
-	var elements = form.elements;
-
-	if(typeof elements === 'undefined') {
-		return;
-	}
-	
-	var count = elements.length;
-	
-	for(var i = 0; i < count; i++) {
-		var attribute =  elements[i].getAttribute('outputformat');
-		if(attribute != null) {
-			var plainNumber = returnPlainNumber(elements[i].value, returnDecSeparator(), returnGroupSeparator());
-			elements[i].value =  plainNumber;
-		}
-	}
-  }
-  
   function getNumberMask(obj) {
     var F = top.frameMenu.F;
 
