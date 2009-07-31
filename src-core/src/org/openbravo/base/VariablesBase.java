@@ -29,6 +29,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.apache.log4j.Logger;
+import org.openbravo.base.filter.NumberFilter;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.utils.FormatUtilities;
 
@@ -46,6 +47,7 @@ public class VariablesBase {
   private List<String> sortedParameters = null;
   public boolean isMultipart = false;
   List<FileItem> items;
+  private final String DEFAULT_FORMAT_NAME = "qtyEdition";
 
   static Logger log4j = Logger.getLogger(VariablesBase.class);
 
@@ -663,6 +665,51 @@ public class VariablesBase {
     } catch (Exception e) {
       return null;
     }
+  }
+
+  public String getNumericParameter(String parameter) throws ServletException {
+    String value = getStringParameter(parameter);
+    String newValue = transformNumber(value);
+
+    if (!NumberFilter.instance.accept(newValue)) {
+      log4j.error("Input: " + parameter + " not accepted by filter: " + NumberFilter.instance);
+      throw new ServletException("Input: " + parameter + " is not an accepted input");
+    }
+
+    return newValue;
+  }
+
+  public String getRequiredNumericParameter(String parameter) throws ServletException {
+    String value = getRequiredStringParameter(parameter);
+    String newValue = transformNumber(value);
+
+    if (!NumberFilter.instance.accept(newValue)) {
+      log4j.error("Input: " + parameter + " not accepted by filter: " + NumberFilter.instance);
+      throw new ServletException("Input: " + parameter + " is not an accepted input");
+    }
+
+    return newValue;
+  }
+
+  private String transformNumber(String number) throws ServletException {
+    String value = number;
+    String groupSeparator = getSessionValue("#GROUPSEPARATOR|" + DEFAULT_FORMAT_NAME);
+    String decimalSeparator = getSessionValue("#DECIMALSEPARATOR|" + DEFAULT_FORMAT_NAME);
+
+    if (groupSeparator.equals("") || decimalSeparator.equals("")) {
+      log4j.error("Error while trying to transform number: groupSeparator = " + groupSeparator
+          + " ,decimalSeparator = " + decimalSeparator);
+      throw new ServletException("Error while trying to transform numeric input");
+    }
+
+    if (groupSeparator.equals(".")) {
+      groupSeparator = "\\.";
+    }
+
+    value = value.replaceAll(groupSeparator, "");
+    value = value.replaceAll(decimalSeparator, ".");
+
+    return value;
   }
 
   /**
