@@ -101,17 +101,13 @@ function selectFilters(params) {
    client_height = client_height - 20;
    var numRows = (client_height)/(grid_row_height);
    numRows = parseInt(numRows);
+   if (numRows > 1) { numRows -= 1; }
    document.getElementById("grid_sample").style.display = "none";
    return numRows;
  }
 </script>
 <script language="JavaScript" type="text/javascript" id="selectedColumn"></script>
 <script language="JavaScript" type="text/javascript" id="fieldScript"></script>
-<!-- START OLD KEY DEFINITION
-
-<script language="JavaScript" type="text/javascript" id="keyMap"></script>
-
-END OLD KEY DEFINITION -->
 
 <script language="JavaScript" type="text/javascript">
   function onLoadDo() {

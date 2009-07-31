@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_forms.DocInvoice;
+import org.openbravo.erpCommon.businessUtility.Tree;
+import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -140,7 +142,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
         return myMessage;
       }
-
+      
       // Select all active Register Type for create the Tax Registers
       TaxRegisterType[] taxregistertypes = TaxRegisterType.select(this, vars.getClient());
       log4j.info("2strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom
@@ -171,7 +173,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
       TaxRegister[] taxregisters = TaxRegister.selectChild(this, strTaxpaymentID);
       for (TaxRegister taxRegister : taxregisters) {
         CreateVatRegistersData[] invoices = CreateVatRegistersData.select(this, strTaxpaymentID,
-            taxRegister.cTaxregisterTypeId, strDatefrom, DateTimeData.nDaysAfter(this, strDateto,"1"));
+            taxRegister.cTaxregisterTypeId, strDatefrom, DateTimeData.nDaysAfter(this, strDateto,"1"),Tree.getMembers(this,TreeData.getTreeOrg(this, vars.getClient()),taxpayment[0].adOrgId));
         for (CreateVatRegistersData myinvoice : invoices) {
           String strTaxBaseAmt = "0";
           String strTaxAmt = "0";

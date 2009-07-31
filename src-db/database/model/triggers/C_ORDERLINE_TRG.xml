@@ -50,7 +50,9 @@ IF (UPDATING) THEN
   OR COALESCE(:old.FreightAmt,0) <> COALESCE(:NEW.FreightAmt,0)
   OR COALESCE(:old.ChargeAmt,0) <> COALESCE(:NEW.ChargeAmt,0)
   OR COALESCE(:old.C_Tax_ID,'0') <> COALESCE(:NEW.C_Tax_ID,'0')
-  OR COALESCE(:old.C_Uom_ID,'0') <> COALESCE(:NEW.C_Uom_ID,'0'))
+  OR COALESCE(:old.C_Uom_ID,'0') <> COALESCE(:NEW.C_Uom_ID,'0')
+  OR COALESCE(:old.qtyOrdered,0) <> COALESCE(:NEW.qtyOrdered,0)
+  OR COALESCE(:old.PriceActual,0) <> COALESCE(:NEW.PriceActual,0))
  THEN
   RETURN;
   END IF;

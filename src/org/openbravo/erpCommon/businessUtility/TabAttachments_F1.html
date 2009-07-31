@@ -63,6 +63,16 @@
         function unHoverCell(cell) {
           cell.className = cell.className.replace(' DataGrid_Body_Cell_hover', '');
         }
+
+    	function validateDataGrid(button) {
+	   	  if(selectedRow=="") {
+		   	showJSMessage(1,null,null);
+            return false;
+    	  } else {
+     		submitCommandForm(button, false, null, 'TabAttachments_F1.html', '_self');
+    		return false;
+    	  }
+    	}
          </script>
   	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
@@ -294,7 +304,7 @@
                 <div id="widthData">
                   <button type="button" 
                     class="ButtonLink" 
-                    onclick="submitCommandForm('EDIT', false, null, 'TabAttachments_F1.html', '_self');return false;" 
+                    onclick="validateDataGrid('EDIT');" 
                     onfocus="buttonEvent('onfocus', this); window.status='Edit'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 
@@ -320,7 +330,7 @@
                 <button type="button" 
                   id="buttonDownload" 
                   class="ButtonLink" 
-                  onclick="submitCommandForm('DISPLAY_DATA', false, null, 'TabAttachments_F1.html', '_self');return false;" 
+                  onclick="validateDataGrid('DISPLAY_DATA');"  
                   onfocus="buttonEvent('onfocus', this); window.status='Download'; return true;" 
                   onblur="buttonEvent('onblur', this);" 
                   onkeyup="buttonEvent('onkeyup', this);" 
@@ -345,7 +355,7 @@
                 <div id="widthData">
                   <button type="button" 
                     class="ButtonLink" 
-                    onclick="submitCommandForm('DEL', false, null, 'TabAttachments_F1.html', '_self');return false;" 
+                    onclick="validateDataGrid('DEL');" 
                     onfocus="buttonEvent('onfocus', this); window.status='Delete'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 

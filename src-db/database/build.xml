@@ -292,7 +292,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
   </target>
 
   <target name="export.database.structure">
-    <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" propertiesFile="${base.config}/Openbravo.properties" module="${module}" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}"/>
+    <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" propertiesFile="${base.config}/Openbravo.properties" module="${module}" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD"/>
   </target>
 
   <target name="import.database.data">
@@ -304,7 +304,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
 
 
   <target name="export.database.data">
-    <exportdata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" filter="com.openbravo.db.OpenbravoMetadataFilter" output="sourcedata" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" codeRevision="${code.revision}" userId="0" propertiesFile="${base.config}/Openbravo.properties" module="${module}" />
+    <exportdata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" filter="com.openbravo.db.OpenbravoMetadataFilter" output="sourcedata" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" codeRevision="${code.revision}" userId="0" propertiesFile="${base.config}/Openbravo.properties" module="${module}" datasetList="AD,ADRD"/>
   </target>
 
   <target name="database.postcreate.ORACLE">

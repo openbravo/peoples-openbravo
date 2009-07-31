@@ -349,7 +349,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         bdErrorGeneral(request, response, myError.getTitle(), myError.getMessage());
     } catch (final OBException e) {
       final Boolean isAutosaving = (Boolean) request.getAttribute("autosave");
-      if (isAutosaving) {
+      if (isAutosaving != null && isAutosaving) {
         request.removeAttribute("autosave");
         request.removeAttribute("popupWindow");
         throw e;

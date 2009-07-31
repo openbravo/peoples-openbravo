@@ -40,7 +40,6 @@
 <!-- PARAMETER id="linkButtonReference" name="buttonReference" attribute="onmouseover" replace="xx" default=""/>
 <PARAMETER id="buttonReference" name="buttonReference" attribute="alt" replace="xx" default=""/>
 <PARAMETER id="spanButtonReference" name="buttonReference" default=""/ -->
-<PARAMETER id="keyMap" name="keyMap" default=""/>
 <PARAMETER id="selectedColumn" name="selectedColumn" default=""/>
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>

@@ -52,6 +52,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   private boolean isInitialized = false;
   private Map<String, Set<String>> naturalTreesByOrgID = new HashMap<String, Set<String>>();
   private Map<String, String> parentByOrganizationID = new HashMap<String, String>();
+  private Map<String, Set<String>> childByOrganizationID = new HashMap<String, Set<String>>();
   private String clientId;
 
   /**
@@ -107,6 +108,12 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
     for (final OrgNode on : orgNodes) {
       naturalTreesByOrgID.put(on.getTreeNode().getNode(), on.getNaturalTree());
+      if (on.getChildren() != null) {
+        Set<String> os = new HashSet<String>();
+        for (OrgNode o : on.getChildren())
+          os.add(o.getTreeNode().getNode());
+        childByOrganizationID.put(on.getTreeNode().getNode(), os);
+      }
     }
     isInitialized = true;
   }
@@ -157,13 +164,13 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   }
 
   /**
-   * Returns the parent organizations tree of an organization.
+   * Returns the parent organization tree of an organization.
    * 
    * @param orgId
    *          the id of the organization for which the parent organization tree is determined.
    * @param includeOrg
    *          if true, returns also the given organization as part of the tree
-   * @return the parent organizations tree of the organization.
+   * @return the parent organization tree of the organization.
    */
   public Set<String> getParentTree(String orgId, boolean includeOrg) {
     initialize();
@@ -190,6 +197,46 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   public String getParentOrg(String orgId) {
     initialize();
     return parentByOrganizationID.get(orgId);
+  }
+
+  /**
+   * Returns the child organization tree of an organization.
+   * 
+   * @param orgId
+   *          the id of the organization for which the child organization tree is determined.
+   * @param includeOrg
+   *          if true, returns also the given organization as part of the tree
+   * @return the child organization tree of the organization.
+   */
+  public Set<String> getChildTree(String orgId, boolean includeOrg) {
+    initialize();
+    Set<String> childOrg = this.getChildOrg(orgId);
+    Set<String> result = new HashSet<String>();
+
+    if (includeOrg)
+      result.add(orgId);
+
+    while (!childOrg.isEmpty()) {
+      for (String co : childOrg) {
+        result.add(co);
+        childOrg = this.getChildTree(co, false);
+        result.addAll(childOrg);
+      }
+
+    }
+    return result;
+  }
+
+  /**
+   * Returns the child organizations of an organization.
+   * 
+   * @param orgId
+   *          the id of the organization for which the child organizations are determined.
+   * @return the child organizations
+   */
+  public Set<String> getChildOrg(String orgId) {
+    initialize();
+    return childByOrganizationID.get(orgId);
   }
 
   class OrgNode {
