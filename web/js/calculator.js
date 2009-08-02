@@ -98,6 +98,8 @@ function TCRrezult (slag_1, slag_2, oper) {
 
 
 function TCRPopup(obj_control) {
+  var decSeparator = returnDecSeparator();
+  var groupSeparator = returnGroupSeparator();
 	var w = 186, h = 122;
 	var ua = navigator.userAgent.toLowerCase();
 	var v = navigator.appVersion.substring(0,1);
@@ -105,7 +107,9 @@ function TCRPopup(obj_control) {
 	if (!obj_control)
 		return alert("Form element specified can't be found in the document.");
 	this.control_obj = obj_control;
-	if (!this.TCRisNumber(this.control_obj.value)) alert('wrong data');
+  this.control_obj_value_calc_format = returnPlainNumber(this.control_obj.value, decSeparator, groupSeparator)
+  this.control_obj_value_calc_format = this.control_obj_value_calc_format.replace(decSeparator, '.');
+	if (!this.TCRisNumber(this.control_obj_value_calc_format)) alert('wrong data');
 	else {
 		if (ua.indexOf("opera") > 0) {w = 176; h = 135;}
 		else if (ua.indexOf("netscape") < 0 && ua.indexOf("msie") < 0 
@@ -136,6 +140,7 @@ function TCRPopup(obj_control) {
 
 
 function TCRmntr(num) {
+  var decSeparator = returnDecSeparator();
 	var flag = 0;
 	if (this.t_load) tmp = window.win_ch.document.forms[0].elements[0].value;
 	if (num == 'C') {
@@ -162,7 +167,9 @@ function TCRmntr(num) {
 				this.slag_1 = Math.sqrt(this.slag_1);
 				this.oper_old =this.oper_old_old ='';
 				this.out_val = this.slag_1;
-				this.control_obj.value = this.out_val;
+        this.out_val = this.out_val.toString();
+				this.control_obj.value = this.out_val.replace('.', decSeparator);
+        if (focusedWindowElement != this.control_obj) { this.control_obj.onblur(); }
         this.control_obj.onchange();
 				break;
 			case '=':
@@ -186,7 +193,9 @@ function TCRmntr(num) {
 				}
 				else if (this.slag_1 == '' && this.slag_2 == '') this.out_val = '0';
 				else this.out_val = this.slag_1;
-				this.control_obj.value = this.out_val;
+        this.out_val = this.out_val.toString();
+				this.control_obj.value = this.out_val.replace('.', decSeparator);
+        if (focusedWindowElement != this.control_obj) { this.control_obj.onblur(); }
         this.control_obj.onchange();
 				break;
 			case 'z':
