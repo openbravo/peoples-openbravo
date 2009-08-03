@@ -107,8 +107,7 @@ function TCRPopup(obj_control) {
 	if (!obj_control)
 		return alert("Form element specified can't be found in the document.");
 	this.control_obj = obj_control;
-  this.control_obj_value_calc_format = returnPlainNumber(this.control_obj.value, decSeparator, groupSeparator)
-  this.control_obj_value_calc_format = this.control_obj_value_calc_format.replace(decSeparator, '.');
+  this.control_obj_value_calc_format = returnCalcNumber(this.control_obj.value, decSeparator, groupSeparator);
 	if (!this.TCRisNumber(this.control_obj_value_calc_format)) alert('wrong data');
 	else {
 		if (ua.indexOf("opera") > 0) {w = 176; h = 135;}

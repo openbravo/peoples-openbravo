@@ -4012,6 +4012,13 @@ function changeAuditIcon(newStatus) {
     return plainNumber;
   }
 
+  function returnCalcNumber(number, decSeparator, groupSeparator) {
+    var calcNumber = number;
+    calcNumber = returnPlainNumber(calcNumber, decSeparator, groupSeparator);
+    calcNumber = calcNumber.replace(decSeparator, '.');
+    return calcNumber;
+  }
+
   function returnMaskChange(maskNumeric, decSeparator_old, groupSeparator_old, decSeparator_new, groupSeparator_new) {
     if (decSeparator_new == null || decSeparator_new == "") decSeparator_new = returnDecSeparator();
     if (groupSeparator_new == null || groupSeparator_new == "") groupSeparator_new = returnGroupSeparator();
