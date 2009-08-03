@@ -752,7 +752,10 @@ public class VariablesBase {
     }
 
     value = value.replaceAll(groupSeparator, "");
-    value = value.replaceAll(decimalSeparator, ".");
+
+    if (!decimalSeparator.equals(".")) {
+      value = value.replaceAll(decimalSeparator, ".");
+    }
 
     return value;
   }
