@@ -3914,46 +3914,42 @@ function changeAuditIcon(newStatus) {
 
 
   // Numeric formatting functions
-  var decSeparator_global = top.frameMenu.decSeparator_global;
-  var groupSeparator_global = top.frameMenu.groupSeparator_global;
-  var groupInterval_global = top.frameMenu.groupInterval_global;
-  var maskNumeric_default = top.frameMenu.maskNumeric_default;
 
-  function returnDecSeparator() {
-    return decSeparator_global;
+  function getGlobalDecSeparator() {
+    return top.frameMenu.decSeparator_global;
   }
 
-  function returnGroupSeparator() {
-    return groupSeparator_global;
+  function getGlobalGroupSeparator() {
+    return top.frameMenu.groupSeparator_global;
   }
 
-  function returnGroupInterval() {
-    return groupInterval_global;
+  function getGlobalGroupInterval() {
+    return top.frameMenu.groupInterval_global;
   }
 
-  function returnMaskNumeric() {
-    return maskNumeric_default;
+  function getDefaultMaskNumeric() {
+    return top.frameMenu.maskNumeric_default;
   }
 
-  function getNumberMask(obj) {
+  function getInputNumberMask(obj) {
     var F = top.frameMenu.F;
 
     if(typeof F === 'undefined') {
-    	return "";
-	}
+        return "";
+    }
 
-	var outputformat = obj.getAttribute('outputformat');
+    var outputformat = obj.getAttribute('outputformat');
 
-	if(outputformat === null) {
-		return "";
-	}
+    if(outputformat === null) {
+      return "";
+    }
 
-	return F.getFormat(outputformat);
+    return F.getFormat(outputformat);
   }
 
   function focusNumberInput(obj, decSeparator, groupSeparator) {
-    if (decSeparator == null || decSeparator == "") decSeparator = returnDecSeparator();
-    if (groupSeparator == null || groupSeparator == "") groupSeparator = returnGroupSeparator();
+    if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
+    if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
 
     var oldCaretPosition = getCaretPosition(obj).start;
     var newCaretPosition = returnNewCaretPosition(obj, oldCaretPosition, groupSeparator);
@@ -4020,8 +4016,8 @@ function changeAuditIcon(newStatus) {
   }
 
   function returnMaskChange(maskNumeric, decSeparator_old, groupSeparator_old, decSeparator_new, groupSeparator_new) {
-    if (decSeparator_new == null || decSeparator_new == "") decSeparator_new = returnDecSeparator();
-    if (groupSeparator_new == null || groupSeparator_new == "") groupSeparator_new = returnGroupSeparator();
+    if (decSeparator_new == null || decSeparator_new == "") decSeparator_new = getGlobalDecSeparator();
+    if (groupSeparator_new == null || groupSeparator_new == "") groupSeparator_new = getGlobalGroupSeparator();
 
     var realMask = "";
     for (var i=0; i<maskNumeric.length; i++) {
@@ -4037,10 +4033,10 @@ function changeAuditIcon(newStatus) {
   }
 
   function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegativo) {
-    if (maskNumeric == null || maskNumeric == "") maskNumeric = returnMaskNumeric();
-    if (decSeparator == null || decSeparator == "") decSeparator = returnDecSeparator();
-    if (groupSeparator == null || groupSeparator == "") groupSeparator = returnGroupSeparator();
-    if (groupInterval == null || groupInterval == "") groupInterval = returnGroupInterval();
+    if (maskNumeric == null || maskNumeric == "") maskNumeric = getDefaultMaskNumeric();
+    if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
+    if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
+    if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
 
     // Just to be used if the mask has always american format independently of
 	// the dec and group separators
@@ -4210,6 +4206,35 @@ function changeAuditIcon(newStatus) {
     return result;
   }
 
+  function formattedNumberOp(number1, operator, number2, result_maskNumeric, decSeparator, groupSeparator, groupInterval) {
+    if (result_maskNumeric == null || result_maskNumeric == "") result_maskNumeric = getDefaultMaskNumeric();
+    if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
+    if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
+    if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
+
+    result_maskNumeric = returnMaskChange(result_maskNumeric, ".", ",", decSeparator, groupSeparator);
+
+    var result;
+
+    number1 = returnCalcNumber(number1, decSeparator, groupSeparator);
+    number1 = parseFloat(number1);
+
+    number2 = returnCalcNumber(number2, decSeparator, groupSeparator);
+    number2 = parseFloat(number2);
+
+    if (operator == "sqrt") {
+      result = Math.sqrt(number1);
+    } else {
+      result = eval(number1 + operator + number2);
+    }
+    if (result != true && result != false && result != null && result != "") {
+      result = result.toString();
+      result = result.replace(".", decSeparator);
+      result = returnFormattedNumber(result, result_maskNumeric, decSeparator, groupSeparator, groupInterval);
+    }
+    return result;
+  }
+
   function reverseString(text) {
     var reverseText = "";
     for (var i=text.length; i>0 ;i--) {
@@ -4312,7 +4337,7 @@ function changeAuditIcon(newStatus) {
   }
 
   function manageDecPoint(obj, decSeparator, evt) {
-    if (decSeparator == null || decSeparator == "") decSeparator = returnDecSeparator();
+    if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
 
     if (decSeparator == ".") {
       return true;
