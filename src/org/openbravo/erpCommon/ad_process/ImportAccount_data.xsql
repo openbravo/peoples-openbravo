@@ -555,6 +555,22 @@
     <Parameter name="C_ACCTSCHEMA_DEFAULT_ID"/>
   </SqlMethod>
 
+  <SqlMethod name="addDefault" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      UPDATE C_ACCTSCHEMA_DEFAULT
+      SET AD_CLIENT_ID =
+      ?
+      WHERE C_ACCTSCHEMA_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="tablename" optional="true" type="replace" after="UPDATE " text="C_ACCTSCHEMA_DEFAULT"/>
+    <Parameter name="columnname" optional="true" type="replace" after="SET " text="AD_CLIENT_ID"/>
+    <Parameter name="defaultToUpdate"/>
+    <Parameter name="cAcctSchemaId"/>
+  </SqlMethod>
+
   <SqlMethod name="insertOperands" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -922,6 +938,26 @@
       ]]>
     </Sql>
     <Parameter name="cValidcombinationId"/>
+  </SqlMethod>
+
+
+  <SqlMethod name="insertValidCombination" type="callableStatement" return="object" object="ImportAccountData" connection="true">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+        CALL C_ValidCombination_Insert(?, ?, ?, ?, ?, ?, 'N', ?, ?, ?, ?, NULL, NULL, NULL, NULL, ?, ?, NULL, NULL, NULL)
+    </Sql>
+    <Parameter name="cValidcombinationId" type="out"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="cAcctschemaId"/>
+    <Parameter name="accountId"/>
+    <Parameter name="cInValidcombinationId"/>
+    <Parameter name="alias"/>
+    <Parameter name="createdby"/>
+    <Parameter name="mProductId"/>
+    <Parameter name="cBpartnerId"/>
+    <Parameter name="cProjectId"/>
+    <Parameter name="cCampaignId"/>
   </SqlMethod>
 
   <SqlMethod name="getCValidCombination" connection="true" type="callableStatement" return="object" object="RespuestaCS">
