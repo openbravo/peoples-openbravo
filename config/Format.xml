@@ -49,7 +49,9 @@
    <Number name="qtyRelation"
        decimal="." grouping="," formatOutput="#,##0.###" formatInternal="#0.000" />
    <Number name="qtyEdition"
-       decimal="." grouping="," formatOutput="#0.###" formatInternal="#0.000" />
+       decimal="," grouping="." formatOutput="#,##0.###" formatInternal="#0.000" />
+   <!--Number name="qtyEdition"
+       decimal="." grouping="," formatOutput="#0.###" formatInternal="#0.000" /-->
    <Number name="qtyExcel"
        decimal="," grouping="." formatOutput="#,##0.###" formatInternal="#0.000" />
    <Number name="generalQtyRelation"

@@ -4009,11 +4009,20 @@ function changeAuditIcon(newStatus) {
     return plainNumber;
   }
 
-  function returnCalcNumber(number, decSeparator, groupSeparator) {
+  function returnFormattedToCalc(number, decSeparator, groupSeparator) {
     var calcNumber = number;
     calcNumber = returnPlainNumber(calcNumber, decSeparator, groupSeparator);
     calcNumber = calcNumber.replace(decSeparator, '.');
     return calcNumber;
+  }
+
+  function returnCalcToFormatted(number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
+    var formattedNumber = number;
+    maskNumeric = returnMaskChange(maskNumeric, ".", ",", decSeparator, groupSeparator);
+    formattedNumber = formattedNumber.toString();
+    formattedNumber = formattedNumber.replace(".", decSeparator);
+    formattedNumber = returnFormattedNumber(formattedNumber, maskNumeric, decSeparator, groupSeparator, groupInterval);
+    return formattedNumber;
   }
 
   function returnMaskChange(maskNumeric, decSeparator_old, groupSeparator_old, decSeparator_new, groupSeparator_new) {
@@ -4225,14 +4234,12 @@ function changeAuditIcon(newStatus) {
     if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
     if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
 
-    result_maskNumeric = returnMaskChange(result_maskNumeric, ".", ",", decSeparator, groupSeparator);
-
     var result;
 
-    number1 = returnCalcNumber(number1, decSeparator, groupSeparator);
+    number1 = returnFormattedToCalc(number1, decSeparator, groupSeparator);
     number1 = parseFloat(number1);
 
-    number2 = returnCalcNumber(number2, decSeparator, groupSeparator);
+    number2 = returnFormattedToCalc(number2, decSeparator, groupSeparator);
     number2 = parseFloat(number2);
 
     if (operator == "sqrt") {
@@ -4241,9 +4248,7 @@ function changeAuditIcon(newStatus) {
       result = eval(number1 + operator + number2);
     }
     if (result != true && result != false && result != null && result != "") {
-      result = result.toString();
-      result = result.replace(".", decSeparator);
-      result = returnFormattedNumber(result, result_maskNumeric, decSeparator, groupSeparator, groupInterval);
+      result = returnCalcToFormatted(result, result_maskNumeric, decSeparator, groupSeparator, groupInterval)
     }
     return result;
   }
