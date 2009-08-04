@@ -4098,7 +4098,7 @@ function changeAuditIcon(newStatus) {
 
     var number = obj.value;
     var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegativo);
-    updateMiniMessageBox(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
+    updateNumberMiniMB(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
     if (!isValid) {
       return false;
     }
@@ -4106,16 +4106,38 @@ function changeAuditIcon(newStatus) {
     obj.value = formattedNumber;
   }
 
-  function updateMiniMessageBox(obj, isValid) {
+  function updateNumberMiniMB(obj, isValid) {
+    //Invalid check
     if (!document.getElementById(obj.id+"invalidSpan")) {
-      return false;
+      return true;
     }
-    var miniMessageBox = document.getElementById(obj.id+"invalidSpan");
+    var miniMessageBox_invalid = document.getElementById(obj.id+"invalidSpan");
     if (!isValid) {
-      miniMessageBox.style.display="";
+      miniMessageBox_invalid.style.display="";
+      return true;
     } else {
-      miniMessageBox.style.display="none";
+      miniMessageBox_invalid.style.display="none";
     }
+
+    //Required check
+    if (!document.getElementById(obj.id+"missingSpan")) {
+      return true;
+    }
+    var isRequired = obj.getAttribute("required");
+    if (isRequired == "true") isRequired = true;
+    else if (isRequired == "false") isRequired = false;
+    var isMissing = false;
+    if (obj.value.length == 0) {
+      isMissing = true;
+    }
+    var miniMessageBox_missing = document.getElementById(obj.id+"missingSpan");
+    if (isRequired && isMissing) {
+      miniMessageBox_missing.style.display="";
+      return true;
+    } else {
+      miniMessageBox_missing.style.display="none";
+    }
+
     return true;
   }
 
