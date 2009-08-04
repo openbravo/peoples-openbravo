@@ -4083,13 +4083,13 @@ function changeAuditIcon(newStatus) {
     return realMask;
   }
 
-  function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegativo) {
+  function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegative) {
     if (maskNumeric == null || maskNumeric == "") maskNumeric = getDefaultMaskNumeric();
     if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
     if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
     if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
 
-    if (bolNegativo != false) { bolNegativo = true; }
+    if (bolNegative != false) { bolNegative = true; }
 
     var bolDecimal = true;
     if (maskNumeric.indexOf(decSeparator) == -1) {
@@ -4097,7 +4097,7 @@ function changeAuditIcon(newStatus) {
     }
 
     var number = obj.value;
-    var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegativo);
+    var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegative);
     updateNumberMiniMB(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
     if (!isValid) {
       return false;
@@ -4269,10 +4269,10 @@ function changeAuditIcon(newStatus) {
     return formattedNumber;
   }
 
-  function checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegativo) {
+  function checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegative) {
     var checkPattern = "";
     checkPattern += "^";
-    if (bolNegativo) { checkPattern += "([+]|[-])?"; }
+    if (bolNegative) { checkPattern += "([+]|[-])?"; }
     checkPattern += "(\\d+)?((\\" + groupSeparator + "\\d{" + groupInterval + "})?)+";
     if (bolDecimal) { checkPattern += "(\\" + decSeparator + "\\d+)?"; }
     checkPattern += "$";
