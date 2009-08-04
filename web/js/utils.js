@@ -4289,6 +4289,8 @@ function changeAuditIcon(newStatus) {
   }
 
   function checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegative) {
+    if (bolDecimal != false) { bolDecimal = true; }
+    if (bolNegative != false) { bolNegative = true; }
     var checkPattern = "";
     checkPattern += "^";
     if (bolNegative) { checkPattern += "([+]|[-])?"; }
