@@ -4018,7 +4018,6 @@ function changeAuditIcon(newStatus) {
 
   function returnCalcToFormatted(number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
     var formattedNumber = number;
-    maskNumeric = returnMaskChange(maskNumeric, ".", ",", decSeparator, groupSeparator);
     formattedNumber = formattedNumber.toString();
     formattedNumber = formattedNumber.replace(".", decSeparator);
     formattedNumber = returnFormattedNumber(formattedNumber, maskNumeric, decSeparator, groupSeparator, groupInterval);
@@ -4048,9 +4047,6 @@ function changeAuditIcon(newStatus) {
     if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
     if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
 
-    // Just to be used if the mask has always american format independently of
-	// the dec and group separators
-    maskNumeric = returnMaskChange(maskNumeric, ".", ",", decSeparator, groupSeparator);
     if (bolNegativo != false) { bolNegativo = true; }
 
     var bolDecimal = true;
@@ -4081,10 +4077,15 @@ function changeAuditIcon(newStatus) {
     return true;
   }
 
-  function returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
+  function returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval, isJavaMask) {
 
     if (number == "" || number == null) {
       return number;
+    }
+
+    if (isJavaMask != false) {
+      isJavaMask = true;
+      maskNumeric = returnMaskChange(maskNumeric, ".", ",", decSeparator, groupSeparator);
     }
 
     //Management of the mask
