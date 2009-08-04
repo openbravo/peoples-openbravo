@@ -2657,27 +2657,27 @@ function formElementValue(form, ElementName, Value) {
     } else {
       if (Value==null || Value=="null") Value="";
       if (typeof Value!="object") {
-    	  if(typeof Value === "number") {
+        if(typeof Value === "number") {
 
-    		  var decSeparator = getGlobalDecSeparator();
-    		  var groupSeparator = getGlobalGroupSeparator();
-    		  var groupInterval = getGlobalGroupInterval();
+          var decSeparator = getGlobalDecSeparator();
+          var groupSeparator = getGlobalGroupSeparator();
+          var groupInterval = getGlobalGroupInterval();
 
-    		  var outputformat = obj.getAttribute("outputformat");
+          var outputformat = obj.getAttribute("outputformat");
 
-    		  if(outputformat == null) {
-    			  outputformat = "qtyEdition";
-    		  }
+          if(outputformat == null) {
+            outputformat = "qtyEdition";
+          }
 
-    		  var menu = top.frames['frameMenu']; //FIXME: implement getFrame() function
-    		  var maskNumeric = menu.F.getFormat(outputformat);
+          var menu = top.frames['frameMenu']; //FIXME: implement getFrame() function
+          var maskNumeric = menu.F.getFormat(outputformat);
 
-    		  obj.value = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
-    	  } else {
-    		  obj.value = Value;
-    	  }
+          obj.value = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
+        } else {
+          obj.value = Value;
+        }
       } else {
-    	//if (obj.className.toUpperCase().indexOf("REQUIRED")!=-1 || obj.className.toUpperCase().indexOf("KEY")!=-1 || obj.className.toUpperCase().indexOf("READONLY")!=-1)
+      //if (obj.className.toUpperCase().indexOf("REQUIRED")!=-1 || obj.className.toUpperCase().indexOf("KEY")!=-1 || obj.className.toUpperCase().indexOf("READONLY")!=-1)
         obj.value = selectDefaultValueFromArray(Value, true);
       }
     }
