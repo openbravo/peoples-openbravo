@@ -3932,19 +3932,20 @@ function changeAuditIcon(newStatus) {
   }
 
   function getInputNumberMask(obj) {
-    var F = top.frameMenu.F;
+    var outputformat = obj.getAttribute('outputformat');
+    outputformat = formatNameToMask(outputformat);
+    return outputformat;
+  }
 
+  function formatNameToMask(formatName) {
+    var F = top.frameMenu.F;
     if(typeof F === 'undefined') {
         return "";
     }
-
-    var outputformat = obj.getAttribute('outputformat');
-
-    if(outputformat === null) {
+    if(formatName === null) {
       return "";
     }
-
-    return F.getFormat(outputformat);
+    return F.getFormat(formatName);
   }
 
   function focusNumberInput(obj, decSeparator, groupSeparator) {
@@ -4049,14 +4050,26 @@ function changeAuditIcon(newStatus) {
     }
 
     var number = obj.value;
-    var element = document.getElementById(obj.id+"invalidSpan");
-    if (!checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimales, bolNegativo)) {
-    	element.style.display="";
-    	return false;
+    var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimales, bolNegativo);
+    updateMiniMessageBox(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
+    if (!isValid) {
+      return false;
     }
-    element.style.display="none";
     var formattedNumber = returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
     obj.value = formattedNumber;
+  }
+
+  function updateMiniMessageBox(obj, isValid) {
+    if (!document.getElementById(obj.id+"invalidSpan")) {
+      return false;
+    }
+    var miniMessageBox = document.getElementById(obj.id+"invalidSpan");
+    if (!isValid) {
+      miniMessageBox.style.display="";
+    } else {
+      miniMessageBox.style.display="none";
+    }
+    return true;
   }
 
   function returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
