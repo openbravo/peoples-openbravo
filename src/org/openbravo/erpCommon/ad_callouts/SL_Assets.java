@@ -44,9 +44,9 @@ public class SL_Assets extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
 
-      String strAssetvalue = vars.getStringParameter("inpassetvalueamt");
-      String strResidualvalue = vars.getStringParameter("inpresidualassetvalueamt");
-      String strAmortizationvalue = vars.getStringParameter("inpamortizationvalueamt");
+      String strAssetvalue = vars.getNumericParameter("inpassetvalueamt");
+      String strResidualvalue = vars.getNumericParameter("inpresidualassetvalueamt");
+      String strAmortizationvalue = vars.getNumericParameter("inpamortizationvalueamt");
       String strLastChanged = vars.getStringParameter("inpLastFieldChanged");
       String strTabId = vars.getStringParameter("inpTabId");
 

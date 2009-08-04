@@ -46,7 +46,7 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
-      String strExpenseAmt = vars.getStringParameter("inpexpenseamt");
+      String strExpenseAmt = vars.getNumericParameter("inpexpenseamt");
       String strDateexpense = vars.getStringParameter("inpdateexpense");
       String strcCurrencyId = vars.getStringParameter("inpcCurrencyId");
       String strTimeExpenseId = vars.getStringParameter("inpsTimeexpenseId");
@@ -62,9 +62,9 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strExpenseAmt,
-      String strDateexpense, String strcCurrencyId, String strTimeExpenseId, String strTabId)
-      throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strExpenseAmt, String strDateexpense, String strcCurrencyId, String strTimeExpenseId,
+      String strTabId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(

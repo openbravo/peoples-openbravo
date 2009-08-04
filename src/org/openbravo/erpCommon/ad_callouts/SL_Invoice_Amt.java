@@ -50,14 +50,14 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
-      String strQtyInvoice = vars.getStringParameter("inpqtyinvoiced");
-      String strPriceActual = vars.getStringParameter("inppriceactual");
-      String strPriceLimit = vars.getStringParameter("inppricelimit");
+      String strQtyInvoice = vars.getNumericParameter("inpqtyinvoiced");
+      String strPriceActual = vars.getNumericParameter("inppriceactual");
+      String strPriceLimit = vars.getNumericParameter("inppricelimit");
       String strInvoiceId = vars.getStringParameter("inpcInvoiceId");
       String strProduct = vars.getStringParameter("inpmProductId");
       String strTabId = vars.getStringParameter("inpTabId");
-      String strPriceList = vars.getStringParameter("inppricelist");
-      String strPriceStd = vars.getStringParameter("inppricestd");
+      String strPriceList = vars.getNumericParameter("inppricelist");
+      String strPriceStd = vars.getNumericParameter("inppricestd");
 
       try {
         printPage(response, vars, strChanged, strQtyInvoice, strPriceActual, strInvoiceId,

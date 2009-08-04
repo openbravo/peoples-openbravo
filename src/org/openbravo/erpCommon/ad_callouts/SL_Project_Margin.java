@@ -47,13 +47,13 @@ public class SL_Project_Margin extends HttpSecureAppServlet {
       String strcProjectId = vars.getStringParameter("inpcProjectId");
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       // Services
-      String strServiceRevenue = vars.getStringParameter("inpservrevenue", "0");
-      String strServiceCost = vars.getStringParameter("inpservcost", "0");
-      String strServiceMargin = vars.getStringParameter("inpservmargin", "0");
+      String strServiceRevenue = vars.getNumericParameter("inpservrevenue", "0");
+      String strServiceCost = vars.getNumericParameter("inpservcost", "0");
+      String strServiceMargin = vars.getNumericParameter("inpservmargin", "0");
       // Expenses
-      String strPlannedExpenses = vars.getStringParameter("inpexpexpenses", "0");
-      String strReinvoicedExpenses = vars.getStringParameter("inpexpreinvoicing", "0");
-      String strPlannedMargin = vars.getStringParameter("inpexpmargin", "0");
+      String strPlannedExpenses = vars.getNumericParameter("inpexpexpenses", "0");
+      String strReinvoicedExpenses = vars.getNumericParameter("inpexpreinvoicing", "0");
+      String strPlannedMargin = vars.getNumericParameter("inpexpmargin", "0");
       try {
         printPage(response, vars, strTabId, strcProjectId, strChanged, strServiceRevenue,
             strServiceCost, strServiceMargin, strPlannedExpenses, strReinvoicedExpenses,

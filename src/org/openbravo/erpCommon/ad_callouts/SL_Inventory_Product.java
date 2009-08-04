@@ -52,9 +52,9 @@ public class SL_Inventory_Product extends HttpSecureAppServlet {
       String strProduct = vars.getStringParameter("inpmProductId");
       String strLocator = vars.getStringParameter("inpmProductId_LOC");
       String strAttribute = vars.getStringParameter("inpmProductId_ATR");
-      String strQty = vars.getStringParameter("inpmProductId_QTY");
+      String strQty = vars.getNumericParameter("inpmProductId_QTY");
       String strUOM = vars.getStringParameter("inpmProductId_UOM");
-      String strQtyOrder = vars.getStringParameter("inpmProductId_PQTY");
+      String strQtyOrder = vars.getNumericParameter("inpmProductId_PQTY");
       String strPUOM = vars.getStringParameter("inpmProductId_PUOM");
       String strTabId = vars.getStringParameter("inpTabId");
       printPage(response, vars, strChanged, strProduct, strLocator, strAttribute, strQty, strUOM,

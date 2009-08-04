@@ -56,8 +56,8 @@ public class SL_JournalLineAmt extends HttpSecureAppServlet {
       String strCurrency = vars.getStringParameter("inpcCurrencyId");
       String strDateAcct = vars.getStringParameter("inpdateacct", DateTimeData.today(this));
       String strCurrencyRateType = vars.getStringParameter("inpcurrencyratetype", "S");
-      String strAmtSourceDr = vars.getStringParameter("inpamtsourcedr", "0");
-      String strAmtSourceCr = vars.getStringParameter("inpamtsourcecr", "0");
+      String strAmtSourceDr = vars.getNumericParameter("inpamtsourcedr", "0");
+      String strAmtSourceCr = vars.getNumericParameter("inpamtsourcecr", "0");
       String strTabId = vars.getStringParameter("inpTabId");
 
       try {

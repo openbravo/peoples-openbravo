@@ -53,9 +53,9 @@ public class SL_Internal_Consumption_Product extends HttpSecureAppServlet {
       // String strLocator = vars.getStringParameter("inpmLocatorId");
       String strPLocator = vars.getStringParameter("inpmProductId_LOC");
       String strPAttr = vars.getStringParameter("inpmProductId_ATR");
-      String strPQty = vars.getStringParameter("inpmProductId_PQTY");
+      String strPQty = vars.getNumericParameter("inpmProductId_PQTY");
       String strPUOM = vars.getStringParameter("inpmProductId_PUOM");
-      String strQty = vars.getStringParameter("inpmProductId_QTY");
+      String strQty = vars.getNumericParameter("inpmProductId_QTY");
       String strUOM = vars.getStringParameter("inpmProductId_UOM");
       String strTabId = vars.getStringParameter("inpTabId");
 

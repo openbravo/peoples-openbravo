@@ -46,8 +46,8 @@ public class SL_ProductionPlan_Conversion extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
-      String strSecQty = vars.getStringParameter("inpsecondaryqty");
-      String strConvRate = vars.getStringParameter("inpconversionrate");
+      String strSecQty = vars.getNumericParameter("inpsecondaryqty");
+      String strConvRate = vars.getNumericParameter("inpconversionrate");
       String strTabId = vars.getStringParameter("inpTabId");
       try {
         printPage(response, vars, strSecQty, strConvRate, strTabId);

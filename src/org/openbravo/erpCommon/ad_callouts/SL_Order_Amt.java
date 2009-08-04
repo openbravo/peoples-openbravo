@@ -50,19 +50,19 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
-      String strQtyOrdered = vars.getStringParameter("inpqtyordered");
-      String strPriceActual = vars.getStringParameter("inppriceactual");
-      String strDiscount = vars.getStringParameter("inpdiscount");
-      String strPriceLimit = vars.getStringParameter("inppricelimit");
-      String strPriceList = vars.getStringParameter("inppricelist");
-      String strPriceStd = vars.getStringParameter("inppricestd");
+      String strQtyOrdered = vars.getNumericParameter("inpqtyordered");
+      String strPriceActual = vars.getNumericParameter("inppriceactual");
+      String strDiscount = vars.getNumericParameter("inpdiscount");
+      String strPriceLimit = vars.getNumericParameter("inppricelimit");
+      String strPriceList = vars.getNumericParameter("inppricelist");
+      String strPriceStd = vars.getNumericParameter("inppricestd");
       String strCOrderId = vars.getStringParameter("inpcOrderId");
       String strProduct = vars.getStringParameter("inpmProductId");
       String strUOM = vars.getStringParameter("inpcUomId");
       String strAttribute = vars.getStringParameter("inpmAttributesetinstanceId");
       String strTabId = vars.getStringParameter("inpTabId");
-      String strQty = vars.getStringParameter("inpqtyordered");
-      String cancelPriceAd = vars.getStringParameter("inpcancelpricead");
+      String strQty = vars.getNumericParameter("inpqtyordered");
+      String cancelPriceAd = vars.getNumericParameter("inpcancelpricead");
 
       try {
         printPage(response, vars, strChanged, strQtyOrdered, strPriceActual, strDiscount,

@@ -50,10 +50,10 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
       String strLocator = vars.getStringParameter("inpmProductId_LOC");
-      String strQty = vars.getStringParameter("inpmProductId_QTY");
+      String strQty = vars.getNumericParameter("inpmProductId_QTY");
       String strUOM = vars.getStringParameter("inpmProductId_UOM");
       String strAttribute = vars.getStringParameter("inpmProductId_ATR");
-      String strQtyOrder = vars.getStringParameter("inpmProductId_PQTY");
+      String strQtyOrder = vars.getNumericParameter("inpmProductId_PQTY");
       String strPUOM = vars.getStringParameter("inpmProductId_PUOM");
       String strMProductID = vars.getStringParameter("inpmProductId");
       String strWindowId = vars.getStringParameter("inpwindowId");

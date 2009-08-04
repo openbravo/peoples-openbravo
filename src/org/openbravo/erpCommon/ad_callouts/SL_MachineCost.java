@@ -47,15 +47,15 @@ public class SL_MachineCost extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
-      String strPurchaseAmt = vars.getStringParameter("inppurchaseamt");
-      String strToolsetAmt = vars.getStringParameter("inptoolsetamt");
+      String strPurchaseAmt = vars.getNumericParameter("inppurchaseamt");
+      String strToolsetAmt = vars.getNumericParameter("inptoolsetamt");
       String strYearValue = vars.getStringParameter("inpyearvalue");
-      String strAmortization = vars.getStringParameter("inpamortization");
+      String strAmortization = vars.getNumericParameter("inpamortization");
       String strDaysYear = vars.getStringParameter("inpdaysyear");
       String strDayHours = vars.getStringParameter("inpdayhours");
       String strImproductiveHoursYear = vars.getStringParameter("inpimproductivehoursyear");
-      String strCostUomYear = vars.getStringParameter("inpcostuomyear");
-      String strCost = vars.getStringParameter("inpcost");
+      String strCostUomYear = vars.getNumericParameter("inpcostuomyear");
+      String strCost = vars.getNumericParameter("inpcost");
       String strCostUom = vars.getStringParameter("inpcostuom");
       try {
         printPage(response, vars, strChanged, strPurchaseAmt, strToolsetAmt, strYearValue,

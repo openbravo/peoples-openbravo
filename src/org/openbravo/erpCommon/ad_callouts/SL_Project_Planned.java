@@ -46,10 +46,10 @@ public class SL_Project_Planned extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       String strcProjectLineId = vars.getStringParameter("inpcProjectlineId");
-      String strPlannedQty = vars.getStringParameter("inpplannedqty", "0");
-      String strPlannedPrice = vars.getStringParameter("inpplannedprice", "0");
-      String strPlannedPurchasePrice = vars.getStringParameter("inpplannedpoprice", "0");
-      String strPlannedMargin = vars.getStringParameter("inpplannedmarginamt", "0");
+      String strPlannedQty = vars.getNumericParameter("inpplannedqty", "0");
+      String strPlannedPrice = vars.getNumericParameter("inpplannedprice", "0");
+      String strPlannedPurchasePrice = vars.getNumericParameter("inpplannedpoprice", "0");
+      String strPlannedMargin = vars.getNumericParameter("inpplannedmarginamt", "0");
       String strTabId = vars.getStringParameter("inpTabId");
       try {
         printPage(response, vars, strPlannedQty, strPlannedPrice, strPlannedPurchasePrice,
@@ -61,10 +61,10 @@ public class SL_Project_Planned extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strPlannedQty,
-      String strPlannedPrice, String strPlannedPurchasePrice, String strPlannedMargin,
-      String strcProjectLineId, String strTabId, String strChanged) throws IOException,
-      ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strPlannedQty, String strPlannedPrice, String strPlannedPurchasePrice,
+      String strPlannedMargin, String strcProjectLineId, String strTabId, String strChanged)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
