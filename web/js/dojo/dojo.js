@@ -12438,11 +12438,11 @@ dojo.widget.defineWidget(
     },
 
     onfocus: function() {
-      focusNumberInput(this.textbox, this.decSeparator, this.groupSeparator);
+      focusNumberInput(this.textbox, this.maskNumeric, this.decSeparator, this.groupSeparator, this.groupInterval);
     },
 
     onblur: function() {
-      blurNumberInput(this.textbox, this.maskNumeric, this.decSeparator, this.groupSeparator);
+      blurNumberInput(this.textbox, this.maskNumeric, this.decSeparator, this.groupSeparator, this.groupInterval);
       this.update();
     },
 

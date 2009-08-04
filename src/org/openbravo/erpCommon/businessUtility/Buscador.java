@@ -633,14 +633,14 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml
               .append("outputformat=\"qtyEdition\" ")
               .append(
-                  "onfocus=\"focusNumberInput(this);\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ")
+                  "onfocus=\"focusNumberInput(this, getInputNumberMask(this));\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ")
 
               .append("id=\"").append(randomId4Num1).append("\" ");
         else if (Utility.isIntegerNumber(fields[i].reference))
           strHtml
               .append("outputformat=\"qtyEdition\" ")
               .append(
-                  "onfocus=\"focusNumberInput(this);\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ")
+                  "onfocus=\"focusNumberInput(this, getInputNumberMask(this));\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ")
               .append("id=\"").append(randomId4Num1).append("\" ");
         strHtml.append(">");
         if (Utility.isDecimalNumber(fields[i].reference)
@@ -706,7 +706,7 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml
               .append("outputformat=\"qtyEdition\" ")
               .append(
-                  "onfocus=\"focusNumberInput(this);\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ");
+                  "onfocus=\"focusNumberInput(this, getInputNumberMask(this));\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ");
 
           strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         } else if (Utility.isIntegerNumber(fields[i].reference)) {
@@ -714,7 +714,7 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml
               .append("outputformat=\"qtyEdition\" ")
               .append(
-                  "onfocus=\"focusNumberInput(this);\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ");
+                  "onfocus=\"focusNumberInput(this, getInputNumberMask(this));\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ");
           strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         }
         strHtml.append(">");
@@ -747,13 +747,13 @@ public class Buscador extends HttpSecureAppServlet {
             strHtml
                 .append("outputformat=\"qtyEdition\" ")
                 .append(
-                    "onfocus=\"focusNumberInput(this);\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ")
+                    "onfocus=\"focusNumberInput(this, getInputNumberMask(this));\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ")
                 .append("id=\"").append(randomId4Num3).append("\" ");
           else if (Utility.isIntegerNumber(fields[i].reference))
             strHtml
                 .append("outputformat=\"qtyEdition\" ")
                 .append(
-                    "onfocus=\"focusNumberInput(this);\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ")
+                    "onfocus=\"focusNumberInput(this, getInputNumberMask(this));\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ")
                 .append("id=\"").append(randomId4Num3).append("\" ");
           strHtml.append(">");
 

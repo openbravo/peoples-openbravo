@@ -3990,13 +3990,27 @@ function changeAuditIcon(newStatus) {
     return maskNumeric;
   }
 
-  function focusNumberInput(obj, decSeparator, groupSeparator) {
+  function focusNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegative) {
+    if (maskNumeric == null || maskNumeric == "") maskNumeric = getDefaultMaskNumeric();
     if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
     if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
+    if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
 
     var oldCaretPosition = getCaretPosition(obj).start;
     var newCaretPosition = returnNewCaretPosition(obj, oldCaretPosition, groupSeparator);
+
+    if (bolNegative != false) { bolNegative = true; }
+
+    var bolDecimal = true;
+    if (maskNumeric.indexOf(decSeparator) == -1) {
+      bolDecimal = false;
+    }
+
     var number = obj.value;
+    var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegative);
+    if (!isValid) {
+      return false;
+    }
     var plainNumber = returnPlainNumber(number, decSeparator, groupSeparator);
     obj.value = plainNumber;
     setCaretToPos(obj, newCaretPosition);
