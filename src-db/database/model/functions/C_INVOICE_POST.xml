@@ -1747,7 +1747,7 @@ cWithHoldId varchar2(32);
       END IF;--FINISH_PROCESS
 
     --C_Invoice_Post - Finish_Process Extension Point
-    SELECT 1 INTO v_count
+    SELECT count(*) INTO v_count
     FROM DUAL
     where exists (select 1 from ad_ep_procedures where ad_extension_points_id = 'CBE7DD2E561E4D3D8257ECEA5F19687F');
     IF (v_count=1) THEN
