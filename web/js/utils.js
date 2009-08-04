@@ -4064,8 +4064,6 @@ function changeAuditIcon(newStatus) {
       }
     }
 
-
-
     var number = obj.value;
     var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegativo);
     updateMiniMessageBox(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
