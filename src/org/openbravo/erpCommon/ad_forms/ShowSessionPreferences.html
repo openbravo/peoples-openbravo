@@ -241,7 +241,7 @@ var baseDirectory = "../../../../../web/";
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
                         <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy" class="TextBox_btn_OneCell_width" type="text" name="inpFecha" id="paramFecha" value="xx" maxlength="10"></input><script>djConfig.searchIds.push("paramFecha");</script>
+                          <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy" class="TextBox_btn_OneCell_width" type="text" name="inpFecha" id="paramFecha" value="xx" maxlength="10" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramFecha");</script>
                         </td>
                         <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"   onclick="showCalendar('frmMain.inpFecha', document.frmMain.inpFecha.value, false);return false;">
