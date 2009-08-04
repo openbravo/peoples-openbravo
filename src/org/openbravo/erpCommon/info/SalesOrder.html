@@ -39,8 +39,6 @@
 <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/default/ValidationNumberBox.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/default/ValidationIntegerBox.js" type="text/javascript"></script>
 
 <script language="JavaScript" type="text/javascript">
   function validate() {
@@ -365,7 +363,7 @@
 						      <table style="border:0px;border-collapse:collapse;">
 						        <tr>
 						          <td style="padding-top: 0px;">
-						            <input type="text" id="paramCal1" class="dojoValidateValid TextBox_btn_OneCell_width number" required="false" value="" maxlength="10" name="inpCal1" onkeyup="" onchange="validateIntegerBox(this.id);logChanges(this);return true;"></input>
+						            <input type="text" id="paramCal1" class="dojoValidateValid TextBox_btn_OneCell_width number" required="false" value="" maxlength="10" name="inpCal1" outputformat="qtyEdition" onkeyup="" onfocus="focusNumberInput(this);" onblur="blurNumberInput(this, '', '', '', '', true);" onkeydown="manageDecPoint(this, '', event);" ></input>
 						          </td>
 						
 						        </tr>
@@ -432,7 +430,7 @@
 					      <table style="border:0px;border-collapse:collapse;">
 					        <tr>
 					          <td style="padding-top: 0px;">
-					            <input type="text" id="paramCal2" class="dojoValidateValid TextBox_btn_OneCell_width number" required="false" value="" maxlength="10" name="inpCal2" onkeyup="" onchange="validateIntegerBox(this.id);logChanges(this);return true;"></input>
+					            <input type="text" id="paramCal2" class="dojoValidateValid TextBox_btn_OneCell_width number" required="false" value="" maxlength="10" name="inpCal2" outputformat="qtyEdition" onkeyup="" onfocus="focusNumberInput(this);" onblur="blurNumberInput(this, '', '', '', '', true);" onkeydown="manageDecPoint(this, '', event);" ></input>
 					          </td>
 					
 					        </tr>

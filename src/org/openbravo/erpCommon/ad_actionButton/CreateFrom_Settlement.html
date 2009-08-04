@@ -551,7 +551,7 @@
                 <td class="DataGrid_Body_Cell" id="fieldPlannedDate">xxP</td>
                 <td class="DataGrid_Body_Cell" id="fieldAmount">xx</td>
                 <td class="DataGrid_Body_Cell" id="fieldCurrency">xx</td>
-                <td class="DataGrid_Body_Cell"><input name="inpwriteoffxx" type="text" id="fieldWriteOff" size="8" value="0" onkeyup="autoCompleteNumber(this, true, true, event);return true;"></input></td>
+                <td class="DataGrid_Body_Cell"><input name="inpwriteoffxx" type="text" id="fieldWriteOff" size="8" value="0" outputformat="qtyEdition" onfocus="focusNumberInput(this);" onblur="blurNumberInput(this, '', '', '', '', true);" onkeydown="manageDecPoint(this, '', event);" ></input></td>
                 <td class="DataGrid_Body_Cell" style="display:none;"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpispaidxx" value="Y" id="fieldIsPaid"></input></span></td>
               </tr>
             </div>

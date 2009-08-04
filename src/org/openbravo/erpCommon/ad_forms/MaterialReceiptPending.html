@@ -499,7 +499,7 @@ function onloadFunctions() {
                   <td width="409" class="DataGrid_Body_Cell" id="fieldProductName">xx</td>
                   <td width="198" class="DataGrid_Body_Cell" id="fieldDescription">xx</td>
                   <td width="146" class="DataGrid_Body_Cell" id="fieldTotalQty">xx</td>
-                  <td width="131" class="DataGrid_Body_Cell"> <input name="inpQtyorderedxx" type="text" id="fieldQtyordered" size="5" style="width:80px" value="0" onkeyup="autoCompleteNumber(this, true, true, event);return true;" class="dojoValidateValid readonly required" required="true" disabled></input>
+                  <td width="131" class="DataGrid_Body_Cell"> <input name="inpQtyorderedxx" type="text" id="fieldQtyordered" size="5" style="width:80px" value="0" outputformat="qtyEdition" class="dojoValidateValid readonly required" required="true" disabled onfocus="focusNumberInput(this);" onblur="blurNumberInput(this, '', '', '', '', true);" onkeydown="manageDecPoint(this, '', event);" ></input>
                   </td>
                   <td class="DataGrid_Body_Cell">
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
