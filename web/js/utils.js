@@ -4034,6 +4034,15 @@ function changeAuditIcon(newStatus) {
     var groupRegExp = new RegExp("\\" + groupSeparator,"g");
     plainNumber = plainNumber.replace(groupRegExp,"");
 
+    // Catch sign
+    var numberSign = "";
+    if (plainNumber.substring(0, 1) == "+") {
+      numberSign = "";
+      plainNumber = plainNumber.substring(1, number.length);
+    } else if (plainNumber.substring(0, 1) == "-") {
+      numberSign = "-";
+      plainNumber = plainNumber.substring(1, number.length);
+    }
 
     // Remove ending decimal "0"
     if (plainNumber.indexOf(decSeparator) != -1) {
@@ -4043,22 +4052,18 @@ function changeAuditIcon(newStatus) {
     }
 
     //Remove starting integer "0"
-    var numberSign = "";
-    if (plainNumber.substring(0, 1) == "+") {
-      numberSign = "";
-      plainNumber = plainNumber.substring(1, number.length);
-    } else if (plainNumber.substring(0, 1) == "-") {
-      numberSign = "-";
-      plainNumber = plainNumber.substring(1, number.length);
-    }
-    while (plainNumber.substring(0, 1) == "0" && plainNumber.length > 1) {
+    while (plainNumber.substring(0, 1) == "0" && plainNumber.substring(1, 2) != decSeparator && plainNumber.length > 1) {
       plainNumber = plainNumber.substring(1, plainNumber.length);
     }
-    plainNumber = numberSign + plainNumber;
 
     // Remove decimal separator if is the last character
     if (plainNumber.substring(plainNumber.length-1, plainNumber.length) == decSeparator) {
       plainNumber = plainNumber.substring(0, plainNumber.length-1);
+    }
+
+    // Re-set sign
+    if (plainNumber != "0") {
+      plainNumber = numberSign + plainNumber;
     }
 
     //Return plain number
