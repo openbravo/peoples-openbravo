@@ -4275,6 +4275,8 @@ function changeAuditIcon(newStatus) {
 
     if (operator == "sqrt") {
       result = Math.sqrt(number1);
+    } else if (operator == "round") {
+      result = roundNumber(number1, number2);
     } else {
       result = eval(number1 + operator + number2);
     }
