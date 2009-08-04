@@ -46,10 +46,10 @@ public class SL_BankStmt_Amount extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
-      String strStmAmount = vars.getStringParameter("inpstmtamt");
-      String strChgAmount = vars.getStringParameter("inpchargeamt");
-      String strTrxAmount = vars.getStringParameter("inptrxamt");
-      String strConvChgAmount = vars.getStringParameter("inpconvertchargeamt");
+      String strStmAmount = vars.getNumericParameter("inpstmtamt");
+      String strChgAmount = vars.getNumericParameter("inpchargeamt");
+      String strTrxAmount = vars.getNumericParameter("inptrxamt");
+      String strConvChgAmount = vars.getNumericParameter("inpconvertchargeamt");
       String strTabId = vars.getStringParameter("inpTabId");
       String strBankStmtLine = vars.getStringParameter("inpcBankstatementlineId");
       String strCurrencyId = vars.getStringParameter("inpcCurrencyId");

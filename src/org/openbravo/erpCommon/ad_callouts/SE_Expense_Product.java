@@ -50,10 +50,10 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
       String strmProductId = vars.getStringParameter("inpmProductId");
       String strsTimeexpenseId = vars.getStringParameter("inpsTimeexpenseId");
       String strcCurrencyId = vars.getStringParameter("inpcCurrencyId");
-      String strqty = vars.getStringParameter("inpqty");
+      String strqty = vars.getNumericParameter("inpqty");
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       String strTabId = vars.getStringParameter("inpTabId");
-      String strInvPrice = vars.getStringParameter("inpinvoiceprice");
+      String strInvPrice = vars.getNumericParameter("inpinvoiceprice");
 
       try {
         printPage(response, vars, strDateexpense, strmProductId, strsTimeexpenseId, strqty,
@@ -65,9 +65,10 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDateexpense,
-      String strmProductId, String strsTimeexpenseId, String strqty, String strcCurrencyId,
-      String strInvPrice, String strChanged, String strTabId) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strDateexpense, String strmProductId, String strsTimeexpenseId, String strqty,
+      String strcCurrencyId, String strInvPrice, String strChanged, String strTabId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(

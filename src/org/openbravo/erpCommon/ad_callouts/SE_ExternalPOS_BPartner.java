@@ -49,7 +49,7 @@ public class SE_ExternalPOS_BPartner extends HttpSecureAppServlet {
       String strBPartner = vars.getStringParameter("inpcBpartnerId");
       String strWindowId = vars.getStringParameter("inpwindowId");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      String strPriceList = vars.getStringParameter("inpmPricelistId");
+      String strPriceList = vars.getNumericParameter("inpmPricelistId");
       try {
         printPage(response, vars, strWindowId, strBPartner, strIsSOTrx, strPriceList);
       } catch (ServletException ex) {

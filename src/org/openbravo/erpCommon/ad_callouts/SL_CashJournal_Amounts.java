@@ -49,8 +49,8 @@ public class SL_CashJournal_Amounts extends HttpSecureAppServlet {
       String strOrder = vars.getStringParameter("inpcOrderId");
       String strDebtPayment = vars.getStringParameter("inpcDebtPaymentId");
       String strAmount = vars.getStringParameter("inpamount");
-      String strDiscount = vars.getStringParameter("inpdiscountamt");
-      String strwriteoff = vars.getStringParameter("inpwriteoffamt");
+      String strDiscount = vars.getNumericParameter("inpdiscountamt");
+      String strwriteoff = vars.getNumericParameter("inpwriteoffamt");
       String strTabId = vars.getStringParameter("inpTabId");
       String strCashId = vars.getStringParameter("inpcCashId");
       String strDesc = vars.getStringParameter("inpdescription");

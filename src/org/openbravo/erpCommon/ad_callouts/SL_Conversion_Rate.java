@@ -48,7 +48,7 @@ public class SL_Conversion_Rate extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
-      String strMultiplyRate = vars.getStringParameter("inpmultiplyrate");
+      String strMultiplyRate = vars.getNumericParameter("inpmultiplyrate");
       String strDivideRate = vars.getStringParameter("inpdividerate");
       String strTabId = vars.getStringParameter("inpTabId");
 
