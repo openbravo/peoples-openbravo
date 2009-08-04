@@ -4041,7 +4041,7 @@ function changeAuditIcon(newStatus) {
     return realMask;
   }
 
-  function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegativo) {
+  function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegativo, isJavaMask) {
     if (maskNumeric == null || maskNumeric == "") maskNumeric = getDefaultMaskNumeric();
     if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
     if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
@@ -4049,10 +4049,22 @@ function changeAuditIcon(newStatus) {
 
     if (bolNegativo != false) { bolNegativo = true; }
 
-    var bolDecimal = true;
-    if (maskNumeric.indexOf(decSeparator) == -1) {
-      bolDecimal = false;
+    if (isJavaMask != false) {
+      isJavaMask = true;
     }
+
+    var bolDecimal = true;
+    if (isJavaMask == true) {
+      if (maskNumeric.indexOf(".") == -1) {
+        bolDecimal = false;
+      }
+    } else {
+      if (maskNumeric.indexOf(decSeparator) == -1) {
+        bolDecimal = false;
+      }
+    }
+
+
 
     var number = obj.value;
     var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegativo);
@@ -4060,7 +4072,7 @@ function changeAuditIcon(newStatus) {
     if (!isValid) {
       return false;
     }
-    var formattedNumber = returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
+    var formattedNumber = returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval, isJavaMask);
     obj.value = formattedNumber;
   }
 
