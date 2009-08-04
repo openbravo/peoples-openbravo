@@ -4051,15 +4051,15 @@ function changeAuditIcon(newStatus) {
     // Just to be used if the mask has always american format independently of
 	// the dec and group separators
     maskNumeric = returnMaskChange(maskNumeric, ".", ",", decSeparator, groupSeparator);
-    var bolDecimales = false;
     if (bolNegativo != false) { bolNegativo = true; }
 
-    if (maskNumeric.indexOf(decSeparator) != -1) {
-      bolDecimales = true;
+    var bolDecimal = true;
+    if (maskNumeric.indexOf(decSeparator) == -1) {
+      bolDecimal = false;
     }
 
     var number = obj.value;
-    var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimales, bolNegativo);
+    var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegativo);
     updateMiniMessageBox(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
     if (!isValid) {
       return false;
@@ -4209,12 +4209,12 @@ function changeAuditIcon(newStatus) {
     return formattedNumber;
   }
 
-  function checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimales, bolNegativo) {
+  function checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegativo) {
     var checkPattern = "";
     checkPattern += "^";
     if (bolNegativo) { checkPattern += "([+]|[-])?"; }
     checkPattern += "(\\d+)?((\\" + groupSeparator + "\\d{" + groupInterval + "})?)+";
-    if (bolDecimales) { checkPattern += "(\\" + decSeparator + "\\d+)?"; }
+    if (bolDecimal) { checkPattern += "(\\" + decSeparator + "\\d+)?"; }
     checkPattern += "$";
     var checkRegExp = new RegExp(checkPattern);
     if (number.match(checkRegExp) && number.substring(0, 1) != groupSeparator) {
