@@ -3947,8 +3947,19 @@ function changeAuditIcon(newStatus) {
     return top.frameMenu.groupInterval_global;
   }
 
+  function isJavaMask() {
+    var isJavaMask = true;
+    return isJavaMask;
+  }
+
   function getDefaultMaskNumeric() {
-    return top.frameMenu.maskNumeric_default;
+    var maskNumeric_default = top.frameMenu.maskNumeric_default;
+    if (isJavaMask()) {
+      decSeparator = getGlobalDecSeparator();
+      groupSeparator = getGlobalGroupSeparator();
+      maskNumeric_default = returnMaskChange(maskNumeric_default, ".", ",", decSeparator, groupSeparator);
+    }
+    return maskNumeric_default;
   }
 
   function getInputNumberMask(obj) {
@@ -3958,14 +3969,25 @@ function changeAuditIcon(newStatus) {
   }
 
   function formatNameToMask(formatName) {
+    var maskNumeric = "";
+    var decSeparator = "";
+    var groupSeparator = "";
     var F = top.frameMenu.F;
     if(typeof F === 'undefined') {
-        return "";
+        return maskNumeric;
     }
     if(formatName === null) {
-      return "";
+      return maskNumeric;
     }
-    return F.getFormat(formatName);
+    maskNumeric = F.getFormat(formatName);
+    if (isJavaMask()) {
+      //decSeparator = F.getDecSeparator(formatName);
+      //groupSeparator = F.getGroupSeparator(formatName);
+      decSeparator = getGlobalDecSeparator();
+      groupSeparator = getGlobalGroupSeparator();
+      maskNumeric = returnMaskChange(maskNumeric, ".", ",", decSeparator, groupSeparator);
+    }
+    return maskNumeric;
   }
 
   function focusNumberInput(obj, decSeparator, groupSeparator) {
@@ -4061,7 +4083,7 @@ function changeAuditIcon(newStatus) {
     return realMask;
   }
 
-  function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegativo, isJavaMask) {
+  function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegativo) {
     if (maskNumeric == null || maskNumeric == "") maskNumeric = getDefaultMaskNumeric();
     if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
     if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
@@ -4069,19 +4091,9 @@ function changeAuditIcon(newStatus) {
 
     if (bolNegativo != false) { bolNegativo = true; }
 
-    if (isJavaMask != false) {
-      isJavaMask = true;
-    }
-
     var bolDecimal = true;
-    if (isJavaMask == true) {
-      if (maskNumeric.indexOf(".") == -1) {
-        bolDecimal = false;
-      }
-    } else {
-      if (maskNumeric.indexOf(decSeparator) == -1) {
-        bolDecimal = false;
-      }
+    if (maskNumeric.indexOf(decSeparator) == -1) {
+      bolDecimal = false;
     }
 
     var number = obj.value;
@@ -4090,7 +4102,7 @@ function changeAuditIcon(newStatus) {
     if (!isValid) {
       return false;
     }
-    var formattedNumber = returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval, isJavaMask);
+    var formattedNumber = returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
     obj.value = formattedNumber;
   }
 
@@ -4107,15 +4119,10 @@ function changeAuditIcon(newStatus) {
     return true;
   }
 
-  function returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval, isJavaMask) {
+  function returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
 
     if (number == "" || number == null) {
       return number;
-    }
-
-    if (isJavaMask != false) {
-      isJavaMask = true;
-      maskNumeric = returnMaskChange(maskNumeric, ".", ",", decSeparator, groupSeparator);
     }
 
     //Management of the mask
