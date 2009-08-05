@@ -922,7 +922,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           // store in session all the formats
           final String strFormatOutput = NumberElement.getAttributes().getNamedItem("formatOutput")
               .getNodeValue();
-          formatMap.put(strNumberName, strNumberFormat);
+          formatMap.put(strNumberName, strFormatOutput);
           vars.setSessionValue("#FormatOutput|" + strNumberName, strFormatOutput);
           vars.setSessionValue("#DecimalSeparator|" + strNumberName, NumberElement.getAttributes()
               .getNamedItem("decimal").getNodeValue());
