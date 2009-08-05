@@ -41,7 +41,6 @@ public class WADInteger extends WADControl {
   }
 
   private void generateJSCode() {
-    addImport("ValidationIntegerBox", "../../../../../web/js/default/ValidationIntegerBox.js");
     addImport("calculator", "../../../../../web/js/calculator.js");
     generateValidation();
     setCalloutJS();
