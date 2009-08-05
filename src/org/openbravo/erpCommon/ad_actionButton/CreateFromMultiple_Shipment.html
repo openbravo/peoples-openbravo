@@ -608,9 +608,9 @@ function submitThisPage(strCommand) {
                 <td class="DataGrid_Body_Cell" id="fieldProduct">xx</td>
                 <td class="DataGrid_Body_Cell" id="fieldLocator">xx</td>
                 <td class="DataGrid_Body_Cell" id="fieldAttribute">xx</td>
-                <td class="DataGrid_Body_Cell"> <input name="inpmovementqtyxx" type="text" id="fieldMovementQty" size="8" value="0" outputformat="qtyEdition" onfocus="focusNumberInput(this, getInputNumberMask(this));" onblur="blurNumberInput(this, getInputNumberMask(this));" onkeydown="manageDecPoint(this, '', event);"  disabled="" /></td>
+                <td class="DataGrid_Body_Cell"> <input name="inpmovementqtyxx" type="text" id="fieldMovementQty" size="8" value="0" outputformat="qtyEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" disabled="" /></td>
                 <td class="DataGrid_Body_Cell" id="fieldUOM">xx</td>
-                <td class="DataGrid_Body_Cell"> <input name="inpquantityorderxx" type="text" id="fieldQuantityOrder" size="8" value="0" outputformat="qtyEdition" onfocus="focusNumberInput(this, getInputNumberMask(this));" onblur="blurNumberInput(this, getInputNumberMask(this));" onkeydown="manageDecPoint(this, '', event);"  disabled="" /></td>
+                <td class="DataGrid_Body_Cell"> <input name="inpquantityorderxx" type="text" id="fieldQuantityOrder" size="8" value="0" outputformat="qtyEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" disabled="" /></td>
                 <td class="DataGrid_Body_Cell" id="fieldProductUOM">xx</td>
               </tr>
             </div>

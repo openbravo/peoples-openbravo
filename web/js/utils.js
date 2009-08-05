@@ -4133,6 +4133,21 @@ function getGlobalGroupInterval() {
     obj.value = formattedNumber;
   }
 
+  function numberInputEvent(command, obj, evt) {
+    if (command == "onfocus") {
+      focusNumberInput(obj, getInputNumberMask(obj));
+      return true;
+    } else if (command == "onblur") {
+      blurNumberInput(obj, getInputNumberMask(obj));
+      return true;
+    } else if (command == "onkeydown") {
+      manageDecPoint(obj, null, evt);
+      return true;
+    } else if (command == "onchange") {
+      return true;
+    }
+  }
+
   function updateNumberMiniMB(obj, isValid) {
     //Invalid check
     if (!document.getElementById(obj.id+"invalidSpan")) {

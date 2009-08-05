@@ -452,7 +452,7 @@ function onloadFunctions() {
 														class="dojoValidateValid TextBox_btn_OneCell_width number TextBox"
 														id="inpCal1"
 														outputformat="qtyEdition" 
-														onfocus="focusNumberInput(this, getInputNumberMask(this));" onblur="blurNumberInput(this, getInputNumberMask(this));" onkeydown="manageDecPoint(this, '', event);" />
+														onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" />
 													</td>
 												</tr>
 											</tbody>
@@ -555,7 +555,7 @@ function onloadFunctions() {
 														class="dojoValidateValid TextBox_btn_OneCell_width number TextBox"
 														id="inpCal2"
 														outputformat="qtyEdition" 
-														onfocus="focusNumberInput(this, getInputNumberMask(this));" onblur="blurNumberInput(this, getInputNumberMask(this));" onkeydown="manageDecPoint(this, '', event);" />
+														onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" />
 													</td>
 												</tr>
 											</tbody>
