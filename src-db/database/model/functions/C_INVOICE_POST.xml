@@ -752,8 +752,8 @@ cWithHoldId varchar2(32);
               AND COALESCE(IsAutomaticGenerated, 'Y')='N'
               AND C_ORDER_ID IS NULL;
             IF(v_IsSOTrx='Y') THEN
-		C_BP_SOCREDITUSED_REFRESH(v_BPartner_ID) ;
-	    END IF;
+                C_BP_SOCREDITUSED_REFRESH(v_BPartner_ID) ;
+            END IF;
             DELETE
             FROM C_INVOICELINE
             WHERE C_INVOICE_DISCOUNT_ID IS NOT NULL
