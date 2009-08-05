@@ -2720,11 +2720,11 @@ function formElementValue(form, ElementName, Value) {
  * @returns null if not find it, or a reference to the frame DOM element
  */
 function getFrame(frameName) {
-  var op = opener;
+  var op = top.opener;
   if(op == null) {
     return top.frames[frameName];
   }
-  return opener.top.frames[frameName];	
+  return op.top.frames[frameName];	
 }
 
 /**
