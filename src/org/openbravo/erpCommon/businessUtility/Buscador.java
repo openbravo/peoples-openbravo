@@ -633,14 +633,13 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml
               .append("outputformat=\"qtyEdition\" ")
               .append(
-                  "onfocus=\"numberInputEvent('onfocus', this);\" onblur=\"numberInputEvent('onblur', this);\" onkeydown=\"numberInputEvent('onkeydown', this, event);\" onchange=\"numberInputEvent('onchange', this);\" ");
-
+                  "onfocus=\"numberInputEvent('onfocus', this);\" onblur=\"numberInputEvent('onblur', this);\" onkeydown=\"numberInputEvent('onkeydown', this, event);\" onchange=\"numberInputEvent('onchange', this);\" ")
               .append("id=\"").append(randomId4Num1).append("\" ");
         else if (Utility.isIntegerNumber(fields[i].reference))
           strHtml
               .append("outputformat=\"qtyEdition\" ")
               .append(
-                  "onfocus=\"numberInputEvent('onfocus', this);\" onblur=\"numberInputEvent('onblur', this);\" onkeydown=\"numberInputEvent('onkeydown', this, event);\" onchange=\"numberInputEvent('onchange', this);\" ");
+                  "onfocus=\"numberInputEvent('onfocus', this);\" onblur=\"numberInputEvent('onblur', this);\" onkeydown=\"numberInputEvent('onkeydown', this, event);\" onchange=\"numberInputEvent('onchange', this);\" ")
               .append("id=\"").append(randomId4Num1).append("\" ");
         strHtml.append(">");
         if (Utility.isDecimalNumber(fields[i].reference)
@@ -707,7 +706,6 @@ public class Buscador extends HttpSecureAppServlet {
               .append("outputformat=\"qtyEdition\" ")
               .append(
                   "onfocus=\"numberInputEvent('onfocus', this);\" onblur=\"numberInputEvent('onblur', this);\" onkeydown=\"numberInputEvent('onkeydown', this, event);\" onchange=\"numberInputEvent('onchange', this);\" ");
-
           strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         } else if (Utility.isIntegerNumber(fields[i].reference)) {
           scriptCalculator = true;
@@ -747,13 +745,13 @@ public class Buscador extends HttpSecureAppServlet {
             strHtml
                 .append("outputformat=\"qtyEdition\" ")
                 .append(
-                    "onfocus=\"numberInputEvent('onfocus', this);\" onblur=\"numberInputEvent('onblur', this);\" onkeydown=\"numberInputEvent('onkeydown', this, event);\" onchange=\"numberInputEvent('onchange', this);\" ");
+                    "onfocus=\"numberInputEvent('onfocus', this);\" onblur=\"numberInputEvent('onblur', this);\" onkeydown=\"numberInputEvent('onkeydown', this, event);\" onchange=\"numberInputEvent('onchange', this);\" ")
                 .append("id=\"").append(randomId4Num3).append("\" ");
           else if (Utility.isIntegerNumber(fields[i].reference))
             strHtml
                 .append("outputformat=\"qtyEdition\" ")
                 .append(
-                    "onfocus=\"numberInputEvent('onfocus', this);\" onblur=\"numberInputEvent('onblur', this);\" onkeydown=\"numberInputEvent('onkeydown', this, event);\" onchange=\"numberInputEvent('onchange', this);\" ");
+                    "onfocus=\"numberInputEvent('onfocus', this);\" onblur=\"numberInputEvent('onblur', this);\" onkeydown=\"numberInputEvent('onkeydown', this, event);\" onchange=\"numberInputEvent('onchange', this);\" ")
                 .append("id=\"").append(randomId4Num3).append("\" ");
           strHtml.append(">");
 
