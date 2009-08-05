@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.security;
 
 import java.util.Vector;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
@@ -28,8 +29,6 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.apache.log4j.Logger;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 
 public class SessionListener implements HttpSessionListener, ServletContextListener {
@@ -37,6 +36,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
   private static final Logger log = Logger.getLogger(SessionListener.class);
 
   private static Vector<String> sessionsInContext = new Vector<String>();
+  private ServletContext context = null;
 
   /**
    * This method is called whenever the session is destroyed because of user action or time out.
@@ -66,6 +66,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
         // cannot use dal at this point, use sqlc
         SessionLoginData.deactivate((ConnectionProvider) event.getServletContext().getAttribute(
             "openbravoPool"), sessionId);
+        this.context = null;
         log.info("Deactivated session:" + sessionId);
       } catch (ServletException e1) {
         log.error(e1);
@@ -85,8 +86,8 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
   }
 
   @Override
-  public void contextInitialized(ServletContextEvent arg0) {
-    // do nothing
+  public void contextInitialized(ServletContextEvent event) {
+    this.context = event.getServletContext();
   }
 
   @Override
@@ -96,20 +97,14 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
 
   private void deactivateSession(String sessionId) {
     try {
-
       sessionsInContext.remove(sessionId);
 
-      OBContext.getOBContext().setInAdministratorMode(true);
-      org.openbravo.model.ad.access.Session dalSession = OBDal.getInstance().get(
-          org.openbravo.model.ad.access.Session.class, sessionId);
-      if (dalSession != null) {
-        dalSession.setSessionActive(false);
-      }
-      log.info("Clossed session:" + sessionId);
-
+      // Do not use DAL here
+      SessionLoginData.deactivate((ConnectionProvider) context.getAttribute("openbravoPool"),
+          sessionId);
+      System.out.println("closed " + sessionId);
     } catch (Exception e) {
-      log.error("Error closing session:" + sessionId);
-      e.printStackTrace();
+      log.error("Error closing session:" + sessionId, e);
     }
   }
 
