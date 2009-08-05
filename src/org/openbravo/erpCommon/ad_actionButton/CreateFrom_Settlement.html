@@ -75,11 +75,25 @@
       if (obj==null) return false;
       var price = document.frmMain.inpTotalPrice;
       var actualValue = Number(eval("document.frmMain.inpPrice" + obj.value + ".value"));
-      if (obj.checked) price.value = round(Number(price.value),2) + actualValue;
-      else price.value = round(Number(price.value),2) - actualValue;
-      if (isNaN(price.value)) price.value = 0;
+
+      if (obj.checked) {
+         price.value = round(Number(price.value),2) + actualValue;
+      } else {
+        price.value = round(Number(price.value),2) - actualValue;
+      }
+
+      if (isNaN(price.value)) {
+         price.value = 0;
+      }
+
+      var decSeparator = getGlobalDecSeparator();
+      var groupSeparator = getGlobalGroupSeparator();
+      var groupInterval = getGlobalGroupInterval();
+      var menu = getFrame("frameMenu");
+      var maskNumeric = menu.F.getFormat("euroEdition");
       round(price.value, 2);
-      layer("paramTotalPrice", price.value, true);
+      var formattedValue = returnCalcToFormatted(price.value, maskNumeric, decSeparator, groupSeparator, groupInterval);
+      layer("paramTotalPrice", formattedValue, true);
       return true;
     }
     function updateData(obj) {
@@ -551,7 +565,7 @@
                 <td class="DataGrid_Body_Cell" id="fieldPlannedDate">xxP</td>
                 <td class="DataGrid_Body_Cell" id="fieldAmount">xx</td>
                 <td class="DataGrid_Body_Cell" id="fieldCurrency">xx</td>
-                <td class="DataGrid_Body_Cell"><input name="inpwriteoffxx" type="text" id="fieldWriteOff" size="8" value="0" outputformat="qtyEdition" onfocus="focusNumberInput(this, getInputNumberMask(this));" onblur="blurNumberInput(this, getInputNumberMask(this));" onkeydown="manageDecPoint(this, '', event);" ></input></td>
+                <td class="DataGrid_Body_Cell"><input name="inpwriteoffxx" type="text" id="fieldWriteOff" size="8" value="0" outputformat="euroEdition" onfocus="focusNumberInput(this, getInputNumberMask(this));" onblur="blurNumberInput(this, getInputNumberMask(this));" onkeydown="manageDecPoint(this, '', event);" ></input></td>
                 <td class="DataGrid_Body_Cell" style="display:none;"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpispaidxx" value="Y" id="fieldIsPaid"></input></span></td>
               </tr>
             </div>

@@ -809,9 +809,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strPaymentRule = vars.getStringParameter("inppaymentrule");
     final String strPlannedDateFrom = vars.getStringParameter("inpplanneddateFrom");
     final String strPlannedDateTo = vars.getStringParameter("inpplanneddateTo");
-    final String strAmountFrom = vars.getStringParameter("inpamountFrom");
-    final String strAmountTo = vars.getStringParameter("inpamountTo");
-    final String strTotalAmount = vars.getStringParameter("inpamount");
+    final String strAmountFrom = vars.getNumericParameter("inpamountFrom");
+    final String strAmountTo = vars.getNumericParameter("inpamountTo");
+    final String strTotalAmount = vars.getNumericParameter("inpamount");
     String strIsReceipt = vars.getStringParameter("inpisreceipt");
     if (log4j.isDebugEnabled())
       log4j.debug("IsReceipt: " + strIsReceipt);
@@ -1932,7 +1932,7 @@ public class CreateFrom extends HttpSecureAppServlet {
         final StringTokenizer st = new StringTokenizer(strDebtPayment, ",", false);
         while (st.hasMoreTokens()) {
           final String strDebtPaymentId = st.nextToken().trim();
-          final String strWriteOff = vars.getStringParameter("inpwriteoff" + strDebtPaymentId);
+          final String strWriteOff = vars.getNumericParameter("inpwriteoff" + strDebtPaymentId);
           final String strIsPaid = vars.getStringParameter("inpispaid" + strDebtPaymentId, "N");
           if (!CreateFromSettlementData.NotIsCancelled(conn, this, strDebtPaymentId)) {
             releaseRollbackConnection(conn);
