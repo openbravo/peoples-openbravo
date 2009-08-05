@@ -102,7 +102,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
       // Do not use DAL here
       SessionLoginData.deactivate((ConnectionProvider) context.getAttribute("openbravoPool"),
           sessionId);
-      System.out.println("closed " + sessionId);
+      log.info("Closed session" + sessionId);
     } catch (Exception e) {
       log.error("Error closing session:" + sessionId, e);
     }
