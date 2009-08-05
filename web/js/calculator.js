@@ -98,8 +98,8 @@ function TCRrezult (slag_1, slag_2, oper) {
 
 
 function TCRPopup(obj_control) {
-  var decSeparator = returnDecSeparator();
-  var groupSeparator = returnGroupSeparator();
+  var decSeparator = getGlobalDecSeparator();
+  var groupSeparator = getGlobalGroupSeparator();
 	var w = 186, h = 122;
 	var ua = navigator.userAgent.toLowerCase();
 	var v = navigator.appVersion.substring(0,1);
@@ -139,7 +139,7 @@ function TCRPopup(obj_control) {
 
 
 function TCRmntr(num) {
-  var decSeparator = returnDecSeparator();
+  var decSeparator = getGlobalDecSeparator();
 	var flag = 0;
 	if (this.t_load) tmp = window.win_ch.document.forms[0].elements[0].value;
 	if (num == 'C') {

@@ -631,13 +631,16 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("value=\"").append(fields[i].value).append("\" ");
         if (Utility.isDecimalNumber(fields[i].reference))
           strHtml
+              .append("outputformat=\"qtyEdition\" ")
               .append(
-                  "onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, true, true, event);return true;\" ")
+                  "onfocus=\"focusNumberInput(this, getInputNumberMask(this));\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ")
+
               .append("id=\"").append(randomId4Num1).append("\" ");
         else if (Utility.isIntegerNumber(fields[i].reference))
           strHtml
+              .append("outputformat=\"qtyEdition\" ")
               .append(
-                  "onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, false, false, event);return true;\" ")
+                  "onfocus=\"focusNumberInput(this, getInputNumberMask(this));\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ")
               .append("id=\"").append(randomId4Num1).append("\" ");
         strHtml.append(">");
         if (Utility.isDecimalNumber(fields[i].reference)
@@ -700,12 +703,18 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("value=\"").append(fields[i].value).append("\" ");
         if (Utility.isDecimalNumber(fields[i].reference)) {
           scriptCalculator = true;
-          strHtml.append("onkeydown=\"autoCompleteNumber(this, true, true, event);return true;\" ");
+          strHtml
+              .append("outputformat=\"qtyEdition\" ")
+              .append(
+                  "onfocus=\"focusNumberInput(this, getInputNumberMask(this));\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ");
+
           strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         } else if (Utility.isIntegerNumber(fields[i].reference)) {
           scriptCalculator = true;
           strHtml
-              .append("onkeydown=\"autoCompleteNumber(this, false, false, event);return true;\" ");
+              .append("outputformat=\"qtyEdition\" ")
+              .append(
+                  "onfocus=\"focusNumberInput(this, getInputNumberMask(this));\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ");
           strHtml.append("id=\"").append(randomId4Num2).append("\" ");
         }
         strHtml.append(">");
@@ -736,13 +745,15 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("value=\"").append(value).append("\" ");
           if (Utility.isDecimalNumber(fields[i].reference))
             strHtml
+                .append("outputformat=\"qtyEdition\" ")
                 .append(
-                    "onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, true, true, event);return true;\" ")
+                    "onfocus=\"focusNumberInput(this, getInputNumberMask(this));\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ")
                 .append("id=\"").append(randomId4Num3).append("\" ");
           else if (Utility.isIntegerNumber(fields[i].reference))
             strHtml
+                .append("outputformat=\"qtyEdition\" ")
                 .append(
-                    "onkeydown=\"validateNumberBox(this.id);autoCompleteNumber(this, false, false, event);return true;\" ")
+                    "onfocus=\"focusNumberInput(this, getInputNumberMask(this));\" onblur=\"blurNumberInput(this, getInputNumberMask(this));\" onkeydown=\"manageDecPoint(this, '', event);\" ")
                 .append("id=\"").append(randomId4Num3).append("\" ");
           strHtml.append(">");
 
@@ -883,8 +894,6 @@ public class Buscador extends HttpSecureAppServlet {
           "/js/default/DateTextBox.js\" type=\"text/javascript\"></script>");
     }
     if (scriptCalculator) {
-      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append(
-          "/js/default/ValidationNumberBox.js\" type=\"text/javascript\"></script>");
       scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append(
           "/js/calculator.js\" type=\"text/javascript\"></script>");
     }

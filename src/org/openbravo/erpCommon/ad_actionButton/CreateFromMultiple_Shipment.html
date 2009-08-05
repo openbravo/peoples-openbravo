@@ -38,8 +38,6 @@
   <script language="JavaScript" src="../../../../../web/js/openbravo/widget/DataGrid.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/default/ValidationTextBox.js" type="text/javascript"></script>
-  <script language="JavaScript" src="../../../../../web/js/default/ValidationNumberBox.js" type="text/javascript"></script>
-  <script language="JavaScript" src="../../../../../web/js/default/ValidationIntegerBox.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/calculator.js" type="text/javascript"></script>
 
   <script type="text/javascript">
@@ -610,9 +608,9 @@ function submitThisPage(strCommand) {
                 <td class="DataGrid_Body_Cell" id="fieldProduct">xx</td>
                 <td class="DataGrid_Body_Cell" id="fieldLocator">xx</td>
                 <td class="DataGrid_Body_Cell" id="fieldAttribute">xx</td>
-                <td class="DataGrid_Body_Cell"> <input name="inpmovementqtyxx" type="text" id="fieldMovementQty" size="8" value="0" onkeyup="autoCompleteNumber(this, true, true, event);return true;" disabled="" /></td>
+                <td class="DataGrid_Body_Cell"> <input name="inpmovementqtyxx" type="text" id="fieldMovementQty" size="8" value="0" outputformat="qtyEdition" onfocus="focusNumberInput(this, getInputNumberMask(this));" onblur="blurNumberInput(this, getInputNumberMask(this));" onkeydown="manageDecPoint(this, '', event);"  disabled="" /></td>
                 <td class="DataGrid_Body_Cell" id="fieldUOM">xx</td>
-                <td class="DataGrid_Body_Cell"> <input name="inpquantityorderxx" type="text" id="fieldQuantityOrder" size="8" value="0" onkeyup="autoCompleteNumber(this, true, true, event);return true;" disabled="" /></td>
+                <td class="DataGrid_Body_Cell"> <input name="inpquantityorderxx" type="text" id="fieldQuantityOrder" size="8" value="0" outputformat="qtyEdition" onfocus="focusNumberInput(this, getInputNumberMask(this));" onblur="blurNumberInput(this, getInputNumberMask(this));" onkeydown="manageDecPoint(this, '', event);"  disabled="" /></td>
                 <td class="DataGrid_Body_Cell" id="fieldProductUOM">xx</td>
               </tr>
             </div>

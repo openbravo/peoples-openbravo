@@ -2657,27 +2657,27 @@ function formElementValue(form, ElementName, Value) {
     } else {
       if (Value==null || Value=="null") Value="";
       if (typeof Value!="object") {
-    	  if(typeof Value === "number") {
+        if(typeof Value === "number") {
 
-    		  var decSeparator = getGlobalDecSeparator();
-    		  var groupSeparator = getGlobalGroupSeparator();
-    		  var groupInterval = getGlobalGroupInterval();
+          var decSeparator = getGlobalDecSeparator();
+          var groupSeparator = getGlobalGroupSeparator();
+          var groupInterval = getGlobalGroupInterval();
 
-    		  var outputformat = obj.getAttribute("outputformat");
+          var outputformat = obj.getAttribute("outputformat");
 
-    		  if(outputformat == null) {
-    			  outputformat = "qtyEdition";
-    		  }
+          if(outputformat == null) {
+            outputformat = "qtyEdition";
+          }
 
-    		  var menu = top.frames['frameMenu']; //FIXME: implement getFrame() function
-    		  var maskNumeric = menu.F.getFormat(outputformat);
+          var menu = top.frames['frameMenu']; //FIXME: implement getFrame() function
+          var maskNumeric = menu.F.getFormat(outputformat);
 
-    		  obj.value = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
-    	  } else {
-    		  obj.value = Value;
-    	  }
+          obj.value = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
+        } else {
+          obj.value = Value;
+        }
       } else {
-    	//if (obj.className.toUpperCase().indexOf("REQUIRED")!=-1 || obj.className.toUpperCase().indexOf("KEY")!=-1 || obj.className.toUpperCase().indexOf("READONLY")!=-1)
+      //if (obj.className.toUpperCase().indexOf("REQUIRED")!=-1 || obj.className.toUpperCase().indexOf("KEY")!=-1 || obj.className.toUpperCase().indexOf("READONLY")!=-1)
         obj.value = selectDefaultValueFromArray(Value, true);
       }
     }
@@ -3947,8 +3947,19 @@ function changeAuditIcon(newStatus) {
     return top.frameMenu.groupInterval_global;
   }
 
+  function isJavaMask() {
+    var isJavaMask = true;
+    return isJavaMask;
+  }
+
   function getDefaultMaskNumeric() {
-    return top.frameMenu.maskNumeric_default;
+    var maskNumeric_default = top.frameMenu.maskNumeric_default;
+    if (isJavaMask()) {
+      decSeparator = getGlobalDecSeparator();
+      groupSeparator = getGlobalGroupSeparator();
+      maskNumeric_default = returnMaskChange(maskNumeric_default, ".", ",", decSeparator, groupSeparator);
+    }
+    return maskNumeric_default;
   }
 
   function getInputNumberMask(obj) {
@@ -3958,23 +3969,48 @@ function changeAuditIcon(newStatus) {
   }
 
   function formatNameToMask(formatName) {
+    var maskNumeric = "";
+    var decSeparator = "";
+    var groupSeparator = "";
     var F = top.frameMenu.F;
     if(typeof F === 'undefined') {
-        return "";
+        return maskNumeric;
     }
     if(formatName === null) {
-      return "";
+      return maskNumeric;
     }
-    return F.getFormat(formatName);
+    maskNumeric = F.getFormat(formatName);
+    if (isJavaMask()) {
+      //decSeparator = F.getDecSeparator(formatName);
+      //groupSeparator = F.getGroupSeparator(formatName);
+      decSeparator = getGlobalDecSeparator();
+      groupSeparator = getGlobalGroupSeparator();
+      maskNumeric = returnMaskChange(maskNumeric, ".", ",", decSeparator, groupSeparator);
+    }
+    return maskNumeric;
   }
 
-  function focusNumberInput(obj, decSeparator, groupSeparator) {
+  function focusNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegative) {
+    if (maskNumeric == null || maskNumeric == "") maskNumeric = getDefaultMaskNumeric();
     if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
     if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
+    if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
 
     var oldCaretPosition = getCaretPosition(obj).start;
     var newCaretPosition = returnNewCaretPosition(obj, oldCaretPosition, groupSeparator);
+
+    if (bolNegative != false) { bolNegative = true; }
+
+    var bolDecimal = true;
+    if (maskNumeric.indexOf(decSeparator) == -1) {
+      bolDecimal = false;
+    }
+
     var number = obj.value;
+    var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegative);
+    if (!isValid) {
+      return false;
+    }
     var plainNumber = returnPlainNumber(number, decSeparator, groupSeparator);
     obj.value = plainNumber;
     setCaretToPos(obj, newCaretPosition);
@@ -3998,6 +4034,15 @@ function changeAuditIcon(newStatus) {
     var groupRegExp = new RegExp("\\" + groupSeparator,"g");
     plainNumber = plainNumber.replace(groupRegExp,"");
 
+    // Catch sign
+    var numberSign = "";
+    if (plainNumber.substring(0, 1) == "+") {
+      numberSign = "";
+      plainNumber = plainNumber.substring(1, number.length);
+    } else if (plainNumber.substring(0, 1) == "-") {
+      numberSign = "-";
+      plainNumber = plainNumber.substring(1, number.length);
+    }
 
     // Remove ending decimal "0"
     if (plainNumber.indexOf(decSeparator) != -1) {
@@ -4007,22 +4052,18 @@ function changeAuditIcon(newStatus) {
     }
 
     //Remove starting integer "0"
-    var numberSign = "";
-    if (plainNumber.substring(0, 1) == "+") {
-      numberSign = "";
-      plainNumber = plainNumber.substring(1, number.length);
-    } else if (plainNumber.substring(0, 1) == "-") {
-      numberSign = "-";
-      plainNumber = plainNumber.substring(1, number.length);
-    }
-    while (plainNumber.substring(0, 1) == "0" && plainNumber.length > 1) {
+    while (plainNumber.substring(0, 1) == "0" && plainNumber.substring(1, 2) != decSeparator && plainNumber.length > 1) {
       plainNumber = plainNumber.substring(1, plainNumber.length);
     }
-    plainNumber = numberSign + plainNumber;
 
     // Remove decimal separator if is the last character
     if (plainNumber.substring(plainNumber.length-1, plainNumber.length) == decSeparator) {
       plainNumber = plainNumber.substring(0, plainNumber.length-1);
+    }
+
+    // Re-set sign
+    if (plainNumber != "0") {
+      plainNumber = numberSign + plainNumber;
     }
 
     //Return plain number
@@ -4061,61 +4102,68 @@ function changeAuditIcon(newStatus) {
     return realMask;
   }
 
-  function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegativo, isJavaMask) {
+  function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegative) {
     if (maskNumeric == null || maskNumeric == "") maskNumeric = getDefaultMaskNumeric();
     if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
     if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
     if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
 
-    if (bolNegativo != false) { bolNegativo = true; }
-
-    if (isJavaMask != false) {
-      isJavaMask = true;
-    }
+    if (bolNegative != false) { bolNegative = true; }
 
     var bolDecimal = true;
-    if (isJavaMask == true) {
-      if (maskNumeric.indexOf(".") == -1) {
-        bolDecimal = false;
-      }
-    } else {
-      if (maskNumeric.indexOf(decSeparator) == -1) {
-        bolDecimal = false;
-      }
+    if (maskNumeric.indexOf(decSeparator) == -1) {
+      bolDecimal = false;
     }
 
     var number = obj.value;
-    var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegativo);
-    updateMiniMessageBox(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
+    var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegative);
+    updateNumberMiniMB(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
     if (!isValid) {
       return false;
     }
-    var formattedNumber = returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval, isJavaMask);
+    var formattedNumber = returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
     obj.value = formattedNumber;
   }
 
-  function updateMiniMessageBox(obj, isValid) {
+  function updateNumberMiniMB(obj, isValid) {
+    //Invalid check
     if (!document.getElementById(obj.id+"invalidSpan")) {
-      return false;
+      return true;
     }
-    var miniMessageBox = document.getElementById(obj.id+"invalidSpan");
+    var miniMessageBox_invalid = document.getElementById(obj.id+"invalidSpan");
     if (!isValid) {
-      miniMessageBox.style.display="";
+      miniMessageBox_invalid.style.display="";
+      return true;
     } else {
-      miniMessageBox.style.display="none";
+      miniMessageBox_invalid.style.display="none";
     }
+
+    //Required check
+    if (!document.getElementById(obj.id+"missingSpan")) {
+      return true;
+    }
+    var isRequired = obj.getAttribute("required");
+    if (isRequired == "true") isRequired = true;
+    else if (isRequired == "false") isRequired = false;
+    var isMissing = false;
+    if (obj.value.length == 0) {
+      isMissing = true;
+    }
+    var miniMessageBox_missing = document.getElementById(obj.id+"missingSpan");
+    if (isRequired && isMissing) {
+      miniMessageBox_missing.style.display="";
+      return true;
+    } else {
+      miniMessageBox_missing.style.display="none";
+    }
+
     return true;
   }
 
-  function returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval, isJavaMask) {
+  function returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
 
     if (number == "" || number == null) {
       return number;
-    }
-
-    if (isJavaMask != false) {
-      isJavaMask = true;
-      maskNumeric = returnMaskChange(maskNumeric, ".", ",", decSeparator, groupSeparator);
     }
 
     //Management of the mask
@@ -4240,10 +4288,12 @@ function changeAuditIcon(newStatus) {
     return formattedNumber;
   }
 
-  function checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegativo) {
+  function checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegative) {
+    if (bolDecimal != false) { bolDecimal = true; }
+    if (bolNegative != false) { bolNegative = true; }
     var checkPattern = "";
     checkPattern += "^";
-    if (bolNegativo) { checkPattern += "([+]|[-])?"; }
+    if (bolNegative) { checkPattern += "([+]|[-])?"; }
     checkPattern += "(\\d+)?((\\" + groupSeparator + "\\d{" + groupInterval + "})?)+";
     if (bolDecimal) { checkPattern += "(\\" + decSeparator + "\\d+)?"; }
     checkPattern += "$";
@@ -4275,6 +4325,8 @@ function changeAuditIcon(newStatus) {
 
     if (operator == "sqrt") {
       result = Math.sqrt(number1);
+    } else if (operator == "round") {
+      result = roundNumber(number1, number2);
     } else {
       result = eval(number1 + operator + number2);
     }
