@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,7 +42,6 @@ public class WADNumber extends WADControl {
   }
 
   private void generateJSCode() {
-    addImport("ValidationNumberBox", "../../../../../web/js/default/ValidationNumberBox.js");
     addImport("calculator", "../../../../../web/js/calculator.js");
     generateValidation();
     setCalloutJS();
