@@ -2655,9 +2655,12 @@ function formElementValue(form, ElementName, Value) {
     } else if (obj.type.toUpperCase().indexOf("RADIO")!=-1 || obj.type.toUpperCase().indexOf("CHECK")!=-1) {
       selectRadioButton(obj, Value);
     } else {
-      if (Value==null || Value=="null") Value="";
+
+      if (Value==null || Value=="null") {
+        Value="";
+      }
+
       if (typeof Value!="object") {
-        if(typeof Value === "number") {
 
           var decSeparator = getGlobalDecSeparator();
           var groupSeparator = getGlobalGroupSeparator();
@@ -2671,11 +2674,8 @@ function formElementValue(form, ElementName, Value) {
 
           var menu = getFrame('frameMenu');
           var maskNumeric = menu.F.getFormat(outputformat);
-
-          obj.value = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
-        } else {
-          obj.value = Value;
-        }
+          var formattedValue = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
+          obj.value = formattedValue;
       } else {
       //if (obj.className.toUpperCase().indexOf("REQUIRED")!=-1 || obj.className.toUpperCase().indexOf("KEY")!=-1 || obj.className.toUpperCase().indexOf("READONLY")!=-1)
         obj.value = selectDefaultValueFromArray(Value, true);
