@@ -4012,7 +4012,7 @@ function getGlobalGroupInterval() {
     return maskNumeric;
   }
 
-  function focusNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegative) {
+  function focusNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval) {
     if (maskNumeric == null || maskNumeric == "") maskNumeric = getDefaultMaskNumeric();
     if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
     if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
@@ -4021,15 +4021,8 @@ function getGlobalGroupInterval() {
     var oldCaretPosition = getCaretPosition(obj).start;
     var newCaretPosition = returnNewCaretPosition(obj, oldCaretPosition, groupSeparator);
 
-    if (bolNegative != false) { bolNegative = true; }
-
-    var bolDecimal = true;
-    if (maskNumeric.indexOf(decSeparator) == -1) {
-      bolDecimal = false;
-    }
-
     var number = obj.value;
-    var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegative);
+    var isValid = checkNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
     if (!isValid) {
       return false;
     }
@@ -4124,21 +4117,14 @@ function getGlobalGroupInterval() {
     return realMask;
   }
 
-  function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval, bolNegative) {
+  function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval) {
     if (maskNumeric == null || maskNumeric == "") maskNumeric = getDefaultMaskNumeric();
     if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
     if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
     if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
 
-    if (bolNegative != false) { bolNegative = true; }
-
-    var bolDecimal = true;
-    if (maskNumeric.indexOf(decSeparator) == -1) {
-      bolDecimal = false;
-    }
-
     var number = obj.value;
-    var isValid = checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegative);
+    var isValid = checkNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
     updateNumberMiniMB(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
     if (!isValid) {
       return false;
@@ -4189,6 +4175,9 @@ function getGlobalGroupInterval() {
     }
 
     //Management of the mask
+    if (maskNumeric.indexOf("+") == 0 || maskNumeric.indexOf("-") == 0) {
+      maskNumeric = maskNumeric.substring(1, maskNumeric.length);
+    }
     if (maskNumeric.indexOf(groupSeparator) != -1 && maskNumeric.indexOf(decSeparator) != -1 && maskNumeric.indexOf(groupSeparator) > maskNumeric.indexOf(decSeparator)) {
       var fixRegExp = new RegExp("\\" + groupSeparator,"g");
       maskNumeric = maskNumeric.replace(fixRegExp,"");
@@ -4310,9 +4299,17 @@ function getGlobalGroupInterval() {
     return formattedNumber;
   }
 
-  function checkNumber(number, decSeparator, groupSeparator, groupInterval, bolDecimal, bolNegative) {
-    if (bolDecimal != false) { bolDecimal = true; }
-    if (bolNegative != false) { bolNegative = true; }
+  function checkNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
+    var bolNegative = true;
+    if (maskNumeric.indexOf("+") == 0) {
+      bolNegative = false;
+      maskNumeric = maskNumeric.substring(1, maskNumeric.length);
+    }
+
+    var bolDecimal = true;
+    if (maskNumeric.indexOf(decSeparator) == -1) {
+      bolDecimal = false;
+    }
     var checkPattern = "";
     checkPattern += "^";
     if (bolNegative) { checkPattern += "([+]|[-])?"; }

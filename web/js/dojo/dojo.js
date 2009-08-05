@@ -12434,12 +12434,7 @@ dojo.widget.defineWidget(
     },
 
     isValid: function() {
-      var bolDecimal = true;
-      var bolNegative = true;
-      if (this.maskNumeric.indexOf(this.decSeparator) == -1) {
-        bolDecimal = false;
-      }
-      return checkNumber(this.textbox.value, this.decSeparator, this.groupSeparator, this.groupInterval, bolDecimal, bolNegative);
+      return checkNumber(this.textbox.value, this.maskNumeric, this.decSeparator, this.groupSeparator, this.groupInterval);
     },
 
     onfocus: function() {
