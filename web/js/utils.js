@@ -2668,14 +2668,20 @@ function formElementValue(form, ElementName, Value) {
 
           var outputformat = obj.getAttribute("outputformat");
 
-          if(outputformat == null) {
-            outputformat = "qtyEdition";
-          }
+          if(outputformat != null) {
 
-          var menu = getFrame('frameMenu');
-          var maskNumeric = menu.F.getFormat(outputformat);
-          var formattedValue = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
-          obj.value = formattedValue;
+            if (outputformat === "") {
+              outputformat = "qtyEdition";
+            }
+
+            var menu = getFrame('frameMenu');
+            var maskNumeric = menu.F.getFormat(outputformat);
+            var formattedValue = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
+            obj.value = formattedValue;
+          }
+          else {
+            obj.value = Value;
+          }
       } else {
       //if (obj.className.toUpperCase().indexOf("REQUIRED")!=-1 || obj.className.toUpperCase().indexOf("KEY")!=-1 || obj.className.toUpperCase().indexOf("READONLY")!=-1)
         obj.value = selectDefaultValueFromArray(Value, true);
