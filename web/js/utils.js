@@ -2669,7 +2669,7 @@ function formElementValue(form, ElementName, Value) {
             outputformat = "qtyEdition";
           }
 
-          var menu = top.frames['frameMenu']; //FIXME: implement getFrame() function
+          var menu = getFrame('frameMenu');
           var maskNumeric = menu.F.getFormat(outputformat);
 
           obj.value = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
@@ -2706,6 +2706,19 @@ function formElementValue(form, ElementName, Value) {
     }
   }
   return true;
+}
+
+/**
+ * Returns a reference to the frame DOM element
+ * @param frameName Name of the frame to get the reference
+ * @returns null if not find it, or a reference to the frame DOM element
+ */
+function getFrame(frameName) {
+  var op = opener;
+  if(op == null) {
+    return top.frames[frameName];
+  }
+  return opener.top.frames[frameName];	
 }
 
 /**
@@ -3935,17 +3948,20 @@ function changeAuditIcon(newStatus) {
 
   // Numeric formatting functions
 
-  function getGlobalDecSeparator() {
-    return top.frameMenu.decSeparator_global;
-  }
+function getGlobalDecSeparator() {
+  var m = getFrame('frameMenu');
+  return m.decSeparator_global;
+}
 
-  function getGlobalGroupSeparator() {
-    return top.frameMenu.groupSeparator_global;
-  }
+function getGlobalGroupSeparator() {
+  var m = getFrame('frameMenu');
+  return m.groupSeparator_global;
+}
 
-  function getGlobalGroupInterval() {
-    return top.frameMenu.groupInterval_global;
-  }
+function getGlobalGroupInterval() {
+  var m = getFrame('frameMenu');
+  return m.groupInterval_global;
+}
 
   function isJavaMask() {
     var isJavaMask = true;
@@ -3953,7 +3969,8 @@ function changeAuditIcon(newStatus) {
   }
 
   function getDefaultMaskNumeric() {
-    var maskNumeric_default = top.frameMenu.maskNumeric_default;
+    var m = getFrame('frameMenu');
+    var maskNumeric_default = m.maskNumeric_default;
     if (isJavaMask()) {
       decSeparator = getGlobalDecSeparator();
       groupSeparator = getGlobalGroupSeparator();
