@@ -2676,6 +2676,9 @@ function formElementValue(form, ElementName, Value) {
 
             var menu = getFrame('frameMenu');
             var maskNumeric = menu.F.getFormat(outputformat);
+            if (isJavaMask()) {
+              maskNumeric = returnMaskChange(maskNumeric, ".", ",", decSeparator, groupSeparator);
+            }
             var formattedValue = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
             obj.value = formattedValue;
           }
