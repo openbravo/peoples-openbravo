@@ -66,8 +66,11 @@ public class EntityAccessTest extends BaseTest {
 
   /**
    * Test tries to remove the {@link Currency}. Which should fail as it is not deletable.
+   * 
+   * After fixing issue #0010139, all entities are deletable. Therefore this test case is not going
+   * to be executed.
    */
-  public void testNonDeletable() {
+  public void doNotExecutetestNonDeletable() {
     setUserContext("1000000");
     addReadWriteAccess(Currency.class);
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
