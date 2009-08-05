@@ -12436,7 +12436,7 @@ dojo.widget.defineWidget(
     isValid: function() {
       var bolDecimal = true;
       var bolNegative = true;
-      if (this.maskNumeric.indexOf(decSeparator) == -1) {
+      if (this.maskNumeric.indexOf(this.decSeparator) == -1) {
         bolDecimal = false;
       }
       return checkNumber(this.textbox.value, this.decSeparator, this.groupSeparator, this.groupInterval, bolDecimal, bolNegative);
