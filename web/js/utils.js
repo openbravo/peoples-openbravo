@@ -3991,11 +3991,16 @@ function getGlobalGroupInterval() {
     return outputformat;
   }
 
+  /**
+   * Returns the output format for a given format defined in Format.xml
+   * @param formatName One of the defined format names in Format.xml
+   * @return The outputFormat for the formatName
+   */
   function formatNameToMask(formatName) {
     var maskNumeric = "";
     var decSeparator = "";
     var groupSeparator = "";
-    var F = top.frameMenu.F;
+    var F = getFrame('frameMenu').F;
     if(typeof F === 'undefined') {
         return maskNumeric;
     }
