@@ -2669,16 +2669,7 @@ function formElementValue(form, ElementName, Value) {
           var outputformat = obj.getAttribute("outputformat");
 
           if(outputformat != null) {
-
-            if (outputformat === "") {
-              outputformat = "qtyEdition";
-            }
-
-            var menu = getFrame('frameMenu');
-            var maskNumeric = menu.F.getFormat(outputformat);
-            if (isJavaMask()) {
-              maskNumeric = returnMaskChange(maskNumeric, ".", ",", decSeparator, groupSeparator);
-            }
+            maskNumeric = formatNameToMask(outputformat);
             var formattedValue = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
             obj.value = formattedValue;
           }
@@ -4007,8 +3998,8 @@ function getGlobalGroupInterval() {
     if(typeof F === 'undefined') {
         return maskNumeric;
     }
-    if(formatName === null) {
-      return maskNumeric;
+    if(formatName == null || formatName == "" || formatName == "null") {
+      formatName = "qtyEdition";
     }
     maskNumeric = F.getFormat(formatName);
     if (isJavaMask()) {
