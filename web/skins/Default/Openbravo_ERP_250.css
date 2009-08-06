@@ -5440,6 +5440,15 @@ a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_relatio
   background-image: url(../../../images/PoweredByOpenbravo.png);
 }
 
+.Main_NavBar_logo_OPS {
+  cursor: pointer;
+  width: 122px;
+  height: 34px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(../../../images/PoweredByOpenbravoOPS.png);
+}
+
 .Main_NavBar_separator_cell {
   width: 10px;
 }
@@ -9003,6 +9012,15 @@ td.Popup_InfoBar_text_table {
   background-repeat: no-repeat;
   background-position: center center;
   background-image: url(../../../images/PoweredByOpenbravo.png);
+}
+
+.Popup_NavBar_logo_OPS {
+  cursor: pointer;
+  width: 122px;
+  height: 34px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(../../../images/PoweredByOpenbravoOPS.png);
 }
 
 .Popup_NavBar_Popup_title_cell {
