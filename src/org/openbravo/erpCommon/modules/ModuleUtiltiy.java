@@ -19,12 +19,19 @@
 
 package org.openbravo.erpCommon.modules;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.services.webservice.WebServiceImpl;
+import org.openbravo.services.webservice.WebServiceImplServiceLocator;
 
 /**
  * This class implements different utilities related to modules
@@ -32,6 +39,7 @@ import org.openbravo.database.ConnectionProvider;
  * 
  */
 public class ModuleUtiltiy {
+  protected static Logger log4j = Logger.getLogger(ModuleUtiltiy.class);
 
   /**
    * It receives an ArrayList<String> with modules IDs and returns the same list ordered taking into
@@ -130,5 +138,63 @@ public class ModuleUtiltiy {
     }
     modules = rt;
     return;
+  }
+
+  /**
+   * Obtains remotelly an obx for the desired moduleVersionID
+   * 
+   * @param im
+   *          {@link ImportModule} instance used to add the log
+   * @param moduleVersionID
+   *          ID for the module version to obtain
+   * @return An {@link InputStream} with containing the obx for the module (null if error)
+   */
+  public static InputStream getRemoteModule(ImportModule im, String moduleVersionID) {
+    if (!moduleVersionID.equals("0")) { // TODO: check for web service
+      WebServiceImplServiceLocator loc;
+      WebServiceImpl ws = null;
+      try {
+        loc = new WebServiceImplServiceLocator();
+        ws = loc.getWebService();
+
+        final byte[] getMod = ws.getModule(moduleVersionID);
+        return new ByteArrayInputStream(getMod);
+
+      } catch (final Exception e) {
+        e.printStackTrace();
+        im.addLog("@CouldntConnectToWS@", ImportModule.MSG_ERROR);
+        try {
+          ImportModuleData.insertLog(ImportModule.pool,
+              (im.vars == null ? "0" : im.vars.getUser()), "", "", "",
+              "Couldn't contact with webservice server", "E");
+        } catch (final ServletException ex) {
+          ex.printStackTrace();
+        }
+      }
+    } else { // TODO: just testing...
+      try {
+        log4j.info("getting core");
+        URL url = new URL(
+            "http://sourceforge.net/projects/openbravo/files/03-openbravo-updates/OpenbravoERP-2.50.14184.obx/download");
+        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+
+        urlConn.setRequestProperty("Keep-Alive", "300");
+        urlConn.setRequestProperty("Connection", "keep-alive");
+        urlConn.setRequestMethod("GET");
+        urlConn.setDoInput(true);
+        urlConn.setDoOutput(true);
+        urlConn.setUseCaches(false);
+        urlConn.setAllowUserInteraction(false);
+
+        urlConn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+
+        return urlConn.getInputStream();
+      } catch (Exception e) {
+        // TODO: handle exception
+        return null;
+      }
+
+    }
+    return null;
   }
 }

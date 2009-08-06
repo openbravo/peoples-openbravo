@@ -787,7 +787,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
     OBError message;
     if (im.getIsLocal())
       im.execute(((FileItem) vars.getSessionObject("ModuleManagementInstall|File"))
-          .getInputStream(), ((FileItem) vars.getSessionObject("ModuleManagementInstall|File"))
           .getInputStream());
     else
       im.execute();
