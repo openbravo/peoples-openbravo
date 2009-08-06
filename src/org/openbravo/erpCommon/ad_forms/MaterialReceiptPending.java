@@ -136,6 +136,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
+    OBError myMessage = null;
     try {
       WindowTabs tabs = new WindowTabs(this, vars,
           "org.openbravo.erpCommon.ad_forms.MaterialReceiptPending");
@@ -154,7 +155,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
     {
-      OBError myMessage = vars.getMessage("MaterialReceiptPending");
+      myMessage = vars.getMessage("MaterialReceiptPending");
       vars.removeMessage("MaterialReceiptPending");
       if (myMessage != null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
@@ -191,8 +192,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("displayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    if (commandIn.equals("GENERATE") && myMessage != null && !myMessage.getType().equals("Success")) {
 
-    if (commandIn.equals("GENERATE")) {
       String strcOrderLineId = vars.getRequiredInStringParameter("inpOrder", IsIDFilter.instance);
       StringBuffer html = new StringBuffer();
       if (strcOrderLineId.startsWith("("))
