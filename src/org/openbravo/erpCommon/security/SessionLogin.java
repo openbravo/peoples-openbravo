@@ -92,6 +92,7 @@ public class SessionLogin {
   public int save(ConnectionProvider conn) throws ServletException {
     if (getSessionID().equals("")) {
       String key = SequenceIdData.getUUID();
+      SessionListener.addSession(key);
       if (key == null || key.equals(""))
         throw new ServletException("SessionLogin.save() - key creation failed");
       setSessionID(key);
