@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -240,65 +239,15 @@ public class DataGrid extends HttpSecureAppServlet {
     String description = "";
 
     // values used for formatting Amounts (read from Format.xml file)
-    String format = vars.getSessionValue("#FormatOutput|euroRelation");
-    String decimal = vars.getSessionValue("#DecimalSeparator|euroRelation");
-    String group = vars.getSessionValue("#GroupSeparator|euroRelation");
-    DecimalFormat numberFormatDecimal = null;
-    if (format != null && !format.equals("") && decimal != null && !decimal.equals("")
-        && group != null && !group.equals("")) {
-      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-      dfs.setDecimalSeparator(decimal.charAt(0));
-      dfs.setGroupingSeparator(group.charAt(0));
-      numberFormatDecimal = new DecimalFormat(format, dfs);
-    }
+    DecimalFormat numberFormatDecimal = Utility.getFormat(vars, "euroRelation");
     // values used for formatting Quantities (read from Format.xml file)
-    format = vars.getSessionValue("#FormatOutput|qtyRelation");
-    decimal = vars.getSessionValue("#DecimalSeparator|qtyRelation");
-    group = vars.getSessionValue("#GroupSeparator|qtyRelation");
-    DecimalFormat numberFormatQuantity = null;
-    if (format != null && !format.equals("") && decimal != null && !decimal.equals("")
-        && group != null && !group.equals("")) {
-      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-      dfs.setDecimalSeparator(decimal.charAt(0));
-      dfs.setGroupingSeparator(group.charAt(0));
-      numberFormatQuantity = new DecimalFormat(format, dfs);
-    }
+    DecimalFormat numberFormatQuantity = Utility.getFormat(vars, "qtyRelation");
     // values used for formatting Prices (read from Format.xml file)
-    format = vars.getSessionValue("#FormatOutput|priceRelation");
-    decimal = vars.getSessionValue("#DecimalSeparator|priceRelation");
-    group = vars.getSessionValue("#GroupSeparator|priceRelation");
-    DecimalFormat numberFormatPrice = null;
-    if (format != null && !format.equals("") && decimal != null && !decimal.equals("")
-        && group != null && !group.equals("")) {
-      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-      dfs.setDecimalSeparator(decimal.charAt(0));
-      dfs.setGroupingSeparator(group.charAt(0));
-      numberFormatPrice = new DecimalFormat(format, dfs);
-    }
+    DecimalFormat numberFormatPrice = Utility.getFormat(vars, "priceRelation");
     // values used for formatting General (read from Format.xml file)
-    format = vars.getSessionValue("#FormatOutput|generalQtyRelation");
-    decimal = vars.getSessionValue("#DecimalSeparator|generalQtyRelation");
-    group = vars.getSessionValue("#GroupSeparator|generalQtyRelation");
-    DecimalFormat numberFormatGeneral = null;
-    if (format != null && !format.equals("") && decimal != null && !decimal.equals("")
-        && group != null && !group.equals("")) {
-      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-      dfs.setDecimalSeparator(decimal.charAt(0));
-      dfs.setGroupingSeparator(group.charAt(0));
-      numberFormatGeneral = new DecimalFormat(format, dfs);
-    }
+    DecimalFormat numberFormatGeneral = Utility.getFormat(vars, "generalQtyRelation");
     // values used for formatting Integer (read from Format.xml file)
-    format = vars.getSessionValue("#FormatOutput|integerRelation");
-    decimal = vars.getSessionValue("#DecimalSeparator|integerRelation");
-    group = vars.getSessionValue("#GroupSeparator|integerRelation");
-    DecimalFormat numberFormatInteger = null;
-    if (format != null && !format.equals("") && decimal != null && !decimal.equals("")
-        && group != null && !group.equals("")) {
-      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-      dfs.setDecimalSeparator(decimal.charAt(0));
-      dfs.setGroupingSeparator(group.charAt(0));
-      numberFormatInteger = new DecimalFormat(format, dfs);
-    }
+    DecimalFormat numberFormatInteger = Utility.getFormat(vars, "integerRelation");
     if (tableSQL != null && headers != null) {
       try {
         // Prepare SQL adding the user filter parameters
