@@ -33,6 +33,8 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -2360,5 +2362,23 @@ public class Utility {
       }
     }
     return refValues;
+  }
+
+  /**
+   * Returns a DecimalFormat for the given formatting type contained in the Format.xml file
+   */
+  public static DecimalFormat getFormat(VariablesSecureApp vars, String typeName) {
+    String format = vars.getSessionValue("#FormatOutput|" + typeName);
+    String decimal = vars.getSessionValue("#DecimalSeparator|" + typeName);
+    String group = vars.getSessionValue("#GroupSeparator|" + typeName);
+    DecimalFormat numberFormatDecimal = null;
+    if (format != null && !format.equals("") && decimal != null && !decimal.equals("")
+        && group != null && !group.equals("")) {
+      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+      dfs.setDecimalSeparator(decimal.charAt(0));
+      dfs.setGroupingSeparator(group.charAt(0));
+      numberFormatDecimal = new DecimalFormat(format, dfs);
+    }
+    return numberFormatDecimal;
   }
 }

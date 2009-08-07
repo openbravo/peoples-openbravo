@@ -20,9 +20,8 @@
 package org.openbravo.uiTranslation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
@@ -34,26 +33,11 @@ class TranslationUtils {
   private static final Logger log4j = Logger.getLogger(TranslationUtils.class);
 
   public static final int TAB = 0, FORM = 1, PROCESS = 2;
-  private static String fileName;
-  private static String language;
-  private static HashMap<String, String> textmap;
-  private static TextInterfacesData[] textData;
-  private static WindowLabel[] windowLabels;
-  private static Collection<WindowLabel> windowLabelsCol = new ArrayList<WindowLabel>();
-  private static ConnectionProvider conn;
-  private static int interfaceType;
 
   public static HashMap<String, String> processFormLabels(ConnectionProvider con, String filename,
       String lang) {
-    fileName = filename;
-    language = lang;
-    textmap = new HashMap<String, String>();
-    conn = con;
 
-    retrieveLabelData();
-    populateLabelMap();
-
-    return textmap;
+    return retrieveLabelData(con, filename, lang);
   }
 
   public static InterfaceInfo getModuleLang(ConnectionProvider con, InterfaceInfo info) {
@@ -100,33 +84,28 @@ class TranslationUtils {
     FieldLabelsData[] fieldLabels;
     FieldGroupLabelsData[] fieldGroupLabels;
     try {
+      List<WindowLabel> windowLabelsCol = new ArrayList<WindowLabel>();
       if (lang.equals("") || lang.equals(moduleLang) || moduleLang.equals("")) {
         fieldLabels = FieldLabelsData.select(con, tabId, lang);
         fieldGroupLabels = FieldGroupLabelsData.select(con, tabId);
-        populateFieldLabels(fieldLabels);
+        populateFieldLabels(windowLabelsCol, fieldLabels);
         if (fieldGroupLabels.length > 0) {
-          populateFieldGroupLabels(fieldGroupLabels);
+          populateFieldGroupLabels(windowLabelsCol, fieldGroupLabels);
         }
       } else {
         fieldLabels = FieldLabelsData.select(con, tabId, lang);
         fieldGroupLabels = FieldGroupLabelsData.selectFieldGroupTrl(con, tabId, lang);
-        populateFieldLabels(fieldLabels);
+        populateFieldLabels(windowLabelsCol, fieldLabels);
         if (fieldGroupLabels.length > 0) {
-          populateFieldGroupLabels(fieldGroupLabels);
+          populateFieldGroupLabels(windowLabelsCol, fieldGroupLabels);
         }
       }
-      windowLabels = new WindowLabel[windowLabelsCol.size()];
-      int i = 0;
-      for (Iterator<WindowLabel> iteratorWinLabel = windowLabelsCol.iterator(); iteratorWinLabel
-          .hasNext();) {
-        WindowLabel label = (WindowLabel) iteratorWinLabel.next();
-        windowLabels[i] = label;
-        i++;
-      }
+      WindowLabel[] windowLabels = new WindowLabel[windowLabelsCol.size()];
+      return windowLabelsCol.toArray(windowLabels);
     } catch (ServletException e) {
-      e.printStackTrace();
+      log4j.error("Error in processWindowLabels", e);
     }
-    return windowLabels;
+    return new WindowLabel[0];
   }
 
   public static WindowLabel[] processProcessLabels(ConnectionProvider con, String lang,
@@ -136,15 +115,15 @@ class TranslationUtils {
       if (lang.equals(uiInfo.getModuleLanguage()) || lang.equals("")
           || uiInfo.getModuleLanguage().equals("")) {
         processLabels = ProcessLabelsData.selectOriginalParameters(con, uiInfo.getId());
-        populateProcessLabels(processLabels);
+        return populateProcessLabels(processLabels);
       } else {
         processLabels = ProcessLabelsData.selectTranslatedParameters(con, uiInfo.getId(), lang);
-        populateProcessLabels(processLabels);
+        return populateProcessLabels(processLabels);
       }
     } catch (ServletException e) {
-      e.printStackTrace();
+      log4j.error("Error in processProcessLabels", e);
     }
-    return windowLabels;
+    return new WindowLabel[0];
   }
 
   public static InterfaceInfo getInterfaceHeaderTrlInfo(ConnectionProvider con, InterfaceInfo info,
@@ -178,7 +157,8 @@ class TranslationUtils {
     return uiInfoResult;
   }
 
-  private static void populateFieldLabels(FieldLabelsData[] fieldLabels) {
+  private static void populateFieldLabels(List<WindowLabel> windowLabelsCol,
+      FieldLabelsData[] fieldLabels) {
     for (int labelsCount = 0; labelsCount < fieldLabels.length; labelsCount++) {
       FieldLabelsData labelData = fieldLabels[labelsCount];
       WindowLabel label = new WindowLabel(labelData.adColumnId, labelData.fieldName,
@@ -187,7 +167,8 @@ class TranslationUtils {
     }
   }
 
-  private static void populateFieldGroupLabels(FieldGroupLabelsData[] fieldGroupLabels) {
+  private static void populateFieldGroupLabels(List<WindowLabel> windowLabelsCol,
+      FieldGroupLabelsData[] fieldGroupLabels) {
     HashMap<String, WindowLabel> uniqueFieldGroups = new HashMap<String, WindowLabel>();
     for (int labelsCount = 0; labelsCount < fieldGroupLabels.length; labelsCount++) {
       FieldGroupLabelsData labelData = fieldGroupLabels[labelsCount];
@@ -198,28 +179,31 @@ class TranslationUtils {
     windowLabelsCol.addAll(uniqueFieldGroups.values());
   }
 
-  private static void populateProcessLabels(ProcessLabelsData[] fieldLabels) {
-    windowLabels = new WindowLabel[fieldLabels.length];
+  private static WindowLabel[] populateProcessLabels(ProcessLabelsData[] fieldLabels) {
+    WindowLabel[] res = new WindowLabel[fieldLabels.length];
     for (int labelsCount = 0; labelsCount < fieldLabels.length; labelsCount++) {
       ProcessLabelsData labelData = fieldLabels[labelsCount];
       WindowLabel label = new WindowLabel(labelData.processparacolumnname,
           labelData.processparaname, labelData.processparatrlname);
-      windowLabels[labelsCount] = label;
+      res[labelsCount] = label;
     }
+    return res;
   }
 
-  private static void retrieveLabelData() {
+  private static HashMap<String, String> retrieveLabelData(ConnectionProvider conn,
+      String fileName, String language) {
+    HashMap<String, String> textmap = new HashMap<String, String>();
     try {
-      textData = TextInterfacesData.selectText(conn, fileName, language);
+      TextInterfacesData[] textData = TextInterfacesData.selectText(conn, fileName, language);
+      for (int i = 0; i < textData.length; i++) {
+        // trim values, in some occasions there is a character 160 representing blank spaces
+        textmap.put(textData[i].text.replace((char) 160, ' ').trim(), textData[i].trltext);
+      }
+      return textmap;
     } catch (ServletException e) {
-      e.printStackTrace();
+      log4j.error("Error in retrieveLabelData", e);
     }
+    return textmap;
   }
 
-  private static void populateLabelMap() {
-    for (int i = 0; i < textData.length; i++) {
-      // trim values, in some occasions there is a character 160 representing blank spaces
-      textmap.put(textData[i].text.replace((char) 160, ' ').trim(), textData[i].trltext);
-    }
-  }
 }

@@ -30,9 +30,11 @@
 			FROM C_TAXREGISTER_TYPE
 			WHERE ISACTIVE='Y'
       AND AD_CLIENT_ID = ?
+      AND C_TAXREGISTER_TYPE.AD_Org_ID IN ('1')
       ]]>
   </Sql>
   <Parameter name="adClientId"/>
+  <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_TAXREGISTER_TYPE.AD_Org_ID IN (" text="'1'"/>
   </SqlMethod>
  
   

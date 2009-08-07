@@ -28,7 +28,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -43,7 +43,7 @@
   *   Use AD_Sequence_Doc('DocumentNo_myTable',.. to get it directly
   ************************************************************************/
   v_NextNo VARCHAR2(32);
-  v_NextNoSys NUMBER;
+
   v_Sequence_ID VARCHAR2(32):=NULL;
   v_Prefix VARCHAR2(30) ;
   v_Suffix VARCHAR2(30) ;
@@ -65,26 +65,19 @@ IF(v_Sequence_ID IS NULL) THEN -- No Sequence Number
   RETURN;
 END IF;
 -- Get the numbers
-SELECT s.AD_Sequence_ID, s.CurrentNext, s.CurrentNextSys, s.Prefix, s.Suffix
-INTO v_Sequence_ID, v_NextNo, v_NextNoSys, v_Prefix, v_Suffix
+SELECT s.AD_Sequence_ID, s.CurrentNext, s.Prefix, s.Suffix
+INTO v_Sequence_ID, v_NextNo, v_Prefix, v_Suffix
 FROM C_DocType d, AD_Sequence s
 WHERE d.C_DocType_ID=p_DocType_ID -- parameter
-  AND d.DocNoSequence_ID=s.AD_Sequence_ID  AND s.IsActive='Y'  AND s.IsTableID='N'  AND s.IsAutoSequence='Y'  FOR UPDATE OF CurrentNext, CurrentNextSys;
-IF(v_NextNoSys<>-1 AND p_ID<'1000000') THEN -- System No
-  IF p_Update_Next='Y' THEN
-    UPDATE AD_Sequence
-      SET CurrentNextSys=CurrentNextSys + IncrementNo
-    WHERE AD_Sequence_ID=v_Sequence_ID;
-  END IF;
-  p_DocumentNo:=COALESCE(v_Prefix, '') || v_NextNoSys || COALESCE(v_Suffix, '') ;
-ELSE -- Standard No
+  AND d.DocNoSequence_ID=s.AD_Sequence_ID  AND s.IsActive='Y'  AND s.IsTableID='N'  AND s.IsAutoSequence='Y'  FOR UPDATE OF CurrentNext;
+
   IF p_Update_Next='Y' THEN
     UPDATE AD_Sequence
       SET CurrentNext=CurrentNext + IncrementNo
     WHERE AD_Sequence_ID=v_Sequence_ID;
   END IF;
   p_DocumentNo:=COALESCE(v_Prefix, '') || v_NextNo || COALESCE(v_Suffix, '') ;
-END IF;
+
 -- DBMS_OUTPUT.PUT_LINE(p_DocumentNo);
 EXCEPTION
 WHEN NO_DATA_FOUND THEN

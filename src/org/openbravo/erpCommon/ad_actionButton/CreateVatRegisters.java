@@ -142,9 +142,10 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
         return myMessage;
       }
-      
+
       // Select all active Register Type for create the Tax Registers
-      TaxRegisterType[] taxregistertypes = TaxRegisterType.select(this, vars.getClient());
+      TaxRegisterType[] taxregistertypes = TaxRegisterType.select(this, vars.getClient(), Tree
+          .getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), taxpayment[0].adOrgId));
       log4j.info("2strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom
           + "strDateto: " + strDateto + "strProcessed: " + strProcessed + "strGeneratePayment: "
           + strGeneratePayment);
@@ -173,7 +174,9 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
       TaxRegister[] taxregisters = TaxRegister.selectChild(this, strTaxpaymentID);
       for (TaxRegister taxRegister : taxregisters) {
         CreateVatRegistersData[] invoices = CreateVatRegistersData.select(this, strTaxpaymentID,
-            taxRegister.cTaxregisterTypeId, strDatefrom, DateTimeData.nDaysAfter(this, strDateto,"1"),Tree.getMembers(this,TreeData.getTreeOrg(this, vars.getClient()),taxpayment[0].adOrgId));
+            taxRegister.cTaxregisterTypeId, strDatefrom, DateTimeData.nDaysAfter(this, strDateto,
+                "1"), Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
+                taxpayment[0].adOrgId));
         for (CreateVatRegistersData myinvoice : invoices) {
           String strTaxBaseAmt = "0";
           String strTaxAmt = "0";
