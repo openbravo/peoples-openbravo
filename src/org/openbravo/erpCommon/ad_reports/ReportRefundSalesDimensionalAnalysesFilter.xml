@@ -57,8 +57,8 @@
   <PARAMETER id="paramRatiodescOrder" name="ratiodesc" boolean="checked" withId="paramConstanteRatiodescOrder"/>
   <PARAMETER id="paramMayor" name="mayor" attribute="value" format="euroEdition"/>
   <PARAMETER id="paramMenor" name="menor" attribute="value" format="euroEdition"/>
-  <PARAMETER id="paramRatioMayor" name="ratioMayor" attribute="value" format="euroEdition"/>
-  <PARAMETER id="paramRatioMenor" name="ratioMenor" attribute="value" format="euroEdition"/>
+  <PARAMETER id="paramRatioMayor" name="ratioMayor" attribute="value" format="qtyEdition"/>
+  <PARAMETER id="paramRatioMenor" name="ratioMenor" attribute="value" format="qtyEdition"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
   <PARAMETER id="paramParentTabContainer" name="parentTabContainer" default=" "/>
