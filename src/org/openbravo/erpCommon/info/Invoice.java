@@ -110,8 +110,8 @@ public class Invoice extends HttpSecureAppServlet {
       String strFechaTo = vars.getGlobalVariable("inpDateTo", "Invoice.inpDateTo", "");
       String strDescription = vars
           .getGlobalVariable("inpDescription", "Invoice.inpDescription", "");
-      String strCal1 = vars.getGlobalVariable("inpCal1", "Invoice.inpCal1", "");
-      String strCalc2 = vars.getGlobalVariable("inpCal2", "Invoice.inpCal2", "");
+      String strCal1 = vars.getNumericGlobalVariable("inpCal1", "Invoice.inpCal1", "");
+      String strCalc2 = vars.getNumericGlobalVariable("inpCal2", "Invoice.inpCal2", "");
       String strOrder = vars.getGlobalVariable("inpOrder", "Invoice.inpOrder", "");
       String strSOTrx = vars.getGlobalVariable("inpisSOTrx", "Invoice.inpisSOTrx", "");
       String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Invoice.adorgid", "");

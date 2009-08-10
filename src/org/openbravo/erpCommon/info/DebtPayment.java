@@ -73,8 +73,8 @@ public class DebtPayment extends HttpSecureAppServlet {
           "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "DebtPayment.inpDateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "DebtPayment.inpDateTo", "");
-      String strCal1 = vars.getGlobalVariable("inpCal1", "DebtPayment.inpCal1", "");
-      String strCal2 = vars.getGlobalVariable("inpCal2", "DebtPayment.inpCal2", "");
+      String strCal1 = vars.getNumericGlobalVariable("inpCal1", "DebtPayment.inpCal1", "");
+      String strCal2 = vars.getNumericGlobalVariable("inpCal2", "DebtPayment.inpCal2", "");
       String strPaymentRule = vars.getGlobalVariable("inpCPaymentRuleId",
           "DebtPayment.inpCPaymentRuleId", "");
       String strIsReceipt = vars.getGlobalVariable("inpIsReceipt", "DebtPayment.inpIsReceipt", "Y");

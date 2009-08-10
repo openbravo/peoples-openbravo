@@ -100,8 +100,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
       String strDocumentNo = vars.getGlobalVariable("inpdocumentno", "InvoiceLine.documentno", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "InvoiceLine.datefrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "InvoiceLine.dateto", "");
-      String strCal1 = vars.getGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
-      String strCal2 = vars.getGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
+      String strCal1 = vars.getNumericGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
+      String strCal2 = vars.getNumericGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
       printPage(response, vars, strBPartner, strProduct, strDocumentNo, strDateFrom, strDateTo,
           strCal1, strCal2);
     } else if (vars.commandIn("KEY")) {
@@ -123,8 +123,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
             .getGlobalVariable("inpdocumentno", "InvoiceLine.documentno", "");
         String strDateFrom = vars.getGlobalVariable("inpDateFrom", "InvoiceLine.datefrom", "");
         String strDateTo = vars.getGlobalVariable("inpDateTo", "InvoiceLine.dateto", "");
-        String strCal1 = vars.getGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
-        String strCal2 = vars.getGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
+        String strCal1 = vars.getNumericGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
+        String strCal2 = vars.getNumericGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
         printPage(response, vars, strBPartner, strProduct, strDocumentNo, strDateFrom, strDateTo,
             strCal1, strCal2);
       }
@@ -142,8 +142,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
       String strDateTo = vars.getGlobalVariable("inpDateTo", "InvoiceLine.dateto", "");
       String strDescription = vars.getGlobalVariable("inpDescription", "InvoiceLine.description",
           "");
-      String strCal1 = vars.getGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
-      String strCal2 = vars.getGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
+      String strCal1 = vars.getNumericGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
+      String strCal2 = vars.getNumericGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
       String strOrder = vars.getGlobalVariable("inpInvoice", "InvoiceLine.invoice", "");
       String strOrg = vars.getGlobalVariable("inpInvoice", "InvoiceLine.adorgid", "");
 

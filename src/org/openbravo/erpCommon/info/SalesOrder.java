@@ -89,8 +89,8 @@ public class SalesOrder extends HttpSecureAppServlet {
       String strDateTo = vars.getGlobalVariable("inpDateTo", "SalesOrder.dateto", "");
       String strDescription = vars
           .getGlobalVariable("inpDescription", "SalesOrder.description", "");
-      String strCal1 = vars.getGlobalVariable("inpCal1", "SalesOrder.grandtotalfrom", "");
-      String strCal2 = vars.getGlobalVariable("inpCal2", "SalesOrder.grandtotalto", "");
+      String strCal1 = vars.getNumericGlobalVariable("inpCal1", "SalesOrder.grandtotalfrom", "");
+      String strCal2 = vars.getNumericGlobalVariable("inpCal2", "SalesOrder.grandtotalto", "");
       String strOrder = vars.getGlobalVariable("inpOrder", "SalesOrder.order", "");
       String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "SalesOrder.adorgid", "");
       String strNewFilter = vars.getStringParameter("newFilter");
