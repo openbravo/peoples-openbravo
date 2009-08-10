@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -11,9 +11,13 @@
  */
 package org.openbravo.xmlEngine;
 
+import java.math.BigDecimal;
+
+import org.apache.log4j.Logger;
 import org.openbravo.utils.Replace;
 
 class ParameterValue implements XmlComponentValue {
+  private static final Logger log4j = Logger.getLogger(ParameterValue.class);
   String strValue = null;
   ParameterTemplate parameterTemplate;
   XmlComponentValue xmlComponentValue = null;
@@ -48,9 +52,24 @@ class ParameterValue implements XmlComponentValue {
   public String print() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.print();
-    } else {
+    }
+
+    if (parameterTemplate.formatOutput == null) {
       return strValue;
     }
+
+    if (strValue == null || strValue.equals("") || strValue.equalsIgnoreCase("NULL")) {
+      return "";
+    }
+
+    // format value for output
+    BigDecimal total = BigDecimal.ZERO;
+    try {
+      total = new BigDecimal(strValue);
+    } catch (Exception e) {
+      log4j.error("print() - Could not parse to string to BigDecimal: " + strValue, e);
+    }
+    return parameterTemplate.formatOutput.format(total);
   }
 
   public String printPrevious() {
