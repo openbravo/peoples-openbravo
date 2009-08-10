@@ -284,8 +284,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strPaymentRule = vars.getStringParameter("inppaymentrule");
     final String strPlannedDateFrom = vars.getStringParameter("inpplanneddateFrom");
     final String strPlannedDateTo = vars.getStringParameter("inpplanneddateTo");
-    final String strAmountFrom = vars.getStringParameter("inpamountFrom");
-    final String strAmountTo = vars.getStringParameter("inpamountTo");
+    final String strAmountFrom = vars.getNumericParameter("inpamountFrom");
+    final String strAmountTo = vars.getNumericParameter("inpamountTo");
     String strIsReceipt = vars.getStringParameter("inpisreceipt");
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     final String strBankAccount = vars.getStringParameter("inpcBankaccountId");
@@ -293,8 +293,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strCharge = vars.getStringParameter("inpCharge");
     final String strPlannedDate = vars.getStringParameter("inpplanneddate", strStatementDate);
     final String strCost = vars.getStringParameter("inpcost", "0.00");
-    final String strProposed = vars.getStringParameter("inpproposed", "0.00");
-    final String strDocumentNo = vars.getStringParameter("inpDocumentNo");
+    final String strProposed = vars.getNumericParameter("inpproposed", "0.00");
+    final String strDocumentNo = vars.getNumericParameter("inpDocumentNo");
     CreateFromBankData[] data = null;
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/CreateFrom_Bank").createXmlDocument();
@@ -982,9 +982,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strPaymentRule = vars.getStringParameter("inppaymentrule");
     final String strPlannedDateFrom = vars.getStringParameter("inpplanneddateFrom");
     final String strPlannedDateTo = vars.getStringParameter("inpplanneddateTo");
-    final String strAmountFrom = vars.getStringParameter("inpamountFrom");
-    final String strAmountTo = vars.getStringParameter("inpamountTo");
-    final String strTotalAmount = vars.getStringParameter("inpamount");
+    final String strAmountFrom = vars.getNumericParameter("inpamountFrom");
+    final String strAmountTo = vars.getNumericParameter("inpamountTo");
+    final String strTotalAmount = vars.getNumericParameter("inpamount");
     String strIsReceipt = vars.getStringParameter("inpisreceipt");
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     // String strAutoCalc = vars.getStringParameter("inpAutoClaculated");
@@ -1152,9 +1152,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strPaymentRule = vars.getStringParameter("inppaymentrule");
     final String strPlannedDateFrom = vars.getStringParameter("inpplanneddateFrom");
     final String strPlannedDateTo = vars.getStringParameter("inpplanneddateTo");
-    final String strAmountFrom = vars.getStringParameter("inpamountFrom");
-    final String strAmountTo = vars.getStringParameter("inpamountTo");
-    final String strTotalAmount = vars.getStringParameter("inpamount");
+    final String strAmountFrom = vars.getNumericParameter("inpamountFrom");
+    final String strAmountTo = vars.getNumericParameter("inpamountTo");
+    final String strTotalAmount = vars.getNumericParameter("inpamount");
     String strIsReceipt = vars.getStringParameter("inpisreceipt", isReceipt);
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     // String strAutoCalc = vars.getStringParameter("inpAutoCalculated");
@@ -1347,8 +1347,8 @@ public class CreateFrom extends HttpSecureAppServlet {
             return myMessage;
           }
           strDateplanned = vars.getStringParameter("inpplanneddate" + strDebtPaymentId.trim());
-          strChargeamt = vars.getStringParameter("inpcost" + strDebtPaymentId.trim());
-          strProposedAmt = vars.getStringParameter("inpproposed" + strDebtPaymentId.trim());
+          strChargeamt = vars.getNumericParameter("inpcost" + strDebtPaymentId.trim());
+          strProposedAmt = vars.getNumericParameter("inpproposed" + strDebtPaymentId.trim());
           String strAmount = CreateFromBankData.selectPaymentAmount(this, strDebtPaymentId.trim());
           if (strProposedAmt != null && !strProposedAmt.equals("")
               && new BigDecimal(strProposedAmt).signum() != 0

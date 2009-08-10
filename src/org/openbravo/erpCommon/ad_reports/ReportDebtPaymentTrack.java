@@ -50,9 +50,10 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportDebtPaymentTrack|DateTo", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportDebtPaymentTrack|cBpartnerId", "", IsIDFilter.instance);
-      String strAmtFrom = vars
-          .getGlobalVariable("inpAmtFrom", "ReportDebtPaymentTrack|AmtFrom", "");
-      String strAmtTo = vars.getGlobalVariable("inpAmtTo", "ReportDebtPaymentTrack|AmtTo", "");
+      String strAmtFrom = vars.getNumericGlobalVariable("inpAmtFrom",
+          "ReportDebtPaymentTrack|AmtFrom", "");
+      String strAmtTo = vars.getNumericGlobalVariable("inpAmtTo", "ReportDebtPaymentTrack|AmtTo",
+          "");
       String strInvoice = vars.getGlobalVariable("inpInvoice", "ReportDebtPaymentTrack|Invoice",
           "I");
       String strDPCNA = vars.getGlobalVariable("inpDPCNA", "ReportDebtPaymentTrack|DPCNA", "C");
@@ -71,9 +72,10 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
           .getRequestGlobalVariable("inpDateTo", "ReportDebtPaymentTrack|DateTo");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportDebtPaymentTrack|cBpartnerId", IsIDFilter.instance);
-      String strAmtFrom = vars.getRequestGlobalVariable("inpAmtFrom",
+      String strAmtFrom = vars.getNumericRequestGlobalVariable("inpAmtFrom",
           "ReportDebtPaymentTrack|AmtFrom");
-      String strAmtTo = vars.getRequestGlobalVariable("inpAmtTo", "ReportDebtPaymentTrack|AmtTo");
+      String strAmtTo = vars.getNumericRequestGlobalVariable("inpAmtTo",
+          "ReportDebtPaymentTrack|AmtTo");
       String strInvoice = vars.getRequestGlobalVariable("inpInvoice",
           "ReportDebtPaymentTrack|Invoice");
       String strDPCNA = vars.getRequestGlobalVariable("inpDPCNA", "ReportDebtPaymentTrack|DPCNA");
@@ -93,9 +95,10 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
           .getRequestGlobalVariable("inpDateTo", "ReportDebtPaymentTrack|DateTo");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportDebtPaymentTrack|cBpartnerId", IsIDFilter.instance);
-      String strAmtFrom = vars.getRequestGlobalVariable("inpAmtFrom",
+      String strAmtFrom = vars.getNumericRequestGlobalVariable("inpAmtFrom",
           "ReportDebtPaymentTrack|AmtFrom");
-      String strAmtTo = vars.getRequestGlobalVariable("inpAmtTo", "ReportDebtPaymentTrack|AmtTo");
+      String strAmtTo = vars.getNumericRequestGlobalVariable("inpAmtTo",
+          "ReportDebtPaymentTrack|AmtTo");
       String strInvoice = vars.getRequestGlobalVariable("inpInvoice",
           "ReportDebtPaymentTrack|Invoice");
       String strDPCNA = vars.getRequestGlobalVariable("inpDPCNA", "ReportDebtPaymentTrack|DPCNA");

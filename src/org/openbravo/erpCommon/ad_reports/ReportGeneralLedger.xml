@@ -31,8 +31,8 @@
 	<PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramAD_ORGID" name="adOrgId"/>
   <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>
-  <PARAMETER id="paramAmtFrom" name="amtFrom" attribute="value"/>
-  <PARAMETER id="paramAmtTo" name="amtTo" attribute="value"/>
+  <PARAMETER id="paramAmtFrom" name="amtFrom" attribute="value" format="euroEdition"/>
+  <PARAMETER id="paramAmtTo" name="amtTo" attribute="value" format="euroEdition"/>
   <PARAMETER id="paramElementvalueIdTo" name="paramElementvalueIdTo" attribute="value"/>
   <PARAMETER id="paramElementvalueIdFrom" name="paramElementvalueIdFrom" attribute="value"/>
   <PARAMETER id="inpElementValueIdTo_DES" name="inpElementValueIdTo_DES" attribute="value"/>

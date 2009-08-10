@@ -277,9 +277,9 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         .getLanguage(), vars.getUser(), Utility.getContext(this, vars, "#User_Client",
         "RequisitionToOrder"), Tree.getMembers(this, strTreeOrg, strOrgId));
     for (int i = 0; dataselected != null && i < dataselected.length; i++) {
-      String strLockQty = vars.getStringParameter("inpQty" + dataselected[i].mRequisitionlineId);
-      String strLockPrice = vars
-          .getStringParameter("inpPrice" + dataselected[i].mRequisitionlineId);
+      String strLockQty = vars.getNumericParameter("inpQty" + dataselected[i].mRequisitionlineId);
+      String strLockPrice = vars.getNumericParameter("inpPrice"
+          + dataselected[i].mRequisitionlineId);
       RequisitionToOrderData.updateLock(this, strLockQty, strLockPrice,
           dataselected[i].mRequisitionlineId);
     }

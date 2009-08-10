@@ -29,8 +29,8 @@
   <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
 	<PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
 	<PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
-  <PARAMETER id="paramAmountFrom" name="amountFrom" attribute="value"/>
-  <PARAMETER id="paramAmountTo" name="amountTo" attribute="value"/>
+  <PARAMETER id="paramAmountFrom" name="amountFrom" attribute="value" format="euroEdition"/>
+  <PARAMETER id="paramAmountTo" name="amountTo" attribute="value" format="euroEdition"/>
   <PARAMETER id="paramPaymentRule" name="paymentRule" default=""/>
   <PARAMETER id="paramStatus" name="status" default=""/>
   <PARAMETER id="parameterConstantSettle" name="constantSettle" default="isSettle"/>

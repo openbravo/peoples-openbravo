@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,9 +59,9 @@
 <PARAMETER id="fieldIsReceiptPago" name="isreceiptPago" boolean="selected" withId="paramIsReceiptPago"/>
 <PARAMETER id="paramIsReceiptCobro" name="paramIsReceiptCobro" default="Y"/>
 <PARAMETER id="fieldIsReceiptCobro" name="isreceiptCobro" boolean="selected" withId="paramIsReceiptCobro"/>
-<PARAMETER id="paramAmountFrom" name="amountFrom" attribute="value"/>
-<PARAMETER id="paramAmountTo" name="amountTo" attribute="value"/>
-<PARAMETER id="paramTotalAmount" name="totalAmount" attribute="value"/>
+<PARAMETER id="paramAmountFrom" name="amountFrom" attribute="value" format="euroEdition"/>
+<PARAMETER id="paramAmountTo" name="amountTo" attribute="value" format="euroEdition"/>
+<PARAMETER id="paramTotalAmount" name="totalAmount" attribute="value" format="euroEdition"/>
 <!-- <PARAMETER id="fieldAutoCalculated" name="autoCalculated" boolean="checked" withId="paramCheck"/>
  --><PARAMETER id="paramPaymentRule" name="paymentRule"/>
 <SUBREPORT id="reportPaymentRule" name="reportPaymentRule" report="org/openbravo/erpCommon/reference/List">

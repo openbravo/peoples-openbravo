@@ -32,10 +32,10 @@
 	<PARAMETER id="paramFecha" name="fecha" attribute="value"/>
 	<PARAMETER id="paramFecha" name="fechadisplayFormat" attribute="displayformat" replace="xx"/>
 	<PARAMETER id="paramFecha" name="fechasaveFormat" attribute="saveformat" replace="yy"/>
-	<PARAMETER id="paramTransactionalRange" name="transactionalRange" attribute="value"/>
+	<PARAMETER id="paramTransactionalRange" name="transactionalRange" attribute="value" format="integerEdition"/>
 	<PARAMETER id="paramInfo" name="info"/>
-	<PARAMETER id="RecordRange" name="recordRange" attribute="value"/>
-	<PARAMETER id="RecordRangeInfo" name="recordRangeInfo" attribute="value"/>
+	<PARAMETER id="RecordRange" name="recordRange" attribute="value" format="integerEdition"/>
+	<PARAMETER id="RecordRangeInfo" name="recordRangeInfo" attribute="value" format="integerEdition"/>
   <PARAMETER id="Theme" name="Theme" attribute="value"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>

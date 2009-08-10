@@ -63,8 +63,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strDateFrom = vars
           .getGlobalVariable("inpDateFrom", "ReportGeneralLedger|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo", "");
-      String strAmtFrom = vars.getGlobalVariable("inpAmtFrom", "ReportGeneralLedger|AmtFrom", "");
-      String strAmtTo = vars.getGlobalVariable("inpAmtTo", "ReportGeneralLedger|AmtTo", "");
+      String strAmtFrom = vars.getNumericGlobalVariable("inpAmtFrom",
+          "ReportGeneralLedger|AmtFrom", "");
+      String strAmtTo = vars.getNumericGlobalVariable("inpAmtTo", "ReportGeneralLedger|AmtTo", "");
       String strcelementvaluefrom = vars.getGlobalVariable("inpcElementValueIdFrom",
           "ReportGeneralLedger|C_ElementValue_IDFROM", "");
       String strcelementvalueto = vars.getGlobalVariable("inpcElementValueIdTo",
@@ -88,9 +89,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportGeneralLedger|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo");
-      String strAmtFrom = vars
-          .getRequestGlobalVariable("inpAmtFrom", "ReportGeneralLedger|AmtFrom");
-      String strAmtTo = vars.getRequestGlobalVariable("inpAmtTo", "ReportGeneralLedger|AmtTo");
+      String strAmtFrom = vars.getNumericRequestGlobalVariable("inpAmtFrom",
+          "ReportGeneralLedger|AmtFrom");
+      String strAmtTo = vars.getNumericRequestGlobalVariable("inpAmtTo",
+          "ReportGeneralLedger|AmtTo");
       String strcelementvaluefrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
           "ReportGeneralLedger|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
@@ -156,9 +158,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportGeneralLedger|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo");
-      String strAmtFrom = vars.getRequestGlobalVariable("inpAmtFrom",
+      String strAmtFrom = vars.getNumericRequestGlobalVariable("inpAmtFrom",
           "ReportGeneralLedger|AmteFrom");
-      String strAmtTo = vars.getRequestGlobalVariable("inpAmtTo", "ReportGeneralLedger|AmtTo");
+      String strAmtTo = vars.getNumericRequestGlobalVariable("inpAmtTo",
+          "ReportGeneralLedger|AmtTo");
       String strcelementvaluefrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
           "ReportGeneralLedger|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",

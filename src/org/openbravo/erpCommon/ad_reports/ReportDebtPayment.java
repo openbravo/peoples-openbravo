@@ -79,8 +79,8 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
         strcBpartnerId = vars.getGlobalVariable("inpcBPartnerId_IN",
             "ReportDebtPayment|inpcBPartnerId_IN", "");
       }
-      String strCal1 = vars.getGlobalVariable("inpCal1", "ReportDebtPayment|Cal1", "");
-      String strCalc2 = vars.getGlobalVariable("inpCalc2", "ReportDebtPayment|Cal2", "");
+      String strCal1 = vars.getNumericGlobalVariable("inpCal1", "ReportDebtPayment|Cal1", "");
+      String strCal2 = vars.getNumericGlobalVariable("inpCal2", "ReportDebtPayment|Cal2", "");
       String strPaymentRule = vars.getGlobalVariable("inpCPaymentRuleId",
           "ReportDebtPayment|PaymentRule", "");
       String strSettle = vars.getGlobalVariable("inpSettle", "ReportDebtPayment|Settle", "");
@@ -101,7 +101,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       // "ReportDebtPayment|Entry","0");
       setHistoryCommand(request, "DIRECT");
       String strGroupBA = vars.getRequestGlobalVariable("inpGroupBA", "ReportDebtPayment|Group");
-      printPageDataSheet(response, vars, strcBpartnerId, strDateFrom, strDateTo, strCal1, strCalc2,
+      printPageDataSheet(response, vars, strcBpartnerId, strDateFrom, strDateTo, strCal1, strCal2,
           strPaymentRule, strSettle, strConciliate, strReceipt, strPending, strcbankaccount,
           strStatus, strGroup, strGroupBA);
     } else if (vars.commandIn("FIND")) {
@@ -115,8 +115,8 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportDebtPayment|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportDebtPayment|DateTo");
-      String strCal1 = vars.getRequestGlobalVariable("inpCal1", "ReportDebtPayment|Cal1");
-      String strCalc2 = vars.getRequestGlobalVariable("inpCal2", "ReportDebtPayment|Cal2");
+      String strCal1 = vars.getNumericRequestGlobalVariable("inpCal1", "ReportDebtPayment|Cal1");
+      String strCal2 = vars.getNumericRequestGlobalVariable("inpCal2", "ReportDebtPayment|Cal2");
       String strPaymentRule = vars.getRequestGlobalVariable("inpCPaymentRuleId",
           "ReportDebtPayment|PaymentRule");
       String strSettle = vars.getRequestGlobalVariable("inpSettle", "ReportDebtPayment|Settle");
@@ -134,7 +134,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       // "ReportDebtPayment|Entry","1");
       setHistoryCommand(request, "DIRECT");
       String strGroupBA = vars.getRequestGlobalVariable("inpGroupBA", "ReportDebtPayment|Group");
-      printPageDataSheet(response, vars, strcBpartnerId, strDateFrom, strDateTo, strCal1, strCalc2,
+      printPageDataSheet(response, vars, strcBpartnerId, strDateFrom, strDateTo, strCal1, strCal2,
           strPaymentRule, strSettle, strConciliate, strReceipt, strPending, strcbankaccount,
           strStatus, strGroup, strGroupBA);
     } else if (vars.commandIn("PRINT_PDF")) {
@@ -147,8 +147,8 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportDebtPayment|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportDebtPayment|DateTo");
-      String strCal1 = vars.getRequestGlobalVariable("inpCal1", "ReportDebtPayment|Cal1");
-      String strCalc2 = vars.getRequestGlobalVariable("inpCal2", "ReportDebtPayment|Cal2");
+      String strCal1 = vars.getNumericRequestGlobalVariable("inpCal1", "ReportDebtPayment|Cal1");
+      String strCal2 = vars.getNumericRequestGlobalVariable("inpCal2", "ReportDebtPayment|Cal2");
       String strPaymentRule = vars.getRequestGlobalVariable("inpCPaymentRuleId",
           "ReportDebtPayment|PaymentRule");
       String strSettle = vars.getRequestGlobalVariable("inpSettle", "ReportDebtPayment|Settle");
@@ -165,7 +165,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       vars.setSessionValue("ReportDebtPayment|Receipt", strReceipt);
       // String strEntry = vars.getGlobalVariable("inpEntry", "ReportDebtPayment|Entry","1");
       setHistoryCommand(request, "DIRECT");
-      printPageDataPdf(response, vars, strcBpartnerId, strDateFrom, strDateTo, strCal1, strCalc2,
+      printPageDataPdf(response, vars, strcBpartnerId, strDateFrom, strDateTo, strCal1, strCal2,
           strPaymentRule, strSettle, strConciliate, strReceipt, strPending, strcbankaccount,
           strStatus, strGroup, strGroupBA);
     } else
