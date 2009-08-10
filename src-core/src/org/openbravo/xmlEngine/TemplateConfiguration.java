@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -390,6 +390,13 @@ class TemplateConfiguration extends DefaultHandler {
           } else if (amap.getValue(i).equals("string")) {
             parameter.type = java.sql.Types.VARCHAR;
           }
+        } else if (amap.getQName(i).equals("format")) {
+          FormatCouple parameterFormat = xmlEngine.formatHashtable.get(amap.getValue(i));
+          if (parameterFormat == null) {
+            log4jTemplateConfiguration.warn("  format " + amap.getValue(i) + " not found");
+          }
+          parameter.formatOutput = parameterFormat.formatOutput;
+          parameter.formatSimple = parameterFormat.formatSimple;
         } else if (amap.getQName(i).equals("replaceCharacters")) {
           parameter.vecReplace = xmlEngine.replaceHashtable.get(amap.getValue(i));
           if (parameter.vecReplace == null) {
@@ -418,9 +425,7 @@ class TemplateConfiguration extends DefaultHandler {
     }
   }
 
-  public void endElement(java.lang.String uri, java.lang.String name, java.lang.String qName) { // throws
-                                                                                                // SAXException
-                                                                                                // {
+  public void endElement(java.lang.String uri, java.lang.String name, java.lang.String qName) {
     if (log4jTemplateConfiguration.isDebugEnabled())
       log4jTemplateConfiguration.debug("TemplateConfiguration: endElement is called: " + name);
     readBuffer();
