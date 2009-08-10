@@ -12347,10 +12347,10 @@ dojo.widget.defineWidget(
     lowerThan:"",
     isWrong:false,
     outputformat:"",
-    decSeparator: getGlobalDecSeparator(),
-    groupSeparator: getGlobalGroupSeparator(),
-    groupInterval: getGlobalGroupInterval(),
-    maskNumeric: getDefaultMaskNumeric(),
+    decSeparator: typeof getGlobalDecSeparator === "function" ? getGlobalDecSeparator() : ".",
+    groupSeparator: typeof getGlobalGroupSeparator === "function" ? getGlobalGroupSeparator() : ",",
+    groupInterval: typeof getGlobalGroupInterval === "function" ? getGlobalGroupInterval() : "3",
+    maskNumeric: typeof getDefaultMaskNumeric === "function" ? getDefaultMaskNumeric() : "#0.###",
     // override html
     templatePath: dojo.uri.dojoUri("deprecated250/ValidationTextbox.html"),
     // override css
