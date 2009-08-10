@@ -20,6 +20,8 @@ package org.openbravo.erpCommon.info;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -268,15 +270,17 @@ public class Product extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/info/SearchUniqueKeyResponse").createXmlDocument();
 
-    xmlDocument.setParameter("script", generateResult(data, strWarehouse, strPriceListVersion));
+    DecimalFormat df = Utility.getFormat(vars, "priceEdition");
+
+    xmlDocument.setParameter("script", generateResult(data, strWarehouse, strPriceListVersion, df));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
 
-  private String generateResult(ProductData[] data, String strWarehouse, String strPriceListVersion)
-      throws IOException, ServletException {
+  private String generateResult(ProductData[] data, String strWarehouse,
+      String strPriceListVersion, DecimalFormat df) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -284,10 +288,13 @@ public class Product extends HttpSecureAppServlet {
     html.append("var text = \"" + Replace.replace(data[0].name, "\"", "\\\"") + "\";\n");
     html.append("var parameter = new Array(\n");
     html.append("new SearchElements(\"_UOM\", true, \"" + data[0].cUomId + "\"),\n");
-    html.append("new SearchElements(\"_PSTD\", true, \"" + data[0].pricestd + "\"),\n");
-    html.append("new SearchElements(\"_PLIM\", true, \"" + data[0].pricelimit + "\"),\n");
+    html.append("new SearchElements(\"_PSTD\", true, \""
+        + df.format(new BigDecimal(data[0].pricestd)) + "\"),\n");
+    html.append("new SearchElements(\"_PLIM\", true, \""
+        + df.format(new BigDecimal(data[0].pricelimit)) + "\"),\n");
     html.append("new SearchElements(\"_CURR\", true, \"" + data[0].cCurrencyId + "\"),\n");
-    html.append("new SearchElements(\"_PLIST\", true, \"" + data[0].pricelist + "\")\n");
+    html.append("new SearchElements(\"_PLIST\", true, \""
+        + df.format(new BigDecimal(data[0].pricelist)) + "\")\n");
     html.append(");\n");
     html.append("parent.opener.closeSearch(\"SAVE\", key, text, parameter);\n");
     html.append("}\n");
@@ -370,11 +377,8 @@ public class Product extends HttpSecureAppServlet {
         // build sql orderBy clause
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-          // filter
-          // or
-          // first
-          // load
+        if (strNewFilter.equals("1") || strNewFilter.equals("")) {
+          // New filter or first load
           strNumRows = ProductData.countRows(this, strKey, strName, strPriceListVersion, Utility
               .getContext(this, vars, "#User_Client", "Product"), Utility.getSelectorOrgs(this,
               vars, strOrg));
@@ -424,6 +428,8 @@ public class Product extends HttpSecureAppServlet {
       }
     }
 
+    final DecimalFormat df = Utility.getFormat(vars, "priceEdition");
+
     if (!type.startsWith("<![CDATA["))
       type = "<![CDATA[" + type + "]]>";
     if (!title.startsWith("<![CDATA["))
@@ -452,7 +458,22 @@ public class Product extends HttpSecureAppServlet {
            * "_R").equals("")) { columnname += "_R"; }
            */
 
-          if ((data[j].getField(columnname)) != null) {
+          // Building rowKey
+          if (columnname.equalsIgnoreCase("rowkey")) {
+            final StringBuffer rowKey = new StringBuffer();
+            rowKey.append(data[j].getField("mProductId")).append("#");
+            rowKey.append(data[j].getField("name")).append("#");
+            rowKey.append(data[j].getField("cUomId")).append("#");
+            rowKey.append(df.format(new BigDecimal(data[j].getField("pricelist")))).append("#");
+            rowKey.append(df.format(new BigDecimal(data[j].getField("pricestd")))).append("#");
+            rowKey.append(df.format(new BigDecimal(data[j].getField("pricelimit")))).append("#");
+            rowKey.append(data[j].getField("cCurrencyId"));
+            strRowsData.append(rowKey);
+          } else if (columnname.equalsIgnoreCase("pricelist")
+              || columnname.equalsIgnoreCase("pricestd")
+              || columnname.equalsIgnoreCase("pricelimit")) {
+            strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
+          } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
             strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",

@@ -28,10 +28,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
       SELECT A.*,
-        PriceStd-PriceLimit AS Margin,
-        M_Product_ID || '#' || Name || '#' || C_UOM_ID || '#' || PriceList
-           || '#' || PriceStd
-           || '#' || PriceLimit || '#' || C_Currency_ID AS rowKey
+        PriceStd-PriceLimit AS Margin
       FROM (
         SELECT p.M_Product_ID, p.Discontinued, p.Value, p.Name,
         M_BOM_Qty_Available(p.M_Product_ID,?, NULL) AS QtyAvailable, 
@@ -68,6 +65,7 @@
         ) A ORDER BY Value
       ]]></Sql>
         <Field name="position" value="count"/>
+        <Field name="rowKey" value="void" />
         <Parameter name="warehouse"/>
         <Parameter name="warehouse"/>
         <Parameter name="warehouse"/>
