@@ -736,6 +736,41 @@ public class VariablesBase {
     return newValue;
   }
 
+  /**
+   * @see #getGlobalVariable(String,String,String)
+   */
+  public String getNumericGlobalVariable(String requestParameter, String sessionAttribute,
+      String defaultValue) throws ServletException {
+    String res = getNumericParameter(requestParameter);
+    if (!res.equals("")) {
+      setSessionValue(sessionAttribute, res);
+    } else {
+      res = getSessionValue(sessionAttribute);
+      if (res.equals("")) {
+        res = defaultValue;
+        setSessionValue(sessionAttribute, res);
+      }
+    }
+    return res;
+  }
+
+  /**
+   * @see #getRequestGlobalVariable(String,String)
+   */
+  public String getNumericRequestGlobalVariable(String requestParameter, String sessionAttribute)
+      throws ServletException {
+    String res = getNumericParameter(requestParameter);
+    if (!res.equals("")) {
+      setSessionValue(sessionAttribute, res);
+    } else {
+      res = getSessionValue(sessionAttribute);
+      if (!res.equals("")) {
+        removeSessionValue(sessionAttribute);
+      }
+    }
+    return res;
+  }
+
   private String transformNumber(String number) throws ServletException {
     String value = number;
     String groupSeparator = getSessionValue("#GROUPSEPARATOR|" + DEFAULT_FORMAT_NAME);
