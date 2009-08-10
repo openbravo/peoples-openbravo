@@ -89,8 +89,7 @@
       var decSeparator = getGlobalDecSeparator();
       var groupSeparator = getGlobalGroupSeparator();
       var groupInterval = getGlobalGroupInterval();
-      var menu = getFrame("frameMenu");
-      var maskNumeric = menu.F.getFormat("euroEdition");
+      var maskNumeric = formatNameToMask("euroEdition");
       round(price.value, 2);
       var formattedValue = returnCalcToFormatted(price.value, maskNumeric, decSeparator, groupSeparator, groupInterval);
       layer("paramTotalPrice", formattedValue, true);
