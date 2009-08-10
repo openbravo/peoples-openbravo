@@ -429,6 +429,7 @@ public class Product extends HttpSecureAppServlet {
     }
 
     final DecimalFormat df = Utility.getFormat(vars, "priceEdition");
+    final DecimalFormat qdf = Utility.getFormat(vars, "qtyEdition");
 
     if (!type.startsWith("<![CDATA["))
       type = "<![CDATA[" + type + "]]>";
@@ -471,8 +472,12 @@ public class Product extends HttpSecureAppServlet {
             strRowsData.append(rowKey);
           } else if (columnname.equalsIgnoreCase("pricelist")
               || columnname.equalsIgnoreCase("pricestd")
-              || columnname.equalsIgnoreCase("pricelimit")) {
+              || columnname.equalsIgnoreCase("pricelimit") || columnname.equalsIgnoreCase("margin")) {
             strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
+          } else if (columnname.equalsIgnoreCase("qtyonhand")
+              || columnname.equalsIgnoreCase("qtyordered")
+              || columnname.equalsIgnoreCase("qtyavailable")) {
+            strRowsData.append(qdf.format(new BigDecimal(data[j].getField(columnname))));
           } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
