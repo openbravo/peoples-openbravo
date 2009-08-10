@@ -577,6 +577,12 @@ function validateNumber(strValue, isFloatAllowed, isNegativeAllowed) {
   var isNegative = false;
   var i=0;
   if (strValue == null || strValue=="") return true;
+
+  var decSeparator = getGlobalDecSeparator();
+  var groupSeparator = getGlobalGroupSeparator();
+
+  strValue = returnFormattedToCalc(strValue, decSeparator, groupSeparator);
+
   if (strValue.substring(i, i+1)=="-") {
     if (isNegativeAllowed !=null && isNegativeAllowed) {
       isNegative = true;
