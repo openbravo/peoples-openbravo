@@ -20,6 +20,8 @@ package org.openbravo.erpCommon.info;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -256,14 +258,16 @@ public class ProductComplete extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/info/SearchUniqueKeyResponse").createXmlDocument();
 
-    xmlDocument.setParameter("script", generateResult(data, strWarehouse));
+    DecimalFormat df = Utility.getFormat(vars, "qtyEdition");
+
+    xmlDocument.setParameter("script", generateResult(data, strWarehouse, df));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
 
-  private String generateResult(ProductCompleteData[] data, String strWarehouse)
+  private String generateResult(ProductCompleteData[] data, String strWarehouse, DecimalFormat df)
       throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
@@ -275,9 +279,11 @@ public class ProductComplete extends HttpSecureAppServlet {
     html.append("new SearchElements(\"_ATR\", true, \"" + data[0].mAttributesetinstanceId
         + "\"),\n");
     html.append("new SearchElements(\"_PQTY\", true, \""
-        + (data[0].qtyorder.equals("0") ? "" : data[0].qtyorder) + "\"),\n");
+        + (data[0].qtyorder.equals("0") ? "" : df.format(new BigDecimal(data[0].qtyorder)))
+        + "\"),\n");
     html.append("new SearchElements(\"_PUOM\", true, \"" + data[0].cUom2Id + "\"),\n");
-    html.append("new SearchElements(\"_QTY\", true, \"" + data[0].qty + "\"),\n");
+    html.append("new SearchElements(\"_QTY\", true, \"" + df.format(new BigDecimal(data[0].qty))
+        + "\"),\n");
     html.append("new SearchElements(\"_UOM\", true, \"" + data[0].cUom1Id + "\")\n");
     html.append(");\n");
     html.append("parent.opener.closeSearch(\"SAVE\", key, text, parameter);\n");
@@ -363,11 +369,8 @@ public class ProductComplete extends HttpSecureAppServlet {
         // build sql orderBy clause from parameters
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-          // filter
-          // or
-          // first
-          // load
+        // New filter or first load
+        if (strNewFilter.equals("1") || strNewFilter.equals("")) {
           if (strStore.equals("Y")) {
             // countRows is the same in en_US and +trl case, so a
             // single countRows method is used
@@ -460,6 +463,8 @@ public class ProductComplete extends HttpSecureAppServlet {
       }
     }
 
+    DecimalFormat df = Utility.getFormat(vars, "qtyEdition");
+
     if (!type.startsWith("<![CDATA["))
       type = "<![CDATA[" + type + "]]>";
     if (!title.startsWith("<![CDATA["))
@@ -488,7 +493,23 @@ public class ProductComplete extends HttpSecureAppServlet {
            * "_R").equals("")) { columnname += "_R"; }
            */
 
-          if ((data[j].getField(columnname)) != null) {
+          if (columnname.equalsIgnoreCase("rowkey")) {
+            final StringBuffer rowKey = new StringBuffer();
+            rowKey.append(data[j].getField("mProductId")).append("#");
+            rowKey.append(data[j].getField("name")).append("#");
+            rowKey.append(data[j].getField("mLocatorId")).append("#");
+            rowKey.append(data[j].getField("mAttributesetinstanceId")).append("#");
+            rowKey.append(df.format(new BigDecimal(data[j].getField("qtyorder")))).append("#");
+            rowKey.append(data[j].getField("cUom2Id")).append("#");
+            final String qty = data[j].getField("qty").equals("") ? "0" : data[j].getField("qty");
+            rowKey.append(df.format(new BigDecimal(qty))).append("#");
+            rowKey.append(data[j].getField("cUom1Id"));
+            strRowsData.append(rowKey);
+          } else if (columnname.equalsIgnoreCase("qty") || columnname.equalsIgnoreCase("qtyorder")
+              || columnname.equalsIgnoreCase("qty_ref")
+              || columnname.equalsIgnoreCase("quantityorder_ref")) {
+            strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
+          } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
             strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
