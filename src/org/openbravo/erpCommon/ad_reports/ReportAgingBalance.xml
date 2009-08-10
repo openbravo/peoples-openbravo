@@ -42,10 +42,10 @@
   <PARAMETER id="parameterConstantPayable" name="constantPayable" default="N"/>
   <PARAMETER id="paramPayable" name="payable" boolean="checked" withId="parameterConstantPayable"/>
 
-  <PARAMETER id="paramColumn1" name="column1" attribute="value"/>
-  <PARAMETER id="paramColumn2" name="column2" attribute="value"/>
-  <PARAMETER id="paramColumn3" name="column3" attribute="value"/>
-  <PARAMETER id="paramColumn4" name="column4" attribute="value"/>
+  <PARAMETER id="paramColumn1" name="column1" attribute="value" format="integerEdition"/>
+  <PARAMETER id="paramColumn2" name="column2" attribute="value" format="integerEdition"/>
+  <PARAMETER id="paramColumn3" name="column3" attribute="value" format="integerEdition"/>
+  <PARAMETER id="paramColumn4" name="column4" attribute="value" format="integerEdition"/>
   <PARAMETER id="paramTitleColumn1" name="titleColumn1" default=""/>
   <PARAMETER id="paramTitleColumn2" name="titleColumn2" default=""/>
   <PARAMETER id="paramTitleColumn3" name="titleColumn3" default=""/>

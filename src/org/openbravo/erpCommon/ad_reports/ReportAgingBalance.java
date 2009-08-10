@@ -55,10 +55,14 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       String strisReceipt = vars.getGlobalVariable("inpReceipt", "ReportAgingBalance|IsReceipt",
           "N");
-      String strcolumn1 = vars.getGlobalVariable("inpColumn1", "ReportAgingBalance|Column1", "10");
-      String strcolumn2 = vars.getGlobalVariable("inpColumn2", "ReportAgingBalance|Column2", "20");
-      String strcolumn3 = vars.getGlobalVariable("inpColumn3", "ReportAgingBalance|Column3", "30");
-      String strcolumn4 = vars.getGlobalVariable("inpColumn4", "ReportAgingBalance|Column4", "60");
+      String strcolumn1 = vars.getNumericGlobalVariable("inpColumn1", "ReportAgingBalance|Column1",
+          "10");
+      String strcolumn2 = vars.getNumericGlobalVariable("inpColumn2", "ReportAgingBalance|Column2",
+          "20");
+      String strcolumn3 = vars.getNumericGlobalVariable("inpColumn3", "ReportAgingBalance|Column3",
+          "30");
+      String strcolumn4 = vars.getNumericGlobalVariable("inpColumn4", "ReportAgingBalance|Column4",
+          "60");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportAgingBalance|cBpartnerId", "", IsIDFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportAgingBalance|Org", "");
@@ -67,10 +71,14 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     } else if (vars.commandIn("FIND")) {
       String strisReceipt = vars.getRequestGlobalVariable("inpReceipt",
           "ReportAgingBalance|IsReceipt");
-      String strcolumn1 = vars.getRequestGlobalVariable("inpColumn1", "ReportAgingBalance|Column1");
-      String strcolumn2 = vars.getRequestGlobalVariable("inpColumn2", "ReportAgingBalance|Column2");
-      String strcolumn3 = vars.getRequestGlobalVariable("inpColumn3", "ReportAgingBalance|Column3");
-      String strcolumn4 = vars.getRequestGlobalVariable("inpColumn4", "ReportAgingBalance|Column4");
+      String strcolumn1 = vars.getNumericRequestGlobalVariable("inpColumn1",
+          "ReportAgingBalance|Column1");
+      String strcolumn2 = vars.getNumericRequestGlobalVariable("inpColumn2",
+          "ReportAgingBalance|Column2");
+      String strcolumn3 = vars.getNumericRequestGlobalVariable("inpColumn3",
+          "ReportAgingBalance|Column3");
+      String strcolumn4 = vars.getNumericRequestGlobalVariable("inpColumn4",
+          "ReportAgingBalance|Column4");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportAgingBalance|cBpartnerId", IsIDFilter.instance);
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportAgingBalance|Org");
@@ -79,10 +87,14 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     } else if (vars.commandIn("PRINT_PDF")) {
       String strisReceipt = vars.getRequestGlobalVariable("inpReceipt",
           "ReportAgingBalance|IsReceipt");
-      String strcolumn1 = vars.getRequestGlobalVariable("inpColumn1", "ReportAgingBalance|Column1");
-      String strcolumn2 = vars.getRequestGlobalVariable("inpColumn2", "ReportAgingBalance|Column2");
-      String strcolumn3 = vars.getRequestGlobalVariable("inpColumn3", "ReportAgingBalance|Column3");
-      String strcolumn4 = vars.getRequestGlobalVariable("inpColumn4", "ReportAgingBalance|Column4");
+      String strcolumn1 = vars.getNumericRequestGlobalVariable("inpColumn1",
+          "ReportAgingBalance|Column1");
+      String strcolumn2 = vars.getNumericRequestGlobalVariable("inpColumn2",
+          "ReportAgingBalance|Column2");
+      String strcolumn3 = vars.getNumericRequestGlobalVariable("inpColumn3",
+          "ReportAgingBalance|Column3");
+      String strcolumn4 = vars.getNumericRequestGlobalVariable("inpColumn4",
+          "ReportAgingBalance|Column4");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportAgingBalance|cBpartnerId", IsIDFilter.instance);
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportAgingBalance|Org");
