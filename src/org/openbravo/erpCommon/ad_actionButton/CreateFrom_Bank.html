@@ -94,10 +94,22 @@
       if (obj==null) return false;
       var price = document.frmMain.inpTotalPrice;
       var actualValue = Number(eval("document.frmMain.inpPrice" + obj.value + ".value"));
-      if (obj.checked) price.value = Number(price.value) + actualValue;
-      else price.value = Number(price.value) - actualValue;
-      if (isNaN(price.value)) price.value = 0;
-      layer("paramTotalPrice", price.value, true);
+      if (obj.checked) {
+         price.value = Number(price.value) + actualValue;
+      } else {
+         price.value = Number(price.value) - actualValue;
+      }
+      if (isNaN(price.value)) {
+         price.value = 0;
+      }
+
+      var decSeparator = getGlobalDecSeparator();
+      var groupSeparator = getGlobalGroupSeparator();
+      var groupInterval = getGlobalGroupInterval();
+      var maskNumeric = formatNameToMask("euroEdition");
+      var formattedValue = returnCalcToFormatted(price.value, maskNumeric, decSeparator, groupSeparator, groupInterval);
+
+      layer("paramTotalPrice", formattedValue, true);
       return true;
     }
 
