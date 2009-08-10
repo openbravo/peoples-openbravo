@@ -20,6 +20,8 @@ package org.openbravo.erpCommon.info;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -247,11 +249,8 @@ public class SalesOrder extends HttpSecureAppServlet {
         // build sql orderBy clause from parameters
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-          // filter
-          // or
-          // first
-          // load
+        // New filter or first load
+        if (strNewFilter.equals("1") || strNewFilter.equals("")) {
           strNumRows = SalesOrderData.countRows(this, Utility.getContext(this, vars,
               "#User_Client", "SalesOrder"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
               strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,
@@ -303,6 +302,8 @@ public class SalesOrder extends HttpSecureAppServlet {
       }
     }
 
+    DecimalFormat df = Utility.getFormat(vars, "priceEdition");
+
     if (!type.startsWith("<![CDATA["))
       type = "<![CDATA[" + type + "]]>";
     if (!title.startsWith("<![CDATA["))
@@ -324,7 +325,9 @@ public class SalesOrder extends HttpSecureAppServlet {
           strRowsData.append("      <td><![CDATA[");
           String columnname = headers[k].getField("columnname");
 
-          if ((data[j].getField(columnname)) != null) {
+          if (columnname.equalsIgnoreCase("grandtotal") || columnname.equalsIgnoreCase("converted")) {
+            strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
+          } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
             strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
