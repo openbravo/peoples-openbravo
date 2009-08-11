@@ -41,7 +41,7 @@
 <PARAMETER id="paramLastorder" name="lastOrder"/>
 <PARAMETER id="paramOrgname" name="orgname"/>
 <PARAMETER id="paramLastmonth" name="lastmonth"/>
-<PARAMETER id="paramInvoicing" name="invoicing"/>
+<PARAMETER id="paramInvoicing" name="invoicing" format="euroInform"/>
 <PARAMETER id="paramTotalAverage" name="totalAverage" format="euroInform"/>
 <PARAMETER id="paramBpartnername" name="bpartnername"/>
 
