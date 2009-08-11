@@ -61,9 +61,9 @@ public class GenerateModel347 extends HttpSecureAppServlet {
       String strDateTo = vars.getStringParameter("inpDateTo");
       String strType = vars.getStringParameter("inpReportType");
       String strOrg = vars.getStringParameter("inpOrg", "0");
-      String strComplementar = vars.getStringParameter("inpComplementar");
+      String strComplementar = vars.getNumericParameter("inpComplementar");
       String strHac = vars.getStringParameter("inpType", "ES");
-      String strID = vars.getStringParameter("inpID", "");
+      String strID = vars.getNumericParameter("inpID", "");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
           "GenerateModel347|product", IsIDFilter.instance);
       printPageGenerate(response, vars, strDateFrom, strDateTo, strType, strComplementar, strOrg,
