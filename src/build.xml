@@ -747,7 +747,7 @@ build.war: build a war file in the lib directory.
 
     <mkdir dir="${build}" />
      <axis-wsdl2java output="${base.src}" verbose="false" url="http://124.124.55.214/openbravo/services/WebService?wsdl" serverside="true" debug="false">
-      <mapping namespace="http://centralrepository.openbravo.com/openbravo/services/WebService" package="org.openbravo.services.webservice" />
+      <mapping namespace="http://124.124.55.214/openbravo/services/WebService" package="org.openbravo.services.webservice" />
       <mapping namespace="/services/WebService" package="org.openbravo.services.webservice" />
     </axis-wsdl2java>
   </target>
