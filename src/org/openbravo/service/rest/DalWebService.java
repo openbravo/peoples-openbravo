@@ -147,9 +147,7 @@ public class DalWebService implements WebService {
         }
 
         if (countOperation) {
-          response.setContentType("text/xml");
-          response.setCharacterEncoding("utf-8");
-          response.setHeader("Content-Encoding", "UTF-8");
+          response.setContentType("text/xml;charset=UTF-8");
           final String xmlResult = WebServiceUtil.getInstance().createResultXML("" + obq.count());
           final Writer w = response.getWriter();
           w.write(xmlResult);
@@ -192,16 +190,12 @@ public class DalWebService implements WebService {
       }
       final String templatedXml = WebServiceUtil.getInstance().applyTemplate(xml,
           this.getClass().getResourceAsStream(request.getParameter("template")), url);
-      response.setContentType("text/html");
-      response.setCharacterEncoding("utf-8");
-      response.setHeader("Content-Encoding", "UTF-8");
+      response.setContentType("text/xml;charset=UTF-8");
       final Writer w = response.getWriter();
       w.write(templatedXml);
       w.close();
     } else {
-      response.setContentType("text/xml");
-      response.setCharacterEncoding("utf-8");
-      response.setHeader("Content-Encoding", "UTF-8");
+      response.setContentType("text/xml;charset=UTF-8");
       final Writer w = response.getWriter();
       w.write(xml);
       w.close();
@@ -249,11 +243,7 @@ public class DalWebService implements WebService {
       final String resultXml = WebServiceUtil.getInstance().createResultXMLWithLogWarning(
           "Action performed successfully", "Removed business object " + resIdentifier, null);
       try {
-        response.setContentType("text/xml");
-        // this call does not seem to work:
-        response.setCharacterEncoding("UTF-8");
-        // this one does:
-        response.setHeader("Content-Encoding", "UTF-8");
+        response.setContentType("text/xml;charset=UTF-8");
         final Writer w = response.getWriter();
         w.write(resultXml);
         w.close();
@@ -284,11 +274,7 @@ public class DalWebService implements WebService {
 
   protected void doChangeAction(String path, HttpServletRequest request,
       HttpServletResponse response, ChangeAction changeAction) {
-    response.setContentType("text/xml");
-    // this call does not seem to work:
-    response.setCharacterEncoding("UTF-8");
-    // this one does:
-    response.setHeader("Content-Encoding", "UTF-8");
+    response.setContentType("text/xml;charset=UTF-8");
     final String resultXml = doChangeActionXML(path, request, response, changeAction);
     try {
       final Writer w = response.getWriter();
