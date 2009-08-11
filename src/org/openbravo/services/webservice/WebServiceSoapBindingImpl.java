@@ -8,63 +8,35 @@
 package org.openbravo.services.webservice;
 
 public class WebServiceSoapBindingImpl implements org.openbravo.services.webservice.WebServiceImpl{
-    public byte[] getModule(java.lang.String in0) throws java.rmi.RemoteException {
+    public byte[] getModule(java.lang.String moduleVersionID) throws java.rmi.RemoteException {
         return null;
     }
 
-    public org.openbravo.services.webservice.Customer[] getCustomers(int in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.SimpleModule[] moduleSearch(java.lang.String word, java.lang.String[] exclude) throws java.rmi.RemoteException {
         return null;
     }
 
-    public org.openbravo.services.webservice.Customer getCustomer(int in0, int in1, java.lang.String in2, java.lang.String in3) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.Module moduleDetail(java.lang.String moduleVersionID) throws java.rmi.RemoteException {
         return null;
     }
 
-    public org.openbravo.services.webservice.Customer getCustomer(int in0, java.lang.String in1, java.lang.String in2, java.lang.String in3, java.lang.String in4) throws java.rmi.RemoteException {
+    public java.lang.String getURLforDownload(java.lang.String moduleVersionID) throws java.rmi.RemoteException {
         return null;
     }
 
-    public java.lang.Boolean updateCustomer(org.openbravo.services.webservice.BusinessPartner in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException {
+    public boolean isCommercial(java.lang.String moduleVersionID) throws java.rmi.RemoteException {
+        return false;
+    }
+
+    public org.openbravo.services.webservice.SimpleModule[] moduleScanForUpdates(java.util.HashMap moduleIdInstalledModules) throws java.rmi.RemoteException {
         return null;
     }
 
-    public int[] getCustomerAddresses(int in0, int in1, java.lang.String in2, java.lang.String in3) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.Module moduleRegister(org.openbravo.services.webservice.Module module, java.lang.String userName, java.lang.String password) throws java.rmi.RemoteException {
         return null;
     }
 
-    public org.openbravo.services.webservice.Location getCustomerLocation(int in0, int in1, int in2, java.lang.String in3, java.lang.String in4) throws java.rmi.RemoteException {
-        return null;
-    }
-
-    public java.lang.Boolean updateAddress(org.openbravo.services.webservice.Location in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException {
-        return null;
-    }
-
-    public org.openbravo.services.webservice.Contact getCustomerContact(int in0, int in1, int in2, java.lang.String in3, java.lang.String in4) throws java.rmi.RemoteException {
-        return null;
-    }
-
-    public java.lang.Boolean updateContact(org.openbravo.services.webservice.Contact in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException {
-        return null;
-    }
-
-    public org.openbravo.services.webservice.SimpleModule[] moduleSearch(java.lang.String in0, java.lang.String[] in1) throws java.rmi.RemoteException {
-        return null;
-    }
-
-    public org.openbravo.services.webservice.Module moduleDetail(java.lang.String in0) throws java.rmi.RemoteException {
-        return null;
-    }
-
-    public org.openbravo.services.webservice.SimpleModule[] moduleScanForUpdates(java.util.HashMap in0) throws java.rmi.RemoteException {
-        return null;
-    }
-
-    public org.openbravo.services.webservice.Module moduleRegister(org.openbravo.services.webservice.Module in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException {
-        return null;
-    }
-
-    public org.openbravo.services.webservice.ModuleInstallDetail checkConsistency(java.util.HashMap in0, java.lang.String[] in1, java.lang.String[] in2) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.ModuleInstallDetail checkConsistency(java.util.HashMap versionIdInstalled, java.lang.String[] versionIdToInstall, java.lang.String[] versionIdToUpdate) throws java.rmi.RemoteException {
         return null;
     }
 
