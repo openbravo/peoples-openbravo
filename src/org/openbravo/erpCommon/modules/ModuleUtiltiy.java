@@ -19,17 +19,19 @@
 
 package org.openbravo.erpCommon.modules;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ops.ActivationKey;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.services.webservice.WebServiceImpl;
 import org.openbravo.services.webservice.WebServiceImplServiceLocator;
@@ -151,57 +153,67 @@ public class ModuleUtiltiy {
    * @return An {@link InputStream} with containing the obx for the module (null if error)
    */
   public static InputStream getRemoteModule(ImportModule im, String moduleVersionID) {
-    if (!moduleVersionID.equals("0")) { // TODO: check for web service
-      WebServiceImplServiceLocator loc;
-      WebServiceImpl ws = null;
+    WebServiceImplServiceLocator loc;
+    WebServiceImpl ws = null;
+    String strUrl = "";
+    boolean isCommercial;
+    try {
+      loc = new WebServiceImplServiceLocator();
+      ws = loc.getWebService();
+      isCommercial = ws.isCommercial(moduleVersionID);
+      strUrl = ws.getURLforDownload(moduleVersionID);
+    } catch (final Exception e) {
+      e.printStackTrace();
+      im.addLog("@CouldntConnectToWS@", ImportModule.MSG_ERROR);
       try {
-        loc = new WebServiceImplServiceLocator();
-        ws = loc.getWebService();
-
-        final byte[] getMod = ws.getModule(moduleVersionID);
-        return new ByteArrayInputStream(getMod);
-
-      } catch (final Exception e) {
-        e.printStackTrace();
-        im.addLog("@CouldntConnectToWS@", ImportModule.MSG_ERROR);
-        try {
-          ImportModuleData.insertLog(ImportModule.pool,
-              (im.vars == null ? "0" : im.vars.getUser()), "", "", "",
-              "Couldn't contact with webservice server", "E");
-        } catch (final ServletException ex) {
-          ex.printStackTrace();
-        }
+        ImportModuleData.insertLog(ImportModule.pool, (im.vars == null ? "0" : im.vars.getUser()),
+            "", "", "", "Couldn't contact with webservice server", "E");
+      } catch (final ServletException ex) {
+        ex.printStackTrace();
       }
-    } else { // TODO: just testing...
-      try {
-        log4j.info("getting core");
-        String strUrl = "http://sourceforge.net/projects/openbravo/files/03-openbravo-updates/OpenbravoERP-2.50.14184.obx/download";
-        URL url = new URL(strUrl);
+      return null;
+    }
 
-        if (strUrl.startsWith("https://")) {
-          return HttpsUtils.getHttpsInputStream(url, "instanceId=xxx", "localhost-1", "changeit");
+    if (isCommercial && !ActivationKey.isActiveInstance()) {
+      im.addLog("@NotCommercialModulesAllowed@", ImportModule.MSG_ERROR);
+      return null;
+    }
 
-        } else {
-          HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+    try {
+      URL url = new URL(strUrl);
+      HttpURLConnection conn = null;
 
-          urlConn.setRequestProperty("Keep-Alive", "300");
-          urlConn.setRequestProperty("Connection", "keep-alive");
-          urlConn.setRequestMethod("GET");
-          urlConn.setDoInput(true);
-          urlConn.setDoOutput(true);
-          urlConn.setUseCaches(false);
-          urlConn.setAllowUserInteraction(false);
-
-          urlConn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
-
-          return urlConn.getInputStream();
-        }
-      } catch (Exception e) {
-        // TODO: handle exception
-        return null;
+      if (strUrl.startsWith("https://")) {
+        ActivationKey ak = new ActivationKey();
+        String instanceKey = "instanceKey=" + URLEncoder.encode(ak.getPublicKey(), "utf-8");
+        conn = HttpsUtils.sendHttpsRequest(url, instanceKey, "localhost-1", "changeit");
+      } else {
+        conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestProperty("Keep-Alive", "300");
+        conn.setRequestProperty("Connection", "keep-alive");
+        conn.setRequestMethod("GET");
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
+        conn.setUseCaches(false);
+        conn.setAllowUserInteraction(false);
       }
 
+      if (conn.getResponseCode() == HttpServletResponse.SC_OK) {
+        // OBX is ready to be used
+        return conn.getInputStream();
+      }
+
+      // There is an error, let's check for a parseable message
+      String msg = conn.getHeaderField("message");
+      if (msg != null) {
+        im.addLog(msg, ImportModule.MSG_ERROR);
+      } else {
+        im.addLog("@ErrorReadingOBX@ " + conn.getResponseCode(), ImportModule.MSG_ERROR);
+      }
+    } catch (Exception e) {
+      im.addLog("@ErrorDownloadingOBX@ " + e.getMessage(), ImportModule.MSG_ERROR);
     }
     return null;
+
   }
 }

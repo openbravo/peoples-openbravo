@@ -235,7 +235,8 @@ public class HttpsUtils {
     try {
       String s = null;
       StringBuilder sb = new StringBuilder();
-      br = new BufferedReader(new InputStreamReader(getHttpsInputStream(conn, data)));
+      br = new BufferedReader(new InputStreamReader(sendSecureHttpsConnection(conn, data)
+          .getInputStream()));
       while ((s = br.readLine()) != null) {
         sb.append(s + "\n");
       }
@@ -248,7 +249,8 @@ public class HttpsUtils {
     return result;
   }
 
-  static InputStream getHttpsInputStream(HttpsURLConnection conn, String data) throws IOException {
+  private static HttpsURLConnection sendSecureHttpsConnection(HttpsURLConnection conn, String data)
+      throws IOException {
     BufferedWriter bw = null;
     try {
       conn.setDoOutput(true);
@@ -258,7 +260,7 @@ public class HttpsUtils {
       bw.flush();
       bw.close();
 
-      return conn.getInputStream();
+      return conn;
     } catch (IOException e) {
       log4j.error(e.getMessage(), e);
       throw e;
@@ -271,15 +273,15 @@ public class HttpsUtils {
     return sendSecure(conn, data);
   }
 
-  public static InputStream getHttpsInputStream(URL url, String data, String alias,
+  public static HttpURLConnection sendHttpsRequest(URL url, String data, String alias,
       String passphrase) throws GeneralSecurityException, IOException {
 
     HttpsURLConnection conn = getHttpsConn(url, alias, passphrase);
-    return getHttpsInputStream(conn, data);
+    return sendSecureHttpsConnection(conn, data);
 
   }
 
-  private static HttpsURLConnection getHttpsConn(URL url, String alias, String passphrase)
+  public static HttpsURLConnection getHttpsConn(URL url, String alias, String passphrase)
       throws KeyStoreException, GeneralSecurityException, SSLHandshakeException {
     KeyStore ks = null;
     try {
