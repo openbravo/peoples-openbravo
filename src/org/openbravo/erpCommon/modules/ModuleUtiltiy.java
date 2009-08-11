@@ -30,6 +30,7 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.services.webservice.WebServiceImpl;
 import org.openbravo.services.webservice.WebServiceImplServiceLocator;
 
@@ -174,21 +175,27 @@ public class ModuleUtiltiy {
     } else { // TODO: just testing...
       try {
         log4j.info("getting core");
-        URL url = new URL(
-            "http://sourceforge.net/projects/openbravo/files/03-openbravo-updates/OpenbravoERP-2.50.14184.obx/download");
-        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+        String strUrl = "http://sourceforge.net/projects/openbravo/files/03-openbravo-updates/OpenbravoERP-2.50.14184.obx/download";
+        URL url = new URL(strUrl);
 
-        urlConn.setRequestProperty("Keep-Alive", "300");
-        urlConn.setRequestProperty("Connection", "keep-alive");
-        urlConn.setRequestMethod("GET");
-        urlConn.setDoInput(true);
-        urlConn.setDoOutput(true);
-        urlConn.setUseCaches(false);
-        urlConn.setAllowUserInteraction(false);
+        if (strUrl.startsWith("https://")) {
+          return HttpsUtils.getHttpsInputStream(url, "instanceId=xxx", "localhost-1", "changeit");
 
-        urlConn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+        } else {
+          HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
 
-        return urlConn.getInputStream();
+          urlConn.setRequestProperty("Keep-Alive", "300");
+          urlConn.setRequestProperty("Connection", "keep-alive");
+          urlConn.setRequestMethod("GET");
+          urlConn.setDoInput(true);
+          urlConn.setDoOutput(true);
+          urlConn.setUseCaches(false);
+          urlConn.setAllowUserInteraction(false);
+
+          urlConn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+
+          return urlConn.getInputStream();
+        }
       } catch (Exception e) {
         // TODO: handle exception
         return null;
