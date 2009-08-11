@@ -34,7 +34,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.HeartbeatData;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
-import org.openbravo.erpCommon.ops.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 

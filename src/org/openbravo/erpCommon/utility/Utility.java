@@ -65,7 +65,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.ops.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.domain.ListTrl;
 import org.openbravo.model.ad.domain.Reference;
