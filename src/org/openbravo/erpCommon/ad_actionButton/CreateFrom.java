@@ -292,9 +292,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strOrg = vars.getStringParameter("inpadOrgId");
     final String strCharge = vars.getStringParameter("inpCharge");
     final String strPlannedDate = vars.getStringParameter("inpplanneddate", strStatementDate);
-    final String strCost = vars.getStringParameter("inpcost", "0.00");
+    final String strCost = vars.getNumericParameter("inpcost", "0.00");
     final String strProposed = vars.getNumericParameter("inpproposed", "0.00");
-    final String strDocumentNo = vars.getNumericParameter("inpDocumentNo");
+    final String strDocumentNo = vars.getStringParameter("inpDocumentNo");
     CreateFromBankData[] data = null;
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/CreateFrom_Bank").createXmlDocument();
