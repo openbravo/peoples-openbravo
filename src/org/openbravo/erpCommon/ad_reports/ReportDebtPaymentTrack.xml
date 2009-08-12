@@ -29,8 +29,8 @@
   <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
 	<PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
 	<PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
-  <PARAMETER id="paramAmtFrom" name="AmtFrom" attribute="value"/>
-  <PARAMETER id="paramAmtTo" name="AmtTo" attribute="value"/>
+  <PARAMETER id="paramAmtFrom" name="AmtFrom" attribute="value" format="euroEdition"/>
+  <PARAMETER id="paramAmtTo" name="AmtTo" attribute="value" format="euroEdition"/>
   <!--PARAMETER id="paramVacio" name="vacio" default=""/-->
   <PARAMETER id="parameterInvoice" name="constantInvoice" default="I"/>
   <PARAMETER id="paramInvoice" name="Invoice" boolean="checked" withId="parameterInvoice"/>
