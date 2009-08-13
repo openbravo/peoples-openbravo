@@ -92,7 +92,7 @@ public class SL_Invoice_Charge_Tax extends HttpSecureAppServlet {
         data[0].cProjectId, strIsSOTrx.equals("Y"));
 
     resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\"),");
-    resultado.append("new Array(\"inpchargeamt\", \"" + chargeAmt + "\")\n");
+    resultado.append("new Array(\"inpchargeamt\", " + chargeAmt + ")\n");
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

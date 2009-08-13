@@ -146,7 +146,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         + (strPriceActual.equals("") ? "\"0\"" : strPriceActual) + "),");
     resultado.append("new Array(\"inpcCurrencyId\", "
         + (strCurrency.equals("") ? "\"\"" : strCurrency) + "),");
-    resultado.append("new Array(\"inpdiscount\", \"" + discount.toString() + "\"),");
+    resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
     if (!strMProductID.equals("")) {
       PAttributeSetData[] dataPAttr = PAttributeSetData.selectProductAttr(this, strMProductID);
       if (dataPAttr != null && dataPAttr.length > 0) {

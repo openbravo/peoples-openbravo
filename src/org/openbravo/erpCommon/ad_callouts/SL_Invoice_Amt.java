@@ -118,7 +118,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
           dataInvoice[0].cBpartnerId, priceActual.toString(), strProduct,
           dataInvoice[0].dateinvoiced, qtyInvoice.toString(), dataInvoice[0].mPricelistId,
           dataInvoice[0].id));
-      resultado.append("new Array(\"inppricestd\", \"" + priceStd.toString() + "\"),");
+      resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
     }
 
     // If quantity changes, recalculates unit price (actual price) applying
@@ -147,8 +147,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
             + FormatUtilities.replaceJS(Utility.messageBD(this, "UnderLimitPrice", vars
                 .getLanguage())) + "\"), ");
     }
-    resultado.append("new Array(\"inplinenetamt\", \"" + LineNetAmt.toString() + "\"),");
-    resultado.append("new Array(\"inppriceactual\", \"" + priceActual.toString() + "\")");
+    resultado.append("new Array(\"inplinenetamt\", " + LineNetAmt.toString() + "),");
+    resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + ")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");

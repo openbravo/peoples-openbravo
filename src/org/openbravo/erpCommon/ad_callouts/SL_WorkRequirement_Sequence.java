@@ -74,8 +74,7 @@ public class SL_WorkRequirement_Sequence extends HttpSecureAppServlet {
         + FormatUtilities.replaceJS(data[0].costcenteruse) + "\"),");
     resultado.append("new Array(\"inppreptime\", \"" + FormatUtilities.replaceJS(data[0].preptime)
         + "\"),");
-    resultado.append("new Array(\"inpnoqty\", \"" + FormatUtilities.replaceJS(data[0].noqty)
-        + "\"),");
+    resultado.append("new Array(\"inpnoqty\", " + FormatUtilities.replaceJS(data[0].noqty) + "),");
     resultado.append("new Array(\"inpgroupuse\", \"" + FormatUtilities.replaceJS(data[0].groupuse)
         + "\")");
     resultado.append(");");

@@ -110,7 +110,7 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
         if (log4j.isDebugEnabled())
           log4j.debug("Discount rounded: " + discount.toString());
         if (!strDiscount.equals(discount.toString()))
-          resultado.append("new Array(\"inpdiscount\", \"" + discount.toString() + "\"),");
+          resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
       } else if (strChanged.equals("inpdiscount")) { // calculate std and
         // actual
         BigDecimal discount1 = null;
@@ -128,7 +128,7 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
               new BigDecimal("100"), 12, BigDecimal.ROUND_HALF_EVEN));
           if (priceActual.scale() > PricePrecision)
             priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-          resultado.append("new Array(\"inppriceactual\", \"" + priceActual.toString() + "\"),");
+          resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
         }
       }
       LineNetAmt = qty.multiply(priceActual);
@@ -138,7 +138,7 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
       strLineNetAmt = LineNetAmt.toString();
     }
 
-    resultado.append("new Array(\"inplinenetamt\", \"" + strLineNetAmt + "\")");
+    resultado.append("new Array(\"inplinenetamt\", " + strLineNetAmt + ")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");

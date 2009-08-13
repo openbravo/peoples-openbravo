@@ -139,26 +139,26 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
       if ("Y".equals(cancelPriceAd)) {
         priceStd = priceActual;
-        resultado.append("new Array(\"inppricestd\", \"" + priceStd.toString() + "\"),");
+        resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
       } else {
         priceStd = new BigDecimal(SLOrderProductData.getOffersStdPrice(this,
             dataOrder[0].cBpartnerId, strPriceActual.replace("\"", ""), strProduct,
             dataOrder[0].dateordered, strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
         // priceList
-        resultado.append("new Array(\"inppricestd\", \"" + priceStd.toString() + "\"),");
+        resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
       }
 
     }
 
     if (strChanged.equals("inpcancelpricead")) {
       if ("Y".equals(cancelPriceAd)) {
-        resultado.append("new Array(\"inppriceactual\", \"" + strPriceStd + "\"),");
+        resultado.append("new Array(\"inppriceactual\", " + strPriceStd + "),");
       } else {
         strPriceActual = SLOrderProductData.getOffersPrice(this, dataOrder[0].dateordered,
             dataOrder[0].cBpartnerId, strProduct, (strPriceStd.equals("undefined") ? "0"
                 : strPriceStd.replace("\"", "")), strQty, dataOrder[0].mPricelistId,
             dataOrder[0].id);
-        resultado.append("new Array(\"inppriceactual\", \"" + strPriceActual + "\"),");
+        resultado.append("new Array(\"inppriceactual\", " + strPriceActual + "),");
       }
     }
 
@@ -190,14 +190,14 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         discount = discount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
       if (log4j.isDebugEnabled())
         log4j.debug("Discount rounded: " + discount.toString());
-      resultado.append("new Array(\"inpdiscount\", \"" + discount.toString() + "\"),");
+      resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
     } else if (strChanged.equals("inpqtyordered")) { // calculate Actual
       priceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
           dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct, priceStd.toString(),
           strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
       if (priceActual.scale() > PricePrecision)
         priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-      resultado.append("new Array(\"inppriceactual\", \"" + priceActual.toString() + "\"),");
+      resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
     } else if (strChanged.equals("inpdiscount")) { // calculate std and
       // actual
       BigDecimal discount1 = null;
@@ -220,8 +220,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
           priceStd = priceStd.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
         if (priceActual.scale() > PricePrecision)
           priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-        resultado.append("new Array(\"inppriceactual\", \"" + priceActual.toString() + "\"),");
-        resultado.append("new Array(\"inppricestd\", \"" + priceStd.toString() + "\"),");
+        resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
+        resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
       }
     }
 
@@ -268,7 +268,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     BigDecimal lineNetAmt = qtyOrdered.multiply(priceActual);
     if (lineNetAmt.scale() > StdPrecision)
       lineNetAmt = lineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-    resultado.append("new Array(\"inplinenetamt\", \"" + lineNetAmt.toString() + "\")");
+    resultado.append("new Array(\"inplinenetamt\", " + lineNetAmt.toString() + ")");
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

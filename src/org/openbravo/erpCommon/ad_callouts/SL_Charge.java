@@ -73,7 +73,7 @@ public class SL_Charge extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Charge';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpchargeamt\", \"" + chargeAmt + "\")\n");
+    resultado.append("new Array(\"inpchargeamt\", " + chargeAmt + ")\n");
     resultado.append(");");
 
     xmlDocument.setParameter("array", resultado.toString());

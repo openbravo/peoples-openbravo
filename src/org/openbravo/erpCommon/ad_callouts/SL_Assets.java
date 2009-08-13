@@ -106,10 +106,10 @@ public class SL_Assets extends HttpSecureAppServlet {
 
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Assets';\n\n");
-    resultado.append("var respuesta = new Array(new Array(\"inpassetvalueamt\",\""
-        + fAssetvalue.toString() + "\"), new Array(\"inpresidualassetvalueamt\",\""
-        + fResidualvalue.toString() + "\"), new Array(\"inpamortizationvalueamt\",\""
-        + fAmortizationvalue.toString() + "\"));");
+    resultado.append("var respuesta = new Array(new Array(\"inpassetvalueamt\","
+        + fAssetvalue.toString() + "), new Array(\"inpresidualassetvalueamt\","
+        + fResidualvalue.toString() + "), new Array(\"inpamortizationvalueamt\","
+        + fAmortizationvalue.toString() + "));");
     resultado.append("\n\n//" + strLastChanged);
 
     xmlDocument.setParameter("array", resultado.toString());

@@ -129,9 +129,9 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
       resultado.append("new Array('MESSAGE', \"" + strConvRateErrorMsg + "\"), ");
     }
-    resultado.append("new Array(\"inpexpenseamt\", \"" + amount.toPlainString() + "\")");
-    resultado.append(", new Array(\"inpconvertedamt\", \""
-        + (convAmount.compareTo(BigDecimal.ZERO) == 0 ? "" : convAmount.toPlainString()) + "\")");
+    resultado.append("new Array(\"inpexpenseamt\", " + amount.toPlainString() + ")");
+    resultado.append(", new Array(\"inpconvertedamt\", "
+        + (convAmount.compareTo(BigDecimal.ZERO) == 0 ? "" : convAmount.toPlainString()) + ")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");

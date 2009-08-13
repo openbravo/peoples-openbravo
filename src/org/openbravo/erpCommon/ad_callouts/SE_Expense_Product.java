@@ -147,7 +147,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
     }
     if (amount.scale() > stdPrecision)
       amount = amount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-    resultado.append(", new Array(\"inpexpenseamt\", \"" + amount.toPlainString() + "\")");
+    resultado.append(", new Array(\"inpexpenseamt\", " + amount.toPlainString() + ")");
     String c_Currency_To_ID = Utility.getContext(this, vars, "$C_Currency_ID", "");
     // Checks if there is a conversion rate for each of the transactions of
     // the report
@@ -180,8 +180,8 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
       }
       if (convAmount.scale() > stdPrecisionConv)
         convAmount = convAmount.setScale(stdPrecisionConv, BigDecimal.ROUND_HALF_UP);
-      resultado.append(", new Array(\"inpconvertedamt\", \""
-          + (convAmount.compareTo(BigDecimal.ZERO) == 0 ? "" : convAmount.toPlainString()) + "\")");
+      resultado.append(", new Array(\"inpconvertedamt\", "
+          + (convAmount.compareTo(BigDecimal.ZERO) == 0 ? "" : convAmount.toPlainString()) + ")");
     }
     if (strChanged.equals("inpmProductId") && !cCurrencyID.equals("")) {
       resultado.append(", new Array(\"inpcCurrencyId\", \"" + cCurrencyID + "\")");

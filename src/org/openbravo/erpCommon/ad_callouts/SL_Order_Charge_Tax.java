@@ -88,7 +88,7 @@ public class SL_Order_Charge_Tax extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Order_Charge_Tax';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpchargeamt\", \"" + chargeAmt + "\"),");
+    resultado.append("new Array(\"inpchargeamt\", " + chargeAmt + "),");
 
     String strCTaxID = "";
     SLOrderTaxData[] data = SLOrderTaxData.select(this, strCOrderId);

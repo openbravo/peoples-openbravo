@@ -94,19 +94,18 @@ public class SL_BankStmt_Amount extends HttpSecureAppServlet {
         // ConvChgAmount =
         // StmAmount.subtract(TrxAmount).subtract(ChgAmount);
         ConvChgAmount = TrxAmount.subtract(ChgAmount).subtract(StmAmount);
-        resultado
-            .append("new Array(\"inpconvertchargeamt\", \"" + ConvChgAmount.toString() + "\")");
+        resultado.append("new Array(\"inpconvertchargeamt\", " + ConvChgAmount.toString() + ")");
         resultado.append(");");
       } else {
         TrxAmount = StmAmount.subtract(ChgAmount);
-        resultado.append("new Array(\"inptrxamt\", \"" + TrxAmount.toString() + "\")");
+        resultado.append("new Array(\"inptrxamt\", " + TrxAmount.toString() + ")");
         resultado.append(");");
       }
     }
     if (strChanged.equals("inpchargeamt") || (strChanged.equals("inpconvertchargeamt"))) {
       // StmAmount = TrxAmount.add(ChgAmount).add(ConvChgAmount);
       StmAmount = TrxAmount.subtract(ChgAmount).subtract(ConvChgAmount);
-      resultado.append("new Array(\"inpstmtamt\", \"" + StmAmount.toString() + "\")");
+      resultado.append("new Array(\"inpstmtamt\", " + StmAmount.toString() + ")");
       resultado.append(");");
     }
 

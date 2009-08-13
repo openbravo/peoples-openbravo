@@ -83,12 +83,12 @@ public class SL_Conversion_Rate extends HttpSecureAppServlet {
     if (strChanged.equals("inpmultiplyrate")) {
       if (multiplyRate.compareTo(BigDecimal.ZERO) != 0)
         rate = one.divide(multiplyRate, 12, 4);
-      resultado.append("new Array(\"inpdividerate\", \"" + rate.toString() + "\")");
+      resultado.append("new Array(\"inpdividerate\", " + rate.toString() + ")");
 
     } else {
       if (divideRate.compareTo(BigDecimal.ZERO) != 0)
         rate = one.divide(divideRate, 12, 4);
-      resultado.append("new Array(\"inpmultiplyrate\", \"" + rate.toString() + "\")");
+      resultado.append("new Array(\"inpmultiplyrate\", " + rate.toString() + ")");
     }
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

@@ -106,9 +106,9 @@ public class SL_JournalLineAmt extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_JournalLineAmt';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpamtacctdr\", \"" + AmtAcctDr.toString() + "\"),");
-    resultado.append("new Array(\"inpamtacctcr\", \"" + AmtAcctCr.toString() + "\"),");
-    resultado.append("new Array(\"inpcurrencyrate\", \"" + CurrencyRateValue.toString() + "\"),");
+    resultado.append("new Array(\"inpamtacctdr\", " + AmtAcctDr.toString() + "),");
+    resultado.append("new Array(\"inpamtacctcr\", " + AmtAcctCr.toString() + "),");
+    resultado.append("new Array(\"inpcurrencyrate\", " + CurrencyRateValue.toString() + "),");
     resultado.append("new Array(\"inpcurrencyratetype\", \"" + strCurrencyRateType + "\")");
 
     resultado.append(");");

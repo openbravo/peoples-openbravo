@@ -93,7 +93,7 @@ public class SL_CashJournal_Amounts extends HttpSecureAppServlet {
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS(strDescription)
         + "\"),");
-    resultado.append("new Array(\"inpamount\", \"" + amount + "\")");
+    resultado.append("new Array(\"inpamount\", " + amount + ")");
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
