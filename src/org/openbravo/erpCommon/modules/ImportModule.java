@@ -538,7 +538,7 @@ public class ImportModule {
    */
   public OBError getOBError(ConnectionProvider conn) {
     if (log.length() != 0) {
-      final String lang = vars.getLanguage();
+
       final OBError rt = new OBError();
       switch (logLevel) {
       case MSG_ERROR:
@@ -551,9 +551,15 @@ public class ImportModule {
         rt.setType("Success");
         break;
       }
-      rt.setMessage(Utility.parseTranslation(conn, vars, lang, log.toString()));
 
-      rt.setTitle(Utility.messageBD(conn, rt.getType(), lang));
+      if (vars != null) {
+        final String lang = vars.getLanguage();
+        rt.setMessage(Utility.parseTranslation(conn, vars, lang, log.toString()));
+        rt.setTitle(Utility.messageBD(conn, rt.getType(), lang));
+      } else {
+        rt.setMessage(log.toString());
+        rt.setTitle(rt.getType());
+      }
       return rt;
     } else
       return null;

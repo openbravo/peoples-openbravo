@@ -23,11 +23,13 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.axis.AxisFault;
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -157,11 +159,10 @@ public class ModuleUtiltiy {
     WebServiceImpl ws = null;
     String strUrl = "";
     boolean isCommercial;
+
     try {
       loc = new WebServiceImplServiceLocator();
       ws = loc.getWebService();
-      isCommercial = ws.isCommercial(moduleVersionID);
-      strUrl = ws.getURLforDownload(moduleVersionID);
     } catch (final Exception e) {
       e.printStackTrace();
       im.addLog("@CouldntConnectToWS@", ImportModule.MSG_ERROR);
@@ -171,6 +172,17 @@ public class ModuleUtiltiy {
       } catch (final ServletException ex) {
         ex.printStackTrace();
       }
+      return null;
+    }
+
+    try {
+      isCommercial = ws.isCommercial(moduleVersionID);
+      strUrl = ws.getURLforDownload(moduleVersionID);
+    } catch (AxisFault e1) {
+      im.addLog("@" + e1.getFaultCode() + "@", ImportModule.MSG_ERROR);
+      return null;
+    } catch (RemoteException e) {
+      im.addLog(e.getMessage(), ImportModule.MSG_ERROR);
       return null;
     }
 
@@ -185,7 +197,7 @@ public class ModuleUtiltiy {
 
       if (strUrl.startsWith("https://")) {
         ActivationKey ak = new ActivationKey();
-        String instanceKey = "instanceKey=" + URLEncoder.encode(ak.getPublicKey(), "utf-8");
+        String instanceKey = "obinstance=" + URLEncoder.encode(ak.getPublicKey(), "utf-8");
         conn = HttpsUtils.sendHttpsRequest(url, instanceKey, "localhost-1", "changeit");
       } else {
         conn = (HttpURLConnection) url.openConnection();
@@ -204,11 +216,11 @@ public class ModuleUtiltiy {
       }
 
       // There is an error, let's check for a parseable message
-      String msg = conn.getHeaderField("message");
+      String msg = conn.getHeaderField("OB-ErrMessage");
       if (msg != null) {
         im.addLog(msg, ImportModule.MSG_ERROR);
       } else {
-        im.addLog("@ErrorReadingOBX@ " + conn.getResponseCode(), ImportModule.MSG_ERROR);
+        im.addLog("@ErrorDownloadingOBX@ " + conn.getResponseCode(), ImportModule.MSG_ERROR);
       }
     } catch (Exception e) {
       im.addLog("@ErrorDownloadingOBX@ " + e.getMessage(), ImportModule.MSG_ERROR);
