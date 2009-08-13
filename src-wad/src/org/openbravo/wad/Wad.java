@@ -2111,11 +2111,7 @@ public class Wad extends DefaultHandler {
             fieldsData1[i].type = "RequiredStringParameter";
           }
 
-          if (WadUtility.isDecimalNumber(fieldsData1[i].reference)
-              || WadUtility.isQtyNumber(fieldsData1[i].reference)
-              || WadUtility.isPriceNumber(fieldsData1[i].reference)
-              || WadUtility.isIntegerNumber(fieldsData1[i].reference)
-              || WadUtility.isGeneralNumber(fieldsData1[i].reference)) {
+          if (WadActionButton.isNumericType(fieldsData1[i].reference)) {
             if (fieldsData1[i].required.equals("Y")) {
               fieldsData1[i].type = "RequiredNumericParameter";
             } else {
