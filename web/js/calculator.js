@@ -168,8 +168,14 @@ function TCRmntr(num) {
 				this.out_val = this.slag_1;
         this.out_val = this.out_val.toString();
 				this.control_obj.value = this.out_val.replace('.', decSeparator);
-        if (focusedWindowElement != this.control_obj) { this.control_obj.onblur(); }
-        this.control_obj.onchange();
+        if (focusedWindowElement != this.control_obj) {
+        	if (typeof this.control_obj.onblur == "function") {
+        		this.control_obj.onblur();
+        	}
+        }
+        if (typeof this.control_obj.onchange == "function") {
+        	this.control_obj.onchange();
+        }
 				break;
 			case '=':
 				if (this.oper_old != '') {
@@ -194,8 +200,14 @@ function TCRmntr(num) {
 				else this.out_val = this.slag_1;
         this.out_val = this.out_val.toString();
 				this.control_obj.value = this.out_val.replace('.', decSeparator);
-        if (focusedWindowElement != this.control_obj) { this.control_obj.onblur(); }
-        this.control_obj.onchange();
+        if (focusedWindowElement != this.control_obj) {
+        	if (typeof this.control_obj.onblur == "function") {
+        		this.control_obj.onblur();
+        	}
+        }
+        if (typeof this.control_obj.onchange == "function") {
+        	this.control_obj.onchange();
+        }
 				break;
 			case 'z':
 				tmp = parseFloat(tmp);
