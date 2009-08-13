@@ -2674,7 +2674,7 @@ function formElementValue(form, ElementName, Value) {
 
           var outputformat = obj.getAttribute("outputformat");
 
-          if(outputformat != null) {
+          if(outputformat != null || typeof Value === "number") {
             maskNumeric = formatNameToMask(outputformat);
             var formattedValue = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
             obj.value = formattedValue;
