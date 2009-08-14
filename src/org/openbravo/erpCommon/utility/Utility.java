@@ -58,14 +58,20 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.HttpBaseServlet;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
+import org.openbravo.model.ad.domain.ListTrl;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.FormatUtilities;
@@ -2281,6 +2287,58 @@ public class Utility {
   }
 
   /**
+   * Returns the name for a value in a list reference in the selected language.
+   * 
+   * @param ListName
+   *          Name for the reference list to look in
+   * @param value
+   *          Value to look for
+   * @param lang
+   *          Language, if null the default language will be returned
+   * @return Name for the value, in case the value is not found in the list the return is not the
+   *         name but the passed value
+   */
+  public static String getListValueName(String ListName, String value, String lang) {
+    OBCriteria<Reference> obCriteria = OBDal.getInstance().createCriteria(Reference.class);
+    obCriteria.add(Expression.and(Expression.eq(Reference.PROPERTY_NAME, ListName), Expression.eq(
+        Reference.PROPERTY_VALIDATIONTYPE, "L")));
+    List<Reference> refs = obCriteria.list();
+
+    if (refs.size() != 1) {
+      return value; // reference not found
+    }
+    Reference reference = refs.get(0);
+
+    org.openbravo.model.ad.domain.List val = null;
+    for (org.openbravo.model.ad.domain.List list : reference.getADListList()) {
+      if (list.getSearchKey().compareTo(value) == 0) {
+        if (val != null) {
+          // val already set, value occurs > 1
+          // can this situation ever occur?
+          // should this be an error?
+          return value;
+        }
+        val = list;
+      }
+    }
+    if (val == null) {
+      return value;
+    }
+
+    // no language, return untranslated value
+    if (lang == null || lang.equals("")) {
+      return val.getName();
+    }
+
+    for (ListTrl listTrl : val.getADListTrlList()) {
+      if (listTrl.getLanguage().getName().equals(lang)) {
+        return listTrl.getName();
+      }
+    }
+    return val.getName();
+  }
+
+  /**
    * Constructs and returns a two dimensional array of the data passed. Array definition is
    * constructed according to Javascript syntax. Used to generate data storage of lists or trees
    * within some manual windows/reports.
@@ -2381,4 +2439,21 @@ public class Utility {
     }
     return numberFormatDecimal;
   }
+  /**
+   * Returns the OB logo CSS style
+   * 
+   * @param type
+   *          Type of logo<br>
+   *          W for complete window<br>
+   *          P for pop-up
+   * @return the CSS style
+   */
+  public static String getLogo(String type) {
+    if (type.equals("W")) {
+      return "Main_NavBar_logo" + (ActivationKey.isActiveInstance() ? "_OPS" : "");
+    } else {
+      return "Popup_NavBar_logo" + (ActivationKey.isActiveInstance() ? "_OPS" : "");
+    }
+  }
+
 }

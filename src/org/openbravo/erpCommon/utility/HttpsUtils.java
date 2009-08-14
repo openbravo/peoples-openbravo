@@ -245,7 +245,7 @@ public class HttpsUtils {
       StringBuilder sb = new StringBuilder();
       br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
       while ((s = br.readLine()) != null) {
-        sb.append(s);
+        sb.append(s + "\n");
       }
       br.close();
       result = sb.toString();
