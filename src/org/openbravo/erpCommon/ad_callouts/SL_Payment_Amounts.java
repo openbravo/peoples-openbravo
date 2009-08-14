@@ -54,7 +54,7 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
       String strIsOverUnderPayment = vars.getStringParameter("inpisoverunderpayment");
-      String strPayamt = vars.getStringParameter("inppayamt");
+      String strPayamt = vars.getNumericParameter("inppayamt");
       String strDiscountamt = vars.getNumericParameter("inpdiscountamt");
       String strWriteoffamt = vars.getNumericParameter("inpwriteoffamt");
       String strOverunderamt = vars.getNumericParameter("inpoverunderamt");

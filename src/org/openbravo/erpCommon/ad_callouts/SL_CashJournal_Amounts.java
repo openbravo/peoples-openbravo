@@ -48,7 +48,7 @@ public class SL_CashJournal_Amounts extends HttpSecureAppServlet {
         log4j.debug("CHANGED: " + strChanged);
       String strOrder = vars.getStringParameter("inpcOrderId");
       String strDebtPayment = vars.getStringParameter("inpcDebtPaymentId");
-      String strAmount = vars.getStringParameter("inpamount");
+      String strAmount = vars.getNumericParameter("inpamount");
       String strDiscount = vars.getNumericParameter("inpdiscountamt");
       String strwriteoff = vars.getNumericParameter("inpwriteoffamt");
       String strTabId = vars.getStringParameter("inpTabId");

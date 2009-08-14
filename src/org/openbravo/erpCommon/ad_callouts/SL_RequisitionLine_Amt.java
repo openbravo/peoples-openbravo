@@ -48,7 +48,7 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
-      String strQty = vars.getStringParameter("inpqty");
+      String strQty = vars.getNumericParameter("inpqty");
       String strPriceActual = vars.getNumericParameter("inppriceactual");
       String strPriceList = vars.getNumericParameter("inppricelist");
       String strDiscount = vars.getNumericParameter("inpdiscount");

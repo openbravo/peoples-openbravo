@@ -58,7 +58,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       String strPriceStd = vars.getNumericParameter("inpmProductId_PSTD");
       String strPriceLimit = vars.getNumericParameter("inpmProductId_PLIM");
       String strCurrency = vars.getStringParameter("inpmProductId_CURR");
-      String strQty = vars.getStringParameter("inpqtyordered");
+      String strQty = vars.getNumericParameter("inpqtyordered");
 
       String strCBpartnerID = vars.getStringParameter("inpcBpartnerId");
       String strMProductID = vars.getStringParameter("inpmProductId");
