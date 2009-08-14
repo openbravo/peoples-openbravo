@@ -106,6 +106,31 @@ public class Utility {
   }
 
   /**
+   * Checks if a getNumericParameters is needed based on a reference
+   * 
+   * @param reference
+   * @return
+   */
+  public static boolean isNumericParameter(String reference) {
+    return (!Utility.isID(reference) && (Utility.isDecimalNumber(reference) || Utility
+        .isIntegerNumber(reference)));
+  }
+
+  /**
+   * Checks if the reference is an ID
+   * 
+   * @param reference
+   *          String with the reference
+   * @return True if is a ID reference
+   */
+  public static boolean isID(String reference) {
+    if (reference == null || reference.equals("")) {
+      return false;
+    }
+    return Integer.valueOf(reference).intValue() == 13;
+  }
+
+  /**
    * Checks if the references is a decimal number type.
    * 
    * @param reference
