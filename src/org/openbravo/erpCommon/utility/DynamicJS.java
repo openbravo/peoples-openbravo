@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -34,8 +35,8 @@ import org.openbravo.utils.FormatUtilities;
 /**
  * @author Fernando Iriazabal
  * 
- *         Servlet that prints a javascript with dynamic functions such as the confirmation messages for the check javascript
- *         of the window.
+ *         Servlet that prints a javascript with dynamic functions such as the confirmation messages
+ *         for the check javascript of the window.
  */
 public class DynamicJS extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -61,6 +62,7 @@ public class DynamicJS extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
+  @SuppressWarnings("unchecked")
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -113,6 +115,37 @@ public class DynamicJS extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug(arrayType.toString() + array.toString());
     out.println(arrayType.toString() + array.toString());
+
+    String globals = "";
+
+    globals += "var decSeparator_global = '"
+        + vars.getSessionValue("#DECIMALSEPARATOR|EUROEDITION") + "';\n";
+    globals += "var groupSeparator_global = '"
+        + vars.getSessionValue("#GROUPSEPARATOR|EUROEDITION") + "';\n";
+    globals += "var groupInterval_global = '3';\n";
+    globals += "var maskNumeric_default = '" + vars.getSessionValue("#FORMATOUTPUT|EUROEDITION")
+        + "';\n";
+
+    out.print(globals);
+
+    final HashMap<String, String> formatMap = (HashMap<String, String>) vars
+        .getSessionObject("#formatMap");
+
+    out.print("var F = {\"formats\": [");
+    boolean first = true;
+    for (String key : formatMap.keySet()) {
+      if (!first) {
+        out.print(",");
+      } else {
+        first = false;
+      }
+      out.print("{\"name\":\"" + key + "\",");
+      out.print("\"output\":\"" + formatMap.get(key) + "\"}");
+    }
+    out.println("]};");
+    out
+        .println("F.getFormat=function(name){if(typeof name==='undefined'||name===''){return'qtyEdition';}for(var i=0;i<this.formats.length;i++){if(this.formats[i].name===name){return this.formats[i].output;}}return'qtyEdtion';}");
+
     out.close();
   }
 }

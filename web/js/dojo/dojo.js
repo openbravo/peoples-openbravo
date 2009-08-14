@@ -12314,116 +12314,179 @@ this.rangeSpan.style.display="none";
 },onclick:function(){
 },onchange:function(){
 }});
+
 dojo.provide("openbravo.widget.RealNumberTextbox");
-dojo.widget.defineWidget("openbravo.widget.RealNumberTextbox",dojo.widget.RealNumberTextbox,{readonly:false,disabled:false,listenOnKeyPress:false,greaterThan:"",lowerThan:"",isWrong:false,templatePath:dojo.uri.dojoUri("deprecated250/ValidationTextbox.html"),templateCssPath:null,postMixInProperties:function(_b14,frag){
-openbravo.widget.RealNumberTextbox.superclass.postMixInProperties.apply(this,arguments);
-this.invalidMessage=openbravo.messages.getDataBaseMessage("Invalid");
-this.missingMessage=openbravo.messages.getDataBaseMessage("Missing");
-this.rangeMessage=openbravo.messages.getDataBaseMessage("Range");
-this.messages.invalidMessage=openbravo.messages.getDataBaseMessage("Invalid");
-this.messages.missingMessage=openbravo.messages.getDataBaseMessage("Missing");
-this.messages.rangeMessage=openbravo.messages.getDataBaseMessage("Range");
-},fillInTemplate:function(args,frag){
-openbravo.widget.RealNumberTextbox.superclass.fillInTemplate.apply(this,arguments);
-if(this.required){
-dojo.html.addClass(this.textbox,"required");
-}
-if(this.readonly){
-dojo.html.addClass(this.textbox,"readonly");
-}
-if(this.disabled){
-dojo.html.addClass(this.textbox,"disabled");
-}
-this.textbox.disabled=this.disabled;
-this.textbox.readonly=this.readonly;
-this.invalidSpan.style.display="none";
-this.missingSpan.style.display="none";
-this.rangeSpan.style.display="none";
-},isInRange:function(){
-if((this.greaterThan==""||this.greaterThan==null)&&(this.lowerThan==""||this.lowerThan==null)){
-return true;
-}
-if(this.greaterThan!=""){
-if(document.getElementById(this.greaterThan).value==null||document.getElementById(this.greaterThan).value==""){
-if(this.isWrong==true){
-this.isWrong=false;
-dojo.widget.byId(this.greaterThan).update();
-}
-return true;
-}else{
-if(this.textbox.value==""||this.textbox.value==null){
-if(this.isWrong==true){
-this.isWrong=false;
-dojo.widget.byId(this.greaterThan).update();
-}
-return true;
-}else{
-if(parseFloat(this.textbox.value)<parseFloat(document.getElementById(this.greaterThan).value)){
-if(this.isWrong==false){
-this.isWrong=true;
-dojo.widget.byId(this.greaterThan).update();
-}
-return false;
-}else{
-if(this.isWrong==true){
-this.isWrong=false;
-dojo.widget.byId(this.greaterThan).update();
-}
-return true;
-}
-}
-}
-}
-if(this.lowerThan!=""){
-if(document.getElementById(this.lowerThan).value==null||document.getElementById(this.lowerThan).value==""){
-if(this.isWrong==true){
-this.isWrong=false;
-dojo.widget.byId(this.lowerThan).update();
-}
-return true;
-}else{
-if(parseFloat(this.textbox.value)>parseFloat(document.getElementById(this.lowerThan).value)){
-if(this.isWrong==false){
-this.isWrong=true;
-dojo.widget.byId(this.lowerThan).update();
-}
-return false;
-}else{
-if(this.isWrong==true){
-this.isWrong=false;
-dojo.widget.byId(this.lowerThan).update();
-}
-return true;
-}
-}
-}
-},onkeydown:function(){
-},onclick:function(){
-},onchange:function(){
-},update:function(){
-this.lastCheckedValue=this.textbox.value;
-this.missingSpan.style.display="none";
-this.invalidSpan.style.display="none";
-this.rangeSpan.style.display="none";
-var _b18=this.isEmpty();
-var _b19=true;
-if(this.promptMessage!=this.textbox.value){
-_b19=this.isValid();
-}
-var _b1a=this.isMissing();
-if(_b1a){
-this.missingSpan.style.display="";
-}else{
-if(!_b18&&!_b19){
-this.invalidSpan.style.display="";
-}else{
-if(!this.isInRange()){
-this.rangeSpan.style.display="";
-}
-}
-}
-this.highlight();
-}});
+dojo.require("dojo.widget.RealNumberTextbox");
+dojo.require("openbravo.messages.common");
+
+// <namespace>, <namespace>.widget is now considered 'conventional'
+// therefore the registerNamespace call below is no longer necessary here
+
+// Tell dojo that widgets prefixed with "openbravo:" namespace are found in the "openbravo.widget" module
+// dojo.registerNamespace("openbravo", "openbravo.widget");
+
+// define UserButton's constructor
+dojo.widget.defineWidget(
+
+  "openbravo.widget.RealNumberTextbox",
+
+  // superclass	
+  dojo.widget.RealNumberTextbox,
+  
+  // member variables/functions
+  {
+    // readonly: Boolean
+    //    Can be true or false, default is false.
+    readonly: false,
+    // disabled: Boolean
+    //    Can be true or false, default is false.
+    disabled: false,
+    listenOnKeyPress:false,
+    // Id of the other member of the comparison.
+    greaterThan:"",
+    lowerThan:"",
+    isWrong:false,
+    outputformat:"",
+    decSeparator: typeof getGlobalDecSeparator === "function" ? getGlobalDecSeparator() : ".",
+    groupSeparator: typeof getGlobalGroupSeparator === "function" ? getGlobalGroupSeparator() : ",",
+    groupInterval: typeof getGlobalGroupInterval === "function" ? getGlobalGroupInterval() : "3",
+    maskNumeric: typeof getDefaultMaskNumeric === "function" ? getDefaultMaskNumeric() : "#0.###",
+    // override html
+    templatePath: dojo.uri.dojoUri("deprecated250/ValidationTextbox.html"),
+    // override css
+    templateCssPath: null, // Defined in the skin --- ValidationTextbox.css
+
+    postMixInProperties: function(localProperties, frag) {
+      openbravo.widget.RealNumberTextbox.superclass.postMixInProperties.apply(this, arguments);
+      this.invalidMessage= openbravo.messages.getDataBaseMessage("Invalid");
+      this.missingMessage= openbravo.messages.getDataBaseMessage("Missing");
+      this.rangeMessage= openbravo.messages.getDataBaseMessage("Range");
+      this.messages.invalidMessage= openbravo.messages.getDataBaseMessage("Invalid");
+      this.messages.missingMessage= openbravo.messages.getDataBaseMessage("Missing");
+      this.messages.rangeMessage= openbravo.messages.getDataBaseMessage("Range");
+    },
+
+    fillInTemplate: function(args, frag) {
+      openbravo.widget.RealNumberTextbox.superclass.fillInTemplate.apply(this, arguments);
+      if (this.outputformat != ""){ this.maskNumeric = formatNameToMask(this.outputformat); }
+      if(this.required){ dojo.html.addClass(this.textbox, "required"); }
+      if(this.readonly){ dojo.html.addClass(this.textbox, "readonly"); }
+      if(this.disabled){ dojo.html.addClass(this.textbox, "disabled"); }
+      this.textbox.disabled = this.disabled;
+      this.textbox.readonly = this.readonly;
+      this.invalidSpan.style.display="none";
+      this.missingSpan.style.display="none";
+      this.rangeSpan.style.display="none";
+    },
+
+    isInRange: function() {
+      if ((this.greaterThan == "" || this.greaterThan == null) && (this.lowerThan == "" || this.lowerThan == null)) {
+        return true;
+      }
+      if (this.greaterThan != "") {
+        if (document.getElementById(this.greaterThan).value == null || document.getElementById(this.greaterThan).value == "") {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.greaterThan).update();
+          }
+          return true;
+        } else if (this.textbox.value == "" || this.textbox.value == null) {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.greaterThan).update();
+          }
+          return true;
+        } else if (formattedNumberOp(this.textbox.value, "<", document.getElementById(this.greaterThan).value, this.maskNumeric, this.decSeparator, this.groupSeparator, this.groupInterval)) {
+          if (this.isWrong == false) {
+            this.isWrong = true;
+            dojo.widget.byId(this.greaterThan).update();
+          }
+          return false;
+        } else {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.greaterThan).update();
+          }
+          return true;
+        }
+      }
+      if (this.lowerThan != "") {
+        if (document.getElementById(this.lowerThan).value == null || document.getElementById(this.lowerThan).value == "") {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.lowerThan).update();
+          }
+          return true;
+        } else if (formattedNumberOp(this.textbox.value, ">", document.getElementById(this.lowerThan).value, this.maskNumeric, this.decSeparator, this.groupSeparator, this.groupInterval)) {
+          if (this.isWrong == false) {
+            this.isWrong = true;
+            dojo.widget.byId(this.lowerThan).update();
+          }
+          return false;
+        } else {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.lowerThan).update();
+          }
+          return true;
+        }
+      }
+    },
+
+    isValid: function() {
+      return checkNumber(this.textbox.value, this.maskNumeric, this.decSeparator, this.groupSeparator, this.groupInterval);
+    },
+
+    onfocus: function() {
+      focusNumberInput(this.textbox, this.maskNumeric, this.decSeparator, this.groupSeparator, this.groupInterval);
+    },
+
+    onblur: function() {
+      blurNumberInput(this.textbox, this.maskNumeric, this.decSeparator, this.groupSeparator, this.groupInterval);
+      this.update();
+    },
+
+    onkeydown: function(evt) {
+      manageDecPoint(this.textbox, this.decSeparator, evt);
+    },
+
+    onclick: function() {
+    },
+
+    onchange: function() {
+    },
+
+    update: function() {
+      // summary:
+      //    Called by oninit, onblur, and onkeypress.
+      // description:
+      //    Show missing or invalid messages if appropriate, and highlight textbox field.
+      this.lastCheckedValue = this.textbox.value;
+      this.missingSpan.style.display = "none";
+      this.invalidSpan.style.display = "none";
+      this.rangeSpan.style.display = "none";
+  
+      var empty = this.isEmpty();
+      var valid = true;
+      if(this.promptMessage != this.textbox.value){ 
+        valid = this.isValid(); 
+      }
+      var missing = this.isMissing();
+  
+      // Display at most one error message
+      if(missing){
+        this.missingSpan.style.display = "";
+      }else if( !empty && !valid ){
+        this.invalidSpan.style.display = "";
+      }else if( !this.isInRange() ){
+        this.rangeSpan.style.display = "";
+      }
+      this.highlight();
+    }
+
+  }
+);
+
 dojo.provide("openbravo.widget.DateTextbox");
 dojo.widget.defineWidget("openbravo.widget.DateTextbox",dojo.widget.DateTextbox,{displayFormat:"",saveFormat:"",listenOnKeyPress:false,greaterThan:"",lowerThan:"",isWrong:false,inputDate:new Date(0,0,0),templatePath:dojo.uri.dojoUri("deprecated250/DateTextbox.html"),templateCssPath:null,postMixInProperties:function(_b04,frag){
 openbravo.widget.DateTextbox.superclass.postMixInProperties.apply(this,arguments);
