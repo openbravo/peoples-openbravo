@@ -23,7 +23,7 @@
   * file and version.
   *************************************************************************/
 
-
+  TYPE RECORD IS REF CURSOR;
 
   v_newTaxBaseAmt NUMBER;
   v_oldTaxBaseAmt NUMBER;
@@ -37,11 +37,12 @@
   v_UOM_ID    VARCHAR2(32);
   v_IsSOTrx CHAR(1);
   v_Count NUMBER;
-  v_taxBaseAmt NUMERIC;
-  v_rate NUMERIC;
-  v_isSummary BOOLEAN;
+  v_taxBaseAmt NUMBER;
+  v_rate NUMBER;
+  v_isSummary CHAR(1);
   Cur_MultiTax RECORD;
-  xTaxAmt NUMERIC:=0;
+  xTaxAmt NUMBER:=0;
+  
     
 BEGIN
     
@@ -152,45 +153,45 @@ IF (UPDATING) THEN
    SELECT TaxBaseAmt 
      INTO v_taxBaseAmt 
    FROM C_OrderTax 
-   WHERE C_Order_ID=old.C_Order_ID 
-     AND C_Tax_ID=old.C_Tax_ID;
+   WHERE C_Order_ID=:old.C_Order_ID 
+     AND C_Tax_ID=:old.C_Tax_ID;
 
    SELECT Rate 
      INTO v_rate 
    FROM C_Tax 
-   WHERE C_Tax_ID=old.C_Tax_ID;
+   WHERE C_Tax_ID=:old.C_Tax_ID;
 
    SELECT IsSummary 
      INTO v_isSummary 
    FROM C_TAX t 
    WHERE C_Tax_ID=(SELECT C_Tax_ID 
-           FROM C_OrderTax 
-           WHERE C_Order_ID=old.C_Order_ID 
-             AND C_Tax_ID=old.C_Tax_ID);
-    
+		   FROM C_OrderTax 
+		   WHERE C_Order_ID=:old.C_Order_ID 
+		     AND C_Tax_ID=:old.C_Tax_ID);
+	
    IF(v_isSummary='N') THEN
      UPDATE C_OrderTax
-     SET TaxAmt = (SELECT ROUND(v_taxBaseAmt * v_rate / 100, v_Prec)),
-     Updated = TO_DATE(NOW()),
-     UpdatedBy = '0'
-     WHERE C_Order_ID=old.C_Order_ID
-     AND C_Tax_ID=old.C_Tax_ID;
+     SET TaxAmt = ROUND(v_taxBaseAmt * v_rate / 100, v_Prec),
+	 Updated = now(),
+	 UpdatedBy = '0'
+     WHERE C_Order_ID=:old.C_Order_ID
+     AND C_Tax_ID=:old.C_Tax_ID;
    ELSE
      FOR Cur_MultiTax IN
         (SELECT C_Tax_ID, Rate, CASCADE
-     FROM C_TAX
-     WHERE Parent_Tax_ID=old.C_Tax_ID
-     ORDER BY Line)
+	 FROM C_TAX
+	 WHERE Parent_Tax_ID=:old.C_Tax_ID
+	 ORDER BY Line)
      LOOP
        xTaxAmt:=xTaxAmt + ROUND(v_taxBaseAmt * Cur_MultiTax.Rate / 100, v_Prec);
      END LOOP;
 
      UPDATE C_OrderTax
      SET TaxAmt = xTaxAmt,
-     Updated = TO_DATE(NOW()),
-     UpdatedBy = '0'
-     WHERE C_Order_ID=old.C_Order_ID
-     AND C_Tax_ID=old.C_Tax_ID;
+	 Updated = now(),
+	 UpdatedBy = '0'
+     WHERE C_Order_ID=:old.C_Order_ID
+     AND C_Tax_ID=:old.C_Tax_ID;
    END IF;
   END IF;
 
@@ -224,49 +225,47 @@ IF (UPDATING) THEN
    SELECT TaxBaseAmt 
      INTO v_taxBaseAmt 
    FROM C_OrderTax 
-   WHERE C_Order_ID=new.C_Order_ID 
-     AND C_Tax_ID=new.C_Tax_ID;
+   WHERE C_Order_ID=:new.C_Order_ID 
+     AND C_Tax_ID=:new.C_Tax_ID;
 
    SELECT Rate 
      INTO v_rate 
    FROM C_Tax 
-   WHERE C_Tax_ID=new.C_Tax_ID;
+   WHERE C_Tax_ID=:new.C_Tax_ID;
 
    SELECT IsSummary 
      INTO v_isSummary 
    FROM C_TAX t 
    WHERE C_Tax_ID=(SELECT C_Tax_ID 
-           FROM C_OrderTax 
-           WHERE C_Order_ID=new.C_Order_ID 
-             AND C_Tax_ID=new.C_Tax_ID);
-    
+		   FROM C_OrderTax 
+		   WHERE C_Order_ID=:new.C_Order_ID 
+		     AND C_Tax_ID=:new.C_Tax_ID);
+	
    IF(v_isSummary='N') THEN
      UPDATE C_OrderTax
-     SET TaxAmt = (SELECT ROUND(v_taxBaseAmt * v_rate / 100, v_Prec)),
-     Updated = TO_DATE(NOW()),
-     UpdatedBy = '0'
-     WHERE C_Order_ID=new.C_Order_ID
-     AND C_Tax_ID=new.C_Tax_ID;
+     SET TaxAmt = ROUND(v_taxBaseAmt * v_rate / 100, v_Prec),
+	 Updated = now(),
+	 UpdatedBy = '0'
+     WHERE C_Order_ID=:new.C_Order_ID
+     AND C_Tax_ID=:new.C_Tax_ID;
    ELSE
      FOR Cur_MultiTax IN
         (SELECT C_Tax_ID, Rate, CASCADE
-     FROM C_TAX
-     WHERE Parent_Tax_ID=new.C_Tax_ID
-     ORDER BY Line)
+	 FROM C_TAX
+	 WHERE Parent_Tax_ID=:new.C_Tax_ID
+	 ORDER BY Line)
      LOOP
        xTaxAmt:=xTaxAmt + ROUND(v_taxBaseAmt * Cur_MultiTax.Rate / 100, v_Prec);
      END LOOP;
 
      UPDATE C_OrderTax
      SET TaxAmt = xTaxAmt,
-     Updated = TO_DATE(NOW()),
-     UpdatedBy = '0'
-     WHERE C_Order_ID=new.C_Order_ID
-     AND C_Tax_ID=new.C_Tax_ID;
+	 Updated = now(),
+	 UpdatedBy = '0'
+     WHERE C_Order_ID=:new.C_Order_ID
+     AND C_Tax_ID=:new.C_Tax_ID;
    END IF;
   END IF;
-
-
 
   -- Get Total Tax Amt
   IF (INSERTING OR UPDATING) THEN
