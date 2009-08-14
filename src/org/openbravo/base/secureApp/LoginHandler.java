@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.erpCommon.ops.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 

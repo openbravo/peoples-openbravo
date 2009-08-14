@@ -219,6 +219,7 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
 
           // only update if changed
           if ((currentValue == null && newValue != null)
+              || (currentValue != null && newValue == null)
               || (currentValue != null && newValue != null && !currentValue.equals(newValue))) {
             log.debug("Value changed setting it");
             if (!preventRealUpdate) {

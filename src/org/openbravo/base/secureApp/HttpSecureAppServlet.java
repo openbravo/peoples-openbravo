@@ -904,6 +904,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     String strGroupingSeparator = ","; // Default grouping separator
     String strDecimalSeparator = "."; // Default decimal separator
     final String strName = "euroInform"; // Name of the format to use
+    final HashMap<String, String> formatMap = new HashMap<String, String>();
+
     try {
       // Reading number format configuration
       final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -919,8 +921,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           final String strNumberName = NumberElement.getAttributes().getNamedItem("name")
               .getNodeValue();
           // store in session all the formats
-          vars.setSessionValue("#FormatOutput|" + strNumberName, NumberElement.getAttributes()
-              .getNamedItem("formatOutput").getNodeValue());
+          final String strFormatOutput = NumberElement.getAttributes().getNamedItem("formatOutput")
+              .getNodeValue();
+          formatMap.put(strNumberName, strFormatOutput);
+          vars.setSessionValue("#FormatOutput|" + strNumberName, strFormatOutput);
           vars.setSessionValue("#DecimalSeparator|" + strNumberName, NumberElement.getAttributes()
               .getNamedItem("decimal").getNodeValue());
           vars.setSessionValue("#GroupSeparator|" + strNumberName, NumberElement.getAttributes()
@@ -936,6 +940,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     } catch (final Exception e) {
       log4j.error("error reading number format", e);
     }
+    vars.setSessionObject("#FormatMap", formatMap);
     vars.setSessionValue("#AD_ReportNumberFormat", strNumberFormat);
     vars.setSessionValue("#AD_ReportGroupingSeparator", strGroupingSeparator);
     vars.setSessionValue("#AD_ReportDecimalSeparator", strDecimalSeparator);

@@ -89,7 +89,7 @@ function on_load() {
 	T.TCRmntr('C');
 	T.t_load = true;
 	if (T.control_obj.value == '') from_p = '0';
-	else from_p = T.control_obj.value;
+	else from_p = T.control_obj_value_calc_format;
 	document.forms[0].elements[0].value = from_p;
 }
 for (i = 0; i < document.links.length; i++) {

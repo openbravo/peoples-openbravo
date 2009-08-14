@@ -577,6 +577,12 @@ function validateNumber(strValue, isFloatAllowed, isNegativeAllowed) {
   var isNegative = false;
   var i=0;
   if (strValue == null || strValue=="") return true;
+
+  var decSeparator = getGlobalDecSeparator();
+  var groupSeparator = getGlobalGroupSeparator();
+
+  strValue = returnFormattedToCalc(strValue, decSeparator, groupSeparator);
+
   if (strValue.substring(i, i+1)=="-") {
     if (isNegativeAllowed !=null && isNegativeAllowed) {
       isNegative = true;
@@ -2656,11 +2662,31 @@ function formElementValue(form, ElementName, Value) {
     } else if (obj.type.toUpperCase().indexOf("RADIO")!=-1 || obj.type.toUpperCase().indexOf("CHECK")!=-1) {
       selectRadioButton(obj, Value);
     } else {
-      if (Value==null || Value=="null") Value="";
+
+      if (Value==null || Value=="null") {
+        Value="";
+      }
+
       if (typeof Value!="object") {
-        obj.value = Value;
-      } else //if (obj.className.toUpperCase().indexOf("REQUIRED")!=-1 || obj.className.toUpperCase().indexOf("KEY")!=-1 || obj.className.toUpperCase().indexOf("READONLY")!=-1) 
+
+          var decSeparator = getGlobalDecSeparator();
+          var groupSeparator = getGlobalGroupSeparator();
+          var groupInterval = getGlobalGroupInterval();
+
+          var outputformat = obj.getAttribute("outputformat");
+
+          if(outputformat != null || typeof Value === "number") {
+            maskNumeric = formatNameToMask(outputformat);
+            var formattedValue = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
+            obj.value = formattedValue;
+          }
+          else {
+            obj.value = Value;
+          }
+      } else {
+      //if (obj.className.toUpperCase().indexOf("REQUIRED")!=-1 || obj.className.toUpperCase().indexOf("KEY")!=-1 || obj.className.toUpperCase().indexOf("READONLY")!=-1)
         obj.value = selectDefaultValueFromArray(Value, true);
+      }
     }
     if (bolReadOnly && onChangeFunction) {
       var i = onChangeFunction.toString().indexOf("selectCombo(this,");
@@ -2687,6 +2713,19 @@ function formElementValue(form, ElementName, Value) {
     }
   }
   return true;
+}
+
+/**
+ * Returns a reference to the frame DOM element
+ * @param frameName Name of the frame to get the reference
+ * @returns null if not find it, or a reference to the frame DOM element
+ */
+function getFrame(frameName) {
+  var op = top.opener;
+  if(op == null) {
+    return top.frames[frameName];
+  }
+  return op.top.frames[frameName];	
 }
 
 /**
@@ -3946,10 +3985,727 @@ function changeAuditIcon(newStatus) {
 
 
 
+  // Numeric formatting functions
+
+/**
+* Returns the global decimal separator
+* @returns The global decimal separator
+* @type String
+*/
+function getGlobalDecSeparator() {
+  var m = getFrame('frameMenu');
+  return m.decSeparator_global;
+}
+
+/**
+* Returns the global group separator
+* @returns The global group separator
+* @type String
+*/
+function getGlobalGroupSeparator() {
+  var m = getFrame('frameMenu');
+  return m.groupSeparator_global;
+}
+
+/**
+* Returns the global group interval
+* @returns The global group interval
+* @type String
+*/
+function getGlobalGroupInterval() {
+  var m = getFrame('frameMenu');
+  return m.groupInterval_global;
+}
+
+/**
+* Returns a boolean specifing if the returned mask is in java format ("," for group separator and "." for decimal separator)
+* @returns True since returned masks are always in java format
+* @type Boolean
+*/
+function isJavaMask() {
+  var isJavaMask = true;
+  return isJavaMask;
+}
+
+/**
+* Returns the default mask numeric
+* @returns The default mask numeric
+* @type String
+*/
+function getDefaultMaskNumeric() {
+  var m = getFrame('frameMenu');
+  var maskNumeric_default = m.maskNumeric_default;
+  if (isJavaMask()) {
+    decSeparator = getGlobalDecSeparator();
+    groupSeparator = getGlobalGroupSeparator();
+    maskNumeric_default = returnMaskChange(maskNumeric_default, ".", ",", decSeparator, groupSeparator);
+  }
+  return maskNumeric_default;
+}
+
+/**
+* Return the mask needed in a given input
+* @param {Object} obj The input to obtain the mask
+* @returns The mask of the input
+* @type String
+*/
+  function getInputNumberMask(obj) {
+    var outputformat = obj.getAttribute('outputformat');
+    outputformat = formatNameToMask(outputformat);
+    return outputformat;
+  }
+
+/**
+ * Returns the output format for a given format defined in Format.xml
+ * @param (String) formatName One of the defined format names in Format.xml
+ * @return The outputFormat for the formatName
+ * @type String
+*/
+function formatNameToMask(formatName) {
+  var maskNumeric = "";
+  var decSeparator = "";
+  var groupSeparator = "";
+  var F = getFrame('frameMenu').F;
+  if(typeof F === 'undefined') {
+      return maskNumeric;
+  }
+  if(formatName == null || formatName == "" || formatName == "null") {
+    formatName = "qtyEdition";
+  }
+  maskNumeric = F.getFormat(formatName);
+  if (isJavaMask()) {
+    //decSeparator = F.getDecSeparator(formatName);
+    //groupSeparator = F.getGroupSeparator(formatName);
+    decSeparator = getGlobalDecSeparator();
+    groupSeparator = getGlobalGroupSeparator();
+    maskNumeric = returnMaskChange(maskNumeric, ".", ",", decSeparator, groupSeparator);
+  }
+  return maskNumeric;
+}
+
+/**
+* Actions to be done when focusing a numeric input
+* @param {Object} obj The focused input
+* @param {String} maskNumeric The numeric mask of the input
+* @param {String} decSeparator The decimal separator of the input
+* @param {String} groupSeparator The group separator of the input
+* @param {String} groupInterval The group interval of the input
+*/
+function focusNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval) {
+  if (maskNumeric == null || maskNumeric == "") maskNumeric = getDefaultMaskNumeric();
+  if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
+  if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
+  if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
+
+  var oldCaretPosition = getCaretPosition(obj).start;
+  var newCaretPosition = returnNewCaretPosition(obj, oldCaretPosition, groupSeparator);
+
+  var number = obj.value;
+  var isValid = checkNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
+  if (!isValid) {
+    return false;
+  }
+  var plainNumber = returnPlainNumber(number, decSeparator, groupSeparator);
+  obj.value = plainNumber;
+  setCaretToPos(obj, newCaretPosition);
+}
+
+/**
+* Function to calculate the new caret position when an input is focused and the display format is changed
+* @param {Object} obj The input
+* @param {String} oldCaretPosition The caret position before the format change
+* @param {String} groupSeparator The group separator of the input
+* @return The new caret position
+* @type Number
+*/
+function returnNewCaretPosition(obj, oldCaretPosition, groupSeparator) {
+  var newCaretPosition = oldCaretPosition;
+  for (var i=oldCaretPosition; i>0; i--) {
+    if (obj.value.substring(i-1, i) == groupSeparator) {
+      newCaretPosition = newCaretPosition - 1;
+    }
+  }
+  return newCaretPosition;
+}
+
+/**
+* Function that returns a number just with the decimal Separator
+* @param {String} number The formatted number
+* @param {String} decSeparator The decimal separator of the input
+* @param {String} groupSeparator The group separator of the input
+* @return The plain number
+* @type String
+*/
+function returnPlainNumber(number, decSeparator, groupSeparator) {
+  number = number.toString();
+  var plainNumber = number;
+
+  // Remove group separators
+  var groupRegExp = new RegExp("\\" + groupSeparator,"g");
+  plainNumber = plainNumber.replace(groupRegExp,"");
+
+  // Catch sign
+  var numberSign = "";
+  if (plainNumber.substring(0, 1) == "+") {
+    numberSign = "";
+    plainNumber = plainNumber.substring(1, number.length);
+  } else if (plainNumber.substring(0, 1) == "-") {
+    numberSign = "-";
+    plainNumber = plainNumber.substring(1, number.length);
+  }
+
+  // Remove ending decimal "0"
+  if (plainNumber.indexOf(decSeparator) != -1) {
+    while (plainNumber.substring(plainNumber.length-1, plainNumber.length) == "0") {
+      plainNumber = plainNumber.substring(0, plainNumber.length-1);
+    }
+  }
+
+  //Remove starting integer "0"
+  while (plainNumber.substring(0, 1) == "0" && plainNumber.substring(1, 2) != decSeparator && plainNumber.length > 1) {
+    plainNumber = plainNumber.substring(1, plainNumber.length);
+  }
+
+  // Remove decimal separator if is the last character
+  if (plainNumber.substring(plainNumber.length-1, plainNumber.length) == decSeparator) {
+    plainNumber = plainNumber.substring(0, plainNumber.length-1);
+  }
+
+  // Re-set sign
+  if (plainNumber != "0") {
+    plainNumber = numberSign + plainNumber;
+  }
+
+  //Return plain number
+  return plainNumber;
+}
+
+/**
+* Function that returns a number just with the decimal separator which always is ".". Used for math operations
+* @param {String} number The formatted number
+* @param {String} decSeparator The decimal separator of the input
+* @param {String} groupSeparator The group separator of the input
+* @return The converted number
+* @type String
+*/
+function returnFormattedToCalc(number, decSeparator, groupSeparator) {
+  var calcNumber = number;
+  calcNumber = returnPlainNumber(calcNumber, decSeparator, groupSeparator);
+  calcNumber = calcNumber.replace(decSeparator, '.');
+  return calcNumber;
+}
+
+/**
+* Function that returns a formatted number given as input a number just with the decimal separator which always is "."
+* @param {String} number The formatted number
+* @param {String} maskNumeric The numeric mask of the number
+* @param {String} decSeparator The decimal separator of the number
+* @param {String} groupSeparator The group separator of the number
+* @param {String} groupInterval The group interval of the number
+* @return The converted number
+* @type String
+*/
+function returnCalcToFormatted(number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
+  var formattedNumber = number;
+  formattedNumber = formattedNumber.toString();
+  formattedNumber = formattedNumber.replace(".", decSeparator);
+  formattedNumber = returnFormattedNumber(formattedNumber, maskNumeric, decSeparator, groupSeparator, groupInterval);
+  return formattedNumber;
+}
+
+/**
+* Function that does a change of the decimal and group separators of a mask
+* @param {String} maskNumeric The numeric maskr
+* @param {String} decSeparator_old The old decimal separator
+* @param {String} groupSeparator_old The old group separator
+* @param {String} decSeparator_new  The new decimal separator
+* @param {String} groupSeparator_new The new group separator
+* @return The converted mask
+* @type String
+*/
+function returnMaskChange(maskNumeric, decSeparator_old, groupSeparator_old, decSeparator_new, groupSeparator_new) {
+  if (decSeparator_new == null || decSeparator_new == "") decSeparator_new = getGlobalDecSeparator();
+  if (groupSeparator_new == null || groupSeparator_new == "") groupSeparator_new = getGlobalGroupSeparator();
+
+  var realMask = "";
+  for (var i=0; i<maskNumeric.length; i++) {
+    if (maskNumeric.substring(i,i+1) == decSeparator_old) {
+      realMask = realMask + decSeparator_new;
+    } else if (maskNumeric.substring(i,i+1) == groupSeparator_old) {
+      realMask = realMask + groupSeparator_new;
+    } else {
+      realMask = realMask + maskNumeric.substring(i,i+1);
+    }
+  }
+  return realMask;
+}
+
+/**
+* Actions to be done when blur from a numeric input
+* @param {Object} obj The focused input
+* @param {String} maskNumeric The numeric mask of the input
+* @param {String} decSeparator The decimal separator of the input
+* @param {String} groupSeparator The group separator of the input
+* @param {String} groupInterval The group interval of the input
+*/
+function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupInterval) {
+  if (maskNumeric == null || maskNumeric == "") maskNumeric = getDefaultMaskNumeric();
+  if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
+  if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
+  if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
+
+  var number = obj.value;
+  var isValid = checkNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
+  updateNumberMiniMB(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
+  if (!isValid) {
+    return false;
+  }
+  var formattedNumber = returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
+  obj.value = formattedNumber;
+}
+
+/**
+* Function called from the input when event occurs
+* @param {String} command String containing the event name
+* @param {Object} obj The focused input
+* @param {Event} evt The event itself (only needed when onkeydown)
+*/
+function numberInputEvent(command, obj, evt) {
+  if (command == "onfocus") {
+    focusNumberInput(obj, getInputNumberMask(obj));
+    return true;
+  } else if (command == "onblur") {
+    blurNumberInput(obj, getInputNumberMask(obj));
+    return true;
+  } else if (command == "onkeydown") {
+    manageDecPoint(obj, null, evt);
+    return true;
+  } else if (command == "onchange") {
+    return true;
+  }
+}
+
+/**
+* Updates the mini message box if the written input format is wrong
+* @param {Object} obj The input to check
+* @param {Boolean} isValid Boolean to check if the passes obj has valid format or not
+*/
+function updateNumberMiniMB(obj, isValid) {
+  //Invalid check
+  if (!document.getElementById(obj.id+"invalidSpan")) {
+    return true;
+  }
+  var miniMessageBox_invalid = document.getElementById(obj.id+"invalidSpan");
+  if (!isValid) {
+    miniMessageBox_invalid.style.display="";
+    return true;
+  } else {
+    miniMessageBox_invalid.style.display="none";
+  }
+
+  //Required check
+  if (!document.getElementById(obj.id+"missingSpan")) {
+    return true;
+  }
+  var isRequired = obj.getAttribute("required");
+  if (isRequired == "true") isRequired = true;
+  else if (isRequired == "false") isRequired = false;
+  var isMissing = false;
+  if (obj.value.length == 0) {
+    isMissing = true;
+  }
+  var miniMessageBox_missing = document.getElementById(obj.id+"missingSpan");
+  if (isRequired && isMissing) {
+    miniMessageBox_missing.style.display="";
+    return true;
+  } else {
+    miniMessageBox_missing.style.display="none";
+  }
+
+  return true;
+}
+
+/**
+* Function that transform a plain number into a formatted one
+* @param {String} number The number
+* @param {String} maskNumeric The numeric mask of the number
+* @param {String} decSeparator The decimal separator of the number
+* @param {String} groupSeparator The group separator of the number
+* @param {String} groupInterval The group interval of the number
+* @return The converted number
+* @type String
+*/
+function returnFormattedNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
+
+  if (number == "" || number == null) {
+    return number;
+  }
+
+  //Management of the mask
+  if (maskNumeric.indexOf("+") == 0 || maskNumeric.indexOf("-") == 0) {
+    maskNumeric = maskNumeric.substring(1, maskNumeric.length);
+  }
+  if (maskNumeric.indexOf(groupSeparator) != -1 && maskNumeric.indexOf(decSeparator) != -1 && maskNumeric.indexOf(groupSeparator) > maskNumeric.indexOf(decSeparator)) {
+    var fixRegExp = new RegExp("\\" + groupSeparator,"g");
+    maskNumeric = maskNumeric.replace(fixRegExp,"");
+  }
+  var maskLength = maskNumeric.length;
+  var decMaskPosition = maskNumeric.indexOf(decSeparator);
+  if (decMaskPosition == -1) decMaskPosition = maskLength;
+  var intMask = maskNumeric.substring(0,decMaskPosition);
+  var decMask = maskNumeric.substring(decMaskPosition+1,maskLength);
+
+  if (decMask.indexOf(groupSeparator) != -1 || decMask.indexOf(decSeparator) != -1) {
+    var fixRegExp_1 = new RegExp("\\" + groupSeparator,"g");
+    decMask = decMask.replace(fixRegExp_1,"");
+    var fixRegExp_2 = new RegExp("\\" + decSeparator,"g");
+    decMask = decMask.replace(fixRegExp_2,"");
+  }
+
+  //Management of the number
+  number = number.toString();
+  number = returnPlainNumber(number, decSeparator, groupSeparator);
+  var numberSign = "";
+  if (number.substring(0, 1) == "+") {
+    numberSign = "";
+    number = number.substring(1, number.length);
+  } else if (number.substring(0, 1) == "-") {
+    numberSign = "-";
+    number = number.substring(1, number.length);
+  }
+
+  ////Splitting the number
+  var formattedNumber = "";
+  var numberLength = number.length;
+  var decPosition = number.indexOf(decSeparator);
+  if (decPosition == -1) decPosition = numberLength;
+  var intNumber = number.substring(0,decPosition);
+  var decNumber = number.substring(decPosition+1,numberLength);
+
+  // //Management of the decimal part
+  if (decNumber.length > decMask.length) {
+    decNumber = "0." + decNumber;
+    decNumber = roundNumber(decNumber, decMask.length);
+    decNumber = decNumber.toString();
+    if (decNumber.substring(0, 1) == "1") {
+      intNumber = parseFloat(intNumber);
+      intNumber = intNumber + 1;
+      intNumber = intNumber.toString();
+    }
+    decNumber = decNumber.substring(2, decNumber.length);
+  }
+
+  if (decNumber.length < decMask.length) {
+    var decNumber_temp = ""
+    for (var i=0; i<decMask.length; i++) {
+      if (decMask.substring(i,i+1) == "#") {
+        if (decNumber.substring(i,i+1) != "") {
+          decNumber_temp = decNumber_temp + decNumber.substring(i,i+1);
+        }
+      } else if (decMask.substring(i,i+1) == "0") {
+        if (decNumber.substring(i,i+1) != "") {
+          decNumber_temp = decNumber_temp + decNumber.substring(i,i+1);
+        } else {
+          decNumber_temp = decNumber_temp + "0";
+        }
+      }
+    }
+    decNumber = decNumber_temp;
+  }
+
+  //Management of the integer part
+  var isGroup = false;
+
+  if (intMask.indexOf(groupSeparator) != -1) { isGroup = true; }
+
+  var groupRegExp = new RegExp("\\" + groupSeparator,"g");
+  intMask = intMask.replace(groupRegExp,"");
+
+  if (intNumber.length < intMask.length) {
+    var intNumber_temp = "";
+    var diff = intMask.length - intNumber.length;
+    for (var i=intMask.length; i>0; i--) {
+      if (intMask.substring(i-1,i) == "#") {
+        if (intNumber.substring(i-1-diff,i-diff) != "") {
+          intNumber_temp = intNumber.substring(i-1-diff,i-diff) + intNumber_temp;
+        }
+      } else if (intMask.substring(i-1,i) == "0") {
+        if (intNumber.substring(i-1-diff,i-diff) != "") {
+          intNumber_temp = intNumber.substring(i-1-diff,i-diff) + intNumber_temp;
+        } else {
+          intNumber_temp = "0" + intNumber_temp;
+        }
+      }
+    }
+    intNumber = intNumber_temp;
+  }
 
 
+  if (isGroup == true) {
+    var intNumber_temp = "";
+    var groupCounter=0;
+    for (var i=intNumber.length; i>0; i--) {
+       intNumber_temp = intNumber.substring(i-1, i) + intNumber_temp; 
+       groupCounter++;
+       if (groupCounter==groupInterval && i!=1) {
+        groupCounter=0;
+        intNumber_temp = groupSeparator + intNumber_temp;
+       }
+    }
+    intNumber = intNumber_temp;
+  }
+
+  //Building the final number
+  if (intNumber=="" && decNumber != "") {
+    intNumber = "0";
+  }
+  formattedNumber = numberSign + intNumber;
+  if (decNumber != "") {
+    formattedNumber += decSeparator + decNumber;
+  }
+  return formattedNumber;
+}
+
+/**
+* Function that checks if a number has the right format or not
+* @param {String} number The number
+* @param {String} maskNumeric The numeric mask of the number
+* @param {String} decSeparator The decimal separator of the number
+* @param {String} groupSeparator The group separator of the number
+* @param {String} groupInterval The group interval of the number
+* @return True if is correct or false if it is incorrect
+* @type Boolean
+*/
+function checkNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
+  var bolNegative = true;
+  if (maskNumeric.indexOf("+") == 0) {
+    bolNegative = false;
+    maskNumeric = maskNumeric.substring(1, maskNumeric.length);
+  }
+
+  var bolDecimal = true;
+  if (maskNumeric.indexOf(decSeparator) == -1) {
+    bolDecimal = false;
+  }
+  var checkPattern = "";
+  checkPattern += "^";
+  if (bolNegative) { checkPattern += "([+]|[-])?"; }
+  checkPattern += "(\\d+)?((\\" + groupSeparator + "\\d{" + groupInterval + "})?)+";
+  if (bolDecimal) { checkPattern += "(\\" + decSeparator + "\\d+)?"; }
+  checkPattern += "$";
+  var checkRegExp = new RegExp(checkPattern);
+  if (number.match(checkRegExp) && number.substring(0, 1) != groupSeparator) {
+    return true;
+  }
+  return false;
+}
+
+/**
+* Function that rounds a number to a given decimal number
+* @param {Number} num The number
+* @param {Number} dec The number of decimals
+* @return True if is correct or false if it is incorrect
+* @type Boolean
+*/
+function roundNumber(num, dec) {
+  var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+  return result;
+}
+
+/**
+* Function to operate with formatted number
+* @param {Number} number1 The first operand
+* @param {String} operator The operator (+ - * / % < > <= >= ...)
+* @param {Number} number2 The second operand
+* @param {String} result_maskNumeric The numeric mask of the result
+* @param {String} decSeparator The decimal separator of the number
+* @param {String} groupSeparator The group separator of the number
+* @param {String} groupInterval The group interval of the number
+* @return The result of the operation or true or false if the operator is (< > <= >= ...)
+* @type String or Boolean
+*/
+function formattedNumberOp(number1, operator, number2, result_maskNumeric, decSeparator, groupSeparator, groupInterval) {
+  if (result_maskNumeric == null || result_maskNumeric == "") result_maskNumeric = getDefaultMaskNumeric();
+  if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
+  if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
+  if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
+
+  var result;
+
+  number1 = returnFormattedToCalc(number1, decSeparator, groupSeparator);
+  number1 = parseFloat(number1);
+
+  number2 = returnFormattedToCalc(number2, decSeparator, groupSeparator);
+  number2 = parseFloat(number2);
+
+  if (operator == "sqrt") {
+    result = Math.sqrt(number1);
+  } else if (operator == "round") {
+    result = roundNumber(number1, number2);
+  } else {
+    result = eval(number1 + operator + number2);
+  }
+  if (result != true && result != false && result != null && result != "") {
+    result = returnCalcToFormatted(result, result_maskNumeric, decSeparator, groupSeparator, groupInterval)
+  }
+  return result;
+}
+
+/**
+* Function that returns the reverse of a given text string
+* @param {String} text The text
+* @return The reversed string
+* @type String
+*/
+function reverseString(text) {
+  var reverseText = "";
+  for (var i=text.length; i>0 ;i--) {
+     reverseText += text.substring(i-1, i);
+  }
+  return reverseText;
+}
 
 
+// CaretPosition object
+function CaretPosition() {
+ var start = null;
+ var end = null;
+}
+
+/* Function that returns actual position of -1 if we are at last position*/
+function getCaretPosition(oField) {
+ var oCaretPos = new CaretPosition();
+
+ // IE support
+ if(document.selection) {
+  oField.focus();
+  var oSel = document.selection.createRange();
+  var selectionLength = oSel.text.length;
+  oSel.moveStart ('character', -oField.value.length);
+  oCaretPos.start = oSel.text.length - selectionLength;
+  oCaretPos.end = oSel.text.length;
+ }
+ // Firefox support
+ else if(oField.selectionStart || oField.selectionStart == '0')
+ {
+  // This is a whole lot easier in Firefox
+  oCaretPos.start = oField.selectionStart;
+  oCaretPos.end = oField.selectionEnd;
+ }
+
+ // Return results
+ return (oCaretPos);
+}
+
+function setSelectionRange(input, selectionStart, selectionEnd) {
+  if (input.setSelectionRange) {
+    input.focus();
+    input.setSelectionRange(selectionStart, selectionEnd);
+  }
+  else if (input.createTextRange) {
+    var range = input.createTextRange();
+    range.collapse(true);
+    range.moveEnd('character', selectionEnd);
+    range.moveStart('character', selectionStart);
+    range.select();
+  }
+}
+
+function setCaretToEnd (input) {
+  setSelectionRange(input, input.value.length, input.value.length);
+}
+
+function setCaretToBegin (input) {
+  setSelectionRange(input, 0, 0);
+}
+
+function setCaretToPos (input, pos) {
+  setSelectionRange(input, pos, pos);
+}
+
+function selectString (input, string) {
+  var match = new RegExp(string, "i").exec(input.value);
+  if (match) {
+    setSelectionRange (input, match.index, match.index + match
+[0].length);
+  }
+}
+
+function replaceSelection (input, replaceString) {
+  if (input.setSelectionRange) {
+    var selectionStart = input.selectionStart;
+    var selectionEnd = input.selectionEnd;
+    input.value = input.value.substring(0, selectionStart)
+                  + replaceString
+                  + input.value.substring(selectionEnd);
+    if (selectionStart != selectionEnd) // has there been a selection
+      setSelectionRange(input, selectionStart, selectionStart + replaceString.length);
+    else // set caret
+      setCaretToPos(input, selectionStart + replaceString.length);
+  }
+  else if (document.selection) {
+    var range = document.selection.createRange();
+    if (range.parentElement() == input) {
+      var isCollapsed = range.text == '';
+      range.text = replaceString;
+      if (!isCollapsed)  { // there has been a selection
+        // it appears range.select() should select the newly
+        // inserted text but that fails with IE
+        range.moveStart('character', -replaceString.length);
+        range.select();
+      }
+    }
+  }
+}
+
+/**
+* Function that manage the numeric dot write in the input
+* @param {Object} obj The input
+* @param {String} decSeparator The decimal separator
+* @param {Event} evt The event. Usually related to onkeydown
+*/
+function manageDecPoint(obj, decSeparator, evt) {
+  if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
+
+  if (decSeparator == ".") {
+    return true;
+  }
+  var caretPosition = getCaretPosition(obj).start;
+  if (!evt) evt = window.event;
+  var keyCode = evt.keyCode ? evt.keyCode : evt.which ? evt.which : evt.charCode;
+  /*
+  * if(keyCode>=65 && keyCode<=90) { setTimeout(function()
+  * {obj.value = replaceAt(obj.value, "", caretPosition);
+  * setCaretToPos(obj, caretPosition);},5); }
+  */
+  if(keyCode==110) {
+    setTimeout(function() {obj.value = replaceAt(obj.value, decSeparator, caretPosition); setCaretToPos(obj, caretPosition+1);},5);
+  }
+  return true;
+}
+
+/**
+* Function that replaces a fixed position of a string with another text
+* @param {String} string The complete text
+* @param {String} what The replacement text
+* @param {Number} ini The initial position to start the change
+* @param {Number} end The end position to start the change
+* @return The result of the operation or true or false if the operator is (< > <= >= ...)
+* @type String
+*/
+function replaceAt(string, what, ini, end) {
+  if (end == null || end == "null" || end == "") {
+    end = ini;
+  }
+  if (ini > end) {
+    var temp = ini;
+    ini = end;
+    end = temp;
+  }
+  var newString = "";
+  newString = string.substring(0, ini) + what + string.substring(end+1, string.length);
+  return newString;
+}
 
 
 /**

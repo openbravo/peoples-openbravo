@@ -33,6 +33,8 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,20 +58,34 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.HttpBaseServlet;
+<<<<<<< /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.base
+=======
 import org.hibernate.criterion.Expression;
+>>>>>>> /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.other
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+<<<<<<< /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.base
+=======
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+>>>>>>> /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.other
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
+<<<<<<< /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java
 import org.openbravo.erpCommon.ops.ActivationKey;
+||||||| /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.base
+=======
+import org.openbravo.erpCommon.obps.ActivationKey;
+>>>>>>> /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.other
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
+<<<<<<< /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.base
+=======
 import org.openbravo.model.ad.domain.ListTrl;
 import org.openbravo.model.ad.domain.Reference;
+>>>>>>> /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.other
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.FormatUtilities;
@@ -2285,6 +2301,8 @@ public class Utility {
   }
 
   /**
+<<<<<<< /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.base
+=======
    * Returns the name for a value in a list reference in the selected language.
    * 
    * @param ListName
@@ -2337,6 +2355,7 @@ public class Utility {
   }
 
   /**
+>>>>>>> /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.other
    * Constructs and returns a two dimensional array of the data passed. Array definition is
    * constructed according to Javascript syntax. Used to generate data storage of lists or trees
    * within some manual windows/reports.
@@ -2434,6 +2453,25 @@ public class Utility {
     } else {
       return "Popup_NavBar_logo" + (ActivationKey.isActiveInstance() ? "_OPS" : "");
     }
+  }
+
+
+  /**
+   * Returns a DecimalFormat for the given formatting type contained in the Format.xml file
+   */
+  public static DecimalFormat getFormat(VariablesSecureApp vars, String typeName) {
+    String format = vars.getSessionValue("#FormatOutput|" + typeName);
+    String decimal = vars.getSessionValue("#DecimalSeparator|" + typeName);
+    String group = vars.getSessionValue("#GroupSeparator|" + typeName);
+    DecimalFormat numberFormatDecimal = null;
+    if (format != null && !format.equals("") && decimal != null && !decimal.equals("")
+        && group != null && !group.equals("")) {
+      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+      dfs.setDecimalSeparator(decimal.charAt(0));
+      dfs.setGroupingSeparator(group.charAt(0));
+      numberFormatDecimal = new DecimalFormat(format, dfs);
+    }
+    return numberFormatDecimal;
   }
 
 }
