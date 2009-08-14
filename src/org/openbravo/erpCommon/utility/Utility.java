@@ -58,34 +58,20 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.HttpBaseServlet;
-<<<<<<< /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.base
-=======
 import org.hibernate.criterion.Expression;
->>>>>>> /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.other
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
-<<<<<<< /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.base
-=======
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
->>>>>>> /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.other
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
-<<<<<<< /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java
-import org.openbravo.erpCommon.ops.ActivationKey;
-||||||| /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.base
-=======
 import org.openbravo.erpCommon.obps.ActivationKey;
->>>>>>> /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.other
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
-<<<<<<< /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.base
-=======
 import org.openbravo.model.ad.domain.ListTrl;
 import org.openbravo.model.ad.domain.Reference;
->>>>>>> /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.other
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.FormatUtilities;
