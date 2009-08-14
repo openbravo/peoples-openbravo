@@ -900,6 +900,13 @@
       FROM AD_ELEMENT e
       WHERE AD_PROCESS_PARA.AD_Element_ID=e.AD_Element_ID
       )
+    AND EXISTS
+      (SELECT 1
+        FROM AD_PROCESS P
+        LEFT JOIN  AD_MODULE M ON P.AD_MODULE_ID = M.AD_MODULE_ID
+        WHERE AD_PROCESS_PARA.AD_PROCESS_ID  = P.AD_PROCESS_ID
+              AND M.ISINDEVELOPMENT='Y'
+      )        
       ;
     -- Parameter Fields
     DBMS_OUTPUT.PUT_LINE('Synchronize Process Parameter') ;
