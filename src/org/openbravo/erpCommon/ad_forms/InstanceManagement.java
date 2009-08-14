@@ -186,16 +186,22 @@ public class InstanceManagement extends HttpSecureAppServlet {
       discard[0] = "CEInstance";
       if (activationKey.hasExpired()) {
         discard[1] = "OPSActive";
+        discard[2] = "OPSNoActiveYet";
+      } else if (activationKey.isNotActiveYet()) {
+        discard[1] = "OPSExpired";
+        discard[2] = "OPSActive";
       } else {
         discard[1] = "OPSExpired";
         if (!activationKey.hasExpirationDate()) {
           discard[2] = "OPSExpirationTime";
         }
+        discard[3] = "OPSNoActiveYet";
       }
     } else {
       discard[0] = "OPSInstance";
       discard[1] = "OPSActive";
       discard[2] = "OPSExpired";
+      discard[3] = "OPSNoActiveYet";
     }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -252,9 +258,9 @@ public class InstanceManagement extends HttpSecureAppServlet {
     else
       xmlDocument.setParameter("instanceInfo", activationKey.toString(this, vars.getLanguage()));
 
-    if (activationKey.hasExpirationDate()) {
-      xmlDocument.setParameter("OPSdaysLeft", activationKey.getPendingDays().toString());
-    }
+    // if (activationKey.hasExpirationDate()) {
+    // xmlDocument.setParameter("OPSdaysLeft", activationKey.getPendingDays().toString());
+    // }
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();

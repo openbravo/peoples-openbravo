@@ -60,6 +60,8 @@ public class ActivationKey {
   private Long pendingTime;
   private boolean hasExpired = false;
 
+  private boolean notActiveYet = false;
+
   public enum LicenseRestriction {
     NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED
   }
@@ -164,6 +166,7 @@ public class ActivationKey {
     Date now = new Date();
     if (startDate == null || now.before(startDate)) {
       isActive = false;
+      notActiveYet = true;
       errorMessage = "@OPSNotActiveTill@ " + startDate;
       setLogger();
       return;
@@ -373,6 +376,11 @@ public class ActivationKey {
 
   public boolean hasExpired() {
     return hasExpired;
+  }
+
+  public boolean isNotActiveYet() {
+
+    return notActiveYet;
   }
 
 }

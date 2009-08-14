@@ -265,6 +265,9 @@ var baseDirectory = "../../../../../web/";
                   <td id="OPSActive" colspan="5" class="TitleCell" style="text-align:left;">
                     <span class="Label_ReadOnly_Text" ><span style="color:green;">Active</span>.<span id="OPSExpirationTime">&nbsp;You have&nbsp;<span id="OPSdaysLeft">xx</span>&nbsp;days left before your&nbsp;<a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Openbravo Professional Subscription</a>&nbsp;expires.</span></span>
                   </td>
+                  <td id="OPSNoActiveYet" colspan="5" class="TitleCell" style="text-align:left;">
+                    <span class="Label_ReadOnly_Text" ><span style="color:red;">No Active Yet</span>.</span>
+                  </td>
                   <td id="OPSExpired" colspan="5" class="TitleCell" style="text-align:left;">
                     <p class="Label_ReadOnly_Text"><span class="Label_ReadOnly_Text" ><span style="color:red;">Expired</span>.</p>
                     <p class="Label_ReadOnly_Text"><span id="OPSExpirationTime">You need to renew the System’s Openbravo Professional Subscription. Users will not be able to login, until you do so.</span></p>
@@ -334,6 +337,11 @@ var baseDirectory = "../../../../../web/";
                         <p class="Label_ReadOnly_Text">If you are connected to the Internet, you can do so online.</p>
                         <p class="Label_ReadOnly_Text">Otherwise, you need to provide a new Activation File that can be downloaded from &nbsp;<a class="LabelLink_noicon" href="http://butler.openbravo.com/heartbeat-server/DownloadActivationKey.html" target="_blank">Openbravo Butler</a>.</p>
                      </span>
+                     <span id="OPSNoActiveYet" class="Label_ReadOnly_Text" >
+                        <p class="Label_ReadOnly_Text">If you have changed your subscription details, the Activation must be refreshed for them to be in place.</p>
+                        <p class="Label_ReadOnly_Text">If you are connected to the Internet, you can do so online.</p>
+                        <p class="Label_ReadOnly_Text">Otherwise, you need to provide a new Activation File that can be downloaded from &nbsp;<a class="LabelLink_noicon" href="http://butler.openbravo.com/heartbeat-server/DownloadActivationKey.html" target="_blank">Openbravo Butler</a>.</p>
+                     </span>
                      <span id="OPSExpired" class="Label_ReadOnly_Text" >
                         <p class="Label_ReadOnly_Text">To reactivate an expired Professional Subscription, you need to refresh your Activation File.</p>
                         <p class="Label_ReadOnly_Text">If you are connected to the Internet, you can do so online.</p>
@@ -366,6 +374,7 @@ var baseDirectory = "../../../../../web/";
                             <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Browse File System" title="Browse File System" src="../../../../../web/images/blank.gif" border="0" /></td>
                             <td class="Button_text" id="CEInstance">Activate Online</td>
                             <td class="Button_text" id="OPSActive">Refresh Online</td>
+                            <td class="Button_text" id="OPSNoActiveYet">Refresh Online</td>
                             <td class="Button_text" id="OPSExpired">Reactivate Online</td>
                             <td class="Button_right"></td>
                           </tr>
@@ -393,6 +402,7 @@ var baseDirectory = "../../../../../web/";
                             <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Browse File System" title="Browse File System" src="../../../../../web/images/blank.gif" border="0" /></td>
                             <td class="Button_text" id="CEInstance">Activate with Activation File</td>
                             <td class="Button_text" id="OPSActive">Refresh with Activation File</td>
+                            <td class="Button_text" id="OPSNoActiveYet">Refresh with Activation File</td>
                             <td class="Button_text" id="OPSExpired">Reactivate with Activation File</td>
                             <td class="Button_right"></td>
                           </tr>
