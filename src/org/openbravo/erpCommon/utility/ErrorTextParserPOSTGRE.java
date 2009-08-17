@@ -153,16 +153,13 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
       return originalError;
     }
 
-    // BEGIN Search message by constraint name
-    FieldProvider fldMessage = Utility.locateMessage(getConnection(),
-        constraintData[0].constraintName, getLanguage());
-    if (fldMessage != null) {
-      myError = new OBError();
-      myError.setType((fldMessage.getField("msgtype").equals("E") ? "Error" : "Warning"));
-      myError.setMessage(fldMessage.getField("msgtext"));
-      return myError;
+    // handle common cases (shared across different dbms)
+    OBError cError = handleConstraintViolation(constraintData);
+    if (cError != null) {
+      return cError;
     }
-    // END Search message by constraint name
+
+    FieldProvider fldMessage;
     if (constraintData[0].constraintType.equalsIgnoreCase("C")
         && !constraintData[0].searchCondition.equals("")) {
       // BEGIN Search message by constraint search

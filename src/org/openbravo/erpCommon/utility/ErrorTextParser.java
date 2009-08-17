@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.utility;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 
 /**
@@ -127,4 +128,22 @@ abstract class ErrorTextParser {
    * @throws Exception
    */
   public abstract OBError parse() throws Exception;
+
+  protected OBError handleConstraintViolation(ErrorTextParserData[] constraintData) {
+    FieldProvider fldMessage;
+    OBError myError;
+
+    // search for AD_MESSAGE.value with exact constraint name
+    fldMessage = Utility.locateMessage(getConnection(), constraintData[0].constraintName,
+        getLanguage());
+    if (fldMessage != null) {
+      myError = new OBError();
+      myError.setType((fldMessage.getField("msgtype").equals("E") ? "Error" : "Warning"));
+      myError.setMessage(fldMessage.getField("msgtext"));
+      return myError;
+    }
+
+    return null;
+  }
+
 }
