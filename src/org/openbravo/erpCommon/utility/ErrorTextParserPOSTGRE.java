@@ -102,7 +102,6 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
     else if (getConnection() == null)
       return null;
     OBError myError = null;
-    OBError myCodeError = null;
     String myMessage = getMessage();
     if (log4j.isDebugEnabled())
       log4j.debug("Message: " + myMessage);
@@ -198,19 +197,13 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
         }
       }
       // END Search message by constraint search condition
-    } else {
-      // it is a constraint but has no entry with the constraint name in AD_MESSAGE.value
-      myError = new OBError();
-      myError.setType("Error");
-      myError.setMessage(getMessage());
-      return myError;
     }
     // END Specific parse for CONSTRAINT DB objects
 
-    // END Getting DB object name
-    if (myCodeError != null)
-      return myCodeError;
-    else
-      return myError;
+    // fallback to original error message for all cases not handled above
+    OBError originalError = new OBError();
+    originalError.setType("Error");
+    originalError.setMessage(getMessage());
+    return originalError;
   }
 }
