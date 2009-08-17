@@ -22,7 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.openbravo.data.FieldProvider;
 
 // examples for the types of postgres messages to be parsed by this class
 
@@ -158,46 +157,6 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
       return cError;
     }
 
-    FieldProvider fldMessage;
-    if (constraintData[0].constraintType.equalsIgnoreCase("C")
-        && !constraintData[0].searchCondition.equals("")) {
-      // BEGIN Search message by constraint search
-      // condition
-      fldMessage = Utility.locateMessage(getConnection(), constraintData[0].searchCondition,
-          getLanguage());
-      if (fldMessage != null) {
-        myError = new OBError();
-        myError.setType((fldMessage.getField("msgtype").equals("E") ? "Error" : "Warning"));
-        myError.setMessage(fldMessage.getField("msgtext"));
-        return myError;
-      } else if (!constraintData[0].searchCondition.trim().equals("")) {
-        String searchCond = constraintData[0].searchCondition.trim().toUpperCase();
-        if (searchCond.endsWith(" IS NOT NULL")) {
-          String columnName = searchCond.substring(0, searchCond.lastIndexOf(" IS NOT NULL"))
-              .trim();
-          columnName = Utility.messageBD(getConnection(), columnName, getLanguage());
-          String tableName = Utility.messageBD(getConnection(), constraintData[0].tableName,
-              getLanguage());
-          myError = new OBError();
-          myError.setType("Error");
-          myError.setMessage(Utility.messageBD(getConnection(), "NotNullError", getLanguage())
-              + ": " + tableName + " - " + columnName);
-          return myError;
-        } else if (searchCond.endsWith(" IN ('Y','N')") || searchCond.endsWith(" IN ('Y', 'N')")
-            || searchCond.endsWith(" IN ('N','Y')") || searchCond.endsWith(" IN ('N', 'Y')")) {
-          String columnName = searchCond.substring(0, searchCond.lastIndexOf(" IN (")).trim();
-          columnName = Utility.messageBD(getConnection(), columnName, getLanguage());
-          String tableName = Utility.messageBD(getConnection(), constraintData[0].tableName,
-              getLanguage());
-          myError = new OBError();
-          myError.setType("Error");
-          myError.setMessage(Utility.messageBD(getConnection(), "NotYNError", getLanguage()) + ": "
-              + tableName + " - " + columnName);
-          return myError;
-        }
-      }
-      // END Search message by constraint search condition
-    }
     // END Specific parse for CONSTRAINT DB objects
 
     // fallback to original error message for all cases not handled above
