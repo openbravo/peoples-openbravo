@@ -140,8 +140,7 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
     }
 
     // lookup constraint data
-    ErrorTextParserPOSTGREData[] constraintData = ErrorTextParserPOSTGREData.select(
-        getConnection(), objectName);
+    ErrorTextParserData[] constraintData = ErrorTextParserData.select(getConnection(), objectName);
 
     // BEGIN Specific parse for CONSTRAINT DB objects
 

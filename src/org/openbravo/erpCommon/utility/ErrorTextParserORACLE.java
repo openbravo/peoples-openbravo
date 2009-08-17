@@ -119,8 +119,8 @@ class ErrorTextParserORACLE extends ErrorTextParser {
           objectName = objectName.substring(pos + 1);
         if (log4j.isDebugEnabled())
           log4j.debug("Object real name: " + objectName);
-        ErrorTextParserORACLEData[] constraintData = ErrorTextParserORACLEData.select(
-            getConnection(), objectName);
+        ErrorTextParserData[] constraintData = ErrorTextParserData.select(getConnection(),
+            objectName);
         // BEGIN Specific parse for CONSTRAINT DB objects
         if (constraintData != null && constraintData.length > 0) {
           // BEGIN Search message by constraint name
