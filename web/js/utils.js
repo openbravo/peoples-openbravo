@@ -4098,8 +4098,8 @@ function returnNewCaretPosition(obj, oldCaretPosition, groupSeparator) {
 /**
 * Function that returns a number just with the decimal Separator
 * @param {String} number The formatted number
-* @param {String} decSeparator The decimal separator of the input
-* @param {String} groupSeparator The group separator of the input
+* @param {String} decSeparator The decimal separator of the number
+* @param {String} groupSeparator The group separator of the number
 * @return The plain number
 * @type String
 */
@@ -4148,10 +4148,10 @@ function returnPlainNumber(number, decSeparator, groupSeparator) {
 }
 
 /**
-* Function that returns a number just with the decimal separator which always is ".". Used for math operations
+* Function that returns a number just with the decimal separator which always is ".". It is used for math operations
 * @param {String} number The formatted number
-* @param {String} decSeparator The decimal separator of the input
-* @param {String} groupSeparator The group separator of the input
+* @param {String} decSeparator The decimal separator of the number
+* @param {String} groupSeparator The group separator of the number
 * @return The converted number
 * @type String
 */
@@ -4182,7 +4182,7 @@ function returnCalcToFormatted(number, maskNumeric, decSeparator, groupSeparator
 
 /**
 * Function that does a change of the decimal and group separators of a mask
-* @param {String} maskNumeric The numeric maskr
+* @param {String} maskNumeric The numeric mask
 * @param {String} decSeparator_old The old decimal separator
 * @param {String} groupSeparator_old The old group separator
 * @param {String} decSeparator_new  The new decimal separator
@@ -4533,13 +4533,17 @@ function reverseString(text) {
 }
 
 
-// CaretPosition object
+/**
+* Objet CaretPosition
+*/
 function CaretPosition() {
  var start = null;
  var end = null;
 }
 
-/* Function that returns actual position of -1 if we are at last position*/
+/**
+* Function that returns actual position of -1 if we are at last position
+*/
 function getCaretPosition(oField) {
  var oCaretPos = new CaretPosition();
 
@@ -4564,13 +4568,18 @@ function getCaretPosition(oField) {
  return (oCaretPos);
 }
 
-function setSelectionRange(input, selectionStart, selectionEnd) {
-  if (input.setSelectionRange) {
-    input.focus();
-    input.setSelectionRange(selectionStart, selectionEnd);
-  }
-  else if (input.createTextRange) {
-    var range = input.createTextRange();
+/**
+* Function that selects a text range of an input
+* @param {Object} obj The input to do a selection
+* @param {Number} selectionStart The start position of the selection
+* @param {Number} selectionEnd The start position of the selection
+*/
+function setSelectionRange(obj, selectionStart, selectionEnd) {
+  if (obj.setSelectionRange) {
+    obj.focus();
+    obj.setSelectionRange(selectionStart, selectionEnd);
+  } else if (obj.createTextRange) {
+    var range = obj.createTextRange();
     range.collapse(true);
     range.moveEnd('character', selectionEnd);
     range.moveStart('character', selectionStart);
@@ -4578,51 +4587,29 @@ function setSelectionRange(input, selectionStart, selectionEnd) {
   }
 }
 
-function setCaretToEnd (input) {
-  setSelectionRange(input, input.value.length, input.value.length);
+/**
+* Function that sets the cursor position to the end
+* @param {Object} obj The target input
+*/
+function setCaretToEnd (obj) {
+  setSelectionRange(obj, obj.value.length, obj.value.length);
 }
 
-function setCaretToBegin (input) {
-  setSelectionRange(input, 0, 0);
+/**
+* Function that sets the cursor position to the start
+* @param {Object} obj The target input
+*/
+function setCaretToBegin (obj) {
+  setSelectionRange(obj, 0, 0);
 }
 
-function setCaretToPos (input, pos) {
-  setSelectionRange(input, pos, pos);
-}
-
-function selectString (input, string) {
-  var match = new RegExp(string, "i").exec(input.value);
-  if (match) {
-    setSelectionRange (input, match.index, match.index + match
-[0].length);
-  }
-}
-
-function replaceSelection (input, replaceString) {
-  if (input.setSelectionRange) {
-    var selectionStart = input.selectionStart;
-    var selectionEnd = input.selectionEnd;
-    input.value = input.value.substring(0, selectionStart)
-                  + replaceString
-                  + input.value.substring(selectionEnd);
-    if (selectionStart != selectionEnd) // has there been a selection
-      setSelectionRange(input, selectionStart, selectionStart + replaceString.length);
-    else // set caret
-      setCaretToPos(input, selectionStart + replaceString.length);
-  }
-  else if (document.selection) {
-    var range = document.selection.createRange();
-    if (range.parentElement() == input) {
-      var isCollapsed = range.text == '';
-      range.text = replaceString;
-      if (!isCollapsed)  { // there has been a selection
-        // it appears range.select() should select the newly
-        // inserted text but that fails with IE
-        range.moveStart('character', -replaceString.length);
-        range.select();
-      }
-    }
-  }
+/**
+* Function that sets the cursor to an specific position
+* @param {Object} obj The target input
+* @param {Number} obj The target position
+*/
+function setCaretToPos (obj, pos) {
+  setSelectionRange(obj, pos, pos);
 }
 
 /**
