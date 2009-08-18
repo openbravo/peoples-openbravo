@@ -44,6 +44,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -57,8 +58,8 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
-import org.openbravo.base.HttpBaseServlet;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -246,8 +247,7 @@ public class Utility {
   /**
    * 
    * Formats a message String into a String for html presentation. Escapes the &, <, >, " and ®, and
-   * replace the \n by <br/>
-   * and \r for space.
+   * replace the \n by <br/> and \r for space.
    * 
    * IMPORTANT! : this method is designed to transform the output of Utility.messageBD method, and
    * this method replaces \n by \\n and \" by &quote. Because of that, the first replacements revert
@@ -945,6 +945,28 @@ public class Utility {
    */
   public static String parseTranslation(ConnectionProvider conn, VariablesSecureApp vars,
       String language, String text) {
+    return parseTranslation(conn, vars, null, language, text);
+  }
+
+  /**
+   * Parse the text searching @ parameters to translate. If replaceMap is not null and contains a
+   * replacement value for a token then it will be used, otherwise the return value of the translate
+   * method will be used for the translation.
+   * 
+   * @param conn
+   *          Handler for the database connection.
+   * @param vars
+   *          Handler for the session info.
+   * @param replaceMap
+   *          optional Map containing replacement values for the tokens
+   * @param language
+   *          String with the language to translate.
+   * @param text
+   *          String with the text to translate.
+   * @return String translated.
+   */
+  public static String parseTranslation(ConnectionProvider conn, VariablesSecureApp vars,
+      Map<String, String> replaceMap, String language, String text) {
     if (text == null || text.length() == 0)
       return text;
 
@@ -964,7 +986,11 @@ public class Utility {
       }
 
       token = inStr.substring(0, j);
-      outStr.append(translate(conn, vars, token, language));
+      if (replaceMap != null && replaceMap.containsKey(token)) {
+        outStr.append(replaceMap.get(token));
+      } else {
+        outStr.append(translate(conn, vars, token, language));
+      }
 
       inStr = inStr.substring(j + 1, inStr.length());
       i = inStr.indexOf("@");
@@ -2439,6 +2465,7 @@ public class Utility {
     }
     return numberFormatDecimal;
   }
+
   /**
    * Returns the OB logo CSS style
    * 
