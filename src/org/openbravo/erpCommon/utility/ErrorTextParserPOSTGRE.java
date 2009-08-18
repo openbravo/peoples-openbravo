@@ -21,6 +21,8 @@ package org.openbravo.erpCommon.utility;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
 
 // examples for the types of postgres messages to be parsed by this class
@@ -77,7 +79,7 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
     Pattern p = Pattern.compile("\".+?\"");
     Matcher m = p.matcher(input);
     if (!m.find()) {
-      log4j.warn("did not find constraint name for error message: " + input);
+      log4j.info("did not find constraint name for error message: " + input);
       return null;
     }
     String constraintName = input.substring(m.start(), m.end());
@@ -90,6 +92,30 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
     return constraintName;
   }
 
+  String[] getColumnNamesForConstraint(String constraintName) {
+    String colString = "";
+    try {
+      String query = "column_names as columnname from user_constraints where constraint_name = ?";
+      ErrorTextParserData[] cols = ErrorTextParserData.selectColumnNamesForConstraint(
+          getConnection(), query, constraintName);
+      if (cols != null && cols.length > 0) {
+        colString = cols[0].columnname;
+      }
+    } catch (ServletException se) {
+      log4j.error("Error reading list of columns for constraint: " + constraintName, se);
+    }
+    // colString pattern "colA","colB"
+    String[] cols = colString.split(",");
+    for (int i = 0; i < cols.length; i++) {
+      String col = cols[i];
+      if (col.length() > 2) {
+        col = col.substring(1, col.length() - 1);
+        cols[i] = col;
+      }
+    }
+    return cols;
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -100,7 +126,6 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
       return null;
     else if (getConnection() == null)
       return null;
-    OBError myError = null;
     String myMessage = getMessage();
     if (log4j.isDebugEnabled())
       log4j.debug("Message: " + myMessage);

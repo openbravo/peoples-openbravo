@@ -18,6 +18,11 @@
  */
 package org.openbravo.erpCommon.utility;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
@@ -43,7 +48,23 @@ import org.openbravo.data.FieldProvider;
  *         ORACLE RDBMS.
  */
 class ErrorTextParserORACLE extends ErrorTextParser {
-  static Logger log4j = Logger.getLogger(ErrorTextParserORACLE.class);
+  private static final Logger log4j = Logger.getLogger(ErrorTextParserORACLE.class);
+
+  String[] getColumnNamesForConstraint(String constraintName) {
+    try {
+      String query = "column_name as columnname from user_cons_columns where upper(constraint_name) = upper(?)";
+      ErrorTextParserData[] cols = ErrorTextParserData.selectColumnNamesForConstraint(
+          getConnection(), query, constraintName);
+      String[] res = new String[cols.length];
+      for (int i = 0; i < cols.length; i++) {
+        res[i] = cols[i].columnname;
+      }
+      return res;
+    } catch (ServletException se) {
+      log4j.error("Error reading list of columns for constraint: " + constraintName, se);
+      return new String[0];
+    }
+  }
 
   /*
    * (non-Javadoc)
@@ -148,9 +169,21 @@ class ErrorTextParserORACLE extends ErrorTextParser {
             columnName = columnName.substring(1, columnName.length() - 1);
           myError = new OBError();
           myError.setType("Error");
-          myError.setMessage(Utility.messageBD(getConnection(), "NotNullError", getLanguage())
-              + ": " + tableName + " - " + columnName);
-          return myError;
+
+          FieldProvider msgText = Utility.locateMessage(getConnection(), "NotNullError",
+              getLanguage());
+          if (msgText != null) {
+            String msgTemplate = msgText.getField("msgText");
+            tableName = getTableName(tableName);
+            columnName = getColumnName(columnName);
+            Map<String, String> replaceMap = new HashMap<String, String>();
+            replaceMap.put("TABLE_NAME", tableName);
+            replaceMap.put("COLUMN_NAME", columnName);
+            String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap,
+                getLanguage(), msgTemplate);
+            myError.setMessage(res);
+            return myError;
+          }
         }
         // END Specific parse for CONSTRAINT DB objects
       }
