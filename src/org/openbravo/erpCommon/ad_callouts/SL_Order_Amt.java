@@ -158,6 +158,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
             dataOrder[0].cBpartnerId, strProduct, (strPriceStd.equals("undefined") ? "0"
                 : strPriceStd.replace("\"", "")), strQty, dataOrder[0].mPricelistId,
             dataOrder[0].id);
+        priceActual = new BigDecimal(strPriceActual);
         resultado.append("new Array(\"inppriceactual\", \"" + strPriceActual + "\"),");
       }
     }
@@ -192,14 +193,19 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         log4j.debug("Discount rounded: " + discount.toString());
       resultado.append("new Array(\"inpdiscount\", \"" + discount.toString() + "\"),");
     } else if (strChanged.equals("inpqtyordered")) { // calculate Actual
-      priceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
-          dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct, priceStd.toString(),
-          strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
-      if (priceActual.scale() > PricePrecision)
-        priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-      resultado.append("new Array(\"inppriceactual\", \"" + priceActual.toString() + "\"),");
-    } else if (strChanged.equals("inpdiscount")) { // calculate std and
-      // actual
+      if ("Y".equals(cancelPriceAd)) {
+        priceActual = priceStd;
+        resultado.append("new Array(\"inppriceactual\", \"" + priceActual.toString() + "\"),");
+      } else {
+        priceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
+            dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct, priceStd.toString(),
+            strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
+        if (priceActual.scale() > PricePrecision)
+          priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+        resultado.append("new Array(\"inppriceactual\", \"" + priceActual.toString() + "\"),");
+      }
+
+    } else if (strChanged.equals("inpdiscount")) { // calculate std and actual
       BigDecimal discount1 = null;
       if (priceList.compareTo(BigDecimal.ZERO) != 0)
         discount1 = (((priceList.subtract(priceStd)).divide(priceList, 12,
@@ -265,7 +271,13 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     }
 
     // Multiply
-    BigDecimal lineNetAmt = qtyOrdered.multiply(priceActual);
+    BigDecimal lineNetAmt;
+    if ("Y".equals(cancelPriceAd)) {
+      lineNetAmt = qtyOrdered.multiply(priceStd);
+    } else {
+      lineNetAmt = qtyOrdered.multiply(priceActual);
+    }
+
     if (lineNetAmt.scale() > StdPrecision)
       lineNetAmt = lineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
     resultado.append("new Array(\"inplinenetamt\", \"" + lineNetAmt.toString() + "\")");
