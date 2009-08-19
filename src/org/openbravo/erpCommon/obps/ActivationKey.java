@@ -52,6 +52,7 @@ public class ActivationKey {
   private boolean isActive = false;
   private boolean hasActivationKey = false;
   private String errorMessage = "";
+  private String messageType = "Error";
   private Properties instanceProperties;
   private static final Logger log = Logger.getLogger(ActivationKey.class);
   private String strPublicKey;
@@ -168,6 +169,7 @@ public class ActivationKey {
       isActive = false;
       notActiveYet = true;
       errorMessage = "@OPSNotActiveTill@ " + getProperty("startdate");
+      messageType = "Warning";
       setLogger();
       return;
     }
@@ -260,6 +262,10 @@ public class ActivationKey {
 
   public String getErrorMessage() {
     return errorMessage;
+  }
+
+  public String getMessageType() {
+    return messageType;
   }
 
   public boolean isOPSInstance() {

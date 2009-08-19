@@ -238,7 +238,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
         myMessage = vars.getMessage("InstanceManagement");
       } else {
         myMessage = new OBError();
-        myMessage.setType("Error");
+        myMessage.setType(activationKey.getMessageType());
         myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), activationKey
             .getErrorMessage()));
       }
