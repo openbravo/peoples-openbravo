@@ -62,6 +62,6 @@
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <check name="CACCTSCHPROCESS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CACCTSCHPROCESS_ISDATASET_CHECK"><![CDATA[ISDATASET IN ('Y', 'N')]]></check>
+      <check name="CACCTSCHPROCESS_ISDATASET_CHK"><![CDATA[ISDATASET IN ('Y', 'N')]]></check>
     </table>
   </database>
