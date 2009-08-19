@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '4462';
+  var number = '4653';
   return number;
 }
 
@@ -76,6 +76,33 @@ function revisionControl(number) {
     return false;
   } else {
     return true;
+  }
+}
+
+
+function getObjAttribute(obj, attribute) {
+  attribute = attribute.toLowerCase();
+  var attribute_text = "";
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+    attribute_text = obj.getAttribute(attribute);
+  } else {
+    attribute_text = obj.getAttribute(attribute).toString();
+    attribute_text = attribute_text.replace("function anonymous()","");
+    attribute_text = attribute_text.replace("function " + attribute + "()","");
+    attribute_text = attribute_text.replace("{\n","");
+    attribute_text = attribute_text.replace("\n","");
+    attribute_text = attribute_text.replace("}","");
+  }
+  return attribute_text;
+}
+
+function setObjAttribute(obj, attribute, attribute_text) {
+  attribute = attribute.toLowerCase();
+  attribute_text = attribute_text.toString();
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+    obj.setAttribute(attribute, attribute_text);
+  } else {
+    obj[attribute]=new Function(attribute_text);
   }
 }
 
