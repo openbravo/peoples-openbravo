@@ -47,7 +47,7 @@
       </column>
       <column name="ISDATASET" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_CACCTSCHEMAPROCESS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
@@ -62,5 +62,6 @@
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <check name="CACCTSCHPROCESS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CACCTSCHPROCESS_ISDATASET_CHECK"><![CDATA[ISDATASET IN ('Y', 'N')]]></check>
     </table>
   </database>

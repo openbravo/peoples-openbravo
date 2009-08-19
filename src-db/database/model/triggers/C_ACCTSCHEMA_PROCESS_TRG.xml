@@ -62,8 +62,9 @@ IF (:NEW.ISDATASET='Y') THEN
         WHERE AD_CLIENT_ID = :NEW.AD_CLIENT_ID AND AD_ORG_ID = :NEW.AD_ORG_ID;
       ELSE
         -- No accounting schema was found!
-        --RAISE_APPLICATION_ERROR(-1, 'WHATEVER EXCEPTION') ;
-	RAISE EXCEPTION '-20000','@NoAcctSchema@';
+	--RAISE_APPLICATION_ERROR(-20000,'@NoAcctSchema@');
+	--RAISE_APPLICATION_ERROR(-20000, 'NoAcctSchema');
+	RAISE_APPLICATION_ERROR(-20000, '@NoAcctSchema@');
       END IF;
     ELSIF (v_Count>1) THEN
       -- If there exists more than one accounting schema for the organization then
