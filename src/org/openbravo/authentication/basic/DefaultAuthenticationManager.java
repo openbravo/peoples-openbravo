@@ -19,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.openbravo.authentication.AuthenticationException;
@@ -109,10 +110,13 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
   public void logout(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    if (request.getSession().getAttribute("#Authenticated_user") != null
-        && !request.getSession().getAttribute("#Authenticated_user").equals("")) {
-      request.getSession(true).removeAttribute("#Authenticated_user");
+
+    // if HttpSession is still valid, then 'logout' by removing #Authenticated_user from it
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+      session.removeAttribute("#Authenticated_user");
     }
+
     if (!response.isCommitted())
       response.sendRedirect(HttpBaseUtils.getLocalAddress(request));
   }
