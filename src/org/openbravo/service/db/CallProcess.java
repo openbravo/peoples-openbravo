@@ -22,10 +22,12 @@ package org.openbravo.service.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.Map;
+import java.util.Properties;
 
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -145,8 +147,16 @@ public class CallProcess {
         // first get a connection
         final Connection connection = OBDal.getInstance().getConnection();
         // connection.createStatement().execute("CALL M_InOut_Create0(?)");
-        final PreparedStatement ps = connection.prepareStatement("SELECT * FROM "
-            + process.getProcedure() + "(?)");
+
+        final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+        final PreparedStatement ps;
+        if (obProps.getProperty("bbdd.rdbms") != null
+            && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
+          ps = connection.prepareStatement("SELECT * FROM " + process.getProcedure() + "(?)");
+        } else {
+          ps = connection.prepareStatement(" CALL " + process.getProcedure() + "(?)");
+        }
+
         ps.setString(1, pInstance.getId());
         ps.execute();
       } catch (Exception e) {
