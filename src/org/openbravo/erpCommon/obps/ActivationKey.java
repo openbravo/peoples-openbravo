@@ -176,8 +176,8 @@ public class ActivationKey {
       if (now.after(endDate)) {
         isActive = false;
         hasExpired = true;
-        // message not needed
-        // errorMessage = "@OPSActivationExpired@ " + endDate;
+
+        errorMessage = "@OPSActivationExpired@ " + endDate;
 
         setLogger();
         return;
