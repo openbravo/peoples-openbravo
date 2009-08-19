@@ -167,7 +167,7 @@ public class ActivationKey {
     if (startDate == null || now.before(startDate)) {
       isActive = false;
       notActiveYet = true;
-      errorMessage = "@OPSNotActiveTill@ " + startDate;
+      errorMessage = "@OPSNotActiveTill@ " + getProperty("startdate");
       setLogger();
       return;
     }
@@ -177,7 +177,7 @@ public class ActivationKey {
         isActive = false;
         hasExpired = true;
 
-        errorMessage = "@OPSActivationExpired@ " + endDate;
+        errorMessage = "@OPSActivationExpired@ " + getProperty("enddate");
 
         setLogger();
         return;
