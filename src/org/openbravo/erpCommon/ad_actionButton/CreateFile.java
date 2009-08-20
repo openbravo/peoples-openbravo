@@ -258,8 +258,7 @@ public class CreateFile extends HttpSecureAppServlet {
           "\r\n");
       contador++;
     }
-    CreateFileData[] NLineas = CreateFileData.selectNLineas(this, String.valueOf(contador),
-        ((Integer) Lineas.length).toString());
+    CreateFileData[] NLineas = CreateFileData.selectNLineas(this, String.valueOf(contador));
     // total orderer
     strBuf = strBuf.append("5870").append(Principio[0].nif).append(strContract).append(
         NLineas[0].hueco);
@@ -711,7 +710,8 @@ public class CreateFile extends HttpSecureAppServlet {
       contador += 6;
     }
     // total
-    CreateFile34Data[] NLineas = CreateFile34Data.selectNLineas(this, String.valueOf(contador + 1));
+    CreateFile34Data[] NLineas = CreateFile34Data.selectNLineas(this, String.valueOf(contador + 1),
+        ((Integer) Lineas.length).toString());
     strBuf = strBuf.append("08").append(strCodigo).append(Principio[0].nif).append(Total[0].payamt); // A
     // -
     // E
