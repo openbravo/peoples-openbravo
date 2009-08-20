@@ -26,6 +26,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -38,6 +39,7 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -152,6 +154,7 @@ public class ActivationKey {
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     Date startDate = null;
     Date endDate = null;
+
     try {
       startDate = sd.parse(getProperty("startdate"));
 
@@ -165,12 +168,14 @@ public class ActivationKey {
       setLogger();
       return;
     }
-
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
+        "dateFormat.java");
+    SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
     Date now = new Date();
     if (startDate == null || now.before(startDate)) {
       isActive = false;
       notActiveYet = true;
-      errorMessage = "@OPSNotActiveTill@ " + getProperty("startdate");
+      errorMessage = "@OPSNotActiveTill@ " + outputFormat.format(startDate);
       messageType = "Warning";
       setLogger();
       return;
@@ -181,7 +186,7 @@ public class ActivationKey {
         isActive = false;
         hasExpired = true;
 
-        errorMessage = "@OPSActivationExpired@ " + getProperty("enddate");
+        errorMessage = "@OPSActivationExpired@ " + outputFormat.format(endDate);
 
         setLogger();
         return;
@@ -319,6 +324,21 @@ public class ActivationKey {
   }
 
   public String toString(ConnectionProvider conn, String lang) {
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
+        "dateFormat.java");
+    SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
+
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+    Date startDate = null;
+    Date endDate = null;
+    try {
+      startDate = sd.parse(getProperty("startdate"));
+      if (getProperty("enddate") != null)
+        endDate = sd.parse(getProperty("enddate"));
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     StringBuffer sb = new StringBuffer();
     if (instanceProperties != null) {
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
@@ -328,12 +348,12 @@ public class ActivationKey {
           Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang)).append(
           "</td></tr>");
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang)).append(
-          "</td><td>").append(getProperty("startdate")).append("</td></tr>");
+          "</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSEndDate", lang)).append("</td><td>")
           .append(
               (getProperty("enddate") == null ? Utility.messageBD(conn, "OPSNoEndDate", lang)
-                  : getProperty("enddate"))).append("</td></tr>");
+                  : outputFormat.format(endDate))).append("</td></tr>");
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsers", lang)).append(
           "</td><td>").append(
