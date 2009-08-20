@@ -31,17 +31,7 @@ function disableToolBarButton(id) {
     img = getObjChild(link);
     if (link.className.indexOf('Main_ToolBar_Button') != -1 && link.className.indexOf('Main_ToolBar_Button_disabled') == -1) {
       link.className = link.className.replace('Main_ToolBar_Button', 'Main_ToolBar_Button_disabled');
-      if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
-        link.setAttribute('onclick', 'return true; tmp_water_mark; ' + link.getAttribute('onclick'));
-      } else {
-        var link_onclick = link.getAttribute('onclick').toString();
-        link_onclick = link_onclick.replace("function anonymous()","");
-        link_onclick = link_onclick.replace("{\n","");
-        link_onclick = link_onclick.replace("\n","");
-        link_onclick = link_onclick.replace("}","");
-        link_onclick = 'return true; tmp_water_mark; ' + link_onclick;
-        link['onclick']=new Function(link_onclick);
-      }
+      disableAttributeWithFunction(link, "obj", "onclick");
       link.setAttribute('id', link.getAttribute('id') + '_disabled');
       img.className = img.className + ('_disabled tmp_water_mark');
     }
@@ -59,17 +49,7 @@ function enableToolBarButton(id) {
     img = getObjChild(link);
     if (link.className.indexOf('Main_ToolBar_Button_disabled') != -1) {
       link.className = link.className.replace('Main_ToolBar_Button_disabled', 'Main_ToolBar_Button');
-      if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
-        link.setAttribute('onclick', link.getAttribute('onclick').replace('return true; tmp_water_mark; ', ''));
-      } else {
-        var link_onclick = link.getAttribute('onclick').toString();
-        link_onclick = link_onclick.replace("function anonymous()","");
-        link_onclick = link_onclick.replace("{\n","");
-        link_onclick = link_onclick.replace("\n","");
-        link_onclick = link_onclick.replace("}","");
-        link_onclick = link_onclick.replace('return true; tmp_water_mark; ', '');
-        link['onclick']=new Function(link_onclick);
-      }
+      enableAttributeWithFunction(link, "obj", "onclick");
       link.setAttribute('id', link.getAttribute('id').replace('_disabled', ''));
       img.className = img.className.replace('_disabled tmp_water_mark', '');
     }
@@ -80,35 +60,19 @@ function enableToolBarButton(id) {
 }
 
 function disableAttributeWithFunction(element, type, attribute) {
-  if (type == 'obj') { var obj = element }
-  if (type == 'id') { var obj = document.getElementById(id); }
-  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
-    obj.setAttribute(attribute, 'return true; tmp_water_mark; ' + obj.getAttribute(attribute));
-  } else {
-    var obj_attribute = obj.getAttribute(attribute).toString();
-    obj_attribute = obj_attribute.replace("function anonymous()","");
-    obj_attribute = obj_attribute.replace("{\n","");
-    obj_attribute = obj_attribute.replace("\n","");
-    obj_attribute = obj_attribute.replace("}","");
-    obj_attribute = 'return true; tmp_water_mark; ' + obj_attribute;
-    obj[attribute]=new Function(obj_attribute);
-  }
+  if (type == 'obj') { var obj = element; }
+  if (type == 'id') { var obj = document.getElementById(element); }
+  var attribute_text = getObjAttribute(obj, attribute);
+  attribute_text = 'return true; tmp_water_mark; ' + attribute_text;
+  setObjAttribute(obj, attribute, attribute_text);
 }
 
 function enableAttributeWithFunction(element, type, attribute) {
-  if (type == 'obj') { var obj = element }
-  if (type == 'id') { var obj = document.getElementById(id); }
-  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
-    obj.setAttribute(attribute, obj.getAttribute(attribute).replace('return true; tmp_water_mark; ', ''));
-  } else {
-    var obj_attribute = obj.getAttribute(attribute).toString();
-    obj_attribute = obj_attribute.replace("function anonymous()","");
-    obj_attribute = obj_attribute.replace("{\n","");
-    obj_attribute = obj_attribute.replace("\n","");
-    obj_attribute = obj_attribute.replace("}","");
-    obj_attribute = obj_attribute.replace('return true; tmp_water_mark; ', '');
-    obj[attribute]=new Function(obj_attribute);
-  }
+  if (type == 'obj') { var obj = element; }
+  if (type == 'id') { var obj = document.getElementById(element); }
+  var attribute_text = getObjAttribute(obj, attribute);
+  attribute_text = attribute_text.replace('return true; tmp_water_mark; ', '')
+  setObjAttribute(obj, attribute, attribute_text);
 }
 
 function disableButton(id) {

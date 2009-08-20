@@ -66,6 +66,7 @@ public class NavigationBar {
 
   @Override
   public String toString() {
+
     final StringBuffer toolbar = new StringBuffer();
     String auxText;
     toolbar.append("<TABLE class=\"Main_ContentPane_NavBar\" id=\"tdtopNavButtons\">\n");

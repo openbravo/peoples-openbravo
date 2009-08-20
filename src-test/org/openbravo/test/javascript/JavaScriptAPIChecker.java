@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.mozilla.javascript.FunctionNode;
 import org.mozilla.javascript.Node;
 import org.mozilla.javascript.ScriptOrFnNode;
@@ -38,9 +39,30 @@ import org.mozilla.javascript.Token;
  * @author iperdomo
  */
 public class JavaScriptAPIChecker {
+  private static final Logger log = Logger.getLogger(JavaScriptAPIChecker.class);
   private HashMap<String, String> apiMap = new HashMap<String, String>();
   private File apiDetailsFolder = null;
   private File jsFolder = null;
+  private boolean export = false;
+
+  /**
+   * Returns if the export of .details file should be made
+   * 
+   * @return true if the export procedure should be made, false if not
+   */
+  public boolean isExport() {
+    return export;
+  }
+
+  /**
+   * Sets the flag to export the .details file
+   * 
+   * @param export
+   *          boolean that sets that export procedure should be made
+   */
+  public void setExport(boolean export) {
+    this.export = export;
+  }
 
   /**
    * Sets the folder where the .details file are located
@@ -89,50 +111,75 @@ public class JavaScriptAPIChecker {
       throw new RuntimeException("A folder containing the JavaScript files must be set");
     }
 
-    FilenameFilter detailsFilter = new FilenameFilter() {
-      public boolean accept(File dir, String fileName) {
-        return fileName.endsWith(".details");
-      }
-    };
+    if (isExport()) { // export
+      // Parsing the .js files and checking it agains the api map
 
-    // Building a map with the current API details
-    final String[] detailFiles = apiDetailsFolder.list(detailsFilter);
-    for (int i = 0; i < detailFiles.length; i++) {
-      final File dFile = new File(apiDetailsFolder, detailFiles[i]);
-      int pos = detailFiles[i].indexOf(".details");
-      final String jsFileName = detailFiles[i].substring(0, pos);
-      String line;
-      int lineNo = 1;
-      try {
-        BufferedReader br = new BufferedReader(new FileReader(dFile));
-        while ((line = br.readLine()) != null) {
-          apiMap.put(jsFileName + line, String.valueOf(lineNo));
-          lineNo++;
+      FilenameFilter jsFilter = new FilenameFilter() {
+        public boolean accept(File dir, String fileName) {
+          return fileName.endsWith(".js");
         }
-        br.close();
-      } catch (Exception e) {
-        e.printStackTrace();
+      };
+
+      final JavaScriptParser jsp = new JavaScriptParser();
+
+      final String[] jsFiles = jsFolder.list(jsFilter);
+      for (int j = 0; j < jsFiles.length; j++) {
+        final File jsFile = new File(jsFolder, jsFiles[j]);
+        jsp.setFile(jsFile);
+        try {
+          final File detailFile = new File(apiDetailsFolder, jsFiles[j] + ".details");
+          jsp.toFile(detailFile);
+        } catch (IOException e) {
+          log.error(e.getMessage(), e);
+        }
       }
-    }
+      log.info("Export done!");
+    } else { // check
+      FilenameFilter detailsFilter = new FilenameFilter() {
+        public boolean accept(File dir, String fileName) {
+          return fileName.endsWith(".details");
+        }
+      };
 
-    // Parsing the .js files and checking it agains the api map
-
-    FilenameFilter jsFilter = new FilenameFilter() {
-      public boolean accept(File dir, String fileName) {
-        return fileName.endsWith(".js");
+      // Building a map with the current API details
+      final String[] detailFiles = apiDetailsFolder.list(detailsFilter);
+      for (int i = 0; i < detailFiles.length; i++) {
+        final File dFile = new File(apiDetailsFolder, detailFiles[i]);
+        int pos = detailFiles[i].indexOf(".details");
+        final String jsFileName = detailFiles[i].substring(0, pos);
+        String line;
+        int lineNo = 1;
+        try {
+          BufferedReader br = new BufferedReader(new FileReader(dFile));
+          while ((line = br.readLine()) != null) {
+            apiMap.put(jsFileName + line, String.valueOf(lineNo));
+            lineNo++;
+          }
+          br.close();
+        } catch (Exception e) {
+          log.error(e.getMessage(), e);
+        }
       }
-    };
 
-    final JavaScriptParser jsp = new JavaScriptParser();
+      // Parsing the .js files and checking it agains the api map
 
-    final String[] jsFiles = jsFolder.list(jsFilter);
-    for (int j = 0; j < jsFiles.length; j++) {
-      final File jsFile = new File(jsFolder, jsFiles[j]);
-      jsp.setFile(jsFile);
-      try {
-        checkJS(jsp, jsFiles[j]);
-      } catch (IOException e) {
-        e.printStackTrace();
+      FilenameFilter jsFilter = new FilenameFilter() {
+        public boolean accept(File dir, String fileName) {
+          return fileName.endsWith(".js");
+        }
+      };
+
+      final JavaScriptParser jsp = new JavaScriptParser();
+
+      final String[] jsFiles = jsFolder.list(jsFilter);
+      for (int j = 0; j < jsFiles.length; j++) {
+        final File jsFile = new File(jsFolder, jsFiles[j]);
+        jsp.setFile(jsFile);
+        try {
+          checkJS(jsp, jsFiles[j]);
+        } catch (IOException e) {
+          log.error(e.getMessage(), e);
+        }
       }
     }
   }

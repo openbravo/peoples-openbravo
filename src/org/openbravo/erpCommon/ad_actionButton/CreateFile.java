@@ -710,7 +710,8 @@ public class CreateFile extends HttpSecureAppServlet {
       contador += 6;
     }
     // total
-    CreateFile34Data[] NLineas = CreateFile34Data.selectNLineas(this, String.valueOf(contador + 1));
+    CreateFile34Data[] NLineas = CreateFile34Data.selectNLineas(this, String.valueOf(contador + 1),
+        ((Integer) Lineas.length).toString());
     strBuf = strBuf.append("08").append(strCodigo).append(Principio[0].nif).append(Total[0].payamt); // A
     // -
     // E

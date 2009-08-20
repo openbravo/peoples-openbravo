@@ -25,7 +25,10 @@
     <PARAMETER id="paramDirectory" name="directory" default=""/>
     <PARAMETER id="paramLanguage" name="language" default=""/>
     <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-  <structure name="structure1">
+    <PARAMETER id="paramLicensedTo" name="paramLicensedTo" default=""/>
+    <PARAMETER id="paraOPSPurpose" name="paraOPSPurpose" default=""/>
+    <PARAMETER id="paraOPSType" name="paraOPSType" default=""/>
+    <structure name="structure1">
         <FIELD id="fieldLang">lang</FIELD>
         <FIELD id="fieldTranslator">translatedby</FIELD>
         <FIELD id="fieldDocumentno">documentno</FIELD>

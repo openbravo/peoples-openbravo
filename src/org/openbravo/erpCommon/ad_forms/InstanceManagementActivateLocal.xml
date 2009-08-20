@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="ISO-8859-1" ?>
 <!--
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -12,25 +12,21 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
 
 
-
-
-
-<SqlClass name="ErrorTextParserPOSTGREData" package="org.openbravo.erpCommon.utility">
-  <SqlMethod name="select" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      select constraint_name, constraint_type, table_name, 
-      AD_DBA_USER_CONST_SEARCHCOND(constraint_name) AS search_condition 
-      from user_constraints 
-      where UPPER(constraint_name) = UPPER(?)
-    </Sql>
-    <Parameter name="constraintName"/>
-  </SqlMethod>
-</SqlClass>
+<REPORT>
+  <template file="InstanceManagementActivateLocal.html" />
+  
+  <PARAMETER id="paramLanguage" name="language" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
+  <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default" default="Default"/>
+  <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
+  <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
+  <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+  <PARAMETER id="publicKey" name="publicKey" default=""/>
+</REPORT>

@@ -240,10 +240,12 @@
               SELECT COALESCE(MAX(PriceList), 0),
                 COALESCE(MAX(PriceActual), 0),
                 COALESCE(MAX(PriceLimit), 0),
+                COALESCE(MAX(Linenetamt),0),
                 MAX(c_tax_id)
               INTO v_PriceList,
                 v_PriceActual,
                 v_PriceLimit,
+                v_LineNetAmt,
                 v_c_Tax_ID
               FROM C_ORDERLINE
               WHERE C_OrderLine_ID=CUR_ShipmentLines.C_OrderLine_ID;
@@ -259,6 +261,8 @@
               WHERE M_Product_ID=CUR_ShipmentLines.M_Product_ID
                 AND M_PriceList_Version_ID=v_M_PriceList_Version_ID;
               v_C_Tax_ID:=C_Gettax(CUR_ShipmentLines.M_Product_ID, CUR_Shipment.MovementDate, CUR_Shipment.AD_Org_ID, CUR_Shipment.M_Warehouse_ID, CUR_Shipment.C_BPartner_Location_ID, CUR_Shipment.C_BPartner_Location_ID, CUR_Shipment.C_Project_ID, 'N') ;
+             v_PriceActual:=M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID);
+            v_LineNetAmt:=ROUND(M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID) *CUR_ShipmentLines.MovementQty, 2) ;
             END IF;
             -- Get UOM + Tax -- VERY simplified, but should work in most cases
             v_ResultStr:='NoUOM+Tax';
@@ -269,7 +273,6 @@
             -- v_UOM_ID, v_Tax_ID
             v_ResultStr:='InsertInvoiceLine';
             Ad_Sequence_Next('C_InvoiceLine', CUR_Shipment.C_Order_ID, v_NextNo) ;
-            v_LineNetAmt:=ROUND(M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID) *CUR_ShipmentLines.MovementQty, 2) ;
             INSERT
             INTO C_INVOICELINE
               (
@@ -288,7 +291,7 @@
                 now(), '100', now(), '0', -- LineTrigger reqirement
                 v_Invoice_ID, CUR_ShipmentLines.C_OrderLine_ID, CUR_ShipmentLines.M_InOutLine_ID, CUR_ShipmentLines.Line,
                 CUR_ShipmentLines.Description, CUR_ShipmentLines.M_Product_ID, CUR_ShipmentLines.MovementQty, v_PriceList,
-                M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID), v_PriceLimit, v_LineNetAmt, NULL,
+                v_PriceActual, v_PriceLimit, v_LineNetAmt, NULL,
                 0, v_C_UOM_ID,
                 v_C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                 CUR_ShipmentLines.QuantityOrder, CUR_ShipmentLines.M_Product_Uom_ID, v_PriceActual

@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -54,11 +56,50 @@ public class LoginHandler extends HttpBaseServlet {
 
       if (!strUserAuth.equals("-1")) {
         req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
-        goToTarget(res, vars);
+        checkLicenseAndGo(res, vars);
       } else {
-        goToRetry(res, vars, null);
+        goToRetry(res, vars, null, "Identification failure. Try again.", "Error",
+            "../security/Login_FS.html");
       }
     }
+  }
+
+  private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars)
+      throws IOException {
+    OBContext.setAdminContext();
+    try {
+      ActivationKey ak = new ActivationKey();
+
+      switch (ak.checkOPSLimitations()) {
+      case NUMBER_OF_CONCURRENT_USERS_REACHED:
+        String msg = "You have exceeded the number of Global Concurrent Users licensed to use this system.<br/>";
+        msg += "Please wait until one or more users log out of the system and then retry again.<br/>";
+        msg += "Contact your Openbravo Business Partner if you want to purchase a subscription for additional users.";
+        String msgType = "Error";
+        String action = "../security/Login_FS.html";
+        goToRetry(res, vars, msg, "Maximum number of concurrent users reached", msgType, action);
+        break;
+      case NUMBER_OF_SOFT_USERS_REACHED:
+        msg = "You have exceeded the number of Global Concurrent Users licensed to use this system.<br/>";
+        msg += "Contact your Openbravo Business Partner if you want to purchase a subscription for additional users.";
+        action = "../security/Menu.html";
+        msgType = "Warning";
+        goToRetry(res, vars, msg, "Maximum number of concurrent users reached", msgType, action);
+        break;
+      case OPS_INSTANCE_NOT_ACTIVE:
+        msg = "Your Professional Subscription has expired. However no data has been lost.<br/>";
+        msg += "To renew your Professional Subscription, contact your assigned partner.";
+        action = "../security/Menu.html";
+        msgType = "Warning";
+        goToRetry(res, vars, msg, "Expired subscription", msgType, action);
+        break;
+      default:
+        goToTarget(res, vars);
+      }
+    } finally {
+      OBContext.setOBContext((OBContext) null);
+    }
+
   }
 
   private void goToTarget(HttpServletResponse response, VariablesSecureApp vars) throws IOException {
@@ -71,15 +112,24 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
-  private void goToRetry(HttpServletResponse response, VariablesSecureApp vars, String message)
-      throws IOException {
+  private void goToRetry(HttpServletResponse response, VariablesSecureApp vars, String message,
+      String title, String msgType, String action) throws IOException {
+    String discard[] = { "" };
+
+    if (msgType.equals("Error")) {
+      discard[0] = "continueButton";
+    } else {
+      discard[0] = "backButton";
+    }
+
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
+        "org/openbravo/base/secureApp/HtmlErrorLogin", discard).createXmlDocument();
 
     // pass relevant mesasge to show inside the error page
     xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("messageType", "Error");
-    xmlDocument.setParameter("messageTitle", "Identification failure. Try again.");
+    xmlDocument.setParameter("messageType", msgType);
+    xmlDocument.setParameter("action", action);
+    xmlDocument.setParameter("messageTitle", title);
     xmlDocument
         .setParameter(
             "messageMessage",

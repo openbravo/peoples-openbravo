@@ -30,6 +30,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -457,15 +458,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    final String user = vars.getUser();
-    final String dbSession = vars.getDBSession();
-
-    vars.clearSession(true);
-    if (log4j.isDebugEnabled())
-      log4j.debug("Clearing session");
-    if (!dbSession.equals(""))
-      SeguridadData.saveProcessed(this, user, dbSession);
-
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+      // finally invalidate the session (this event will be caught by the session listener
+      session.invalidate();
+    }
     m_AuthManager.logout(request, response);
   }
 
@@ -481,9 +478,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    */
   private void invalidLogin(HttpServletRequest request, HttpServletResponse response, OBError error)
       throws IOException, ServletException {
-    final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    vars.clearSession(true);
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+      // finally invalidate the session (this event will be caught by the session listener
+      session.invalidate();
+    }
+
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
 
