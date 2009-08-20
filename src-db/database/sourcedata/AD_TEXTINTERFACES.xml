@@ -8629,7 +8629,7 @@
 <!--807029-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--807029-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--807029-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--807029-->  <TEXT><![CDATA[Ask your administrator por accessing permission]]></TEXT>
+<!--807029-->  <TEXT><![CDATA[Please contact your system administrator]]></TEXT>
 <!--807029-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--807029-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--807029--></AD_TEXTINTERFACES>
@@ -11929,7 +11929,7 @@
 <!--807407-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--807407-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--807407-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--807407-->  <TEXT><![CDATA[You have not permission to access this page]]></TEXT>
+<!--807407-->  <TEXT><![CDATA[You do not have sufficient privileges to access this page]]></TEXT>
 <!--807407-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--807407-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--807407--></AD_TEXTINTERFACES>
