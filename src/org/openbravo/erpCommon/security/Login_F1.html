@@ -28,6 +28,8 @@
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</script>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">    defaultLang = "en_US";</script>
+<script language="JavaScript" src="../utility/CheckCleanCache.js?cache=true" type="text/javascript"></script>
+<script language="JavaScript" src="../utility/CheckCleanCache.js?cache=false" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript">
 
 function validate(action)
@@ -77,6 +79,9 @@ function redirectWhenPopup() {
     } catch (e) {}
     setWindowElementFocus('firstElement');
     if (!revisionControl('4653')) alert("Your browser's cache has outdated files. Please clean it and reload the page.");
+    if (isOpsInstance() != isOpsInstanceCached()) {
+        alert("Your browser's cache has outdated files. Please clean it and reload the page.");
+    }
   }
 
   function onResizeDo() {

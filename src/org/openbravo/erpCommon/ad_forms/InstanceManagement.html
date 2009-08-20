@@ -43,8 +43,8 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
 <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
-
-
+<script language="JavaScript" src="../utility/CheckCleanCache.js?cache=true" type="text/javascript"></script>
+<script language="JavaScript" src="../utility/CheckCleanCache.js?cache=false" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript">
   
   function validate(action, frm, value) {
@@ -90,7 +90,9 @@ var baseDirectory = "../../../../../web/";
 
     resizeArea();
 
-
+    if (isOpsInstance() != isOpsInstanceCached()) {
+        alert("Your browser's cache has outdated files. Please clean it and reload the page.");
+    } 
   }
 
   function onResizeDo(){

@@ -1431,7 +1431,6 @@ function putFocusOnWindow() {
 * Used to activate the key-press handling. Must be called after set the keys global array <em>keyArray</em>.
 */
 function enableShortcuts(type) {
-  setOPSLogo(); //set here the logo because it is the only function called in every on load
   if (type!=null && type!='null' && type!='') {
     try {
       this.keyArray = new Array();
@@ -3977,41 +3976,6 @@ function changeAuditIcon(newStatus) {
    }
    
    
-  
-  /**
-   * Changes the logo for OPS instances
-   * 
-   * @return
-   */
-  function setOPSLogo(){
-	var opsInstance = null;
-	var logo = null;
-	if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
-		if(top.opener != null) { // is a pop-up window
-			logo = document.getElementById('openbravoLogo');
-		    if (logo == null && top.mainframe) {
-		    	logo = top.mainframe.document.getElementById('openbravoLogo');
-		    }
-			opsInstance = top.opener.top.frameMenu.opsInstance;
-		}
-	} else {
-		logo = top.appFrame.document.getElementById('openbravoLogo');
-		opsInstance = top.frameMenu.opsInstance;
-	}
-	
-	if (logo != null && opsInstance ) {
-	    className = logo.className;
-	    if (className.length>4 && className.substring(className.length-4) != "_OPS") {
-		  logo.className = logo.className + "_OPS";
-	    }
-	}
-  }
-
-
-//-->
-
-
-
   // Numeric formatting functions
 
 /**
