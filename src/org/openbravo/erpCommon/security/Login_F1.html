@@ -78,9 +78,8 @@ function redirectWhenPopup() {
       clearForm();
     } catch (e) {}
     setWindowElementFocus('firstElement');
-    if (!revisionControl('4676')) alert("Your browser's cache has outdated files. Please clean it and reload the page.");
-    if (isOpsInstance() != isOpsInstanceCached()) {
-        alert("Your browser's cache has outdated files. Please clean it and reload the page.");
+    if ((!revisionControl('4676')) || (isOpsInstance() != isOpsInstanceCached())) {
+      alert("Your browser's cache has outdated files. Please clean it and reload the page.");
     }
   }
 
