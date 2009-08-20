@@ -36,7 +36,7 @@ import org.openbravo.utils.FileUtility;
  * @author huehner
  * 
  */
-public class GetOpsLogo extends HttpBaseServlet {
+public class GetOpenbravoLogo extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,

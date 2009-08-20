@@ -196,7 +196,6 @@ public class ActivationKey {
     }
     isActive = true;
     setLogger();
-    System.out.println(getProperty("customer"));
     OBContext.getOBContext().setInAdministratorMode(adminMode);
   }
 
