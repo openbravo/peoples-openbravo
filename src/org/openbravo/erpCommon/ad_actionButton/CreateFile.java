@@ -258,7 +258,8 @@ public class CreateFile extends HttpSecureAppServlet {
           "\r\n");
       contador++;
     }
-    CreateFileData[] NLineas = CreateFileData.selectNLineas(this, String.valueOf(contador));
+    CreateFileData[] NLineas = CreateFileData.selectNLineas(this, String.valueOf(contador),
+        ((Integer) Lineas.length).toString());
     // total orderer
     strBuf = strBuf.append("5870").append(Principio[0].nif).append(strContract).append(
         NLineas[0].hueco);
