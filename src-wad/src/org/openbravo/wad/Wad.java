@@ -2119,6 +2119,14 @@ public class Wad extends DefaultHandler {
             }
           }
 
+          if (WadActionButton.isNumericType(fieldsData1[i].reference)) {
+            fieldsData1[i].trytext = " try { ";
+            fieldsData1[i].catchtext = " } catch (ServletException paramEx) { ex = paramEx; } ";
+          } else {
+            fieldsData1[i].trytext = "";
+            fieldsData1[i].catchtext = "";
+          }
+
           if (fieldsData1[i].iscolumnencrypted.equals("Y")
               && fieldsData1[i].isdesencryptable.equals("Y")) {
             fieldsData1[i].htmltext = "FormatUtilities.encryptDecrypt(";

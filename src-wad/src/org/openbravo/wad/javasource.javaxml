@@ -642,8 +642,9 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 */
   private <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data getEditVariables(Connection con, VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException,ServletException {
     <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data data = new <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data();
+    ServletException ex = null;
     try {
-<FIELDS_TMP id="sectionDetailgetEditVariables">    data.<FIELD_TMP id="fieldName">claveAlmacen</FIELD_TMP> = <FIELD_TMP id="fieldEncryption">FormatUtilities.encryptDecrypt(</FIELD_TMP>vars.get<FIELD_TMP id="fieldType">StringParameter</FIELD_TMP>("inp<FIELD_TMP id="fieldName1">claveAlmacen</FIELD_TMP>"<FIELD_TMP id="fieldDefault">, "D"</FIELD_TMP>)<FIELD_TMP id="fieldEndEncryption">, true)</FIELD_TMP>;</FIELDS_TMP>
+<FIELDS_TMP id="sectionDetailgetEditVariables">  <FIELD_TMP id="fieldTry">claveAlmacen</FIELD_TMP>  data.<FIELD_TMP id="fieldName">claveAlmacen</FIELD_TMP> = <FIELD_TMP id="fieldEncryption">FormatUtilities.encryptDecrypt(</FIELD_TMP>vars.get<FIELD_TMP id="fieldType">StringParameter</FIELD_TMP>("inp<FIELD_TMP id="fieldName1">claveAlmacen</FIELD_TMP>"<FIELD_TMP id="fieldDefault">, "D"</FIELD_TMP>)<FIELD_TMP id="fieldEndEncryption">, true)</FIELD_TMP>; <FIELD_TMP id="fieldCatch">claveAlmacen</FIELD_TMP></FIELDS_TMP>
       data.createdby = vars.getUser();
       data.updatedby = vars.getUser();
       data.adUserClient = Utility.getContext(this, vars, "#User_Client", windowId, accesslevel);
@@ -657,10 +658,15 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     <LISTS_TMP id="sectionDetailDocumentsNew">     if (data.<LIST_TMP id="fieldNameDocNew">dd</LIST_TMP>.startsWith("&#60;")) data.<LIST_TMP id="fieldNameDocNew">dd</LIST_TMP> = <LIST_TMP id="fieldValueDocNew">dd</LIST_TMP>;</LISTS_TMP>
 
     <LISTS_TMP id="sectionIdentifyValues">      if (data.<LIST_TMP id="fieldIdentifyColumn">dd</LIST_TMP>.equals("")) data.<LIST_TMP id="fieldIdentifyColumn">dd</LIST_TMP> = <LIST_TMP id="fieldIdentifyValue">dd</LIST_TMP>;</LISTS_TMP>
-	}
+    }
     catch(ServletException e) {
     	vars.setEditionData(tabId, data);
     	throw e;
+    }
+    // Behavior with exception for numeric fields is to catch last one if we have multiple ones
+    if(ex != null) {
+      vars.setEditionData(tabId, data);
+      throw ex;
     }
     return data;
   }
