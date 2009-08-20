@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.obps;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -139,9 +140,10 @@ public class ActivationKey {
       byte[] props = bos.toByteArray();
 
       ByteArrayInputStream isProps = new ByteArrayInputStream(props);
+      InputStreamReader reader = new InputStreamReader(isProps, "UTF-8");
       instanceProperties = new Properties();
 
-      instanceProperties.load(isProps);
+      instanceProperties.load(reader);
     } catch (Exception e) {
       isActive = false;
       errorMessage = "@NotAValidKey@";
@@ -194,7 +196,7 @@ public class ActivationKey {
     }
     isActive = true;
     setLogger();
-
+    System.out.println(getProperty("customer"));
     OBContext.getOBContext().setInAdministratorMode(adminMode);
   }
 
@@ -336,8 +338,7 @@ public class ActivationKey {
       if (getProperty("enddate") != null)
         endDate = sd.parse(getProperty("enddate"));
     } catch (ParseException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log.error("Error parsing date", e);
     }
     StringBuffer sb = new StringBuffer();
     if (instanceProperties != null) {
