@@ -258,9 +258,13 @@ public class InstanceManagement extends HttpSecureAppServlet {
     else
       xmlDocument.setParameter("instanceInfo", activationKey.toString(this, vars.getLanguage()));
 
-    // if (activationKey.hasExpirationDate()) {
-    // xmlDocument.setParameter("OPSdaysLeft", activationKey.getPendingDays().toString());
-    // }
+    if (activationKey.hasExpirationDate()) {
+      if (activationKey.getPendingDays() != null)
+        xmlDocument.setParameter("OPSdaysLeft", activationKey.getPendingDays().toString());
+      else
+        xmlDocument.setParameter("OPSdaysLeft", Utility.messageBD(this, "OPSUnlimitedUsers",
+            vars.getLanguage()).replace("\\n", "\n"));
+    }
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();

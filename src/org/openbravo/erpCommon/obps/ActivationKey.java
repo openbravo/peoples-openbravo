@@ -70,6 +70,8 @@ public class ActivationKey {
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
 
   public ActivationKey() {
+    boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
+    OBContext.getOBContext().setInAdministratorMode(true);
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
         org.openbravo.model.ad.system.System.class, "0");
     strPublicKey = sys.getInstanceKey();
@@ -187,6 +189,8 @@ public class ActivationKey {
     }
     isActive = true;
     setLogger();
+
+    OBContext.getOBContext().setInAdministratorMode(adminMode);
   }
 
   @SuppressWarnings( { "static-access", "unchecked" })
