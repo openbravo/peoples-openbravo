@@ -388,6 +388,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
           strSummary.append(SALTO_LINEA).append(
               Utility.messageBD(this, strReferenceData, vars.getLanguage())).append(SALTO_LINEA);
           isOK = false;
+          strError = strReferenceData;
           return m_info.toString();
         }
       } catch (Exception err) {
@@ -1563,10 +1564,19 @@ public class InitialClientSetup extends HttpSecureAppServlet {
           if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
               && !myResult.getErrorMessages().equals("null")) {
             m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
-            m_info.append(SALTO_LINEA).append(myResult.getErrorMessages()).append(SALTO_LINEA);
+            if (myResult.getErrorMessages().startsWith("isBatchUpdateException:")) {
+              String messageKey = myResult.getErrorMessages().substring(
+                  "isBatchUpdateException:".length()).trim();
+              m_info.append(SALTO_LINEA).append(
+                  Utility.translateError(this, vars, vars.getLanguage(), messageKey).getMessage())
+                  .append(SALTO_LINEA);
+              strError = strError.append(Utility.translateError(this, vars, vars.getLanguage(),
+                  messageKey).getMessage());
+            } else {
+              m_info.append(SALTO_LINEA).append(myResult.getErrorMessages()).append(SALTO_LINEA);
+              strError = strError.append(myResult.getErrorMessages());
+            }
           }
-          if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals(""))
-            strError = strError.append(myResult.getErrorMessages());
 
           if (!strError.toString().equals(""))
             return strError.toString();
