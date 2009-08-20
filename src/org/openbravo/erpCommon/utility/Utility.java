@@ -69,7 +69,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.domain.ListTrl;
 import org.openbravo.model.ad.domain.Reference;
@@ -2464,23 +2463,6 @@ public class Utility {
       numberFormatDecimal = new DecimalFormat(format, dfs);
     }
     return numberFormatDecimal;
-  }
-
-  /**
-   * Returns the OB logo CSS style
-   * 
-   * @param type
-   *          Type of logo<br>
-   *          W for complete window<br>
-   *          P for pop-up
-   * @return the CSS style
-   */
-  public static String getLogo(String type) {
-    if (type.equals("W")) {
-      return "Main_NavBar_logo" + (ActivationKey.isActiveInstance() ? "_OPS" : "");
-    } else {
-      return "Popup_NavBar_logo" + (ActivationKey.isActiveInstance() ? "_OPS" : "");
-    }
   }
 
 }
