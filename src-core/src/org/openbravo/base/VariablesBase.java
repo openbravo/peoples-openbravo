@@ -1247,42 +1247,22 @@ public class VariablesBase {
 
   /**
    * Retrieves the set of string values for the parameter with the specified name as passed to the
-   * servlet by the HTTP POST/GET method. The parameter must be a
-   * 
-   * Calls the {@link #getInStringMultiValueParameter(String, boolean, String[], RequestFilter)}
-   * with required set to false and default value to String[0].
-   * 
-   * @param parameter
-   *          Name of the parameter to be retrieved
-   * @param requestFilter
-   *          filter used to validate the input against list of allowed inputs
-   * @return String array with the values
-   * @throws ServletException
-   */
-  public String[] getStringMultiValueParameter(String parameter, RequestFilter requestFilter)
-      throws ServletException {
-    return getStringMultiValueParameter(parameter, false, new String[0], requestFilter);
-  }
-
-  /**
-   * Retrieves the set of string values for the parameter with the specified name as passed to the
-   * servlet by the HTTP POST/GET method. The parameter must be a
+   * servlet by the HTTP POST/GET method. The parameter must be a multi-valued parameter. If the
+   * parameter is not set then a String[0] is returned.
    * 
    * @param parameter
    *          Name of the parameter to be retrieved
    * @param required
    *          If true, an exception is thrown if the parameter is not among the data submitted to
    *          the servlet.
-   * @param defaultValue
-   *          If not required, this is the value that will be returned in case the parameter is not
-   *          found among the data submitted to the servlet.
    * @param requestFilter
    *          filter used to validate the input against list of allowed inputs
-   * @return String containing the set of values in the form ('value1', 'value2',...)
+   * @return returns a String array with the values present in the request, if the parameter has no
+   *         value then String[0] is returned.
    * @throws ServletException
    */
-  public String[] getStringMultiValueParameter(String parameter, boolean required,
-      String[] defaultValue, RequestFilter requestFilter) throws ServletException {
+  public String[] getMultiValueStringParameter(String parameter, boolean required,
+      RequestFilter requestFilter) throws ServletException {
     String[] auxStr = null;
     try {
       if (isMultipart)
@@ -1291,7 +1271,7 @@ public class VariablesBase {
         auxStr = httpRequest.getParameterValues(parameter);
     } catch (Exception e) {
       if (!(required)) {
-        return defaultValue;
+        return new String[0];
       }
     }
 
@@ -1299,7 +1279,7 @@ public class VariablesBase {
       if (required) {
         throw new ServletException("Request IN parameter required: " + parameter);
       } else {
-        return defaultValue;
+        return new String[0];
       }
     }
 
