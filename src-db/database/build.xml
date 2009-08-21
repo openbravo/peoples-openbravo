@@ -367,11 +367,8 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
         </fileset>
       </classpath>
       <transaction>
-          DELETE FROM AD_SYSTEM;
-          INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_TRANSACTIONALRANGE, TAD_THEME)
-          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
-        	UPDATE AD_SYSTEM_INFO SET CODE_REVISION=SUBSTR('${code.revision}',1,60);
-        	CALL AD_UPDATE_SEQUENCE();
+          UPDATE AD_SYSTEM_INFO SET CODE_REVISION=SUBSTR('${code.revision}',1,60);
+          CALL AD_UPDATE_SEQUENCE();
           CALL AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
           CALL AD_LANGUAGE_CREATE(NULL);
@@ -388,9 +385,6 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
         </fileset>
       </classpath>
       <transaction>
-          DELETE FROM AD_SYSTEM;
-          INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_TRANSACTIONALRANGE, TAD_THEME)
-          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
           UPDATE AD_SYSTEM_INFO SET CODE_REVISION=SUBSTR('${code.revision}',1,60);
           SELECT AD_UPDATE_SEQUENCE();
           SELECT AD_UPDATE_ACCESS();
