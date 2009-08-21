@@ -159,7 +159,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
                 : strPriceStd.replace("\"", "")), strQty, dataOrder[0].mPricelistId,
             dataOrder[0].id);
         priceActual = new BigDecimal(strPriceActual);
-        resultado.append("new Array(\"inppriceactual\", \"" + strPriceActual + "\"),");
+        resultado.append("new Array(\"inppriceactual\", " + strPriceActual + "),");
       }
     }
 

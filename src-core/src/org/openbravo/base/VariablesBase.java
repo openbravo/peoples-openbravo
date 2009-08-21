@@ -678,7 +678,8 @@ public class VariablesBase {
 
     if (!NumberFilter.instance.accept(newValue)) {
       log4j.error("Input: " + parameter + " not accepted by filter: " + NumberFilter.instance);
-      throw new ServletException("Input: " + parameter + " is not an accepted input");
+      throw new ServletException("Input: " + parameter + " with value " + newValue
+          + " is not an accepted input");
     }
 
     return newValue;
@@ -1125,6 +1126,35 @@ public class VariablesBase {
   }
 
   /**
+   * Checks if a certain parameter is defined in the variables base.
+   * 
+   * @param parameter
+   *          the parameter to check
+   * @return true if a value is present, false otherwise
+   */
+  public boolean hasParameter(String parameter) {
+    Object value;
+    try {
+      if (isMultipart) {
+        value = getMultiParameters(parameter);
+      } else {
+        value = httpRequest.getParameterValues(parameter);
+      }
+    } catch (Exception e) {
+      return false;
+    }
+    return value != null;
+  }
+
+  /**
+   * @return the parameter names of the request object
+   */
+  @SuppressWarnings("unchecked")
+  public Enumeration<String> getParameterNames() {
+    return httpRequest.getParameterNames();
+  }
+
+  /**
    * Retrieves the set of string values for the parameter with the specified name as passed to the
    * servlet by the HTTP POST method. String returned is in the form ('value1', 'value2',...) and
    * can be used within SQL statements as part of the 'WHERE columnName IN' filter which is the main
@@ -1213,6 +1243,73 @@ public class VariablesBase {
       log4j.debug("Request IN parameter: " + parameter + ":..." + strResult.toString());
 
     return strResult.toString();
+  }
+
+  /**
+   * Retrieves the set of string values for the parameter with the specified name as passed to the
+   * servlet by the HTTP POST/GET method. The parameter must be a
+   * 
+   * Calls the {@link #getInStringMultiValueParameter(String, boolean, String[], RequestFilter)}
+   * with required set to false and default value to String[0].
+   * 
+   * @param parameter
+   *          Name of the parameter to be retrieved
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
+   * @return String array with the values
+   * @throws ServletException
+   */
+  public String[] getStringMultiValueParameter(String parameter, RequestFilter requestFilter)
+      throws ServletException {
+    return getStringMultiValueParameter(parameter, false, new String[0], requestFilter);
+  }
+
+  /**
+   * Retrieves the set of string values for the parameter with the specified name as passed to the
+   * servlet by the HTTP POST/GET method. The parameter must be a
+   * 
+   * @param parameter
+   *          Name of the parameter to be retrieved
+   * @param required
+   *          If true, an exception is thrown if the parameter is not among the data submitted to
+   *          the servlet.
+   * @param defaultValue
+   *          If not required, this is the value that will be returned in case the parameter is not
+   *          found among the data submitted to the servlet.
+   * @param requestFilter
+   *          filter used to validate the input against list of allowed inputs
+   * @return String containing the set of values in the form ('value1', 'value2',...)
+   * @throws ServletException
+   */
+  public String[] getStringMultiValueParameter(String parameter, boolean required,
+      String[] defaultValue, RequestFilter requestFilter) throws ServletException {
+    String[] auxStr = null;
+    try {
+      if (isMultipart)
+        auxStr = getMultiParameters(parameter);
+      else
+        auxStr = httpRequest.getParameterValues(parameter);
+    } catch (Exception e) {
+      if (!(required)) {
+        return defaultValue;
+      }
+    }
+
+    if (auxStr == null || auxStr.length == 0) {
+      if (required) {
+        throw new ServletException("Request IN parameter required: " + parameter);
+      } else {
+        return defaultValue;
+      }
+    }
+
+    auxStr = FormatUtilities.sanitizeInput(auxStr);
+    filterRequest(requestFilter, auxStr);
+
+    if (log4j.isDebugEnabled())
+      log4j.debug("Request IN parameter: " + parameter + ":..." + auxStr.toString());
+
+    return auxStr;
   }
 
   /**
