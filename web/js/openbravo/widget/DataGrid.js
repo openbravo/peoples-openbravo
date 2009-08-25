@@ -3104,7 +3104,7 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
     var table = this.liveGrid.table;
     var headerHeight = table.parentNode.firstChild.offsetHeight;
     var scrollerStyle = this.scrollerDiv.style;
-    scrollerStyle.top         = headerHeight - 17;
+    scrollerStyle.top         = headerHeight - 16;
     scrollerStyle.height      = visibleHeight + "px";
     var totalHeight = parseInt(visibleHeight * this.metaData.getTotalRows()/this.metaData.getPageSize());
     this.heightDiv.style.height = totalHeight + "px" ;

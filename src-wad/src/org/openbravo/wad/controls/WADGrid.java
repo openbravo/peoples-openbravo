@@ -56,13 +56,17 @@ public class WADGrid extends WADControl {
         + maxRowsPerGridPage
         + ");\n"
         + "  var firstPage = (liveGrid.metaData.getBackendPage() == 0);\n"
-        + "  var res =  ((liveGrid.visibleRows>0)?(currPageStart+offset+1):0) + \" - \""
+        + "  var res =  \"<nobr class='Main_ToolBar_text_bookmark'>\" +"
+        + "((liveGrid.visibleRows>0)?(currPageStart+offset+1):0) + \" - \""
         + "+ (currPageStart+offset+liveGrid.visibleRows) + \" / \" + (currPageStart+liveGrid.metaData.getTotalRows());\n"
         + "  var strPrevious = getMessage(\"GridPreviousPage\");\n"
         + "  var strNext = getMessage(\"GridNextPage\");\n"
         + "\n"
+        + "  if (!firstPage || fullPage) {\n"
+        + "    res = res + \"<span>&nbsp;&nbsp;&nbsp;</span>\";\n"
+        + "  }\n"
         + "  if (!firstPage) {\n"
-        + "    res = res + \"&nbsp;<a href='#' onclick='gridMovePage(\\\"PREVIOUSPAGE\\\")' class='dojoTabLink'>\" + strPrevious + \" "
+        + "    res = res + \"&nbsp;<a href='#' onclick='gridMovePage(\\\"PREVIOUSPAGE\\\")' class='Main_ToolBar_text_pagerange'>\" + strPrevious + \" "
         + maxRowsPerGridPage
         + "</a>\";\n"
         + "  }\n"
@@ -70,12 +74,13 @@ public class WADGrid extends WADControl {
         + "    res = res + \"&nbsp;|\";\n"
         + "  }\n"
         + "  if (pageFull) {\n"
-        + "    res = res + \"&nbsp;<a href='#' onclick='gridMovePage(\\\"NEXTPAGE\\\")' class='dojoTabLink'>\" + strNext + \" "
+        + "    res = res + \"&nbsp;<a href='#' onclick='gridMovePage(\\\"NEXTPAGE\\\")' class='Main_ToolBar_text_pagerange'>\" + strNext + \" "
         + maxRowsPerGridPage
         + "</a>\";\n"
         + "  }\n"
         + "\n"
         + "  liveGrid.setGridPaging(!firstPage,pageFull);\n"
+        + "  res = res + \"</nobr>\";\n"
         + "  dojo.byId('bookmark').innerHTML = res;\n" + "}\n";
     addJSCode("updateHeader", str);
 

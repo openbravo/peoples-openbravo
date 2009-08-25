@@ -1455,7 +1455,7 @@ div.calendar {
   position: relative;
   width: 17px;
   height: 16px;
-  margin-top: 1px;
+  margin-top: 0px;
   _left: -1px;
   cursor: pointer;
   border-collapse:collapse;
@@ -1468,12 +1468,55 @@ div.calendar {
   position: relative;
   width: 17px;
   height: 16px;
-  margin-top: 18px;
+  margin-top: 22px;
   _left: -1px;
   cursor: pointer;
   border-collapse:collapse;
   border: none;
   background-image: url(Common/DataGrid/iconNextRange.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.DataGrid_Popup_text_container {
+  padding-right: 60px;
+  padding-bottom: 6px;
+  text-align: right;
+}
+
+.DataGrid_Popup_text_bookmark {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  color: #505050;
+}
+
+a.DataGrid_Popup_text_pagerange {
+  color: #2985BA;
+  text-decoration: none;
+}
+
+a.DataGrid_Popup_text_pagerange:active {
+  color: #1d5e84;
+  text-decoration: none;
+  -moz-outline-style: none;
+}
+
+a.DataGrid_Popup_text_pagerange:visited {
+  color: #2985BA;
+  text-decoration: none;
+}
+
+a.DataGrid_Popup_text_pagerange:hover {
+  text-decoration: underline;
+}
+
+a.DataGrid_Popup_text_pagerange:focus {
+  padding: 0px 4px 0px 4px;
+  background-color: #C8E9F9 !important;
+  color: #2985BA;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #2985BA;
+  outline: none;
 }
 
 /* Table */
@@ -6578,6 +6621,35 @@ a.Main_ToolBar_text_relatedinfo:hover {
   color: #B4B4B4;
 }
 
+a.Main_ToolBar_text_pagerange {
+  color: #2985BA;
+  text-decoration: none;
+}
+
+a.Main_ToolBar_text_pagerange:active {
+  color: #1d5e84;
+  text-decoration: none;
+  -moz-outline-style: none;
+}
+
+a.Main_ToolBar_text_pagerange:visited {
+  color: #2985BA;
+  text-decoration: none;
+}
+
+a.Main_ToolBar_text_pagerange:hover {
+  text-decoration: underline;
+}
+
+a.Main_ToolBar_text_pagerange:focus {
+  padding: 0px 4px 0px 4px;
+  background-color: #C8E9F9 !important;
+  color: #2985BA;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #2985BA;
+  outline: none;
+}
 
 
 
