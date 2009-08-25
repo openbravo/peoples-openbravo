@@ -22,6 +22,15 @@ import java.util.Properties;
 
 public class WADGrid extends WADControl {
 
+  /**
+   * Defines how many rows will be shown at maximum in any datagrid inside the scrollable area. If
+   * there are more rows in the source table multiple pages of this size will be used.
+   * 
+   * This constant needs to be in sync with
+   * src/org.openbravo.erpCommon.utility.TableSQLData.maxRowsPerGridPage
+   */
+  private static final int maxRowsPerGridPage = 10000;
+
   public WADGrid() {
   }
 
@@ -40,8 +49,34 @@ public class WADGrid extends WADControl {
   private void generateJSCode() {
     addJSCode("DataGrid", "dojo.require(\"openbravo.widget.DataGrid\");");
     String str = "function updateHeader(liveGrid, offset) {\n"
-        + "  dojo.byId('bookmark').innerHTML = ((liveGrid.visibleRows>0)?(offset+1):0) + \" - \""
-        + "+ (offset+liveGrid.visibleRows) + \" / \" + liveGrid.metaData.getTotalRows();\n" + '}';
+        + "  var currPageStart = (liveGrid.metaData.getBackendPage()*"
+        + maxRowsPerGridPage
+        + ");\n"
+        + "  var pageFull = (liveGrid.metaData.getTotalRows() >= "
+        + maxRowsPerGridPage
+        + ");\n"
+        + "  var firstPage = (liveGrid.metaData.getBackendPage() == 0);\n"
+        + "  var res =  ((liveGrid.visibleRows>0)?(currPageStart+offset+1):0) + \" - \""
+        + "+ (currPageStart+offset+liveGrid.visibleRows) + \" / \" + (currPageStart+liveGrid.metaData.getTotalRows());\n"
+        + "  var strPrevious = getMessage(\"GridPreviousPage\");\n"
+        + "  var strNext = getMessage(\"GridNextPage\");\n"
+        + "\n"
+        + "  if (!firstPage) {\n"
+        + "    res = res + \"&nbsp;<a href='#' onclick='gridMovePage(\\\"PREVIOUSPAGE\\\")' class='dojoTabLink'>\" + strPrevious + \" "
+        + maxRowsPerGridPage
+        + "</a>\";\n"
+        + "  }\n"
+        + "  if (!firstPage && pageFull) {\n"
+        + "    res = res + \"&nbsp;|\";\n"
+        + "  }\n"
+        + "  if (pageFull) {\n"
+        + "    res = res + \"&nbsp;<a href='#' onclick='gridMovePage(\\\"NEXTPAGE\\\")' class='dojoTabLink'>\" + strNext + \" "
+        + maxRowsPerGridPage
+        + "</a>\";\n"
+        + "  }\n"
+        + "\n"
+        + "  liveGrid.setGridPaging(!firstPage,pageFull);\n"
+        + "  dojo.byId('bookmark').innerHTML = res;\n" + "}\n";
     addJSCode("updateHeader", str);
 
     StringBuffer text = new StringBuffer();
@@ -108,6 +143,13 @@ public class WADGrid extends WADControl {
     text.append("  return true;\n");
     text.append('}');
     addJSCode("updateGridDataAfterFilter", text.toString());
+
+    text = new StringBuffer();
+    text.append("function gridMovePage(direction) {\n");
+    text.append("  dijit.byId('").append(getData("id")).append("').gridMovePage(direction);\n");
+    text.append("  return true;\n");
+    text.append("}\n");
+    addJSCode("gridMovePage", text.toString());
   }
 
   public String toString() {

@@ -149,16 +149,22 @@ public class DataGrid extends HttpSecureAppServlet {
   /**
    * Gets the total for the selected rows.
    * 
+   * @param vars
+   *          to get access to session and request parameters
    * @param tableSQL
-   *          Object hanler of tab's query
+   *          Object handler of tab's query
    * @return String with the total.
    */
-  private String getTotalRows(TableSQLData tableSQL) {
+  private String getTotalRows(VariablesSecureApp vars, TableSQLData tableSQL) {
     if (tableSQL == null)
       return "0";
     FieldProvider[] data = null;
     try {
-      ExecuteQuery execquery = new ExecuteQuery(this, tableSQL.getTotalSQL(), tableSQL
+      String currPageKey = tableSQL.getTabID() + "|" + "currentPage";
+      String strPage = vars.getSessionValue(currPageKey, "0");
+      int page = Integer.valueOf(strPage);
+
+      ExecuteQuery execquery = new ExecuteQuery(this, tableSQL.getTotalSQL(page), tableSQL
           .getParameterValuesTotalSQL());
       data = execquery.select();
     } catch (Exception ex) {
@@ -238,6 +244,11 @@ public class DataGrid extends HttpSecureAppServlet {
     String title = "";
     String description = "";
 
+    int page = TableSQLData.calcAndGetBackendPage(vars, tableSQL.getTabID() + "|" + "currentPage");
+    int absoluteOffset = (page * TableSQLData.maxRowsPerGridPage) + offset;
+    log4j.debug("relativeOffset: " + offset + " absoluteOffset: " + absoluteOffset);
+    offset = absoluteOffset;
+
     // values used for formatting Amounts (read from Format.xml file)
     DecimalFormat numberFormatDecimal = Utility.getFormat(vars, "euroRelation");
     // values used for formatting Quantities (read from Format.xml file)
@@ -301,7 +312,8 @@ public class DataGrid extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(getTotalRows(tableSQL)).append("\">\n");
+    strRowsData.append("  <rows numRows=\"").append(getTotalRows(vars, tableSQL)).append(
+        "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -396,7 +408,7 @@ public class DataGrid extends HttpSecureAppServlet {
    * @param vars
    *          Handler for the session info.
    * @param tableSQL
-   *          Object hanler of tab's query.
+   *          Object handler of tab's query.
    * @throws IOException
    * @throws ServletException
    */
@@ -411,6 +423,19 @@ public class DataGrid extends HttpSecureAppServlet {
     String description = "";
     FieldProvider[] data = null;
     FieldProvider[] res = null;
+
+    // get current page
+    String currPageKey = tableSQL.getTabID() + "|" + "currentPage";
+    String strPage = vars.getSessionValue(currPageKey, "0");
+    int page = Integer.valueOf(strPage);
+
+    int oldMinOffset = minOffset;
+    int oldMaxOffset = maxOffset;
+    minOffset = (page * TableSQLData.maxRowsPerGridPage) + minOffset;
+    maxOffset = (page * TableSQLData.maxRowsPerGridPage) + maxOffset;
+    log4j.debug("relativeMinOffset: " + oldMinOffset + " absoluteMinOffset: " + minOffset);
+    log4j.debug("relativeMaxOffset: " + oldMaxOffset + " absoluteMaxOffset: " + maxOffset);
+
     if (tableSQL != null) {
       try {
         // minOffset and maxOffset are zero based so pageSize is difference +1

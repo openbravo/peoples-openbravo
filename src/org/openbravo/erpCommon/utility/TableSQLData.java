@@ -25,6 +25,8 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -65,6 +67,15 @@ public class TableSQLData implements Serializable {
   private Vector<String> orderByDirection = new Vector<String>();
   private int index = 0;
   private boolean isSameTable = false;
+
+  /**
+   * Defines how many rows will be shown at maximum in any datagrid inside the scrollable area. If
+   * there are more rows in the source table multiple pages of this size will be used.
+   * 
+   * This constant needs to be in sync with
+   * src-wad/org.openbravo.wad.controls.WADGrid.maxRowsPerGridPage
+   */
+  public static final int maxRowsPerGridPage = 10000;
 
   /**
    * Constructor
@@ -2267,27 +2278,6 @@ public class TableSQLData implements Serializable {
   }
 
   /**
-   * Gets the sql generated removing all filters
-   * 
-   * @return String with the sql.
-   */
-  String getSQL() {
-    return getSQL(null, null, null, null, null, null, 0, 0, false, false);
-  }
-
-  /**
-   * Get the sql generated with order clause by default
-   * 
-   * @return String with the sql
-   */
-  String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams,
-      Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields,
-      Vector<String> _OrderSimple, int startPosition, int rangeLength) {
-    return getSQL(_FilterFields, _FilterParams, _OrderFields, _OrderParams, selectFields,
-        _OrderSimple, startPosition, rangeLength, true, false);
-  }
-
-  /**
    * Gets the sql generated adding the filters
    * 
    * @param _FilterFields
@@ -2528,13 +2518,22 @@ public class TableSQLData implements Serializable {
   /**
    * Gets the sql for the total queries.
    * 
+   * @param page
+   *          current backend page
    * @return String with the sql.
    */
-  String getTotalSQL() {
+  String getTotalSQL(int page) {
     StringBuffer text = new StringBuffer();
     Vector<QueryFieldStructure> aux = null;
     boolean hasWhere = false;
-    text.append("SELECT COUNT(*) AS TOTAL ");
+
+    text.append(" SELECT count(*) AS TOTAL FROM (\n");
+    if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
+      text.append("SELECT ROWNUM AS rn1, B.* FROM (\n");
+    } else {
+    }
+
+    text.append("SELECT * ");
 
     aux = getFromFields();
     if (aux != null) {
@@ -2573,6 +2572,60 @@ public class TableSQLData implements Serializable {
     if (hasWhere)
       text.append("WHERE ").append(txtAuxWhere.toString());
 
+    if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
+      text.append(" ) B WHERE ROWNUM <= " + ((page+1) * maxRowsPerGridPage) + "\n");
+      text.append(" ) A WHERE RN1 BETWEEN " + ((page * maxRowsPerGridPage)+1) + " AND " + ((page+1) * maxRowsPerGridPage) + "\n");
+    } else {
+      text.append(" LIMIT " + maxRowsPerGridPage + " OFFSET " + (page * maxRowsPerGridPage) + "\n");
+      text.append(" ) B");
+    }
+
     return text.toString();
   }
+
+  /**
+   * This function retrieves the stored backend page number for the given key from the session,
+   * adjust it if needed based on the movePage request parameter, stored the new value into the
+   * session and return it to the caller.
+   * 
+   * @param vars
+   * @param currPageKey
+   * @return
+   * @throws ServletException
+   */
+  public static int calcAndGetBackendPage(VariablesSecureApp vars, String currPageKey)
+      throws ServletException {
+
+    String movePage = vars.getStringParameter("movePage", "");
+    log4j.debug("movePage action: " + movePage);
+
+    // get current page
+    String strPage = vars.getSessionValue(currPageKey, "0");
+    int page = Integer.valueOf(strPage);
+
+    // reset page on filter change
+    if (vars.getStringParameter("newFilter", "0").equals("1")) {
+      page = 0;
+      vars.setSessionValue(currPageKey, String.valueOf(page));
+    }
+
+    // need to change page?
+    if (movePage.length() > 0) {
+      if (movePage.equals("FIRSTPAGE")) {
+        page = 0;
+      } else if (movePage.equals("PREVIOUSPAGE")) {
+        page = Math.max(--page, 0);
+        log4j.debug("page-- newPage=" + page);
+      } else if (movePage.equals("NEXTPAGE")) {
+        page++;
+        log4j.debug("page++ newPage=" + page);
+      } else {
+        throw new ServletException("Unknown action for movePage: " + movePage);
+      }
+      vars.setSessionValue(currPageKey, String.valueOf(page));
+    }
+
+    return page;
+  }
+
 }
