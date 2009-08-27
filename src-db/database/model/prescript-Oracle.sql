@@ -84,7 +84,8 @@ BEGIN
 END GET_UUID;
 /-- END
 
-create or replace FUNCTION AD_DB_MODIFIED(p_Update CHAR) RETURN CHAR
+create or replace
+FUNCTION AD_DB_MODIFIED(p_Update CHAR) RETURN CHAR
 
 AS
 /*************************************************************************
@@ -103,20 +104,41 @@ AS
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
+
+  v_md5 varchar(32);
+  aux varchar(32);
   v_Modified char(1);
+  TYPE RECORD IS REF CURSOR;
+  c1 RECORD;
   PRAGMA AUTONOMOUS_TRANSACTION; --To allow DML within a function in a select        
 BEGIN
-   SELECT (CASE WHEN COUNT(*)>0 THEN 'Y' ELSE 'N' END)
-    INTO v_Modified
-     FROM AD_SYSTEM_INFO
-     WHERE LAST_DBUPDATE < (SELECT MAX(LAST_DDL_TIME)
-                              FROM USER_OBJECTS);
-                              
-                     
+v_md5:='';
+for c1 in (select text from user_source order by name,line) loop
+     v_md5 := dbms_obfuscation_toolkit.md5(input_string => v_md5||c1.text);
+end loop;
+for c1 in (select * from user_tab_cols order by table_name, column_id) loop
+     v_md5 := dbms_obfuscation_toolkit.md5(input_string => v_md5||c1.column_name||c1.data_type||c1.data_length||c1.nullable);
+end loop;
+for c1 in (select * from user_views order by view_name) loop
+     v_md5 := dbms_obfuscation_toolkit.md5(input_string => v_md5||c1.view_name||c1.text);
+end loop;
+
+
+  select db_checksum
+    into aux
+    from ad_system_info;
+                                
+
+  if aux = v_md5 then
+    v_Modified := 'N';
+  else
+    v_Modified := 'Y';
+  end if;     
    BEGIN
    IF p_Update = 'Y' THEN
      UPDATE AD_SYSTEM_INFO
-       SET LAST_DBUPDATE = NOW();
+       SET LAST_DBUPDATE = NOW(),
+           DB_CHECKSUM = v_md5;
    END IF;
    END;
    COMMIT;
