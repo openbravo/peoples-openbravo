@@ -62,7 +62,7 @@ public class WADGrid extends WADControl {
         + "  var strPrevious = getMessage(\"GridPreviousPage\");\n"
         + "  var strNext = getMessage(\"GridNextPage\");\n"
         + "\n"
-        + "  if (!firstPage || fullPage) {\n"
+        + "  if (!firstPage || pageFull) {\n"
         + "    res = res + \"<span>&nbsp;&nbsp;&nbsp;</span>\";\n"
         + "  }\n"
         + "  if (!firstPage) {\n"
