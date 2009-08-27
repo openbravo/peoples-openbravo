@@ -2533,7 +2533,7 @@ public class TableSQLData implements Serializable {
     } else {
     }
 
-    text.append("SELECT * ");
+    text.append("SELECT 1 ");
 
     aux = getFromFields();
     if (aux != null) {
