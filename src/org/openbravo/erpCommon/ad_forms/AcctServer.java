@@ -236,7 +236,7 @@ public abstract class AcctServer {
 
   /**
    * Cosntructor
-   *
+   * 
    * @param m_AD_Client_ID
    *          Client ID of these Documents
    * @param connectionProvider
@@ -291,7 +291,7 @@ public abstract class AcctServer {
 
   /**
    * Factory - Create Posting document
-   *
+   * 
    * @param AD_Table_ID
    *          Table ID of Documents
    * @param AD_Client_ID
@@ -305,108 +305,129 @@ public abstract class AcctServer {
     AcctServer acct = null;
     if (log4j.isDebugEnabled())
       log4j.debug("get - table: " + AD_Table_ID);
-    switch (Integer.parseInt(AD_Table_ID)) {
-    case 318:
-      acct = new DocInvoice(AD_Client_ID, AD_Org_ID, connectionProvider);
-      acct.tableName = "C_Invoice";
-      acct.AD_Table_ID = "318";
-      acct.strDateColumn = "DateAcct";
-      acct.reloadAcctSchemaArray();
-      acct.groupLines = AcctServerData.selectGroupLines(acct.connectionProvider, AD_Client_ID);
-      break;
-    /*
-     * case 390: acct = new DocAllocation (AD_Client_ID); acct.strDateColumn = ""; acct.AD_Table_ID
-     * = "390"; acct.reloadAcctSchemaArray(); acct.break;
-     */
-    case 800060:
-      acct = new DocAmortization(AD_Client_ID, AD_Org_ID, connectionProvider);
-      acct.tableName = "A_Amortization";
-      acct.AD_Table_ID = "800060";
-      acct.strDateColumn = "DateAcct";
-      acct.reloadAcctSchemaArray();
-      break;
+    if (AD_Table_ID.equals("318") || AD_Table_ID.equals("800060") || AD_Table_ID.equals("800176")
+        || AD_Table_ID.equals("407") || AD_Table_ID.equals("392") || AD_Table_ID.equals("259")
+        || AD_Table_ID.equals("800019") || AD_Table_ID.equals("319") || AD_Table_ID.equals("321")
+        || AD_Table_ID.equals("323") || AD_Table_ID.equals("325") || AD_Table_ID.equals("224")) {
+      switch (Integer.parseInt(AD_Table_ID)) {
+      case 318:
+        acct = new DocInvoice(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "C_Invoice";
+        acct.AD_Table_ID = "318";
+        acct.strDateColumn = "DateAcct";
+        acct.reloadAcctSchemaArray();
+        acct.groupLines = AcctServerData.selectGroupLines(acct.connectionProvider, AD_Client_ID);
+        break;
+      /*
+       * case 390: acct = new DocAllocation (AD_Client_ID); acct.strDateColumn = "";
+       * acct.AD_Table_ID = "390"; acct.reloadAcctSchemaArray(); acct.break;
+       */
+      case 800060:
+        acct = new DocAmortization(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "A_Amortization";
+        acct.AD_Table_ID = "800060";
+        acct.strDateColumn = "DateAcct";
+        acct.reloadAcctSchemaArray();
+        break;
 
-    case 800176:
-      if (log4j.isDebugEnabled())
-        log4j.debug("AcctServer - Get DPM");
-      acct = new DocDPManagement(AD_Client_ID, AD_Org_ID, connectionProvider);
-      acct.tableName = "C_DP_Management";
-      acct.AD_Table_ID = "800176";
-      acct.strDateColumn = "DateAcct";
-      acct.reloadAcctSchemaArray();
-      break;
-    case 407:
-      acct = new DocCash(AD_Client_ID, AD_Org_ID, connectionProvider);
-      acct.tableName = "C_Cash";
-      acct.strDateColumn = "DateAcct";
-      acct.AD_Table_ID = "407";
-      acct.reloadAcctSchemaArray();
-      break;
-    case 392:
-      acct = new DocBank(AD_Client_ID, AD_Org_ID, connectionProvider);
-      acct.tableName = "C_Bankstatement";
-      acct.strDateColumn = "StatementDate";
-      acct.AD_Table_ID = "392";
-      acct.reloadAcctSchemaArray();
-      break;
-    case 259:
-      acct = new DocOrder(AD_Client_ID, AD_Org_ID, connectionProvider);
-      acct.tableName = "C_Order";
-      acct.strDateColumn = "DateAcct";
-      acct.AD_Table_ID = "259";
-      acct.reloadAcctSchemaArray();
-      break;
-    case 800019:
-      acct = new DocPayment(AD_Client_ID, AD_Org_ID, connectionProvider);
-      acct.tableName = "C_Settlement";
-      acct.strDateColumn = "Dateacct";
-      acct.AD_Table_ID = "800019";
-      acct.reloadAcctSchemaArray();
-      break;
-    case 319:
-      acct = new DocInOut(AD_Client_ID, AD_Org_ID, connectionProvider);
-      acct.tableName = "M_InOut";
-      acct.strDateColumn = "DateAcct";
-      acct.AD_Table_ID = "319";
-      acct.reloadAcctSchemaArray();
-      break;
-    case 321:
-      acct = new DocInventory(AD_Client_ID, AD_Org_ID, connectionProvider);
-      acct.tableName = "M_Inventory";
-      acct.strDateColumn = "MovementDate";
-      acct.AD_Table_ID = "321";
-      acct.reloadAcctSchemaArray();
-      break;
-    case 323:
-      acct = new DocMovement(AD_Client_ID, AD_Org_ID, connectionProvider);
-      acct.tableName = "M_Movement";
-      acct.strDateColumn = "MovementDate";
-      acct.AD_Table_ID = "323";
-      acct.reloadAcctSchemaArray();
-      break;
-    case 325:
-      acct = new DocProduction(AD_Client_ID, AD_Org_ID, connectionProvider);
-      acct.tableName = "M_Production";
-      acct.strDateColumn = "MovementDate";
-      acct.AD_Table_ID = "325";
-      acct.reloadAcctSchemaArray();
-      break;
-    case 224:
-      if (log4j.isDebugEnabled())
-        log4j.debug("AcctServer - Before OBJECT CREATION");
-      acct = new DocGLJournal(AD_Client_ID, AD_Org_ID, connectionProvider);
-      acct.tableName = "GL_Journal";
-      acct.strDateColumn = "DateAcct";
-      acct.AD_Table_ID = "224";
-      acct.reloadAcctSchemaArray();
-      break;/*
-             * case 472: acct = new DocMatchInv (AD_Client_ID); acct.strDateColumn = "MovementDate";
-             * acct.reloadAcctSchemaArray(); break; case 473: acct = new DocMatchPO (AD_Client_ID);
-             * acct.strDateColumn = "MovementDate"; acct.reloadAcctSchemaArray(); break; case
-             * DocProjectIssue.AD_TABLE_ID: acct = new DocProjectIssue (AD_Client_ID);
-             * acct.strDateColumn = "MovementDate"; acct.reloadAcctSchemaArray(); break;
-             */
+      case 800176:
+        if (log4j.isDebugEnabled())
+          log4j.debug("AcctServer - Get DPM");
+        acct = new DocDPManagement(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "C_DP_Management";
+        acct.AD_Table_ID = "800176";
+        acct.strDateColumn = "DateAcct";
+        acct.reloadAcctSchemaArray();
+        break;
+      case 407:
+        acct = new DocCash(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "C_Cash";
+        acct.strDateColumn = "DateAcct";
+        acct.AD_Table_ID = "407";
+        acct.reloadAcctSchemaArray();
+        break;
+      case 392:
+        acct = new DocBank(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "C_Bankstatement";
+        acct.strDateColumn = "StatementDate";
+        acct.AD_Table_ID = "392";
+        acct.reloadAcctSchemaArray();
+        break;
+      case 259:
+        acct = new DocOrder(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "C_Order";
+        acct.strDateColumn = "DateAcct";
+        acct.AD_Table_ID = "259";
+        acct.reloadAcctSchemaArray();
+        break;
+      case 800019:
+        acct = new DocPayment(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "C_Settlement";
+        acct.strDateColumn = "Dateacct";
+        acct.AD_Table_ID = "800019";
+        acct.reloadAcctSchemaArray();
+        break;
+      case 319:
+        acct = new DocInOut(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "M_InOut";
+        acct.strDateColumn = "DateAcct";
+        acct.AD_Table_ID = "319";
+        acct.reloadAcctSchemaArray();
+        break;
+      case 321:
+        acct = new DocInventory(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "M_Inventory";
+        acct.strDateColumn = "MovementDate";
+        acct.AD_Table_ID = "321";
+        acct.reloadAcctSchemaArray();
+        break;
+      case 323:
+        acct = new DocMovement(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "M_Movement";
+        acct.strDateColumn = "MovementDate";
+        acct.AD_Table_ID = "323";
+        acct.reloadAcctSchemaArray();
+        break;
+      case 325:
+        acct = new DocProduction(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "M_Production";
+        acct.strDateColumn = "MovementDate";
+        acct.AD_Table_ID = "325";
+        acct.reloadAcctSchemaArray();
+        break;
+      case 224:
+        if (log4j.isDebugEnabled())
+          log4j.debug("AcctServer - Before OBJECT CREATION");
+        acct = new DocGLJournal(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "GL_Journal";
+        acct.strDateColumn = "DateAcct";
+        acct.AD_Table_ID = "224";
+        acct.reloadAcctSchemaArray();
+        break;/*
+               * case 472: acct = new DocMatchInv (AD_Client_ID); acct.strDateColumn =
+               * "MovementDate"; acct.reloadAcctSchemaArray(); break; case 473: acct = new
+               * DocMatchPO (AD_Client_ID); acct.strDateColumn = "MovementDate";
+               * acct.reloadAcctSchemaArray(); break; case DocProjectIssue.AD_TABLE_ID: acct = new
+               * DocProjectIssue (AD_Client_ID); acct.strDateColumn = "MovementDate";
+               * acct.reloadAcctSchemaArray(); break;
+               */
+      }
+    } else {
+      AcctServerData[] acctinfo = AcctServerData.getTableInfo(connectionProvider, AD_Table_ID);
+      if (acctinfo != null && acctinfo.length != 0) {
+        if (!acctinfo[0].acctclassname.equals("") && !acctinfo[0].acctdatecolumn.equals("")) {
+          try {
+            acct = (AcctServer) Class.forName(acctinfo[0].acctclassname).newInstance();
+            acct.set(AD_Table_ID, AD_Client_ID, AD_Org_ID, connectionProvider,
+                acctinfo[0].tablename, acctinfo[0].acctdatecolumn);
+            acct.reloadAcctSchemaArray();
+          } catch (Exception e) {
+            log4j.error("Error while creating new instance for AcctServer - " + e);
+          }
+        }
+      }
     }
+
     if (acct == null)
       log4j.warn("AcctServer - get - Unknown AD_Table_ID=" + AD_Table_ID);
     else if (log4j.isDebugEnabled())
@@ -415,6 +436,19 @@ public abstract class AcctServer {
       log4j.debug("AcctServer - get - AD_Table_ID=" + AD_Table_ID);
     return acct;
   } // get
+
+  public void set(String m_AD_Table_ID, String m_AD_Client_ID, String m_AD_Org_ID,
+      ConnectionProvider connectionProvider, String tablename, String acctdatecolumn) {
+    AD_Client_ID = m_AD_Client_ID;
+    AD_Org_ID = m_AD_Org_ID;
+    this.connectionProvider = connectionProvider;
+    tableName = tablename;
+    strDateColumn = acctdatecolumn;
+    AD_Table_ID = m_AD_Table_ID;
+    if (log4j.isDebugEnabled())
+      log4j.debug("AcctServer - LOADING ARRAY: " + m_AD_Client_ID);
+    m_as = AcctSchema.getAcctSchemaArray(connectionProvider, m_AD_Client_ID, m_AD_Org_ID);
+  }
 
   public void reloadAcctSchemaArray() throws ServletException {
     if (log4j.isDebugEnabled())
@@ -483,7 +517,7 @@ public abstract class AcctServer {
     // if (log4j.isDebugEnabled()) log4j.debug("POSTLOADING ARRAY: " +
     // AD_Client_ID);
     if (!DocumentType.equals(DOCTYPE_GLJournal))
-      //m_as = AcctSchema.getAcctSchemaArray(conn, AD_Client_ID, AD_Org_ID);
+      // m_as = AcctSchema.getAcctSchemaArray(conn, AD_Client_ID, AD_Org_ID);
       reloadAcctSchemaArray();
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Post - Antes de new Fact - C_CURRENCY_ID = "
@@ -535,7 +569,7 @@ public abstract class AcctServer {
 
   /**
    * Post Commit. Save Facts & Document
-   *
+   * 
    * @param status
    *          status
    * @return Posting Status
@@ -581,7 +615,7 @@ public abstract class AcctServer {
 
   /**
    * Save to Disk - set posted flag
-   *
+   * 
    * @param con
    *          connection
    * @return true if saved
@@ -592,9 +626,9 @@ public abstract class AcctServer {
     int no = 0;
     try {
       no = AcctServerData.updateSave(con, conn, tableName, Status, Record_ID);
-      //If Status is not posted (Error...) then the created accounting is deleted
-      if(!Status.equals(AcctServer.STATUS_Posted))
-    	AcctServerData.delete(con, connectionProvider, AD_Table_ID, Record_ID);
+      // If Status is not posted (Error...) then the created accounting is deleted
+      if (!Status.equals(AcctServer.STATUS_Posted))
+        AcctServerData.delete(con, connectionProvider, AD_Table_ID, Record_ID);
     } catch (ServletException e) {
       log4j.warn(e);
     }
@@ -616,18 +650,19 @@ public abstract class AcctServer {
   } // unlock
 
   @Deprecated
-  //Deprecated in 2.50 because of a missing connection needed
+  // Deprecated in 2.50 because of a missing connection needed
   public boolean loadDocument(FieldProvider[] data, boolean force, ConnectionProvider conn) {
-	try{
-	  Connection con = conn.getConnection();
-	  return loadDocument(data, force, conn, con);
-	}catch(NoConnectionAvailableException e){
-	  log4j.warn(e);
-	  return false;
-	}
+    try {
+      Connection con = conn.getConnection();
+      return loadDocument(data, force, conn, con);
+    } catch (NoConnectionAvailableException e) {
+      log4j.warn(e);
+      return false;
+    }
   }
 
-  public boolean loadDocument(FieldProvider[] data, boolean force, ConnectionProvider conn, Connection con) {
+  public boolean loadDocument(FieldProvider[] data, boolean force, ConnectionProvider conn,
+      Connection con) {
     if (log4j.isDebugEnabled())
       log4j.debug("loadDocument " + data.length);
 
@@ -805,7 +840,7 @@ public abstract class AcctServer {
 
   /**
    * Posting logic for Accounting Schema index
-   *
+   * 
    * @param index
    *          Accounting Schema index
    * @return posting status/error code
@@ -858,23 +893,23 @@ public abstract class AcctServer {
     if (!m_fact[index].isAcctBalanced())
       m_fact[index].balanceAccounting(conn);
 
-	//Here processes defined to be executed at posting time, when existing, will be executed
-    AcctServerData [] data = AcctServerData.selectAcctProcess(conn, as.m_C_AcctSchema_ID);
-    for(int i=0; data!=null && i<data.length; i++){
-		String strClassname = data[i].classname;
-	    if (!strClassname.equals("")) {
-	      try {
-	        AcctProcessTemplate newTemplate = (AcctProcessTemplate) Class.forName(strClassname)
-	            .newInstance();
-	        if(!newTemplate.execute(this, as, conn, con, vars)){
-	        	Status = AcctServer.STATUS_Error;
-	        	break;
-	        }
-	      } catch (Exception e) {
-	        log4j.error("Error while creating new instance for AcctProcessTemplate - " + e);
-	        return AcctServer.STATUS_Error;
-	      }
-	    }
+    // Here processes defined to be executed at posting time, when existing, will be executed
+    AcctServerData[] data = AcctServerData.selectAcctProcess(conn, as.m_C_AcctSchema_ID);
+    for (int i = 0; data != null && i < data.length; i++) {
+      String strClassname = data[i].classname;
+      if (!strClassname.equals("")) {
+        try {
+          AcctProcessTemplate newTemplate = (AcctProcessTemplate) Class.forName(strClassname)
+              .newInstance();
+          if (!newTemplate.execute(this, as, conn, con, vars)) {
+            Status = AcctServer.STATUS_Error;
+            break;
+          }
+        } catch (Exception e) {
+          log4j.error("Error while creating new instance for AcctProcessTemplate - " + e);
+          return AcctServer.STATUS_Error;
+        }
+      }
     }
 
     return STATUS_Posted;
@@ -882,7 +917,7 @@ public abstract class AcctServer {
 
   /**
    * Is the Source Document Balanced
-   *
+   * 
    * @return true if (source) balanced
    */
   public boolean isBalanced() {
@@ -901,7 +936,7 @@ public abstract class AcctServer {
 
   /**
    * Is Document convertible to currency and Conversion Type
-   *
+   * 
    * @param acctSchema
    *          accounting schema
    * @return true, if vonvertable to accounting currency
@@ -961,7 +996,7 @@ public abstract class AcctServer {
 
   /**
    * Get the Amount (loaded in loadDocumentDetails)
-   *
+   * 
    * @param AmtType
    *          see AMTTYPE_*
    * @return Amount
@@ -974,7 +1009,7 @@ public abstract class AcctServer {
 
   /**
    * Get Amount with index 0
-   *
+   * 
    * @return Amount (primary document amount)
    */
   public String getAmount() {
@@ -983,7 +1018,7 @@ public abstract class AcctServer {
 
   /**
    * Convert an amount
-   *
+   * 
    * @param CurFrom_ID
    *          The C_Currency_ID FROM
    * @param CurTo_ID
@@ -1042,7 +1077,7 @@ public abstract class AcctServer {
 
   /**
    * Is Period Open
-   *
+   * 
    * @return true if period is open
    */
   public boolean isPeriodOpen() {
@@ -1088,7 +1123,7 @@ public abstract class AcctServer {
 
   /**
    * Matching
-   *
+   * 
    * <pre>
    *  Derive Invoice-Receipt Match from PO-Invoice and PO-Receipt
    *  Purchase Order (20)
@@ -1102,10 +1137,10 @@ public abstract class AcctServer {
    *  (b) Creates Indirects
    *      - Invoice1 - Receipt2 (5)
    *  (Not imlemented)
-   *
-   *
+   * 
+   * 
    * </pre>
-   *
+   * 
    * @return number of records created
    */
   public int match(VariablesSecureApp vars, ConnectionProvider conn, Connection con) {
@@ -1160,7 +1195,7 @@ public abstract class AcctServer {
 
   /**
    * Create MatchInv record
-   *
+   * 
    * @param AD_Client_ID
    *          Client
    * @param AD_Org_ID
@@ -1198,7 +1233,7 @@ public abstract class AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   *
+   * 
    * @param AcctType
    *          see ACCTTYPE_*
    * @param as
@@ -1354,14 +1389,14 @@ public abstract class AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line (and tax) amounts from total - no rounding
-   *
+   * 
    * @return positive amount, if total header is bigger than lines
    */
   public abstract BigDecimal getBalance();
 
   /**
    * Create Facts (the accounting logic)
-   *
+   * 
    * @param as
    *          accounting schema
    * @return Fact
