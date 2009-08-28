@@ -148,7 +148,6 @@ end loop;
        RETURN 'N';
 END AD_DB_MODIFIED
 ;
-
 /-- END
 
 create or replace FUNCTION AD_GET_RDBMS RETURN VARCHAR2
