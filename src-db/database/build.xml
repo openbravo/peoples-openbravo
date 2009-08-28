@@ -122,7 +122,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
   </target>
 
   <target name="fix.date.ORACLE">
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue">
+    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
