@@ -19,16 +19,20 @@
 
 package org.openbravo.erpCommon.ad_process;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
 import org.openbravo.scheduling.ProcessLogger;
@@ -38,6 +42,7 @@ import org.openbravo.service.db.DalBaseProcess;
 public class AcctServerProcess extends DalBaseProcess {
 
   private final static String BATCH_SIZE = "50";
+  private final static String SYSTEM_CLIENT_ID = "0";
 
   private boolean isDirect;
 
@@ -49,13 +54,34 @@ public class AcctServerProcess extends DalBaseProcess {
   private ProcessLogger logger;
   private ConnectionProvider connection;
 
+  static Logger log4j = Logger.getLogger(AcctServerProcess.class);
+
   public void doExecute(ProcessBundle bundle) throws Exception {
 
     logger = bundle.getLogger();
     connection = bundle.getConnection();
 
     VariablesSecureApp vars = bundle.getContext().toVars();
+    if (vars.getClient().equals(SYSTEM_CLIENT_ID)) {
+      OBCriteria<Client> obc = OBDal.getInstance().createCriteria(Client.class);
+      obc.add(Expression.not(Expression.eq(Client.PROPERTY_ID, SYSTEM_CLIENT_ID)));
+      for (Client c : obc.list()) {
+        final VariablesSecureApp vars1 = new VariablesSecureApp(bundle.getContext().getUser(), c
+            .getId(), bundle.getContext().getOrganization());
+        processClient(vars1, bundle);
+      }
+    } else {
+      processClient(vars, bundle);
+    }
+  }
 
+  /**
+   * 
+   * @param vars
+   * @param bundle
+   * @throws ServletException
+   */
+  private void processClient(VariablesSecureApp vars, ProcessBundle bundle) throws ServletException {
     final String processId = bundle.getProcessId();
     final String pinstanceId = bundle.getPinstanceId();
 
@@ -82,7 +108,7 @@ public class AcctServerProcess extends DalBaseProcess {
         }
         vars = new VariablesSecureApp(dataOrg[0].adUserId, ctx.getClient(), dataOrg[0].adOrgId);
       } catch (final ServletException ex) {
-        ex.printStackTrace();
+        log4j.error(ex.getMessage());
         return;
       }
     }
@@ -95,7 +121,7 @@ public class AcctServerProcess extends DalBaseProcess {
       TableIds = new String[vTableIds.size()];
       vTableIds.toArray(TableIds);
     } catch (final ServletException ex) {
-      ex.printStackTrace();
+      log4j.error(ex.getMessage());
       return;
     }
     adNoteId = saveLog(adNoteId, vars.getClient());
@@ -134,13 +160,14 @@ public class AcctServerProcess extends DalBaseProcess {
           else
             addLog("Counted " + total + " - " + strTableDesc, false);
         }
+
         try {
           acct.run(vars);
-
-        } catch (final IOException ex) {
-          ex.printStackTrace();
+        } catch (final Exception ex) {
+          log4j.error(ex.getMessage());
           return;
         }
+
         total += Integer.valueOf(BATCH_SIZE).intValue();
       }
       if (isDirect) {
@@ -211,7 +238,7 @@ public class AcctServerProcess extends DalBaseProcess {
       }
 
     } catch (final ServletException ex) {
-      ex.printStackTrace();
+      log4j.error(ex.getMessage());
     }
     return adNoteId;
   }
