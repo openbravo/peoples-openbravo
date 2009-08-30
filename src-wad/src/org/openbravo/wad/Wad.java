@@ -2091,7 +2091,12 @@ public class Wad extends DefaultHandler {
             fieldsData1[i].xmltext = ", windowId + \"|" + fieldsData1[i].realname + "\"";
             fieldsData1[i].type = "RequestGlobalVariable";
           } else if (fieldsData1[i].issessionattr.equals("Y")) {
-            fieldsData1[i].xmltext = ", windowId + \"|" + fieldsData1[i].realname + "\"";
+            if (WadActionButton.isNumericType(fieldsData1[i].reference)) {
+              fieldsData1[i].xmltext = ", vars.getSessionValue(windowId + \"|"
+                  + fieldsData1[i].realname + "\")";
+            } else {
+              fieldsData1[i].xmltext = ", windowId + \"|" + fieldsData1[i].realname + "\"";
+            }
             if (fieldsData1[i].reference.equals("20"))
               fieldsData1[i].xmltext += ", \"N\"";
             if (fieldsData1[i].required.equals("Y")
