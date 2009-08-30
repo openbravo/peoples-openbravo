@@ -478,9 +478,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 </FIELDS_TMP>
 <FIELDS_TMP id="sectionActionButtons3java">    } else if (vars.commandIn("SAVE_BUTTON<FIELD_TMP id="ButtonRealName3j">button</FIELD_TMP><FIELD_TMP id="ProcessID3j">button</FIELD_TMP>")) {
         String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inpKey", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
-        @SuppressWarnings("unused")
         
-        ProcessBundle pb = new ProcessBundle("<FIELD_TMP id="ProcessID3j"/>", vars);
+        ProcessBundle pb = new ProcessBundle("<FIELD_TMP id="ProcessID3j"/>", vars).init(this);
         HashMap&lt;String, Object&gt; params= new HashMap&lt;String, Object&gt;();
        
         params.put("<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
@@ -491,7 +490,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         pb.setParams(params);
         OBError myMessage = null;
         try {
-          <FIELD_TMP id="ProcessCode3j">execute process</FIELD_TMP>
+          new ProcessRunner(pb).execute(this);
           myMessage = (OBError) pb.getResult();
           myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), myMessage.getMessage()));
           myMessage.setTitle(Utility.parseTranslation(this, vars, vars.getLanguage(), myMessage.getTitle()));
