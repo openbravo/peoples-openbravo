@@ -31,7 +31,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       	SELECT p.AD_Process_ID as Id, p.Name, p.AccessLevel, p.IsUserStartable, p.ProcedureName, p.IsReport, p.IsDirectPrint, 
-         COALESCE(p.ClassName, mo.ClassName) as ClassName, p.IsBackground, p.IsJasper, p.JRName, p.Service_Type, p.IsExternalService, p.Service_Source
+         COALESCE(TO_CHAR(p.ClassName), TO_CHAR(mo.ClassName)) as ClassName, p.IsBackground, p.IsJasper, p.JRName, p.Service_Type, p.IsExternalService, p.Service_Source
          FROM AD_Process p LEFT JOIN AD_Model_Object mo on p.AD_Process_ID = mo.AD_Process_ID
         WHERE p.AD_Process_ID = ?
     ]]></Sql>
