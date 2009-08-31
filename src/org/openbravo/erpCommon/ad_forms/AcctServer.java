@@ -261,14 +261,22 @@ public abstract class AcctServer {
     try {
       Connection con = connectionProvider.getTransactionConnection();
       String strIDs = "";
-      if (log4j.isDebugEnabled())
+
+      if (log4j.isDebugEnabled()) {
         log4j.debug("AcctServer - Run - TableName = " + tableName);
+      }
+
+      log4j.debug("AcctServer.run - AD_Client_ID: " + AD_Client_ID);
       AcctServerData[] data = AcctServerData.select(connectionProvider, tableName, AD_Client_ID,
           AD_Org_ID, strDateColumn, 0, Integer.valueOf(batchSize).intValue());
-      if (data != null)
-        if (log4j.isDebugEnabled())
+
+      if (data != null && data.length > 0) {
+        if (log4j.isDebugEnabled()) {
           log4j.debug("AcctServer - Run -Select inicial realizada N = " + data.length + " - Key: "
               + data[0].id);
+        }
+      }
+
       for (int i = 0; data != null && i < data.length; i++) {
         strIDs += data[i].getField("ID") + ", ";
         if (!post(data[i].getField("ID"), false, vars, connectionProvider, con)) {
@@ -282,10 +290,12 @@ public abstract class AcctServer {
       // match (vars, this,con);
       connectionProvider.releaseCommitConnection(con);
     } catch (NoConnectionAvailableException ex) {
-      throw new ServletException("@CODE=NoConnectionAvailable");
+      throw new ServletException("@CODE=NoConnectionAvailable", ex);
     } catch (SQLException ex2) {
       throw new ServletException("@CODE=" + Integer.toString(ex2.getErrorCode()) + "@"
-          + ex2.getMessage());
+          + ex2.getMessage(), ex2);
+    } catch (Exception ex3) {
+      log4j.error(ex3.getMessage(), ex3);
     }
   }
 
@@ -422,7 +432,7 @@ public abstract class AcctServer {
                 acctinfo[0].tablename, acctinfo[0].acctdatecolumn);
             acct.reloadAcctSchemaArray();
           } catch (Exception e) {
-            log4j.error("Error while creating new instance for AcctServer - " + e);
+            log4j.error("Error while creating new instance for AcctServer - " + e, e);
           }
         }
       }
@@ -494,7 +504,7 @@ public abstract class AcctServer {
       } else
         errors++;
     } catch (ServletException e) {
-      log4j.warn(e);
+      log4j.error(e);
       return false;
     }
     return true;
@@ -1448,14 +1458,17 @@ public abstract class AcctServer {
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - AcctSchema length-" + (this.m_as).length);
     for (int i = 0; i < docTypes.length; i++) {
-      AcctServerData[] data = AcctServerData.selectDocuments(connectionProvider, tableName,
-          AD_Org_ID, docTypes[i].name, strDateColumn);
-      if (log4j.isDebugEnabled())
-        log4j.debug("AcctServer - not posted " + docTypes[i].name + " documets length-"
-            + data.length);
-      if (data != null && data.length > 0) {
-        if (!data[0].id.equals(""))
+      AcctServerData data = AcctServerData.selectDocuments(connectionProvider, tableName,
+          AD_Client_ID, AD_Org_ID, docTypes[i].name, strDateColumn);
+
+      if (data != null) {
+        if (data.id != null && !data.id.equals("")) {
+          if (log4j.isDebugEnabled()) {
+            log4j.debug("AcctServer - not posted - " + docTypes[i].name + " document id: "
+                + data.id);
+          }
           return true;
+        }
       }
     }
     return false;

@@ -88,6 +88,10 @@ public class AcctServerProcess extends DalBaseProcess {
     final ProcessContext ctx = bundle.getContext();
     isDirect = bundle.getChannel() == Channel.DIRECT;
 
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("Processing client: " + vars.getClient());
+    }
+
     String adNoteId = "";
     if (isDirect) {
       addLog("@DL_STARTING@", false);
@@ -164,7 +168,7 @@ public class AcctServerProcess extends DalBaseProcess {
         try {
           acct.run(vars);
         } catch (final Exception ex) {
-          log4j.error(ex.getMessage());
+          log4j.error(ex.getMessage(), ex);
           return;
         }
 
