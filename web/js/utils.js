@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '4676';
+  var number = '4844';
   return number;
 }
 
@@ -3471,34 +3471,15 @@ function closeHandler(cal) {
 */
 function getDateFormat(str_format) {
   var format = "";
-  str_format = str_format.replace("mm","MM").replace("dd","DD").replace("yyyy","YYYY");
-  str_format = str_format.replace("%D","%d").replace("%M","%m").replace("%y","%Y");
+  str_format = str_format.replace("mm","MM").replace("dd","DD").replace("yyyy","YYYY").replace("yy","YY");
+  str_format = str_format.replace("%D","%d").replace("%M","%m");
   if (str_format!=null && str_format!="" && str_format!="null") {
-         if (str_format.indexOf('DD-MM-YYYY')!=-1)  format = "%d-%m-%Y";
-    else if (str_format.indexOf('MM-DD-YYYY')!=-1)  format = "%m-%d-%Y";
-    else if (str_format.indexOf('YYYY-MM-DD')!=-1)  format = "%Y-%m-%d";
-    else if (str_format.indexOf('DD/MM/YYYY')!=-1)  format = "%d/%m/%Y";
-    else if (str_format.indexOf('MM/DD/YYYY')!=-1)  format = "%m/%d/%Y";
-    else if (str_format.indexOf('YYYY/MM/DD')!=-1)  format = "%Y/%m/%d";
-    else if (str_format.indexOf('DD.MM.YYYY')!=-1)  format = "%d.%m.%Y";
-    else if (str_format.indexOf('MM.DD.YYYY')!=-1)  format = "%m.%d.%Y";
-    else if (str_format.indexOf('YYYY.MM.DD')!=-1)  format = "%Y.%m.%d";
-    else if (str_format.indexOf('DD:MM:YYYY')!=-1)  format = "%d:%m:%Y";
-    else if (str_format.indexOf('MM:DD:YYYY')!=-1)  format = "%m:%d:%Y";
-    else if (str_format.indexOf('YYYY:MM:DD')!=-1)  format = "%Y:%m:%d";
-
-    else if (str_format.indexOf('%d-%m-%Y')!=-1)  format = "%d-%m-%Y";
-    else if (str_format.indexOf('%m-%d-%Y')!=-1)  format = "%m-%d-%Y";
-    else if (str_format.indexOf('%Y-%m-%d')!=-1)  format = "%Y-%m-%d";
-    else if (str_format.indexOf('%d/%m/%Y')!=-1)  format = "%d/%m/%Y";
-    else if (str_format.indexOf('%m/%d/%Y')!=-1)  format = "%m/%d/%Y";
-    else if (str_format.indexOf('%Y/%m/%d')!=-1)  format = "%Y/%m/%d";
-    else if (str_format.indexOf('%d.%m.%Y')!=-1)  format = "%d.%m.%Y";
-    else if (str_format.indexOf('%m.%d.%Y')!=-1)  format = "%m.%d.%Y";
-    else if (str_format.indexOf('%Y.%m.%d')!=-1)  format = "%Y.%m.%d";
-    else if (str_format.indexOf('%d:%m:%Y')!=-1)  format = "%d:%m:%Y";
-    else if (str_format.indexOf('%m:%d:%Y')!=-1)  format = "%m:%d:%Y";
-    else if (str_format.indexOf('%Y:%m:%d')!=-1)  format = "%Y:%m:%d";
+    format = str_format;
+    format = format.replace("YYYY","%Y");
+    format = format.replace("YY","%y");
+    format = format.replace("MM","%m");
+    format = format.replace("DD","%d");
+    format = format.substring(0,8);
   }
   if (str_format==null || str_format=="" || str_format=="null") str_format = defaultDateFormat;
   else if (str_format.indexOf(" %H:%M:%S")!=-1) format += " %H:%M:%S";
