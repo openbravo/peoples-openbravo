@@ -248,15 +248,15 @@ public class ProcessBundle {
       throw new ServletException("Process Id cannot be null");
     }
     final ProcessData data = ProcessData.select(conn, processId);
-    if (data.isbackground != null && data.isbackground.equals("Y")) {
-      try {
-        setProcessClass(Class.forName(data.classname).asSubclass(Process.class));
-      } catch (final ClassNotFoundException e) {
-        log.error(e.getMessage(), e);
-        throw new ServletException(e.getMessage(), e);
-      }
 
-    } else if (data.isjasper != null && data.isjasper.equals("Y")) {
+    try {
+      setProcessClass(Class.forName(data.classname).asSubclass(Process.class));
+    } catch (final ClassNotFoundException e) {
+      log.error(e.getMessage(), e);
+      throw new ServletException(e.getMessage(), e);
+    }
+
+    if (data.isjasper != null && data.isjasper.equals("Y")) {
       this.impl = data.procedurename;
       this.processClass = JasperProcess.class;
 
