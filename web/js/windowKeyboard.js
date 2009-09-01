@@ -360,6 +360,8 @@ function drawWindowElementFocus(obj) {
     if(obj.tagName == 'A') {
       if (obj.className.indexOf(' Popup_Client_Help_LabelLink_focus') == -1 && obj.className.indexOf('Popup_Client_Help_LabelLink') != -1) {
         obj.className = obj.className + ' Popup_Client_Help_LabelLink_focus';
+      } else if (obj.className.indexOf('DataGrid_Popup_text_pagerange_focus') == -1 && obj.className.indexOf('DataGrid_Popup_text_pagerange') != -1) {
+        obj.className = obj.className + ' DataGrid_Popup_text_pagerange_focus';
       } else if (obj.className.indexOf('Popup_Client_Help_Icon_LabelLink_focus') == -1 && obj.className.indexOf('Popup_Client_Help_Icon_LabelLink') != -1) {
         obj.className = 'Popup_Client_Help_Icon_LabelLink_focus';
       } else if (obj.className.indexOf(' Popup_Client_UserOps_LabelLink_Selected_focus') == -1 && obj.className.indexOf('Popup_Client_UserOps_LabelLink_Selected') != -1) {
@@ -499,6 +501,7 @@ function eraseWindowElementFocus(obj) {
       obj.className = obj.className.replace(' Popup_Client_UserOps_LabelLink_focus','');
       obj.className = obj.className.replace(' Popup_Client_UserOps_LabelLink_Selected_focus','');
       obj.className = obj.className.replace(' Popup_Client_Help_LabelLink_focus','');
+      obj.className = obj.className.replace(' DataGrid_Popup_text_pagerange_focus','');
       obj.className = obj.className.replace(' LabelLink_focus','');
       obj.className = obj.className.replace(' LabelLink_noicon_focus','');
       obj.className = obj.className.replace('FieldButtonLink_focus','FieldButtonLink');

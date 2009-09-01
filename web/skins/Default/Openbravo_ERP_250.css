@@ -1485,12 +1485,12 @@ div.calendar {
 .DataGrid_Popup_text_bookmark {
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
-  font-weight: bold;
   color: #505050;
 }
 
 a.DataGrid_Popup_text_pagerange {
   color: #2985BA;
+  font-weight: bold;
   text-decoration: none;
 }
 
@@ -1509,7 +1509,7 @@ a.DataGrid_Popup_text_pagerange:hover {
   text-decoration: underline;
 }
 
-a.DataGrid_Popup_text_pagerange:focus {
+a.DataGrid_Popup_text_pagerange_focus {
   padding: 0px 4px 0px 4px;
   background-color: #C8E9F9 !important;
   color: #2985BA;
@@ -6617,40 +6617,32 @@ a.Main_ToolBar_text_relatedinfo:hover {
 .Main_ToolBar_text_bookmark {
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
-  font-weight: bold;
   color: #B4B4B4;
 }
 
 a.Main_ToolBar_text_pagerange {
   color: #2985BA;
+  font-weight: bold;
   text-decoration: none;
 }
 
-a.Main_ToolBar_text_pagerange:active {
-  color: #1d5e84;
+a.Main_ToolBar_text_pagerange {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  color: #B4B4B4;
   text-decoration: none;
-  -moz-outline-style: none;
-}
-
-a.Main_ToolBar_text_pagerange:visited {
-  color: #2985BA;
-  text-decoration: none;
+  white-space: nowrap;
 }
 
 a.Main_ToolBar_text_pagerange:hover {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  color: #C8C8C8;
   text-decoration: underline;
+  white-space: nowrap;
 }
-
-a.Main_ToolBar_text_pagerange:focus {
-  padding: 0px 4px 0px 4px;
-  background-color: #C8E9F9 !important;
-  color: #2985BA;
-  border-style: solid;
-  border-width: 2px;
-  border-color: #2985BA;
-  outline: none;
-}
-
 
 
 .Main_ToolBar_Space {
