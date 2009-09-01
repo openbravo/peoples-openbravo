@@ -249,14 +249,14 @@ public class ProcessBundle {
     }
     final ProcessData data = ProcessData.select(conn, processId);
 
-    try {
-      setProcessClass(Class.forName(data.classname).asSubclass(Process.class));
-    } catch (final ClassNotFoundException e) {
-      log.error(e.getMessage(), e);
-      throw new ServletException(e.getMessage(), e);
-    }
-
-    if (data.isjasper != null && data.isjasper.equals("Y")) {
+    if (data.classname != null && !data.classname.equals("")) {
+      try {
+        setProcessClass(Class.forName(data.classname).asSubclass(Process.class));
+      } catch (final ClassNotFoundException e) {
+        log.error(e.getMessage(), e);
+        throw new ServletException(e.getMessage(), e);
+      }
+    } else if (data.isjasper != null && data.isjasper.equals("Y")) {
       this.impl = data.procedurename;
       this.processClass = JasperProcess.class;
 
