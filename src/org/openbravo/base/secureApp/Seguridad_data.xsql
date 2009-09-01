@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -51,7 +51,10 @@
    <SqlMethod name="loggedOK" type="preparedStatement" return="boolean">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT COUNT(*) AS TOTAL FROM AD_SESSION WHERE AD_SESSION_ID = ? AND PROCESSED = 'N' AND ISACTIVE = 'Y'
+        SELECT COUNT(*) AS TOTAL 
+          FROM AD_SESSION WHERE AD_SESSION_ID = ? 
+            AND SESSION_ACTIVE = 'Y' 
+            AND ISACTIVE = 'Y'
       </Sql>
       <Parameter name="adSessionId"/>
    </SqlMethod>
