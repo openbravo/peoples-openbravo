@@ -713,6 +713,17 @@ public class Wad extends DefaultHandler {
         }
       } else
         servletParams = new WadData[0][0];
+
+      WadData[] timeout = WadData.selectSessionTimeOut(pool);
+      if (timeout.length == 0) {
+        log4j.info("No session timeout found, setting default 60min");
+      } else if (timeout.length > 1) {
+        log4j.error("Multiple session timeout config found (" + timeout.length
+            + "), setting default 60min");
+      } else {
+        xmlDocument.setParameter("fieldSessionTimeOut", timeout[0].value);
+      }
+
       xmlDocument.setData("structure1", servlets);
       xmlDocument.setDataArray("reportServletParams", "structure1", servletParams);
       xmlDocument.setData("structureFilterMapping", WadData.selectFilterMapping(pool));
