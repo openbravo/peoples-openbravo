@@ -956,6 +956,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       String strOrganizacion) throws ServletException {
     final SessionLogin sl = new SessionLogin(request, strCliente, strOrganizacion, vars
         .getSessionValue("#AD_User_ID"));
+    sl.setServerUrl(strDireccion);
     sl.save(this);
     vars.setSessionValue("#AD_Session_ID", sl.getSessionID());
   }
