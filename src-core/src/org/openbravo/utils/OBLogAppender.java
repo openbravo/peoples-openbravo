@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
 import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.tools.ant.Project;
@@ -38,12 +39,17 @@ public class OBLogAppender extends AppenderSkeleton {
 
   private static final ThreadLocal<OutputStream> outputStreamHolder = new ThreadLocal<OutputStream>();
   private static final ThreadLocal<Project> projectHolder = new ThreadLocal<Project>();
+  private static final ThreadLocal<Level> levelHolder = new ThreadLocal<Level>();
 
   /**
    * @return the ant project held in the threadlocal.
    */
   public static Project getProject() {
     return projectHolder.get();
+  }
+
+  public static void setLevel(Level level) {
+    levelHolder.set(level);
   }
 
   /**
@@ -93,12 +99,14 @@ public class OBLogAppender extends AppenderSkeleton {
       }
 
       if (outputStreamHolder.get() != null) {
-        if (getLayout() != null) {
-          outputStreamHolder.get().write(getLayout().format(event).getBytes());
-        } else {
-          outputStreamHolder.get().write((event.getMessage().toString() + "\n").getBytes());
+        if (event.getLevel().isGreaterOrEqual(levelHolder.get())) {
+          if (getLayout() != null) {
+            outputStreamHolder.get().write(getLayout().format(event).getBytes());
+          } else {
+            outputStreamHolder.get().write((event.getMessage().toString() + "\n").getBytes());
+          }
+          outputStreamHolder.get().flush();
         }
-        outputStreamHolder.get().flush();
       }
     } catch (final IOException e) {
       // TODO: replace with OBException to log this exception

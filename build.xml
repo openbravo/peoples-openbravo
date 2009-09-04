@@ -539,7 +539,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <target name="update.database" depends="init,code.rev">
     <antcall target="database.lib" />
     <antcall target="core.lib" />
-    <ant dir="${base.db}" target="update.database" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
     <antcall target="generate.entities.quick" />
     <antcall target="db.apply.modules" />
   </target>
