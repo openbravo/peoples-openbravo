@@ -2337,8 +2337,6 @@ public class Utility {
   }
 
   /**
-<<<<<<< /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.base
-=======
    * Returns the name for a value in a list reference in the selected language.
    * 
    * @param ListName
@@ -2391,7 +2389,6 @@ public class Utility {
   }
 
   /**
->>>>>>> /home/openbravo/ws/projects/cr2/openbravo/src/org/openbravo/erpCommon/utility/Utility.java.other
    * Constructs and returns a two dimensional array of the data passed. Array definition is
    * constructed according to Javascript syntax. Used to generate data storage of lists or trees
    * within some manual windows/reports.
@@ -2474,23 +2471,6 @@ public class Utility {
     }
     return refValues;
   }
-  /**
-   * Returns the OB logo CSS style
-   * 
-   * @param type
-   *          Type of logo<br>
-   *          W for complete window<br>
-   *          P for pop-up
-   * @return the CSS style
-   */
-  public static String getLogo(String type) {
-    if (type.equals("W")) {
-      return "Main_NavBar_logo" + (ActivationKey.isActiveInstance() ? "_OPS" : "");
-    } else {
-      return "Popup_NavBar_logo" + (ActivationKey.isActiveInstance() ? "_OPS" : "");
-    }
-  }
-
 
   /**
    * Returns a DecimalFormat for the given formatting type contained in the Format.xml file
