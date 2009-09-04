@@ -36,7 +36,6 @@ import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
-import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
@@ -88,9 +87,9 @@ public class ReportCashFlow extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId,
-      String strAccountingReportId, String strOrg, String strPeriod, String strProcessId)
-      throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod,
+      String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: printPage ReportCashFlow");
 
@@ -139,9 +138,9 @@ public class ReportCashFlow extends HttpSecureAppServlet {
             "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client",
             "ReportCashFlow"), "", strcAcctSchemaId));
 
-    xmlDocument.setData("reportPeriod", "liststructure", ReportCashFlowData.selectCombo(this,
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(
-            this, vars, "#User_Client", "ReportCashFlow"), vars.getLanguage()));
+    xmlDocument.setData("reportPeriod", "liststructure", ReportCashFlowData.selectCombo(this, vars
+        .getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), Utility
+        .getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow")));
 
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
         .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -196,21 +195,16 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     String strPeriodFrom = "";
     int level = 0;
     String strPeriodTo = "";
-    String strYear = DateTimeData.sysdateYear(this);
     String strAccountingType = ReportCashFlowData.selectType(this, strAccountingReportId);
-    if (strAccountingType.equals("Q")) {
-      String strAux = ReportCashFlowData.selectMax(this, strPeriod);
-      strPeriodFrom = "01/" + ReportCashFlowData.selectMin(this, strPeriod) + "/" + strYear;
-      strPeriodTo = ReportCashFlowData.lastDay(this, "01/" + strAux + "/" + strYear, vars
-          .getSqlDateFormat());
-      strPeriodTo = DateTimeData.nDaysAfter(this, strPeriodTo, "1");
+    if (strAccountingType.equals("A")) {
+      ReportCashFlowData[] data = ReportCashFlowData.startEndYear(this, strPeriod);
+      strPeriodFrom = data[0].startdate;
+      strPeriodTo = data[0].enddate;
     } else if (strAccountingType.equals("M")) {
-      strPeriodFrom = "01/" + strPeriod + "/" + strYear;
-      strPeriodTo = ReportCashFlowData.lastDay(this, strPeriodFrom, vars.getSqlDateFormat());
-      strPeriodTo = DateTimeData.nDaysAfter(this, strPeriodTo, "1");
+      ReportCashFlowData[] data = ReportCashFlowData.startEndMonth(this, strPeriod);
+      strPeriodFrom = data[0].startdate;
+      strPeriodTo = data[0].enddate;
     } else {
-      strPeriodFrom = "01/01/" + strPeriod;
-      strPeriodTo = DateTimeData.nDaysAfter(this, "31/12/" + strPeriod, "1");
     }
     strPeriodFrom = ReportCashFlowData.selectFormat(this, strPeriodFrom, vars.getSqlDateFormat());
     strPeriodTo = ReportCashFlowData.selectFormat(this, strPeriodTo, vars.getSqlDateFormat());
@@ -247,21 +241,16 @@ public class ReportCashFlow extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_reports/ReportCashFlowReload").createXmlDocument();
     String strPeriodFrom = "";
     String strPeriodTo = "";
-    String strYear = DateTimeData.sysdateYear(this);
     String strAccountingType = ReportCashFlowData.selectType(this, strAccountingReportId);
-    if (strAccountingType.equals("Q")) {
-      String strAux = ReportCashFlowData.selectMax(this, strPeriod);
-      strPeriodFrom = "01/" + ReportCashFlowData.selectMin(this, strPeriod) + "/" + strYear;
-      strPeriodTo = ReportCashFlowData.lastDay(this, "01/" + strAux + "/" + strYear, vars
-          .getSqlDateFormat());
-      strPeriodTo = DateTimeData.nDaysAfter(this, strPeriodTo, "1");
+    if (strAccountingType.equals("A")) {
+      ReportCashFlowData[] data = ReportCashFlowData.startEndYear(this, strPeriod);
+      strPeriodFrom = data[0].startdate;
+      strPeriodTo = data[0].enddate;
     } else if (strAccountingType.equals("M")) {
-      strPeriodFrom = "01/" + strPeriod + "/" + strYear;
-      strPeriodTo = ReportCashFlowData.lastDay(this, strPeriodFrom, vars.getSqlDateFormat());
-      strPeriodTo = DateTimeData.nDaysAfter(this, strPeriodTo, "1");
+      ReportCashFlowData[] data = ReportCashFlowData.startEndMonth(this, strPeriod);
+      strPeriodFrom = data[0].startdate;
+      strPeriodTo = data[0].enddate;
     } else {
-      strPeriodFrom = "01/01/" + strPeriod;
-      strPeriodTo = DateTimeData.nDaysAfter(this, "31/12/" + strPeriod, "1");
     }
     strPeriodFrom = ReportCashFlowData.selectFormat(this, strPeriodFrom, vars.getSqlDateFormat());
     strPeriodTo = ReportCashFlowData.selectFormat(this, strPeriodTo, vars.getSqlDateFormat());
@@ -326,7 +315,8 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     out.close();
   }
 
-  private String arrayEntry(VariablesSecureApp vars, String strcAcctSchemaId) throws ServletException {
+  private String arrayEntry(VariablesSecureApp vars, String strcAcctSchemaId)
+      throws ServletException {
     String result = "";
     ReportCashFlowData[] data = ReportCashFlowData.selectAD_Accountingrpt_Element_ID(this, Utility
         .getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(this,
@@ -342,9 +332,9 @@ public class ReportCashFlow extends HttpSecureAppServlet {
           result += ",\n";
       }
       result += ");";
-      ReportCashFlowData[] dataPeriod = ReportCashFlowData.selectCombo(this, Utility.getContext(
-          this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(this, vars,
-          "#User_Client", "ReportCashFlow"), vars.getLanguage());
+      ReportCashFlowData[] dataPeriod = ReportCashFlowData.selectCombo(this, vars.getLanguage(),
+          Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), Utility.getContext(
+              this, vars, "#AccessibleOrgTree", "ReportCashFlow"));
       if (dataPeriod == null || dataPeriod.length == 0) {
         result += "\nvar combo = null;";
       } else {
@@ -372,9 +362,10 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     return;
   }
 
-  private void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strcAcctSchemaId,
-      String strAccountingReportId, String strPeriodFrom, String strPeriodTo, String strOrg,
-      int level, String strParent) throws IOException, ServletException {
+  private void childData(VariablesSecureApp vars, Vector<Object> vectorArray,
+      String strcAcctSchemaId, String strAccountingReportId, String strPeriodFrom,
+      String strPeriodTo, String strOrg, int level, String strParent) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Ouput: child tree data");
     String strAccountId = ReportCashFlowData.selectAccounting(this, strAccountingReportId);

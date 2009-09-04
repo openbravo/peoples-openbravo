@@ -33,7 +33,7 @@
                </tr>
              </table>
            </td>
-           <td class="DataGrid_Body_Cell" style="white-space: normal; overflow: visible !important;"><span class="LabelText" id="funcfieldAlertDesc" style="white-space: normal;">xxDescription</span></td>
+           <td class="DataGrid_Body_Cell" style="white-space: normal !important; overflow: visible !important;"><span class="LabelText" id="funcfieldAlertDesc" style="white-space: normal;">xxDescription</span></td>
            <td class="DataGrid_Body_Cell" style="white-space: normal; overflow: visible !important;">
              <textarea class="dojoValidateValid TextArea_Small_height" rows="2" style="width:98%" id="fieldNotes" name="strNotesxx"> </textarea>
            </td>

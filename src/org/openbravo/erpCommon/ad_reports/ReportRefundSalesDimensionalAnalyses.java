@@ -91,13 +91,13 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
           "ReportRefundSalesDimensionalAnalyses|warehouseId", "");
       String strOrder = vars.getGlobalVariable("inpOrder",
           "ReportRefundSalesDimensionalAnalyses|order", "Normal");
-      String strMayor = vars.getGlobalVariable("inpMayor",
+      String strMayor = vars.getNumericGlobalVariable("inpMayor",
           "ReportRefundSalesDimensionalAnalyses|mayor", "");
-      String strMenor = vars.getGlobalVariable("inpMenor",
+      String strMenor = vars.getNumericGlobalVariable("inpMenor",
           "ReportRefundSalesDimensionalAnalyses|menor", "");
-      String strRatioMayor = vars.getGlobalVariable("inpRatioMayor",
+      String strRatioMayor = vars.getNumericGlobalVariable("inpRatioMayor",
           "ReportRefundSalesDimensionalAnalyses|ratioMayor", "");
-      String strRatioMenor = vars.getGlobalVariable("inpRatioMenor",
+      String strRatioMenor = vars.getNumericGlobalVariable("inpRatioMenor",
           "ReportRefundSalesDimensionalAnalyses|ratioMenor", "");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportRefundSalesDimensionalAnalyses|currency", strUserCurrencyId);
@@ -140,10 +140,10 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
           "ReportRefundSalesDimensionalAnalyses|warehouseId");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
           "ReportRefundSalesDimensionalAnalyses|order");
-      String strMayor = vars.getStringParameter("inpMayor", "");
-      String strMenor = vars.getStringParameter("inpMenor", "");
-      String strRatioMayor = vars.getStringParameter("inpRatioMayor", "");
-      String strRatioMenor = vars.getStringParameter("inpRatioMenor", "");
+      String strMayor = vars.getNumericParameter("inpMayor", "");
+      String strMenor = vars.getNumericParameter("inpMenor", "");
+      String strRatioMayor = vars.getNumericParameter("inpRatioMayor", "");
+      String strRatioMenor = vars.getNumericParameter("inpRatioMenor", "");
       String strComparative = vars.getStringParameter("inpComparative", "N");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportRefundSalesDimensionalAnalyses|currency", strUserCurrencyId);

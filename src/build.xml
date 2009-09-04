@@ -273,7 +273,8 @@ build.war: build a war file in the lib directory.
 
   <target name="run.api.test.javascript">
   	<taskdef name="jstest" classname="org.openbravo.test.javascript.JavaScriptAntTest" classpathref="project.class.path" />
-	<jstest apiDetailsPath="${api.test.javascript.details}" jsPath="${base.web}/js" />
+	<property name="export" value="no" />
+	<jstest apiDetailsPath="${api.test.javascript.details}" jsPath="${base.web}/js" export="${export}" />
   </target>
   
   <target name="compileSqlc" depends="sqlc">

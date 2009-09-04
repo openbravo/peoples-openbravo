@@ -52,8 +52,8 @@
   <PARAMETER id="paramAmountascOrder" name="amountasc" boolean="checked" withId="paramConstanteAmountascOrder"/>
   <PARAMETER id="paramConstanteAmountdescOrder" name="constanteAmountdescOrder" default="Amountdesc"/>
   <PARAMETER id="paramAmountdescOrder" name="amountdesc" boolean="checked" withId="paramConstanteAmountdescOrder"/>
-  <PARAMETER id="paramMayor" name="mayor" attribute="value"/>
-  <PARAMETER id="paramMenor" name="menor" attribute="value"/>
+  <PARAMETER id="paramMayor" name="mayor" attribute="value" format="euroEdition"/>
+  <PARAMETER id="paramMenor" name="menor" attribute="value" format="euroEdition"/>
   <PARAMETER id="C_Project_ID" name="cProjectId" attribute="value"/>
   <PARAMETER id="C_Project_ID_D" name="projectName" attribute="value"/>
   <PARAMETER id="paramreportProducttype" name="producttype" default=""/>

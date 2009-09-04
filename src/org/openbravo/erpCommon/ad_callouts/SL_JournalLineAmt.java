@@ -56,8 +56,8 @@ public class SL_JournalLineAmt extends HttpSecureAppServlet {
       String strCurrency = vars.getStringParameter("inpcCurrencyId");
       String strDateAcct = vars.getStringParameter("inpdateacct", DateTimeData.today(this));
       String strCurrencyRateType = vars.getStringParameter("inpcurrencyratetype", "S");
-      String strAmtSourceDr = vars.getStringParameter("inpamtsourcedr", "0");
-      String strAmtSourceCr = vars.getStringParameter("inpamtsourcecr", "0");
+      String strAmtSourceDr = vars.getNumericParameter("inpamtsourcedr", "0");
+      String strAmtSourceCr = vars.getNumericParameter("inpamtsourcecr", "0");
       String strTabId = vars.getStringParameter("inpTabId");
 
       try {
@@ -106,9 +106,9 @@ public class SL_JournalLineAmt extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_JournalLineAmt';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpamtacctdr\", \"" + AmtAcctDr.toString() + "\"),");
-    resultado.append("new Array(\"inpamtacctcr\", \"" + AmtAcctCr.toString() + "\"),");
-    resultado.append("new Array(\"inpcurrencyrate\", \"" + CurrencyRateValue.toString() + "\"),");
+    resultado.append("new Array(\"inpamtacctdr\", " + AmtAcctDr.toString() + "),");
+    resultado.append("new Array(\"inpamtacctcr\", " + AmtAcctCr.toString() + "),");
+    resultado.append("new Array(\"inpcurrencyrate\", " + CurrencyRateValue.toString() + "),");
     resultado.append("new Array(\"inpcurrencyratetype\", \"" + strCurrencyRateType + "\")");
 
     resultado.append(");");

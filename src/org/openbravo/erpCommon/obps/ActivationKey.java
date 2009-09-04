@@ -21,12 +21,15 @@ package org.openbravo.erpCommon.obps;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -38,6 +41,7 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -52,6 +56,7 @@ public class ActivationKey {
   private boolean isActive = false;
   private boolean hasActivationKey = false;
   private String errorMessage = "";
+  private String messageType = "Error";
   private Properties instanceProperties;
   private static final Logger log = Logger.getLogger(ActivationKey.class);
   private String strPublicKey;
@@ -59,6 +64,8 @@ public class ActivationKey {
   private static String opsLogId;
   private Long pendingTime;
   private boolean hasExpired = false;
+
+  private boolean notActiveYet = false;
 
   public enum LicenseRestriction {
     NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED
@@ -132,9 +139,10 @@ public class ActivationKey {
       byte[] props = bos.toByteArray();
 
       ByteArrayInputStream isProps = new ByteArrayInputStream(props);
+      InputStreamReader reader = new InputStreamReader(isProps, "UTF-8");
       instanceProperties = new Properties();
 
-      instanceProperties.load(isProps);
+      instanceProperties.load(reader);
     } catch (Exception e) {
       isActive = false;
       errorMessage = "@NotAValidKey@";
@@ -147,6 +155,7 @@ public class ActivationKey {
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     Date startDate = null;
     Date endDate = null;
+
     try {
       startDate = sd.parse(getProperty("startdate"));
 
@@ -160,11 +169,15 @@ public class ActivationKey {
       setLogger();
       return;
     }
-
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
+        "dateFormat.java");
+    SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
     Date now = new Date();
     if (startDate == null || now.before(startDate)) {
       isActive = false;
-      errorMessage = "@OPSNotActiveTill@ " + startDate;
+      notActiveYet = true;
+      errorMessage = "@OPSNotActiveTill@ " + outputFormat.format(startDate);
+      messageType = "Warning";
       setLogger();
       return;
     }
@@ -173,8 +186,8 @@ public class ActivationKey {
       if (now.after(endDate)) {
         isActive = false;
         hasExpired = true;
-        // message not needed
-        // errorMessage = "@OPSActivationExpired@ " + endDate;
+
+        errorMessage = "@OPSActivationExpired@ " + outputFormat.format(endDate);
 
         setLogger();
         return;
@@ -259,6 +272,10 @@ public class ActivationKey {
     return errorMessage;
   }
 
+  public String getMessageType() {
+    return messageType;
+  }
+
   public boolean isOPSInstance() {
     return instanceProperties != null;
   }
@@ -306,6 +323,20 @@ public class ActivationKey {
   }
 
   public String toString(ConnectionProvider conn, String lang) {
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
+        "dateFormat.java");
+    SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
+
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+    Date startDate = null;
+    Date endDate = null;
+    try {
+      startDate = sd.parse(getProperty("startdate"));
+      if (getProperty("enddate") != null)
+        endDate = sd.parse(getProperty("enddate"));
+    } catch (ParseException e) {
+      log.error("Error parsing date", e);
+    }
     StringBuffer sb = new StringBuffer();
     if (instanceProperties != null) {
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
@@ -315,12 +346,12 @@ public class ActivationKey {
           Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang)).append(
           "</td></tr>");
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang)).append(
-          "</td><td>").append(getProperty("startdate")).append("</td></tr>");
+          "</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSEndDate", lang)).append("</td><td>")
           .append(
               (getProperty("enddate") == null ? Utility.messageBD(conn, "OPSNoEndDate", lang)
-                  : getProperty("enddate"))).append("</td></tr>");
+                  : outputFormat.format(endDate))).append("</td></tr>");
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsers", lang)).append(
           "</td><td>").append(
@@ -373,6 +404,51 @@ public class ActivationKey {
 
   public boolean hasExpired() {
     return hasExpired;
+  }
+
+  public boolean isNotActiveYet() {
+    return notActiveYet;
+  }
+
+  /**
+   * Obtains a list for modules ID the instance is subscribed to.
+   * 
+   * @param onlyActive
+   *          if this value is true the list will contain only the modules active at this time,
+   *          other case it will contain all the subscribed modules regardless expiration dates
+   * @return ArrayList<String> containing the subscribed modules
+   */
+  public ArrayList<String> getSubscribedModules(boolean onlyActive) {
+    ArrayList<String> moduleList = new ArrayList<String>();
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+
+    String allModules = getProperty("modules");
+    if (allModules == null || allModules.equals(""))
+      return moduleList;
+    String modulesInfo[] = allModules.split(",");
+    Date now = new Date();
+    for (String moduleInfo : modulesInfo) {
+      String moduleData[] = moduleInfo.split("\\|");
+      if (!onlyActive) {
+        moduleList.add(moduleData[0]);
+      } else {
+        Date validFrom = null;
+        Date validTo = null;
+        try {
+          validFrom = sd.parse(moduleData[1]);
+          if (moduleData.length > 2) {
+            validTo = sd.parse(moduleData[2]);
+          }
+
+          if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
+            moduleList.add(moduleData[0]);
+          }
+        } catch (Exception e) {
+          log.error("Error reading module's dates module:" + moduleData[0], e);
+        }
+      }
+    }
+    return moduleList;
   }
 
 }

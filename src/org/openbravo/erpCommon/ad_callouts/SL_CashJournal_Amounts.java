@@ -48,9 +48,9 @@ public class SL_CashJournal_Amounts extends HttpSecureAppServlet {
         log4j.debug("CHANGED: " + strChanged);
       String strOrder = vars.getStringParameter("inpcOrderId");
       String strDebtPayment = vars.getStringParameter("inpcDebtPaymentId");
-      String strAmount = vars.getStringParameter("inpamount");
-      String strDiscount = vars.getStringParameter("inpdiscountamt");
-      String strwriteoff = vars.getStringParameter("inpwriteoffamt");
+      String strAmount = vars.getNumericParameter("inpamount");
+      String strDiscount = vars.getNumericParameter("inpdiscountamt");
+      String strwriteoff = vars.getNumericParameter("inpwriteoffamt");
       String strTabId = vars.getStringParameter("inpTabId");
       String strCashId = vars.getStringParameter("inpcCashId");
       String strDesc = vars.getStringParameter("inpdescription");
@@ -93,7 +93,7 @@ public class SL_CashJournal_Amounts extends HttpSecureAppServlet {
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS(strDescription)
         + "\"),");
-    resultado.append("new Array(\"inpamount\", \"" + amount + "\")");
+    resultado.append("new Array(\"inpamount\", " + amount + ")");
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

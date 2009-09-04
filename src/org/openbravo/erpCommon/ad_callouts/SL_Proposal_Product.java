@@ -40,7 +40,7 @@ public class SL_Proposal_Product extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
-      String strPriceStd = vars.getStringParameter("inpmProductId_PSTD");
+      String strPriceStd = vars.getNumericParameter("inpmProductId_PSTD");
       String strTabId = vars.getStringParameter("inpTabId");
       String strmProductId = vars.getStringParameter("inpmProductId");
       try {

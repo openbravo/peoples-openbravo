@@ -51,9 +51,9 @@
 		<FIELD id="fieldAttribute">description</FIELD>
 		<FIELD id="fieldUOM">uom1</FIELD>
 		<FIELD id="fieldProductUOM">uom2</FIELD>
-		<FIELD id="fieldMovementQty" attribute="value" format="euroEdition">qtyonhand</FIELD>
+		<FIELD id="fieldMovementQty" attribute="value" format="qtyEdition">qtyonhand</FIELD>
 		<FIELD id="fieldMovementQty" attribute="name" replace="xx">mStorageDetailId</FIELD>
-		<FIELD id="fieldQuantityOrder" attribute="value" format="euroEdition" default="0">qtyorderonhand</FIELD>
+		<FIELD id="fieldQuantityOrder" attribute="value" format="qtyEdition" default="0">qtyorderonhand</FIELD>
 		<FIELD id="fieldQuantityOrder" attribute="name" replace="xx">mStorageDetailId</FIELD>
 		<SECTION id="sectionDetail"/>
 	</structure>

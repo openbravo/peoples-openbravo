@@ -20,6 +20,8 @@ package org.openbravo.erpCommon.info;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -100,8 +102,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
       String strDocumentNo = vars.getGlobalVariable("inpdocumentno", "InvoiceLine.documentno", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "InvoiceLine.datefrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "InvoiceLine.dateto", "");
-      String strCal1 = vars.getGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
-      String strCal2 = vars.getGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
+      String strCal1 = vars.getNumericGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
+      String strCal2 = vars.getNumericGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
       printPage(response, vars, strBPartner, strProduct, strDocumentNo, strDateFrom, strDateTo,
           strCal1, strCal2);
     } else if (vars.commandIn("KEY")) {
@@ -123,8 +125,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
             .getGlobalVariable("inpdocumentno", "InvoiceLine.documentno", "");
         String strDateFrom = vars.getGlobalVariable("inpDateFrom", "InvoiceLine.datefrom", "");
         String strDateTo = vars.getGlobalVariable("inpDateTo", "InvoiceLine.dateto", "");
-        String strCal1 = vars.getGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
-        String strCal2 = vars.getGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
+        String strCal1 = vars.getNumericGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
+        String strCal2 = vars.getNumericGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
         printPage(response, vars, strBPartner, strProduct, strDocumentNo, strDateFrom, strDateTo,
             strCal1, strCal2);
       }
@@ -142,8 +144,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
       String strDateTo = vars.getGlobalVariable("inpDateTo", "InvoiceLine.dateto", "");
       String strDescription = vars.getGlobalVariable("inpDescription", "InvoiceLine.description",
           "");
-      String strCal1 = vars.getGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
-      String strCal2 = vars.getGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
+      String strCal1 = vars.getNumericGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
+      String strCal2 = vars.getNumericGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
       String strOrder = vars.getGlobalVariable("inpInvoice", "InvoiceLine.invoice", "");
       String strOrg = vars.getGlobalVariable("inpInvoice", "InvoiceLine.adorgid", "");
 
@@ -294,11 +296,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
         // build sql orderBy clause
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-          // filter
-          // or
-          // first
-          // load
+        // New filter or first load
+        if (strNewFilter.equals("1") || strNewFilter.equals("")) {
           strNumRows = InvoiceLineData.countRows(this, Utility.getContext(this, vars,
               "#User_Client", "InvoiceLine"), Utility.getSelectorOrgs(this, vars, strOrg),
               strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
@@ -350,6 +349,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
       }
     }
 
+    DecimalFormat df = Utility.getFormat(vars, "priceEdition");
+
     if (!type.startsWith("<![CDATA["))
       type = "<![CDATA[" + type + "]]>";
     if (!title.startsWith("<![CDATA["))
@@ -371,7 +372,10 @@ public class InvoiceLine extends HttpSecureAppServlet {
           strRowsData.append("      <td><![CDATA[");
           String columnname = headers[k].getField("columnname");
 
-          if ((data[j].getField(columnname)) != null) {
+          if (columnname.equalsIgnoreCase("qty") || columnname.equalsIgnoreCase("priceactual")
+              || columnname.equalsIgnoreCase("linenetamt")) {
+            strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
+          } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
             strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",

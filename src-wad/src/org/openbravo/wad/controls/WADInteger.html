@@ -11,8 +11,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,7 @@
       <table style="border:0px;border-collapse:collapse;">
         <tr>
           <td style="padding-top: 0px;">
-            <input type="text" id="xx" class="dojoValidateValidxx TextBox_yy_width number" required="false" value="" maxlength="xx" name="inpxx" onkeyup="" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onchange="validateIntegerBox(this.id);logChanges(this);xx();return true;"/>
+            <input type="text" id="xx" class="dojoValidateValidxx TextBox_yy_width number" required="false" value="" maxlength="xx" name="inpxx" onkeyup="" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onchange="logChanges(this); numberInputEvent('onchange', this); xx(); return true;" outputformat="xx" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);"/>
           </td>
         </tr>
       </table>

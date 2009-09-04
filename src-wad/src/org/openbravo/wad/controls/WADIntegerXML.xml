@@ -23,12 +23,6 @@
   <PARAMETER id="xx" name="columnName"/>
   <PARAMETER id="xx_PARAM" name="columnName" attribute="id"/>
   <PARAMETER id="xx_PARAM" name="columnName" attribute="name"/>
-  <PARAMETER id="buttonCalcxx" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="buttonCalcxx" name="columnName" attribute="name" replace="xx"/>
-  <PARAMETER id="imgCalcxx" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="imgCalcxx" name="columnName" attribute="name" replace="xx"/>
-  <PARAMETER id="imgCalcxx2" name="columnName" attribute="id" replace="xx2"/>
-  <PARAMETER id="imgCalcxx2" name="columnName" attribute="name" replace="xx"/>
 
   <DISCARD id="discard"/>
 </REPORT>

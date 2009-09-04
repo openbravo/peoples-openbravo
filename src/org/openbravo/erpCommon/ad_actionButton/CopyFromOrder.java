@@ -105,8 +105,8 @@ public class CopyFromOrder extends HttpSecureAppServlet {
           String strmProductId = vars.getStringParameter("inpmProductId" + strRownum);
           String strmAttributesetinstanceId = vars.getStringParameter("inpmAttributesetinstanceId"
               + strRownum);
-          String strLastpriceso = vars.getStringParameter("inpLastpriceso" + strRownum);
-          String strQty = vars.getStringParameter("inpquantity" + strRownum);
+          String strLastpriceso = vars.getNumericParameter("inpLastpriceso" + strRownum);
+          String strQty = vars.getNumericParameter("inpquantity" + strRownum);
           String strcTaxId = vars.getStringParameter("inpcTaxId" + strRownum);
           String strcUOMId = vars.getStringParameter("inpcUOMId" + strRownum);
           String strPrecision = "0";

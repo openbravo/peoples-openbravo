@@ -72,15 +72,16 @@ public class LoginHandler extends HttpBaseServlet {
 
       switch (ak.checkOPSLimitations()) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
-        String msg = "At this moment you cannot log in because the maximum number of users that can be logged in at the same time, was reached.<br/>";
-        msg += "You can wait until one or more users log out or you can contact your system adiministrator for advice";
+        String msg = "You have exceeded the number of Global Concurrent Users licensed to use this system.<br/>";
+        msg += "Please wait until one or more users log out of the system and then retry again.<br/>";
+        msg += "Contact your Openbravo Business Partner if you want to purchase a subscription for additional users.";
         String msgType = "Error";
         String action = "../security/Login_FS.html";
         goToRetry(res, vars, msg, "Maximum number of concurrent users reached", msgType, action);
         break;
       case NUMBER_OF_SOFT_USERS_REACHED:
-        msg = "You have exceeded the number of Global Concurrent Users available.<br/>";
-        msg += "Please contact your assigned partner to purchase a subscription for additional users.";
+        msg = "You have exceeded the number of Global Concurrent Users licensed to use this system.<br/>";
+        msg += "Contact your Openbravo Business Partner if you want to purchase a subscription for additional users.";
         action = "../security/Menu.html";
         msgType = "Warning";
         goToRetry(res, vars, msg, "Maximum number of concurrent users reached", msgType, action);

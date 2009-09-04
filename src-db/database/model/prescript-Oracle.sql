@@ -84,7 +84,8 @@ BEGIN
 END GET_UUID;
 /-- END
 
-create or replace FUNCTION AD_DB_MODIFIED(p_Update CHAR) RETURN CHAR
+create or replace
+FUNCTION AD_DB_MODIFIED(p_Update CHAR) RETURN CHAR
 
 AS
 /*************************************************************************
@@ -103,20 +104,41 @@ AS
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
+
+  v_md5 varchar(32);
+  aux varchar(32);
   v_Modified char(1);
+  TYPE RECORD IS REF CURSOR;
+  c1 RECORD;
   PRAGMA AUTONOMOUS_TRANSACTION; --To allow DML within a function in a select        
 BEGIN
-   SELECT (CASE WHEN COUNT(*)>0 THEN 'Y' ELSE 'N' END)
-    INTO v_Modified
-     FROM AD_SYSTEM_INFO
-     WHERE LAST_DBUPDATE < (SELECT MAX(LAST_DDL_TIME)
-                              FROM USER_OBJECTS);
-                              
-                     
+v_md5:='';
+for c1 in (select text from user_source order by name,line) loop
+     v_md5 := dbms_obfuscation_toolkit.md5(input_string => v_md5||c1.text);
+end loop;
+for c1 in (select * from user_tab_cols order by table_name, column_id) loop
+     v_md5 := dbms_obfuscation_toolkit.md5(input_string => v_md5||c1.column_name||c1.data_type||c1.data_length||c1.nullable);
+end loop;
+for c1 in (select * from user_views order by view_name) loop
+     v_md5 := dbms_obfuscation_toolkit.md5(input_string => v_md5||c1.view_name||c1.text);
+end loop;
+
+
+  select db_checksum
+    into aux
+    from ad_system_info;
+                                
+
+  if aux = v_md5 then
+    v_Modified := 'N';
+  else
+    v_Modified := 'Y';
+  end if;     
    BEGIN
    IF p_Update = 'Y' THEN
      UPDATE AD_SYSTEM_INFO
-       SET LAST_DBUPDATE = NOW();
+       SET LAST_DBUPDATE = NOW(),
+           DB_CHECKSUM = v_md5;
    END IF;
    END;
    COMMIT;
@@ -126,30 +148,6 @@ BEGIN
        RETURN 'N';
 END AD_DB_MODIFIED
 ;
-
-/-- END
-
-create or replace FUNCTION AD_GET_RDBMS RETURN VARCHAR2
-AS
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2009 Openbravo SL
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
-BEGIN
- return 'ORACLE';
-END AD_GET_RDBMS;
 /-- END
 
 BEGIN

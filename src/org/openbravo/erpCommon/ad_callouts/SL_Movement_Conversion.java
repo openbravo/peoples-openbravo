@@ -50,7 +50,7 @@ public class SL_Movement_Conversion extends HttpSecureAppServlet {
         log4j.debug("CHANGED: " + strChanged);
       String strUOM = vars.getStringParameter("inpcUomId");
       String strMProductUOMID = vars.getStringParameter("inpmProductUomId");
-      String strQuantityOrder = vars.getStringParameter("inpquantityorder");
+      String strQuantityOrder = vars.getNumericParameter("inpquantityorder");
       String strTabId = vars.getStringParameter("inpTabId");
 
       try {

@@ -75,11 +75,24 @@
       if (obj==null) return false;
       var price = document.frmMain.inpTotalPrice;
       var actualValue = Number(eval("document.frmMain.inpPrice" + obj.value + ".value"));
-      if (obj.checked) price.value = round(Number(price.value),2) + actualValue;
-      else price.value = round(Number(price.value),2) - actualValue;
-      if (isNaN(price.value)) price.value = 0;
+
+      if (obj.checked) {
+         price.value = round(Number(price.value),2) + actualValue;
+      } else {
+        price.value = round(Number(price.value),2) - actualValue;
+      }
+
+      if (isNaN(price.value)) {
+         price.value = 0;
+      }
+
+      var decSeparator = getGlobalDecSeparator();
+      var groupSeparator = getGlobalGroupSeparator();
+      var groupInterval = getGlobalGroupInterval();
+      var maskNumeric = formatNameToMask("euroEdition");
       round(price.value, 2);
-      layer("paramTotalPrice", price.value, true);
+      var formattedValue = returnCalcToFormatted(price.value, maskNumeric, decSeparator, groupSeparator, groupInterval);
+      layer("paramTotalPrice", formattedValue, true);
       return true;
     }
     function updateData(obj) {
@@ -409,7 +422,7 @@
               <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                 <tr>
                   <td class="TextBox_ContentCell">
-                    <input dojoType="openbravo:RealNumberTextbox" type="text" id="paramAmountFrom" class="TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountFrom"></input><script>djConfig.searchIds.push("paramAmountFrom");</script>
+                    <input dojoType="openbravo:RealNumberTextbox" type="text" id="paramAmountFrom" class="TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountFrom" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountFrom");</script>
                   </td>
                   <td class="FieldButton_ContentCell">
                     <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpamountFrom', document.frmMain.inpamountFrom.value, false);return false;" onmouseout="this.className='FieldButton';window.status='';return true;">
@@ -432,7 +445,7 @@
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:RealNumberTextbox" type="text" id="paramAmountTo" class="TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountTo"></input><script>djConfig.searchIds.push("paramAmountTo");</script>
+                      <input dojoType="openbravo:RealNumberTextbox" type="text" id="paramAmountTo" class="TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountTo" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountTo");</script>
                     </td>
                     <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount to'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpamountTo', document.frmMain.inpamountTo.value, false);return false;" onmouseout="this.className='FieldButton';window.status='';return true;">
@@ -455,7 +468,7 @@
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:RealNumberTextbox" type="text" id="paramTotalAmount" class="TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamount"></input><script>djConfig.searchIds.push("paramTotalAmount");</script>
+                      <input dojoType="openbravo:RealNumberTextbox" type="text" id="paramTotalAmount" class="TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamount" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramTotalAmount");</script>
                     </td>
                     <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount lower than'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpamount', document.frmMain.inpamount.value, false);return false;" onmouseout="this.className='FieldButton';window.status='';return true;">
@@ -551,7 +564,7 @@
                 <td class="DataGrid_Body_Cell" id="fieldPlannedDate">xxP</td>
                 <td class="DataGrid_Body_Cell" id="fieldAmount">xx</td>
                 <td class="DataGrid_Body_Cell" id="fieldCurrency">xx</td>
-                <td class="DataGrid_Body_Cell"><input name="inpwriteoffxx" type="text" id="fieldWriteOff" size="8" value="0" onkeyup="autoCompleteNumber(this, true, true, event);return true;"></input></td>
+                <td class="DataGrid_Body_Cell"><input name="inpwriteoffxx" type="text" id="fieldWriteOff" size="8" value="0" outputformat="euroEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" ></input></td>
                 <td class="DataGrid_Body_Cell" style="display:none;"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpispaidxx" value="Y" id="fieldIsPaid"></input></span></td>
               </tr>
             </div>

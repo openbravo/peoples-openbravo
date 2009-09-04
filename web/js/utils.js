@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '4462';
+  var number = '4844';
   return number;
 }
 
@@ -76,6 +76,33 @@ function revisionControl(number) {
     return false;
   } else {
     return true;
+  }
+}
+
+
+function getObjAttribute(obj, attribute) {
+  attribute = attribute.toLowerCase();
+  var attribute_text = "";
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+    attribute_text = obj.getAttribute(attribute);
+  } else {
+    attribute_text = obj.getAttribute(attribute).toString();
+    attribute_text = attribute_text.replace("function anonymous()","");
+    attribute_text = attribute_text.replace("function " + attribute + "()","");
+    attribute_text = attribute_text.replace("{\n","");
+    attribute_text = attribute_text.replace("\n","");
+    attribute_text = attribute_text.replace("}","");
+  }
+  return attribute_text;
+}
+
+function setObjAttribute(obj, attribute, attribute_text) {
+  attribute = attribute.toLowerCase();
+  attribute_text = attribute_text.toString();
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+    obj.setAttribute(attribute, attribute_text);
+  } else {
+    obj[attribute]=new Function(attribute_text);
   }
 }
 
@@ -1404,7 +1431,6 @@ function putFocusOnWindow() {
 * Used to activate the key-press handling. Must be called after set the keys global array <em>keyArray</em>.
 */
 function enableShortcuts(type) {
-  setOPSLogo(); //set here the logo because it is the only function called in every on load
   if (type!=null && type!='null' && type!='') {
     try {
       this.keyArray = new Array();
@@ -3445,34 +3471,15 @@ function closeHandler(cal) {
 */
 function getDateFormat(str_format) {
   var format = "";
-  str_format = str_format.replace("mm","MM").replace("dd","DD").replace("yyyy","YYYY");
-  str_format = str_format.replace("%D","%d").replace("%M","%m").replace("%y","%Y");
+  str_format = str_format.replace("mm","MM").replace("dd","DD").replace("yyyy","YYYY").replace("yy","YY");
+  str_format = str_format.replace("%D","%d").replace("%M","%m");
   if (str_format!=null && str_format!="" && str_format!="null") {
-         if (str_format.indexOf('DD-MM-YYYY')!=-1)  format = "%d-%m-%Y";
-    else if (str_format.indexOf('MM-DD-YYYY')!=-1)  format = "%m-%d-%Y";
-    else if (str_format.indexOf('YYYY-MM-DD')!=-1)  format = "%Y-%m-%d";
-    else if (str_format.indexOf('DD/MM/YYYY')!=-1)  format = "%d/%m/%Y";
-    else if (str_format.indexOf('MM/DD/YYYY')!=-1)  format = "%m/%d/%Y";
-    else if (str_format.indexOf('YYYY/MM/DD')!=-1)  format = "%Y/%m/%d";
-    else if (str_format.indexOf('DD.MM.YYYY')!=-1)  format = "%d.%m.%Y";
-    else if (str_format.indexOf('MM.DD.YYYY')!=-1)  format = "%m.%d.%Y";
-    else if (str_format.indexOf('YYYY.MM.DD')!=-1)  format = "%Y.%m.%d";
-    else if (str_format.indexOf('DD:MM:YYYY')!=-1)  format = "%d:%m:%Y";
-    else if (str_format.indexOf('MM:DD:YYYY')!=-1)  format = "%m:%d:%Y";
-    else if (str_format.indexOf('YYYY:MM:DD')!=-1)  format = "%Y:%m:%d";
-
-    else if (str_format.indexOf('%d-%m-%Y')!=-1)  format = "%d-%m-%Y";
-    else if (str_format.indexOf('%m-%d-%Y')!=-1)  format = "%m-%d-%Y";
-    else if (str_format.indexOf('%Y-%m-%d')!=-1)  format = "%Y-%m-%d";
-    else if (str_format.indexOf('%d/%m/%Y')!=-1)  format = "%d/%m/%Y";
-    else if (str_format.indexOf('%m/%d/%Y')!=-1)  format = "%m/%d/%Y";
-    else if (str_format.indexOf('%Y/%m/%d')!=-1)  format = "%Y/%m/%d";
-    else if (str_format.indexOf('%d.%m.%Y')!=-1)  format = "%d.%m.%Y";
-    else if (str_format.indexOf('%m.%d.%Y')!=-1)  format = "%m.%d.%Y";
-    else if (str_format.indexOf('%Y.%m.%d')!=-1)  format = "%Y.%m.%d";
-    else if (str_format.indexOf('%d:%m:%Y')!=-1)  format = "%d:%m:%Y";
-    else if (str_format.indexOf('%m:%d:%Y')!=-1)  format = "%m:%d:%Y";
-    else if (str_format.indexOf('%Y:%m:%d')!=-1)  format = "%Y:%m:%d";
+    format = str_format;
+    format = format.replace("YYYY","%Y");
+    format = format.replace("YY","%y");
+    format = format.replace("MM","%m");
+    format = format.replace("DD","%d");
+    format = format.substring(0,8);
   }
   if (str_format==null || str_format=="" || str_format=="null") str_format = defaultDateFormat;
   else if (str_format.indexOf(" %H:%M:%S")!=-1) format += " %H:%M:%S";
@@ -3948,38 +3955,6 @@ function changeAuditIcon(newStatus) {
      elementId = document.getElementById(elementId);
      div.scrollTop = elementId.offsetTop - (navigator.userAgent.toUpperCase().indexOf("MSIE")!=-1?0:div.offsetTop);
    }
-   
-   
-  
-  /**
-   * Changes the logo for OPS instances
-   * 
-   * @return
-   */
-  function setOPSLogo(){
-	var opsInstance = null;
-	var logo = null;
-	if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
-		if(top.opener != null) { // is a pop-up window
-			logo = document.getElementById('openbravoLogo');
-		    if (logo == null && top.mainframe) {
-		    	logo = top.mainframe.document.getElementById('openbravoLogo');
-		    }
-			opsInstance = top.opener.top.frameMenu.opsInstance;
-		}
-	} else {
-		logo = top.appFrame.document.getElementById('openbravoLogo');
-		opsInstance = top.frameMenu.opsInstance;
-	}
-	
-	if (logo != null && opsInstance ) {
-	    className = logo.className;
-	    if (className.length>4 && className.substring(className.length-4) != "_OPS") {
-		  logo.className = logo.className + "_OPS";
-	    }
-	}
-  }
-
 
 //-->
 
@@ -4131,8 +4106,8 @@ function returnNewCaretPosition(obj, oldCaretPosition, groupSeparator) {
 /**
 * Function that returns a number just with the decimal Separator
 * @param {String} number The formatted number
-* @param {String} decSeparator The decimal separator of the input
-* @param {String} groupSeparator The group separator of the input
+* @param {String} decSeparator The decimal separator of the number
+* @param {String} groupSeparator The group separator of the number
 * @return The plain number
 * @type String
 */
@@ -4181,10 +4156,10 @@ function returnPlainNumber(number, decSeparator, groupSeparator) {
 }
 
 /**
-* Function that returns a number just with the decimal separator which always is ".". Used for math operations
+* Function that returns a number just with the decimal separator which always is ".". It is used for math operations
 * @param {String} number The formatted number
-* @param {String} decSeparator The decimal separator of the input
-* @param {String} groupSeparator The group separator of the input
+* @param {String} decSeparator The decimal separator of the number
+* @param {String} groupSeparator The group separator of the number
 * @return The converted number
 * @type String
 */
@@ -4215,7 +4190,7 @@ function returnCalcToFormatted(number, maskNumeric, decSeparator, groupSeparator
 
 /**
 * Function that does a change of the decimal and group separators of a mask
-* @param {String} maskNumeric The numeric maskr
+* @param {String} maskNumeric The numeric mask
 * @param {String} decSeparator_old The old decimal separator
 * @param {String} groupSeparator_old The old group separator
 * @param {String} decSeparator_new  The new decimal separator
@@ -4566,13 +4541,17 @@ function reverseString(text) {
 }
 
 
-// CaretPosition object
+/**
+* Objet CaretPosition
+*/
 function CaretPosition() {
  var start = null;
  var end = null;
 }
 
-/* Function that returns actual position of -1 if we are at last position*/
+/**
+* Function that returns actual position of -1 if we are at last position
+*/
 function getCaretPosition(oField) {
  var oCaretPos = new CaretPosition();
 
@@ -4597,13 +4576,18 @@ function getCaretPosition(oField) {
  return (oCaretPos);
 }
 
-function setSelectionRange(input, selectionStart, selectionEnd) {
-  if (input.setSelectionRange) {
-    input.focus();
-    input.setSelectionRange(selectionStart, selectionEnd);
-  }
-  else if (input.createTextRange) {
-    var range = input.createTextRange();
+/**
+* Function that selects a text range of an input
+* @param {Object} obj The input to do a selection
+* @param {Number} selectionStart The start position of the selection
+* @param {Number} selectionEnd The start position of the selection
+*/
+function setSelectionRange(obj, selectionStart, selectionEnd) {
+  if (obj.setSelectionRange) {
+    obj.focus();
+    obj.setSelectionRange(selectionStart, selectionEnd);
+  } else if (obj.createTextRange) {
+    var range = obj.createTextRange();
     range.collapse(true);
     range.moveEnd('character', selectionEnd);
     range.moveStart('character', selectionStart);
@@ -4611,51 +4595,29 @@ function setSelectionRange(input, selectionStart, selectionEnd) {
   }
 }
 
-function setCaretToEnd (input) {
-  setSelectionRange(input, input.value.length, input.value.length);
+/**
+* Function that sets the cursor position to the end
+* @param {Object} obj The target input
+*/
+function setCaretToEnd (obj) {
+  setSelectionRange(obj, obj.value.length, obj.value.length);
 }
 
-function setCaretToBegin (input) {
-  setSelectionRange(input, 0, 0);
+/**
+* Function that sets the cursor position to the start
+* @param {Object} obj The target input
+*/
+function setCaretToBegin (obj) {
+  setSelectionRange(obj, 0, 0);
 }
 
-function setCaretToPos (input, pos) {
-  setSelectionRange(input, pos, pos);
-}
-
-function selectString (input, string) {
-  var match = new RegExp(string, "i").exec(input.value);
-  if (match) {
-    setSelectionRange (input, match.index, match.index + match
-[0].length);
-  }
-}
-
-function replaceSelection (input, replaceString) {
-  if (input.setSelectionRange) {
-    var selectionStart = input.selectionStart;
-    var selectionEnd = input.selectionEnd;
-    input.value = input.value.substring(0, selectionStart)
-                  + replaceString
-                  + input.value.substring(selectionEnd);
-    if (selectionStart != selectionEnd) // has there been a selection
-      setSelectionRange(input, selectionStart, selectionStart + replaceString.length);
-    else // set caret
-      setCaretToPos(input, selectionStart + replaceString.length);
-  }
-  else if (document.selection) {
-    var range = document.selection.createRange();
-    if (range.parentElement() == input) {
-      var isCollapsed = range.text == '';
-      range.text = replaceString;
-      if (!isCollapsed)  { // there has been a selection
-        // it appears range.select() should select the newly
-        // inserted text but that fails with IE
-        range.moveStart('character', -replaceString.length);
-        range.select();
-      }
-    }
-  }
+/**
+* Function that sets the cursor to an specific position
+* @param {Object} obj The target input
+* @param {Number} obj The target position
+*/
+function setCaretToPos (obj, pos) {
+  setSelectionRange(obj, pos, pos);
 }
 
 /**
@@ -4980,8 +4942,6 @@ function menuContextual(evt) {
   }
   return true;
 }
-
-
 
 /**
 * End of deprecated functions in 2.50

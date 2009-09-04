@@ -20,6 +20,8 @@ package org.openbravo.erpCommon.info;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -324,11 +326,8 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
         // build sql orderBy clause
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-          // filter
-          // or
-          // first
-          // load
+        // New filter or first load
+        if (strNewFilter.equals("1") || strNewFilter.equals("")) {
           if (strSOTrx.equals("Y")) {
             data = ShipmentReceiptLineData.select(this, "1", Utility.getContext(this, vars,
                 "#User_Client", "ShipmentReceiptLine"),
@@ -413,6 +412,8 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
       }
     }
 
+    DecimalFormat df = Utility.getFormat(vars, "qtyEdition");
+
     if (!type.startsWith("<![CDATA["))
       type = "<![CDATA[" + type + "]]>";
     if (!title.startsWith("<![CDATA["))
@@ -441,7 +442,9 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
            * "_R").equals("")) { columnname += "_R"; }
            */
 
-          if ((data[j].getField(columnname)) != null) {
+          if (columnname.equalsIgnoreCase("qty")) {
+            strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
+          } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
             strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",

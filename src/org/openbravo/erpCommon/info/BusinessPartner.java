@@ -20,6 +20,8 @@ package org.openbravo.erpCommon.info;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -360,6 +362,9 @@ public class BusinessPartner extends HttpSecureAppServlet {
         e.printStackTrace();
       }
     }
+
+    DecimalFormat df = Utility.getFormat(vars, "priceEdition");
+
     if (!type.startsWith("<![CDATA["))
       type = "<![CDATA[" + type + "]]>";
     if (!title.startsWith("<![CDATA["))
@@ -381,7 +386,13 @@ public class BusinessPartner extends HttpSecureAppServlet {
           strRowsData.append("      <td><![CDATA[");
           final String columnname = headers[k].getField("columnname");
 
-          if ((data[j].getField(columnname)) != null) {
+          if (columnname.equalsIgnoreCase("so_creditavailable")
+              || columnname.equalsIgnoreCase("so_creditused")
+              || columnname.equalsIgnoreCase("income")) {
+            final String value = data[j].getField(columnname).equals("") ? "0" : data[j]
+                .getField(columnname);
+            strRowsData.append(df.format(new BigDecimal(value)));
+          } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
             strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",

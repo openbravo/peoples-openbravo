@@ -285,13 +285,13 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       log4j.debug("Save: Receipt");
     String strProduct = vars.getRequiredStringParameter("inpmProductId");
     String strAtributo = vars.getStringParameter("inpmAttributesetinstanceId");
-    String strQty = vars.getStringParameter("inpmovementqty");
+    String strQty = vars.getNumericParameter("inpmovementqty");
     String strUOM = vars.getStringParameter("inpcUomId");
-    String strQuantityOrder = vars.getStringParameter("inpquantityorder");
+    String strQuantityOrder = vars.getNumericParameter("inpquantityorder");
     String strProductUOM = vars.getStringParameter("inpmProductUomId");
     String strWarehouse = vars.getRequiredStringParameter("inpmWarehouseId");
     String strLocator = vars.getStringParameter("inpmLocatorX");
-    String strNumero = vars.getRequiredStringParameter("inpnumerolineas");
+    String strNumero = vars.getRequiredNumericParameter("inpnumerolineas");
     String strLocatorType = vars.getStringParameter("inpmLocatorType");
 
     OBError myMessage = null;
@@ -361,8 +361,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
         count = 0;
         while (st.hasMoreTokens()) {
           String strStorageDetailId = st.nextToken().trim();
-          String strQty = vars.getStringParameter("inpmovementqty" + strStorageDetailId);
-          String strQtyOrder = vars.getStringParameter("inpquantityorder" + strStorageDetailId);
+          String strQty = vars.getNumericParameter("inpmovementqty" + strStorageDetailId);
+          String strQtyOrder = vars.getNumericParameter("inpquantityorder" + strStorageDetailId);
 
           String strSequence = SequenceIdData.getUUID();
           try {

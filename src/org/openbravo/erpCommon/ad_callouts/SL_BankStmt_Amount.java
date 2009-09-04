@@ -46,10 +46,10 @@ public class SL_BankStmt_Amount extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
-      String strStmAmount = vars.getStringParameter("inpstmtamt");
-      String strChgAmount = vars.getStringParameter("inpchargeamt");
-      String strTrxAmount = vars.getStringParameter("inptrxamt");
-      String strConvChgAmount = vars.getStringParameter("inpconvertchargeamt");
+      String strStmAmount = vars.getNumericParameter("inpstmtamt");
+      String strChgAmount = vars.getNumericParameter("inpchargeamt");
+      String strTrxAmount = vars.getNumericParameter("inptrxamt");
+      String strConvChgAmount = vars.getNumericParameter("inpconvertchargeamt");
       String strTabId = vars.getStringParameter("inpTabId");
       String strBankStmtLine = vars.getStringParameter("inpcBankstatementlineId");
       String strCurrencyId = vars.getStringParameter("inpcCurrencyId");
@@ -94,19 +94,18 @@ public class SL_BankStmt_Amount extends HttpSecureAppServlet {
         // ConvChgAmount =
         // StmAmount.subtract(TrxAmount).subtract(ChgAmount);
         ConvChgAmount = TrxAmount.subtract(ChgAmount).subtract(StmAmount);
-        resultado
-            .append("new Array(\"inpconvertchargeamt\", \"" + ConvChgAmount.toString() + "\")");
+        resultado.append("new Array(\"inpconvertchargeamt\", " + ConvChgAmount.toString() + ")");
         resultado.append(");");
       } else {
         TrxAmount = StmAmount.subtract(ChgAmount);
-        resultado.append("new Array(\"inptrxamt\", \"" + TrxAmount.toString() + "\")");
+        resultado.append("new Array(\"inptrxamt\", " + TrxAmount.toString() + ")");
         resultado.append(");");
       }
     }
     if (strChanged.equals("inpchargeamt") || (strChanged.equals("inpconvertchargeamt"))) {
       // StmAmount = TrxAmount.add(ChgAmount).add(ConvChgAmount);
       StmAmount = TrxAmount.subtract(ChgAmount).subtract(ConvChgAmount);
-      resultado.append("new Array(\"inpstmtamt\", \"" + StmAmount.toString() + "\")");
+      resultado.append("new Array(\"inpstmtamt\", " + StmAmount.toString() + ")");
       resultado.append(");");
     }
 

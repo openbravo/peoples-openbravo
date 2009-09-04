@@ -160,7 +160,7 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
     data.salesrepId = vars.getStringParameter("inpsalesrepId");
     data.isdiscountprinted = vars.getStringParameter("inpisdiscountprinted", "N");
     data.cChargeId = vars.getStringParameter("inpcChargeId");
-    data.chargeamt = vars.getStringParameter("inpchargeamt");
+    data.chargeamt = vars.getNumericParameter("inpchargeamt");
     data.paymentrule = vars.getRequiredStringParameter("inppaymentrule");
     data.cPaymenttermId = vars.getRequiredStringParameter("inpcPaymenttermId");
     data.createfrom = vars.getStringParameter("inpcreatefrom", "N");

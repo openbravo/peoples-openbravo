@@ -54,10 +54,10 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
       String strIsOverUnderPayment = vars.getStringParameter("inpisoverunderpayment");
-      String strPayamt = vars.getStringParameter("inppayamt");
-      String strDiscountamt = vars.getStringParameter("inpdiscountamt");
-      String strWriteoffamt = vars.getStringParameter("inpwriteoffamt");
-      String strOverunderamt = vars.getStringParameter("inpoverunderamt");
+      String strPayamt = vars.getNumericParameter("inppayamt");
+      String strDiscountamt = vars.getNumericParameter("inpdiscountamt");
+      String strWriteoffamt = vars.getNumericParameter("inpwriteoffamt");
+      String strOverunderamt = vars.getNumericParameter("inpoverunderamt");
       String strcCurrencyId = vars.getStringParameter("inpcCurrencyId");
       String strcPaymentId = vars.getStringParameter("inpcPaymentId");
       String strcInvoiceId = vars.getStringParameter("inpcInvoiceId");
@@ -104,7 +104,7 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
       overunderamt = new BigDecimal(strOverunderamt);
       if (overunderamt == null)
         overunderamt = ZERO;
-      resultado.append("new Array(\"inpoverunderamt\", \"" + overunderamt.toString() + "\")");
+      resultado.append("new Array(\"inpoverunderamt\", " + overunderamt.toString() + ")");
     }
 
     else if (strChanged.equals("inpcCurrencyId")) {
@@ -155,13 +155,13 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
           } else {
             convert = new BigDecimal(strconvert);
             payamt = payamt.multiply(convert).setScale(2, 4);
-            resultado.append("new Array(\"inppayamt\", \"" + payamt.toString() + "\"),");
+            resultado.append("new Array(\"inppayamt\", " + payamt.toString() + "),");
             discountamt = discountamt.multiply(convert).setScale(2, 4);
-            resultado.append("new Array(\"inpdiscountamt\", \"" + discountamt.toString() + "\"),");
+            resultado.append("new Array(\"inpdiscountamt\", " + discountamt.toString() + "),");
             writeoffamt = writeoffamt.multiply(convert).setScale(2, 4);
-            resultado.append("new Array(\"inpwriteoffamt\", \"" + writeoffamt.toString() + "\"),");
+            resultado.append("new Array(\"inpwriteoffamt\", " + writeoffamt.toString() + "),");
             overunderamt = overunderamt.multiply(convert).setScale(2, 4);
-            resultado.append("new Array(\"inpoverunderamt\", \"" + overunderamt.toString() + "\")");
+            resultado.append("new Array(\"inpoverunderamt\", " + overunderamt.toString() + ")");
             vars.setSessionValue("Last.Currency", strcCurrencyId);
           }
 
@@ -184,7 +184,7 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
         invtotamt = invtotamt.multiply(convert).setScale(2, 4);
       }
       writeoffamt = (invtotamt).subtract(payamt).subtract(discountamt).subtract(overunderamt);
-      resultado.append("new Array(\"inpwriteoffamt\", \"" + writeoffamt.toString() + "\")");
+      resultado.append("new Array(\"inpwriteoffamt\", " + writeoffamt.toString() + ")");
     } else if (strChanged.equals("inpdiscountamt")) {
       SLPaymentAmountsData[] data = SLPaymentAmountsData.select(this, strcInvoiceId);
       invtotamt = new BigDecimal(data[0].grand);
@@ -198,7 +198,7 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
         invtotamt = invtotamt.multiply(convert).setScale(2, 4);
       }
       invtotamt = invtotamt.subtract(discountamt).subtract(writeoffamt).subtract(overunderamt);
-      resultado.append("new Array(\"inppayamt\", \"" + invtotamt.toString() + "\")");
+      resultado.append("new Array(\"inppayamt\", " + invtotamt.toString() + ")");
     } else if (strChanged.equals("inpwriteoffamt")) {
       SLPaymentAmountsData[] data = SLPaymentAmountsData.select(this, strcInvoiceId);
       invtotamt = new BigDecimal(data[0].grand);
@@ -212,14 +212,14 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
         invtotamt = invtotamt.multiply(convert).setScale(2, 4);
       }
       invtotamt = invtotamt.subtract(writeoffamt).subtract(discountamt).subtract(overunderamt);
-      resultado.append("new Array(\"inppayamt\", \"" + invtotamt.toString() + "\")");
+      resultado.append("new Array(\"inppayamt\", " + invtotamt.toString() + ")");
     } else if (strChanged.equals("inpoverunderamt")) {
       SLPaymentAmountsData[] data = SLPaymentAmountsData.select(this, strcInvoiceId);
       invtotamt = new BigDecimal(data[0].grand);
       if (invtotamt == null)
         invtotamt = ZERO;
       invtotamt = invtotamt.subtract(overunderamt).subtract(writeoffamt).subtract(discountamt);
-      resultado.append("new Array(\"inppayamt\", \"" + invtotamt.toString() + "\")");
+      resultado.append("new Array(\"inppayamt\", " + invtotamt.toString() + ")");
     }
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

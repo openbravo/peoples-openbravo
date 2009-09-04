@@ -41,7 +41,7 @@
 <PARAMETER id="paramLastorder" name="lastOrder"/>
 <PARAMETER id="paramOrgname" name="orgname"/>
 <PARAMETER id="paramLastmonth" name="lastmonth"/>
-<PARAMETER id="paramInvoicing" name="invoicing"/>
+<PARAMETER id="paramInvoicing" name="invoicing" format="euroInform"/>
 <PARAMETER id="paramTotalAverage" name="totalAverage" format="euroInform"/>
 <PARAMETER id="paramBpartnername" name="bpartnername"/>
 
@@ -73,9 +73,9 @@
 <FIELD id="fieldMofferid" attribute="name" replace="xx">rownum</FIELD>
 <FIELD id="fieldOffernameclass" attribute="class" replace="xx">classOffer</FIELD>
 <FIELD id="fieldOffername">offerName</FIELD>
-<FIELD id="fieldPricestdvalue" attribute="value">pricestd</FIELD>
+<FIELD id="fieldPricestdvalue" attribute="value" format="priceEdition">pricestd</FIELD>
 <FIELD id="fieldPricestdvalue" attribute="name" replace="xx">rownum</FIELD>
-<FIELD id="fieldPricestd">pricestd</FIELD>
+<FIELD id="fieldPricestd" format="priceEdition">pricestd</FIELD>
 <FIELD id="fieldLastpriceso" attribute="value" format="priceEdition">lastpriceso</FIELD>
 <FIELD id="fieldLastpriceso" attribute="name" replace="xx">rownum</FIELD>
 <FIELD id="fieldLastpriceso" attribute="class" replace="xx">classOffer</FIELD>

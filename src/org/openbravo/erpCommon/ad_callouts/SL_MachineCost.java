@@ -47,15 +47,15 @@ public class SL_MachineCost extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
-      String strPurchaseAmt = vars.getStringParameter("inppurchaseamt");
-      String strToolsetAmt = vars.getStringParameter("inptoolsetamt");
-      String strYearValue = vars.getStringParameter("inpyearvalue");
-      String strAmortization = vars.getStringParameter("inpamortization");
-      String strDaysYear = vars.getStringParameter("inpdaysyear");
-      String strDayHours = vars.getStringParameter("inpdayhours");
-      String strImproductiveHoursYear = vars.getStringParameter("inpimproductivehoursyear");
-      String strCostUomYear = vars.getStringParameter("inpcostuomyear");
-      String strCost = vars.getStringParameter("inpcost");
+      String strPurchaseAmt = vars.getNumericParameter("inppurchaseamt");
+      String strToolsetAmt = vars.getNumericParameter("inptoolsetamt");
+      String strYearValue = vars.getNumericParameter("inpyearvalue");
+      String strAmortization = vars.getNumericParameter("inpamortization");
+      String strDaysYear = vars.getNumericParameter("inpdaysyear");
+      String strDayHours = vars.getNumericParameter("inpdayhours");
+      String strImproductiveHoursYear = vars.getNumericParameter("inpimproductivehoursyear");
+      String strCostUomYear = vars.getNumericParameter("inpcostuomyear");
+      String strCost = vars.getNumericParameter("inpcost");
       String strCostUom = vars.getStringParameter("inpcostuom");
       try {
         printPage(response, vars, strChanged, strPurchaseAmt, strToolsetAmt, strYearValue,
@@ -168,16 +168,16 @@ public class SL_MachineCost extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_MachineCost';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inppurchaseamt\", \"" + strPurchaseAmt + "\"),\n");
-    resultado.append("new Array(\"inptoolsetamt\", \"" + strToolsetAmt + "\"),\n");
-    resultado.append("new Array(\"inpyearvalue\", \"" + strYearValue + "\"),\n");
-    resultado.append("new Array(\"inpamortization\", \"" + strAmortization + "\"), \n");
-    resultado.append("new Array(\"inpdaysyear\", \"" + strDaysYear + "\"),\n");
-    resultado.append("new Array(\"inpdayhours\", \"" + strDayHours + "\"),\n");
-    resultado.append("new Array(\"inpimproductivehoursyear\", \"" + strImproductiveHoursYear
-        + "\"),\n");
-    resultado.append("new Array(\"inpcostuomyear\", \"" + strCostUomYear + "\"),\n");
-    resultado.append("new Array(\"inpcost\", \"" + strCost + "\") \n");
+    resultado.append("new Array(\"inppurchaseamt\", " + strPurchaseAmt + "),\n");
+    resultado.append("new Array(\"inptoolsetamt\", " + strToolsetAmt + "),\n");
+    resultado.append("new Array(\"inpyearvalue\", " + strYearValue + "),\n");
+    resultado.append("new Array(\"inpamortization\", " + strAmortization + "), \n");
+    resultado.append("new Array(\"inpdaysyear\", " + strDaysYear + "),\n");
+    resultado.append("new Array(\"inpdayhours\", " + strDayHours + "),\n");
+    resultado
+        .append("new Array(\"inpimproductivehoursyear\", " + strImproductiveHoursYear + "),\n");
+    resultado.append("new Array(\"inpcostuomyear\", " + strCostUomYear + "),\n");
+    resultado.append("new Array(\"inpcost\", " + strCost + ") \n");
     resultado.append(");\n");
     xmlDocument.setParameter("array", resultado.toString());
     response.setContentType("text/html; charset=UTF-8");

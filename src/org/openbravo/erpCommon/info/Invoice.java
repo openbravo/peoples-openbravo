@@ -20,6 +20,8 @@ package org.openbravo.erpCommon.info;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -108,8 +110,8 @@ public class Invoice extends HttpSecureAppServlet {
       String strFechaTo = vars.getGlobalVariable("inpDateTo", "Invoice.inpDateTo", "");
       String strDescription = vars
           .getGlobalVariable("inpDescription", "Invoice.inpDescription", "");
-      String strCal1 = vars.getGlobalVariable("inpCal1", "Invoice.inpCal1", "");
-      String strCalc2 = vars.getGlobalVariable("inpCal2", "Invoice.inpCal2", "");
+      String strCal1 = vars.getNumericGlobalVariable("inpCal1", "Invoice.inpCal1", "");
+      String strCalc2 = vars.getNumericGlobalVariable("inpCal2", "Invoice.inpCal2", "");
       String strOrder = vars.getGlobalVariable("inpOrder", "Invoice.inpOrder", "");
       String strSOTrx = vars.getGlobalVariable("inpisSOTrx", "Invoice.inpisSOTrx", "");
       String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Invoice.adorgid", "");
@@ -267,11 +269,8 @@ public class Invoice extends HttpSecureAppServlet {
         // build sql orderBy clause
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
 
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-          // filter
-          // or
-          // first
-          // load
+        // New filter of first load
+        if (strNewFilter.equals("1") || strNewFilter.equals("")) {
           strNumRows = InvoiceData.countRows(this, Utility.getContext(this, vars, "#User_Client",
               "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription,
               strBpartnerId, strOrder, strDateFrom, DateTimeData.nDaysAfter(this, strFechaTo, "1"),
@@ -325,6 +324,8 @@ public class Invoice extends HttpSecureAppServlet {
       }
     }
 
+    DecimalFormat df = Utility.getFormat(vars, "priceEdition");
+
     if (!type.startsWith("<![CDATA["))
       type = "<![CDATA[" + type + "]]>";
     if (!title.startsWith("<![CDATA["))
@@ -346,7 +347,11 @@ public class Invoice extends HttpSecureAppServlet {
           strRowsData.append("      <td><![CDATA[");
           String columnname = headers[k].getField("columnname");
 
-          if ((data[j].getField(columnname)) != null) {
+          if (columnname.equalsIgnoreCase("grandtotal")
+              || columnname.equalsIgnoreCase("convertedamount")
+              || columnname.equalsIgnoreCase("openamt")) {
+            strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
+          } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
             strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",

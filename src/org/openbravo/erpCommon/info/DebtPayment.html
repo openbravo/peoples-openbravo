@@ -35,9 +35,6 @@
 <script language="JavaScript" src="../../../../../web/js/djConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojotoolkit/dojo/dojo.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/djDependencies.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/default/ValidationDateTextBox.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/default/ValidationNumberBox.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/default/ValidationIntegerBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/default/ValidationTextBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/calculator.js" type="text/javascript"></script>
@@ -440,10 +437,12 @@ function onloadFunctions() {
 											<tbody>
 												<tr>
 													<td style="padding-top: 0px;">
-														<input type="text" onchange="validateNumberBox(this.id);return true;"
+														<input type="text"
 														onkeyup="" name="inpCal1" maxlength="10" value=""
 														class="dojoValidateValid TextBox_btn_OneCell_width number TextBox"
-														id="inpCal1" />
+														id="inpCal1"
+														outputformat="priceEdition"
+														onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" />
 													</td>
 												</tr>
 											</tbody>
@@ -541,10 +540,12 @@ function onloadFunctions() {
 											<tbody>
 												<tr>
 													<td style="padding-top: 0px;">
-														<input type="text" onchange="validateNumberBox(this.id);return true;"
+														<input type="text"
 														onkeyup="" name="inpCal2" maxlength="10" value=""
 														class="dojoValidateValid TextBox_btn_OneCell_width number TextBox"
-														id="inpCal2" />
+														id="inpCal2"
+														outputformat="priceEdition"
+														onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" />
 													</td>
 												</tr>
 											</tbody>

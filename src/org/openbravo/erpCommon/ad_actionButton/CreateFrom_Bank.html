@@ -22,6 +22,8 @@
   <title>Create from Bank</title>
   <link rel="shortcut icon" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
   <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS"></link>
+  <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
@@ -30,8 +32,6 @@
   <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
   <script language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</script>
   <script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</script>
-  <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
-  <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
@@ -94,10 +94,22 @@
       if (obj==null) return false;
       var price = document.frmMain.inpTotalPrice;
       var actualValue = Number(eval("document.frmMain.inpPrice" + obj.value + ".value"));
-      if (obj.checked) price.value = Number(price.value) + actualValue;
-      else price.value = Number(price.value) - actualValue;
-      if (isNaN(price.value)) price.value = 0;
-      layer("paramTotalPrice", price.value, true);
+      if (obj.checked) {
+         price.value = Number(price.value) + actualValue;
+      } else {
+         price.value = Number(price.value) - actualValue;
+      }
+      if (isNaN(price.value)) {
+         price.value = 0;
+      }
+
+      var decSeparator = getGlobalDecSeparator();
+      var groupSeparator = getGlobalGroupSeparator();
+      var groupInterval = getGlobalGroupInterval();
+      var maskNumeric = formatNameToMask("euroEdition");
+      var formattedValue = returnCalcToFormatted(price.value, maskNumeric, decSeparator, groupSeparator, groupInterval);
+
+      layer("paramTotalPrice", formattedValue, true);
       return true;
     }
 
@@ -462,7 +474,7 @@
                   <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                     <tr>
                       <td class="Textbox_ContentCell">
-                        <input type="text" dojoType="openbravo:RealNumberTextbox" id="paramAmountFrom" class="dojoValidateValid TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountFrom" onkeyup="" onchange="logChanges(this);return true;"></input><script>djConfig.searchIds.push("paramAmountFrom");</script>
+                        <input type="text" dojoType="openbravo:RealNumberTextbox" id="paramAmountFrom" class="dojoValidateValid TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountFrom" onkeyup="" onchange="logChanges(this);return true;" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountFrom");</script>
                       </td>
                       <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpamountFrom', document.frmMain.inpamountFrom.value, false);return false;">
@@ -485,7 +497,7 @@
                 <table border="0" cellspacing="0" cellpadding="0" summary="" class="">
                   <tr>
                     <td class="Textbox_ContentCell">
-                        <input type="text" dojoType="openbravo:RealNumberTextbox" id="paramAmountTo" class="dojoValidateValid TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountTo" onkeyup="" onchange="logChanges(this);return true;"></input><script>djConfig.searchIds.push("paramAmountTo");</script>
+                        <input type="text" dojoType="openbravo:RealNumberTextbox" id="paramAmountTo" class="dojoValidateValid TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountTo" onkeyup="" onchange="logChanges(this);return true;" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountTo");</script>
                     </td>
 
                     <td class="FieldButton_ContentCell">
@@ -626,8 +638,8 @@
                 <td class="DataGrid_Body_Cell" id="fieldAmount" style="border-bottom-width:3px">xx</td>
                 <td class="DataGrid_Body_Cell" id="fieldConverted" style="border-bottom-width:3px">xx</td>
                 <td class="DataGrid_Body_Cell" style="border-bottom-width:3px"><input class="dojoValidateValid" name="inpplanneddatexx" type="text" id="inpterplanneddate" maxlength="10" size="9" value="" onkeyup="autoCompleteDate(this);return true;"></td>
-                <td class="DataGrid_Body_Cell" style="border-bottom-width:3px"><input class="dojoValidateValid" name="inpproposedxx" type="text" id="parameterProposed" maxlength="8" value=""></td>
-                <td class="DataGrid_Body_Cell" style="border-bottom-width:3px"><input class="dojoValidateValid" name="inpcostxx" type="text" id="parameterCost" maxlength="8" value=""></td>
+                <td class="DataGrid_Body_Cell" style="border-bottom-width:3px"><input class="dojoValidateValid" name="inpproposedxx" type="text" id="parameterProposed" maxlength="8" value="" outputformat="euroEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);"></td>
+                <td class="DataGrid_Body_Cell" style="border-bottom-width:3px"><input class="dojoValidateValid" name="inpcostxx" type="text" id="parameterCost" maxlength="8" value="" outputformat="euroEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);"></td>
               </tr>
 
             </div>

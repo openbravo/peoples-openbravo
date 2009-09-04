@@ -400,7 +400,7 @@ function validate(){
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:RealNumberTextbox" lowerThan="paramAmountTo" class="TextBox_btn_OneCell_width" type="text" name="inpCal1" id="paramAmountFrom" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramAmountFrom");</script>
+                      <input dojoType="openbravo:RealNumberTextbox" lowerThan="paramAmountTo" class="TextBox_btn_OneCell_width" type="text" name="inpCal1" id="paramAmountFrom" maxlength="10" value="" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountFrom");</script>
                     </td>
                     <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="calculator('frmMain.inpCal1', document.frmMain.inpCal1.value);return false;">
@@ -421,7 +421,7 @@ function validate(){
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramAmountFrom" class="TextBox_btn_OneCell_width" type="text" name="inpCal2" id="paramAmountTo" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramAmountTo");</script>
+                      <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramAmountFrom" class="TextBox_btn_OneCell_width" type="text" name="inpCal2" id="paramAmountTo" maxlength="10" value="" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountTo");</script>
                     </td>
                     <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpCal2', document.frmMain.inpCal2.value);return false;">

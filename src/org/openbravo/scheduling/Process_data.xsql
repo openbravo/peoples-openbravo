@@ -30,10 +30,10 @@
    <SqlMethod name="select" type="preparedStatement" return="single">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      	SELECT AD_Process_ID as Id, Name, AccessLevel, IsUserStartable, ProcedureName, IsReport, IsDirectPrint, 
-      	ClassName, IsBackground, IsJasper, JRName, Service_Type, IsExternalService, Service_Source
-      	FROM AD_Process
-      	WHERE AD_Process_ID = ?
+      	SELECT p.AD_Process_ID as Id, p.Name, p.AccessLevel, p.IsUserStartable, p.ProcedureName, p.IsReport, p.IsDirectPrint, 
+         COALESCE(TO_CHAR(p.ClassName), TO_CHAR(mo.ClassName)) as ClassName, p.IsBackground, p.IsJasper, p.JRName, p.Service_Type, p.IsExternalService, p.Service_Source
+         FROM AD_Process p LEFT JOIN AD_Model_Object mo on p.AD_Process_ID = mo.AD_Process_ID
+        WHERE p.AD_Process_ID = ?
     ]]></Sql>
     <Parameter name="processId"/>
    </SqlMethod>

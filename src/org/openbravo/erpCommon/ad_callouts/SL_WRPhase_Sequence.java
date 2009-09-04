@@ -76,8 +76,8 @@ public class SL_WRPhase_Sequence extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpmaProcessId\", \""
           + FormatUtilities.replaceJS((data[0].process.equals("") ? "\"\"" : data[0].process))
           + "\"),\n");
-      resultado.append("new Array(\"inpquantity\", \""
-          + FormatUtilities.replaceJS((strQuantity.equals("") ? "\"\"" : strQuantity)) + "\"),\n");
+      resultado.append("new Array(\"inpquantity\", "
+          + FormatUtilities.replaceJS((strQuantity.equals("") ? "\"\"" : strQuantity)) + "),\n");
       resultado.append("new Array(\"inpcostcenteruse\", \""
           + FormatUtilities.replaceJS((data[0].ccuse.equals("") ? "\"\"" : data[0].ccuse))
           + "\"),\n");

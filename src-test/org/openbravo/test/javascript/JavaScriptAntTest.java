@@ -34,6 +34,26 @@ public class JavaScriptAntTest extends Task {
   private JavaScriptAPIChecker jsAPIChecker = null;
   private String apiDetailsPath = null;
   private String jsPath = null;
+  private boolean export;
+
+  /**
+   * Returns if the export of .details file should be made
+   * 
+   * @return true if the export procedure should be made, false if not
+   */
+  public boolean isExport() {
+    return export;
+  }
+
+  /**
+   * Sets the flag to export the .details file
+   * 
+   * @param export
+   *          boolean that sets that export procedure should be made
+   */
+  public void setExport(boolean export) {
+    this.export = export;
+  }
 
   /**
    * Gets the folder path of the .details files
@@ -81,10 +101,14 @@ public class JavaScriptAntTest extends Task {
   public void execute() throws BuildException {
     log.debug("JS API details folder: " + this.apiDetailsPath);
     log.debug("JS folder:" + this.jsPath);
+    log.debug("JS Export procedure:" + this.export);
+
     jsAPIChecker = new JavaScriptAPIChecker();
     jsAPIChecker.setDetailsFolder(new File(this.apiDetailsPath));
     jsAPIChecker.setJSFolder(new File(this.jsPath));
+    jsAPIChecker.setExport(this.export);
     jsAPIChecker.process();
+
     if (!jsAPIChecker.getAPIMap().isEmpty()) {
       throw new BuildException("API Map must be empty: " + jsAPIChecker.getAPIMap());
     }

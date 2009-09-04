@@ -54,11 +54,11 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
       String strUOM = vars.getStringParameter("inpmProductId_UOM");
-      String strPriceList = vars.getStringParameter("inpmProductId_PLIST");
-      String strPriceStd = vars.getStringParameter("inpmProductId_PSTD");
-      String strPriceLimit = vars.getStringParameter("inpmProductId_PLIM");
+      String strPriceList = vars.getNumericParameter("inpmProductId_PLIST");
+      String strPriceStd = vars.getNumericParameter("inpmProductId_PSTD");
+      String strPriceLimit = vars.getNumericParameter("inpmProductId_PLIM");
       String strCurrency = vars.getStringParameter("inpmProductId_CURR");
-      String strQty = vars.getStringParameter("inpqtyordered");
+      String strQty = vars.getNumericParameter("inpqtyordered");
 
       String strCBpartnerID = vars.getStringParameter("inpcBpartnerId");
       String strMProductID = vars.getStringParameter("inpmProductId");
@@ -146,7 +146,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         + (strPriceActual.equals("") ? "\"0\"" : strPriceActual) + "),");
     resultado.append("new Array(\"inpcCurrencyId\", "
         + (strCurrency.equals("") ? "\"\"" : strCurrency) + "),");
-    resultado.append("new Array(\"inpdiscount\", \"" + discount.toString() + "\"),");
+    resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
     if (!strMProductID.equals("")) {
       PAttributeSetData[] dataPAttr = PAttributeSetData.selectProductAttr(this, strMProductID);
       if (dataPAttr != null && dataPAttr.length > 0) {

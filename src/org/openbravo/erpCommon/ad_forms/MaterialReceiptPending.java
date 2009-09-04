@@ -316,7 +316,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           }
           strLastBpartnerId = data[0].cBpartnerId;
           strLastOrgId = data[0].adOrgId;
-          String strQtyordered = vars.getStringParameter("inpQtyordered" + strOrderlineId);
+          String strQtyordered = vars.getNumericParameter("inpQtyordered" + strOrderlineId);
           String strLocator = vars.getStringParameter("inpmLocatorId" + strOrderlineId);
           String strSequenceLine = SequenceIdData.getUUID();
           MaterialReceiptPendingLinesData[] dataLine = MaterialReceiptPendingLinesData.select(this,

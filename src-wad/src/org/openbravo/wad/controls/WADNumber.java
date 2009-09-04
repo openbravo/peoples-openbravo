@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,8 +20,8 @@ package org.openbravo.wad.controls;
 
 import java.util.Properties;
 
-import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.wad.WadUtility;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADNumber extends WADControl {
   private WADControl button;
@@ -42,7 +42,6 @@ public class WADNumber extends WADControl {
   }
 
   private void generateJSCode() {
-    addImport("ValidationNumberBox", "../../../../../web/js/default/ValidationNumberBox.js");
     addImport("calculator", "../../../../../web/js/calculator.js");
     generateValidation();
     setCalloutJS();
@@ -119,6 +118,8 @@ public class WADNumber extends WADControl {
 
     xmlDocument.setParameter("callout", getOnChangeCode());
 
+    setFormat(xmlDocument);
+
     return replaceHTML(xmlDocument.print());
   }
 
@@ -161,6 +162,8 @@ public class WADNumber extends WADControl {
 
     xmlDocument.setParameter("callout", getOnChangeCode());
 
+    setFormat(xmlDocument);
+
     return replaceHTML(xmlDocument.print());
   }
 
@@ -171,24 +174,36 @@ public class WADNumber extends WADControl {
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
         "org/openbravo/wad/controls/WADNumberXML", discard).createXmlDocument();
 
-    xmlDocument.setParameter("columnName", getData("ColumnName"));
-    if (WadUtility.isDecimalNumber(getData("AD_Reference_ID")))
-      xmlDocument.setParameter("columnFormat", "euroEdition");
-    else if (WadUtility.isQtyNumber(getData("AD_Reference_ID")))
-      xmlDocument.setParameter("columnFormat", "qtyEdition");
-    else if (WadUtility.isPriceNumber(getData("AD_Reference_ID")))
-      xmlDocument.setParameter("columnFormat", "priceEdition");
-    else if (WadUtility.isIntegerNumber(getData("AD_Reference_ID")))
-      xmlDocument.setParameter("columnFormat", "integerEdition");
-    else if (WadUtility.isGeneralNumber(getData("AD_Reference_ID")))
-      xmlDocument.setParameter("columnFormat", "generalQtyEdition");
-    else
-      xmlDocument.setParameter("columnFormat", "qtyEdition");
+    setFormat(xmlDocument);
+
     return replaceHTML(xmlDocument.print());
   }
 
   public String toJava() {
     return "xmlDocument.setParameter(\"button" + getData("ColumnName")
         + "\", Utility.messageBD(this, \"Calc\", vars.getLanguage()));";
+  }
+
+  private void setFormat(XmlDocument xmlDocument) {
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    if (WadUtility.isDecimalNumber(getData("AD_Reference_ID"))) {
+      xmlDocument.setParameter("columnFormat", "euroEdition");
+      xmlDocument.setParameter("outputFormat", "euroEdition");
+    } else if (WadUtility.isQtyNumber(getData("AD_Reference_ID"))) {
+      xmlDocument.setParameter("columnFormat", "qtyEdition");
+      xmlDocument.setParameter("outputFormat", "qtyEdition");
+    } else if (WadUtility.isPriceNumber(getData("AD_Reference_ID"))) {
+      xmlDocument.setParameter("columnFormat", "priceEdition");
+      xmlDocument.setParameter("outputFormat", "priceEdition");
+    } else if (WadUtility.isIntegerNumber(getData("AD_Reference_ID"))) {
+      xmlDocument.setParameter("columnFormat", "integerEdition");
+      xmlDocument.setParameter("outputFormat", "integerEdition");
+    } else if (WadUtility.isGeneralNumber(getData("AD_Reference_ID"))) {
+      xmlDocument.setParameter("columnFormat", "generalQtyEdition");
+      xmlDocument.setParameter("outputFormat", "generalQtyEdition");
+    } else {
+      xmlDocument.setParameter("columnFormat", "qtyEdition");
+      xmlDocument.setParameter("outputFormat", "generalQtyEdition");
+    }
   }
 }

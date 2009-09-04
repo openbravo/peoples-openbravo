@@ -57,7 +57,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
       String strPriceStd = vars.getStringParameter("inpmProductId_PSTD");
       String strPriceLimit = vars.getStringParameter("inpmProductId_PLIM");
       String strCurrency = vars.getStringParameter("inpmProductId_CURR");
-      String strQty = vars.getStringParameter("inpqtyinvoiced");
+      String strQty = vars.getNumericParameter("inpqtyinvoiced");
 
       String strMProductID = vars.getStringParameter("inpmProductId");
       String strADOrgID = vars.getStringParameter("inpadOrgId");

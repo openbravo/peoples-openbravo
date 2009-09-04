@@ -82,27 +82,36 @@ public class PrintJR extends HttpSecureAppServlet {
         if (log4j.isDebugEnabled())
           log4j.debug("JR: Error: " + e);
         e.printStackTrace();
-        throw new ServletException(e.getMessage());
+        throw new ServletException(e.getMessage(), e);
       } catch (Exception e) {
-        throw new ServletException(e.getMessage());
+        throw new ServletException(e.getMessage(), e);
       }
 
     }
     for (int i = 0; i < processparams.length; i++) {
-      strParamname = Sqlc.TransformaNombreColumna(processparams[i].paramname);
-      if (log4j.isDebugEnabled())
-        log4j.debug("JR: -----parameter: " + strParamname + " "
-            + vars.getStringParameter("inp" + strParamname));
-      if (!vars.getStringParameter("inp" + strParamname).equals(""))
+      strParamname = "inp" + Sqlc.TransformaNombreColumna(processparams[i].paramname);
+      String paramValue = "";
+
+      if (Utility.isNumericParameter(processparams[i].reference)) {
+        paramValue = vars.getNumericParameter(strParamname);
+      } else {
+        paramValue = vars.getStringParameter(strParamname);
+      }
+
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("JR: -----parameter: " + strParamname + " " + paramValue);
+      }
+
+      if (!paramValue.equals("")) {
         parameters.put(processparams[i].paramname, formatParameter(vars,
-            processparams[i].paramname, vars.getStringParameter("inp" + strParamname),
-            processparams[i].reference, jasperReport));
+            processparams[i].paramname, paramValue, processparams[i].reference, jasperReport));
+      }
     }
     return parameters;
   }
 
-  private Object formatParameter(VariablesSecureApp vars, String strParamName, String strParamValue,
-      String reference, JasperReport jasperReport) throws ServletException {
+  private Object formatParameter(VariablesSecureApp vars, String strParamName,
+      String strParamValue, String reference, JasperReport jasperReport) throws ServletException {
     String strObjectClass = "";
     Object object;
     JRParameter[] jrparams = jasperReport.getParameters();

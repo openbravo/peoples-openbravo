@@ -60,10 +60,10 @@
 <PARAMETER id="paramIsReceiptCobro" name="paramIsReceiptCobro" default="Y"/>
 <PARAMETER id="fieldIsReceiptCobro" name="isreceiptCobro" boolean="selected" withId="paramIsReceiptCobro"/>
 
-<PARAMETER id="paramAmountFrom" name="amountFrom" attribute="value"/>
-<PARAMETER id="paramAmountTo" name="amountTo" attribute="value"/>
+<PARAMETER id="paramAmountFrom" name="amountFrom" attribute="value" format="euroEdition"/>
+<PARAMETER id="paramAmountTo" name="amountTo" attribute="value" format="euroEdition"/>
 
-<PARAMETER id="paramTotalAmount" name="totalAmount" attribute="value"/>
+<PARAMETER id="paramTotalAmount" name="totalAmount" attribute="value" format="euroEdition"/>
 
 <PARAMETER id="paramAutoCalculated" name="autoCalculated" boolean="checked" withId="paramCheck"/>
 

@@ -74,6 +74,8 @@
   <FIELD id="fieldEncryption">htmltext</FIELD>
   <FIELD id="fieldEndEncryption">htmltexttrl</FIELD>
   <FIELD id="fieldName1">columnname</FIELD>
+  <FIELD id="fieldTry">trytext</FIELD>
+  <FIELD id="fieldCatch">catchtext</FIELD>
   <SECTION id="sectionDetailgetEditVariables"/>
 </structure>
 <structure name="structure2">

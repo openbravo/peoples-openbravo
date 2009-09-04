@@ -81,9 +81,9 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
           "");
       String strOrder = vars.getGlobalVariable("inpOrder",
           "ReportMaterialDimensionalAnalysesJR|order", "Normal");
-      String strMayor = vars.getGlobalVariable("inpMayor",
+      String strMayor = vars.getNumericGlobalVariable("inpMayor",
           "ReportMaterialDimensionalAnalysesJR|mayor", "");
-      String strMenor = vars.getGlobalVariable("inpMenor",
+      String strMenor = vars.getNumericGlobalVariable("inpMenor",
           "ReportMaterialDimensionalAnalysesJR|menor", "");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportMaterialDimensionalAnalysesJR|currency", strUserCurrencyId);
@@ -121,8 +121,8 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
           "ReportMaterialDimensionalAnalysesJR|org");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
           "ReportMaterialDimensionalAnalysesJR|order");
-      String strMayor = vars.getStringParameter("inpMayor", "");
-      String strMenor = vars.getStringParameter("inpMenor", "");
+      String strMayor = vars.getNumericParameter("inpMayor", "");
+      String strMenor = vars.getNumericParameter("inpMenor", "");
       String strComparative = vars.getStringParameter("inpComparative", "N");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportMaterialDimensionalAnalysesJR|currency", strUserCurrencyId);
@@ -154,8 +154,8 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
           "ReportMaterialDimensionalAnalysesJR|org");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
           "ReportMaterialDimensionalAnalysesJR|order");
-      String strMayor = vars.getStringParameter("inpMayor", "");
-      String strMenor = vars.getStringParameter("inpMenor", "");
+      String strMayor = vars.getNumericParameter("inpMayor", "");
+      String strMenor = vars.getNumericParameter("inpMenor", "");
       String strComparative = vars.getStringParameter("inpComparative", "N");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportMaterialDimensionalAnalysesJR|currency", strUserCurrencyId);

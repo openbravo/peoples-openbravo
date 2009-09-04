@@ -50,14 +50,14 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
-      String strQtyInvoice = vars.getStringParameter("inpqtyinvoiced");
-      String strPriceActual = vars.getStringParameter("inppriceactual");
-      String strPriceLimit = vars.getStringParameter("inppricelimit");
+      String strQtyInvoice = vars.getNumericParameter("inpqtyinvoiced");
+      String strPriceActual = vars.getNumericParameter("inppriceactual");
+      String strPriceLimit = vars.getNumericParameter("inppricelimit");
       String strInvoiceId = vars.getStringParameter("inpcInvoiceId");
       String strProduct = vars.getStringParameter("inpmProductId");
       String strTabId = vars.getStringParameter("inpTabId");
-      String strPriceList = vars.getStringParameter("inppricelist");
-      String strPriceStd = vars.getStringParameter("inppricestd");
+      String strPriceList = vars.getNumericParameter("inppricelist");
+      String strPriceStd = vars.getNumericParameter("inppricestd");
 
       try {
         printPage(response, vars, strChanged, strQtyInvoice, strPriceActual, strInvoiceId,
@@ -118,7 +118,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
           dataInvoice[0].cBpartnerId, priceActual.toString(), strProduct,
           dataInvoice[0].dateinvoiced, qtyInvoice.toString(), dataInvoice[0].mPricelistId,
           dataInvoice[0].id));
-      resultado.append("new Array(\"inppricestd\", \"" + priceStd.toString() + "\"),");
+      resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
     }
 
     // If quantity changes, recalculates unit price (actual price) applying
@@ -147,8 +147,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
             + FormatUtilities.replaceJS(Utility.messageBD(this, "UnderLimitPrice", vars
                 .getLanguage())) + "\"), ");
     }
-    resultado.append("new Array(\"inplinenetamt\", \"" + LineNetAmt.toString() + "\"),");
-    resultado.append("new Array(\"inppriceactual\", \"" + priceActual.toString() + "\")");
+    resultado.append("new Array(\"inplinenetamt\", " + LineNetAmt.toString() + "),");
+    resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + ")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");

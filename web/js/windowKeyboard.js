@@ -224,9 +224,9 @@ function cursorFocus(obj, event) {
     frameLocked = false;
     selectedArea = 'window';
     focusedWindowElement = obj;
-    setWindowElementFocus(focusedWindowElement);
+    setWindowElementFocus(focusedWindowElement, "obj", event);
   } else if (event == 'onclick') {
-    if (selectedArea == 'window') setWindowElementFocus(focusedWindowElement);
+    if (selectedArea == 'window') setWindowElementFocus(focusedWindowElement, "obj", event);
     if (selectedArea == 'tabs') setTabFocus(focusedTab);
   }
   return true;
@@ -300,30 +300,27 @@ function isInsideWindowTable(obj) {
   }
 }
 
-function setWindowElementFocus(obj, type) {
-  if (type == null || type == 'null' || type == '' || type == 'obj') {
-    if (obj == 'firstElement') {
-      setFirstWindowElementFocus();
-    } else if (obj == 'lastElement') {
-      setLastWindowElementFocus();
-    } else {
-      removeWindowElementFocus(focusedWindowElement_tmp);
-      focusedWindowElement = obj;
-      focusedWindowElement_tmp = focusedWindowElement;
-      if(!frameLocked)
-      putWindowElementFocus(focusedWindowElement);
-    }
-  } else if (type == 'id') {
+function setWindowElementFocus(obj, type, event) {
+  if (type == null || type == 'null' || type == '') {
+    type = "obj";
+  } else if (type == "id") {
     obj = document.getElementById(obj);
-    if (!canHaveFocus(obj)) {
-      setFirstWindowElementFocus();
-      return false;
-    }
+  }
+
+  if (type == "id" && !canHaveFocus(obj)) {
+    setFirstWindowElementFocus();
+    return false;
+  }
+
+  if (obj == 'firstElement') {
+    setFirstWindowElementFocus();
+  } else if (obj == 'lastElement') {
+    setLastWindowElementFocus();
+  } else {
     removeWindowElementFocus(focusedWindowElement_tmp);
     focusedWindowElement = obj;
     focusedWindowElement_tmp = focusedWindowElement;
-    if(!frameLocked) putWindowElementFocus(obj);
-    putWindowElementFocus(focusedWindowElement);
+    if(!frameLocked) putWindowElementFocus(focusedWindowElement, event);
   }
 }
 
@@ -473,7 +470,7 @@ function drawWindowElementFocus(obj) {
   }
 }
 
-function putWindowElementFocus(obj) {
+function putWindowElementFocus(obj, event) {
   isContextMenuOpened = false;
   previousWindowElementType=currentWindowElementType;
   drawWindowElementFocus(obj);
@@ -486,7 +483,10 @@ function putWindowElementFocus(obj) {
       obj.focus();
       focusGenericTree();
     } else {
-      obj.focus();
+      if (obj.tagName.toLowerCase() == 'input' && obj.type.toLowerCase() == 'text' && event == "onmousedown" && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+      } else {
+        obj.focus();
+      }
     }
   } catch (e) {
   }

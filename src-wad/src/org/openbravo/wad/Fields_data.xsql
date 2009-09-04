@@ -47,6 +47,8 @@
       ORDER BY ad_field.SEQNO
       ]]>
     </Sql>
+    <Field name="trytext" value="void" />
+    <Field name="catchtext" value="void" />
     <Parameter name="tab"/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">

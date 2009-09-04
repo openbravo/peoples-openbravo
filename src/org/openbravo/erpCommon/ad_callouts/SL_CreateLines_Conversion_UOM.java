@@ -49,7 +49,7 @@ public class SL_CreateLines_Conversion_UOM extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strOrderlineId);
       String strUOM = vars.getStringParameter("inpcUomId" + strOrderlineId);
-      String strQuantityOrder = vars.getStringParameter("inpquantityorder" + strOrderlineId);
+      String strQuantityOrder = vars.getNumericParameter("inpquantityorder" + strOrderlineId);
       String strMProductUOMID = vars.getStringParameter("inpmProductUomId" + strOrderlineId);
 
       try {
@@ -61,9 +61,9 @@ public class SL_CreateLines_Conversion_UOM extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strOrderlineId,
-      String strUOM, String strQuantityOrder, String strMProductUOMID) throws IOException,
-      ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strOrderlineId, String strUOM, String strQuantityOrder, String strMProductUOMID)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(

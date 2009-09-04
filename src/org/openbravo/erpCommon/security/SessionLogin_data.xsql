@@ -34,9 +34,9 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         INSERT INTO AD_SESSION (AD_SESSION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
-        WEBSESSION, REMOTE_ADDR, REMOTE_HOST, PROCESSED, SESSION_ACTIVE) 
+        WEBSESSION, REMOTE_ADDR, REMOTE_HOST, PROCESSED, SESSION_ACTIVE, SERVER_URL) 
         VALUES (?, ?, ?, ?, now(), ?, now(), ?, 
-        ?, ?, ?, ?, 'Y')
+        ?, ?, ?, ?, 'Y',?)
       </Sql>
       <Parameter name="adSessionId"/>
       <Parameter name="adClientId"/>
@@ -48,6 +48,7 @@
       <Parameter name="remoteAddr"/>
       <Parameter name="remoteHost"/>
       <Parameter name="processed"/>
+      <Parameter name="serverURL"/>
    </SqlMethod>
    <SqlMethod name="update" type="preparedStatement" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
@@ -73,4 +74,23 @@
     ]]></Sql>
     <Parameter name="adSessionId"/>
   </SqlMethod>
+  
+   <SqlMethod name="isSessionActive" type="preparedStatement" return="boolean">
+    <Sql><![CDATA[
+        SELECT COUNT(*) 
+          FROM AD_SESSION
+         WHERE AD_SESSION_ID = ?
+           AND SESSION_ACTIVE = 'Y'
+    ]]></Sql>
+    <Parameter name="adSessionId"/>
+  </SqlMethod>
+  
+  <SqlMethod name="activeSessions" type="preparedStatement" return="multiple">
+    <Sql><![CDATA[
+        SELECT AD_SESSION_ID, SERVER_URL
+          FROM AD_SESSION
+         WHERE SESSION_ACTIVE = 'Y'
+    ]]></Sql>
+  </SqlMethod>
+  
 </SqlClass>

@@ -37,7 +37,8 @@
         '' AS C_CAMPAIGN_ID, '' AS C_PROJECT_ID, '' AS C_ACTIVITY_ID, '' AS ISPAID, '' AS C_PAYMENT_ID, '' AS C_CASHLINE_ID,
         '' AS CREATEFROM, '' AS GENERATETO, '' AS SENDEMAIL, '' AS AD_USER_ID, '' AS COPYFROM, '' AS ISSELFSERVICE, '' AS AD_ORGTRX_ID,
         '' AS USER1_ID, '' AS USER2_ID, '' AS CONVERTED, '' AS PERIOD, '' AS C_INVOICELINE_ID,'' AS M_INOUTLINE_ID, '' AS M_PRODUCT_ID,
-        '' AS DATETRX1, '' AS DATETRX2, '' AS QTY1, '' AS QTY2, '' AS ACCOUNT_ID, '' AS C_INVOICE_ID, '' AS NAME, '' AS CLASSNAME
+        '' AS DATETRX1, '' AS DATETRX2, '' AS QTY1, '' AS QTY2, '' AS ACCOUNT_ID, '' AS C_INVOICE_ID, '' AS NAME, '' AS CLASSNAME,
+        '' AS ACCTDATECOLUMN, '' AS TABLENAME, '' AS ACCTCLASSNAME
         FROM C_INVOICE a, ad_org WHERE a.AD_CLIENT_ID=?
         AND ad_org.ad_org_id=a.ad_org_id
         AND AD_ISORGINCLUDED(ad_org.ad_org_id, ?, ad_org.ad_client_id)<>-1
@@ -507,7 +508,7 @@
       </Sql>
       <Parameter name="adUserClient" type="replace" optional="true" after="AD_Org.AD_Client_ID IN (" text="'1'"/>
    </SqlMethod>
-   <SqlMethod name="selectDocuments" type="preparedStatement" return="multiple">
+   <SqlMethod name="selectDocuments" type="preparedStatement" return="single">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
@@ -517,6 +518,7 @@
         and processed = 'Y'
         and (processing = 'N' or processing is null)
         AND ad_org.ad_org_id=a.ad_org_id
+        AND a.ad_client_id = ?
         AND AD_ISORGINCLUDED(ad_org.ad_org_id, ?, ad_org.ad_client_id)<>-1
         AND EXISTS (select 1
                from c_year, c_period, c_periodcontrol, ad_org
@@ -532,6 +534,7 @@
       </Sql>
       <Parameter name="tableName" type="replace" optional="true" after="select MIN(" text="C_INVOICE"/>
       <Parameter name="tableName" type="replace" optional="true" after="from " text="c_invoice"/>
+      <Parameter name="adClientId" />
       <Parameter name="adOrgId"/>
       <Parameter name="docbasetype"/>
       <Parameter name="dateColumn" type="replace" optional="true" after="and    a." text="dateacct"/>
@@ -635,5 +638,15 @@
       AND C_ACCTSCHEMA_PROCESS.C_ACCTSCHEMA_ID = ?
       </Sql>
       <Parameter name="cAcctschemaId"/>
+   </SqlMethod>
+   <SqlMethod name="getTableInfo" type="preparedStatement" return="multiple" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      SELECT COLUMNNAME AS ACCTDATECOLUMN, TABLENAME, ACCTCLASSNAME
+      FROM AD_TABLE, AD_COLUMN
+      WHERE AD_TABLE.ACCTDATE_COLUMN_ID = AD_COLUMN.AD_COLUMN_ID
+        AND AD_TABLE.AD_TABLE_ID = ?
+      </Sql>
+      <Parameter name="adTableId"/>
    </SqlMethod>
   </SqlClass>

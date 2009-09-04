@@ -30,7 +30,7 @@
           AR.ISSUMMARY WHEN 'N' THEN      sum(amount) ELSE 0 END,0) AS TOTAL, AR.FILTEREDBYORGANIZATION,
           AR.TEMPORARYFILTERTYPE, '' AS VALUE, ? AS LEVEL_ACCOUNT, (CASE TO_NUMBER(?) WHEN 0 THEN
           '' ELSE '' END) AS CLASS_ACCOUNT, 'TEXT-INDENT: '||TO_CHAR(TO_NUMBER(?)*10)||'pt' AS CLASS_STYLE,
-          '' AS PADRE
+          '' AS PADRE, '' AS STARTDATE, '' AS ENDDATE
           FROM AD_ACCOUNTINGRPT_ELEMENT AR left join (SELECT AMOUNT, C_ACCTSCHEMA_ID
           FROM FACT_ACCT, FACT_ACCT_CFS
           WHERE FACT_ACCT.AD_CLIENT_ID IN ('1')
@@ -240,6 +240,7 @@
       FROM AD_ACCOUNTINGRPT_ELEMENT
       WHERE AD_ORG_ID IN ('1')
       AND AD_CLIENT_ID IN ('1')
+      AND TEMPORARYFILTERTYPE IN ('A','M')
       AND ISREPORT='Y'
       AND (isActive = 'Y' OR AD_ACCOUNTINGRPT_ELEMENT_ID = ? )
       AND 1=1
@@ -284,26 +285,47 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT 'M' AS VALUE, TO_CHAR(VALUE) AS ID, TO_CHAR(NAME) AS NAME
-      FROM AD_MONTH
+      SELECT 'M' AS VALUE, C_PERIOD_ID AS ID, AD_COLUMN_IDENTIFIER('C_PERIOD',C_PERIOD_ID,?) AS NAME
+      FROM C_PERIOD
       WHERE AD_CLIENT_ID IN ('1')
-      AND AD_ORG_ID IN ('1')
-      UNION SELECT 'Q' AS VALUE, TO_CHAR(A.VALUE) AS ID, TO_CHAR(A.NAME) AS NAME
-      FROM AD_MONTH, AD_REF_LIST_V A
-      WHERE AD_CLIENT_ID  IN ('2')
-      AND AD_ORG_ID  IN ('2')
-      AND AD_MONTH.QUARTER = A.VALUE
-      AND AD_REFERENCE_ID = '800027'
-      AND AD_LANGUAGE = ?
-      UNION SELECT 'A' AS VALUE, TO_CHAR(YEAR) AS ID, TO_CHAR(YEAR) AS NAME
+        AND AD_ORG_ID IN ('1')
+      UNION 
+      SELECT 'A' AS VALUE, C_YEAR_ID AS ID, AD_COLUMN_IDENTIFIER('C_YEAR', C_YEAR_ID, ?) AS NAME
       FROM C_YEAR
+      WHERE AD_CLIENT_ID  IN ('2')
+        AND AD_ORG_ID  IN ('2')
       ]]>
     </Sql>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="WHERE AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="WHERE AD_CLIENT_ID  IN (" text="'2'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_ORG_ID  IN (" text="'2'"/>
     <Parameter name="adLanguage"/>
+    <Parameter name="adClient" type="replace" optional="true" after="WHERE AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adOrg" type="replace" optional="true" after="AND AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adClient" type="replace" optional="true" after="WHERE AD_CLIENT_ID  IN (" text="'2'"/>
+    <Parameter name="adOrg" type="replace" optional="true" after="AND AD_ORG_ID  IN (" text="'2'"/>
+  </SqlMethod>
+
+  <SqlMethod name="startEndMonth" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT STARTDATE, ENDDATE+1 AS ENDDATE
+      FROM C_PERIOD
+      WHERE C_PERIOD_ID=?
+      ]]>
+    </Sql>
+    <Parameter name="cPeriodId"/>
+  </SqlMethod>
+
+  <SqlMethod name="startEndYear" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select min(startdate) as startdate, max(enddate)+1 as enddate 
+      from c_period 
+      where c_year_id=?
+      ]]>
+    </Sql>
+    <Parameter name="cYearId"/>
   </SqlMethod>
 
 

@@ -77,10 +77,10 @@ public class SL_ProductionPlan_WRPhase extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_ProductionPlan_WRPhase';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpneededquantity\", \"" + strNeededQuantity + "\"),\n");
+    resultado.append("new Array(\"inpneededquantity\", " + strNeededQuantity + "),\n");
     resultado.append("new Array(\"inpsecondaryunit\", \""
         + FormatUtilities.replaceJS(data[0].secondaryunit) + "\"),\n");
-    resultado.append("new Array(\"inpconversionrate\", \"" + data[0].conversionrate + "\"),\n");
+    resultado.append("new Array(\"inpconversionrate\", " + data[0].conversionrate + "),\n");
     resultado.append("new Array(\"inpmaCostcenterVersionId\", \"" + data[0].maCostcenterVersionId
         + "\"), \n");
     resultado.append("new Array(\"inpoutsourced\", \"" + strOutsourced + "\")\n");

@@ -46,8 +46,8 @@ public class SL_InvoiceTax_Amt extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
-      String strTaxAmt = vars.getStringParameter("inptaxamt");
-      String strTaxBaseAmt = vars.getStringParameter("inptaxbaseamt");
+      String strTaxAmt = vars.getNumericParameter("inptaxamt");
+      String strTaxBaseAmt = vars.getNumericParameter("inptaxbaseamt");
       String strTaxId = vars.getStringParameter("inpcTaxId");
       String strInvoiceId = vars.getStringParameter("inpcInvoiceId");
 

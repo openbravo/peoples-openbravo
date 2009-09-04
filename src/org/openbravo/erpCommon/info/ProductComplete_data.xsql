@@ -29,8 +29,6 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
       SELECT B.*,
-        M_PRODUCT_ID || '#' || name || '#' || COALESCE(TO_CHAR(M_LOCATOR_ID),'') || '#' || COALESCE(TO_CHAR(M_ATTRIBUTESETINSTANCE_ID),'') || '#' || 
-        QTYORDER || '#' || COALESCE(TO_CHAR(C_UOM2_ID),'') || '#' || COALESCE(QTY,0) || '#' || COALESCE(TO_CHAR(C_UOM1_ID),'') as rowkey,
         (wh_name || ' - ' || loc_value || '-' || X || '-' || Y || '-' || Z) AS LOCATOR,
         (SELECT U1.NAME FROM C_UOM U1 WHERE U1.C_UOM_ID = C_UOM1_ID) AS C_UOM1,
         (SELECT U2.NAME FROM C_UOM U2, M_PRODUCT_UOM PU WHERE U2.C_UOM_ID = PU.C_UOM_ID AND PU.M_PRODUCT_UOM_ID = C_UOM2_ID) AS C_UOM2,
@@ -66,6 +64,7 @@
 		WHERE 1=1
       ]]></Sql>
         <Field name="position" value="count"/>
+        <Field name="rowkey" value="void"/>
         <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="key" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>

@@ -87,9 +87,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           "ReportInvoiceCustomerDimensionalAnalysesJR|producttype", "");
       String strOrder = vars.getGlobalVariable("inpOrder",
           "ReportInvoiceCustomerDimensionalAnalyze|order", "Normal");
-      String strMayor = vars.getGlobalVariable("inpMayor",
+      String strMayor = vars.getNumericGlobalVariable("inpMayor",
           "ReportInvoiceCustomerSalesDimensionalAnalyze|mayor", "");
-      String strMenor = vars.getGlobalVariable("inpMenor",
+      String strMenor = vars.getNumericGlobalVariable("inpMenor",
           "ReportInvoiceCustomerDimensionalAnalyze|menor", "");
       String strPartnerSalesRepId = vars.getGlobalVariable("inpPartnerSalesrepId",
           "ReportInvoiceCustomerDimensionalAnalysesJR|partnersalesrep", "");
@@ -136,8 +136,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           "ReportInvoiceCustomerDimensionalAnalysesJR|producttype");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
           "ReportInvoiceCustomerDimensionalAnalysesJR|order");
-      String strMayor = vars.getStringParameter("inpMayor", "");
-      String strMenor = vars.getStringParameter("inpMenor", "");
+      String strMayor = vars.getNumericParameter("inpMayor", "");
+      String strMenor = vars.getNumericParameter("inpMenor", "");
       String strComparative = vars.getStringParameter("inpComparative", "N");
       String strPartnerSalesrepId = vars.getRequestGlobalVariable("inpPartnerSalesrepId",
           "ReportInvoiceCustomerDimensionalAnalysesJR|partnersalesrep");
@@ -177,8 +177,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           "ReportInvoiceCustomerDimensionalAnalysesJR|producttype");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
           "ReportSalesDimensionalAnalyze|order");
-      String strMayor = vars.getStringParameter("inpMayor", "");
-      String strMenor = vars.getStringParameter("inpMenor", "");
+      String strMayor = vars.getNumericParameter("inpMayor", "");
+      String strMenor = vars.getNumericParameter("inpMenor", "");
       String strComparative = vars.getStringParameter("inpComparative", "N");
       String strPartnerSalesrepId = vars.getRequestGlobalVariable("inpPartnerSalesrepId",
           "ReportInvoiceCustomerDimensionalAnalysesJR|partnersalesrep");

@@ -609,9 +609,15 @@ public class WadActionButton {
 
     if (data != null) {
       for (int i = 0; i < data.length; i++) {
-        html.append("String str" + Sqlc.TransformaNombreColumna(data[i].columnname)
-            + " = vars.getStringParameter(\"inp" + Sqlc.TransformaNombreColumna(data[i].columnname)
-            + "\"");
+        html.append("String str" + Sqlc.TransformaNombreColumna(data[i].columnname));
+
+        if (WadActionButton.isNumericType(data[i].reference)) {
+          html.append(" = vars.getNumericParameter");
+        } else {
+          html.append(" = vars.getStringParameter");
+        }
+
+        html.append("(\"inp" + Sqlc.TransformaNombreColumna(data[i].columnname) + "\"");
         if (data[i].adReferenceId.equals("20"))
           html.append(", \"N\"");
         html.append(");\n");

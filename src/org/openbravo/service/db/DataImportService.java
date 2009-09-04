@@ -20,6 +20,7 @@
 package org.openbravo.service.db;
 
 import java.io.Reader;
+import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -441,10 +442,24 @@ public class DataImportService implements OBSingleton {
         return ir;
       }
     } catch (final Throwable t) {
+      boolean isBatchUpdateException = false;
+      // We need to capture nested exception of BatchUpdate exception.
+      Throwable cause = t.getCause();
+      if (cause instanceof BatchUpdateException) {
+        BatchUpdateException batchUpdateException = (BatchUpdateException) cause;
+        if (batchUpdateException.getNextException() != null) {
+          String errorMessage = batchUpdateException.getNextException().getMessage();
+          String messageKey = errorMessage.substring("ERROR:".length()).trim();
+          isBatchUpdateException = true;
+          ir.setErrorMessages("isBatchUpdateException:" + messageKey);
+        }
+      }
       OBDal.getInstance().rollbackAndClose();
       rolledBack = true;
       t.printStackTrace(System.err);
-      ir.setException(t);
+      if (!isBatchUpdateException)
+        ir.setException(t);
+
     } finally {
       if (rolledBack) {
         TriggerHandler.getInstance().clear();

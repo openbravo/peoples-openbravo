@@ -93,10 +93,10 @@ public class SL_BankDebt_Amount extends HttpSecureAppServlet {
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS(strDescription)
         + "\"),");
-    resultado.append("new Array(\"inptrxamt\", \"" + Amount + "\"),");
+    resultado.append("new Array(\"inptrxamt\", " + Amount + "),");
     resultado.append("new Array(\"inpcurrconv\", \"" + conv + "\"),");
-    resultado.append("new Array(\"inpconvertchargeamt\", \"" + ConvChargeAmt + "\"),");
-    resultado.append("new Array(\"inpstmtamt\", \"" + Amount + "\")");
+    resultado.append("new Array(\"inpconvertchargeamt\", " + ConvChargeAmt + "),");
+    resultado.append("new Array(\"inpstmtamt\", " + Amount + ")");
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

@@ -29,7 +29,13 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-
+    IF DELETING THEN
+      IF (:old.PROCESSED = 'Y') THEN
+        RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+      END IF;
+    END IF;
+    
+ IF UPDATING THEN
   IF (:old.PROCESSED = 'Y' AND(
      (COALESCE(:old.MOVEMENTDATE, v_DateNull) <> COALESCE(:new.MOVEMENTDATE, v_DateNull))
      OR (COALESCE(:old.AD_ORGTRX_ID, '0') <> COALESCE(:new.AD_ORGTRX_ID, '0'))
@@ -38,6 +44,7 @@ BEGIN
      OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))) THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
+ END IF;
 END M_MOVEMENT_TRG
 ]]></body>
     </trigger>

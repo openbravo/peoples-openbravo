@@ -186,16 +186,22 @@ public class InstanceManagement extends HttpSecureAppServlet {
       discard[0] = "CEInstance";
       if (activationKey.hasExpired()) {
         discard[1] = "OPSActive";
+        discard[2] = "OPSNoActiveYet";
+      } else if (activationKey.isNotActiveYet()) {
+        discard[1] = "OPSExpired";
+        discard[2] = "OPSActive";
       } else {
         discard[1] = "OPSExpired";
         if (!activationKey.hasExpirationDate()) {
           discard[2] = "OPSExpirationTime";
         }
+        discard[3] = "OPSNoActiveYet";
       }
     } else {
       discard[0] = "OPSInstance";
       discard[1] = "OPSActive";
       discard[2] = "OPSExpired";
+      discard[3] = "OPSNoActiveYet";
     }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -232,7 +238,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
         myMessage = vars.getMessage("InstanceManagement");
       } else {
         myMessage = new OBError();
-        myMessage.setType("Error");
+        myMessage.setType(activationKey.getMessageType());
         myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), activationKey
             .getErrorMessage()));
       }
@@ -247,13 +253,17 @@ public class InstanceManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("opsinstance", "var opsInstance = " + ActivationKey.isActiveInstance()
         + ";");
     if (!activationKey.isOPSInstance())
-      xmlDocument.setParameter("instanceInfo", Utility.messageBD(this, "OPSCoummintyInstance",
+      xmlDocument.setParameter("instanceInfo", Utility.messageBD(this, "OPSCommunityInstance",
           vars.getLanguage()).replace("\\n", "\n"));
     else
       xmlDocument.setParameter("instanceInfo", activationKey.toString(this, vars.getLanguage()));
 
     if (activationKey.hasExpirationDate()) {
-      xmlDocument.setParameter("OPSdaysLeft", activationKey.getPendingDays().toString());
+      if (activationKey.getPendingDays() != null)
+        xmlDocument.setParameter("OPSdaysLeft", activationKey.getPendingDays().toString());
+      else
+        xmlDocument.setParameter("OPSdaysLeft", Utility.messageBD(this, "OPSUnlimitedUsers",
+            vars.getLanguage()).replace("\\n", "\n"));
     }
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
