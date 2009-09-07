@@ -27,6 +27,7 @@ import static org.openbravo.model.common.enterprise.Organization.PROPERTY_UPDATE
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.hibernate.EmptyInterceptor;
@@ -331,4 +332,13 @@ public class OBInterceptor extends EmptyInterceptor {
       }
     }
   }
+
+  // after flushing an object is not new anymore
+  public void postFlush(Iterator entities) {
+    while (entities.hasNext()) {
+      final BaseOBObject bob = (BaseOBObject) entities.next();
+      bob.setNewOBObject(false);
+    }
+  }
+
 }
