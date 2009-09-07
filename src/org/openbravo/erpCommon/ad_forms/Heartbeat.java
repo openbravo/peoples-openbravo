@@ -63,7 +63,7 @@ public class Heartbeat extends HttpSecureAppServlet {
       }
     }
 
-    if (vars.commandIn("DEFAULT")) {
+    if (vars.commandIn("DEFAULT", "DEFAULT_MODULE")) {
       printPageDataSheet(response, vars);
     } else if (vars.commandIn("DISABLE")) {
       HeartbeatData.disableHeartbeat(myPool);
@@ -90,8 +90,11 @@ public class Heartbeat extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
+
+    String msgCode = vars.getCommand().equals("DEFAULT_MODULE") ? "HB_WELCOME_MODULE"
+        : "HB_WELCOME";
     xmlDocument.setParameter("welcome", Utility.formatMessageBDToHtml(Utility.messageBD(this,
-        "HB_WELCOME", vars.getLanguage())));
+        msgCode, vars.getLanguage())));
 
     final RegistrationData[] rData = RegistrationData.select(this);
     if (rData.length > 0) {

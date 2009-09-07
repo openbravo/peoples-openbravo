@@ -107,7 +107,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       printPageDetail(response, vars, record, local);
     } else if (vars.commandIn("INSTALL")) {
       final String record = vars.getStringParameter("inpcRecordId");
-      printPageInstall1(response, vars, record, false, null, new String[0]);
+      printPageInstall1(response, request, vars, record, false, null, new String[0]);
     } else if (vars.commandIn("INSTALL2")) {
       printPageInstall2(response, vars);
     } else if (vars.commandIn("INSTALL3")) {
@@ -118,7 +118,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     } else if (vars.commandIn("LOCAL")) {
       printSearchFile(response, vars, null);
     } else if (vars.commandIn("INSTALLFILE")) {
-      printPageInstallFile(response, vars);
+      printPageInstallFile(response, request, vars);
 
     } else if (vars.commandIn("UNINSTALL")) {
       final String modules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
@@ -140,7 +140,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         modulesToUpdate = new String[1];
         modulesToUpdate[0] = updateModule;
       }
-      printPageInstall1(response, vars, null, false, null, modulesToUpdate);
+      printPageInstall1(response, request, vars, null, false, null, modulesToUpdate);
     } else
       pageError(response);
   }
@@ -484,8 +484,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @param response
    * @throws IOException
    */
-  private void printPageInstallFile(HttpServletResponse response, VariablesSecureApp vars)
-      throws ServletException, IOException {
+  private void printPageInstallFile(HttpServletResponse response, HttpServletRequest request,
+      VariablesSecureApp vars) throws ServletException, IOException {
     final FileItem fi = vars.getMultiFile("inpFile");
 
     if (!fi.getName().toUpperCase().endsWith(".OBX")) {
@@ -502,7 +502,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       try {
         if (im.isModuleUpdate(fi.getInputStream())) {
           vars.setSessionObject("ModuleManagementInstall|File", vars.getMultiFile("inpFile"));
-          printPageInstall1(response, vars, null, true, fi.getInputStream(), new String[0]);
+          printPageInstall1(response, request, vars, null, true, fi.getInputStream(), new String[0]);
         } else {
           OBError message = im.getOBError(this);
           printSearchFile(response, vars, message);
@@ -528,11 +528,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  private void printPageInstall1(HttpServletResponse response, VariablesSecureApp vars,
-      String recordId, boolean islocal, InputStream obx, String[] updateModules)
-      throws IOException, ServletException {
+  private void printPageInstall1(HttpServletResponse response, HttpServletRequest request,
+      VariablesSecureApp vars, String recordId, boolean islocal, InputStream obx,
+      String[] updateModules) throws IOException, ServletException {
     final String discard[] = { "", "", "", "", "", "" };
     Module module = null;
+
+    // Remote installation is only allowed for heartbeat enabled instances
+    if (!islocal && !isHeartbeatEnabled()) {
+      response.sendRedirect(strDireccion + "/ad_forms/Heartbeat.html?Command=DEFAULT_MODULE");
+    }
+
     if (!islocal && (updateModules == null || updateModules.length == 0)) {
       // if it is a remote installation get the module from webservice,
       // other case the obx file is passed as an InputStream
@@ -669,6 +675,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private boolean isHeartbeatEnabled() {
+    SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
+    return sys.isEnableHeartbeat();
   }
 
   /**
