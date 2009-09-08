@@ -363,6 +363,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             strModules, bProduct, bBPartner, bProject, bCampaign, bSalesRegion, strCreateAccounting);
         if (!strReferenceData.equals("")) {
           releaseRollbackConnection(conn);
+          strError = Utility.messageBD(this, "CreateReferenceDataFailed", vars.getLanguage());
           m_info.append(SALTO_LINEA).append(
               Utility.messageBD(this, "CreateReferenceDataFailed", vars.getLanguage())).append(
               SALTO_LINEA);
@@ -1109,17 +1110,20 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
           if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
               && !myResult.getLogMessages().equals("null")) {
             m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
-            m_info.append(SALTO_LINEA).append(myResult.getLogMessages()).append(SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(
+                myResult.getLogMessages().replaceAll("\\\n", SALTO_LINEA)).append(SALTO_LINEA);
           }
           if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
               && !myResult.getWarningMessages().equals("null")) {
             m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
-            m_info.append(SALTO_LINEA).append(myResult.getWarningMessages()).append(SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(
+                myResult.getWarningMessages().replaceAll("\\\n", SALTO_LINEA)).append(SALTO_LINEA);
           }
           if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
               && !myResult.getErrorMessages().equals("null")) {
             m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
-            m_info.append(SALTO_LINEA).append(myResult.getErrorMessages()).append(SALTO_LINEA);
+            m_info.append(SALTO_LINEA).append(
+                myResult.getErrorMessages().replaceAll("\\\n", SALTO_LINEA)).append(SALTO_LINEA);
           }
           if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
               && !myResult.getErrorMessages().equals("null"))

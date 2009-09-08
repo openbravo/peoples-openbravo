@@ -783,7 +783,7 @@
       <![CDATA[
         UPDATE AD_TreeNode
         SET Parent_id = ?,
-          SeqNo= ?
+          SeqNo= to_number(?)
         WHERE AD_Tree_ID=?
         AND Node_ID=?
       ]]>
