@@ -120,13 +120,13 @@ function updateHeader(liveGrid, offset) {
       res = res + "<span>&nbsp;&nbsp;&nbsp;</span>";
   }
   if (!firstPage) {
-    res = res + "&nbsp;<a href='#' onclick='gridMovePage(\"PREVIOUSPAGE\"); setWindowElementFocus(\"prevPage_link\",\"id\");' class='DataGrid_Popup_text_pagerange' id='prevPage_link'>" + strPrevious + " 5</a>";
+    res = res + "&nbsp;<a href='#' onclick='gridMovePage(\"PREVIOUSPAGE\"); setWindowElementFocus(\"grid_table_dummy_input\",\"id\");' class='DataGrid_Popup_text_pagerange' id='prevPage_link'>" + strPrevious + " 5</a>";
   }
   if (!firstPage && pageFull) {
     res = res + "&nbsp;|";
   }
   if (pageFull) {
-    res = res + "&nbsp;<a href='#' onclick='gridMovePage(\"NEXTPAGE\"); setWindowElementFocus(\"nextPage_link\",\"id\");' class='DataGrid_Popup_text_pagerange' id='nextPage_link'>" + strNext + " 5</a>";
+    res = res + "&nbsp;<a href='#' onclick='gridMovePage(\"NEXTPAGE\"); setWindowElementFocus(\"grid_table_dummy_input\",\"id\");' class='DataGrid_Popup_text_pagerange' id='nextPage_link'>" + strNext + " 5</a>";
   }
 
   liveGrid.setGridPaging(!firstPage,pageFull);
