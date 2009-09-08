@@ -71,9 +71,6 @@ public class TableSQLData implements Serializable {
   /**
    * Defines how many rows will be shown at maximum in any datagrid inside the scrollable area. If
    * there are more rows in the source table multiple pages of this size will be used.
-   * 
-   * This constant needs to be in sync with
-   * src-wad/org.openbravo.wad.controls.WADGrid.maxRowsPerGridPage
    */
   public static final int maxRowsPerGridPage = 10000;
 
@@ -2573,8 +2570,9 @@ public class TableSQLData implements Serializable {
       text.append("WHERE ").append(txtAuxWhere.toString());
 
     if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
-      text.append(" ) B WHERE ROWNUM <= " + ((page+1) * maxRowsPerGridPage) + "\n");
-      text.append(" ) A WHERE RN1 BETWEEN " + ((page * maxRowsPerGridPage)+1) + " AND " + ((page+1) * maxRowsPerGridPage) + "\n");
+      text.append(" ) B WHERE ROWNUM <= " + ((page + 1) * maxRowsPerGridPage) + "\n");
+      text.append(" ) A WHERE RN1 BETWEEN " + ((page * maxRowsPerGridPage) + 1) + " AND "
+          + ((page + 1) * maxRowsPerGridPage) + "\n");
     } else {
       text.append(" LIMIT " + maxRowsPerGridPage + " OFFSET " + (page * maxRowsPerGridPage) + "\n");
       text.append(" ) B");
