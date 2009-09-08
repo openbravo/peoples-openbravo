@@ -251,6 +251,11 @@ public abstract class AcctServer {
     m_as = AcctSchema.getAcctSchemaArray(connectionProvider, m_AD_Client_ID, m_AD_Org_ID);
   } //
 
+  // Empty constructor for Accruals and Deferrals plan line posting
+  public AcctServer() {
+
+  }
+
   public void setBatchSize(String newbatchSize) {
     batchSize = newbatchSize;
   }
