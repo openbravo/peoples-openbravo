@@ -9464,7 +9464,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1624-->  <COLUMNNAME><![CDATA[P_InvoicePriceVariance_Acct]]></COLUMNNAME>
 <!--1624-->  <NAME><![CDATA[Invoice Price Variance]]></NAME>
 <!--1624-->  <PRINTNAME><![CDATA[Invoice Price Variance]]></PRINTNAME>
-<!--1624-->  <DESCRIPTION><![CDATA[x not implemented]]></DESCRIPTION>
+<!--1624-->  <DESCRIPTION><![CDATA[The Invoice Price Variance is used reflects the difference between the current Costs and the Invoice Price.]]></DESCRIPTION>
 <!--1624-->  <HELP><![CDATA[The Invoice Price Variance is used reflects the difference between the current Costs and the Invoice Price.]]></HELP>
 <!--1624-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1624--></AD_ELEMENT>
