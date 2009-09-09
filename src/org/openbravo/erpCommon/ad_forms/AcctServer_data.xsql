@@ -312,6 +312,38 @@
       </Sql>
       <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
+   <SqlMethod name="selectAccDefPEDefaultAcct" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+    SELECT EM_ACCDEF_PREPAID_EXPENSE AS ACCOUNT_ID FROM C_Acctschema_Default
+    WHERE C_ACCTSCHEMA_ID = ?
+      </Sql>
+      <Parameter name="C_AcctSchema_ID"/>
+   </SqlMethod>
+   <SqlMethod name="selectAccDefOLDefaultAcct" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+    SELECT EM_ACCDEF_OTHER_LIABILITIES AS ACCOUNT_ID FROM C_Acctschema_Default
+    WHERE C_ACCTSCHEMA_ID = ?
+      </Sql>
+      <Parameter name="C_AcctSchema_ID"/>
+   </SqlMethod>
+   <SqlMethod name="selectAccDefDIDefaultAcct" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+    SELECT EM_ACCDEF_DEFERRED_INCOME AS ACCOUNT_ID FROM C_Acctschema_Default
+    WHERE C_ACCTSCHEMA_ID = ?
+      </Sql>
+      <Parameter name="C_AcctSchema_ID"/>
+   </SqlMethod>
+   <SqlMethod name="selectAccDefORDefaultAcct" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+    SELECT EM_ACCDEF_OTHER_RECEIVABLES AS ACCOUNT_ID FROM C_Acctschema_Default
+    WHERE C_ACCTSCHEMA_ID = ?
+      </Sql>
+      <Parameter name="C_AcctSchema_ID"/>
+   </SqlMethod>           
    <SqlMethod name="selectPaymentSelectAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
