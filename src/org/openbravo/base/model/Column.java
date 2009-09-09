@@ -187,6 +187,7 @@ public class Column extends ModelObject {
     if (!reference.getId().equals(Reference.TABLE) && !reference.getId().equals(Reference.TABLEDIR)
         && !reference.getId().equals(Reference.SEARCH)
         && !reference.getId().equals(Reference.IMAGE)
+        && !reference.getId().equals(Reference.IMAGE_BLOB)
         && !reference.getId().equals(Reference.PRODUCT_ATTRIBUTE)
         && !reference.getId().equals(Reference.RESOURCE_ASSIGNMENT))
       return true;
