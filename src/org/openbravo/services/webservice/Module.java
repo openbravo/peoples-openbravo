@@ -542,7 +542,7 @@ public class Module  implements java.io.Serializable {
         new org.apache.axis.description.TypeDesc(Module.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("/services/WebService", "Module"));
+        typeDesc.setXmlType(new javax.xml.namespace.QName("/services/WebService2", "Module"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("author");
         elemField.setXmlName(new javax.xml.namespace.QName("", "author"));
@@ -558,7 +558,7 @@ public class Module  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("dependencies");
         elemField.setXmlName(new javax.xml.namespace.QName("", "dependencies"));
-        elemField.setXmlType(new javax.xml.namespace.QName("/services/WebService", "ModuleDependency"));
+        elemField.setXmlType(new javax.xml.namespace.QName("/services/WebService2", "ModuleDependency"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
@@ -576,7 +576,7 @@ public class Module  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("includes");
         elemField.setXmlName(new javax.xml.namespace.QName("", "includes"));
-        elemField.setXmlType(new javax.xml.namespace.QName("/services/WebService", "ModuleDependency"));
+        elemField.setXmlType(new javax.xml.namespace.QName("/services/WebService2", "ModuleDependency"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
