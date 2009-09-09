@@ -30,13 +30,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
-import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.DataPackage;
 import org.openbravo.model.ad.utility.Image;
@@ -111,14 +111,8 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         OBContext.getOBContext().setInAdministratorMode(true);
         Image image = OBDal.getInstance().get(Image.class, imageID);
         Table table = OBDal.getInstance().get(Table.class, tableId);
-        Column column = null;
-        for (Column acolumn : table.getADColumnList()) {
-          if (Sqlc.TransformaNombreColumna(acolumn.getDBColumnName()).equalsIgnoreCase(
-              Sqlc.TransformaNombreColumna(columnName)))
-            column = acolumn;
-        }
-        if (column == null)
-          log4j.error("Column not found");
+        String propertyName = ModelProvider.getInstance().getEntityByTableName(
+            table.getDBTableName()).getPropertyByColumnName(columnName).getName();
         DataPackage dpackage = table.getDataPackage();
         try {
           Class tableClass = Class.forName(dpackage.getJavaPackage() + "."
@@ -129,7 +123,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           argTypes[1] = Object.class;
           Method setMethod = tableClass.getMethod("set", argTypes);
           Object[] argValues = new Object[2];
-          argValues[0] = Sqlc.TransformaNombreColumna(column.getName());
+          argValues[0] = propertyName;
           argValues[1] = null;
           setMethod.invoke(parentObject, argValues);
           OBDal.getInstance().flush();
