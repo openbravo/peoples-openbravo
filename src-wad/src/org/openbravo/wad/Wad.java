@@ -1955,6 +1955,8 @@ public class Wad extends DefaultHandler {
     if (parentsFieldsData.length > 0) {
 
       xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
+      xmlDocument.setParameter("keyParentSimple", WadUtility.columnName(parentsFieldsData[0].name,
+          parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule));
       xmlDocument.setParameter("keyParentT", Sqlc
           .TransformaNombreColumna(parentsFieldsData[0].name));
       xmlDocument.setParameter("keyParentINP", Sqlc.TransformaNombreColumna(WadUtility.columnName(
