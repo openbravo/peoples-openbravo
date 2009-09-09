@@ -19,12 +19,17 @@
 
 package org.openbravo.erpCommon.security;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.util.Vector;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
@@ -36,7 +41,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
   private static final Logger log = Logger.getLogger(SessionListener.class);
 
   private static Vector<String> sessionsInContext = new Vector<String>();
-  private ServletContext context = null;
+  private static ServletContext context = null;
 
   /**
    * This method is called whenever the session is destroyed because of user action or time out.
@@ -55,7 +60,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
 
   /**
    * This method is invoked when the server is shot down, it deactivates all sessions in this
-   * context
+   * context.
    */
   @Override
   public void contextDestroyed(ServletContextEvent event) {
@@ -85,9 +90,70 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
     sessionsInContext.add(sessionId);
   }
 
+  /**
+   * Sets the current context and deactivates orphan sessions.
+   * 
+   * Orphan sessions occur after a wrong context shutdown.
+   */
   @Override
   public void contextInitialized(ServletContextEvent event) {
-    this.context = event.getServletContext();
+    SessionListener.context = event.getServletContext();
+
+    // Look orphan sessions and close them, these sessions are:
+    // -All the ones in the current context that will generate a time out when querying the servlet
+    // -The ones in other contexts that are no longer active
+
+    SessionLoginData activeSessions[];
+    try {
+      activeSessions = SessionLoginData.activeSessions((ConnectionProvider) SessionListener.context
+          .getAttribute("openbravoPool"));
+
+      for (SessionLoginData session : activeSessions) {
+        if (!checkSessionInRemoteContext(session.adSessionId, session.serverUrl)) {
+          deactivateSession(session.adSessionId);
+        }
+      }
+    } catch (ServletException e) {
+      log.error("Error checking orphan sessions", e);
+    }
+  }
+
+  private boolean checkSessionInRemoteContext(String sessionId, String serverUrl) {
+    try {
+      log.info("Checking session " + sessionId + " in context " + serverUrl);
+      URL url = new URL(serverUrl + "/security/SessionActive?id=" + sessionId);
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestProperty("Keep-Alive", "300");
+      conn.setRequestProperty("Connection", "keep-alive");
+      conn.setRequestMethod("POST");
+      conn.setDoInput(true);
+      conn.setDoOutput(true);
+      conn.setUseCaches(false);
+      conn.setAllowUserInteraction(false);
+
+      // Set short timeouts because for current context sessions timeout will be raised
+      conn.setConnectTimeout(500);
+      conn.setReadTimeout(500);
+
+      if (conn.getResponseCode() == HttpServletResponse.SC_OK) {
+        InputStream is = conn.getInputStream();
+        byte buff[] = new byte[100];
+        int len;
+        String result = "";
+        while ((len = is.read(buff)) != -1) {
+          result += new String(buff, 0, len);
+        }
+        return result.equals("true");
+      } else {
+        return false;
+      }
+    } catch (SocketTimeoutException e) {
+      log.error("Timeout connecting to " + serverUrl + " to check session " + sessionId);
+    } catch (Exception e) {
+      System.out.println(e);
+      log.error("Error checking remote session " + sessionId + " in context " + serverUrl, e);
+    }
+    return false;
   }
 
   @Override
@@ -105,6 +171,29 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
       log.info("Closed session" + sessionId);
     } catch (Exception e) {
       log.error("Error closing session:" + sessionId, e);
+    }
+  }
+
+  /**
+   * Check whether a session is in the current context and it is active
+   * 
+   * @param sessionId
+   *          session to check
+   * @return true in case it is in the context and active
+   */
+  public static boolean isSessionActiveInContext(String sessionId) {
+    boolean isInContext = sessionsInContext.contains(sessionId);
+
+    if (!isInContext) {
+      return false;
+    }
+
+    try {
+      return SessionLoginData.isSessionActive((ConnectionProvider) context
+          .getAttribute("openbravoPool"), sessionId);
+    } catch (ServletException e) {
+      log.error("Error checking active session " + sessionId, e);
+      return false;
     }
   }
 

@@ -5605,7 +5605,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--457-->  <ISREADONLY><![CDATA[Y]]></ISREADONLY>
 <!--457-->  <AD_COLUMN_ID><![CDATA[803418]]></AD_COLUMN_ID>
 <!--457-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--457-->  <WHERECLAUSE><![CDATA[S_TimeExpenseLine_V.C_BPartner_ID=@C_BPartner_ID@]]></WHERECLAUSE>
 <!--457-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--457-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--457-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>

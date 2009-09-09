@@ -327,6 +327,37 @@ public class VersionUtility {
     return versionCompare(ver1, ver2, false);
   }
 
+  /**
+   * Compares two versions.
+   * 
+   * Depending on onlyMayorVersion parameter:
+   * <ul>
+   * <li><b> false</b>: The comparison is done for the whole versions taking thus 2.50.2 is higher
+   * than 2.50.1
+   * <li><b> true</b>: The comparison is done taking into account the minor version in a different
+   * way:
+   * <ul>
+   * <li>If major versions are the same and minor version is higher then the result is higher. Thus
+   * 2.50.2 is higher than 2.50.1
+   * <li>If major versions are the same and minor version is higher the result is equals. Thus
+   * 2.50.1 is equals to 2.50.2 (if passed as parameters in this order).
+   * <li>If major versions are different no minor version is taken into account.
+   * 
+   * </ul>
+   * </ul>
+   * 
+   * @param ver1
+   *          Installing version to compare (example module)
+   * 
+   * @param ver2
+   *          Installed version to compare with (example core)
+   * @param onlyMayorVersion
+   * @return <ul>
+   *         <li>-1 in case ver1 is lower than ver2
+   *         <li>0 in case ver1 equals ver2
+   *         <li>1 in case ver1 is higher than ver2
+   *         </ul>
+   */
   static private int versionCompare(String ver1, String ver2, boolean onlyMayorVersion) {
     if ((ver1 == null || ver1.equals("")) && (ver2 == null || ver2.equals("")))
       return 0;
@@ -354,10 +385,10 @@ public class VersionUtility {
     }
 
     if (n1[0] > n2[0] || (n1[0] == n2[0] && n1[1] > n2[1])
-        || (!onlyMayorVersion && n1[0] == n2[0] && n1[1] == n2[1] && n1[2] > n2[2]))
+        || (n1[0] == n2[0] && n1[1] == n2[1] && n1[2] > n2[2]))
       return 1;
-    else if ((n1[0] == n2[0] && n1[1] == n2[1] && onlyMayorVersion)
-        || (n1[0] == n2[0] && n1[1] == n2[1] && n1[2] == n2[2]))
+    else if ((onlyMayorVersion && n1[0] == n2[0] && n1[1] == n2[1] && n1[2] <= n2[2])
+        || (!onlyMayorVersion && n1[0] == n2[0] && n1[1] == n2[1] && n1[2] == n2[2]))
       return 0;
     else
       return -1;

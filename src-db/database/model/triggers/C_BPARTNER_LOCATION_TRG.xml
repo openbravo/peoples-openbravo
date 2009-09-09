@@ -42,8 +42,6 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-
-  DBMS_OUTPUT.PUT_LINE('C_BPartner_Location_Trg') ;
   IF(UPDATING) THEN
     IF NOT(COALESCE(:old.C_Location_ID, '0') <> COALESCE(:NEW.C_Location_ID, '0') OR COALESCE(:old.Updated, v_DateNull) <> COALESCE(:NEW.Updated, v_DateNull)) THEN
       RETURN;

@@ -150,9 +150,9 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   @SuppressWarnings("unchecked")
-  void post(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, DocumentType documentType, String sessionValuePrefix,
-      String strDocumentId) throws IOException, ServletException {
+  void post(HttpServletRequest request, HttpServletResponse response, VariablesSecureApp vars,
+      DocumentType documentType, String sessionValuePrefix, String strDocumentId)
+      throws IOException, ServletException {
 
     Map<String, Report> reports;
 
@@ -174,8 +174,7 @@ public class PrintController extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Number of documents selected: " + documentIds.length);
 
-    if (documentIds.length > 1)
-      multiReports = true;
+    multiReports = (documentIds.length > 1);
 
     reports = (Map<String, Report>) vars.getSessionObject(sessionValuePrefix + ".Documents");
     final ReportManager reportManager = new ReportManager(this, globalParameters.strFTPDirectory,
@@ -232,6 +231,7 @@ public class PrintController extends HttpSecureAppServlet {
         String documentId = documentIds[index];
         report = buildReport(response, vars, documentId, reportManager, documentType,
             OutputTypeEnum.ARCHIVE);
+        buildReport(response, vars, documentId, reports, reportManager);
         try {
           reportManager.processReport(report, vars);
         } catch (final ReportingException e) {
@@ -241,8 +241,6 @@ public class PrintController extends HttpSecureAppServlet {
         savedReports.add(report);
       }
       printReports(response, null, savedReports);
-    } else if (!request.getRequestURI().endsWith(".html")) {
-      buildReport(response, vars, strDocumentId, reports, reportManager);
     } else {
       if (vars.commandIn("DEFAULT")) {
 

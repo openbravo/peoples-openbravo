@@ -240,6 +240,13 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   public void releaseRollbackConnection(Connection conn) throws SQLException {
     if (conn == null)
       return;
+    // prevent extra exception if the connection is already closed
+    // especially needed here because rollback occurs in case of
+    // application exceptions also. If the conn.isClosed and a rollback
+    // is done then the real app exception is hidden.
+    if (conn.isClosed()) {
+      return;
+    }
     conn.rollback();
     releaseConnection(conn);
   }

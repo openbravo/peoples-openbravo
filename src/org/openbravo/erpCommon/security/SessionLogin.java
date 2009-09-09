@@ -39,6 +39,7 @@ public class SessionLogin {
   protected String remoteAddr;
   protected String remoteHost;
   protected String processed = "N";
+  protected String serverUrl;
 
   public SessionLogin(String ad_client_id, String ad_org_id, String ad_user_id)
       throws ServletException {
@@ -66,6 +67,10 @@ public class SessionLogin {
     setOrg(ad_org_id);
     setUser(ad_user_id);
     defaultParameters(request);
+  }
+
+  public void setServerUrl(String strAddr) {
+    serverUrl = strAddr;
   }
 
   private void defaultParameters() {
@@ -97,7 +102,7 @@ public class SessionLogin {
         throw new ServletException("SessionLogin.save() - key creation failed");
       setSessionID(key);
       return SessionLoginData.insert(conn, getSessionID(), getClient(), getOrg(), getIsActive(),
-          getUser(), getWebSession(), getRemoteAddr(), getRemoteHost(), getProcessed());
+          getUser(), getWebSession(), getRemoteAddr(), getRemoteHost(), getProcessed(), serverUrl);
     } else
       return SessionLoginData.update(conn, getIsActive(), getUser(), getWebSession(),
           getRemoteAddr(), getRemoteHost(), getProcessed(), getSessionID());

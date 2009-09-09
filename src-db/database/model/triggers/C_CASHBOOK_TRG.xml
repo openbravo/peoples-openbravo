@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SL
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+    * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -46,6 +46,13 @@ BEGIN
       SELECT 1 
       FROM AD_Org_AcctSchema
       WHERE AD_IsOrgIncluded(AD_Org_ID, :new.AD_ORG_ID, :new.AD_Client_ID)<>-1
+      AND IsActive = 'Y'
+      AND AD_Org_AcctSchema.C_AcctSchema_ID = d.C_AcctSchema_ID
+      UNION
+      SELECT 1 
+      FROM AD_Org_AcctSchema
+      WHERE AD_Org_ID = '0'
+      AND AD_Client_ID = :new.AD_Client_ID
       AND IsActive = 'Y'
       AND AD_Org_AcctSchema.C_AcctSchema_ID = d.C_AcctSchema_ID
         )

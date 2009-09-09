@@ -1003,7 +1003,7 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800018-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800018-->  <NAME><![CDATA[Project type service]]></NAME>
 <!--800018-->  <TYPE><![CDATA[S]]></TYPE>
-<!--800018-->  <CODE><![CDATA[C_ProjectType.ProjectCategory = 'S']]></CODE>
+<!--800018-->  <CODE><![CDATA[(C_ProjectType.ProjectCategory = 'S') AND (AD_ISORGINCLUDED(@AD_Org_ID@, td0.AD_Org_ID, @#AD_Client_ID@) <> '-1')]]></CODE>
 <!--800018-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800018--></AD_VAL_RULE>
 

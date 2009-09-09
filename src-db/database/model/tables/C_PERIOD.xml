@@ -90,6 +90,11 @@
         <unique-column name="C_YEAR_ID"/>
         <unique-column name="PERIODNO"/>
       </unique>
+      <unique name="C_PERIOD_UNIQUE_PERIOD">
+        <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="STARTDATE"/>
+        <unique-column name="ENDDATE"/>
+      </unique>
       <check name="C_PERIOD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

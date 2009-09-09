@@ -68,6 +68,20 @@
     </Sql>
   </SqlMethod>
   
+  <SqlMethod name="selectSessionTimeOut" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT P.VALUE
+      FROM AD_MODEL_OBJECT O, AD_MODEL_OBJECT_PARA P
+      WHERE O.ISACTIVE = 'Y' 
+      AND O.OBJECT_TYPE = 'ST'
+      AND P.AD_MODEL_OBJECT_ID = O.AD_MODEL_OBJECT_ID
+      AND UPPER(P.NAME) = 'TIMEOUT' 
+      ]]>
+    </Sql>
+  </SqlMethod>
+  
   <SqlMethod name="selectResource" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>

@@ -73,7 +73,10 @@ BEGIN
                   AND C.AD_Element_ID = :NEW.AD_Element_ID
                   AND F.IsCentrallyMaintained = 'Y'
                   AND M.aD_Module_id = f.ad_module_id
-                  and m.AD_Language = :new.AD_Language);
+                  and m.AD_Language = :new.AD_Language)
+      AND exists (SELECT 1 from ad_module m
+              where m.ad_module_id=ad_field.ad_module_id
+              and m.isindevelopment='Y');
                   
        UPDATE AD_Column
     SET Name=:new.Name,
@@ -83,7 +86,10 @@ BEGIN
     AND exists (select 1
                   from ad_module m
                  where m.ad_module_id = ad_column.ad_module_id
-                   and m.ad_language = :new.ad_language);
+                   and m.ad_language = :new.ad_language)
+      AND exists (SELECT 1 from ad_module m
+                   where m.ad_module_id=ad_column.ad_module_id
+                   and m.isindevelopment='Y');
 
 
 
@@ -97,9 +103,8 @@ BEGIN
       WHERE  AD_Language = :NEW.AD_Language
          AND AD_Process_Para_ID IN (
                SELECT f.AD_Process_Para_ID
-                 FROM AD_Process_Para f, AD_Column c, AD_Process p, ad_module m
-               WHERE  f.ColumnName = c.ColumnName
-                  AND c.AD_Element_ID = :NEW.AD_Element_ID
+                 FROM AD_Process_Para f, AD_Process p, ad_module m
+               WHERE  f.AD_Element_ID = :NEW.AD_Element_ID
                   AND f.IsCentrallyMaintained = 'Y'
                   and p.ad_process_id = f.ad_process_id
                   and m.ad_module_id = p.ad_module_id
@@ -111,13 +116,16 @@ BEGIN
              HELP = :NEW.HELP
       WHERE  AD_Process_Para_ID IN (
                SELECT f.AD_Process_Para_ID
-                 FROM AD_Process_Para f, AD_Column c, AD_Process p, ad_module m
-               WHERE  f.ColumnName = c.ColumnName
-                  AND c.AD_Element_ID = :NEW.AD_Element_ID
+                 FROM AD_Process_Para f, AD_Process p, ad_module m
+               WHERE  f.AD_Element_ID = :NEW.AD_Element_ID
                   AND f.IsCentrallyMaintained = 'Y'
                   and p.ad_process_id = f.ad_process_id
                   and m.ad_module_id = p.ad_module_id
-                  and m.ad_language = :NEW.AD_Language);                  
+                  and m.ad_language = :NEW.AD_Language)
+      AND exists (SELECT 1 from ad_module m, ad_process p
+                   where m.ad_module_id=p.ad_module_id
+                   and p.ad_process_id = ad_process_para.ad_process_id
+                   and m.isindevelopment='Y');        
 
     END IF;
   END IF;

@@ -109,6 +109,17 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ACCTDATE_COLUMN_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ACCTCLASSNAME" primaryKey="false" required="false" type="VARCHAR" size="1000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_TABLE">
+        <reference local="ACCTDATE_COLUMN_ID" foreign="AD_COLUMN_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_PACKAGE" name="AD_PACKAGE_TABLE">
         <reference local="AD_PACKAGE_ID" foreign="AD_PACKAGE_ID"/>
       </foreign-key>

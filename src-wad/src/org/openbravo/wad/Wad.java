@@ -713,6 +713,17 @@ public class Wad extends DefaultHandler {
         }
       } else
         servletParams = new WadData[0][0];
+
+      WadData[] timeout = WadData.selectSessionTimeOut(pool);
+      if (timeout.length == 0) {
+        log4j.info("No session timeout found, setting default 60min");
+      } else if (timeout.length > 1) {
+        log4j.error("Multiple session timeout config found (" + timeout.length
+            + "), setting default 60min");
+      } else {
+        xmlDocument.setParameter("fieldSessionTimeOut", timeout[0].value);
+      }
+
       xmlDocument.setData("structure1", servlets);
       xmlDocument.setDataArray("reportServletParams", "structure1", servletParams);
       xmlDocument.setData("structureFilterMapping", WadData.selectFilterMapping(pool));
@@ -1944,6 +1955,8 @@ public class Wad extends DefaultHandler {
     if (parentsFieldsData.length > 0) {
 
       xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
+      xmlDocument.setParameter("keyParentSimple", WadUtility.columnName(parentsFieldsData[0].name,
+          parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule));
       xmlDocument.setParameter("keyParentT", Sqlc
           .TransformaNombreColumna(parentsFieldsData[0].name));
       xmlDocument.setParameter("keyParentINP", Sqlc.TransformaNombreColumna(WadUtility.columnName(
@@ -2091,7 +2104,12 @@ public class Wad extends DefaultHandler {
             fieldsData1[i].xmltext = ", windowId + \"|" + fieldsData1[i].realname + "\"";
             fieldsData1[i].type = "RequestGlobalVariable";
           } else if (fieldsData1[i].issessionattr.equals("Y")) {
-            fieldsData1[i].xmltext = ", windowId + \"|" + fieldsData1[i].realname + "\"";
+            if (WadActionButton.isNumericType(fieldsData1[i].reference)) {
+              fieldsData1[i].xmltext = ", vars.getSessionValue(windowId + \"|"
+                  + fieldsData1[i].realname + "\")";
+            } else {
+              fieldsData1[i].xmltext = ", windowId + \"|" + fieldsData1[i].realname + "\"";
+            }
             if (fieldsData1[i].reference.equals("20"))
               fieldsData1[i].xmltext += ", \"N\"";
             if (fieldsData1[i].required.equals("Y")

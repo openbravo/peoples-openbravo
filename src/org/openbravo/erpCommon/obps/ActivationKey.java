@@ -29,6 +29,7 @@ import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -406,8 +407,48 @@ public class ActivationKey {
   }
 
   public boolean isNotActiveYet() {
-
     return notActiveYet;
+  }
+
+  /**
+   * Obtains a list for modules ID the instance is subscribed to.
+   * 
+   * @param onlyActive
+   *          if this value is true the list will contain only the modules active at this time,
+   *          other case it will contain all the subscribed modules regardless expiration dates
+   * @return ArrayList<String> containing the subscribed modules
+   */
+  public ArrayList<String> getSubscribedModules(boolean onlyActive) {
+    ArrayList<String> moduleList = new ArrayList<String>();
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+
+    String allModules = getProperty("modules");
+    if (allModules == null || allModules.equals(""))
+      return moduleList;
+    String modulesInfo[] = allModules.split(",");
+    Date now = new Date();
+    for (String moduleInfo : modulesInfo) {
+      String moduleData[] = moduleInfo.split("\\|");
+      if (!onlyActive) {
+        moduleList.add(moduleData[0]);
+      } else {
+        Date validFrom = null;
+        Date validTo = null;
+        try {
+          validFrom = sd.parse(moduleData[1]);
+          if (moduleData.length > 2) {
+            validTo = sd.parse(moduleData[2]);
+          }
+
+          if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
+            moduleList.add(moduleData[0]);
+          }
+        } catch (Exception e) {
+          log.error("Error reading module's dates module:" + moduleData[0], e);
+        }
+      }
+    }
+    return moduleList;
   }
 
 }

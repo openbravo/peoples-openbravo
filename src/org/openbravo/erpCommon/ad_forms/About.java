@@ -46,7 +46,6 @@ public class About extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  @SuppressWarnings("static-access")
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -66,7 +65,7 @@ public class About extends HttpSecureAppServlet {
         data = AboutData.set();
       }
       String licenseInfo = "";
-      if (ak.isActiveInstance()) {
+      if (ActivationKey.isActiveInstance()) {
         licenseInfo = Utility.messageBD(this, "OPSLicensedTo", vars.getLanguage()) + " "
             + ak.getProperty("customer");
       } else {
@@ -89,7 +88,7 @@ public class About extends HttpSecureAppServlet {
       xmlDocument.setParameter("versionId", ver.versionId);
       xmlDocument.setParameter("versionNo", ver.version);
 
-      if (ak.isActiveInstance()) {
+      if (ActivationKey.isActiveInstance()) {
         xmlDocument.setParameter("paraOPSPurpose", ak.getPurpose(vars.getLanguage()));
         xmlDocument.setParameter("paraOPSType", ak.getLicenseExplanation(this, vars.getLanguage()));
       }
