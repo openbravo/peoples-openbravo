@@ -22,6 +22,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -39,6 +40,7 @@ import org.openbravo.erpCommon.modules.ImportModule;
 import org.openbravo.erpCommon.modules.ModuleTree;
 import org.openbravo.erpCommon.modules.UninstallModule;
 import org.openbravo.erpCommon.modules.VersionUtility;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.HttpsUtils;
@@ -574,15 +576,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
         check = im.checkDependenciesFile(obx);
       }
 
+      // Check commercial modules can be installed
+
       if (check) { // dependencies are statisfied, show modules to install
-        final Module[] installOrig = im.getModulesToInstall(); // This
-        // includes
-        // the
-        // also
-        // the
-        // module
-        // to
-        // install
+        // installOrig includes also the module to install
+        final Module[] installOrig = im.getModulesToInstall();
+
+        // check commercial modules and show error page if not allowed to install
+        if (!checkCommercialModules(im, response, vars)) {
+          return;
+        }
+
         if (installOrig == null || installOrig.length == 0)
           discard[0] = "modulesToinstall";
         else {
@@ -675,6 +679,49 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private boolean checkCommercialModules(ImportModule im, HttpServletResponse response,
+      VariablesSecureApp vars) throws IOException {
+    ActivationKey ak = new ActivationKey();
+    boolean OBPSActiveInstance = ActivationKey.isActiveInstance();
+    ArrayList<Module> notAllowedMods = new ArrayList<Module>();
+
+    for (Module instMod : im.getModulesToInstall()) {
+      if (instMod.getIsCommercial()
+          && (!OBPSActiveInstance || !ak.isModuleSubscribed(instMod.getModuleID(), true))) {
+        notAllowedMods.add(instMod);
+      }
+    }
+
+    for (Module updMod : im.getModulesToUpdate()) {
+      if (updMod.getIsCommercial()
+          && (!OBPSActiveInstance || !ak.isModuleSubscribed(updMod.getModuleID(), true))) {
+        notAllowedMods.add(updMod);
+      }
+    }
+
+    if (notAllowedMods.size() > 0) {
+      String discard[] = { "" };
+
+      if (OBPSActiveInstance) {
+        discard[0] = "CEInstance";
+      } else {
+        discard[0] = "OBPSInstance";
+      }
+      XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/erpCommon/ad_forms/ModuleManagement_ErrorCommercial", discard)
+          .createXmlDocument();
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      xmlDocument.setData("modules", FieldProviderFactory.getFieldProviderArray(notAllowedMods));
+      response.setContentType("text/html; charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+    }
+    return notAllowedMods.size() == 0;
   }
 
   private boolean isHeartbeatEnabled() {
