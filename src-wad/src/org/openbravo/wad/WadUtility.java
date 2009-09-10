@@ -2198,7 +2198,7 @@ public class WadUtility {
     return reference.equals("21") || reference.equals("25") || reference.equals("30")
         || reference.equals("31") || reference.equals("32") || reference.equals("35")
         || reference.equals("800013") || reference.equals("800011")
-        || reference.equals("4AA6C3BE9D3B4D84A3B80489505A23E5");
+    /* || reference.equals("4AA6C3BE9D3B4D84A3B80489505A23E5") */;
   }
 
   public static boolean isLinkType(String reference) {
