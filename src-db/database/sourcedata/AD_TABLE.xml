@@ -4260,7 +4260,7 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--461-->  <TABLENAME><![CDATA[AD_Image]]></TABLENAME>
 <!--461-->  <CLASSNAME><![CDATA[Image]]></CLASSNAME>
 <!--461-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--461-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
+<!--461-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--461-->  <AD_WINDOW_ID><![CDATA[227]]></AD_WINDOW_ID>
 <!--461-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--461-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
