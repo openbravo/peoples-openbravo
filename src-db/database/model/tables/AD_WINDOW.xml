@@ -72,7 +72,7 @@
       <foreign-key foreignTable="AD_IMAGE" name="ADIMAGE_ADWINDOW">
         <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADWINDOW">
+      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADWINDOW" onDelete="cascade">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="WINDOWCLIENT">

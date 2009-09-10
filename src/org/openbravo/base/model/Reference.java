@@ -41,6 +41,7 @@ public class Reference extends ModelObject {
   public static final String TABLEDIR = "19";
   public static final String SEARCH = "30";
   public static final String IMAGE = "32";
+  public static final String IMAGE_BLOB = "4AA6C3BE9D3B4D84A3B80489505A23E5";
   public static final String RESOURCE_ASSIGNMENT = "33";
   public static final String PRODUCT_ATTRIBUTE = "35";
   public static final String NO_REFERENCE = "-1";
