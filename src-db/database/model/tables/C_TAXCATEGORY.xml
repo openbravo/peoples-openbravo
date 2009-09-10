@@ -53,6 +53,7 @@
       </foreign-key>
       <unique name="C_TAXCATEGORY_NAME">
         <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="AD_ORG_ID"/>
         <unique-column name="NAME"/>
       </unique>
       <check name="C_TAXCATEGORY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
