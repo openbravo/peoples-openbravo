@@ -39,6 +39,16 @@ public class Module  implements java.io.Serializable {
     private java.lang.String url;
 
     private java.lang.String versionNo;
+    
+    private boolean isCommercial;
+    
+    public java.lang.Boolean getIsCommercial() {
+      return isCommercial;
+  }
+    
+    public void setIsCommercial(java.lang.Boolean isCommercial) {
+      this.isCommercial = isCommercial;
+  }
 
     public Module() {
     }
