@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -107,32 +107,34 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
       OBContext.getOBContext().setInAdministratorMode(adminMode);
     } else if (vars.commandIn("DELETE")) {
       if (imageID != null && !imageID.equals("")) {
-        boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
-        OBContext.getOBContext().setInAdministratorMode(true);
-        Image image = OBDal.getInstance().get(Image.class, imageID);
-        Table table = OBDal.getInstance().get(Table.class, tableId);
-        String propertyName = ModelProvider.getInstance().getEntityByTableName(
-            table.getDBTableName()).getPropertyByColumnName(columnName).getName();
-        DataPackage dpackage = table.getDataPackage();
+        boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
         try {
-          Class tableClass = Class.forName(dpackage.getJavaPackage() + "."
-              + table.getJavaClassName());
-          Object parentObject = OBDal.getInstance().get(tableClass, parentObjectId);
-          Class[] argTypes = new Class[2];
-          argTypes[0] = String.class;
-          argTypes[1] = Object.class;
-          Method setMethod = tableClass.getMethod("set", argTypes);
-          Object[] argValues = new Object[2];
-          argValues[0] = propertyName;
-          argValues[1] = null;
-          setMethod.invoke(parentObject, argValues);
-          OBDal.getInstance().flush();
-          OBDal.getInstance().remove(image);
-        } catch (Exception e) {
-          e.printStackTrace();
-          log4j.error("Class for table not found", e);
+          Image image = OBDal.getInstance().get(Image.class, imageID);
+          Table table = OBDal.getInstance().get(Table.class, tableId);
+          String propertyName = ModelProvider.getInstance().getEntityByTableName(
+              table.getDBTableName()).getPropertyByColumnName(columnName).getName();
+          DataPackage dpackage = table.getDataPackage();
+          try {
+            Class tableClass = Class.forName(dpackage.getJavaPackage() + "."
+                + table.getJavaClassName());
+            Object parentObject = OBDal.getInstance().get(tableClass, parentObjectId);
+            Class[] argTypes = new Class[2];
+            argTypes[0] = String.class;
+            argTypes[1] = Object.class;
+            Method setMethod = tableClass.getMethod("set", argTypes);
+            Object[] argValues = new Object[2];
+            argValues[0] = propertyName;
+            argValues[1] = null;
+            setMethod.invoke(parentObject, argValues);
+            OBDal.getInstance().flush();
+            OBDal.getInstance().remove(image);
+          } catch (Exception e) {
+            e.printStackTrace();
+            log4j.error("Class for table not found", e);
+          }
+        } finally {
+          OBContext.getOBContext().setInAdministratorMode(adminMode);
         }
-        OBContext.getOBContext().setInAdministratorMode(adminMode);
         PrintWriter writer = response.getWriter();
         writeRedirect(writer, "", columnName);
       } else {

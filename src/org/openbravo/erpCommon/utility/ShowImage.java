@@ -19,7 +19,6 @@
 
 package org.openbravo.erpCommon.utility;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -70,14 +69,8 @@ public class ShowImage extends HttpSecureAppServlet {
       }
     } else { // If there is not image to show return blank.gif
       String sourcePath = vars.getSessionValue("#sourcePath");
-      FileInputStream f = new FileInputStream(sourcePath + "/web/images/blank.gif");
       OutputStream out = response.getOutputStream();
-      int l = 0;
-      byte b[] = new byte[1024];
-      while ((l = f.read(b)) != -1) {
-        out.write(b, 0, l);
-      }
-      f.close();
+      Utility.dumpFile(sourcePath + "/web/images/blank.gif", out);
       out.close();
 
     }
