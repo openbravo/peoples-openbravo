@@ -60,6 +60,7 @@
     v_count NUMBER;
     v_DocAction VARCHAR2(60);
     v_UpdatedBy AD_PINSTANCE.UpdatedBy%TYPE;
+    v_DeleteFact BOOLEAN :=TRUE;
  BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -187,6 +188,7 @@
                       END)
                 AND AD_Client_ID = Cur_Clients.AD_Client_ID
               ) LOOP
+            IF (v_DeleteFact=TRUE) THEN
               IF(Cur_Tables.AD_Table_ID IN('472', '473')) THEN
                 v_DateColumn:='DATETRX';
               ELSIF(Cur_Tables.AD_Table_ID IN('392')) THEN
@@ -231,7 +233,9 @@
               if (mod(v_factAcctCounter, c_commitInterval) = 0) then
                 COMMIT;
               end if;
-
+	END IF;
+              v_Record_ID:=Cur_Fact_Acct.Record_ID;
+              v_AD_Client_ID:=Cur_Clients.AD_Client_ID;
             END LOOP;
         v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='''  || Cur_Clients.AD_Client_ID
         || ''' AND (Posted=''Y'' OR Processing<>''N'' OR Processing IS NULL) AND NOT EXISTS (SELECT 1 FROM FACT_ACCT WHERE AD_TABLE_ID =''' || Cur_Tables.AD_Table_ID ||
@@ -263,23 +267,32 @@
     -- Fact_Acct_Rest - Finish_Process Extension Point
    SELECT count(*) INTO v_count
    FROM DUAL
-   where exists (select 1 from ad_ep_procedures where ad_extension_points_id = '53134730F2B340059ABA16165E9E0D29');
+   where exists (select 1 from ad_ep_procedures where ad_extension_points_id = 'E1F9635815BF4A44B88E3EAADBD0D10E');
          IF (v_count=1) THEN
      DECLARE
        v_ep_instance VARCHAR(32);
-       v_extension_point_id VARCHAR(32) := '53134730F2B340059ABA16165E9E0D29';
+       v_extension_point_id VARCHAR(32) := 'E1F9635815BF4A44B88E3EAADBD0D10E';
+        v_DeletingFact VARCHAR(10):='TRUE';
      BEGIN
        v_ep_instance := get_uuid();
        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Record_ID',
-         v_record_id, NULL, NULL, NULL, NULL, NULL, NULL);
-       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'DocAction',
-         v_DocAction, NULL, NULL, NULL, NULL, NULL, NULL);
+         v_Record_ID, NULL, NULL, NULL, NULL, NULL, NULL);
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AD_Table_ID',
+         v_AD_Table_ID, NULL, NULL, NULL, NULL, NULL, NULL); 
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AD_Client_ID',
+         v_AD_Client_ID, NULL, NULL, NULL, NULL, NULL, NULL); 
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'DeleteFact',
+         v_DeletingFact, NULL, NULL, NULL, NULL, NULL, NULL);  
        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'User',
          v_UpdatedBy, NULL, NULL, NULL, NULL, NULL, NULL);
        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Message',
          NULL, NULL, NULL, NULL, NULL, NULL, v_Message);
        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Result',
          NULL, NULL, v_result, NULL, NULL, NULL, NULL);
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AD_Org_ID',
+         v_AD_Org_ID, NULL, NULL, NULL, NULL, NULL, NULL);
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'PInstance_ID',
+         p_PInstance_ID, NULL, NULL, NULL, NULL, NULL, NULL);
        AD_EXTENSION_POINT_HANDLER(v_ep_instance, v_extension_point_id);
        SELECT p_number INTO v_Result
        FROM ad_ep_instance_para
