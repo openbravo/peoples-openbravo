@@ -93,10 +93,10 @@
     <Parameter name="level"/>
     <Parameter name="adClientId" optional="true" type="replace" after="FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= ?]]></Parameter>
-    <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < ?]]></Parameter>
+    <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
+    <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
     <Parameter name="accountId" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.ACCOUNT_ID = ?]]></Parameter>
-    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="adAccountingElementId"/>
   </SqlMethod>
 
