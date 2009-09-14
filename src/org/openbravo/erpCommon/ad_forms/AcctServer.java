@@ -251,7 +251,11 @@ public abstract class AcctServer {
     m_as = AcctSchema.getAcctSchemaArray(connectionProvider, m_AD_Client_ID, m_AD_Org_ID);
   } //
 
-  // Empty constructor for Accruals and Deferrals plan line posting
+  /*
+   * Empty constructor to initialize the class using reflexion, set() method should be called
+   * afterwards.
+   */
+
   public AcctServer() {
 
   }
