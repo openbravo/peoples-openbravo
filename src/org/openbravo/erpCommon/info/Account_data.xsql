@@ -98,7 +98,7 @@
         <Parameter name="bpartner" optional="true" after="WHERE "><![CDATA[ C.C_BPARTNER_ID = ? AND ]]></Parameter>
         <Parameter name="project" optional="true" after="WHERE "><![CDATA[ C.C_PROJECT_ID = ? AND ]]></Parameter>
         <Parameter name="campaign" optional="true" after="WHERE "><![CDATA[ C.C_CAMPAIGN_ID = ? AND ]]></Parameter>
-        <Parameter name="validcombination" optional="true" after="WHERE "><![CDATA[ C.C_VALIDCOMBINATION_ID = ?) AND ]]></Parameter>
+        <Parameter name="validcombination" optional="true" after="WHERE "><![CDATA[ C.C_VALIDCOMBINATION_ID = ? AND ]]></Parameter>
         <Parameter name="adUserClient" type="replace" optional="true" after="C.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="C.AD_Org_ID IN (" text="'1'"/>
    </SqlMethod>
