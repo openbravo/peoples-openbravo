@@ -72,7 +72,7 @@ td.Login_Logo_Company_Container_Cell {
   height: 55px;
   margin-top: 3px;
   margin-bottom: 3px;
-  background: url(CompanyLogo_big.png) no-repeat center center;
+  background: url(../../utility/ShowImageLogo?logo=yourcompanylogin) no-repeat center center;
 }
 
 .Login_Logo_Support_Container {
@@ -101,11 +101,11 @@ td.Login_Logo_Support_Container_Cell {
   height: 55px;
   margin-top: 3px;
   margin-bottom: 3px;
-  background: url(SupportLogo_big.png) no-repeat center center;
+  background: url(../../utility/ShowImageLogo?logo=youritservicelogin) no-repeat center center;
 }
 
 .Menu_NavBar_logo {
   width: 122px;
   height: 34px;
-  background: url(CompanyLogo_small.png) no-repeat center center;
+  background: url(../../utility/ShowImageLogo?logo=yourcompanymenu) no-repeat center center;
 }

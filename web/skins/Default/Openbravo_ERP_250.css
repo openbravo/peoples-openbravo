@@ -4853,7 +4853,7 @@ td.Login_Home_Logo {
   width: 608;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Login/initialOpenbravoLogo.png);
+  background-image: url(../../../../utility/ShowImageLogo?logo=yourcompanybig);
 }
 
 table.Login_ToolBar_bg {
