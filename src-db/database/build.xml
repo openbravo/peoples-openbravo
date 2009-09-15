@@ -347,7 +347,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
   </target>
 
   <target name="export.database.structure">
-    <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" propertiesFile="${base.config}/Openbravo.properties" module="${module}" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD"/>
+    <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" propertiesFile="${base.config}/Openbravo.properties" module="${module}" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" />
   </target>
 
   <target name="import.database.data">

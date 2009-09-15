@@ -86,10 +86,10 @@
 <!--9B2B32C0BAF146F783A50C6F69251BC4-->  <AD_PROCESS_ID><![CDATA[800064]]></AD_PROCESS_ID>
 <!--9B2B32C0BAF146F783A50C6F69251BC4-->  <AD_USER_ID><![CDATA[100]]></AD_USER_ID>
 <!--9B2B32C0BAF146F783A50C6F69251BC4-->  <ISROLESECURITY><![CDATA[Y]]></ISROLESECURITY>
-<!--9B2B32C0BAF146F783A50C6F69251BC4-->  <OB_CONTEXT><![CDATA[{"org.openbravo.scheduling.ProcessContext":{"user":100,"role":0,"language":"en_US","theme":"ltr\/Default","client":0,"organization":0,"warehouse":"","command":"DEFAULT","userClient":"","userOrganization":"","dbSessionID":"","javaDateFormat":"","jsDateFormat":"","sqlDateFormat":"","accessLevel":"","roleSecurity":true}}]]></OB_CONTEXT>
+<!--9B2B32C0BAF146F783A50C6F69251BC4-->  <OB_CONTEXT><![CDATA[{"org.openbravo.scheduling.ProcessContext":{"user":100,"role":0,"language":"es_ES","theme":"ltr\/Default","client":0,"organization":0,"warehouse":"","command":"DEFAULT","userClient":"","userOrganization":"","dbSessionID":"","javaDateFormat":"","jsDateFormat":"","sqlDateFormat":"","accessLevel":"","roleSecurity":true}}]]></OB_CONTEXT>
 <!--9B2B32C0BAF146F783A50C6F69251BC4-->  <STATUS><![CDATA[SCH]]></STATUS>
-<!--9B2B32C0BAF146F783A50C6F69251BC4-->  <NEXT_FIRE_TIME><![CDATA[2009-08-25 00:31:49.0]]></NEXT_FIRE_TIME>
-<!--9B2B32C0BAF146F783A50C6F69251BC4-->  <PREVIOUS_FIRE_TIME><![CDATA[2009-08-25 00:30:49.0]]></PREVIOUS_FIRE_TIME>
+<!--9B2B32C0BAF146F783A50C6F69251BC4-->  <NEXT_FIRE_TIME><![CDATA[2009-09-15 19:43:06.0]]></NEXT_FIRE_TIME>
+<!--9B2B32C0BAF146F783A50C6F69251BC4-->  <PREVIOUS_FIRE_TIME><![CDATA[2009-09-15 19:42:06.0]]></PREVIOUS_FIRE_TIME>
 <!--9B2B32C0BAF146F783A50C6F69251BC4-->  <CHANNEL><![CDATA[Process Scheduler]]></CHANNEL>
 <!--9B2B32C0BAF146F783A50C6F69251BC4-->  <TIMING_OPTION><![CDATA[S]]></TIMING_OPTION>
 <!--9B2B32C0BAF146F783A50C6F69251BC4-->  <FREQUENCY><![CDATA[2]]></FREQUENCY>

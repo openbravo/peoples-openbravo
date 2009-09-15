@@ -101,6 +101,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="obx.export.CS" value="false" />
   <property name="chekPerms" value="false" />
   <property name="force" value="false" />
+  <property name="rd" value="false" />
   <property name="local" value="true" />
   <property name="apply.modules.complete.compilation" value="false" />
   <property name="calculate.core.revision" value="true"/>
