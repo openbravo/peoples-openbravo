@@ -157,7 +157,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
 
   <target name="update.database.java">
     <antcall target="fix.date.${bbdd.rdbms}" />
-    <java classname="org.openbravo.ddlutils.task.AlterDatabaseJava" fork="true">
+    <java classname="org.openbravo.ddlutils.task.AlterDatabaseJava" fork="true" maxmemory="${build.maxmemory}">
       <arg value="${bbdd.driver}"/>
       <arg value="${bbdd.owner.url}"/>
       <arg value="${bbdd.user}"/>
