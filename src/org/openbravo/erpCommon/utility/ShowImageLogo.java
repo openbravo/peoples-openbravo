@@ -56,50 +56,52 @@ public class ShowImageLogo extends HttpBaseServlet {
     } else {
       adminMode = OBContext.getOBContext().isInAdministratorMode();
     }
-    OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      OBContext.getOBContext().setInAdministratorMode(true);
 
-    String logo = vars.getStringParameter("logo");
-    if (logo == null || logo.equals(""))
-      return;
+      String logo = vars.getStringParameter("logo");
+      if (logo == null || logo.equals(""))
+        return;
 
-    Image img = null;
-    if (logo.equals("yourcompanylogin")) {
-      img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyLoginImage();
-    } else if (logo.equals("youritservicelogin")) {
-      img = OBDal.getInstance().get(SystemInformation.class, "0").getYourItServiceLoginImage();
-    } else if (logo.equals("yourcompanymenu")) {
-      img = OBContext.getOBContext().getCurrentClient().getClientInformationList().get(0)
-          .getYourCompanyMenuImage();
-      if (img == null)
-        img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyMenuImage();
-    } else if (logo.equals("yourcompanybig")) {
-      img = OBContext.getOBContext().getCurrentClient().getClientInformationList().get(0)
-          .getYourCompanyBigImage();
-      if (img == null)
-        img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyBigImage();
-    } else if (logo.equals("yourcompanydoc")) {
-      img = OBContext.getOBContext().getCurrentOrganization().getOrganizationInformationList().get(
-          0).getYourCompanyDocumentImage();
-      if (img == null)
-        img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyDocumentImage();
-    } else
-      return;
-    if (img != null) {
-      byte[] imageBytes = img.getBindaryData();
-      if (imageBytes != null) {
+      Image img = null;
+      if (logo.equals("yourcompanylogin")) {
+        img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyLoginImage();
+      } else if (logo.equals("youritservicelogin")) {
+        img = OBDal.getInstance().get(SystemInformation.class, "0").getYourItServiceLoginImage();
+      } else if (logo.equals("yourcompanymenu")) {
+        img = OBContext.getOBContext().getCurrentClient().getClientInformationList().get(0)
+            .getYourCompanyMenuImage();
+        if (img == null)
+          img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyMenuImage();
+      } else if (logo.equals("yourcompanybig")) {
+        img = OBContext.getOBContext().getCurrentClient().getClientInformationList().get(0)
+            .getYourCompanyBigImage();
+        if (img == null)
+          img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyBigImage();
+      } else if (logo.equals("yourcompanydoc")) {
+        img = OBContext.getOBContext().getCurrentOrganization().getOrganizationInformationList()
+            .get(0).getYourCompanyDocumentImage();
+        if (img == null)
+          img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyDocumentImage();
+      } else
+        return;
+      if (img != null) {
+        byte[] imageBytes = img.getBindaryData();
+        if (imageBytes != null) {
+          OutputStream out = response.getOutputStream();
+          response.setContentLength(imageBytes.length);
+          out.write(imageBytes);
+          out.close();
+        }
+      } else { // If there is not image to show return blank.gif
+        String sourcePath = vars.getSessionValue("#sourcePath");
         OutputStream out = response.getOutputStream();
-        response.setContentLength(imageBytes.length);
-        out.write(imageBytes);
+        Utility.dumpFile(sourcePath + "/web/images/blank.gif", out);
         out.close();
+
       }
-    } else { // If there is not image to show return blank.gif
-      String sourcePath = vars.getSessionValue("#sourcePath");
-      OutputStream out = response.getOutputStream();
-      Utility.dumpFile(sourcePath + "/web/images/blank.gif", out);
-      out.close();
-
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(adminMode);
     }
-
-    OBContext.getOBContext().setInAdministratorMode(adminMode);
   }
 }
