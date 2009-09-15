@@ -26,22 +26,28 @@ public class ImageToDatabaseLoader extends BaseDalInitializingTask {
       String properties[] = propertyNames.split(",");
       Image[] images = new Image[paths.length];
       for (int i = 0; i < paths.length; i++) {
-        File f = new File(basePath + File.separator + paths[i]);
-        InputStream is = new FileInputStream(f);
-        byte[] bytes = new byte[(int) f.length()];
-        int offset = 0;
-        int numRead = 0;
-        while (offset < bytes.length
-            && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-          offset += numRead;
+        if (OBDal.getInstance().get(SystemInformation.class, "0").get(properties[i]) == null) {
+          File f = new File(basePath + File.separator + paths[i]);
+          InputStream is = new FileInputStream(f);
+          byte[] bytes = new byte[(int) f.length()];
+          int offset = 0;
+          int numRead = 0;
+          while (offset < bytes.length
+              && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+            offset += numRead;
+          }
+          Image image = OBProvider.getInstance().get(Image.class);
+          image.setBindaryData(bytes);
+          image.setName("Image");
+          getLog().info("Inserting image with property: " + properties[i]);
+          OBDal.getInstance().save(image);
+          OBDal.getInstance().get(SystemInformation.class, "0").set(properties[i], image);
+          OBDal.getInstance().flush();
+        } else {
+          getLog().info(
+              "Image of property " + properties[i]
+                  + " wasn't inserted because it's already in the database.");
         }
-        Image image = OBProvider.getInstance().get(Image.class);
-        image.setBindaryData(bytes);
-        image.setName("Image");
-        getLog().info("Inserting image with property: " + properties[i]);
-        OBDal.getInstance().save(image);
-        OBDal.getInstance().get(SystemInformation.class, "0").set(properties[i], image);
-        OBDal.getInstance().flush();
       }
 
     } catch (Exception e) {
