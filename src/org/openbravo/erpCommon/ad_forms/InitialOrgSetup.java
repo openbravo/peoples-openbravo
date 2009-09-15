@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -53,6 +54,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
@@ -457,7 +459,6 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
           name).append(SALTO_LINEA);
       if (log4j.isDebugEnabled())
         log4j.debug("InitialOrgSetup - createOrg - m_info: " + m_info.toString());
-
       // * Load Roles
       // * - Admin
       final String stradRoleId = InitialOrgSetupData.selectAdminRole(conn, this, AD_Client_ID);
@@ -522,6 +523,20 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
         Utility.messageBD(this, "CreateOrgSuccess", vars.getLanguage())).append(SALTO_LINEA);
     if (log4j.isDebugEnabled())
       log4j.debug("InitialOrgSetup - createOrg - m_info last: " + m_info.toString());
+    // Add images
+    Organization newOrganization = OBDal.getInstance().get(Organization.class, AD_Org_ID);
+    Client organizationClient = OBDal.getInstance().get(Client.class, AD_Client_ID);
+    Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
+    yourCompanyDocumentImage.setBindaryData(organizationClient.getClientInformationList().get(0)
+        .getYourCompanyDocumentImage().getBindaryData());
+    yourCompanyDocumentImage.setName(organizationClient.getClientInformationList().get(0)
+        .getYourCompanyBigImage().getName());
+    newOrganization.getOrganizationInformationList().get(0).setYourCompanyDocumentImage(
+        yourCompanyDocumentImage);
+    yourCompanyDocumentImage.setOrganization(newOrganization);
+    OBDal.getInstance().save(yourCompanyDocumentImage);
+    OBDal.getInstance().save(newOrganization);
+    OBDal.getInstance().flush();
     return true;
   }
 
