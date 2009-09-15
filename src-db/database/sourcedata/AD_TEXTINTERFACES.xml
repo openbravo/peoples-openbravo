@@ -4426,7 +4426,7 @@
 <!--803637-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--803637-->  <TEXT><![CDATA[Attribute]]></TEXT>
 <!--803637-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProductionPDF.fo]]></FILENAME>
-<!--803637-->  <ISUSED><![CDATA[N]]></ISUSED>
+<!--803637-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--803637-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--803637--></AD_TEXTINTERFACES>
 
@@ -13377,7 +13377,7 @@
 <!--808473-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--808473-->  <TEXT><![CDATA[Totals]]></TEXT>
 <!--808473-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportInvoiceDiscountJR.jrxml]]></FILENAME>
-<!--808473-->  <ISUSED><![CDATA[N]]></ISUSED>
+<!--808473-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--808473-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--808473--></AD_TEXTINTERFACES>
 
@@ -14004,7 +14004,7 @@
 <!--809756-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--809756-->  <TEXT><![CDATA[Totals]]></TEXT>
 <!--809756-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProjectProfitabilityJR.jrxml]]></FILENAME>
-<!--809756-->  <ISUSED><![CDATA[N]]></ISUSED>
+<!--809756-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--809756-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--809756--></AD_TEXTINTERFACES>
 
@@ -20248,7 +20248,7 @@
 <!--1005300016-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005300016-->  <TEXT><![CDATA[Locator type]]></TEXT>
 <!--1005300016-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
-<!--1005300016-->  <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005300016-->  <ISUSED><![CDATA[N]]></ISUSED>
 <!--1005300016-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005300016--></AD_TEXTINTERFACES>
 

@@ -49,7 +49,6 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="L.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="mWarehouseId"/>
     <Parameter name="mLocatorId" optional="true" after="AND L.ISACTIVE = 'Y' " text=" AND L.X = ? "/>
-    <Parameter name="mLocatortypeId" optional="true" after="AND 1=1" text=" AND L.M_LOCATOR_TYPE_ID = ? "/>
   </SqlMethod>
   <SqlMethod name="selectM_Locator_X" type="preparedStatement" return="multiple">
     <SqlMethodComment>Ids and Names of table dir M_Locator</SqlMethodComment>
