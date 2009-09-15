@@ -47,8 +47,8 @@ BEGIN
      startsWithLetter := false;
      FOR I IN 1..LENGTH(:new.name) LOOP
        v_char := substr(:new.name,i,1);
-       IF NOT (v_char between 'A' and 'Z' 
-               or v_char between '0' and '9') THEN
+       IF NOT ((v_char between 'A' and 'Z') 
+               or (v_char between '0' and '9'))  THEN
         RAISE_APPLICATION_ERROR(-20531, '@20531@') ;
        END IF;
        IF v_char between 'A' and 'Z' THEN

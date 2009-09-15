@@ -32,6 +32,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.utility.Image;
+import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * 
@@ -79,8 +80,11 @@ public class ShowImageLogo extends HttpBaseServlet {
         if (img == null)
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyBigImage();
       } else if (logo.equals("yourcompanydoc")) {
-        img = OBContext.getOBContext().getCurrentOrganization().getOrganizationInformationList()
-            .get(0).getYourCompanyDocumentImage();
+        String orgId = vars.getStringParameter("orgId");
+        if (orgId != null && !orgId.equals("")) {
+          Organization org = OBDal.getInstance().get(Organization.class, orgId);
+          img = org.getOrganizationInformationList().get(0).getYourCompanyDocumentImage();
+        }
         if (img == null)
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyDocumentImage();
       } else

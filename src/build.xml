@@ -110,7 +110,7 @@ build.war: build a war file in the lib directory.
     <validateModules userId="0" propertiesFile="${base.config}/Openbravo.properties" type="module" />
   </target>
   
-  <target name="image.loading">
+  <target name="image.load">
     <taskdef name="imageloading" classname="org.openbravo.erpCommon.utility.ImageToDatabaseLoader">
       <classpath refid="project.class.path" />
     </taskdef>
