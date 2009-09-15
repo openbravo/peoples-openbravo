@@ -28,44 +28,38 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT SUM(TO_NUMBER(PARENT_ID)) AS PARENT_ID, ID, NAME, ACCOUNT_ID, ELEMENTLEVEL, SUM(AMTACCTDR) AS AMTACCTDR, 
-      SUM(AMTACCTCR) AS AMTACCTCR, SUM(SALDO_INICIAL) AS SALDO_INICIAL,0 AS TOTALAMTACCTDR, 0 AS TOTALAMTACCTCR,
-      SUM(SALDO_INICIAL+AMTACCTDR-AMTACCTCR) AS SALDO_FINAL, TO_DATE(?) AS DATE_FROM, TO_DATE(?) AS DATE_TO, ? AS AD_ORG_ID,
-      '' AS BP, '' AS PADRE
-      FROM
-      (SELECT AD_TREENODE.PARENT_ID, C_ELEMENTVALUE.C_ELEMENTVALUE_ID AS ID, C_ELEMENTVALUE.ELEMENTLEVEL, 
-      C_ELEMENTVALUE.NAME AS NAME, C_ELEMENTVALUE.VALUE AS ACCOUNT_ID, 0 AS SALDO_INICIAL, 0 AS AMTACCTDR, 
-      0 AS AMTACCTCR
-      FROM AD_TREENODE, C_ELEMENTVALUE
-      WHERE AD_TREENODE.NODE_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
-      AND AD_TREENODE.AD_TREE_ID = ?
-      AND AD_TREENODE.ISACTIVE = 'Y'
-      AND C_ELEMENTVALUE.ISACTIVE = 'Y'
-      AND (select max(c_element_id) from c_acctschema_element where c_acctschema_id = ? and ELEMENTTYPE = 'AC') = C_ELEMENTVALUE.C_ELEMENT_ID
-      UNION		
-      SELECT '0' AS PARENT_ID, F.ACCOUNT_ID AS ID, EV.ELEMENTLEVEL, EV.NAME AS NAME, EV.VALUE AS ACCOUNT_ID, 
-      SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN F.AMTACCTDR-F.AMTACCTCR ELSE 0 END)) AS SALDO_INICIAL, 
-      SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN 0 ELSE F.AMTACCTDR END)) AS AMTACCTDR, 
-      SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN 0 ELSE f.AMTACCTCR END)) AS AMTACCTCR 
-      FROM FACT_ACCT F, C_ELEMENTVALUE EV
-      WHERE F.ACCOUNT_ID = EV.C_ELEMENTVALUE_ID
-      AND f.AD_ORG_ID IN('2')
-      AND F.AD_CLIENT_ID IN ('1')
-      AND F.AD_ORG_ID IN('1')
-      AND 1=1
-      AND F.FACTACCTTYPE <> 'R'
-      AND F.FACTACCTTYPE <> 'C'
-      AND F.ISACTIVE = 'Y'
-      GROUP BY ACCOUNT_ID,EV.NAME, EV.VALUE, EV.ELEMENTLEVEL) A
-      GROUP BY ID, NAME, ACCOUNT_ID, ELEMENTLEVEL
-      ORDER BY PARENT_ID, ID, NAME, ACCOUNT_ID, ELEMENTLEVEL
+        SELECT AD_TREENODE.PARENT_ID, C_ELEMENTVALUE.C_ELEMENTVALUE_ID AS ID, C_ELEMENTVALUE.ELEMENTLEVEL, 
+          C_ELEMENTVALUE.NAME AS NAME, C_ELEMENTVALUE.VALUE AS ACCOUNT_ID, COALESCE(A.SALDO_INICIAL,0) AS SALDO_INICIAL, COALESCE(A.AMTACCTDR, 0) AS AMTACCTDR, 
+          COALESCE(A.AMTACCTCR,0) AS AMTACCTCR, 0 AS TOTALAMTACCTDR, 0 AS TOTALAMTACCTCR, 
+          (COALESCE(SALDO_INICIAL,0)+COALESCE(AMTACCTDR,0)-COALESCE(AMTACCTCR,0)) AS SALDO_FINAL, TO_DATE(?) AS DATE_FROM, 
+          TO_DATE(?) AS DATE_TO, ? AS AD_ORG_ID, '' AS BP, '' AS PADRE
+        FROM AD_TREENODE, C_ELEMENTVALUE LEFT JOIN (
+                  SELECT '0' AS PARENT_ID, F.ACCOUNT_ID AS ID, EV.ELEMENTLEVEL, EV.NAME AS NAME, EV.VALUE AS ACCOUNT_ID, 
+                    SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN F.AMTACCTDR-F.AMTACCTCR ELSE 0 END)) AS SALDO_INICIAL, 
+                    SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN 0 ELSE F.AMTACCTDR END)) AS AMTACCTDR, 
+                    SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN 0 ELSE f.AMTACCTCR END)) AS AMTACCTCR 
+                  FROM FACT_ACCT F, C_ELEMENTVALUE EV
+                  WHERE F.ACCOUNT_ID = EV.C_ELEMENTVALUE_ID
+                    AND f.AD_ORG_ID IN('2')
+                    AND F.AD_CLIENT_ID IN ('1')
+                    AND F.AD_ORG_ID IN('1')
+                    AND 1=1
+                    AND F.FACTACCTTYPE <> 'R'
+                    AND F.FACTACCTTYPE <> 'C'
+                    AND F.ISACTIVE = 'Y'
+                  GROUP BY ACCOUNT_ID,EV.NAME, EV.VALUE, EV.ELEMENTLEVEL
+          ) A ON C_ELEMENTVALUE.C_ELEMENTVALUE_ID = A.ID
+        WHERE AD_TREENODE.NODE_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
+          AND AD_TREENODE.AD_TREE_ID = ?
+          AND AD_TREENODE.ISACTIVE = 'Y'
+          AND C_ELEMENTVALUE.ISACTIVE = 'Y'
+          AND (select max(c_element_id) from c_acctschema_element where c_acctschema_id = ? and ELEMENTTYPE = 'AC') = C_ELEMENTVALUE.C_ELEMENT_ID
+        ORDER BY PARENT_ID, ID, NAME, ACCOUNT_ID, ELEMENTLEVEL
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="dateFrom"/>
     <Parameter name="dateTo"/>
     <Parameter name="org"/>
-    <Parameter name="treeAcct"/>
-    <Parameter name="acctSchema"/>    
     <Parameter name="orgFamily" type="replace" optional="true" after="f.AD_ORG_ID IN(" text="'2'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="F.AD_ORG_ID IN(" text="'1'"/>
@@ -74,6 +68,8 @@
     <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= ?]]></Parameter>
     <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= ?]]></Parameter>
     <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[ AND F.C_ACCTSCHEMA_ID = ?]]></Parameter>    
+    <Parameter name="treeAcct"/>
+    <Parameter name="acctSchema"/>    
   </SqlMethod>
   
   

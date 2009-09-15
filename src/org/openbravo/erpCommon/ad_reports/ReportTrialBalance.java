@@ -179,18 +179,18 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strAccountFrom,
               strAccountTo, strcBpartnerId, strcAcctSchemaId);
         } else {
-          data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg,
-              strTreeAccount, strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars,
-                  "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars,
-                  "#AccessibleOrgTree", "ReportTrialBalance"), strDateFrom, DateTimeData
-                  .nDaysAfter(this, strDateTo, "1"), strAccountFrom, strAccountTo);
+          data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strOrgFamily,
+              Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility
+                  .getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), strDateFrom,
+              DateTimeData.nDaysAfter(this, strDateTo, "1"), strAccountFrom, strAccountTo,
+              strcAcctSchemaId, strTreeAccount);
         }
       } else {
-        data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount,
-            strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars, "#User_Client",
-                "ReportTrialBalance"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-            "", "");
+        data = ReportTrialBalanceData
+            .select(this, strDateFrom, strDateTo, strOrg, strOrgFamily, Utility.getContext(this,
+                vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars,
+                "#AccessibleOrgTree", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(
+                this, strDateTo, "1"), "", "", strcAcctSchemaId, strTreeAccount);
       }
 
       if (log4j.isDebugEnabled())
@@ -371,18 +371,18 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strAccountFrom,
               strAccountTo, strcBpartnerId, strcAcctSchemaId);
         } else {
-          data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg,
-              strTreeAccount, strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars,
-                  "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars,
-                  "#AccessibleOrgTree", "ReportTrialBalance"), strDateFrom, DateTimeData
-                  .nDaysAfter(this, strDateTo, "1"), strAccountFrom, strAccountTo);
+          data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strOrgFamily,
+              Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility
+                  .getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), strDateFrom,
+              DateTimeData.nDaysAfter(this, strDateTo, "1"), strAccountFrom, strAccountTo,
+              strcAcctSchemaId, strTreeAccount);
         }
       } else {
-        data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount,
-            strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars, "#User_Client",
-                "ReportTrialBalance"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-            "", "");
+        data = ReportTrialBalanceData
+            .select(this, strDateFrom, strDateTo, strOrg, strOrgFamily, Utility.getContext(this,
+                vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars,
+                "#AccessibleOrgTree", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(
+                this, strDateTo, "1"), "", "", strcAcctSchemaId, strTreeAccount);
       }
 
       data = calculateTree(data, null, new Vector<Object>());
