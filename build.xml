@@ -258,8 +258,8 @@ compare.database.structure: refer to compare.database.structure target of databa
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
 
-    <antcall target="image.load" />
     <antcall target="build.deploy" />
+    <antcall target="image.load" />
     <!-- only restart tomcat if the restart prop was set to true -->
     <condition property="dorestart">
       <istrue value="${restart}" />
@@ -512,7 +512,6 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <antcall target="import.sample.data" />
-    <antcall target="image.load" />
 
     <!--
 		<antcall target="validate.database" />
