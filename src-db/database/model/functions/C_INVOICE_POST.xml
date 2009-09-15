@@ -413,6 +413,20 @@ cWithHoldId varchar2(32);
             User2_ID
           FROM C_INVOICE
           WHERE C_Invoice_ID=v_Record_ID;
+          -- Create Reversed invoice relation
+          INSERT
+          INTO C_Invoice_Reverse
+            (
+              C_Invoice_Reverse_ID,AD_Client_ID, AD_Org_ID,
+              IsActive, Created, CreatedBy, Updated,
+              UpdatedBy, C_Invoice_ID, Reversed_C_Invoice_ID
+            )
+          SELECT get_uuid(), AD_Client_ID, AD_Org_ID,
+              'Y', now(), CreatedBy, now(),
+              UpdatedBy, v_RInvoice_ID, C_Invoice_ID
+          FROM C_INVOICE
+          WHERE C_Invoice_ID=v_Record_ID;
+          
           --  Delete C_Invoice_Discounts inserted by the trigger
           DELETE FROM C_INVOICE_DISCOUNT WHERE C_Invoice_ID=v_RInvoice_ID;
           --  Insert discounts as in the reversed invoice
