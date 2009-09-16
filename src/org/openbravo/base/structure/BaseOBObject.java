@@ -28,6 +28,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.util.Check;
+import org.openbravo.base.util.CheckException;
 import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
@@ -68,11 +69,15 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
   protected void setDefaultValue(String propName, Object value) {
     try {
       getEntity().checkValidPropertyAndValue(propName, value);
+      Check.isNotNull(value, "Null default values are not allowed");
+      setDataValue(propName, value);
     } catch (ValidationException ve) {
+      // do not fail here so that build tasks can still continue
       log.error(ve.getMessage());
+    } catch (CheckException ce) {
+      // do not fail here so that build tasks can still continue
+      log.error(ce.getMessage());
     }
-    Check.isNotNull(value, "Null default values are not allowed");
-    setDataValue(propName, value);
   }
 
   private Object getData(String propName) {
