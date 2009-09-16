@@ -726,7 +726,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
   private boolean isHeartbeatEnabled() {
     SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
-    return sys.isEnableHeartbeat();
+    return sys.isEnableHeartbeat() != null && sys.isEnableHeartbeat();
   }
 
   /**
