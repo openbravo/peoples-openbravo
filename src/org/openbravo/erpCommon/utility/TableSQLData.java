@@ -1479,24 +1479,16 @@ public class TableSQLData implements Serializable {
     addFromField(getTableName(), getTableName(), getTableName());
     for (Enumeration<Properties> e = headers.elements(); e.hasMoreElements();) {
       Properties prop = e.nextElement();
-      switch (Integer.valueOf(prop.getProperty("AD_Reference_ID")).intValue()) {
-      case 17: // List
-      case 18: // Table
-      case 19: // TableDir
-      case 30: // Search
-      case 31: // Locator
-      case 35:
-      case 25: // Account
-      case 800011: // Product Search
+      String ref = prop.getProperty("AD_Reference_ID");
+      if (ref.equals("17") || ref.equals("18") || ref.equals("19") || ref.equals("30")
+          || ref.equals("31") || ref.equals("35") || ref.equals("25") || ref.equals("800011")) {
         addSelectField(getTableName() + "." + prop.getProperty("ColumnName"), prop
             .getProperty("ColumnName"));
         identifier(getTableName(), prop, prop.getProperty("ColumnName") + "_R", getTableName()
             + "." + prop.getProperty("ColumnName"));
-        break;
-      default:
+      } else {
         identifier(getTableName(), prop, prop.getProperty("ColumnName"), getTableName() + "."
             + prop.getProperty("ColumnName"));
-        break;
       }
     }
     setWindowFilters();
@@ -1525,35 +1517,34 @@ public class TableSQLData implements Serializable {
       return;
     else
       reference = field.getProperty("AD_Reference_ID");
-    switch (Integer.valueOf(reference).intValue()) {
-    case 17: // List
+
+    if (reference.equals("17")) {
       setListQuery(parentTableName, field.getProperty("ColumnName"), field
           .getProperty("AD_Reference_Value_ID"), identifierName, realName);
-      break;
-    case 18: // Table
+    } else if (reference.equals("18")) {
       setTableQuery(parentTableName, field.getProperty("ColumnName"), field
           .getProperty("AD_Reference_Value_ID"), identifierName, realName);
-      break;
-    case 19: // TableDir
+    } else if (reference.equals("19")) {
+      // TableDir
       setTableDirQuery(parentTableName, field.getProperty("ColumnNameSearch"), field
           .getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName,
           realName);
-      break;
-    case 35: // PAttribute
+    } else if (reference.equals("35")) {
+      // PAttribute
       setTableDirQuery(parentTableName, "M_AttributeSetInstance_ID", field
           .getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName,
           realName);
-      break;
-    case 30: // Search
+    } else if (reference.equals("30")) {
+      // Search
       setTableDirQuery(parentTableName, field.getProperty("ColumnNameSearch"), field
           .getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName,
           realName);
-      break;
-    case 32: // Image
+    } else if (reference.equals("32")) {
+      // Image
       setImageQuery(parentTableName, field.getProperty("ColumnNameSearch"), identifierName,
           realName);
-      break;
-    case 28: // Button
+    } else if (reference.equals("28")) {
+      // Button
       if (field.getProperty("AD_Reference_Value_ID") != null
           && !field.getProperty("AD_Reference_Value_ID").equals("")) {
         setListQuery(parentTableName, field.getProperty("ColumnName"), field
@@ -1561,13 +1552,11 @@ public class TableSQLData implements Serializable {
       } else
         addSelectField(formatField((parentTableName + "." + field.getProperty("ColumnName")),
             reference), identifierName);
-      break;
-    default:
+    } else {
       if (!checkTableTranslation(parentTableName, field, reference, identifierName, realName)) {
         addSelectField(formatField((parentTableName + "." + field.getProperty("ColumnName")),
             reference), identifierName);
       }
-      break;
     }
   }
 
@@ -1621,40 +1610,39 @@ public class TableSQLData implements Serializable {
       return "";
     else if (reference == null || reference.length() == 0)
       return field;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 11: // INTEGER
+
+    if (reference.equals("11")) {
+      // INTEGER
       result = "CAST(" + field + " AS INTEGER)";
-      break;
-    case 12: // AMOUNT
-    case 22: // NUMBER
-    case 26: // ROWID
-    case 29: // QUANTITY
-    case 800008: // PRICE
-    case 800019: // GENERAL QUANTITY
+    } else if (reference.equals("12")/* AMOUNT */
+        || reference.equals("22") /* NUMBER */
+        || reference.equals("23") /* ROWID */
+        || reference.equals("29") /* QUANTITY */
+        || reference.equals("800008") /* PRICE */
+        || reference.equals("800019")/* GENERAL QUANTITY */) {
       result = "TO_NUMBER(" + field + ")";
-      break;
-    case 15: // DATE
+    } else if (reference.equals("15")) {
+      // DATE
       result = "TO_CHAR("
           + field
           + (getVars() == null ? ""
               : (", '" + getVars().getSessionValue("#AD_SqlDateFormat") + "'")) + ")";
-      break;
-    case 16: // DATETIME
+    } else if (reference.equals("16")) {
+
       result = "(" + field + ")";
-      break;
-    case 24: // TIME
+    } else if (reference.equals("24")) {
+      // TIME
       result = "TO_CHAR(" + field + ", 'HH24:MI:SS')";
-      break;
-    case 20: // YESNO
+    } else if (reference.equals("20")) {
+      // YESNO
       result = "COALESCE(" + field + ", 'N')";
-      break;
-    case 23: // Binary
+    } else if (reference.equals("23")) {
+      // Binary
       result = field;
-      break;
-    default:
+    } else {
       result = "COALESCE(TO_CHAR(" + field + "),'')";
-      break;
     }
+
     return result;
   }
 

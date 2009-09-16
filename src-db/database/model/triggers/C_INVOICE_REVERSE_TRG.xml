@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER C_INVOICE_REVERSE_TRG">
+    <trigger name="C_INVOICE_REVERSE_TRG" table="C_INVOICE_REVERSE" fires="before" insert="true" update="true" delete="true" foreach="row">
+      <body><![CDATA[
+
+
+
+
+
+    /*************************************************************************
+    * The contents of this file are subject to the Openbravo  Public  License
+    * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+    * Version 1.1  with a permitted attribution clause; you may not  use this
+    * file except in compliance with the License. You  may  obtain  a copy of
+    * the License at http://www.openbravo.com/legal/license.html
+    * Software distributed under the License  is  distributed  on  an "AS IS"
+    * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    * License for the specific  language  governing  rights  and  limitations
+    * under the License.
+    * The Original Code is Openbravo ERP.
+    * The Initial Developer of the Original Code is Openbravo SL
+    * All portions are Copyright (C) 2009 Openbravo SL
+    * All Rights Reserved.
+    * Contributor(s):  ______________________________________.
+    ************************************************************************/
+    /*************************************************************************
+    * Title: Check the introduced BP is the same as the Invoice
+    ************************************************************************/
+   v_n NUMBER;
+   v_isprocessed C_Invoice.Processed%TYPE;
+   v_bpheader_id C_Invoice.C_BPARTNER_ID%TYPE;
+   v_bpreversed_id C_Invoice.C_BPARTNER_ID%TYPE;
+   
+BEGIN
+    
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
+    END IF;
+
+  IF(INSERTING OR UPDATING) THEN
+   SELECT PROCESSED, C_BPARTNER_ID
+   INTO v_isprocessed, v_bpheader_id
+   FROM C_INVOICE
+   WHERE C_INVOICE_ID=:NEW.C_INVOICE_ID;
+   
+   SELECT C_BPARTNER_ID
+   INTO v_bpreversed_id
+   FROM C_INVOICE
+   WHERE C_INVOICE_ID=:NEW.REVERSED_C_INVOICE_ID;
+   
+   IF(v_isprocessed='Y') THEN
+     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+   END IF;
+   
+   IF(v_bpheader_id <> v_bpreversed_id) THEN
+     RAISE_APPLICATION_ERROR(-20000, '@NotEqualBPartner@');
+   END IF;  
+  END IF;
+  
+  IF(DELETING) THEN
+   SELECT PROCESSED
+   INTO v_isprocessed
+   FROM C_INVOICE
+   WHERE C_INVOICE_ID=:OLD.C_INVOICE_ID;
+   
+   IF(v_isprocessed='Y') THEN
+     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+   END IF;
+   
+  END IF;
+END C_INVOICE_REVERSE_TRG
+]]></body>
+    </trigger>
+  </database>

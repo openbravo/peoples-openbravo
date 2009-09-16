@@ -65,7 +65,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="OS_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
+      <column name="OS_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="100" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

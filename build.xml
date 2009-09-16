@@ -101,6 +101,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="obx.export.CS" value="false" />
   <property name="chekPerms" value="false" />
   <property name="force" value="false" />
+  <property name="rd" value="false" />
   <property name="local" value="true" />
   <property name="apply.modules.complete.compilation" value="false" />
   <property name="calculate.core.revision" value="true"/>
@@ -259,6 +260,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
 
     <antcall target="build.deploy" />
+    <antcall target="image.load" />
     <!-- only restart tomcat if the restart prop was set to true -->
     <condition property="dorestart">
       <istrue value="${restart}" />
@@ -296,6 +298,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <target name="compile.complete.deploy">
     <antcall target="compile.complete.development" />
     <antcall target="compile.complete.war" />
+    <antcall target="image.load" />
   </target>
 
   <target name="compile.complete.development" depends="init" if="mode.class">
@@ -611,6 +614,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
+    <antcall target="image.load" />
   </target>
 
 
@@ -903,5 +907,10 @@ compare.database.structure: refer to compare.database.structure target of databa
         </tokenfilter>
       </filterchain>
     </loadfile>
+  </target>
+  
+  
+  <target name="image.load">
+    <ant dir="${base.src}" target="image.load" inheritAll="true" inheritRefs="true" />
   </target>
 </project>

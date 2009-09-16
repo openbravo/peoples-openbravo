@@ -553,6 +553,7 @@ public class OBContext implements OBNotSingleton {
         Hibernate.initialize(getCurrentOrganization().getClient());
         setCurrentClient(getCurrentOrganization().getClient());
       }
+      Hibernate.initialize(getCurrentClient().getClientInformationList());
 
       Check.isNotNull(getCurrentClient(), "Client may not be null");
       Check.isTrue(getCurrentClient().isActive(), "Current Client " + getCurrentClient().getName()

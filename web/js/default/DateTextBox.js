@@ -116,7 +116,7 @@ isValidDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
 purgeDateFormat= function(/*String*/ str_format){
   str_format = str_format.replace("mm","MM").replace("dd","DD").replace("yyyy","YYYY");
   str_format = str_format.replace("mm","MM").replace("dd","DD").replace("yy","YY");
-  str_format = str_format.replace("%D","%d").replace("%M","%m").replace("%y","%Y");
+  str_format = str_format.replace("%D","%d").replace("%M","%m");
   str_format = str_format.replace("/","-").replace("/","-").replace("/","-");
   str_format = str_format.replace(".","-").replace(".","-").replace(".","-");
   str_format = str_format.replace(":","-").replace(":","-").replace(":","-");
@@ -145,12 +145,16 @@ getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
     case "MM-DD-YYYY": 
     case "YY-MM-DDDD": 
     case "DD-MM-YYYY": 
+    case "%m-%d-%Y": 
+    case "%Y-%m-%d": 
+    case "%d-%m-%Y": 
       fullYear = true;
   }
   switch (str_dateFormat) { 
     case "MM-DD-YYYY": 
     case "MM-DD-YY": 
     case "%m-%d-%Y": 
+    case "%m-%d-%y": 
       if (dateBlock[2] < 1 || dateBlock[2] > 31) return false; 
       if (dateBlock[1] < 1 || dateBlock[1] > 12) return false; 
       if (dateBlock[3] < 1 || dateBlock[3] > 9999) return false; 
@@ -160,6 +164,7 @@ getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
     case "YYYY-MM-DD": 
     case "YY-MM-DD": 
     case "%Y-%m-%d": 
+    case "%y-%m-%d": 
       if (dateBlock[3] < 1 || dateBlock[3] > 31) return false; 
       if (dateBlock[2] < 1 || dateBlock[2] > 12) return false; 
       if (dateBlock[1] < 1 || dateBlock[1] > 9999) return false; 
@@ -169,6 +174,7 @@ getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
     case "DD-MM-YYYY": 
     case "DD-MM-YY": 
     case "%d-%m-%Y": 
+    case "%d-%m-%y": 
     default: 
       if (dateBlock[1] < 1 || dateBlock[1] > 31) return false; 
       if (dateBlock[2] < 1 || dateBlock[2] > 12) return false; 

@@ -82,7 +82,7 @@ public abstract class AcctServer {
   public String Record_ID = "";
   /** No Currency in Document Indicator */
   protected static final String NO_CURRENCY = "-1";
-  // This is just for the initialitation of the accounting
+  // This is just for the initialization of the accounting
   public String m_IsOpening = "N";
 
   public Fact[] m_fact = null;
@@ -251,7 +251,11 @@ public abstract class AcctServer {
     m_as = AcctSchema.getAcctSchemaArray(connectionProvider, m_AD_Client_ID, m_AD_Org_ID);
   } //
 
-  // Empty constructor for Accruals and Deferrals plan line posting
+  /*
+   * Empty constructor to initialize the class using reflexion, set() method should be called
+   * afterwards.
+   */
+
   public AcctServer() {
 
   }
@@ -323,7 +327,8 @@ public abstract class AcctServer {
     if (AD_Table_ID.equals("318") || AD_Table_ID.equals("800060") || AD_Table_ID.equals("800176")
         || AD_Table_ID.equals("407") || AD_Table_ID.equals("392") || AD_Table_ID.equals("259")
         || AD_Table_ID.equals("800019") || AD_Table_ID.equals("319") || AD_Table_ID.equals("321")
-        || AD_Table_ID.equals("323") || AD_Table_ID.equals("325") || AD_Table_ID.equals("224")) {
+        || AD_Table_ID.equals("323") || AD_Table_ID.equals("325") || AD_Table_ID.equals("224")
+        || AD_Table_ID.equals("472")) {
       switch (Integer.parseInt(AD_Table_ID)) {
       case 318:
         acct = new DocInvoice(AD_Client_ID, AD_Org_ID, connectionProvider);
@@ -418,14 +423,20 @@ public abstract class AcctServer {
         acct.strDateColumn = "DateAcct";
         acct.AD_Table_ID = "224";
         acct.reloadAcctSchemaArray();
-        break;/*
-               * case 472: acct = new DocMatchInv (AD_Client_ID); acct.strDateColumn =
-               * "MovementDate"; acct.reloadAcctSchemaArray(); break; case 473: acct = new
-               * DocMatchPO (AD_Client_ID); acct.strDateColumn = "MovementDate";
-               * acct.reloadAcctSchemaArray(); break; case DocProjectIssue.AD_TABLE_ID: acct = new
-               * DocProjectIssue (AD_Client_ID); acct.strDateColumn = "MovementDate";
-               * acct.reloadAcctSchemaArray(); break;
-               */
+        break;
+      case 472:
+        acct = new DocMatchInv(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "M_MatchInv";
+        acct.strDateColumn = "DateTrx";
+        acct.AD_Table_ID = "472";
+        acct.reloadAcctSchemaArray();
+        break;
+      // case 473: acct = new
+      // DocMatchPO (AD_Client_ID); acct.strDateColumn = "MovementDate";
+      // acct.reloadAcctSchemaArray(); break; case DocProjectIssue.AD_TABLE_ID: acct = new
+      // DocProjectIssue (AD_Client_ID); acct.strDateColumn = "MovementDate";
+      // acct.reloadAcctSchemaArray(); break;
+
       }
     } else {
       AcctServerData[] acctinfo = AcctServerData.getTableInfo(connectionProvider, AD_Table_ID);
@@ -1422,29 +1433,9 @@ public abstract class AcctServer {
   public abstract boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId);
 
   public String getInfo(VariablesSecureApp vars) {
-    return (Utility.messageBD(connectionProvider, "Created", vars.getLanguage()) + "=" + success /*
-                                                                                                  * +
-                                                                                                  * ", "
-                                                                                                  * +
-                                                                                                  * Utility
-                                                                                                  * .
-                                                                                                  * messageBD
-                                                                                                  * (
-                                                                                                  * this
-                                                                                                  * ,
-                                                                                                  * "Errors"
-                                                                                                  * ,
-                                                                                                  * vars
-                                                                                                  * .
-                                                                                                  * getLanguage
-                                                                                                  * (
-                                                                                                  * )
-                                                                                                  * )
-                                                                                                  * +
-                                                                                                  * "="
-                                                                                                  * +
-                                                                                                  * errors
-                                                                                                  */);
+    return (Utility.messageBD(connectionProvider, "Created", vars.getLanguage()) + "=" + success
+    // + ", " + Utility . messageBD ( this , "Errors" , vars . getLanguage ( ) ) + "=" + errors
+    );
   } // end of getInfo() method
 
   /**

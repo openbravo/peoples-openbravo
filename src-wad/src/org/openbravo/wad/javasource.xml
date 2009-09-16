@@ -37,6 +37,7 @@
   <PARAMETER id="key" name = "key" default=" "/>
   <PARAMETER id="keyParent" name = "keyParent" default=" "/>
   <PARAMETER id="keyParentT" name = "keyParentT" default=" "/>
+  <PARAMETER id="keyParentSimple" name = "keyParentSimple" default=" "/>
   <PARAMETER id="parentTab" name = "parentTab" default=" "/>
   <PARAMETER id="parentTabName" name = "parentTabName" default=" "/>
   <PARAMETER id="keyParentINP" name = "keyParentINP" default=" "/>

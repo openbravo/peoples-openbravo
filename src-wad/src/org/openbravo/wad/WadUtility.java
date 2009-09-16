@@ -2120,108 +2120,64 @@ public class WadUtility {
   public static boolean isDecimalNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 12:
-    case 22:
-      return true;
-    }
-    return false;
+    return (reference.equals("12") || reference.equals("22"));
   }
 
   public static boolean isGeneralNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 800019:
-      return true;
-    }
-    return false;
+    return reference.equals("800019");
   }
 
   public static boolean isQtyNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 29:
-      return true;
-    }
-    return false;
+    return reference.equals("29");
   }
 
   public static boolean isPriceNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 800008:
-      return true;
-    }
-    return false;
+    return reference.equals("800008");
+
   }
 
   public static boolean isIntegerNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 11:
-      return true;
-    }
-    return false;
+    return reference.equals("11");
   }
 
   public static boolean isDateField(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 15:
-      return true;
-    }
-    return false;
+    return reference.equals("15");
   }
 
   public static boolean isTimeField(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 24:
-      return true;
-    }
-    return false;
+    return reference.equals("24");
   }
 
   public static boolean isDateTimeField(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 15:
-    case 16:
-    case 24:
-      return true;
-    }
-    return false;
+
+    return reference.equals("15") || reference.equals("16") || reference.equals("24");
   }
 
   public static boolean isLikeType(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 10:
-    case 14:
-    case 34:
-      return true;
-    }
-    return false;
+    return reference.equals("10") || reference.equals("14") || reference.equals("34");
   }
 
   public static boolean isTextData(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 15:
-    case 20:
-    case 17:
-      return true;
-    }
-    return false;
+    return reference.equals("15") || reference.equals("20") || reference.equals("17");
+
   }
 
   public static boolean isSearchValueColumn(String name) {
@@ -2233,40 +2189,22 @@ public class WadUtility {
   public static boolean isSelectType(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 17:
-    case 18:
-    case 19:
-      return true;
-    }
-    return false;
+    return reference.equals("17") || reference.equals("18") || reference.equals("19");
   }
 
   public static boolean isSearchType(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 21:
-    case 25:
-    case 30:
-    case 31:
-    case 32:
-    case 35:
-    case 800013:
-    case 800011:
-      return true;
-    }
-    return false;
+    return reference.equals("21") || reference.equals("25") || reference.equals("30")
+        || reference.equals("31") || reference.equals("32") || reference.equals("35")
+        || reference.equals("800013") || reference.equals("800011")
+    /* || reference.equals("4AA6C3BE9D3B4D84A3B80489505A23E5") */;
   }
 
   public static boolean isLinkType(String reference) {
     if (reference == null || reference.equals(""))
       return false;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 800101:
-      return true;
-    }
-    return false;
+    return reference.equals("800101");
   }
 
   public static String sqlCasting(ConnectionProvider conn, String reference, String referencevalue) {

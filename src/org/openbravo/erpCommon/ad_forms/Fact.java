@@ -599,4 +599,12 @@ public class Fact {
     return line;
   } // balanceAccounting
 
+  public AcctSchema getM_acctSchema() {
+    return m_acctSchema;
+  }
+
+  public void setM_acctSchema(AcctSchema schema) {
+    m_acctSchema = schema;
+  }
+
 }

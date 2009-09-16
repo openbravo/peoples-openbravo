@@ -30,6 +30,7 @@ import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.OBInterceptor;
 
 /**
  * Base business object, the root of the inheritance tree for all business objects. The class model
@@ -231,9 +232,12 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
   }
 
   /**
-   * Returns true if the id is null or the object is set to new explicitly.
+   * Returns true if the id is null or the object is set to new explicitly. After flushing the
+   * object to the database then new object is set to false.
    * 
-   * @return false if the id is set and this is not a new object, true otherwise
+   * @return false if the id is set and this is not a new object, true otherwise.
+   * 
+   * @see OBInterceptor#postFlush(java.util.Iterator)
    */
   public boolean isNewOBObject() {
     return getId() == null || newOBObject;
