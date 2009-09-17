@@ -685,7 +685,9 @@ public class ImportModule {
       rt[i].setDescription((String) dynModule.get("DESCRIPTION"));
       rt[i].setHelp((String) dynModule.get("HELP"));
       rt[i].setDependencies(dyanaBeanToDependencies(dynDependencies, rt[i].getModuleID()));
-      rt[i].setIsCommercial(((String) dynModule.get("ISCOMMERCIAL")).equals("Y"));
+      // old modules don't have iscommercial column
+      Object isCommercial = dynModule.get("ISCOMMERCIAL");
+      rt[i].setIsCommercial(isCommercial != null && ((String) isCommercial).equals("Y"));
       rt[i].setModuleVersionID((String) dynModule.get("AD_MODULE_ID")); // To
       // show
       // details
