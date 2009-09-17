@@ -226,17 +226,17 @@ public class OBScheduler {
   }
 
   /**
-   * @param sched
+   * @param schdlr
    * @throws SchedulerException
    */
-  public void initialize(Scheduler sched) throws SchedulerException {
-    this.ctx = sched.getContext();
-    this.sched = sched;
+  public void initialize(Scheduler schdlr) throws SchedulerException {
+    this.ctx = schdlr.getContext();
+    this.sched = schdlr;
 
     final ProcessMonitor monitor = new ProcessMonitor("Monitor." + OB_GROUP, this.ctx);
-    sched.addSchedulerListener(monitor);
-    sched.addGlobalJobListener(monitor);
-    sched.addGlobalTriggerListener(monitor);
+    schdlr.addSchedulerListener(monitor);
+    schdlr.addGlobalJobListener(monitor);
+    schdlr.addGlobalTriggerListener(monitor);
 
     dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
     ProcessRequestData[] data = null;
