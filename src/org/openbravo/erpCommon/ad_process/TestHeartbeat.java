@@ -69,7 +69,10 @@ public class TestHeartbeat extends HttpSecureAppServlet {
     final boolean isHearbeatEnabled = sysInfo.isEnableHeartbeat() == null ? false : sysInfo
         .isEnableHeartbeat();
 
-    if (isHearbeatEnabled) { // Disable
+    final String clickedButton = vars.getStringParameter("inpLastFieldChanged");
+
+    if (isHearbeatEnabled || clickedButton.equalsIgnoreCase("inpisheartbeatactive")) {
+      // Disable Heartbeat
       try {
         // Deactivating the process at SystemInfo
         sysInfo.setEnableHeartbeat(false);
@@ -101,10 +104,10 @@ public class TestHeartbeat extends HttpSecureAppServlet {
 
       } catch (Exception e) {
         log4j.error(e.getMessage(), e);
-        advisePopUp(request, response, "ERROR", "Heartbeat Configuration", e.getMessage());
+        advisePopUpRefresh(request, response, "ERROR", "Heartbeat Configuration", e.getMessage());
       }
 
-    } else { // Enable
+    } else { // Enable Heartbeat
 
       try {
 
