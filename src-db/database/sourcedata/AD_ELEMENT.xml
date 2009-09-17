@@ -21456,8 +21456,8 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400017-->  <COLUMNNAME><![CDATA[Isheartbeatactive]]></COLUMNNAME>
 <!--1005400017-->  <NAME><![CDATA[Enable Heartbeat]]></NAME>
 <!--1005400017-->  <PRINTNAME><![CDATA[Enable Heartbeat]]></PRINTNAME>
-<!--1005400017-->  <DESCRIPTION><![CDATA[Enable/Disable Heartbeat process]]></DESCRIPTION>
-<!--1005400017-->  <HELP><![CDATA[Enable/Disable Heartbeat process]]></HELP>
+<!--1005400017-->  <DESCRIPTION><![CDATA[Disable Heartbeat process]]></DESCRIPTION>
+<!--1005400017-->  <HELP><![CDATA[Disable Heartbeat process]]></HELP>
 <!--1005400017-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005400017--></AD_ELEMENT>
 
