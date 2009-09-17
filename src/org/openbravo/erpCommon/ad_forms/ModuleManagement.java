@@ -229,7 +229,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       out.println(xmlDocument.print());
       out.close();
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
     }
   }
 
@@ -265,7 +265,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
             + Utility.messageBD(this, "InstallUpdatesNow", lang) + "</a>";
       }
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
     }
     return rt;
   }
@@ -549,7 +549,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         final WebServiceImpl ws = loc.getWebService();
         module = ws.moduleDetail(recordId);
       } catch (final Exception e) {
-        e.printStackTrace();
+        log4j.error(e);
       }
     } else {
       discard[4] = "core";
@@ -641,7 +641,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         discard[5] = "discardContinue";
       }
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
       message = new OBError();
       message.setType("Error");
       message.setTitle(Utility.messageBD(this, message.getType(), vars.getLanguage()));
@@ -893,7 +893,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
             response
                 .sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
           } catch (final Exception ex) {
-            ex.printStackTrace();
+            log4j.error(ex);
           }
         }
       }
@@ -907,11 +907,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
       message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       message.setMessage(Utility.messageBD(this, "WSError", vars.getLanguage()));
       vars.setMessage("ModuleManagement", message);
-      e.printStackTrace();
+      log4j.error(e);
       try {
         response.sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
       } catch (final Exception ex) {
-        ex.printStackTrace();
+        log4j.error(ex);
       }
     }
     if (modules != null && modules.length > 0) {
@@ -952,7 +952,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       } else
         return new String[0];
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
       return (new String[0]);
     }
   }
@@ -968,7 +968,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       } else
         return new String[0];
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
       return (new String[0]);
     }
   }

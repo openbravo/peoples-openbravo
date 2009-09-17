@@ -222,7 +222,7 @@ public class ImportModule {
             "Cannot perform installation correctly: " + errors.getMessage()
                 + (force ? ". Forced anyway" : ""), "E");
       } catch (final ServletException ex) {
-        ex.printStackTrace();
+        log4j.error(ex);
       }
     }
     return checked;
@@ -316,13 +316,13 @@ public class ImportModule {
         }
       }
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
       addLog(e.toString(), MSG_ERROR);
       try {
         ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "", e
             .toString(), "E");
       } catch (final ServletException ex) {
-        ex.printStackTrace();
+        log4j.error(ex);
       }
       rollback();
     }
@@ -342,7 +342,7 @@ public class ImportModule {
       loc = new WebServiceImplServiceLocator();
       ws = loc.getWebService();
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
       addLog("@CouldntConnectToWS@", MSG_ERROR);
       try {
         ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "",
@@ -463,7 +463,7 @@ public class ImportModule {
         } catch (final Exception e) {
           e.printStackTrace();
         }
-        log4j.info("deleting files...");
+        log4j.info("Removing old core version files...");
         Utility.deleteDir(core);
       } else { // updating a module different than core
 
@@ -481,7 +481,7 @@ public class ImportModule {
             Zip.zip(obDir + "/modules/" + moduleInDB.javapackage, obDir + "/backup_install/"
                 + moduleInDB.javapackage + "-" + moduleInDB.version + ".zip");
             // Delete directory to be updated
-            log4j.info("deleting files...");
+            log4j.info("Removing old module version files...");
             Utility.deleteDir(new File(obDir + "/modules/" + moduleInDB.javapackage));
           } catch (final Exception e) {
             log4j.error(e);
@@ -577,7 +577,7 @@ public class ImportModule {
       ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "",
           "Rollback installation", "E");
     } catch (final ServletException ex) {
-      ex.printStackTrace();
+      log4j.error(ex);
     }
     if (modulesToInstall != null && modulesToInstall.length > 0) {
       for (int i = 0; i < modulesToInstall.length; i++) {
@@ -588,7 +588,7 @@ public class ImportModule {
           ImportModuleData.deleteDBPrefix(pool, modulesToInstall[i].getModuleID());
           ImportModuleData.deleteModule(pool, modulesToInstall[i].getModuleID());
         } catch (final Exception e) {
-          e.printStackTrace();
+          log4j.error(e);
           addLog("Error deleting module " + modulesToInstall[i].getName() + " from db. "
               + e.getMessage(), MSG_ERROR);
         }
@@ -613,7 +613,7 @@ public class ImportModule {
             Zip.unzip(obDir + "/backup_install/" + modulesToUpdate[i].getPackageName() + "-"
                 + modulesToUpdate[i].getVersionNo() + ".zip", obDir);
           } catch (final Exception e) {
-            e.printStackTrace();
+            log4j.error(e);
           }
         } else { // restore regular modules
           try {
@@ -622,7 +622,7 @@ public class ImportModule {
                 + modulesToUpdate[i].getVersionNo() + ".zip", obDir + "/modules/"
                 + modulesToUpdate[i].getPackageName());
           } catch (final Exception e) {
-            e.printStackTrace();
+            log4j.error(e);
           }
         }
       }
@@ -685,7 +685,9 @@ public class ImportModule {
       rt[i].setDescription((String) dynModule.get("DESCRIPTION"));
       rt[i].setHelp((String) dynModule.get("HELP"));
       rt[i].setDependencies(dyanaBeanToDependencies(dynDependencies, rt[i].getModuleID()));
-      rt[i].setIsCommercial(((String) dynModule.get("ISCOMMERCIAL")).equals("Y"));
+      // old modules don't have iscommercial column
+      Object isCommercial = dynModule.get("ISCOMMERCIAL");
+      rt[i].setIsCommercial(isCommercial != null && ((String) isCommercial).equals("Y"));
       rt[i].setModuleVersionID((String) dynModule.get("AD_MODULE_ID")); // To
       // show
       // details
@@ -1080,7 +1082,7 @@ public class ImportModule {
         }
       }
     } catch (final ServletException e) {
-      e.printStackTrace();
+      log4j.error(e);
     }
   }
 
@@ -1108,12 +1110,12 @@ public class ImportModule {
         updates = ws.moduleScanForUpdates(currentlyInstalledModules);
       } catch (final Exception e) {
         // do nothing just log the error
-        e.printStackTrace();
+        log4j.error(e);
         try {
           ImportModuleData.insertLog(conn, user, "", "", "",
               "Scan for updates: Couldn't contact with webservice server", "E");
         } catch (final ServletException ex) {
-          ex.printStackTrace();
+          log4j.error(e);
         }
         return updateModules; // return empty hashmap
       }
@@ -1135,16 +1137,16 @@ public class ImportModule {
         ImportModuleData.insertLog(conn, (vars == null ? "0" : vars.getUser()), "", "", "",
             "Total: found " + updateModules.size() + " updates", "S");
       } catch (final ServletException ex) {
-        ex.printStackTrace();
+        log4j.error(ex);
       }
       return updateModules;
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
       try {
         ImportModuleData.insertLog(conn, (vars == null ? "0" : vars.getUser()), "", "", "",
             "Scan for updates: Error: " + e.toString(), "E");
       } catch (final ServletException ex) {
-        ex.printStackTrace();
+        log4j.error(ex);
       }
       return new HashMap<String, String>();
     }
@@ -1164,7 +1166,7 @@ public class ImportModule {
       parentId = ImportModuleData.getParentNode(conn, node);
     } catch (final ServletException e) {
       // do nothing just stop adding elements
-      e.printStackTrace();
+      log4j.error(e);
       return;
     }
     if (parentId == null || parentId.equals(""))
@@ -1187,7 +1189,7 @@ public class ImportModule {
     try {
       data = ImportModuleData.selectInstalled(conn);
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
     }
     if (data != null) {
       for (int i = 0; i < data.length; i++) {

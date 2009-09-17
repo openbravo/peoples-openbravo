@@ -81,7 +81,7 @@ public class ModuleUtiltiy {
 
       return rt;
     } catch (Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
       return modules;
     }
   }
@@ -164,13 +164,13 @@ public class ModuleUtiltiy {
       loc = new WebServiceImplServiceLocator();
       ws = loc.getWebService();
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
       im.addLog("@CouldntConnectToWS@", ImportModule.MSG_ERROR);
       try {
         ImportModuleData.insertLog(ImportModule.pool, (im.vars == null ? "0" : im.vars.getUser()),
             "", "", "", "Couldn't contact with webservice server", "E");
       } catch (final ServletException ex) {
-        ex.printStackTrace();
+        log4j.error(ex);
       }
       return null;
     }
