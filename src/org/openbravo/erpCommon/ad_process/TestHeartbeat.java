@@ -20,6 +20,9 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -32,6 +35,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Process;
@@ -42,30 +46,32 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
 import org.openbravo.scheduling.ProcessRunner;
 import org.openbravo.scheduling.ProcessBundle.Channel;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class TestHeartbeat extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
   private static final String HB_Process_ID = "1005800000";
+  private static final String HB_tabId = "1005400005";
   private static final String SystemInfomation_ID = "0";
-  private static final String WEEKLY = "5";
+  private static final String EVERY_N_DAYS = "N";
   private static final String SCHEDULE = "S";
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    final boolean isHearbeatEnabled = vars.getRequiredStringParameter("inptestproxy").equals("Y");
+
+    final Process HBProcess = OBDal.getInstance().get(Process.class, HB_Process_ID);
+    final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class,
+        SystemInfomation_ID);
+    final boolean isHearbeatEnabled = sysInfo.isEnableHeartbeat() == null ? false : sysInfo
+        .isEnableHeartbeat();
 
     if (isHearbeatEnabled) { // Disable
       try {
-
-        // Getting the process
-        final Process HBProcess = OBDal.getInstance().get(Process.class, HB_Process_ID);
-
         // Deactivating the process at SystemInfo
-        final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class,
-            SystemInfomation_ID);
         sysInfo.setEnableHeartbeat(false);
         sysInfo.setTestHeartbeat("N");
         OBDal.getInstance().save(sysInfo);
@@ -91,7 +97,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         }
 
         String msg = Utility.messageBD(this, "HB_SUCCESS", vars.getLanguage());
-        advisePopUp(request, response, "SUCCESS", "Heartbeat Configuration", msg);
+        advisePopUpRefresh(request, response, "SUCCESS", "Heartbeat Configuration", msg);
 
       } catch (Exception e) {
         log4j.error(e.getMessage(), e);
@@ -102,19 +108,15 @@ public class TestHeartbeat extends HttpSecureAppServlet {
 
       try {
 
-        // Activating the process
-        final Process HBProcess = OBDal.getInstance().get(Process.class, HB_Process_ID);
         HBProcess.setActive(true);
         OBDal.getInstance().save(HBProcess);
 
         // Activating the process at SystemInfo
-        final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class,
-            SystemInfomation_ID);
         sysInfo.setEnableHeartbeat(true);
         sysInfo.setTestHeartbeat("Y");
         OBDal.getInstance().save(sysInfo);
 
-        // Committing because sqlc uses a different connection
+        // Committing because SQLC uses a different connection
         OBDal.getInstance().commitAndClose();
 
         // Making the first beat
@@ -129,7 +131,25 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         final ProcessRun processRunResult = prl.get(0);
 
         if (processRunResult.getStatus().equals("ERR")) {
-          advisePopUp(request, response, "ERROR", "Heartbeat Configuration");
+          // Restoring not active state
+          sysInfo.setEnableHeartbeat(false);
+          sysInfo.setTestHeartbeat("N");
+          OBDal.getInstance().save(sysInfo);
+          OBDal.getInstance().commitAndClose();
+
+          String msg = Utility.messageBD(this, "HB_INTERNAL_ERROR", vars.getLanguage());
+          msg += "\n" + processRunResult.getLog();
+          msg = Utility.formatMessageBDToHtml(msg);
+
+          if (vars.commandIn("CONFIGURE")) {
+            OBError err = new OBError();
+            err.setType("Error");
+            err.setMessage(msg);
+            vars.setMessage(HB_tabId, err);
+            printPageRedirect(response, vars);
+          } else {
+            advisePopUpRefresh(request, response, "ERROR", "Heartbeat Configuration", msg);
+          }
           return;
         }
 
@@ -147,9 +167,18 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           pr = OBProvider.getInstance().get(ProcessRequest.class);
           pr.setProcess(HBProcess);
           pr.setActive(true);
+
+          // Schedule the next beat in 7 days
+          Calendar c1 = Calendar.getInstance();
+          c1.add(Calendar.DATE, 7);
+          pr.setStartDate(c1.getTime());
+
+          // At today's same time
+          pr.setStartTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+
           pr.setSecurityBasedOnRole(true);
-          pr.setFrequency(WEEKLY);
-          pr.setFriday(true);
+          pr.setDailyOption(EVERY_N_DAYS);
+          pr.setDailyInterval(Long.parseLong("7"));
           pr.setTiming(SCHEDULE);
           final ProcessContext context = new ProcessContext(vars);
           pr.setOpenbravoContext(context.toString());
@@ -160,6 +189,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
 
         OBDal.getInstance().save(pr);
 
+        // SQLC uses a different connection
         OBDal.getInstance().commitAndClose();
 
         final ProcessBundle bundle2 = ProcessBundle.request(pr.getId(), vars, this);
@@ -170,12 +200,28 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         }
 
         String msg = Utility.messageBD(this, "HB_SUCCESS", vars.getLanguage());
-        advisePopUp(request, response, "SUCCESS", "Heartbeat Configuration", msg);
+        advisePopUpRefresh(request, response, "SUCCESS", "Heartbeat Configuration", msg);
 
       } catch (Exception e) {
         log4j.error(e.getMessage(), e);
-        advisePopUp(request, response, "ERROR", "Heartbeat Configuration", e.getMessage());
+        advisePopUpRefresh(request, response, "ERROR", "Heartbeat Configuration", e.getMessage());
       }
     }
+  }
+
+  private void printPageRedirect(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+
+    XmlDocument xmlDocument = null;
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/HeartbeatRedirect")
+        .createXmlDocument();
+
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    out.println(xmlDocument.print());
+    out.close();
   }
 }

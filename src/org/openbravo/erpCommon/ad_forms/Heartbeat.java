@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.ServletConfig;
@@ -65,13 +64,8 @@ public class Heartbeat extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT", "DEFAULT_MODULE")) {
       printPageDataSheet(response, vars);
-    } else if (vars.commandIn("DISABLE")) {
-      HeartbeatData.disableHeartbeat(myPool);
-    } else if (vars.commandIn("POSTPONE")) {
-      final Calendar cal = Calendar.getInstance();
-      cal.add(Calendar.DATE, 2);
-      final String date = new SimpleDateFormat(vars.getJavaDateFormat()).format(cal.getTime());
-      HeartbeatData.postpone(myPool, date);
+    } else if (vars.commandIn("CONFIGURE")) {
+      response.sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command=CONFIGURE");
     } else
       pageError(response);
   }
