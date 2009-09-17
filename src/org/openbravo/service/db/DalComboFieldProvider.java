@@ -20,18 +20,33 @@
 package org.openbravo.service.db;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.data.FieldProvider;
 
 /**
  * Creates a {@link FieldProvider} which reads data from a {@link BaseOBObject} and sets the correct
- * fields to populate a combobox.
+ * fields to populate a combobox. The {@link BaseOBObject#getIdentifier()} and the
+ * {@link BaseOBObject#getId()} a are used to fill this field provider. The id is used to fill the
+ * value of the combo select option, the identifier is used to set the display of the combo select
+ * option.
  * 
  * @author mtaal
  */
-public class DalComboFieldProvider extends DalMapFieldProvider {
+public class DalComboFieldProvider implements FieldProvider {
+
+  private Map<String, String> values = new HashMap<String, String>();
+
+  public String getField(String fieldName) {
+    return values.get(fieldName);
+  }
+
+  public void setValue(String fieldName, String value) {
+    values.put(fieldName, value);
+  }
 
   /**
    * Create an array of field providers from a list of {@link BaseOBObject}.
