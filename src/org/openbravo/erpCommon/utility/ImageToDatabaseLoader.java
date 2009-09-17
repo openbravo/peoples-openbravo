@@ -24,7 +24,6 @@ public class ImageToDatabaseLoader extends BaseDalInitializingTask {
     try {
       String paths[] = imagePaths.split(",");
       String properties[] = propertyNames.split(",");
-      Image[] images = new Image[paths.length];
       for (int i = 0; i < paths.length; i++) {
         if (OBDal.getInstance().get(SystemInformation.class, "0").get(properties[i]) == null) {
           File f = new File(basePath + File.separator + paths[i]);

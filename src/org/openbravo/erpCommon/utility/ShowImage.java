@@ -48,33 +48,33 @@ public class ShowImage extends HttpSecureAppServlet {
       ServletException {
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
-    OBContext.getOBContext().setInAdministratorMode(true);
-
-    String id = vars.getStringParameter("id");
-    Image img = null;
+    boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
     try {
-      img = OBDal.getInstance().get(Image.class, id);
-    } catch (Exception e) {
-      log4j.error(e);
-    }
-
-    if (img != null) {
-      byte[] imageBytes = img.getBindaryData();
-      if (imageBytes != null) {
-        OutputStream out = response.getOutputStream();
-        response.setContentLength(imageBytes.length);
-        out.write(imageBytes);
-        out.close();
+      String id = vars.getStringParameter("id");
+      Image img = null;
+      try {
+        img = OBDal.getInstance().get(Image.class, id);
+      } catch (Exception e) {
+        log4j.error("Could not load image from database", e);
       }
-    } else { // If there is not image to show return blank.gif
-      String sourcePath = vars.getSessionValue("#sourcePath");
-      OutputStream out = response.getOutputStream();
-      Utility.dumpFile(sourcePath + "/web/images/blank.gif", out);
-      out.close();
 
+      if (img != null) {
+        byte[] imageBytes = img.getBindaryData();
+        if (imageBytes != null) {
+          OutputStream out = response.getOutputStream();
+          response.setContentLength(imageBytes.length);
+          out.write(imageBytes);
+          out.close();
+        }
+      } else { // If there is not image to show return blank.gif
+        String sourcePath = vars.getSessionValue("#sourcePath");
+        OutputStream out = response.getOutputStream();
+        Utility.dumpFile(sourcePath + "/web/images/blank.gif", out);
+        out.close();
+
+      }
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(adminMode);
     }
-
-    OBContext.getOBContext().setInAdministratorMode(adminMode);
   }
 }
