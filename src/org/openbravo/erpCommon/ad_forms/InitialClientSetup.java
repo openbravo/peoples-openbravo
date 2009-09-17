@@ -576,7 +576,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         OBDal.getInstance().save(yourCompanyBigImage);
       }
 
-      if (sys.getYourCompanyBigImage() != null) {
+      if (sys.getYourCompanyDocumentImage() != null) {
         Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
         yourCompanyDocumentImage.setBindaryData(sys.getYourCompanyDocumentImage().getBindaryData());
         yourCompanyDocumentImage.setName(sys.getYourCompanyBigImage().getName());
