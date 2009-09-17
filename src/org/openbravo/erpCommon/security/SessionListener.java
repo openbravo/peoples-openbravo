@@ -150,7 +150,6 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
     } catch (SocketTimeoutException e) {
       log.error("Timeout connecting to " + serverUrl + " to check session " + sessionId);
     } catch (Exception e) {
-      System.out.println(e);
       log.error("Error checking remote session " + sessionId + " in context " + serverUrl, e);
     }
     return false;
