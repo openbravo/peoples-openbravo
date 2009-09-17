@@ -61653,11 +61653,13 @@ And Release features, bla, bla, bla]]></MSGTEXT>
 <!--1005800002-->  <VALUE><![CDATA[HB_WELCOME]]></VALUE>
 <!--1005800002-->  <MSGTEXT><![CDATA[Welcome to Openbravo ERP!
 
-To help us improve the software quality and understand its worldwide use, we invite you to configure the Heartbeat. This tool sends Openbravo periodic updates regarding your technical system specifications (e.g. Operating System, Database, and ERP Version). See Help window in Heartbeat Configuration page for information on data processing.
+To help us improve the software quality and understand its worldwide use, we invite you to configure the Heartbeat. This tool sends Openbravo periodic updates regarding your technical system specifications (e.g. Operating System, Database, and ERP Version). See Help window in Heartbeat Configuration page for information on data processing. You can disable this feature from that window.
 
 To say thanks, configuring the Heartbeat will automatically notify you about specific updates to your installation via an alert (e.g. Openbravo patches, new versions tested with your database).
 
-Thank you for downloading and supporting our open source ERP.]]></MSGTEXT>
+Thank you for downloading and supporting our open source ERP.
+
+Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1005800002-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1005800002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005800002--></AD_MESSAGE>
@@ -63531,13 +63533,15 @@ Deploy the war file into the server to make the changes available.]]></MSGTEXT>
 <!--272961BF12DB4930A0F8EDDADE8827CA-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--272961BF12DB4930A0F8EDDADE8827CA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--272961BF12DB4930A0F8EDDADE8827CA-->  <VALUE><![CDATA[HB_WELCOME_MODULE]]></VALUE>
-<!--272961BF12DB4930A0F8EDDADE8827CA-->  <MSGTEXT><![CDATA[Welcome to Openbravo ERP!
+<!--272961BF12DB4930A0F8EDDADE8827CA-->  <MSGTEXT><![CDATA[The Heartbeat is disabled in this Openbravo ERP instance.
 
 To help us improve the software quality and understand its worldwide use, we invite you to configure the Heartbeat before you install or update extension modules. This tool sends Openbravo periodic updates regarding your technical system specifications (e.g. Operating System, Database, and ERP Version). See Help window in Heartbeat Configuration page for information on data processing.
 
 To say thanks, configuring the Heartbeat will automatically notify you about specific updates to your installation via an alert (e.g. Openbravo patches, new versions tested with your database).
 
-Thank you for downloading and supporting our open source ERP.]]></MSGTEXT>
+Thank you for downloading and supporting our open source ERP.
+
+Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--272961BF12DB4930A0F8EDDADE8827CA-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--272961BF12DB4930A0F8EDDADE8827CA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--272961BF12DB4930A0F8EDDADE8827CA--></AD_MESSAGE>
