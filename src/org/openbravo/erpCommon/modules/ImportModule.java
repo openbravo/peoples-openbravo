@@ -463,7 +463,7 @@ public class ImportModule {
         } catch (final Exception e) {
           e.printStackTrace();
         }
-        log4j.info("deleting files...");
+        log4j.info("Removing old core version files...");
         Utility.deleteDir(core);
       } else { // updating a module different than core
 
@@ -481,7 +481,7 @@ public class ImportModule {
             Zip.zip(obDir + "/modules/" + moduleInDB.javapackage, obDir + "/backup_install/"
                 + moduleInDB.javapackage + "-" + moduleInDB.version + ".zip");
             // Delete directory to be updated
-            log4j.info("deleting files...");
+            log4j.info("Removing old module version files...");
             Utility.deleteDir(new File(obDir + "/modules/" + moduleInDB.javapackage));
           } catch (final Exception e) {
             log4j.error(e);
