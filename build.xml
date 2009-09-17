@@ -260,7 +260,6 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
 
     <antcall target="build.deploy" />
-    <antcall target="image.load" />
     <!-- only restart tomcat if the restart prop was set to true -->
     <condition property="dorestart">
       <istrue value="${restart}" />
@@ -298,7 +297,6 @@ compare.database.structure: refer to compare.database.structure target of databa
   <target name="compile.complete.deploy">
     <antcall target="compile.complete.development" />
     <antcall target="compile.complete.war" />
-    <antcall target="image.load" />
   </target>
 
   <target name="compile.complete.development" depends="init" if="mode.class">
@@ -513,6 +511,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <antcall target="import.sample.data" />
+    <antcall target="load.logoimages" />
 
     <!--
 		<antcall target="validate.database" />
@@ -614,7 +613,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
-    <antcall target="image.load" />
+    <antcall target="load.logoimages" />
   </target>
 
 
@@ -910,7 +909,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
   
   
-  <target name="image.load">
-    <ant dir="${base.src}" target="image.load" inheritAll="true" inheritRefs="true" />
+  <target name="load.logoimages">
+    <ant dir="${base.src}" target="load.logoimages" inheritAll="true" inheritRefs="true" />
   </target>
 </project>

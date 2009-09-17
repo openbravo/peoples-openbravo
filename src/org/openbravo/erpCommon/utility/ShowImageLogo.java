@@ -28,8 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
@@ -49,10 +51,11 @@ public class ShowImageLogo extends HttpBaseServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    boolean loginWindow = false;
+    String logo = vars.getStringParameter("logo");
+    if (logo == null || logo.equals(""))
+      return;
     boolean adminMode = false;
     if (OBContext.getOBContext() == null) {
-      loginWindow = true;
       OBContext.setAdminContext();
     } else {
       adminMode = OBContext.getOBContext().isInAdministratorMode();
@@ -60,23 +63,19 @@ public class ShowImageLogo extends HttpBaseServlet {
     try {
       OBContext.getOBContext().setInAdministratorMode(true);
 
-      String logo = vars.getStringParameter("logo");
-      if (logo == null || logo.equals(""))
-        return;
-
       Image img = null;
       if (logo.equals("yourcompanylogin")) {
         img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyLoginImage();
       } else if (logo.equals("youritservicelogin")) {
         img = OBDal.getInstance().get(SystemInformation.class, "0").getYourItServiceLoginImage();
       } else if (logo.equals("yourcompanymenu")) {
-        img = OBContext.getOBContext().getCurrentClient().getClientInformationList().get(0)
-            .getYourCompanyMenuImage();
+        img = OBDal.getInstance().get(ClientInformation.class,
+            OBContext.getOBContext().getCurrentClient().getId()).getYourCompanyMenuImage();
         if (img == null)
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyMenuImage();
       } else if (logo.equals("yourcompanybig")) {
-        img = OBContext.getOBContext().getCurrentClient().getClientInformationList().get(0)
-            .getYourCompanyBigImage();
+        img = OBDal.getInstance().get(ClientInformation.class,
+            OBContext.getOBContext().getCurrentClient().getId()).getYourCompanyBigImage();
         if (img == null)
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyBigImage();
       } else if (logo.equals("yourcompanydoc")) {
@@ -89,21 +88,41 @@ public class ShowImageLogo extends HttpBaseServlet {
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyDocumentImage();
       } else
         return;
+      byte[] imageBytes = null;
       if (img != null) {
-        byte[] imageBytes = img.getBindaryData();
-        if (imageBytes != null) {
-          OutputStream out = response.getOutputStream();
-          response.setContentLength(imageBytes.length);
-          out.write(imageBytes);
-          out.close();
+        imageBytes = img.getBindaryData();
+      } else {
+        String imagePath = null;
+        if (logo.equals("yourcompanylogin")) {
+          imagePath = "web/images/CompanyLogo_big.png";
+        } else if (logo.equals("youritservicelogin")) {
+          imagePath = "web/images/SupportLogo_big.png";
+        } else if (logo.equals("yourcompanymenu")) {
+          imagePath = "web/images/CompanyLogo_small.png";
+        } else if (logo.equals("yourcompanybig")) {
+          imagePath = "web/skins/Default/Login/initialOpenbravoLogo.png";
+        } else if (logo.equals("yourcompanydoc")) {
+          imagePath = "web/images/CompanyLogo_big.png";
         }
-      } else { // If there is not image to show return blank.gif
-        String sourcePath = vars.getSessionValue("#sourcePath");
         OutputStream out = response.getOutputStream();
-        Utility.dumpFile(sourcePath + "/web/images/blank.gif", out);
+        if (imagePath != null) {
+          Utility.dumpFile(OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
+              "source.path")
+              + "/" + imagePath, out);
+        } else {
+          // If there is not image to show return blank.gif
+          String sourcePath = vars.getSessionValue("#sourcePath");
+          Utility.dumpFile(sourcePath + "/web/images/blank.gif", out);
+        }
         out.close();
-
       }
+      if (imageBytes != null) {
+        OutputStream out = response.getOutputStream();
+        response.setContentLength(imageBytes.length);
+        out.write(imageBytes);
+        out.close();
+      }
+
     } finally {
       OBContext.getOBContext().setInAdministratorMode(adminMode);
     }
