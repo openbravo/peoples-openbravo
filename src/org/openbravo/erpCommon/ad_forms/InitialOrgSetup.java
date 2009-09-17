@@ -526,7 +526,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     // Add images
     Organization newOrganization = OBDal.getInstance().get(Organization.class, AD_Org_ID);
     Client organizationClient = OBDal.getInstance().get(Client.class, AD_Client_ID);
-    if (organizationClient.getClientInformationList() != null) {
+    if (organizationClient.getClientInformationList().get(0).getYourCompanyDocumentImage() != null) {
       Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
       yourCompanyDocumentImage.setBindaryData(organizationClient.getClientInformationList().get(0)
           .getYourCompanyDocumentImage().getBindaryData());
