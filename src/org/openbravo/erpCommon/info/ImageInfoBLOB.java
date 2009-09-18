@@ -73,7 +73,6 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
 
       printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId);
     } else if (vars.commandIn("SAVE")) {
-      boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
       try {
         final FileItem fi = vars.getMultiFile("inpFile");
         byte[] bytea = fi.get();
@@ -97,7 +96,6 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         PrintWriter writer = response.getWriter();
         writeRedirect(writer, image.getId(), columnName);
       } finally {
-        OBContext.getOBContext().setInAdministratorMode(adminMode);
       }
     } else if (vars.commandIn("DELETE")) {
       if (imageID != null && !imageID.equals("")) {
