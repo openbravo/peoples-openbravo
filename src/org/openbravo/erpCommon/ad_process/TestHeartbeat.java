@@ -122,12 +122,6 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         HBProcess.setActive(true);
         OBDal.getInstance().save(HBProcess);
 
-        // Activating the process at SystemInfo
-        sysInfo.setEnableHeartbeat(true);
-        sysInfo.setTestHeartbeat("Y");
-        OBDal.getInstance().save(sysInfo);
-
-        // Committing because SQLC uses a different connection
         OBDal.getInstance().commitAndClose();
 
         // Sending beat
@@ -135,13 +129,9 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         final String beatExecutionId = new ProcessRunner(bundle).execute(this);
 
         // Getting beat result
-        final OBCriteria<ProcessRun> runCriteria = OBDal.getInstance().createCriteria(
-            ProcessRun.class);
-        runCriteria.add(Expression.eq(ProcessRun.PROPERTY_ID, beatExecutionId));
-        final List<ProcessRun> prl = runCriteria.list();
-        final ProcessRun processRunResult = prl.get(0);
+        final ProcessRun result = OBDal.getInstance().get(ProcessRun.class, beatExecutionId);
 
-        if (processRunResult.getStatus().equals("ERR")) {
+        if (result.getStatus().equals("ERR")) {
           // Restoring not active state
           sysInfo.setEnableHeartbeat(false);
           sysInfo.setTestHeartbeat("N");
@@ -149,7 +139,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           OBDal.getInstance().commitAndClose();
 
           String msg = Utility.messageBD(this, "HB_INTERNAL_ERROR", vars.getLanguage());
-          msg += "\n" + processRunResult.getLog();
+          msg += "\n" + result.getLog();
           msg = Utility.formatMessageBDToHtml(msg);
 
           if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE")) {
@@ -174,29 +164,28 @@ public class TestHeartbeat extends HttpSecureAppServlet {
 
         ProcessRequest pr = null;
 
-        if (requestList.size() == 0) {
+        if (requestList.size() == 0) { // Creating a process request
           pr = OBProvider.getInstance().get(ProcessRequest.class);
           pr.setProcess(HBProcess);
           pr.setActive(true);
-
-          // Schedule the next beat in 7 days
-          Calendar c1 = Calendar.getInstance();
-          c1.add(Calendar.DATE, 7);
-          pr.setStartDate(c1.getTime());
-
-          // At today's same time
-          pr.setStartTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
-
-          pr.setSecurityBasedOnRole(true);
-          pr.setDailyOption(EVERY_N_DAYS);
-          pr.setDailyInterval(Long.parseLong("7"));
-          pr.setTiming(SCHEDULE);
           final ProcessContext context = new ProcessContext(vars);
           pr.setOpenbravoContext(context.toString());
-
         } else {
           pr = requestList.get(0);
         }
+
+        // Schedule the next beat in 7 days
+        Calendar c1 = Calendar.getInstance();
+        c1.add(Calendar.DATE, 7);
+        pr.setStartDate(c1.getTime());
+
+        // At today's same time
+        pr.setStartTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+
+        pr.setSecurityBasedOnRole(true);
+        pr.setDailyOption(EVERY_N_DAYS);
+        pr.setDailyInterval(Long.parseLong("7"));
+        pr.setTiming(SCHEDULE);
 
         OBDal.getInstance().save(pr);
 

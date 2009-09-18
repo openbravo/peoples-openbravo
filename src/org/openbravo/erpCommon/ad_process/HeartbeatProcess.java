@@ -24,6 +24,7 @@ import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
 import org.openbravo.scheduling.ProcessLogger;
+import org.openbravo.scheduling.ProcessBundle.Channel;
 
 public class HeartbeatProcess implements Process {
 
@@ -33,26 +34,34 @@ public class HeartbeatProcess implements Process {
 
   private static final String CERT_ALIAS = "openbravo-butler";
 
+  private static final String ENABLING_BEAT = "E";
+  private static final String SCHEDULED_BEAT = "S";
+  private static final String DISABLING_BEAT = "D";
+  private static final String UNKNOWN_BEAT = "U";
+
   private ProcessContext ctx;
 
   private ConnectionProvider connection;
   private ProcessLogger logger;
+  private Channel channel;
 
   public void execute(ProcessBundle bundle) throws Exception {
 
     connection = bundle.getConnection();
     logger = bundle.getLogger();
+    channel = bundle.getChannel();
 
     this.ctx = bundle.getContext();
 
     SystemInfo.load(bundle.getConnection());
 
     String msg = null;
-    if (!isHeartbeatActive()) {
+    if (this.channel == Channel.SCHEDULED && !isHeartbeatActive()) {
       msg = Utility.messageBD(connection, "HB_INACTIVE", ctx.getLanguage());
       logger.logln(msg);
       return;
     }
+
     if (!isInternetAvailable(connection)) {
       msg = Utility.messageBD(connection, "HB_INTERNET_UNAVAILABLE", ctx.getLanguage());
       logger.logln(msg);
@@ -62,17 +71,49 @@ public class HeartbeatProcess implements Process {
     logger.logln("Hearbeat process starting...");
     try {
       Properties systemInfo = getSystemInfo(connection);
-      String queryStr = createQueryStr(systemInfo);
+
+      String beatType = UNKNOWN_BEAT;
+
+      if (this.channel == Channel.SCHEDULED) {
+        beatType = SCHEDULED_BEAT;
+      } else {
+        final String active = SystemInfoData.isHeartbeatActive(connection);
+        if (active.equals("") || active.equals("N")) {
+          beatType = ENABLING_BEAT;
+        } else {
+          beatType = DISABLING_BEAT;
+        }
+      }
+
+      String queryStr = createQueryStr(systemInfo, beatType);
       String response = sendInfo(queryStr);
-      logSystemInfo(connection, systemInfo);
+      logSystemInfo(connection, systemInfo, beatType);
       List<Alert> updates = parseUpdates(response);
       saveUpdateAlerts(connection, updates);
+      updateHeartbeatStatus();
 
     } catch (Exception e) {
       logger.logln(e.getMessage());
       log.error(e.getMessage(), e);
       throw new Exception(e.getMessage());
     }
+  }
+
+  private void updateHeartbeatStatus() throws Exception {
+
+    if (this.channel == Channel.SCHEDULED) {
+      // Don't update status when is a scheduled beat
+      return;
+    }
+
+    String active = SystemInfoData.isHeartbeatActive(connection);
+    if (active.equals("") || active.equals("N")) {
+      active = "Y";
+    } else {
+      active = "N";
+    }
+
+    SystemInfoData.updateHeartbeatActive(connection, active);
   }
 
   /**
@@ -107,11 +148,11 @@ public class HeartbeatProcess implements Process {
   }
 
   /**
-   * @param connection
+   * @param con
    * @return the system info as properties
    * @throws ServletException
    */
-  private Properties getSystemInfo(ConnectionProvider connection) throws ServletException {
+  private Properties getSystemInfo(ConnectionProvider con) throws ServletException {
     logger.logln(logger.messageDb("HB_GATHER", ctx.getLanguage()));
     return SystemInfo.getSystemInfo();
   }
@@ -122,7 +163,7 @@ public class HeartbeatProcess implements Process {
    * @param props
    * @return the UTF-8 encoded query string
    */
-  private String createQueryStr(Properties props) {
+  private String createQueryStr(Properties props, String beatType) {
     logger.logln(logger.messageDb("HB_QUERY", ctx.getLanguage()));
     if (props == null)
       return null;
@@ -133,6 +174,7 @@ public class HeartbeatProcess implements Process {
       String value = props.getProperty(elem);
       sb.append(elem + "=" + (value == null ? "" : value) + "&");
     }
+    sb.append("beatType=" + beatType);
 
     return HttpsUtils.encode(sb.toString(), "UTF-8");
   }
@@ -158,7 +200,7 @@ public class HeartbeatProcess implements Process {
     return HttpsUtils.sendSecure(url, queryStr, CERT_ALIAS, "changeit");
   }
 
-  private void logSystemInfo(ConnectionProvider connection, Properties systemInfo)
+  private void logSystemInfo(ConnectionProvider conn, Properties systemInfo, String beatType)
       throws ServletException {
     logger.logln(logger.messageDb("HB_LOG", ctx.getLanguage()));
     String id = SequenceIdData.getUUID();
@@ -184,11 +226,11 @@ public class HeartbeatProcess implements Process {
     String proxyPort = systemInfo.getProperty("proxyPort");
     String numRegisteredUsers = systemInfo.getProperty("numRegisteredUsers");
 
-    HeartbeatProcessData.insertHeartbeatLog(connection, id, "0", "0", systemIdentifier,
+    HeartbeatProcessData.insertHeartbeatLog(conn, id, "0", "0", systemIdentifier,
         isHeartbeatActive, isProxyRequired, proxyServer, proxyPort, activityRate, complexityRate,
         os, osVersion, db, dbVersion, servletContainer, servletContainerVersion, webserver,
         webserverVersion, obVersion, obInstallMode, codeRevision, numRegisteredUsers, javaVersion,
-        antVersion);
+        antVersion, beatType);
   }
 
   /**
@@ -219,17 +261,17 @@ public class HeartbeatProcess implements Process {
   }
 
   /**
-   * @param connection
+   * @param conn
    * @param updates
    */
-  private void saveUpdateAlerts(ConnectionProvider connection, List<Alert> updates) {
+  private void saveUpdateAlerts(ConnectionProvider conn, List<Alert> updates) {
     if (updates == null) {
       logger.logln("No Updates found...");
       return;
     }
     // info("  ");
     for (Alert update : updates) {
-      update.save(connection);
+      update.save(conn);
     }
   }
 
