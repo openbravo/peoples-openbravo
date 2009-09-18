@@ -83,12 +83,14 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         if (imageID == null || imageID.equals("")) {
           image = OBProvider.getInstance().get(Image.class);
           image.setBindaryData(bytea);
+          image.setActive(true);
           image.setName("Image");
           OBDal.getInstance().save(image);
           OBDal.getInstance().flush();
 
         } else {
           image = OBDal.getInstance().get(Image.class, imageID);
+          image.setActive(true);
           image.setBindaryData(bytea);
           OBDal.getInstance().flush();
         }
