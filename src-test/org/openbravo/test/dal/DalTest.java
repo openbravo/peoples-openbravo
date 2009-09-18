@@ -30,6 +30,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.CategoryAccounts;
 import org.openbravo.model.common.currency.Currency;
@@ -49,6 +50,27 @@ import org.openbravo.test.base.BaseTest;
 
 public class DalTest extends BaseTest {
   private static final Logger log = Logger.getLogger(DalTest.class);
+
+  /**
+   * Test to assert save false in a null char(1) column - Part I
+   */
+  public void testSaveBooleanValue1() {
+    setUserContext("0");
+    SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+    if (sysInfo.isEnableHeartbeat() == null) {
+      sysInfo.setEnableHeartbeat(false);
+    }
+    OBDal.getInstance().save(sysInfo);
+  }
+
+  /**
+   * Test to assert save false in a null char(1) column - Part II
+   */
+  public void testSaveBooleanValue2() {
+    setUserContext("0");
+    SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+    assertTrue(sysInfo.isEnableHeartbeat() != null);
+  }
 
   /**
    * Test creates a {@link Category}, test simple save through {@link OBDal}. The new object is
