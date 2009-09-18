@@ -24,6 +24,8 @@ import junit.framework.TestSuite;
 
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
 import org.openbravo.test.dal.DalComplexQueryTestOrderLine;
+import org.openbravo.test.dal.DalConnectionProviderTest;
+import org.openbravo.test.dal.DalCopyTest;
 import org.openbravo.test.dal.DalPerformanceInventoryLineTest;
 import org.openbravo.test.dal.DalPerformanceProductTest;
 import org.openbravo.test.dal.DalQueryTest;
@@ -76,6 +78,8 @@ public class AllAntTaskTests {
     suite.addTestSuite(DalPerformanceProductTest.class);
     suite.addTestSuite(DalQueryTest.class);
     suite.addTestSuite(DalTest.class);
+    suite.addTestSuite(DalCopyTest.class);
+    suite.addTestSuite(DalConnectionProviderTest.class);
     suite.addTestSuite(DynamicEntityTest.class);
     suite.addTestSuite(HiddenUpdateTest.class);
     // suite.addTestSuite(HqlTest.class);
