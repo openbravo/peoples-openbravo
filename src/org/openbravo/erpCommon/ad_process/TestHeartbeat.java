@@ -75,6 +75,13 @@ public class TestHeartbeat extends HttpSecureAppServlet {
     if (isHearbeatEnabled || clickedButton.equalsIgnoreCase("inpisheartbeatactive")) {
       // Disable Heartbeat
       try {
+
+        if (sysInfo.isEnableHeartbeat() != null && sysInfo.isEnableHeartbeat()) {
+          // Sending beat
+          ProcessBundle beat = new ProcessBundle(HB_Process_ID, vars).init(this);
+          new ProcessRunner(beat).execute(this);
+        }
+
         // Deactivating the process at SystemInfo
         sysInfo.setEnableHeartbeat(false);
         sysInfo.setTestHeartbeat("N");
@@ -123,7 +130,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         // Committing because SQLC uses a different connection
         OBDal.getInstance().commitAndClose();
 
-        // Making the first beat
+        // Sending beat
         ProcessBundle bundle = new ProcessBundle(HB_Process_ID, vars).init(this);
         final String beatExecutionId = new ProcessRunner(bundle).execute(this);
 
