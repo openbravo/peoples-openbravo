@@ -22,7 +22,9 @@ package org.openbravo.dal.core;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.openbravo.base.exception.OBException;
@@ -67,9 +69,11 @@ public class DalUtil {
    */
   public static List<BaseOBObject> copyAll(List<BaseOBObject> source, boolean resetId) {
     final List<BaseOBObject> result = new ArrayList<BaseOBObject>();
+    final Map<BaseOBObject, BaseOBObject> fromTo = new HashMap<BaseOBObject, BaseOBObject>();
     for (final BaseOBObject bob : source) {
-      result.add(copy(bob, true, resetId));
+      result.add(copy(bob, true, resetId, fromTo));
     }
+    repairReferences(fromTo);
     return result;
   }
 
@@ -113,7 +117,49 @@ public class DalUtil {
    * @return the copied object
    */
   public static BaseOBObject copy(BaseOBObject source, boolean copyChildren, boolean resetId) {
+    final Map<BaseOBObject, BaseOBObject> fromTo = new HashMap<BaseOBObject, BaseOBObject>();
+    copy(source, copyChildren, resetId, fromTo);
+    repairReferences(fromTo);
+    return fromTo.get(source);
+  }
+
+  // Walks through all copied objects and if there are references to objects which have been
+  // copied then the references are moved to the copied object
+  // see issue:
+  // https://issues.openbravo.com/view.php?id=8651
+  private static void repairReferences(Map<BaseOBObject, BaseOBObject> fromTo) {
+
+    for (BaseOBObject to : fromTo.values()) {
+      System.err.println(to.getEntityName());
+      System.err.println(to.getEntityName());
+      for (final Property p : to.getEntity().getProperties()) {
+        if (p.isPrimitive()) {
+          continue;
+        }
+        final Object value = to.getValue(p.getName());
+
+        if (p.isOneToMany()) {
+          @SuppressWarnings("unchecked")
+          final List<BaseOBObject> bobs = (List<BaseOBObject>) value;
+          for (int i = 0; i < bobs.size(); i++) {
+            final BaseOBObject curValue = bobs.get(i);
+            if (fromTo.containsKey(curValue)) {
+              bobs.set(i, fromTo.get(curValue));
+            }
+          }
+        } else if (fromTo.containsKey(value)) {
+          to.setValue(p.getName(), fromTo.get(value));
+        }
+      }
+    }
+
+  }
+
+  private static BaseOBObject copy(BaseOBObject source, boolean copyChildren, boolean resetId,
+      Map<BaseOBObject, BaseOBObject> fromTo) {
+
     final BaseOBObject target = (BaseOBObject) OBProvider.getInstance().get(source.getEntityName());
+    fromTo.put(source, target);
     for (final Property p : source.getEntity().getProperties()) {
       final Object value = source.getValue(p.getName());
       if (p.isOneToMany()) {
@@ -123,7 +169,7 @@ public class DalUtil {
           @SuppressWarnings("unchecked")
           final List<BaseOBObject> sourceChildren = (List<BaseOBObject>) value;
           for (final BaseOBObject sourceChild : sourceChildren) {
-            targetChildren.add(copy(sourceChild, copyChildren, resetId));
+            targetChildren.add(copy(sourceChild, copyChildren, resetId, fromTo));
           }
         }
       } else {
