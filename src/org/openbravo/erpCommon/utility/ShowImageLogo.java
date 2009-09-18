@@ -114,7 +114,6 @@ public class ShowImageLogo extends HttpBaseServlet {
         }
 
         FileUtility f = new FileUtility(this.globalParameters.prefix, imagePath, false, true);
-        response.setContentType("image/png");
         f.dumpFile(response.getOutputStream());
         response.getOutputStream().flush();
         response.getOutputStream().close();
