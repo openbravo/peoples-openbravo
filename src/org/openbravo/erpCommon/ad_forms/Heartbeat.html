@@ -37,9 +37,11 @@
 	  	return true;
    }
   </script>
+  <script language="JavaScript" type="text/javascript" id="paramCMD">var cmd = 'CONFIGURE';</script>
   <script language="JavaScript" type="text/javascript">  
   function configure() {
-	submitCommandForm('CONFIGURE', false, null);  
+	var command = typeof cmd === 'undefined' ? 'CONFIGURE' : cmd;
+	submitCommandForm(command, false, null);
   }
 
   function cancel() {
@@ -73,8 +75,9 @@
 </div>
 
 <form method="post" action="Heartbeat.html" name="frmMain" style="position: relative;">
-<input type="hidden" name="Command">
-<input type="hidden" name="IsPopUpCall" value="1"></input>
+<input type="hidden" name="Command" />
+<input type="hidden" name="IsPopUpCall" value="1" />
+<input type="hidden" id="paramRecordId" name="inpcRecordId" value="xx" />
 
 <div class="Popup_ContentPane_CircleLogo">
   <div class="Popup_WindowLogo">

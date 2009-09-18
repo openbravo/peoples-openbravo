@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -144,7 +145,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           msg += "\n" + processRunResult.getLog();
           msg = Utility.formatMessageBDToHtml(msg);
 
-          if (vars.commandIn("CONFIGURE")) {
+          if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE")) {
             OBError err = new OBError();
             err.setType("Error");
             err.setMessage(msg);
@@ -202,9 +203,16 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           OBScheduler.getInstance().reschedule(pr.getId(), bundle2);
         }
 
-        String msg = Utility.messageBD(this, "HB_SUCCESS", vars.getLanguage());
-        advisePopUpRefresh(request, response, "SUCCESS", "Heartbeat Configuration", msg);
-
+        if (vars.commandIn("CONFIGURE_MODULE")) {
+          // Continue with the module install
+          String recordId = vars.getStringParameter("inpcRecordId", IsIDFilter.instance);
+          response.sendRedirect(strDireccion
+              + "/ad_forms/ModuleManagement.html?Command=INSTALL&inpcRecordId=" + recordId);
+        } else {
+          // Prompt HB configured
+          String msg = Utility.messageBD(this, "HB_SUCCESS", vars.getLanguage());
+          advisePopUpRefresh(request, response, "SUCCESS", "Heartbeat Configuration", msg);
+        }
       } catch (Exception e) {
         log4j.error(e.getMessage(), e);
         advisePopUpRefresh(request, response, "ERROR", "Heartbeat Configuration", e.getMessage());

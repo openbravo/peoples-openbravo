@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
@@ -64,8 +65,10 @@ public class Heartbeat extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT", "DEFAULT_MODULE")) {
       printPageDataSheet(response, vars);
-    } else if (vars.commandIn("CONFIGURE")) {
-      response.sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command=CONFIGURE");
+    } else if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE")) {
+      response.sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command="
+          + vars.getCommand() + "&inpcRecordId="
+          + vars.getStringParameter("inpcRecordId", IsIDFilter.instance));
     } else
       pageError(response);
   }
@@ -89,6 +92,18 @@ public class Heartbeat extends HttpSecureAppServlet {
         : "HB_WELCOME";
     xmlDocument.setParameter("welcome", Utility.formatMessageBDToHtml(Utility.messageBD(this,
         msgCode, vars.getLanguage())));
+
+    xmlDocument.setParameter("recordId", vars.getStringParameter("inpcRecordId",
+        IsIDFilter.instance));
+
+    String jsCommand = "var cmd='";
+    if (vars.commandIn("DEFAULT")) {
+      jsCommand += "CONFIGURE";
+    } else {
+      jsCommand += "CONFIGURE_MODULE";
+    }
+    jsCommand += "';";
+    xmlDocument.setParameter("cmd", jsCommand);
 
     final RegistrationData[] rData = RegistrationData.select(this);
     if (rData.length > 0) {
