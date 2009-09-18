@@ -73,30 +73,27 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
 
       printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId);
     } else if (vars.commandIn("SAVE")) {
-      try {
-        final FileItem fi = vars.getMultiFile("inpFile");
-        byte[] bytea = fi.get();
+      final FileItem fi = vars.getMultiFile("inpFile");
+      byte[] bytea = fi.get();
 
-        // Using DAL to write the image data to the database
-        Image image;
-        if (imageID == null || imageID.equals("")) {
-          image = OBProvider.getInstance().get(Image.class);
-          image.setBindaryData(bytea);
-          image.setActive(true);
-          image.setName("Image");
-          OBDal.getInstance().save(image);
-          OBDal.getInstance().flush();
+      // Using DAL to write the image data to the database
+      Image image;
+      if (imageID == null || imageID.equals("")) {
+        image = OBProvider.getInstance().get(Image.class);
+        image.setBindaryData(bytea);
+        image.setActive(true);
+        image.setName("Image");
+        OBDal.getInstance().save(image);
+        OBDal.getInstance().flush();
 
-        } else {
-          image = OBDal.getInstance().get(Image.class, imageID);
-          image.setActive(true);
-          image.setBindaryData(bytea);
-          OBDal.getInstance().flush();
-        }
-        PrintWriter writer = response.getWriter();
-        writeRedirect(writer, image.getId(), columnName);
-      } finally {
+      } else {
+        image = OBDal.getInstance().get(Image.class, imageID);
+        image.setActive(true);
+        image.setBindaryData(bytea);
+        OBDal.getInstance().flush();
       }
+      PrintWriter writer = response.getWriter();
+      writeRedirect(writer, image.getId(), columnName);
     } else if (vars.commandIn("DELETE")) {
       if (imageID != null && !imageID.equals("")) {
         boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
