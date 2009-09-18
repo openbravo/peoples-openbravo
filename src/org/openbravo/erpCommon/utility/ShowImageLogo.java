@@ -28,13 +28,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.utils.FileUtility;
 
 /**
  * 
@@ -91,6 +91,10 @@ public class ShowImageLogo extends HttpBaseServlet {
       byte[] imageBytes = null;
       if (img != null) {
         imageBytes = img.getBindaryData();
+        OutputStream out = response.getOutputStream();
+        response.setContentLength(imageBytes.length);
+        out.write(imageBytes);
+        out.close();
       } else {
         String imagePath = null;
         if (logo.equals("yourcompanylogin")) {
@@ -100,27 +104,20 @@ public class ShowImageLogo extends HttpBaseServlet {
         } else if (logo.equals("yourcompanymenu")) {
           imagePath = "web/images/CompanyLogo_small.png";
         } else if (logo.equals("yourcompanybig")) {
-          imagePath = "web/skins/Default/Login/initialOpenbravoLogo.png";
+          imagePath = "web/skins/ltr/Default/Login/initialOpenbravoLogo.png";
         } else if (logo.equals("yourcompanydoc")) {
           imagePath = "web/images/CompanyLogo_big.png";
         }
-        OutputStream out = response.getOutputStream();
-        if (imagePath != null) {
-          Utility.dumpFile(OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-              "source.path")
-              + "/" + imagePath, out);
-        } else {
+        if (imagePath == null) {
           // If there is not image to show return blank.gif
-          String sourcePath = vars.getSessionValue("#sourcePath");
-          Utility.dumpFile(sourcePath + "/web/images/blank.gif", out);
+          imagePath = "web/images/blank.gif";
         }
-        out.close();
-      }
-      if (imageBytes != null) {
-        OutputStream out = response.getOutputStream();
-        response.setContentLength(imageBytes.length);
-        out.write(imageBytes);
-        out.close();
+
+        FileUtility f = new FileUtility(this.globalParameters.prefix, imagePath, false, true);
+        response.setContentType("image/png");
+        f.dumpFile(response.getOutputStream());
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
       }
 
     } finally {
