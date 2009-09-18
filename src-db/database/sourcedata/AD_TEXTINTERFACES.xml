@@ -20435,7 +20435,7 @@
 <!--1005400013-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005400013-->  <TEXT><![CDATA[Configure]]></TEXT>
 <!--1005400013-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/Heartbeat.html]]></FILENAME>
-<!--1005400013-->  <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005400013-->  <ISUSED><![CDATA[N]]></ISUSED>
 <!--1005400013-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005400013--></AD_TEXTINTERFACES>
 
@@ -20457,7 +20457,7 @@
 <!--1005400015-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005400015-->  <TEXT><![CDATA[Disable]]></TEXT>
 <!--1005400015-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/Heartbeat.html]]></FILENAME>
-<!--1005400015-->  <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005400015-->  <ISUSED><![CDATA[N]]></ISUSED>
 <!--1005400015-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005400015--></AD_TEXTINTERFACES>
 
@@ -20468,7 +20468,7 @@
 <!--1005400016-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005400016-->  <TEXT><![CDATA[Later]]></TEXT>
 <!--1005400016-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/Heartbeat.html]]></FILENAME>
-<!--1005400016-->  <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005400016-->  <ISUSED><![CDATA[N]]></ISUSED>
 <!--1005400016-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005400016--></AD_TEXTINTERFACES>
 
