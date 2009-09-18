@@ -46,7 +46,7 @@
         AND A_R_O.ISACTIVE = 'Y' 
         AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
         AND R.ISACTIVE = 'Y' 
-        ORDER BY A_R_O.AD_ROLE_ID, A_O.NAME DESC
+        ORDER BY A_R_O.AD_ROLE_ID, A_O.NAME
       ]]></Sql>
    </SqlMethod>
 </SqlClass>

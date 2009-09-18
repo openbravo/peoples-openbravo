@@ -526,15 +526,17 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     // Add images
     Organization newOrganization = OBDal.getInstance().get(Organization.class, AD_Org_ID);
     Client organizationClient = OBDal.getInstance().get(Client.class, AD_Client_ID);
-    Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
-    yourCompanyDocumentImage.setBindaryData(organizationClient.getClientInformationList().get(0)
-        .getYourCompanyDocumentImage().getBindaryData());
-    yourCompanyDocumentImage.setName(organizationClient.getClientInformationList().get(0)
-        .getYourCompanyBigImage().getName());
-    newOrganization.getOrganizationInformationList().get(0).setYourCompanyDocumentImage(
-        yourCompanyDocumentImage);
-    yourCompanyDocumentImage.setOrganization(newOrganization);
-    OBDal.getInstance().save(yourCompanyDocumentImage);
+    if (organizationClient.getClientInformationList().get(0).getYourCompanyDocumentImage() != null) {
+      Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
+      yourCompanyDocumentImage.setBindaryData(organizationClient.getClientInformationList().get(0)
+          .getYourCompanyDocumentImage().getBindaryData());
+      yourCompanyDocumentImage.setName(organizationClient.getClientInformationList().get(0)
+          .getYourCompanyBigImage().getName());
+      newOrganization.getOrganizationInformationList().get(0).setYourCompanyDocumentImage(
+          yourCompanyDocumentImage);
+      yourCompanyDocumentImage.setOrganization(newOrganization);
+      OBDal.getInstance().save(yourCompanyDocumentImage);
+    }
     OBDal.getInstance().save(newOrganization);
     OBDal.getInstance().flush();
     return true;

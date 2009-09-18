@@ -28,9 +28,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Image;
+import org.openbravo.utils.FileUtility;
 
 /**
  * 
@@ -48,15 +48,12 @@ public class ShowImage extends HttpSecureAppServlet {
       ServletException {
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
-    OBContext.getOBContext().setInAdministratorMode(true);
-
     String id = vars.getStringParameter("id");
     Image img = null;
     try {
       img = OBDal.getInstance().get(Image.class, id);
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Could not load image from database", e);
     }
 
     if (img != null) {
@@ -68,13 +65,11 @@ public class ShowImage extends HttpSecureAppServlet {
         out.close();
       }
     } else { // If there is not image to show return blank.gif
-      String sourcePath = vars.getSessionValue("#sourcePath");
-      OutputStream out = response.getOutputStream();
-      Utility.dumpFile(sourcePath + "/web/images/blank.gif", out);
-      out.close();
-
+      FileUtility f = new FileUtility(this.globalParameters.prefix, "web/images/blank.gif", false,
+          true);
+      f.dumpFile(response.getOutputStream());
+      response.getOutputStream().flush();
+      response.getOutputStream().close();
     }
-
-    OBContext.getOBContext().setInAdministratorMode(adminMode);
   }
 }

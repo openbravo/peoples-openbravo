@@ -19,10 +19,7 @@
 package org.openbravo.erpCommon.info;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -34,6 +31,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
@@ -75,36 +73,32 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
 
       printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId);
     } else if (vars.commandIn("SAVE")) {
-      boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
-      OBContext.getOBContext().setInAdministratorMode(true);
-      final FileItem fi = vars.getMultiFile("inpFile");
-      ArrayList bytes = new ArrayList();
-      InputStream in = fi.getInputStream();
-      int nextChar;
-      while ((nextChar = in.read()) != -1)
-        bytes.add(new Byte((byte) nextChar));
-      byte[] bytea = new byte[bytes.size()];
-      for (int i = 0; i < bytes.size(); i++)
-        bytea[i] = ((Byte) bytes.get(i)).byteValue();
+      boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+      try {
+        final FileItem fi = vars.getMultiFile("inpFile");
+        byte[] bytea = fi.get();
 
-      // Using DAL to write the image data to the database
-      Image image;
-      if (imageID == null || imageID.equals("")) {
-        image = OBProvider.getInstance().get(Image.class);
-        image.setBindaryData(bytea);
-        image.setName("Image");
-        OBDal.getInstance().save(image);
-        OBDal.getInstance().flush();
+        // Using DAL to write the image data to the database
+        Image image;
+        if (imageID == null || imageID.equals("")) {
+          image = OBProvider.getInstance().get(Image.class);
+          image.setBindaryData(bytea);
+          image.setActive(true);
+          image.setName("Image");
+          OBDal.getInstance().save(image);
+          OBDal.getInstance().flush();
 
-      } else {
-        image = OBDal.getInstance().get(Image.class, imageID);
-        image.setBindaryData(bytea);
-        OBDal.getInstance().flush();
+        } else {
+          image = OBDal.getInstance().get(Image.class, imageID);
+          image.setActive(true);
+          image.setBindaryData(bytea);
+          OBDal.getInstance().flush();
+        }
+        PrintWriter writer = response.getWriter();
+        writeRedirect(writer, image.getId(), columnName);
+      } finally {
+        OBContext.getOBContext().setInAdministratorMode(adminMode);
       }
-      PrintWriter writer = response.getWriter();
-      writeRedirect(writer, image.getId(), columnName);
-
-      OBContext.getOBContext().setInAdministratorMode(adminMode);
     } else if (vars.commandIn("DELETE")) {
       if (imageID != null && !imageID.equals("")) {
         boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
@@ -117,15 +111,9 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           try {
             Class tableClass = Class.forName(dpackage.getJavaPackage() + "."
                 + table.getJavaClassName());
-            Object parentObject = OBDal.getInstance().get(tableClass, parentObjectId);
-            Class[] argTypes = new Class[2];
-            argTypes[0] = String.class;
-            argTypes[1] = Object.class;
-            Method setMethod = tableClass.getMethod("set", argTypes);
-            Object[] argValues = new Object[2];
-            argValues[0] = propertyName;
-            argValues[1] = null;
-            setMethod.invoke(parentObject, argValues);
+            BaseOBObject parentObject = (BaseOBObject) OBDal.getInstance().get(tableClass,
+                parentObjectId);
+            parentObject.set(propertyName, null);
             OBDal.getInstance().flush();
             OBDal.getInstance().remove(image);
           } catch (Exception e) {

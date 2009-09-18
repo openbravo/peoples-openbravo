@@ -181,14 +181,17 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     try {
       final String strUserAuth = m_AuthManager.authenticate(request, response);
 
-      if (!variables.getDBSession().equals("")
-          && !SeguridadData.loggedOK(this, variables.getDBSession())) {
-        m_AuthManager.logout(request, response);
+      boolean loggedOK = false;
+
+      if (!variables.getDBSession().equals("")) {
+        loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
+        if (!loggedOK) {
+          m_AuthManager.logout(request, response);
+        }
       }
 
       if (strUserAuth != null) {
-        if (variables.getRole().equals("")
-            || !SeguridadData.loggedOK(this, variables.getDBSession())) {
+        if (variables.getRole().equals("") || !loggedOK) {
           String strLanguage = "";
           String strIsRTL = "";
           String strRole = "";

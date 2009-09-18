@@ -60,7 +60,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_AD_ORGINFO" onDelete="cascade">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_IMAGEDOCUM">
+      <foreign-key foreignTable="AD_IMAGE" name="AD_ORGINFO_IMAGEDOCUM">
         <reference local="YOUR_COMPANY_DOCUMENT_IMAGE" foreign="AD_IMAGE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADORGINFO">

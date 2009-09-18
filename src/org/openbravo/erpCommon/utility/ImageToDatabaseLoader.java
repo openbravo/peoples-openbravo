@@ -11,6 +11,11 @@ import org.openbravo.ddlutils.task.BaseDalInitializingTask;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.utility.Image;
 
+/**
+ * 
+ * This class loads images from files and stores them in the AD_System_Info table in the database
+ * 
+ */
 public class ImageToDatabaseLoader extends BaseDalInitializingTask {
 
   private String imagePaths;
@@ -24,7 +29,6 @@ public class ImageToDatabaseLoader extends BaseDalInitializingTask {
     try {
       String paths[] = imagePaths.split(",");
       String properties[] = propertyNames.split(",");
-      Image[] images = new Image[paths.length];
       for (int i = 0; i < paths.length; i++) {
         if (OBDal.getInstance().get(SystemInformation.class, "0").get(properties[i]) == null) {
           File f = new File(basePath + File.separator + paths[i]);

@@ -4628,6 +4628,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--391-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--391-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--391-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--391-->  <WHERECLAUSE><![CDATA[binarydata is null]]></WHERECLAUSE>
 <!--391-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--391-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--391-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>

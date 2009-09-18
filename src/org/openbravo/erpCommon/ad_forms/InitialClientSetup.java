@@ -568,25 +568,31 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       // Add images
       Client newClient = OBDal.getInstance().get(Client.class, AD_Client_ID);
       SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
-      Image yourCompanyBigImage = OBProvider.getInstance().get(Image.class);
-      yourCompanyBigImage.setBindaryData(sys.getYourCompanyBigImage().getBindaryData());
-      yourCompanyBigImage.setName(sys.getYourCompanyBigImage().getName());
-      newClient.getClientInformationList().get(0).setYourCompanyBigImage(yourCompanyBigImage);
+      if (sys.getYourCompanyBigImage() != null) {
+        Image yourCompanyBigImage = OBProvider.getInstance().get(Image.class);
+        yourCompanyBigImage.setBindaryData(sys.getYourCompanyBigImage().getBindaryData());
+        yourCompanyBigImage.setName(sys.getYourCompanyBigImage().getName());
+        newClient.getClientInformationList().get(0).setYourCompanyBigImage(yourCompanyBigImage);
+        OBDal.getInstance().save(yourCompanyBigImage);
+      }
 
-      Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
-      yourCompanyDocumentImage.setBindaryData(sys.getYourCompanyDocumentImage().getBindaryData());
-      yourCompanyDocumentImage.setName(sys.getYourCompanyBigImage().getName());
-      newClient.getClientInformationList().get(0).setYourCompanyDocumentImage(
-          yourCompanyDocumentImage);
+      if (sys.getYourCompanyDocumentImage() != null) {
+        Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
+        yourCompanyDocumentImage.setBindaryData(sys.getYourCompanyDocumentImage().getBindaryData());
+        yourCompanyDocumentImage.setName(sys.getYourCompanyBigImage().getName());
+        newClient.getClientInformationList().get(0).setYourCompanyDocumentImage(
+            yourCompanyDocumentImage);
+        OBDal.getInstance().save(yourCompanyDocumentImage);
+      }
 
-      Image yourCompanyMenuImage = OBProvider.getInstance().get(Image.class);
-      yourCompanyMenuImage.setBindaryData(sys.getYourCompanyMenuImage().getBindaryData());
-      yourCompanyMenuImage.setName(sys.getYourCompanyMenuImage().getName());
-      newClient.getClientInformationList().get(0).setYourCompanyMenuImage(yourCompanyMenuImage);
+      if (sys.getYourCompanyMenuImage() != null) {
+        Image yourCompanyMenuImage = OBProvider.getInstance().get(Image.class);
+        yourCompanyMenuImage.setBindaryData(sys.getYourCompanyMenuImage().getBindaryData());
+        yourCompanyMenuImage.setName(sys.getYourCompanyMenuImage().getName());
+        newClient.getClientInformationList().get(0).setYourCompanyMenuImage(yourCompanyMenuImage);
+        OBDal.getInstance().save(yourCompanyMenuImage);
+      }
 
-      OBDal.getInstance().save(yourCompanyBigImage);
-      OBDal.getInstance().save(yourCompanyDocumentImage);
-      OBDal.getInstance().save(yourCompanyMenuImage);
       OBDal.getInstance().save(newClient);
       OBDal.getInstance().flush();
 

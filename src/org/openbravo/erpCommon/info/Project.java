@@ -60,6 +60,7 @@ public class Project extends HttpSecureAppServlet {
       String strWindow = vars.getGlobalVariable("WindowID", "Project.windowId", "");
       String strBpartner = vars.getGlobalVariable("inpBpartnerId", "Project.bpartner", "");
       String strNameValue = vars.getGlobalVariable("inpNameValue", "Project.key", "");
+      vars.setSessionValue("Project.adorgid", vars.getStringParameter("inpAD_Org_ID", ""));
       vars.removeSessionValue("Project.key");
       if (!strNameValue.equals("")) {
         int guion = strNameValue.indexOf(" - ");
@@ -76,7 +77,7 @@ public class Project extends HttpSecureAppServlet {
       String strWindow = vars.getGlobalVariable("WindowID", "Project.windowId", "");
       String strBpartner = vars.getGlobalVariable("inpBpartnerId", "Project.bpartner", "");
       String strKeyValue = vars.getGlobalVariable("inpNameValue", "Project.key", "");
-      String strOrg = vars.getStringParameter("inpAD_Org_ID");
+      String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Project.adorgid", "");
       vars.setSessionValue("Project.key", strKeyValue + "%");
       ProjectData[] data = ProjectData.selectKey(this, Utility.getContext(this, vars,
           "#User_Client", "Project"), Utility.getSelectorOrgs(this, vars, strOrg), strBpartner,

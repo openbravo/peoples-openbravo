@@ -201,7 +201,7 @@
 	<parameter name="LANGUAGE" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["en_US"]]></defaultValueExpression>
 	</parameter>
-	<queryString><![CDATA[SELECT C_ORDER.C_ORDER_ID, C_ORDER.AD_ORG_ID, C_ORDER.DATEORDERED, C_ORDER.DOCUMENTNO, C_BPARTNER.NAME, 
+	<queryString><![CDATA[SELECT C_ORDER.C_ORDER_ID, C_ORDER.DATEORDERED, C_ORDER.DOCUMENTNO, C_BPARTNER.NAME, 
        C_BPARTNER_LOCATION.FAX, C_BPARTNER_LOCATION.PHONE, 
        REPLACE(C_ORDER.DESCRIPTION, CHR(10), '') AS DESCRIPTION,  
        REPLACE(C_ORDER.DELIVERYNOTES, CHR(10), '') AS DELIVERYNOTES, 
@@ -245,7 +245,6 @@
 	<field name="DELIVERYTERM" class="java.lang.String"/>
 	<field name="ISO_CODE" class="java.lang.String"/>
 	<field name="PAYMENTTERM" class="java.lang.String"/>
-	<field name="AD_ORG_ID" class="java.lang.String"/>
 
 
 		<group  name="C_ORDER_ID" isStartNewPage="true" isResetPageNumber="true" isReprintHeaderOnEachPage="true" >
@@ -265,7 +264,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<graphicElement stretchType="NoStretch"/>
-					<imageExpression class="java.lang.String"><![CDATA[$P{BASE_WEB}+"/../utility/ShowImageLogo?logo=yourcompanydoc&orgId="+$F{AD_ORG_ID}]]></imageExpression>
+					<imageExpression class="java.lang.String"><![CDATA[$P{BASE_WEB}+"/images/CompanyLogo_big.png"]]></imageExpression>
 				</image>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
