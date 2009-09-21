@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class LoginHandler extends HttpBaseServlet {
@@ -51,10 +50,10 @@ public class LoginHandler extends HttpBaseServlet {
       res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
     } else {
       final String strUser = vars.getRequiredStringParameter("user");
-      final String strPass = FormatUtilities.sha1Base64(vars.getStringParameter("password"));
-      final String strUserAuth = SeguridadData.valido(this, strUser, strPass);
+      final String strPass = vars.getStringParameter("password");
+      final String strUserAuth = LoginUtils.getValidUserId(myPool, strUser, strPass);
 
-      if (!strUserAuth.equals("-1")) {
+      if (strUserAuth != null) {
         req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
         checkLicenseAndGo(res, vars);
       } else {

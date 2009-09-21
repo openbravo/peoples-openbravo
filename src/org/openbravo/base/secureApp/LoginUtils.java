@@ -41,7 +41,7 @@ public class LoginUtils {
    *          the DAL.
    * @param login
    *          the login
-   * @param password
+   * @param unHashedPassword
    *          the password, the unhashed password as it is entered by the user.
    * @return the user id or null if no user could be found.
    * @see FormatUtilities#sha1Base64(String)
