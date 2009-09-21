@@ -139,7 +139,11 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           OBDal.getInstance().commitAndClose();
 
           String msg = Utility.messageBD(this, "HB_INTERNAL_ERROR", vars.getLanguage());
-          msg += "\n" + result.getLog();
+          // Extracting the last line from the log
+          String log = result.getLog().substring(0, result.getLog().lastIndexOf("\n"));
+          log = log.substring(log.lastIndexOf("\n"));
+
+          msg += "\n" + log;
           msg = Utility.formatMessageBDToHtml(msg);
 
           if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE")) {
