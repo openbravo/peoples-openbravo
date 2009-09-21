@@ -297,7 +297,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       strError = strError.substring((strError.lastIndexOf("@ORA-") > 0 ? strError
           .lastIndexOf("@ORA-") : 0), strError.length());
       isOK = false;
-      log4j.warn(err);
+      log4j.error("Error in createOrg", err);
       try {
         releaseRollbackConnection(conn);
       } catch (final Exception ignored) {
