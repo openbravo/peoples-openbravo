@@ -33,6 +33,7 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext}
@@ -115,7 +116,7 @@ public class BaseWebServiceServlet extends HttpServlet {
     final String password = request.getParameter(PASSWORD_PARAM);
     String userId = null;
     if (login != null && password != null) {
-      userId = LoginUtils.getValidUserId(login, password);
+      userId = LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
     } else { // use basic authentication
       userId = doBasicAuthentication(request);
     }
@@ -149,7 +150,7 @@ public class BaseWebServiceServlet extends HttpServlet {
       }
       final String login = decodedUserPass.substring(0, index);
       final String password = decodedUserPass.substring(index + 1);
-      return LoginUtils.getValidUserId(login, password);
+      return LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
     } catch (final Exception e) {
       throw new OBException(e);
     }

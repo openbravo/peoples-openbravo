@@ -20,6 +20,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.utils.FormatUtilities;
 
 public class LoginUtils {
 
@@ -35,15 +36,21 @@ public class LoginUtils {
    * 
    * Note that only active users are returned.
    * 
+   * @param connectionProvider
+   *          , see the {@link DalConnectionProvider} for an instance of a ConnectionProvider for
+   *          the DAL.
    * @param login
    *          the login
    * @param password
-   *          the password
+   *          the password, the unhashed password as it is entered by the user.
    * @return the user id or null if no user could be found.
+   * @see FormatUtilities#sha1Base64(String)
    */
-  public static String getValidUserId(String login, String password) {
+  public static String getValidUserId(ConnectionProvider connectionProvider, String login,
+      String unHashedPassword) {
     try {
-      final String userId = SeguridadData.valido(new DalConnectionProvider(), login, password);
+      final String hashedPassword = FormatUtilities.sha1Base64(unHashedPassword);
+      final String userId = SeguridadData.valido(connectionProvider, login, hashedPassword);
       if (userId.equals("-1")) {
         return null;
       }
