@@ -533,7 +533,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       yourCompanyDocumentImage.setBindaryData(organizationClient.getClientInformationList().get(0)
           .getYourCompanyDocumentImage().getBindaryData());
       yourCompanyDocumentImage.setName(organizationClient.getClientInformationList().get(0)
-          .getYourCompanyBigImage().getName());
+          .getYourCompanyDocumentImage().getName());
       newOrganization.getOrganizationInformationList().get(0).setYourCompanyDocumentImage(
           yourCompanyDocumentImage);
       yourCompanyDocumentImage.setOrganization(newOrganization);
