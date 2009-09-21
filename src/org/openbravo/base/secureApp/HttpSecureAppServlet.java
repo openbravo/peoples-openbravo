@@ -465,7 +465,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   protected void logout(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-    final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     HttpSession session = request.getSession(false);
     if (session != null) {
