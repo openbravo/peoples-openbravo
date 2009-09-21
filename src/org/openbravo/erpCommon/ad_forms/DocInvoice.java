@@ -326,10 +326,19 @@ public class DocInvoice extends AcctServer {
       for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
         BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
         BigDecimal ZERO = BigDecimal.ZERO;
-        fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
-            m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(((amount
-            .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,
-            DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        if ((amount.compareTo(ZERO) > 0 && m_debt_payments[i].isReceipt.equals("Y"))
+            || (amount.compareTo(ZERO) < 0 && m_debt_payments[i].isReceipt.equals("N")))
+          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
+              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(((amount
+              .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
+              this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+        else
+          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
+              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(((amount
+              .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
+              this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
       }
 
       // fact.createLine(null,
@@ -420,10 +429,19 @@ public class DocInvoice extends AcctServer {
       for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
         BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
         BigDecimal ZERO = BigDecimal.ZERO;
-        fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
-            m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(((amount
-            .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,
-            DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        if ((amount.compareTo(ZERO) < 0 && m_debt_payments[i].isReceipt.equals("Y"))
+            || (amount.compareTo(ZERO) > 0 && m_debt_payments[i].isReceipt.equals("N")))
+          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
+              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(((amount
+              .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
+              this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+        else
+          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
+              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(((amount
+              .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
+              this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
       }
 
       // fact.createLine (null,
@@ -462,7 +480,7 @@ public class DocInvoice extends AcctServer {
     }
     SeqNo = "0";
     return fact;
-  }// createFact
+  } // createFact
 
   /**
    * Update Product Info. - Costing (PriceLastInv) - PO (PriceLastInv)
