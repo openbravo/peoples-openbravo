@@ -14,10 +14,12 @@ package org.openbravo.base.secureApp;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class LoginUtils {
 
@@ -25,6 +27,30 @@ public class LoginUtils {
 
   /** Creates a new instance of LoginUtils */
   private LoginUtils() {
+  }
+
+  /**
+   * Returns a userId which matches the login and password. If no user is found then null is
+   * returned. The combination of login and password is used to find the user.
+   * 
+   * Note that only active users are returned.
+   * 
+   * @param login
+   *          the login
+   * @param password
+   *          the password
+   * @return the user id or null if no user could be found.
+   */
+  public static String getValidUserId(String login, String password) {
+    try {
+      final String userId = SeguridadData.valido(new DalConnectionProvider(), login, password);
+      if (userId.equals("-1")) {
+        return null;
+      }
+      return userId;
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
   }
 
   public static boolean fillSessionArguments(ConnectionProvider conn, VariablesSecureApp vars,
