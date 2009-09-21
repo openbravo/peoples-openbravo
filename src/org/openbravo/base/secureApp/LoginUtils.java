@@ -11,21 +11,13 @@
  */
 package org.openbravo.base.secureApp;
 
-import java.util.List;
-
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.access.User;
-import org.openbravo.utils.CryptoSHA1BASE64;
 
 public class LoginUtils {
 
@@ -33,39 +25,6 @@ public class LoginUtils {
 
   /** Creates a new instance of LoginUtils */
   private LoginUtils() {
-  }
-
-  /**
-   * Returns a userId which matches the login and password. If no user is found then null is
-   * returned. The combination of login and password is used to find the user.
-   * 
-   * Note that only active users are returned.
-   * 
-   * @param login
-   *          the login
-   * @param password
-   *          the password
-   * @return the user id or null if no user could be found.
-   */
-  public static String getValidUserId(String login, String password) {
-    try {
-      final String encodedPwd = CryptoSHA1BASE64.hash(password);
-      // now search with the login and password
-      final Query qry = SessionHandler.getInstance().createQuery(
-          "select id from " + User.class.getName()
-              + " where username=? and password=? and active=true");
-      qry.setParameter(0, login);
-      qry.setParameter(1, encodedPwd);
-      final List<?> list = qry.list();
-      Check.isTrue(list.size() == 0 || list.size() == 1, "Zero or one user expected for login "
-          + login + " but found " + list.size() + " users ");
-      if (list.size() == 0) {
-        return null;
-      }
-      return (String) list.get(0);
-    } catch (final Exception e) {
-      throw new OBException(e);
-    }
   }
 
   public static boolean fillSessionArguments(ConnectionProvider conn, VariablesSecureApp vars,
