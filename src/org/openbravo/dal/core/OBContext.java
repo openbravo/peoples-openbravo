@@ -80,7 +80,7 @@ public class OBContext implements OBNotSingleton {
 
   private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<OBContext>();
 
-  public static String CONTEXT_PARAM = "#OBContext";
+  public static final String CONTEXT_PARAM = "#OBContext";
 
   private static OBContext adminContext = null;
 
