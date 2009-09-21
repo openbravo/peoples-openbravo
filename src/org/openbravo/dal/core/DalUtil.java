@@ -130,8 +130,6 @@ public class DalUtil {
   private static void repairReferences(Map<BaseOBObject, BaseOBObject> fromTo) {
 
     for (BaseOBObject to : fromTo.values()) {
-      System.err.println(to.getEntityName());
-      System.err.println(to.getEntityName());
       for (final Property p : to.getEntity().getProperties()) {
         if (p.isPrimitive()) {
           continue;
