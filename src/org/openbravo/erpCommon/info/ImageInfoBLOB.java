@@ -107,6 +107,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         image.setBindaryData(bytea);
         OBDal.getInstance().flush();
       }
+      response.setContentType("text/html; charset=UTF-8");
       PrintWriter writer = response.getWriter();
       writeRedirect(writer, image.getId(), columnName);
     } else if (vars.commandIn("DELETE")) {
@@ -133,6 +134,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         } finally {
           OBContext.getOBContext().setInAdministratorMode(adminMode);
         }
+        response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
         writeRedirect(writer, "", columnName);
       } else {
