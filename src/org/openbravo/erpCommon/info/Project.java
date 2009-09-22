@@ -77,6 +77,7 @@ public class Project extends HttpSecureAppServlet {
       String strWindow = vars.getGlobalVariable("WindowID", "Project.windowId", "");
       String strBpartner = vars.getGlobalVariable("inpBpartnerId", "Project.bpartner", "");
       String strKeyValue = vars.getGlobalVariable("inpNameValue", "Project.key", "");
+      // getGlobalVariable only used to store request value into session, not to read it from there
       String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Project.adorgid", "");
       vars.setSessionValue("Project.key", strKeyValue + "%");
       ProjectData[] data = ProjectData.selectKey(this, Utility.getContext(this, vars,
@@ -114,7 +115,11 @@ public class Project extends HttpSecureAppServlet {
     vars.removeSessionValue("Project.key");
     vars.removeSessionValue("Project.name");
     vars.removeSessionValue("Project.bpartner");
-    vars.removeSessionValue("Project.adorgid");
+    // remove saved adorgid only when called from DEFAULT,KEY
+    // but not when called by clicking search in the selector
+    if (!vars.getStringParameter("newFilter").equals("1")) {
+      vars.removeSessionValue("Project.adorgid");
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
