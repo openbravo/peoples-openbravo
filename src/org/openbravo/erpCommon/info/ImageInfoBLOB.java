@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.info;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -35,6 +36,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.DataPackage;
 import org.openbravo.model.ad.utility.Image;
@@ -51,11 +53,6 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    String parentObjectId = vars.getStringParameter("parentObjectId");
-    if (parentObjectId == null || parentObjectId.equals("")) {
-      String keyCol = vars.getStringParameter("inpkeyColumnId");
-      parentObjectId = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(keyCol));
-    }
 
     String columnName = vars.getStringParameter("columnName");
     if (columnName == null || columnName.equals(""))
@@ -69,36 +66,49 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
       imageID = vars.getStringParameter("imageId");
     }
 
+    String parentObjectId = vars.getStringParameter("parentObjectId");
+    if (parentObjectId == null || parentObjectId.equals("")) {
+      boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+      try {
+        Table table = OBDal.getInstance().get(Table.class, vars.getStringParameter("inpTableId"));
+        List<Column> cols = table.getADColumnList();
+        String keyCol = "";
+        for (Column col : cols) {
+          if (col.isKeyColumn()) {
+            keyCol = col.getDBColumnName();
+            break;
+          }
+        }
+        parentObjectId = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(keyCol));
+      } finally {
+        OBContext.getOBContext().setInAdministratorMode(adminMode);
+      }
+    }
     if (vars.commandIn("DEFAULT")) {
 
       printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId);
     } else if (vars.commandIn("SAVE")) {
-      boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
-      try {
-        final FileItem fi = vars.getMultiFile("inpFile");
-        byte[] bytea = fi.get();
+      final FileItem fi = vars.getMultiFile("inpFile");
+      byte[] bytea = fi.get();
 
-        // Using DAL to write the image data to the database
-        Image image;
-        if (imageID == null || imageID.equals("")) {
-          image = OBProvider.getInstance().get(Image.class);
-          image.setBindaryData(bytea);
-          image.setActive(true);
-          image.setName("Image");
-          OBDal.getInstance().save(image);
-          OBDal.getInstance().flush();
+      // Using DAL to write the image data to the database
+      Image image;
+      if (imageID == null || imageID.equals("")) {
+        image = OBProvider.getInstance().get(Image.class);
+        image.setBindaryData(bytea);
+        image.setActive(true);
+        image.setName("Image");
+        OBDal.getInstance().save(image);
+        OBDal.getInstance().flush();
 
-        } else {
-          image = OBDal.getInstance().get(Image.class, imageID);
-          image.setActive(true);
-          image.setBindaryData(bytea);
-          OBDal.getInstance().flush();
-        }
-        PrintWriter writer = response.getWriter();
-        writeRedirect(writer, image.getId(), columnName);
-      } finally {
-        OBContext.getOBContext().setInAdministratorMode(adminMode);
+      } else {
+        image = OBDal.getInstance().get(Image.class, imageID);
+        image.setActive(true);
+        image.setBindaryData(bytea);
+        OBDal.getInstance().flush();
       }
+      PrintWriter writer = response.getWriter();
+      writeRedirect(writer, image.getId(), columnName);
     } else if (vars.commandIn("DELETE")) {
       if (imageID != null && !imageID.equals("")) {
         boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);

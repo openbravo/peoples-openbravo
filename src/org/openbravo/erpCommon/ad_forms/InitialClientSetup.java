@@ -570,6 +570,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
       if (sys.getYourCompanyBigImage() != null) {
         Image yourCompanyBigImage = OBProvider.getInstance().get(Image.class);
+        yourCompanyBigImage.setClient(newClient);
         yourCompanyBigImage.setBindaryData(sys.getYourCompanyBigImage().getBindaryData());
         yourCompanyBigImage.setName(sys.getYourCompanyBigImage().getName());
         newClient.getClientInformationList().get(0).setYourCompanyBigImage(yourCompanyBigImage);
@@ -578,6 +579,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
       if (sys.getYourCompanyDocumentImage() != null) {
         Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
+        yourCompanyDocumentImage.setClient(newClient);
         yourCompanyDocumentImage.setBindaryData(sys.getYourCompanyDocumentImage().getBindaryData());
         yourCompanyDocumentImage.setName(sys.getYourCompanyBigImage().getName());
         newClient.getClientInformationList().get(0).setYourCompanyDocumentImage(
@@ -587,6 +589,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
       if (sys.getYourCompanyMenuImage() != null) {
         Image yourCompanyMenuImage = OBProvider.getInstance().get(Image.class);
+        yourCompanyMenuImage.setClient(newClient);
         yourCompanyMenuImage.setBindaryData(sys.getYourCompanyMenuImage().getBindaryData());
         yourCompanyMenuImage.setName(sys.getYourCompanyMenuImage().getName());
         newClient.getClientInformationList().get(0).setYourCompanyMenuImage(yourCompanyMenuImage);

@@ -277,13 +277,10 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       fail(ir.getException().getMessage());
     }
 
-    assertEquals(NO_OF_PT + NO_OF_PT_LINE, ir.getInsertedObjects().size());
-    assertEquals(NO_OF_PT, ir.getUpdatedObjects().size());
-    for (final Object o : ir.getUpdatedObjects()) {
-      assertTrue(o instanceof PaymentTermTrl);
-    }
+    assertEquals(NO_OF_PT + NO_OF_PT_LINE + 1, ir.getInsertedObjects().size());
     for (final Object o : ir.getInsertedObjects()) {
-      assertTrue(o instanceof PaymentTerm || o instanceof PaymentTermLine);
+      assertTrue(o instanceof PaymentTermTrl || o instanceof PaymentTerm
+          || o instanceof PaymentTermLine);
     }
   }
 

@@ -21,7 +21,6 @@ package org.openbravo.service.web;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,14 +28,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
-import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.base.util.Check;
+import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
-import org.openbravo.model.ad.access.User;
-import org.openbravo.utils.CryptoSHA1BASE64;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext}
@@ -119,7 +116,7 @@ public class BaseWebServiceServlet extends HttpServlet {
     final String password = request.getParameter(PASSWORD_PARAM);
     String userId = null;
     if (login != null && password != null) {
-      userId = getValidUserId(login, password);
+      userId = LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
     } else { // use basic authentication
       userId = doBasicAuthentication(request);
     }
@@ -153,27 +150,7 @@ public class BaseWebServiceServlet extends HttpServlet {
       }
       final String login = decodedUserPass.substring(0, index);
       final String password = decodedUserPass.substring(index + 1);
-      return getValidUserId(login, password);
-    } catch (final Exception e) {
-      throw new OBException(e);
-    }
-  }
-
-  private String getValidUserId(String login, String password) {
-    try {
-      final String encodedPwd = CryptoSHA1BASE64.hash(password);
-      // now search with the login and password
-      final Query qry = SessionHandler.getInstance().createQuery(
-          "select id from " + User.class.getName() + " where username=? and password=?");
-      qry.setParameter(0, login);
-      qry.setParameter(1, encodedPwd);
-      final List<?> list = qry.list();
-      Check.isTrue(list.size() == 0 || list.size() == 1, "Zero or one user expected for login "
-          + login + " but found " + list.size() + " users ");
-      if (list.size() == 0) {
-        return null;
-      }
-      return (String) list.get(0);
+      return LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
     } catch (final Exception e) {
       throw new OBException(e);
     }

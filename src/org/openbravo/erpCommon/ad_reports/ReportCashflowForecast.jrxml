@@ -158,6 +158,7 @@
 
 	<parameter name="ATTACH" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="ReportData" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
 	<parameter name="BASE_DESIGN" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["/home/david/workspace/trunk/openbravo/src"]]></defaultValueExpression>
 	</parameter>
@@ -504,7 +505,7 @@
 						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"ReportCashflowForecast_sub.jasper"]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ReportData}]]></subreportExpression>
 				</subreport>
 				<staticText>
 					<reportElement

@@ -281,7 +281,7 @@
 					<textElement>
 						<font pdfFontName="Helvetica"/>
 					</textElement>
-				<text><![CDATA[Client]]></text>
+				<text><![CDATA[Customer]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -444,9 +444,9 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Detail_Header"
-						x="90"
+						x="178"
 						y="10"
-						width="238"
+						width="150"
 						height="16"
 						key="textField"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -489,9 +489,9 @@
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Detail_Header"
-						x="420"
+						x="456"
 						y="10"
-						width="286"
+						width="250"
 						height="16"
 						key="textField"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -586,7 +586,7 @@
 						style="Detail_Header"
 						x="328"
 						y="10"
-						width="92"
+						width="128"
 						height="16"
 						key="staticText-9"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -605,7 +605,7 @@
 						style="Detail_Header"
 						x="10"
 						y="10"
-						width="80"
+						width="168"
 						height="16"
 						key="staticText-11"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -617,7 +617,7 @@
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Order No.]]></text>
+				<text><![CDATA[Invoice Doc No.]]></text>
 				</staticText>
 				<line direction="TopDown">
 					<reportElement

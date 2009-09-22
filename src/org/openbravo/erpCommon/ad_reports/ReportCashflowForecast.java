@@ -103,11 +103,8 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
       String strBaseDesign = getBaseDesignPath(strLanguage);
       JasperReport jasperReportLines;
       try {
-        JasperDesign jasperDesignLines = (("on".equals(strBreakDate)) ? JRXmlLoader
-            .load(strBaseDesign
-                + "/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_perDay.jrxml")
-            : JRXmlLoader.load(strBaseDesign
-                + "/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast.jrxml"));
+        JasperDesign jasperDesignLines = (JRXmlLoader.load(strBaseDesign
+            + "/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_sub.jrxml"));
         jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
       } catch (JRException e) {
         log4j.error("Error Compiling report ", e);

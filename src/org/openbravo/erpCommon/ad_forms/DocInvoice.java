@@ -37,7 +37,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Constructor
-   *
+   * 
    * @param AD_Client_ID
    *          AD_Client_ID
    */
@@ -217,7 +217,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for ARI, ARC, ARF, API, APC.
-   *
+   * 
    * <pre>
    *  ARI, ARF
    *      Receivables     DR
@@ -240,7 +240,7 @@ public class DocInvoice extends AcctServer {
    *      TaxCredit               CR
    *      Expense                 CR
    * </pre>
-   *
+   * 
    * @param as
    *          accounting schema
    * @return Fact
@@ -296,9 +296,9 @@ public class DocInvoice extends AcctServer {
       // TaxDue CR
       log4jDocInvoice.debug("m_taxes.length: " + m_taxes);
       for (int i = 0; m_taxes != null && i < m_taxes.length; i++) {
-    	//New docLine created to assign C_Tax_ID value to the entry
-    	DocLine docLine = new DocLine(DocumentType, Record_ID, "");
-    	docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
+        // New docLine created to assign C_Tax_ID value to the entry
+        DocLine docLine = new DocLine(DocumentType, Record_ID, "");
+        docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
         fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
             C_Currency_ID, "", m_taxes[i].m_amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
@@ -326,10 +326,19 @@ public class DocInvoice extends AcctServer {
       for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
         BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
         BigDecimal ZERO = BigDecimal.ZERO;
-        fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
-            m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(((amount
-            .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,
-            DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        if ((amount.compareTo(ZERO) > 0 && m_debt_payments[i].isReceipt.equals("Y"))
+            || (amount.compareTo(ZERO) < 0 && m_debt_payments[i].isReceipt.equals("N")))
+          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
+              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(((amount
+              .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
+              this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+        else
+          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
+              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(((amount
+              .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
+              this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
       }
 
       // fact.createLine(null,
@@ -342,10 +351,14 @@ public class DocInvoice extends AcctServer {
           getAmount(AcctServer.AMTTYPE_Charge), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
       // TaxDue DR
-      for (int i = 0; m_taxes != null && i < m_taxes.length; i++)
-        fact.createLine(null, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
+      for (int i = 0; m_taxes != null && i < m_taxes.length; i++) {
+        // New docLine created to assign C_Tax_ID value to the entry
+        DocLine docLine = new DocLine(DocumentType, Record_ID, "");
+        docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
+        fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
             this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
+      }
       // Revenue CR
       for (int i = 0; p_lines != null && i < p_lines.length; i++)
         fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
@@ -386,10 +399,14 @@ public class DocInvoice extends AcctServer {
           getAmount(AcctServer.AMTTYPE_Charge), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
       // TaxCredit DR
-      for (int i = 0; m_taxes != null && i < m_taxes.length; i++)
-        fact.createLine(null, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
+      for (int i = 0; m_taxes != null && i < m_taxes.length; i++) {
+        // New docLine created to assign C_Tax_ID value to the entry
+        DocLine docLine = new DocLine(DocumentType, Record_ID, "");
+        docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
+        fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
             this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
+      }
       // Expense DR
       for (int i = 0; p_lines != null && i < p_lines.length; i++)
         fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
@@ -412,10 +429,19 @@ public class DocInvoice extends AcctServer {
       for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
         BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
         BigDecimal ZERO = BigDecimal.ZERO;
-        fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
-            m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(((amount
-            .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,
-            DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        if ((amount.compareTo(ZERO) < 0 && m_debt_payments[i].isReceipt.equals("Y"))
+            || (amount.compareTo(ZERO) > 0 && m_debt_payments[i].isReceipt.equals("N")))
+          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
+              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(((amount
+              .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
+              this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+        else
+          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
+              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(((amount
+              .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
+              this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
       }
 
       // fact.createLine (null,
@@ -427,10 +453,14 @@ public class DocInvoice extends AcctServer {
           "", getAmount(AcctServer.AMTTYPE_Charge), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
       // TaxCredit CR
-      for (int i = 0; m_taxes != null && i < m_taxes.length; i++)
-        fact.createLine(null, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
+      for (int i = 0; m_taxes != null && i < m_taxes.length; i++) {
+        // New docLine created to assign C_Tax_ID value to the entry
+        DocLine docLine = new DocLine(DocumentType, Record_ID, "");
+        docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
+        fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
             this.C_Currency_ID, "", m_taxes[i].getAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
+      }
       // Expense CR
       for (int i = 0; p_lines != null && i < p_lines.length; i++)
         fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
@@ -450,11 +480,11 @@ public class DocInvoice extends AcctServer {
     }
     SeqNo = "0";
     return fact;
-  }// createFact
+  } // createFact
 
   /**
    * Update Product Info. - Costing (PriceLastInv) - PO (PriceLastInv)
-   *
+   * 
    * @param C_AcctSchema_ID
    *          accounting schema
    */
@@ -481,7 +511,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line and tax amounts from total - no rounding
-   *
+   * 
    * @return positive amount, if total invoice is bigger than lines
    */
   public BigDecimal getBalance() {
@@ -520,7 +550,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   *
+   * 
    * @param cBPartnerId
    *          business partner id
    * @param as
@@ -567,7 +597,7 @@ public class DocInvoice extends AcctServer {
 
   /**
    * Get Document Confirmation
-   *
+   * 
    * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {

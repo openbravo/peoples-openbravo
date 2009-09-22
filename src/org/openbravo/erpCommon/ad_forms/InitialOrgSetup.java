@@ -297,7 +297,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       strError = strError.substring((strError.lastIndexOf("@ORA-") > 0 ? strError
           .lastIndexOf("@ORA-") : 0), strError.length());
       isOK = false;
-      log4j.warn(err);
+      log4j.error("Error in createOrg", err);
       try {
         releaseRollbackConnection(conn);
       } catch (final Exception ignored) {
@@ -528,10 +528,12 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     Client organizationClient = OBDal.getInstance().get(Client.class, AD_Client_ID);
     if (organizationClient.getClientInformationList().get(0).getYourCompanyDocumentImage() != null) {
       Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
+      yourCompanyDocumentImage.setClient(organizationClient);
+      yourCompanyDocumentImage.setOrganization(newOrganization);
       yourCompanyDocumentImage.setBindaryData(organizationClient.getClientInformationList().get(0)
           .getYourCompanyDocumentImage().getBindaryData());
       yourCompanyDocumentImage.setName(organizationClient.getClientInformationList().get(0)
-          .getYourCompanyBigImage().getName());
+          .getYourCompanyDocumentImage().getName());
       newOrganization.getOrganizationInformationList().get(0).setYourCompanyDocumentImage(
           yourCompanyDocumentImage);
       yourCompanyDocumentImage.setOrganization(newOrganization);
