@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.ServletConfig;
@@ -27,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
@@ -63,15 +63,12 @@ public class Heartbeat extends HttpSecureAppServlet {
       }
     }
 
-    if (vars.commandIn("DEFAULT")) {
+    if (vars.commandIn("DEFAULT", "DEFAULT_MODULE")) {
       printPageDataSheet(response, vars);
-    } else if (vars.commandIn("DISABLE")) {
-      HeartbeatData.disableHeartbeat(myPool);
-    } else if (vars.commandIn("POSTPONE")) {
-      final Calendar cal = Calendar.getInstance();
-      cal.add(Calendar.DATE, 2);
-      final String date = new SimpleDateFormat(vars.getJavaDateFormat()).format(cal.getTime());
-      HeartbeatData.postpone(myPool, date);
+    } else if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE")) {
+      response.sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command="
+          + vars.getCommand() + "&inpcRecordId="
+          + vars.getStringParameter("inpcRecordId", IsIDFilter.instance));
     } else
       pageError(response);
   }
@@ -90,8 +87,23 @@ public class Heartbeat extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
+
+    String msgCode = vars.getCommand().equals("DEFAULT_MODULE") ? "HB_WELCOME_MODULE"
+        : "HB_WELCOME";
     xmlDocument.setParameter("welcome", Utility.formatMessageBDToHtml(Utility.messageBD(this,
-        "HB_WELCOME", vars.getLanguage())));
+        msgCode, vars.getLanguage())));
+
+    xmlDocument.setParameter("recordId", vars.getStringParameter("inpcRecordId",
+        IsIDFilter.instance));
+
+    String jsCommand = "var cmd='";
+    if (vars.commandIn("DEFAULT")) {
+      jsCommand += "CONFIGURE";
+    } else {
+      jsCommand += "CONFIGURE_MODULE";
+    }
+    jsCommand += "';";
+    xmlDocument.setParameter("cmd", jsCommand);
 
     final RegistrationData[] rData = RegistrationData.select(this);
     if (rData.length > 0) {

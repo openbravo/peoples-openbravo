@@ -41,9 +41,9 @@
                           UPDATED, UPDATEDBY, SYSTEM_IDENTIFIER, ISHEARTBEATACTIVE, ISPROXYREQUIRED, PROXY_SERVER, PROXY_PORT,
                           ACTIVITY_RATE, COMPLEXITY_RATE, OS, OS_VERSION, DB, DB_VERSION, SERVLET_CONTAINER,
                           SERVLET_CONTAINER_VERSION, WEBSERVER, WEBSERVER_VERSION, OB_VERSION, OB_INSTALLMODE, CODE_REVISION, NUM_REGISTERED_USERS,
-                          JAVA_VERSION, ANT_VERSION) 
+                          JAVA_VERSION, ANT_VERSION, BEAT_TYPE)
       		VALUES (?, ?, ?, 'Y', NOW(), 0, NOW(), 0, ?, ?, ?, ?, TO_NUMBER(?), TO_NUMBER(?), 
-      		TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_NUMBER(?), ?, ?)
+      		TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_NUMBER(?), ?, ?, ?)
     ]]></Sql>
     <Parameter name="id"/>
     <Parameter name="adClientId"/>null
@@ -69,6 +69,7 @@
     <Parameter name="numRegisteredUsers"/>
     <Parameter name="javaVersion"/>
     <Parameter name="antVersion"/>
+    <Parameter name="beatType"/>
    </SqlMethod>
 
 </SqlClass>

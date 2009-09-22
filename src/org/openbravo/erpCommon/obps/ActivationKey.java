@@ -451,4 +451,8 @@ public class ActivationKey {
     return moduleList;
   }
 
+  public boolean isModuleSubscribed(String moduleId, boolean onlyActive) {
+    return getSubscribedModules(onlyActive).contains(moduleId);
+  }
+
 }

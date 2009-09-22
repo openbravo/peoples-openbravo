@@ -3205,7 +3205,7 @@ function setPageLoading(status) {
 * @see #setChangedField
 */
 function logChanges(field) {
-  if(!isUserChanges) return;
+  // if(!isUserChanges) return;
   if (field==null || !field) return false;
   return setChangedField(field, field.form);
 }

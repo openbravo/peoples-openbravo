@@ -23,5 +23,7 @@
 	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
+    <PARAMETER id="paramCMD" name="cmd" default="var cmd='CONFIGURE';" />
+    <PARAMETER id="paramRecordId" name="recordId" attribute="value" default="" replace="xx" />
  	<PARAMETER id="openRegistration" name="registration" />
 </REPORT>

@@ -19,12 +19,24 @@
 
 package org.openbravo.erpCommon.modules;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.axis.AxisFault;
+import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.utility.HttpsUtils;
+import org.openbravo.services.webservice.WebServiceImpl;
+import org.openbravo.services.webservice.WebServiceImplServiceLocator;
 
 /**
  * This class implements different utilities related to modules
@@ -32,6 +44,7 @@ import org.openbravo.database.ConnectionProvider;
  * 
  */
 public class ModuleUtiltiy {
+  protected static Logger log4j = Logger.getLogger(ModuleUtiltiy.class);
 
   /**
    * It receives an ArrayList<String> with modules IDs and returns the same list ordered taking into
@@ -68,7 +81,7 @@ public class ModuleUtiltiy {
 
       return rt;
     } catch (Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
       return modules;
     }
   }
@@ -130,5 +143,89 @@ public class ModuleUtiltiy {
     }
     modules = rt;
     return;
+  }
+
+  /**
+   * Obtains remotelly an obx for the desired moduleVersionID
+   * 
+   * @param im
+   *          {@link ImportModule} instance used to add the log
+   * @param moduleVersionID
+   *          ID for the module version to obtain
+   * @return An {@link InputStream} with containing the obx for the module (null if error)
+   */
+  public static InputStream getRemoteModule(ImportModule im, String moduleVersionID) {
+    WebServiceImplServiceLocator loc;
+    WebServiceImpl ws = null;
+    String strUrl = "";
+    boolean isCommercial;
+
+    try {
+      loc = new WebServiceImplServiceLocator();
+      ws = loc.getWebService();
+    } catch (final Exception e) {
+      log4j.error(e);
+      im.addLog("@CouldntConnectToWS@", ImportModule.MSG_ERROR);
+      try {
+        ImportModuleData.insertLog(ImportModule.pool, (im.vars == null ? "0" : im.vars.getUser()),
+            "", "", "", "Couldn't contact with webservice server", "E");
+      } catch (final ServletException ex) {
+        log4j.error(ex);
+      }
+      return null;
+    }
+
+    try {
+      isCommercial = ws.isCommercial(moduleVersionID);
+      strUrl = ws.getURLforDownload(moduleVersionID);
+    } catch (AxisFault e1) {
+      im.addLog("@" + e1.getFaultCode() + "@", ImportModule.MSG_ERROR);
+      return null;
+    } catch (RemoteException e) {
+      im.addLog(e.getMessage(), ImportModule.MSG_ERROR);
+      return null;
+    }
+
+    if (isCommercial && !ActivationKey.isActiveInstance()) {
+      im.addLog("@NotCommercialModulesAllowed@", ImportModule.MSG_ERROR);
+      return null;
+    }
+
+    try {
+      URL url = new URL(strUrl);
+      HttpURLConnection conn = null;
+
+      if (strUrl.startsWith("https://")) {
+        ActivationKey ak = new ActivationKey();
+        String instanceKey = "obinstance=" + URLEncoder.encode(ak.getPublicKey(), "utf-8");
+        conn = HttpsUtils.sendHttpsRequest(url, instanceKey, "localhost-1", "changeit");
+      } else {
+        conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestProperty("Keep-Alive", "300");
+        conn.setRequestProperty("Connection", "keep-alive");
+        conn.setRequestMethod("GET");
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
+        conn.setUseCaches(false);
+        conn.setAllowUserInteraction(false);
+      }
+
+      if (conn.getResponseCode() == HttpServletResponse.SC_OK) {
+        // OBX is ready to be used
+        return conn.getInputStream();
+      }
+
+      // There is an error, let's check for a parseable message
+      String msg = conn.getHeaderField("OB-ErrMessage");
+      if (msg != null) {
+        im.addLog(msg, ImportModule.MSG_ERROR);
+      } else {
+        im.addLog("@ErrorDownloadingOBX@ " + conn.getResponseCode(), ImportModule.MSG_ERROR);
+      }
+    } catch (Exception e) {
+      im.addLog("@ErrorDownloadingOBX@ " + e.getMessage(), ImportModule.MSG_ERROR);
+    }
+    return null;
+
   }
 }

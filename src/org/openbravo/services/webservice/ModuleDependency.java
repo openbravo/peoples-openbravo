@@ -14,8 +14,6 @@ public class ModuleDependency  implements java.io.Serializable {
 
     private java.lang.String moduleVersionDependencyID;
 
-    private java.lang.String moduleVersionID;
-
     private java.lang.String versionEnd;
 
     private java.lang.String versionStart;
@@ -27,13 +25,11 @@ public class ModuleDependency  implements java.io.Serializable {
            java.lang.String moduleID,
            java.lang.String moduleName,
            java.lang.String moduleVersionDependencyID,
-           java.lang.String moduleVersionID,
            java.lang.String versionEnd,
            java.lang.String versionStart) {
            this.moduleID = moduleID;
            this.moduleName = moduleName;
            this.moduleVersionDependencyID = moduleVersionDependencyID;
-           this.moduleVersionID = moduleVersionID;
            this.versionEnd = versionEnd;
            this.versionStart = versionStart;
     }
@@ -100,26 +96,6 @@ public class ModuleDependency  implements java.io.Serializable {
 
 
     /**
-     * Gets the moduleVersionID value for this ModuleDependency.
-     * 
-     * @return moduleVersionID
-     */
-    public java.lang.String getModuleVersionID() {
-        return moduleVersionID;
-    }
-
-
-    /**
-     * Sets the moduleVersionID value for this ModuleDependency.
-     * 
-     * @param moduleVersionID
-     */
-    public void setModuleVersionID(java.lang.String moduleVersionID) {
-        this.moduleVersionID = moduleVersionID;
-    }
-
-
-    /**
      * Gets the versionEnd value for this ModuleDependency.
      * 
      * @return versionEnd
@@ -179,9 +155,6 @@ public class ModuleDependency  implements java.io.Serializable {
             ((this.moduleVersionDependencyID==null && other.getModuleVersionDependencyID()==null) || 
              (this.moduleVersionDependencyID!=null &&
               this.moduleVersionDependencyID.equals(other.getModuleVersionDependencyID()))) &&
-            ((this.moduleVersionID==null && other.getModuleVersionID()==null) || 
-             (this.moduleVersionID!=null &&
-              this.moduleVersionID.equals(other.getModuleVersionID()))) &&
             ((this.versionEnd==null && other.getVersionEnd()==null) || 
              (this.versionEnd!=null &&
               this.versionEnd.equals(other.getVersionEnd()))) &&
@@ -208,9 +181,6 @@ public class ModuleDependency  implements java.io.Serializable {
         if (getModuleVersionDependencyID() != null) {
             _hashCode += getModuleVersionDependencyID().hashCode();
         }
-        if (getModuleVersionID() != null) {
-            _hashCode += getModuleVersionID().hashCode();
-        }
         if (getVersionEnd() != null) {
             _hashCode += getVersionEnd().hashCode();
         }
@@ -226,7 +196,7 @@ public class ModuleDependency  implements java.io.Serializable {
         new org.apache.axis.description.TypeDesc(ModuleDependency.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("/services/WebService", "ModuleDependency"));
+        typeDesc.setXmlType(new javax.xml.namespace.QName("/services/WebService2", "ModuleDependency"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("moduleID");
         elemField.setXmlName(new javax.xml.namespace.QName("", "moduleID"));
@@ -242,12 +212,6 @@ public class ModuleDependency  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("moduleVersionDependencyID");
         elemField.setXmlName(new javax.xml.namespace.QName("", "moduleVersionDependencyID"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("moduleVersionID");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "moduleVersionID"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);

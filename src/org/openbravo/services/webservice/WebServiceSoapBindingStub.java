@@ -16,9 +16,8 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
     static org.apache.axis.description.OperationDesc [] _operations;
 
     static {
-        _operations = new org.apache.axis.description.OperationDesc[15];
+        _operations = new org.apache.axis.description.OperationDesc[8];
         _initOperationDesc1();
-        _initOperationDesc2();
     }
 
     private static void _initOperationDesc1(){
@@ -26,9 +25,9 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         org.apache.axis.description.ParameterDesc param;
         oper = new org.apache.axis.description.OperationDesc();
         oper.setName("getModule");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "moduleVersionID"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "base64Binary"));
+        oper.setReturnType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "base64Binary"));
         oper.setReturnClass(byte[].class);
         oper.setReturnQName(new javax.xml.namespace.QName("", "getModuleReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
@@ -36,225 +35,91 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         _operations[0] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("getCustomers");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), int.class, false, false);
+        oper.setName("moduleSearch");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "word"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "exclude"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_tns1_Customer"));
-        oper.setReturnClass(org.openbravo.services.webservice.Customer[].class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "getCustomersReturn"));
+        oper.setReturnType(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_tns1_SimpleModule"));
+        oper.setReturnClass(org.openbravo.services.webservice.SimpleModule[].class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "moduleSearchReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
         oper.setUse(org.apache.axis.constants.Use.ENCODED);
         _operations[1] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("getCustomer");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), int.class, false, false);
+        oper.setName("moduleDetail");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "moduleVersionID"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), int.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in3"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("/services/WebService", "Customer"));
-        oper.setReturnClass(org.openbravo.services.webservice.Customer.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "getCustomerReturn"));
+        oper.setReturnType(new javax.xml.namespace.QName("/services/WebService2", "Module"));
+        oper.setReturnClass(org.openbravo.services.webservice.Module.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "moduleDetailReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
         oper.setUse(org.apache.axis.constants.Use.ENCODED);
         _operations[2] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("getCustomer");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), int.class, false, false);
+        oper.setName("getURLforDownload");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "moduleVersionID"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in3"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in4"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("/services/WebService", "Customer"));
-        oper.setReturnClass(org.openbravo.services.webservice.Customer.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "getCustomerReturn"));
+        oper.setReturnType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        oper.setReturnClass(java.lang.String.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "getURLforDownloadReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
         oper.setUse(org.apache.axis.constants.Use.ENCODED);
         _operations[3] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("updateCustomer");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("/services/WebService", "BusinessPartner"), org.openbravo.services.webservice.BusinessPartner.class, false, false);
+        oper.setName("isCommercial");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "moduleVersionID"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "boolean"));
-        oper.setReturnClass(java.lang.Boolean.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "updateCustomerReturn"));
+        oper.setReturnType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        oper.setReturnClass(boolean.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "isCommercialReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
         oper.setUse(org.apache.axis.constants.Use.ENCODED);
         _operations[4] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("getCustomerAddresses");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), int.class, false, false);
+        oper.setName("moduleScanForUpdates");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "moduleIdInstalledModules"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"), java.util.HashMap.class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), int.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in3"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_xsd_int"));
-        oper.setReturnClass(int[].class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "getCustomerAddressesReturn"));
+        oper.setReturnType(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_tns1_SimpleModule"));
+        oper.setReturnClass(org.openbravo.services.webservice.SimpleModule[].class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "moduleScanForUpdatesReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
         oper.setUse(org.apache.axis.constants.Use.ENCODED);
         _operations[5] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("getCustomerLocation");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), int.class, false, false);
+        oper.setName("moduleRegister");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "module"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("/services/WebService2", "Module"), org.openbravo.services.webservice.Module.class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), int.class, false, false);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "userName"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), int.class, false, false);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "password"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in3"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in4"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("/services/WebService", "Location"));
-        oper.setReturnClass(org.openbravo.services.webservice.Location.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "getCustomerLocationReturn"));
+        oper.setReturnType(new javax.xml.namespace.QName("/services/WebService2", "Module"));
+        oper.setReturnClass(org.openbravo.services.webservice.Module.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "moduleRegisterReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
         oper.setUse(org.apache.axis.constants.Use.ENCODED);
         _operations[6] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("updateAddress");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("/services/WebService", "Location"), org.openbravo.services.webservice.Location.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "boolean"));
-        oper.setReturnClass(java.lang.Boolean.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "updateAddressReturn"));
-        oper.setStyle(org.apache.axis.constants.Style.RPC);
-        oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        _operations[7] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("getCustomerContact");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), int.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), int.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), int.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in3"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in4"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("/services/WebService", "Contact"));
-        oper.setReturnClass(org.openbravo.services.webservice.Contact.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "getCustomerContactReturn"));
-        oper.setStyle(org.apache.axis.constants.Style.RPC);
-        oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        _operations[8] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("updateContact");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("/services/WebService", "Contact"), org.openbravo.services.webservice.Contact.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "boolean"));
-        oper.setReturnClass(java.lang.Boolean.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "updateContactReturn"));
-        oper.setStyle(org.apache.axis.constants.Style.RPC);
-        oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        _operations[9] = oper;
-
-    }
-
-    private static void _initOperationDesc2(){
-        org.apache.axis.description.OperationDesc oper;
-        org.apache.axis.description.ParameterDesc param;
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("moduleSearch");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_tns1_SimpleModule"));
-        oper.setReturnClass(org.openbravo.services.webservice.SimpleModule[].class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "moduleSearchReturn"));
-        oper.setStyle(org.apache.axis.constants.Style.RPC);
-        oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        _operations[10] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("moduleDetail");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("/services/WebService", "Module"));
-        oper.setReturnClass(org.openbravo.services.webservice.Module.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "moduleDetailReturn"));
-        oper.setStyle(org.apache.axis.constants.Style.RPC);
-        oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        _operations[11] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("moduleScanForUpdates");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"), java.util.HashMap.class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_tns1_SimpleModule"));
-        oper.setReturnClass(org.openbravo.services.webservice.SimpleModule[].class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "moduleScanForUpdatesReturn"));
-        oper.setStyle(org.apache.axis.constants.Style.RPC);
-        oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        _operations[12] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("moduleRegister");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("/services/WebService", "Module"), org.openbravo.services.webservice.Module.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("/services/WebService", "Module"));
-        oper.setReturnClass(org.openbravo.services.webservice.Module.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "moduleRegisterReturn"));
-        oper.setStyle(org.apache.axis.constants.Style.RPC);
-        oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        _operations[13] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
         oper.setName("checkConsistency");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"), java.util.HashMap.class, false, false);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "versionIdInstalled"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"), java.util.HashMap.class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "versionIdToInstall"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "versionIdToUpdate"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
         oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("/services/WebService", "ModuleInstallDetail"));
+        oper.setReturnType(new javax.xml.namespace.QName("/services/WebService2", "ModuleInstallDetail"));
         oper.setReturnClass(org.openbravo.services.webservice.ModuleInstallDetail.class);
         oper.setReturnQName(new javax.xml.namespace.QName("", "checkConsistencyReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
         oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        _operations[14] = oper;
+        _operations[7] = oper;
 
     }
 
@@ -287,126 +152,62 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
             java.lang.Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
             java.lang.Class simplelistsf = org.apache.axis.encoding.ser.SimpleListSerializerFactory.class;
             java.lang.Class simplelistdf = org.apache.axis.encoding.ser.SimpleListDeserializerFactory.class;
-            qName = new javax.xml.namespace.QName("/services/WebService", "BusinessPartner");
-            cachedSerQNames.add(qName);
-            cls = org.openbravo.services.webservice.BusinessPartner.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("/services/WebService", "Contact");
-            cachedSerQNames.add(qName);
-            cls = org.openbravo.services.webservice.Contact.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("/services/WebService", "Customer");
-            cachedSerQNames.add(qName);
-            cls = org.openbravo.services.webservice.Customer.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("/services/WebService", "Location");
-            cachedSerQNames.add(qName);
-            cls = org.openbravo.services.webservice.Location.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("/services/WebService", "Module");
+            qName = new javax.xml.namespace.QName("/services/WebService2", "Module");
             cachedSerQNames.add(qName);
             cls = org.openbravo.services.webservice.Module.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("/services/WebService", "ModuleDependency");
+            qName = new javax.xml.namespace.QName("/services/WebService2", "ModuleDependency");
             cachedSerQNames.add(qName);
             cls = org.openbravo.services.webservice.ModuleDependency.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("/services/WebService", "ModuleInstallDetail");
+            qName = new javax.xml.namespace.QName("/services/WebService2", "ModuleInstallDetail");
             cachedSerQNames.add(qName);
             cls = org.openbravo.services.webservice.ModuleInstallDetail.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("/services/WebService", "SimpleModule");
+            qName = new javax.xml.namespace.QName("/services/WebService2", "SimpleModule");
             cachedSerQNames.add(qName);
             cls = org.openbravo.services.webservice.SimpleModule.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_tns1_Contact");
-            cachedSerQNames.add(qName);
-            cls = org.openbravo.services.webservice.Contact[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("/services/WebService", "Contact");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
-
-            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_tns1_Customer");
-            cachedSerQNames.add(qName);
-            cls = org.openbravo.services.webservice.Customer[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("/services/WebService", "Customer");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
-
-            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_tns1_Location");
-            cachedSerQNames.add(qName);
-            cls = org.openbravo.services.webservice.Location[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("/services/WebService", "Location");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
-
-            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_tns1_Module");
+            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_tns1_Module");
             cachedSerQNames.add(qName);
             cls = org.openbravo.services.webservice.Module[].class;
             cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("/services/WebService", "Module");
+            qName = new javax.xml.namespace.QName("/services/WebService2", "Module");
             qName2 = null;
             cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
             cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_tns1_ModuleDependency");
+            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_tns1_ModuleDependency");
             cachedSerQNames.add(qName);
             cls = org.openbravo.services.webservice.ModuleDependency[].class;
             cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("/services/WebService", "ModuleDependency");
+            qName = new javax.xml.namespace.QName("/services/WebService2", "ModuleDependency");
             qName2 = null;
             cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
             cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_tns1_SimpleModule");
+            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_tns1_SimpleModule");
             cachedSerQNames.add(qName);
             cls = org.openbravo.services.webservice.SimpleModule[].class;
             cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("/services/WebService", "SimpleModule");
+            qName = new javax.xml.namespace.QName("/services/WebService2", "SimpleModule");
             qName2 = null;
             cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
             cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_xsd_int");
-            cachedSerQNames.add(qName);
-            cls = int[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
-
-            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "ArrayOf_xsd_string");
+            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_xsd_string");
             cachedSerQNames.add(qName);
             cls = java.lang.String[].class;
             cachedSerClasses.add(cls);
@@ -482,7 +283,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         }
     }
 
-    public byte[] getModule(java.lang.String in0) throws java.rmi.RemoteException {
+    public byte[] getModule(java.lang.String moduleVersionID) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -495,7 +296,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {moduleVersionID});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;
@@ -513,7 +314,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
 }
     }
 
-    public org.openbravo.services.webservice.Customer[] getCustomers(int in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.SimpleModule[] moduleSearch(java.lang.String word, java.lang.String[] exclude) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -522,11 +323,11 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         _call.setUseSOAPAction(true);
         _call.setSOAPActionURI("");
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "getCustomers"));
+        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "moduleSearch"));
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {new java.lang.Integer(in0), in1, in2});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {word, exclude});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;
@@ -534,9 +335,9 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         else {
             extractAttachments(_call);
             try {
-                return (org.openbravo.services.webservice.Customer[]) _resp;
+                return (org.openbravo.services.webservice.SimpleModule[]) _resp;
             } catch (java.lang.Exception _exception) {
-                return (org.openbravo.services.webservice.Customer[]) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.Customer[].class);
+                return (org.openbravo.services.webservice.SimpleModule[]) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.SimpleModule[].class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -544,7 +345,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
 }
     }
 
-    public org.openbravo.services.webservice.Customer getCustomer(int in0, int in1, java.lang.String in2, java.lang.String in3) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.Module moduleDetail(java.lang.String moduleVersionID) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -553,11 +354,11 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         _call.setUseSOAPAction(true);
         _call.setSOAPActionURI("");
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "getCustomer"));
+        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "moduleDetail"));
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {new java.lang.Integer(in0), new java.lang.Integer(in1), in2, in3});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {moduleVersionID});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;
@@ -565,9 +366,9 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         else {
             extractAttachments(_call);
             try {
-                return (org.openbravo.services.webservice.Customer) _resp;
+                return (org.openbravo.services.webservice.Module) _resp;
             } catch (java.lang.Exception _exception) {
-                return (org.openbravo.services.webservice.Customer) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.Customer.class);
+                return (org.openbravo.services.webservice.Module) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.Module.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -575,7 +376,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
 }
     }
 
-    public org.openbravo.services.webservice.Customer getCustomer(int in0, java.lang.String in1, java.lang.String in2, java.lang.String in3, java.lang.String in4) throws java.rmi.RemoteException {
+    public java.lang.String getURLforDownload(java.lang.String moduleVersionID) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -584,11 +385,11 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         _call.setUseSOAPAction(true);
         _call.setSOAPActionURI("");
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "getCustomer"));
+        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "getURLforDownload"));
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {new java.lang.Integer(in0), in1, in2, in3, in4});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {moduleVersionID});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;
@@ -596,9 +397,9 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         else {
             extractAttachments(_call);
             try {
-                return (org.openbravo.services.webservice.Customer) _resp;
+                return (java.lang.String) _resp;
             } catch (java.lang.Exception _exception) {
-                return (org.openbravo.services.webservice.Customer) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.Customer.class);
+                return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -606,7 +407,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
 }
     }
 
-    public java.lang.Boolean updateCustomer(org.openbravo.services.webservice.BusinessPartner in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException {
+    public boolean isCommercial(java.lang.String moduleVersionID) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -615,11 +416,11 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         _call.setUseSOAPAction(true);
         _call.setSOAPActionURI("");
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "updateCustomer"));
+        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "isCommercial"));
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0, in1, in2});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {moduleVersionID});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;
@@ -627,9 +428,9 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Boolean) _resp;
+                return ((java.lang.Boolean) _resp).booleanValue();
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Boolean) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Boolean.class);
+                return ((java.lang.Boolean) org.apache.axis.utils.JavaUtils.convert(_resp, boolean.class)).booleanValue();
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -637,7 +438,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
 }
     }
 
-    public int[] getCustomerAddresses(int in0, int in1, java.lang.String in2, java.lang.String in3) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.SimpleModule[] moduleScanForUpdates(java.util.HashMap moduleIdInstalledModules) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -646,11 +447,11 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         _call.setUseSOAPAction(true);
         _call.setSOAPActionURI("");
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "getCustomerAddresses"));
+        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "moduleScanForUpdates"));
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {new java.lang.Integer(in0), new java.lang.Integer(in1), in2, in3});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {moduleIdInstalledModules});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;
@@ -658,9 +459,9 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         else {
             extractAttachments(_call);
             try {
-                return (int[]) _resp;
+                return (org.openbravo.services.webservice.SimpleModule[]) _resp;
             } catch (java.lang.Exception _exception) {
-                return (int[]) org.apache.axis.utils.JavaUtils.convert(_resp, int[].class);
+                return (org.openbravo.services.webservice.SimpleModule[]) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.SimpleModule[].class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -668,7 +469,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
 }
     }
 
-    public org.openbravo.services.webservice.Location getCustomerLocation(int in0, int in1, int in2, java.lang.String in3, java.lang.String in4) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.Module moduleRegister(org.openbravo.services.webservice.Module module, java.lang.String userName, java.lang.String password) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -677,11 +478,11 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         _call.setUseSOAPAction(true);
         _call.setSOAPActionURI("");
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "getCustomerLocation"));
+        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "moduleRegister"));
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {new java.lang.Integer(in0), new java.lang.Integer(in1), new java.lang.Integer(in2), in3, in4});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {module, userName, password});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;
@@ -689,9 +490,9 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         else {
             extractAttachments(_call);
             try {
-                return (org.openbravo.services.webservice.Location) _resp;
+                return (org.openbravo.services.webservice.Module) _resp;
             } catch (java.lang.Exception _exception) {
-                return (org.openbravo.services.webservice.Location) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.Location.class);
+                return (org.openbravo.services.webservice.Module) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.Module.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -699,7 +500,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
 }
     }
 
-    public java.lang.Boolean updateAddress(org.openbravo.services.webservice.Location in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.ModuleInstallDetail checkConsistency(java.util.HashMap versionIdInstalled, java.lang.String[] versionIdToInstall, java.lang.String[] versionIdToUpdate) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -708,228 +509,11 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         _call.setUseSOAPAction(true);
         _call.setSOAPActionURI("");
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "updateAddress"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0, in1, in2});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (java.lang.Boolean) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (java.lang.Boolean) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Boolean.class);
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
-    public org.openbravo.services.webservice.Contact getCustomerContact(int in0, int in1, int in2, java.lang.String in3, java.lang.String in4) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[8]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "getCustomerContact"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {new java.lang.Integer(in0), new java.lang.Integer(in1), new java.lang.Integer(in2), in3, in4});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (org.openbravo.services.webservice.Contact) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (org.openbravo.services.webservice.Contact) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.Contact.class);
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
-    public java.lang.Boolean updateContact(org.openbravo.services.webservice.Contact in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[9]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "updateContact"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0, in1, in2});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (java.lang.Boolean) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (java.lang.Boolean) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Boolean.class);
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
-    public org.openbravo.services.webservice.SimpleModule[] moduleSearch(java.lang.String in0, java.lang.String[] in1) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[10]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "moduleSearch"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0, in1});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (org.openbravo.services.webservice.SimpleModule[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (org.openbravo.services.webservice.SimpleModule[]) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.SimpleModule[].class);
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
-    public org.openbravo.services.webservice.Module moduleDetail(java.lang.String in0) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[11]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "moduleDetail"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (org.openbravo.services.webservice.Module) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (org.openbravo.services.webservice.Module) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.Module.class);
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
-    public org.openbravo.services.webservice.SimpleModule[] moduleScanForUpdates(java.util.HashMap in0) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[12]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "moduleScanForUpdates"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (org.openbravo.services.webservice.SimpleModule[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (org.openbravo.services.webservice.SimpleModule[]) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.SimpleModule[].class);
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
-    public org.openbravo.services.webservice.Module moduleRegister(org.openbravo.services.webservice.Module in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[13]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "moduleRegister"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0, in1, in2});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (org.openbravo.services.webservice.Module) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (org.openbravo.services.webservice.Module) org.apache.axis.utils.JavaUtils.convert(_resp, org.openbravo.services.webservice.Module.class);
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
-    public org.openbravo.services.webservice.ModuleInstallDetail checkConsistency(java.util.HashMap in0, java.lang.String[] in1, java.lang.String[] in2) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[14]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
         _call.setOperationName(new javax.xml.namespace.QName("http://services.ws.erpCommon.openbravo.org", "checkConsistency"));
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0, in1, in2});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {versionIdInstalled, versionIdToInstall, versionIdToUpdate});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;

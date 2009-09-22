@@ -232,18 +232,11 @@ public class HttpsUtils {
   static String sendSecure(HttpsURLConnection conn, String data) throws IOException {
     String result = null;
     BufferedReader br = null;
-    BufferedWriter bw = null;
     try {
-      conn.setDoOutput(true);
-
-      bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-      bw.write(data);
-      bw.flush();
-      bw.close();
-
       String s = null;
       StringBuilder sb = new StringBuilder();
-      br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      br = new BufferedReader(new InputStreamReader(sendSecureHttpsConnection(conn, data)
+          .getInputStream()));
       while ((s = br.readLine()) != null) {
         sb.append(s + "\n");
       }
@@ -256,11 +249,41 @@ public class HttpsUtils {
     return result;
   }
 
+  private static HttpsURLConnection sendSecureHttpsConnection(HttpsURLConnection conn, String data)
+      throws IOException {
+    BufferedWriter bw = null;
+    try {
+      conn.setDoOutput(true);
+
+      bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+      bw.write(data);
+      bw.flush();
+      bw.close();
+
+      return conn;
+    } catch (IOException e) {
+      log4j.error(e.getMessage(), e);
+      throw e;
+    }
+  }
+
   public static String sendSecure(URL url, String data, String alias, String passphrase)
       throws GeneralSecurityException, IOException {
-    KeyStore ks = null;
-    HttpsURLConnection conn = null;
+    HttpsURLConnection conn = getHttpsConn(url, alias, passphrase);
+    return sendSecure(conn, data);
+  }
 
+  public static HttpURLConnection sendHttpsRequest(URL url, String data, String alias,
+      String passphrase) throws GeneralSecurityException, IOException {
+
+    HttpsURLConnection conn = getHttpsConn(url, alias, passphrase);
+    return sendSecureHttpsConnection(conn, data);
+
+  }
+
+  public static HttpsURLConnection getHttpsConn(URL url, String alias, String passphrase)
+      throws KeyStoreException, GeneralSecurityException, SSLHandshakeException {
+    KeyStore ks = null;
     try {
       ks = loadKeyStore(passphrase);
     } catch (KeyStoreException e) { // Problem loading keystore
@@ -273,13 +296,11 @@ public class HttpsUtils {
     }
     // Now try and establish the secure connection
     try {
-      conn = getSecureConnection(url, ks);
+      return getSecureConnection(url, ks);
     } catch (GeneralSecurityException e) {
       log4j.error(e.getMessage(), e);
       throw new SSLHandshakeException(e.getMessage());
     }
-    // If we get to here it's time to send.
-    return sendSecure(conn, data);
   }
 
   public static String encode(String queryStr, String encoding) {

@@ -117,6 +117,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <column name="BEAT_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[U]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_HEARTBEAT_LOG_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

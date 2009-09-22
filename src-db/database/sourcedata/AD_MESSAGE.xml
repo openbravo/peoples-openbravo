@@ -61653,11 +61653,13 @@ And Release features, bla, bla, bla]]></MSGTEXT>
 <!--1005800002-->  <VALUE><![CDATA[HB_WELCOME]]></VALUE>
 <!--1005800002-->  <MSGTEXT><![CDATA[Welcome to Openbravo ERP!
 
-To help us improve the software quality and understand its worldwide use, we invite you to configure the Heartbeat. This tool sends Openbravo periodic updates regarding your technical system specifications (e.g. Operating System, Database, and ERP Version). See Help window in Heartbeat Configuration page for information on data processing.
+To help us improve the software quality and understand its worldwide use, we invite you to configure the Heartbeat. This tool sends Openbravo periodic updates regarding your technical system specifications (e.g. Operating System, Database, and ERP Version). See Help window in Heartbeat Configuration page for information on data processing. You can disable this feature from that window.
 
 To say thanks, configuring the Heartbeat will automatically notify you about specific updates to your installation via an alert (e.g. Openbravo patches, new versions tested with your database).
 
-Thank you for downloading and supporting our open source ERP.]]></MSGTEXT>
+Thank you for downloading and supporting our open source ERP.
+
+Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1005800002-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1005800002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005800002--></AD_MESSAGE>
@@ -63292,6 +63294,17 @@ Thank you for downloading and supporting our open source ERP.]]></MSGTEXT>
 <!--0EABAB89726A4A3C800199142CF8E17F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0EABAB89726A4A3C800199142CF8E17F--></AD_MESSAGE>
 
+<!--10E779E8F227496B86B3136A09EB6043--><AD_MESSAGE>
+<!--10E779E8F227496B86B3136A09EB6043-->  <AD_MESSAGE_ID><![CDATA[10E779E8F227496B86B3136A09EB6043]]></AD_MESSAGE_ID>
+<!--10E779E8F227496B86B3136A09EB6043-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10E779E8F227496B86B3136A09EB6043-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10E779E8F227496B86B3136A09EB6043-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10E779E8F227496B86B3136A09EB6043-->  <VALUE><![CDATA[CR_OBXGetNotAuthorized]]></VALUE>
+<!--10E779E8F227496B86B3136A09EB6043-->  <MSGTEXT><![CDATA[This instance has not a license for this commercial module.]]></MSGTEXT>
+<!--10E779E8F227496B86B3136A09EB6043-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
+<!--10E779E8F227496B86B3136A09EB6043-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--10E779E8F227496B86B3136A09EB6043--></AD_MESSAGE>
+
 <!--11314163807C4401B2964F93256597EA--><AD_MESSAGE>
 <!--11314163807C4401B2964F93256597EA-->  <AD_MESSAGE_ID><![CDATA[11314163807C4401B2964F93256597EA]]></AD_MESSAGE_ID>
 <!--11314163807C4401B2964F93256597EA-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -63514,6 +63527,25 @@ Deploy the war file into the server to make the changes available.]]></MSGTEXT>
 <!--2413C331A08B4F3F98FC3F9A0F2A636C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2413C331A08B4F3F98FC3F9A0F2A636C--></AD_MESSAGE>
 
+<!--272961BF12DB4930A0F8EDDADE8827CA--><AD_MESSAGE>
+<!--272961BF12DB4930A0F8EDDADE8827CA-->  <AD_MESSAGE_ID><![CDATA[272961BF12DB4930A0F8EDDADE8827CA]]></AD_MESSAGE_ID>
+<!--272961BF12DB4930A0F8EDDADE8827CA-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--272961BF12DB4930A0F8EDDADE8827CA-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--272961BF12DB4930A0F8EDDADE8827CA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--272961BF12DB4930A0F8EDDADE8827CA-->  <VALUE><![CDATA[HB_WELCOME_MODULE]]></VALUE>
+<!--272961BF12DB4930A0F8EDDADE8827CA-->  <MSGTEXT><![CDATA[The Heartbeat is disabled in this Openbravo ERP instance.
+
+To help us improve the software quality and understand its worldwide use, we invite you to configure the Heartbeat before you install or update extension modules. This tool sends Openbravo periodic updates regarding your technical system specifications (e.g. Operating System, Database, and ERP Version). See Help window in Heartbeat Configuration page for information on data processing.
+
+To say thanks, configuring the Heartbeat will automatically notify you about specific updates to your installation via an alert (e.g. Openbravo patches, new versions tested with your database).
+
+Thank you for downloading and supporting our open source ERP.
+
+Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
+<!--272961BF12DB4930A0F8EDDADE8827CA-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
+<!--272961BF12DB4930A0F8EDDADE8827CA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--272961BF12DB4930A0F8EDDADE8827CA--></AD_MESSAGE>
+
 <!--2ADD7BAB84FF44F8BA55C270DC4F7F41--><AD_MESSAGE>
 <!--2ADD7BAB84FF44F8BA55C270DC4F7F41-->  <AD_MESSAGE_ID><![CDATA[2ADD7BAB84FF44F8BA55C270DC4F7F41]]></AD_MESSAGE_ID>
 <!--2ADD7BAB84FF44F8BA55C270DC4F7F41-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -63535,6 +63567,17 @@ Deploy the war file into the server to make the changes available.]]></MSGTEXT>
 <!--2E175A7785AD4313B24D3E9034B05BAD-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--2E175A7785AD4313B24D3E9034B05BAD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2E175A7785AD4313B24D3E9034B05BAD--></AD_MESSAGE>
+
+<!--2E658610941946F58CA77F17F6095E89--><AD_MESSAGE>
+<!--2E658610941946F58CA77F17F6095E89-->  <AD_MESSAGE_ID><![CDATA[2E658610941946F58CA77F17F6095E89]]></AD_MESSAGE_ID>
+<!--2E658610941946F58CA77F17F6095E89-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--2E658610941946F58CA77F17F6095E89-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--2E658610941946F58CA77F17F6095E89-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--2E658610941946F58CA77F17F6095E89-->  <VALUE><![CDATA[ErrorDownloadingOBX]]></VALUE>
+<!--2E658610941946F58CA77F17F6095E89-->  <MSGTEXT><![CDATA[An error occurred when downloading the OBX file.]]></MSGTEXT>
+<!--2E658610941946F58CA77F17F6095E89-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--2E658610941946F58CA77F17F6095E89-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--2E658610941946F58CA77F17F6095E89--></AD_MESSAGE>
 
 <!--2EB6F2EE079E41C3A9E416768353105F--><AD_MESSAGE>
 <!--2EB6F2EE079E41C3A9E416768353105F-->  <AD_MESSAGE_ID><![CDATA[2EB6F2EE079E41C3A9E416768353105F]]></AD_MESSAGE_ID>
@@ -64630,6 +64673,17 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--BDBAEDC585EA4D06BACC9E2469003E4F-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--BDBAEDC585EA4D06BACC9E2469003E4F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--BDBAEDC585EA4D06BACC9E2469003E4F--></AD_MESSAGE>
+
+<!--BF73CD95240B43239E7C8F7BD83E03D5--><AD_MESSAGE>
+<!--BF73CD95240B43239E7C8F7BD83E03D5-->  <AD_MESSAGE_ID><![CDATA[BF73CD95240B43239E7C8F7BD83E03D5]]></AD_MESSAGE_ID>
+<!--BF73CD95240B43239E7C8F7BD83E03D5-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--BF73CD95240B43239E7C8F7BD83E03D5-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--BF73CD95240B43239E7C8F7BD83E03D5-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--BF73CD95240B43239E7C8F7BD83E03D5-->  <VALUE><![CDATA[NotCommercialModulesAllowed]]></VALUE>
+<!--BF73CD95240B43239E7C8F7BD83E03D5-->  <MSGTEXT><![CDATA[Commercial modules installation is not allowed in a Community Edition Instance.]]></MSGTEXT>
+<!--BF73CD95240B43239E7C8F7BD83E03D5-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--BF73CD95240B43239E7C8F7BD83E03D5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--BF73CD95240B43239E7C8F7BD83E03D5--></AD_MESSAGE>
 
 <!--BFB1B3D4C3994CD78DA498EF0DC1E00C--><AD_MESSAGE>
 <!--BFB1B3D4C3994CD78DA498EF0DC1E00C-->  <AD_MESSAGE_ID><![CDATA[BFB1B3D4C3994CD78DA498EF0DC1E00C]]></AD_MESSAGE_ID>

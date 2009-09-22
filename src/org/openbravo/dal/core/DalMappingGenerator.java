@@ -26,13 +26,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.apache.log4j.Logger;
+import org.hibernate.type.YesNoType;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
-import org.openbravo.base.session.OBYesNoType;
 import org.openbravo.base.util.Check;
 
 /**
@@ -173,7 +173,7 @@ public class DalMappingGenerator implements OBSingleton {
       type = p.getPrimitiveType().getName();
     }
     if (p.isBoolean()) {
-      type = OBYesNoType.class.getName(); // "yes_no";
+      type = YesNoType.class.getName(); // "yes_no";
     }
     sb.append(" type=\"" + type + "\"");
 
