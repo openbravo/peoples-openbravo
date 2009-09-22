@@ -756,8 +756,8 @@ build.war: build a war file in the lib directory.
     </delete>
 
     <mkdir dir="${build}" />
-     <axis-wsdl2java output="${base.src}" verbose="false" url="http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2?wsdl" serverside="true" debug="false">
-      <mapping namespace="http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2" package="org.openbravo.services.webservice" />
+     <axis-wsdl2java output="${base.src}" verbose="false" url="http://centralrepository.openbravo.com/openbravo/services/WebService2?wsdl" serverside="true" debug="false">
+      <mapping namespace="http://centralrepository.openbravo.com/openbravo/services/WebService2" package="org.openbravo.services.webservice" />
       <mapping namespace="/services/WebService2" package="org.openbravo.services.webservice" />
     </axis-wsdl2java>
   </target>

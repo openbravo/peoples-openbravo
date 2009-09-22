@@ -38,9 +38,9 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         oper.setName("moduleSearch");
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "word"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "exclude"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "exclude"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
         oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2", "ArrayOf_tns1_SimpleModule"));
+        oper.setReturnType(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_tns1_SimpleModule"));
         oper.setReturnClass(org.openbravo.services.webservice.SimpleModule[].class);
         oper.setReturnQName(new javax.xml.namespace.QName("", "moduleSearchReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
@@ -84,7 +84,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         oper.setName("moduleScanForUpdates");
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "moduleIdInstalledModules"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"), java.util.HashMap.class, false, false);
         oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2", "ArrayOf_tns1_SimpleModule"));
+        oper.setReturnType(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_tns1_SimpleModule"));
         oper.setReturnClass(org.openbravo.services.webservice.SimpleModule[].class);
         oper.setReturnQName(new javax.xml.namespace.QName("", "moduleScanForUpdatesReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
@@ -110,9 +110,9 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
         oper.setName("checkConsistency");
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "versionIdInstalled"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"), java.util.HashMap.class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "versionIdToInstall"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "versionIdToInstall"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "versionIdToUpdate"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "versionIdToUpdate"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
         oper.addParameter(param);
         oper.setReturnType(new javax.xml.namespace.QName("/services/WebService2", "ModuleInstallDetail"));
         oper.setReturnClass(org.openbravo.services.webservice.ModuleInstallDetail.class);
@@ -180,7 +180,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2", "ArrayOf_tns1_Module");
+            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_tns1_Module");
             cachedSerQNames.add(qName);
             cls = org.openbravo.services.webservice.Module[].class;
             cachedSerClasses.add(cls);
@@ -189,7 +189,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
             cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
             cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2", "ArrayOf_tns1_ModuleDependency");
+            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_tns1_ModuleDependency");
             cachedSerQNames.add(qName);
             cls = org.openbravo.services.webservice.ModuleDependency[].class;
             cachedSerClasses.add(cls);
@@ -198,7 +198,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
             cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
             cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2", "ArrayOf_tns1_SimpleModule");
+            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_tns1_SimpleModule");
             cachedSerQNames.add(qName);
             cls = org.openbravo.services.webservice.SimpleModule[].class;
             cachedSerClasses.add(cls);
@@ -207,7 +207,7 @@ public class WebServiceSoapBindingStub extends org.apache.axis.client.Stub imple
             cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
             cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2", "ArrayOf_xsd_string");
+            qName = new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "ArrayOf_xsd_string");
             cachedSerQNames.add(qName);
             cls = java.lang.String[].class;
             cachedSerClasses.add(cls);

@@ -22,7 +22,7 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
     }
 
     // Use to get a proxy class for WebService
-    private java.lang.String WebService_address = "http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2";
+    private java.lang.String WebService_address = "http://centralrepository.openbravo.com/openbravo/services/WebService2";
 
     public java.lang.String getWebServiceAddress() {
         return WebService_address;
@@ -105,7 +105,7 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
     }
 
     public javax.xml.namespace.QName getServiceName() {
-        return new javax.xml.namespace.QName("http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2", "WebServiceImplService");
+        return new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "WebServiceImplService");
     }
 
     private java.util.HashSet ports = null;
@@ -113,7 +113,7 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
     public java.util.Iterator getPorts() {
         if (ports == null) {
             ports = new java.util.HashSet();
-            ports.add(new javax.xml.namespace.QName("http://stage.openbravo.essentiaforge.com/openbravo/services/WebService2", "WebService"));
+            ports.add(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "WebService"));
         }
         return ports.iterator();
     }
