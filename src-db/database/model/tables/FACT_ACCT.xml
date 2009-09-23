@@ -173,7 +173,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="DOCBASETYPE" primaryKey="false" required="false" type="CHAR" size="3" autoIncrement="false">
+      <column name="DOCBASETYPE" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
