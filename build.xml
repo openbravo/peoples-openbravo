@@ -610,6 +610,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="db.apply.modules.sampledata" if="apply.modules.on.create">
+    <antcall target="generate.entities" />
     <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
