@@ -209,7 +209,7 @@ public class ApplyModules extends HttpSecureAppServlet {
 
       final String unnappliedModules = getUnnapliedModules();
 
-      if (ApplyModulesData.isUpdatingCore(this)) {
+      if (ApplyModulesData.isUpdatingCoreOrTemplate(this)) {
         tasks.add("update.database");
         tasks.add("core.lib");
         tasks.add("wad.lib");
