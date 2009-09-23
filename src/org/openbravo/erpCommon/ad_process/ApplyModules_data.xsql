@@ -49,7 +49,7 @@
             (SELECT 1
                 FROM AD_MODULE_INSTALL
                 WHERE STATUS='I'      
-               AND (AD_MODULE_ID = '0' OR TYPE='T'))) as q
+               AND (AD_MODULE_ID = '0' OR TYPE='T'))) q
           ]]>
       </Sql>
   </SqlMethod>
