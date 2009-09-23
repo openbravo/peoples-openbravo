@@ -140,9 +140,9 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("adOrgId", strCOrgId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_Order InvoiceRule", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportOrderNotInvoiceFilterJR"), Utility.getContext(this, vars, "#User_Client",
-              "ReportOrderNotInvoiceJR"), 0);
+          "C_Order InvoiceRule", "Invoice Terms used in Orders Awaiting Invoice report", Utility
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceFilterJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotInvoiceJR",
           strInvoiceRule);
       xmlDocument.setData("reportInvoiceRule", "liststructure", comboTableData.select(false));

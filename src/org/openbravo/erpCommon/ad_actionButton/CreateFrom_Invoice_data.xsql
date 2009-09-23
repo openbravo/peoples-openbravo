@@ -117,6 +117,7 @@
         AND ic.AD_Client_ID IN ('1') 
         AND ic.AD_Org_ID IN ('1') 
         AND ic.C_BPartner_ID = ? 
+        AND ic.term <> 'N'
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal 
         ORDER BY NAME
       ]]>
