@@ -504,6 +504,12 @@
 					<subreportParameter  name="LOCALE">
 						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter  name="USER_CLIENT">
+						<subreportParameterExpression><![CDATA[$P{USER_CLIENT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_ORG">
+						<subreportParameterExpression><![CDATA[$P{USER_ORG}]]></subreportParameterExpression>
+					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ReportData}]]></subreportExpression>
 				</subreport>
