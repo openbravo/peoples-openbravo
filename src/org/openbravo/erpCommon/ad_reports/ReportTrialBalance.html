@@ -112,7 +112,9 @@ function refreshAccounts() {
   var cmbAccountFrom = document.frmMain.inpAccountFrom;  
   var cmbAccountTo = document.frmMain.inpAccountTo;  
   changeComboData(cmbAccountFrom, arrAccountFrom, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
-  changeComboData(cmbAccountTo, arrAccountTo, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);  
+  changeComboData(cmbAccountTo, arrAccountTo, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
+  if (cmbAccountTo.options.length > 0)
+    cmbAccountTo.options[cmbAccountTo.options.length-1].selected = true;
   return true;
 }
 </script>
