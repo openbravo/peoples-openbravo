@@ -128,7 +128,10 @@
       )
     LOOP
       v_ResultStr:='new albaran:   '||Cur_InOutLine.M_INOUTLINE_ID;
-      IF(Cur_InOutLine.MOVEMENTDATE<>v_DateOld OR Cur_InOutLine.M_PRODUCT_ID<>v_ProductOld) THEN
+      IF(Cur_InOutLine.M_PRODUCT_ID<>v_ProductOld) THEN
+        v_Date:=NULL;
+        v_CumQty:=0;
+      ELSIF (Cur_InOutLine.MOVEMENTDATE<>v_DateOld) THEN
         v_CumQty:=0;
       END IF;
       SELECT COUNT(*)
@@ -151,9 +154,14 @@
           WHERE M_COSTING_ID = Cur_ProdCost.M_COSTING_ID;
           EXIT;
         END LOOP;
+        IF (v_Date IS NULL) THEN
+          SELECT MIN(DATEFROM) INTO v_Date
+          FROM M_COSTING
+          WHERE M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID
+            AND DATEFROM > Cur_InOutLine.MOVEMENTDATE;
+        END IF;
       ELSE
         v_Cost:=NULL;
-        v_Date := TO_DATE('31-12-9999', 'DD-MM-YYYY');
       END IF;
       IF(v_Cost IS NOT NULL) THEN
         SELECT COALESCE(SUM(MOVEMENTQTY), 0)
@@ -221,7 +229,7 @@
         (
           Ad_Sequence_Nextno('M_Costing'), now(), v_User, now(),
           v_User, Cur_InOutLine.AD_CLIENT_ID, Cur_InOutLine.AD_ORG_ID, Cur_InOutLine.M_PRODUCT_ID,
-          v_Date, Cur_InOutLine.MOVEMENTDATE, 'N', Cur_InOutLine.M_INOUTLINE_ID,
+          COALESCE(v_Date, TO_DATE('31-12-9999', 'DD-MM-YYYY')), Cur_InOutLine.MOVEMENTDATE, 'N', Cur_InOutLine.M_INOUTLINE_ID,
           NULL, Cur_InOutLine.MOVEMENTQTY, v_Price, COALESCE(v_Qty, 0) + Cur_InOutLine.MOVEMENTQTY + v_CumQty,(
           CASE
             WHEN v_Qty+v_CumQty<0 THEN v_Price
