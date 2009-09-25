@@ -134,7 +134,7 @@ public class InvoiceLine extends HttpSecureAppServlet {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
 
-      if (vars.getStringParameter("NewFilter").equals("1"))
+      if (vars.getStringParameter("newFilter").equals("1"))
         clearSessionVariables(vars);
 
       String strBpartnerId = vars.getGlobalVariable("inpBpartnerId", "InvoiceLine.bpartner", "");
