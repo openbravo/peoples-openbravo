@@ -120,6 +120,50 @@
     END IF;
     
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
+   -- Fact_Acct_Rest - Finish_Process Extension Point
+   SELECT count(*) INTO v_count
+   FROM DUAL
+   where exists (select 1 from ad_ep_procedures where ad_extension_points_id = 'E1F9635815BF4A44B88E3EAADBD0D10E');
+         IF (v_count=1) THEN
+     DECLARE
+       v_ep_instance VARCHAR(32);
+       v_extension_point_id VARCHAR(32) := 'E1F9635815BF4A44B88E3EAADBD0D10E';
+       
+     BEGIN
+       v_ep_instance := get_uuid();
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Record_ID',
+         v_Record_ID, NULL, NULL, NULL, NULL, NULL, NULL);
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AD_Table_ID',
+         v_AD_Table_ID, NULL, NULL, NULL, NULL, NULL, NULL); 
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AD_Client_ID',
+         v_AD_Client_ID, NULL, NULL, NULL, NULL, NULL, NULL); 
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'DeleteFact',
+         v_DeleteFact, NULL, NULL, NULL, NULL, NULL, NULL);  
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'User',
+         v_UpdatedBy, NULL, NULL, NULL, NULL, NULL, NULL);
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Message',
+         NULL, NULL, NULL, NULL, NULL, NULL, v_Message);
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Result',
+         NULL, NULL, v_result, NULL, NULL, NULL, NULL);
+       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'PInstance_ID',
+         p_pinstance_id, NULL, NULL, NULL, NULL, NULL, NULL);
+       AD_EXTENSION_POINT_HANDLER(v_ep_instance, v_extension_point_id);
+       SELECT p_number INTO v_Result
+       FROM ad_ep_instance_para
+       WHERE ad_ep_instance_id = v_ep_instance
+         AND parametername LIKE 'Result';
+       SELECT p_text INTO v_Message
+       FROM ad_ep_instance_para
+       WHERE ad_ep_instance_id = v_ep_instance
+         AND parametername LIKE 'Message';
+       SELECT p_string INTO v_DeleteFact
+       FROM ad_ep_instance_para
+       WHERE ad_ep_instance_id = v_ep_instance
+         AND parametername LIKE 'DeleteFact';   
+       DELETE FROM ad_ep_instance_para
+       WHERE ad_ep_instance_id = v_ep_instance;
+      END;
+   END IF;
     DECLARE
     TYPE RECORD IS REF CURSOR;
       Cur_Clients RECORD;
@@ -161,49 +205,7 @@
           DBMS_OUTPUT.PUT_LINE('AD_Client_ID=' || Cur_Clients.AD_Client_ID || ', AD_Table_ID=' || Cur_Tables.AD_Table_ID || ' ' || Cur_Tables.TableName) ;
           -- Update Table
           v_ResultStr:='ResetTable:' || Cur_Tables.TableName;
-              -- Fact_Acct_Rest - Finish_Process Extension Point
-   SELECT count(*) INTO v_count
-   FROM DUAL
-   where exists (select 1 from ad_ep_procedures where ad_extension_points_id = 'E1F9635815BF4A44B88E3EAADBD0D10E');
-         IF (v_count=1) THEN
-     DECLARE
-       v_ep_instance VARCHAR(32);
-       v_extension_point_id VARCHAR(32) := 'E1F9635815BF4A44B88E3EAADBD0D10E';
-       
-     BEGIN
-       v_ep_instance := get_uuid();
-       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Record_ID',
-         v_Record_ID, NULL, NULL, NULL, NULL, NULL, NULL);
-       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AD_Table_ID',
-         v_AD_Table_ID, NULL, NULL, NULL, NULL, NULL, NULL); 
-       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AD_Client_ID',
-         v_AD_Client_ID, NULL, NULL, NULL, NULL, NULL, NULL); 
-       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'DeleteFact',
-         v_DeleteFact, NULL, NULL, NULL, NULL, NULL, NULL);  
-       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'User',
-         v_UpdatedBy, NULL, NULL, NULL, NULL, NULL, NULL);
-       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Message',
-         NULL, NULL, NULL, NULL, NULL, NULL, v_Message);
-       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Result',
-         NULL, NULL, v_result, NULL, NULL, NULL, NULL);
-       AD_EXTENSION_POINT_HANDLER(v_ep_instance, v_extension_point_id);
-       SELECT p_number INTO v_Result
-       FROM ad_ep_instance_para
-       WHERE ad_ep_instance_id = v_ep_instance
-         AND parametername LIKE 'Result';
-       SELECT p_text INTO v_Message
-       FROM ad_ep_instance_para
-       WHERE ad_ep_instance_id = v_ep_instance
-         AND parametername LIKE 'Message';
-       SELECT p_string INTO v_DeleteFact
-       FROM ad_ep_instance_para
-       WHERE ad_ep_instance_id = v_ep_instance
-         AND parametername LIKE 'DeleteFact';   
-       DELETE FROM ad_ep_instance_para
-       WHERE ad_ep_instance_id = v_ep_instance;
-      END;
-   END IF;
-          IF(v_DeletePosting='Y') THEN
+           IF(v_DeletePosting='Y') THEN
             FOR Cur_Fact_Acct IN (
               SELECT Record_ID
               FROM FACT_ACCT
