@@ -93,8 +93,16 @@ public class HQLQueryTool extends HttpSecureAppServlet {
         .append("<a target='_new' href='http://wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Reference/Entity_Model/"
             + entityName + "'>Developers Guide Entity Description</a><br/><br/>");
     sb.append("Properties:<div style='padding-left: 10px'>");
+
+    final List<String> props = new ArrayList<String>();
+
     for (Property p : entity.getProperties()) {
-      sb.append(p.getName() + "<br/>");
+      props.add(p.getName());
+    }
+    Collections.sort(props);
+
+    for (String propName : props) {
+      sb.append(propName + "<br/>");
     }
     sb.append("</div>");
     return sb.toString();
@@ -177,7 +185,8 @@ public class HQLQueryTool extends HttpSecureAppServlet {
       if (value != null) {
         sb.append(", ");
         if (value instanceof BaseOBObject) {
-          value = ((BaseOBObject) value).getId();
+          value = ((BaseOBObject) value).getId() + " (" + ((BaseOBObject) value).getIdentifier()
+              + ")";
         }
         sb.append(p.getName() + ": " + value);
       }
