@@ -88,24 +88,28 @@ public class HQLQueryTool extends HttpSecureAppServlet {
       return "";
     }
     final Entity entity = ModelProvider.getInstance().getEntity(entityName);
-    final StringBuilder sb = new StringBuilder();
-    sb
-        .append("<a target='_new' href='http://wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Reference/Entity_Model/"
-            + entityName + "'>Developers Guide Entity Description</a><br/><br/>");
-    sb.append("Properties:<div style='padding-left: 10px'>");
+
+    final String xmlTemplateName = "org/openbravo/erpCommon/utility/HQLQueryTool_PropertyList";
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(xmlTemplateName).createXmlDocument();
+
+    xmlDocument.setParameter("entityName", entity.getName());
+
+    final List<FieldProvider> result = new ArrayList<FieldProvider>();
 
     final List<String> props = new ArrayList<String>();
-
     for (Property p : entity.getProperties()) {
       props.add(p.getName());
     }
     Collections.sort(props);
 
     for (String propName : props) {
-      sb.append(propName + "<br/>");
+      final SimpleFieldProvider fp = new SimpleFieldProvider();
+      fp.setField("result", propName);
+      result.add(fp);
     }
-    sb.append("</div>");
-    return sb.toString();
+
+    xmlDocument.setData("lines", result.toArray(new FieldProvider[result.size()]));
+    return xmlDocument.print();
   }
 
   private String getResult(VariablesSecureApp vars) {

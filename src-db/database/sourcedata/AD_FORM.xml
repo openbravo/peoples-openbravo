@@ -423,7 +423,10 @@ Each time that is pressed the Create button is opened a popup to create a unique
 <!--DB11A21C046F48C2AF9457811EA8E290-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--DB11A21C046F48C2AF9457811EA8E290-->  <NAME><![CDATA[HQL Query Tool]]></NAME>
 <!--DB11A21C046F48C2AF9457811EA8E290-->  <DESCRIPTION><![CDATA[Supports entering HQL query through a web interface]]></DESCRIPTION>
-<!--DB11A21C046F48C2AF9457811EA8E290-->  <HELP><![CDATA[Allows a user to enter HQL queries in a window and see the results directly. The Entity model can be viewed on this location: <a href="http://wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Reference/Entity_Model">Entity Model</a>.]]></HELP>
+<!--DB11A21C046F48C2AF9457811EA8E290-->  <HELP><![CDATA[
+Allows a user to enter HQL queries in a window and see the results directly. The Openbravo Developers Guide has a description of the tool <a href="http://wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Concepts/Data_Access_Layer#Test_your_HQL:_the_HQL_Query_Tool">here</a>.
+
+Queries make use of the Entities and Properties of the entity model. The entity model can be viewed on this location: <a href="http://wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Reference/Entity_Model">Entity Model</a>.]]></HELP>
 <!--DB11A21C046F48C2AF9457811EA8E290-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--DB11A21C046F48C2AF9457811EA8E290-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.utility.HQLQueryTool]]></CLASSNAME>
 <!--DB11A21C046F48C2AF9457811EA8E290-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
