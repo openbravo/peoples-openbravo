@@ -242,7 +242,7 @@ WHERE C_SETTLEMENT_CANCEL_ID IS NULL
 	<field name="PAYMENT" class="java.math.BigDecimal"/>
 	<field name="INCPAY" class="java.math.BigDecimal"/>
 	<field name="FINALSUMMARY" class="java.math.BigDecimal"/>
-	<field name="C_BANKACCOUNT_ID" class="java.math.BigDecimal"/>
+	<field name="C_BANKACCOUNT_ID" class="java.math.String"/>
 	<field name="C_DEBT_PAYMENT_ID" class="java.lang.String"/>
 	<field name="DATEPLANNED" class="java.lang.String"/>
 	<field name="BPARTNER" class="java.lang.String"/>
