@@ -226,8 +226,14 @@ function cursorFocus(obj, event) {
     focusedWindowElement = obj;
     setWindowElementFocus(focusedWindowElement, "obj", event);
   } else if (event == 'onclick') {
-    if (selectedArea == 'window') setWindowElementFocus(focusedWindowElement, "obj", event);
-    if (selectedArea == 'tabs') setTabFocus(focusedTab);
+    if (selectedArea == 'window') {
+      //setWindowElementFocus(focusedWindowElement, "obj", event);
+      if (obj != focusedWindowElement) {
+        eraseWindowElementFocus(focusedWindowElement);
+      }
+    } else if (selectedArea == 'tabs') {
+      setTabFocus(focusedTab);
+    }
   }
   return true;
 }
