@@ -179,6 +179,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     }
 
     try {
+
+      if (OBContext.getOBContext() == null) {
+        OBContext.setAdminContext();
+      }
+
       final String strUserAuth = m_AuthManager.authenticate(request, response);
 
       boolean loggedOK = false;
