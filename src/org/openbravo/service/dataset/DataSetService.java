@@ -114,6 +114,18 @@ public class DataSetService implements OBSingleton {
       final OBCriteria<T> obc = OBDal.getInstance().createCriteria(entity.getName());
       obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
       // todo: count is slower than exists, is exists possible?
+      List list = obc.list();
+      if (obc.count() < 20 && obc.count() > 0) {
+        log
+            .error("The following rows were changed after your last update.database or export.database:");
+        for (Object obj : list) {
+          log.error("     -" + obj);
+        }
+      } else if (obc.count() > 20) {
+        log.error("Rows inside the table "
+            + ((BaseOBObject) obc.list().get(0)).getEntity().getTableName()
+            + " were changed after your last update.database or export.database:");
+      }
       if (obc.count() > 0) {
         return true;
       }
