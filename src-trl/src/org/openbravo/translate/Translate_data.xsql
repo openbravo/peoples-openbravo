@@ -50,7 +50,7 @@
     <Parameter name="languajeFin"/>
   </SqlMethod>
 
-  <SqlMethod name="existsExpresion" type="preparedStatement" return="rowCount">
+  <SqlMethod name="existsExpresionModFile" type="preparedStatement" return="rowCount">
     <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
          update ad_textinterfaces
@@ -64,23 +64,65 @@
                                                            and filename = ?
                                                            and m.ad_module_id = t.ad_module_id
                                                            and m.ad_language = ?
-                                                        union
-                                                        select min(t.ad_textinterfaces_id) AS ad_textinterfaces_id, 2 AS o
+                                                         order by o) B
+                                                 where ad_textinterfaces_id is not null) A)
+    </Sql>
+    <Parameter name="text"/>
+    <Parameter name="filename"/>
+    <Parameter name="moduleLang"/>
+  </SqlMethod>
+  
+  <SqlMethod name="existsExpresionNoModFile" type="preparedStatement" return="rowCount">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+         update ad_textinterfaces
+           set isUsed = 'Y'
+         where ad_textinterfaces_id = ( select min(A.ad_textinterfaces_id)
+                                          from (select B.*
+                                                from (select min(t.ad_textinterfaces_id) AS ad_textinterfaces_id, 2 AS o
                                                           from ad_textinterfaces t, ad_textinterfaces_trl trl
                                                          where trl.text     = ?
                                                            and t.filename = ?
                                                            and trl.ad_textinterfaces_id = t.ad_textinterfaces_id
                                                            and trl.ad_language = ?
-                                                        union
-                                                        select min(ad_textinterfaces_id) AS ad_textinterfaces_id, 3 AS o
+                                                         order by o) B
+                                                 where ad_textinterfaces_id is not null) A)
+    </Sql>
+    
+    <Parameter name="text"/>
+    <Parameter name="filename"/>
+    <Parameter name="moduleLang"/>
+  </SqlMethod>
+  
+  <SqlMethod name="existsExpresionModNoFile" type="preparedStatement" return="rowCount">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+         update ad_textinterfaces
+           set isUsed = 'Y'
+         where ad_textinterfaces_id = ( select min(A.ad_textinterfaces_id)
+                                          from (select B.*
+                                                from (select min(ad_textinterfaces_id) AS ad_textinterfaces_id, 3 AS o
                                                           from ad_textinterfaces t,
                                                                ad_module m
                                                          where text = ?
                                                            and filename is null
                                                            and m.ad_module_id = t.ad_module_id
                                                            and m.ad_language = ?
-                                                        union
-                                                        select min(t.ad_textinterfaces_id) AS ad_textinterfaces_id, 4 AS o
+                                                         order by o) B
+                                                 where ad_textinterfaces_id is not null) A)
+    </Sql>
+    <Parameter name="text"/>
+    <Parameter name="moduleLang"/>
+  </SqlMethod>
+  
+  <SqlMethod name="existsExpresionNoModNoFile" type="preparedStatement" return="rowCount">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+         update ad_textinterfaces
+           set isUsed = 'Y'
+         where ad_textinterfaces_id = ( select min(A.ad_textinterfaces_id)
+                                          from (select B.*
+                                                from (select min(t.ad_textinterfaces_id) AS ad_textinterfaces_id, 4 AS o
                                                           from ad_textinterfaces t, ad_textinterfaces_trl trl
                                                          where trl.text = ?
                                                            and t.filename is null
@@ -89,16 +131,6 @@
                                                          order by o) B
                                                  where ad_textinterfaces_id is not null) A)
     </Sql>
-    <Parameter name="text"/>
-    <Parameter name="filename"/>
-    <Parameter name="moduleLang"/>
-    
-    <Parameter name="text"/>
-    <Parameter name="filename"/>
-    <Parameter name="moduleLang"/>
-    
-    <Parameter name="text"/>
-    <Parameter name="moduleLang"/>
     
     <Parameter name="text"/>
     <Parameter name="moduleLang"/>

@@ -39,7 +39,7 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
     final File importDir = getReferenceDataDir();
 
     for (final File importFile : importDir.listFiles()) {
-      if (importFile.isDirectory()) {
+      if (importFile.isDirectory() || !importFile.getName().endsWith(".xml")) {
         continue;
       }
       log.info("Importing from file " + importFile.getAbsolutePath());

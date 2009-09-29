@@ -82,11 +82,11 @@ public class ApplyModule {
     try {
       // **************** Translation modules ************************
       // Check whether modules to install are translations
-      log4j.info("Looking for tranlation modules");
+      log4j.info("Looking for translation modules");
       final ApplyModuleData[] data = ApplyModuleData.selectTranslationModules(pool);
 
       if (data != null && data.length > 0) {
-        log4j.info(data.length + " tranlation modules found");
+        log4j.info(data.length + " translation modules found");
         // Set language as system in case it is not already
         for (int i = 0; i < data.length; i++) {
           if (data[i].issystemlanguage.equals("N")) {

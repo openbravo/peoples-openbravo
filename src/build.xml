@@ -109,6 +109,15 @@ build.war: build a war file in the lib directory.
     </taskdef>
     <validateModules userId="0" propertiesFile="${base.config}/Openbravo.properties" type="module" />
   </target>
+  
+  <target name="load.logoimages">
+    <taskdef name="imageloading" classname="org.openbravo.erpCommon.utility.ImageToDatabaseLoader">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <imageloading userId="0" propertiesFile="${base.config}/Openbravo.properties" basePath="${basedir}/../"
+      imagePaths="web/images/CompanyLogo_big.png,web/images/SupportLogo_big.png,web/images/CompanyLogo_small.png,web/skins/Default/Login/initialOpenbravoLogo.png,web/images/CompanyLogo_big.png"
+      propertyNames="yourCompanyLoginImage,yourItServiceLoginImage,yourCompanyMenuImage,yourCompanyBigImage,yourCompanyDocumentImage"/>
+  </target>
 
   <target name="trl.clean" if="translation">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
@@ -747,9 +756,9 @@ build.war: build a war file in the lib directory.
     </delete>
 
     <mkdir dir="${build}" />
-     <axis-wsdl2java output="${base.src}" verbose="false" url="http://centralrepository.openbravo.com/openbravo/services/WebService?wsdl" serverside="true" debug="false">
-      <mapping namespace="http://centralrepository.openbravo.com/openbravo/services/WebService" package="org.openbravo.services.webservice" />
-      <mapping namespace="/services/WebService" package="org.openbravo.services.webservice" />
+     <axis-wsdl2java output="${base.src}" verbose="false" url="http://centralrepository.openbravo.com/openbravo/services/WebService2?wsdl" serverside="true" debug="false">
+      <mapping namespace="http://centralrepository.openbravo.com/openbravo/services/WebService2" package="org.openbravo.services.webservice" />
+      <mapping namespace="/services/WebService2" package="org.openbravo.services.webservice" />
     </axis-wsdl2java>
   </target>
 

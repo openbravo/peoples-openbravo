@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
-import org.hibernate.impl.SessionImpl;
+import org.hibernate.engine.SessionImplementor;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -75,7 +75,7 @@ public class OBDal implements OBSingleton {
    * @return the current database connection
    */
   public Connection getConnection() {
-    return ((SessionImpl) SessionHandler.getInstance().getSession()).connection();
+    return ((SessionImplementor) SessionHandler.getInstance().getSession()).connection();
   }
 
   /**

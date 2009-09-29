@@ -285,7 +285,7 @@
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
         <Parameter name="adUserId"/>
-        <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND ar.isActive='Y' AND "/>
+        <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND tr.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
         <Parameter name="adTreeId"/>

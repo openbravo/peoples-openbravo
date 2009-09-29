@@ -22,7 +22,7 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
     }
 
     // Use to get a proxy class for WebService
-    private java.lang.String WebService_address = "http://centralrepository.openbravo.com/openbravo/services/WebService";
+    private java.lang.String WebService_address = "http://centralrepository.openbravo.com/openbravo/services/WebService2";
 
     public java.lang.String getWebServiceAddress() {
         return WebService_address;
@@ -54,7 +54,6 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
         try {
             org.openbravo.services.webservice.WebServiceSoapBindingStub _stub = new org.openbravo.services.webservice.WebServiceSoapBindingStub(portAddress, this);
             _stub.setPortName(getWebServiceWSDDServiceName());
-            _stub.setTimeout(5000);
             return _stub;
         }
         catch (org.apache.axis.AxisFault e) {
@@ -106,7 +105,7 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
     }
 
     public javax.xml.namespace.QName getServiceName() {
-        return new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "WebServiceImplService");
+        return new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "WebServiceImplService");
     }
 
     private java.util.HashSet ports = null;
@@ -114,7 +113,7 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
     public java.util.Iterator getPorts() {
         if (ports == null) {
             ports = new java.util.HashSet();
-            ports.add(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService", "WebService"));
+            ports.add(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService2", "WebService"));
         }
         return ports.iterator();
     }

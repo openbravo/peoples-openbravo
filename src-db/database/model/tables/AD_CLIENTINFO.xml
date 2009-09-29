@@ -125,8 +125,29 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="YOUR_COMPANY_MENU_IMAGE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="YOUR_COMPANY_BIG_IMAGE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="YOUR_COMPANY_DOCUMENT_IMAGE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_CLIENTINFO">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_CLIENTINFO_IMAGEBIGCOMP">
+        <reference local="YOUR_COMPANY_BIG_IMAGE" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_CLIENTINFO_IMAGEDOCUM">
+        <reference local="YOUR_COMPANY_DOCUMENT_IMAGE" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_CLIENTINFO_IMAGEMENUCOMP">
+        <reference local="YOUR_COMPANY_MENU_IMAGE" foreign="AD_IMAGE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADCLIENTINFO">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>

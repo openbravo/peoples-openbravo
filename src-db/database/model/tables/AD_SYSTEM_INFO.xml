@@ -109,11 +109,46 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="YOUR_COMPANY_LOGIN_IMAGE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="YOUR_IT_SERVICE_LOGIN_IMAGE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="YOUR_COMPANY_MENU_IMAGE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="YOUR_COMPANY_BIG_IMAGE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="YOUR_COMPANY_DOCUMENT_IMAGE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_SYSTEM_INFO_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_SYSTEM_INFO_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_IMAGEBIGCOMP">
+        <reference local="YOUR_COMPANY_BIG_IMAGE" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_IMAGEDOCUM">
+        <reference local="YOUR_COMPANY_DOCUMENT_IMAGE" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_IMAGELOGINCOMP">
+        <reference local="YOUR_COMPANY_LOGIN_IMAGE" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_IMAGELOGINSERV">
+        <reference local="YOUR_IT_SERVICE_LOGIN_IMAGE" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_IMAGEMENUCOMP">
+        <reference local="YOUR_COMPANY_MENU_IMAGE" foreign="AD_IMAGE_ID"/>
       </foreign-key>
       <check name="ADSYSTEMINFO_CUSTOMALLOW_CHECK"><![CDATA[CUSTOMIZATION_ALLOWED IN ('Y', 'N')]]></check>
     </table>

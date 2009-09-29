@@ -80,7 +80,7 @@ public class OBContext implements OBNotSingleton {
 
   private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<OBContext>();
 
-  private static String CONTEXT_PARAM = "#OBContext";
+  public static final String CONTEXT_PARAM = "#OBContext";
 
   private static OBContext adminContext = null;
 
@@ -553,6 +553,7 @@ public class OBContext implements OBNotSingleton {
         Hibernate.initialize(getCurrentOrganization().getClient());
         setCurrentClient(getCurrentOrganization().getClient());
       }
+      Hibernate.initialize(getCurrentClient().getClientInformationList());
 
       Check.isNotNull(getCurrentClient(), "Client may not be null");
       Check.isTrue(getCurrentClient().isActive(), "Current Client " + getCurrentClient().getName()

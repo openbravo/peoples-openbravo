@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -48,6 +49,8 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
@@ -562,6 +565,39 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         log4j.debug("InitialClientSetup - createClient - CLIENT INFO CREATED");
       if (log4j.isDebugEnabled())
         log4j.debug("InitialClientSetup - createClient - m_info: " + m_info.toString());
+      // Add images
+      Client newClient = OBDal.getInstance().get(Client.class, AD_Client_ID);
+      SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
+      if (sys.getYourCompanyBigImage() != null) {
+        Image yourCompanyBigImage = OBProvider.getInstance().get(Image.class);
+        yourCompanyBigImage.setClient(newClient);
+        yourCompanyBigImage.setBindaryData(sys.getYourCompanyBigImage().getBindaryData());
+        yourCompanyBigImage.setName(sys.getYourCompanyBigImage().getName());
+        newClient.getClientInformationList().get(0).setYourCompanyBigImage(yourCompanyBigImage);
+        OBDal.getInstance().save(yourCompanyBigImage);
+      }
+
+      if (sys.getYourCompanyDocumentImage() != null) {
+        Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
+        yourCompanyDocumentImage.setClient(newClient);
+        yourCompanyDocumentImage.setBindaryData(sys.getYourCompanyDocumentImage().getBindaryData());
+        yourCompanyDocumentImage.setName(sys.getYourCompanyBigImage().getName());
+        newClient.getClientInformationList().get(0).setYourCompanyDocumentImage(
+            yourCompanyDocumentImage);
+        OBDal.getInstance().save(yourCompanyDocumentImage);
+      }
+
+      if (sys.getYourCompanyMenuImage() != null) {
+        Image yourCompanyMenuImage = OBProvider.getInstance().get(Image.class);
+        yourCompanyMenuImage.setClient(newClient);
+        yourCompanyMenuImage.setBindaryData(sys.getYourCompanyMenuImage().getBindaryData());
+        yourCompanyMenuImage.setName(sys.getYourCompanyMenuImage().getName());
+        newClient.getClientInformationList().get(0).setYourCompanyMenuImage(yourCompanyMenuImage);
+        OBDal.getInstance().save(yourCompanyMenuImage);
+      }
+
+      OBDal.getInstance().save(newClient);
+      OBDal.getInstance().flush();
 
       // * Create Roles
       // * - Admin

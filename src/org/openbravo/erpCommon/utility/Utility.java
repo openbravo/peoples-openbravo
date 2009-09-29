@@ -1340,8 +1340,9 @@ public class Utility {
         // to be made here, as we disabled getContext (where it was before)
         if (strAux == null || strAux.equals(""))
           strAux = vars.getSessionValue(tab + "|param" + name);
-        // strAux = vars.getSessionValue(window + "|" + name);
-        // strAux = Utility.getContext(conn, vars, name, window);
+        // language needs to be read from preference, to enable translation for ComboTableData
+        if ((strAux == null || strAux.equals("")) && name.equals("#AD_LANGUAGE"))
+          strAux = Utility.getContext(conn, vars, name, window);
       } else {
         strAux = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(name));
         if (log4j.isDebugEnabled())

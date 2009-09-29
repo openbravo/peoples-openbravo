@@ -121,43 +121,14 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
     <antcall target="database.postupdate.${bbdd.rdbms}" />
   </target>
 
-  <target name="fix.date.ORACLE">
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-        UPDATE ad_system_info SET last_dbupdate=last_dbupdate+1/24 
-      </transaction>
-    </sql>
-  </target>
-  <target name="fix.date.POSTGRE">
-    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-          <classpath>
-            <fileset dir="${base.lib}">
-              <include name="**/*.jar">
-              </include>
-            </fileset>
-          </classpath>
-          <transaction>
-        </transaction>
-      </sql>
-    </target>
-  
-
   <target name="update.database">
-    <antcall target="fix.date.${bbdd.rdbms}" />
     <alterdatabasedataall driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}"/>
     <antcall target="database.postupdate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
   </target>
 
   <target name="update.database.java">
-    <antcall target="fix.date.${bbdd.rdbms}" />
-    <java classname="org.openbravo.ddlutils.task.AlterDatabaseJava" fork="true">
+    <java classname="org.openbravo.ddlutils.task.AlterDatabaseJava" failonerror="true" fork="true" maxmemory="${build.maxmemory}">
       <arg value="${bbdd.driver}"/>
       <arg value="${bbdd.owner.url}"/>
       <arg value="${bbdd.user}"/>
@@ -347,7 +318,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
   </target>
 
   <target name="export.database.structure">
-    <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" propertiesFile="${base.config}/Openbravo.properties" module="${module}" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD"/>
+    <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" propertiesFile="${base.config}/Openbravo.properties" module="${module}" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" />
   </target>
 
   <target name="import.database.data">

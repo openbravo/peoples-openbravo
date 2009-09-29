@@ -128,8 +128,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     }
 
     if (argv.length < 3) {
-      log4j
-          .error("Usage: java Translate Openbravo.properties fileTermination sourceDir");
+      log4j.error("Usage: java Translate Openbravo.properties fileTermination sourceDir");
       return;
     }
 
@@ -562,15 +561,20 @@ public class Translate extends DefaultHandler implements LexicalHandler {
           translateModule = false;
           return;
         }
-        if (!aux && TranslateData.existsExpresion(pool, ini, actualFile, moduleLang) == 0) {
+        if (!aux) {
+          if (TranslateData.existsExpresionModFile(pool, ini, actualFile, moduleLang) == 0
+              && TranslateData.existsExpresionModNoFile(pool, ini, moduleLang) == 0
+              && TranslateData.existsExpresionNoModFile(pool, ini, actualFile, moduleLang) == 0
+              && TranslateData.existsExpresionNoModNoFile(pool, ini, moduleLang) == 0) {
 
-          if (!TranslateData.isInDevelopmentModule(pool, moduleID))
-            log4j.error("Module  is not in development, it will be inserted anyway");
-          if (log4j.isDebugEnabled())
-            log4j.debug("inserting in module:" + moduleName + " - ID:" + moduleID);
-          TranslateData.insert(pool, ini, actualFile, moduleID);
-          log4j.info("Inserting text: " + ini + "from file: " + actualFile
-              + "into ad_textinterfaces");
+            if (!TranslateData.isInDevelopmentModule(pool, moduleID))
+              log4j.error("Module  is not in development, it will be inserted anyway");
+            if (log4j.isDebugEnabled())
+              log4j.debug("inserting in module:" + moduleName + " - ID:" + moduleID);
+            TranslateData.insert(pool, ini, actualFile, moduleID);
+            log4j.info("Inserting text: " + ini + "from file: " + actualFile
+                + "into ad_textinterfaces");
+          }
         }
       } catch (final ServletException e) {
         e.printStackTrace();

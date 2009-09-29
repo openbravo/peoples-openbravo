@@ -171,7 +171,7 @@ BEGIN --BODY
       FROM M_Product p LEFT JOIN (SELECT C_CURRENCY_CONVERT(C_BudgetLine.Price, C_BudgetLine.C_CURRENCY_ID, p_Currency, p_Calcdate, C_BudgetLine.ad_client_id, C_BudgetLine.ad_org_id) as price,
                                    C_BudgetLine.M_Product_ID
                                   FROM C_BudgetLine
-                                  WHERE C_BudgetLine.C_Budget_ID = NULL) bl ON p.M_Product_ID = bl.M_Product_ID
+                                  WHERE C_BudgetLine.C_Budget_ID IS NULL) bl ON p.M_Product_ID = bl.M_Product_ID
       WHERE p.M_Product_ID = Cur_UsedProducts.M_Product_ID
       AND p.ispurchased = 'Y';
       v_SequenceCost_Tmp := COALESCE(v_SequenceCost_Tmp, 0) + Cur_UsedProducts.quantityfactor*v_Cost;

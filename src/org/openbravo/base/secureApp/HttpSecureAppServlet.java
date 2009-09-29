@@ -179,16 +179,24 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     }
 
     try {
+
+      if (OBContext.getOBContext() == null) {
+        OBContext.setAdminContext();
+      }
+
       final String strUserAuth = m_AuthManager.authenticate(request, response);
 
-      if (!variables.getDBSession().equals("")
-          && !SeguridadData.loggedOK(this, variables.getDBSession())) {
-        m_AuthManager.logout(request, response);
+      boolean loggedOK = false;
+
+      if (!variables.getDBSession().equals("")) {
+        loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
+        if (!loggedOK) {
+          m_AuthManager.logout(request, response);
+        }
       }
 
       if (strUserAuth != null) {
-        if (variables.getRole().equals("")
-            || !SeguridadData.loggedOK(this, variables.getDBSession())) {
+        if (variables.getRole().equals("") || !loggedOK) {
           String strLanguage = "";
           String strIsRTL = "";
           String strRole = "";
@@ -462,7 +470,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   protected void logout(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-    final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     HttpSession session = request.getSession(false);
     if (session != null) {

@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.utils.FormatUtilities;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class LoginHandler extends HttpBaseServlet {
@@ -51,10 +51,10 @@ public class LoginHandler extends HttpBaseServlet {
       res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
     } else {
       final String strUser = vars.getRequiredStringParameter("user");
-      final String strPass = FormatUtilities.sha1Base64(vars.getStringParameter("password"));
-      final String strUserAuth = SeguridadData.valido(this, strUser, strPass);
+      final String strPass = vars.getStringParameter("password");
+      final String strUserAuth = LoginUtils.getValidUserId(myPool, strUser, strPass);
 
-      if (!strUserAuth.equals("-1")) {
+      if (strUserAuth != null) {
         req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
         checkLicenseAndGo(res, vars);
       } else {
@@ -72,26 +72,27 @@ public class LoginHandler extends HttpBaseServlet {
 
       switch (ak.checkOPSLimitations()) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
-        String msg = "You have exceeded the number of Global Concurrent Users licensed to use this system.<br/>";
-        msg += "Please wait until one or more users log out of the system and then retry again.<br/>";
-        msg += "Contact your Openbravo Business Partner if you want to purchase a subscription for additional users.";
+        String msg = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED", vars
+            .getLanguage());
+        String title = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE", vars
+            .getLanguage());
         String msgType = "Error";
         String action = "../security/Login_FS.html";
-        goToRetry(res, vars, msg, "Maximum number of concurrent users reached", msgType, action);
+        goToRetry(res, vars, msg, title, msgType, action);
         break;
       case NUMBER_OF_SOFT_USERS_REACHED:
-        msg = "You have exceeded the number of Global Concurrent Users licensed to use this system.<br/>";
-        msg += "Contact your Openbravo Business Partner if you want to purchase a subscription for additional users.";
+        msg = Utility.messageBD(myPool, "NUMBER_OF_SOFT_USERS_REACHED", vars.getLanguage());
+        title = Utility.messageBD(myPool, "NUMBER_OF_SOFT_USERS_REACHED_TITLE", vars.getLanguage());
         action = "../security/Menu.html";
         msgType = "Warning";
-        goToRetry(res, vars, msg, "Maximum number of concurrent users reached", msgType, action);
+        goToRetry(res, vars, msg, title, msgType, action);
         break;
       case OPS_INSTANCE_NOT_ACTIVE:
-        msg = "Your Professional Subscription has expired. However no data has been lost.<br/>";
-        msg += "To renew your Professional Subscription, contact your assigned partner.";
+        msg = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE", vars.getLanguage());
+        title = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE_TITLE", vars.getLanguage());
         action = "../security/Menu.html";
         msgType = "Warning";
-        goToRetry(res, vars, msg, "Expired subscription", msgType, action);
+        goToRetry(res, vars, msg, title, msgType, action);
         break;
       default:
         goToTarget(res, vars);

@@ -37,13 +37,19 @@
       </Sql>
   </SqlMethod>
   
-  <SqlMethod name="isUpdatingCore" type="preparedStatement" return="boolean">
+  <SqlMethod name="isUpdatingCoreOrTemplate" type="preparedStatement" return="boolean">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-         SELECT count(*) as NAME
-           FROM AD_MODULE
-          WHERE STATUS='I'      
-            AND AD_MODULE_ID = '0'
+         SELECT count(*) as NAME FROM
+            ((SELECT 1  
+                FROM AD_MODULE
+                WHERE STATUS='I'      
+               AND (AD_MODULE_ID = '0' OR TYPE='T'))
+            UNION
+            (SELECT 1
+                FROM AD_MODULE_INSTALL
+                WHERE STATUS='I'      
+               AND (AD_MODULE_ID = '0' OR TYPE='T'))) q
           ]]>
       </Sql>
   </SqlMethod>

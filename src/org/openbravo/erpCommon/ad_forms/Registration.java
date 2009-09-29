@@ -30,7 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Registration extends HttpSecureAppServlet {
@@ -89,6 +91,17 @@ public class Registration extends HttpSecureAppServlet {
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("welcome", Utility.formatMessageBDToHtml(Utility.messageBD(this,
         "REG_WELCOME", vars.getLanguage())));
+
+    // Building registration URL js variable
+    SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+
+    String url = "var url = 'http://www.openbravo.com/embedreg/form";
+    if (sysInfo.getSystemIdentifier() != null) {
+      url += "?system_id=" + sysInfo.getSystemIdentifier();
+    }
+    url += "';";
+
+    xmlDocument.setParameter("url", url);
 
     out.println(xmlDocument.print());
     out.close();

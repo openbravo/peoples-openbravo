@@ -515,6 +515,10 @@ public class DataGrid extends HttpSecureAppServlet {
     String total = "0";
     if (data != null && data.length > 0)
       total = data[0].getField("TOTAL");
+    // fallback to default value when query returned null (i.e. with no rows in filter)
+    if (total == null) {
+      total = "0";
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/utility/DataGridTotal").createXmlDocument();
     xmlDocument.setParameter("total", total);

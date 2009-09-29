@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,8 +34,8 @@
            END) AS DEBT_PAYMENT,
           Ad_Column_Identifier(to_char('C_Invoice'), to_char(C_INVOICE_ID), to_char(?)) AS INVOICE,
           Ad_Column_Identifier(to_char('C_BankAccount'), to_char(C_BankAccount_ID), to_char(?)) AS BANK,
-          p_amount - p_woamount AS AMOUNT,
-          p_amount - p_woamount as AMOUNT2,
+          (CASE IsReceipt WHEN 'Y' THEN (p_amount - p_woamount) ELSE (p_amount - p_woamount)*(-1) END) AS AMOUNT,
+          (CASE IsReceipt WHEN 'Y' THEN (p_amount - p_woamount) ELSE (p_amount - p_woamount)*(-1) END) AS AMOUNT2,
           C_Currency_Convert(p_amount,b.C_Currency_ID,
           	(select c_currency_id from c_bankaccount c where c.c_bankaccount_id = b.c_bankaccount_id),
           	to_date(?),to_char(null),AD_Client_ID,AD_Org_ID
@@ -46,7 +46,8 @@
         p.description, p.c_invoice_id, p.c_bankaccount_id, p.ad_client_id, p.ad_org_id,
         p.Amount as p_amount, p.WriteOffAmt as p_woamount,
         p.C_Currency_ID,c.ISO_Code AS CURRENCY,
-        o.Name AS Org
+        o.Name AS Org,
+        p.IsReceipt AS IsReceipt
         FROM C_DEBT_Payment_v p,
          C_Currency c,  AD_Org o
         where p.C_Currency_ID=c.C_Currency_ID

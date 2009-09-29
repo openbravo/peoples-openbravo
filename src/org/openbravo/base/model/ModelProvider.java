@@ -762,6 +762,14 @@ public class ModelProvider implements OBSingleton {
           c = rs.getColumn();
         }
       }
+    } else if (reference.equals(Reference.IMAGE_BLOB)) {
+      List<Column> columns = tablesByTableName.get("ad_image").getColumns();
+      for (Column acolumn : columns) {
+        if (acolumn.getColumnName().equalsIgnoreCase("AD_Image_Id")) {
+          c = acolumn;
+          break;
+        }
+      }
     }
     if (c == null)
       Check.fail("Reference column for " + columnName + " not found in runtime model [ref: "

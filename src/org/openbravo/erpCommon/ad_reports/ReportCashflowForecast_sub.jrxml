@@ -231,7 +231,7 @@ WHERE C_SETTLEMENT_CANCEL_ID IS NULL
     FROM C_BANKSTATEMENTLINE BL,     
     C_BANKSTATEMENT     BS,           C_BANK              B,           C_BANKACCOUNT       BA     
     WHERE BS.C_BANKSTATEMENT_ID = BL.C_BANKSTATEMENT_ID        AND BA.C_BANKACCOUNT_ID = BS.C_BANKACCOUNT_ID        AND BA.C_BANK_ID = B.C_BANK_ID         AND BS.PROCESSED='Y'        
-    AND BS.STATEMENTDATE <= NOW()        AND 3=3    AND B.AD_CLIENT_ID IN (0,1000000)        AND B.AD_ORG_ID IN (1000000,0)        
+    AND BS.STATEMENTDATE <= NOW()        AND 3=3    AND B.AD_CLIENT_ID IN ($P!{USER_CLIENT})      AND B.AD_ORG_ID IN ($P!{USER_ORG})       
     GROUP BY (B.CODEBANK || '/' || B.CODEBRANCH || B.DIGITCONTROL || BA.CODEACCOUNT || '.' || BA.DIGITCONTROL), BA.C_BANKACCOUNT_ID, ba.c_Currency_ID, ba.ad_client_id, ba.ad_org_id        ) AAA        
     ORDER BY 1]]></queryString>
 
@@ -242,7 +242,7 @@ WHERE C_SETTLEMENT_CANCEL_ID IS NULL
 	<field name="PAYMENT" class="java.math.BigDecimal"/>
 	<field name="INCPAY" class="java.math.BigDecimal"/>
 	<field name="FINALSUMMARY" class="java.math.BigDecimal"/>
-	<field name="C_BANKACCOUNT_ID" class="java.math.BigDecimal"/>
+	<field name="C_BANKACCOUNT_ID" class="java.math.String"/>
 	<field name="C_DEBT_PAYMENT_ID" class="java.lang.String"/>
 	<field name="DATEPLANNED" class="java.lang.String"/>
 	<field name="BPARTNER" class="java.lang.String"/>

@@ -1333,7 +1333,7 @@ public class ComboTableData {
       }
     } catch (SQLException e) {
       log4j.error("Error of SQL in query: " + strSql + "Exception:" + e);
-      throw new Exception(Integer.toString(e.getErrorCode()));
+      throw new Exception("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } finally {
       getPool().releasePreparedStatement(st);
     }

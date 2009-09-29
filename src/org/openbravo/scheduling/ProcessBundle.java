@@ -310,6 +310,7 @@ public class ProcessBundle {
    * @throws ServletException
    *           if an error occurrs retrieving the request from the database
    */
+  @SuppressWarnings("unchecked")
   public static final ProcessBundle request(String requestId, VariablesSecureApp vars,
       ConnectionProvider conn) throws ServletException {
     final ProcessRequestData data = ProcessRequestData.select(conn, requestId);

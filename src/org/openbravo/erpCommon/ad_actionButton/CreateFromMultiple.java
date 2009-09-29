@@ -192,17 +192,6 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     xmlDocument.setData("reportM_LOCATOR_X", "liststructure", CreateFromMultipleReceiptData
         .selectM_Locator_X(this, strmWarehouseId));
 
-    try {
-      ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Locator_Type_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
-              .getContext(this, vars, "#User_Client", strWindowId), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
-      xmlDocument.setData("reportM_LOCATOR_TYPE", "liststructure", comboTableData.select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -292,7 +281,6 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     String strWarehouse = vars.getRequiredStringParameter("inpmWarehouseId");
     String strLocator = vars.getStringParameter("inpmLocatorX");
     String strNumero = vars.getRequiredNumericParameter("inpnumerolineas");
-    String strLocatorType = vars.getStringParameter("inpmLocatorType");
 
     OBError myMessage = null;
     int count = 0;
@@ -303,8 +291,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       int total = Integer.valueOf(strNumero).intValue();
       CreateFromMultipleReceiptData[] locators = CreateFromMultipleReceiptData.select(conn, this,
           vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility
-              .getContext(this, vars, "#User_Org", strWindowId), strWarehouse, strLocator,
-          strLocatorType);
+              .getContext(this, vars, "#User_Org", strWindowId), strWarehouse, strLocator);
       if (locators != null && locators.length > 0) {
         for (count = 0; count < total; count++) {
           String strM_Locator_ID = (count > locators.length - 1) ? "" : locators[count].mLocatorId;

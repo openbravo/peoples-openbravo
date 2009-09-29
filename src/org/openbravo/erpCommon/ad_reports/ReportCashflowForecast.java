@@ -103,11 +103,8 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
       String strBaseDesign = getBaseDesignPath(strLanguage);
       JasperReport jasperReportLines;
       try {
-        JasperDesign jasperDesignLines = (("on".equals(strBreakDate)) ? JRXmlLoader
-            .load(strBaseDesign
-                + "/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_perDay.jrxml")
-            : JRXmlLoader.load(strBaseDesign
-                + "/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast.jrxml"));
+        JasperDesign jasperDesignLines = (JRXmlLoader.load(strBaseDesign
+            + "/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_sub.jrxml"));
         jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
       } catch (JRException e) {
         log4j.error("Error Compiling report ", e);
@@ -128,9 +125,17 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
           "ReportCashflowForecast|AcctNo"));
 
       try {
-        dataDetail = ReportCashflowForecastData.selectAllLines(this, vars.getSqlDateFormat(), vars
-            .getLanguage(), vars.getRequestGlobalVariable("inpcBankAccountId",
-            "ReportCashflowForecast|AcctNo"), strDateMax, "BANKACCOUNT, ISRECEIPT desc");
+        if (strBreakDate.equals("")) {
+          dataDetail = ReportCashflowForecastData.selectAllLines(this, vars.getSqlDateFormat(),
+              vars.getLanguage(), vars.getRequestGlobalVariable("inpcBankAccountId",
+                  "ReportCashflowForecast|AcctNo"), strDateMax,
+              "BANKACCOUNT, ISRECEIPT desc,DATEPLANNED,INVOICENO ");
+        } else {
+          dataDetail = ReportCashflowForecastData.selectAllLines(this, vars.getSqlDateFormat(),
+              vars.getLanguage(), vars.getRequestGlobalVariable("inpcBankAccountId",
+                  "ReportCashflowForecast|AcctNo"), strDateMax,
+              "BANKACCOUNT,DATEPLANNED,ISRECEIPT desc,INVOICENO ");
+        }
         String strReportName = (("on".equals(strBreakDate)) ? "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_perDay.jrxml"
             : "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast.jrxml");
         renderJR(vars, response, strReportName, "pdf", parameters, dataDetail, null);

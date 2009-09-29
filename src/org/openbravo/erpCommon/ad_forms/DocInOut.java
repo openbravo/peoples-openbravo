@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -191,30 +191,38 @@ public class DocInOut extends AcctServer {
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_lines[i];
         String costs = line.getProductCosts(DateAcct, as, conn, con);
-        log4jDocInOut.debug("(matReceipt) - DR account: "
-            + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
-        log4jDocInOut.debug("(matReceipt) - DR costs: " + costs);
-        // Inventory DR
-        dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
-            .getC_Currency_ID(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-            conn);
-        dr.setM_Locator_ID(line.m_M_Locator_ID);
-        dr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
-        // Loc
-        dr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
-        // Loc
-        log4jDocInOut.debug("(matReceipt) - CR account: "
-            + line.getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn));
-        log4jDocInOut.debug("(matReceipt) - CR costs: " + costs);
-        // NotInvoicedReceipt CR
-        cr = fact.createLine(line, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
-            as.getC_Currency_ID(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-            conn);
-        cr.setM_Locator_ID(line.m_M_Locator_ID);
-        cr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
-        // Loc
-        cr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
-        // Loc
+
+        // If there exists cost for the product, but it is equals to zero, then no line is added,
+        // but no error is thrown. If this is the only line in the document, yes an error will be
+        // thrown
+        if (!costs.equals("0")
+            || DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
+
+          log4jDocInOut.debug("(matReceipt) - DR account: "
+              + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
+          log4jDocInOut.debug("(matReceipt) - DR costs: " + costs);
+          // Inventory DR
+          dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
+              .getC_Currency_ID(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              conn);
+          dr.setM_Locator_ID(line.m_M_Locator_ID);
+          dr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
+          // Loc
+          dr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
+          // Loc
+          log4jDocInOut.debug("(matReceipt) - CR account: "
+              + line.getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn));
+          log4jDocInOut.debug("(matReceipt) - CR costs: " + costs);
+          // NotInvoicedReceipt CR
+          cr = fact.createLine(line, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
+              as.getC_Currency_ID(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              conn);
+          cr.setM_Locator_ID(line.m_M_Locator_ID);
+          cr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
+          // Loc
+          cr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
+          // Loc
+        }
       }
     } else {
       log4jDocInOut.warn("createFact - " + "DocumentType unknown: " + DocumentType);

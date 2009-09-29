@@ -168,7 +168,7 @@
       ]]>
     </Sql>
     <Parameter name="initseqno"/>
-    <Parameter name="endseqno" optional="true" after="AND 1=1"><![CDATA[ AND SEQNO < ? ]]></Parameter>
+    <Parameter name="endseqno" optional="true" after="AND 1=1"><![CDATA[ AND SEQNO < TO_NUMBER(?) ]]></Parameter>
     <Parameter name="adTabId"/>
   </SqlMethod>
   <SqlMethod name="parentsColumnName" type="preparedStatement" return="multiple">

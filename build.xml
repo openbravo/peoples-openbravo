@@ -101,6 +101,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="obx.export.CS" value="false" />
   <property name="chekPerms" value="false" />
   <property name="force" value="false" />
+  <property name="rd" value="false" />
   <property name="local" value="true" />
   <property name="apply.modules.complete.compilation" value="false" />
   <property name="calculate.core.revision" value="true"/>
@@ -510,6 +511,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <antcall target="import.sample.data" />
+    <antcall target="load.logoimages" />
 
     <!--
 		<antcall target="validate.database" />
@@ -608,9 +610,11 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="db.apply.modules.sampledata" if="apply.modules.on.create">
+    <antcall target="generate.entities" />
     <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
+    <antcall target="load.logoimages" />
   </target>
 
 
@@ -903,5 +907,10 @@ compare.database.structure: refer to compare.database.structure target of databa
         </tokenfilter>
       </filterchain>
     </loadfile>
+  </target>
+  
+  
+  <target name="load.logoimages">
+    <ant dir="${base.src}" target="load.logoimages" inheritAll="true" inheritRefs="true" />
   </target>
 </project>

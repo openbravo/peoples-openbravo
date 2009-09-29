@@ -32,6 +32,8 @@ public class SimpleModule  implements java.io.Serializable {
 
     private java.lang.String versionNo;
 
+    private java.lang.Boolean isCommercial;
+
     public SimpleModule() {
     }
 
@@ -47,7 +49,8 @@ public class SimpleModule  implements java.io.Serializable {
            java.lang.String type,
            java.lang.String updateDescription,
            java.lang.String url,
-           java.lang.String versionNo) {
+           java.lang.String versionNo,
+           java.lang.Boolean isCommercial) {
            this.author = author;
            this.description = description;
            this.help = help;
@@ -60,6 +63,7 @@ public class SimpleModule  implements java.io.Serializable {
            this.updateDescription = updateDescription;
            this.url = url;
            this.versionNo = versionNo;
+           this.isCommercial = isCommercial;
     }
 
 
@@ -302,6 +306,26 @@ public class SimpleModule  implements java.io.Serializable {
         this.versionNo = versionNo;
     }
 
+
+    /**
+     * Gets the isCommercial value for this SimpleModule.
+     * 
+     * @return isCommercial
+     */
+    public java.lang.Boolean getIsCommercial() {
+        return isCommercial;
+    }
+
+
+    /**
+     * Sets the isCommercial value for this SimpleModule.
+     * 
+     * @param isCommercial
+     */
+    public void setIsCommercial(java.lang.Boolean isCommercial) {
+        this.isCommercial = isCommercial;
+    }
+
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof SimpleModule)) return false;
@@ -349,7 +373,10 @@ public class SimpleModule  implements java.io.Serializable {
               this.url.equals(other.getUrl()))) &&
             ((this.versionNo==null && other.getVersionNo()==null) || 
              (this.versionNo!=null &&
-              this.versionNo.equals(other.getVersionNo())));
+              this.versionNo.equals(other.getVersionNo()))) &&
+            ((this.isCommercial==null && other.getIsCommercial()==null) || 
+             (this.isCommercial!=null &&
+              this.isCommercial.equals(other.getIsCommercial())));
         __equalsCalc = null;
         return _equals;
     }
@@ -397,6 +424,9 @@ public class SimpleModule  implements java.io.Serializable {
         if (getVersionNo() != null) {
             _hashCode += getVersionNo().hashCode();
         }
+        if (getIsCommercial() != null) {
+            _hashCode += getIsCommercial().hashCode();
+        }
         __hashCodeCalc = false;
         return _hashCode;
     }
@@ -406,7 +436,7 @@ public class SimpleModule  implements java.io.Serializable {
         new org.apache.axis.description.TypeDesc(SimpleModule.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("/services/WebService", "SimpleModule"));
+        typeDesc.setXmlType(new javax.xml.namespace.QName("/services/WebService2", "SimpleModule"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("author");
         elemField.setXmlName(new javax.xml.namespace.QName("", "author"));
@@ -477,6 +507,12 @@ public class SimpleModule  implements java.io.Serializable {
         elemField.setFieldName("versionNo");
         elemField.setXmlName(new javax.xml.namespace.QName("", "versionNo"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("isCommercial");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "isCommercial"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
     }

@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '4844';
+  var number = '5108';
   return number;
 }
 
@@ -3205,7 +3205,7 @@ function setPageLoading(status) {
 * @see #setChangedField
 */
 function logChanges(field) {
-  if(!isUserChanges) return;
+  // if(!isUserChanges) return;
   if (field==null || !field) return false;
   return setChangedField(field, field.form);
 }

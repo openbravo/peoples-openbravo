@@ -22,6 +22,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -39,6 +40,7 @@ import org.openbravo.erpCommon.modules.ImportModule;
 import org.openbravo.erpCommon.modules.ModuleTree;
 import org.openbravo.erpCommon.modules.UninstallModule;
 import org.openbravo.erpCommon.modules.VersionUtility;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.HttpsUtils;
@@ -107,7 +109,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       printPageDetail(response, vars, record, local);
     } else if (vars.commandIn("INSTALL")) {
       final String record = vars.getStringParameter("inpcRecordId");
-      printPageInstall1(response, vars, record, false, null, new String[0]);
+      printPageInstall1(response, request, vars, record, false, null, new String[0]);
     } else if (vars.commandIn("INSTALL2")) {
       printPageInstall2(response, vars);
     } else if (vars.commandIn("INSTALL3")) {
@@ -118,7 +120,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     } else if (vars.commandIn("LOCAL")) {
       printSearchFile(response, vars, null);
     } else if (vars.commandIn("INSTALLFILE")) {
-      printPageInstallFile(response, vars);
+      printPageInstallFile(response, request, vars);
 
     } else if (vars.commandIn("UNINSTALL")) {
       final String modules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
@@ -140,7 +142,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         modulesToUpdate = new String[1];
         modulesToUpdate[0] = updateModule;
       }
-      printPageInstall1(response, vars, null, false, null, modulesToUpdate);
+      printPageInstall1(response, request, vars, null, false, null, modulesToUpdate);
     } else
       pageError(response);
   }
@@ -227,7 +229,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       out.println(xmlDocument.print());
       out.close();
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
     }
   }
 
@@ -263,7 +265,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
             + Utility.messageBD(this, "InstallUpdatesNow", lang) + "</a>";
       }
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
     }
     return rt;
   }
@@ -484,8 +486,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @param response
    * @throws IOException
    */
-  private void printPageInstallFile(HttpServletResponse response, VariablesSecureApp vars)
-      throws ServletException, IOException {
+  private void printPageInstallFile(HttpServletResponse response, HttpServletRequest request,
+      VariablesSecureApp vars) throws ServletException, IOException {
     final FileItem fi = vars.getMultiFile("inpFile");
 
     if (!fi.getName().toUpperCase().endsWith(".OBX")) {
@@ -502,7 +504,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       try {
         if (im.isModuleUpdate(fi.getInputStream())) {
           vars.setSessionObject("ModuleManagementInstall|File", vars.getMultiFile("inpFile"));
-          printPageInstall1(response, vars, null, true, fi.getInputStream(), new String[0]);
+          printPageInstall1(response, request, vars, null, true, fi.getInputStream(), new String[0]);
         } else {
           OBError message = im.getOBError(this);
           printSearchFile(response, vars, message);
@@ -528,11 +530,18 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  private void printPageInstall1(HttpServletResponse response, VariablesSecureApp vars,
-      String recordId, boolean islocal, InputStream obx, String[] updateModules)
-      throws IOException, ServletException {
+  private void printPageInstall1(HttpServletResponse response, HttpServletRequest request,
+      VariablesSecureApp vars, String recordId, boolean islocal, InputStream obx,
+      String[] updateModules) throws IOException, ServletException {
     final String discard[] = { "", "", "", "", "", "" };
     Module module = null;
+
+    // Remote installation is only allowed for heartbeat enabled instances
+    if (!islocal && !isHeartbeatEnabled()) {
+      response.sendRedirect(strDireccion
+          + "/ad_forms/Heartbeat.html?Command=DEFAULT_MODULE&inpcRecordId=" + recordId);
+    }
+
     if (!islocal && (updateModules == null || updateModules.length == 0)) {
       // if it is a remote installation get the module from webservice,
       // other case the obx file is passed as an InputStream
@@ -541,7 +550,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         final WebServiceImpl ws = loc.getWebService();
         module = ws.moduleDetail(recordId);
       } catch (final Exception e) {
-        e.printStackTrace();
+        log4j.error(e);
       }
     } else {
       discard[4] = "core";
@@ -568,15 +577,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
         check = im.checkDependenciesFile(obx);
       }
 
+      // Check commercial modules can be installed
+
       if (check) { // dependencies are statisfied, show modules to install
-        final Module[] installOrig = im.getModulesToInstall(); // This
-        // includes
-        // the
-        // also
-        // the
-        // module
-        // to
-        // install
+        // installOrig includes also the module to install
+        final Module[] installOrig = im.getModulesToInstall();
+
+        // check commercial modules and show error page if not allowed to install
+        if (!checkCommercialModules(im, response, vars)) {
+          return;
+        }
+
         if (installOrig == null || installOrig.length == 0)
           discard[0] = "modulesToinstall";
         else {
@@ -631,7 +642,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         discard[5] = "discardContinue";
       }
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
       message = new OBError();
       message.setType("Error");
       message.setTitle(Utility.messageBD(this, message.getType(), vars.getLanguage()));
@@ -669,6 +680,54 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private boolean checkCommercialModules(ImportModule im, HttpServletResponse response,
+      VariablesSecureApp vars) throws IOException {
+    ActivationKey ak = new ActivationKey();
+    boolean OBPSActiveInstance = ActivationKey.isActiveInstance();
+    ArrayList<Module> notAllowedMods = new ArrayList<Module>();
+
+    for (Module instMod : im.getModulesToInstall()) {
+      if (instMod.getIsCommercial()
+          && (!OBPSActiveInstance || !ak.isModuleSubscribed(instMod.getModuleID(), true))) {
+        notAllowedMods.add(instMod);
+      }
+    }
+
+    for (Module updMod : im.getModulesToUpdate()) {
+      if (updMod.getIsCommercial()
+          && (!OBPSActiveInstance || !ak.isModuleSubscribed(updMod.getModuleID(), true))) {
+        notAllowedMods.add(updMod);
+      }
+    }
+
+    if (notAllowedMods.size() > 0) {
+      String discard[] = { "" };
+
+      if (OBPSActiveInstance) {
+        discard[0] = "CEInstance";
+      } else {
+        discard[0] = "OBPSInstance";
+      }
+      XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/erpCommon/ad_forms/ModuleManagement_ErrorCommercial", discard)
+          .createXmlDocument();
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      xmlDocument.setData("modules", FieldProviderFactory.getFieldProviderArray(notAllowedMods));
+      response.setContentType("text/html; charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+    }
+    return notAllowedMods.size() == 0;
+  }
+
+  private boolean isHeartbeatEnabled() {
+    SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
+    return sys.isEnableHeartbeat() != null && sys.isEnableHeartbeat();
   }
 
   /**
@@ -787,7 +846,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
     OBError message;
     if (im.getIsLocal())
       im.execute(((FileItem) vars.getSessionObject("ModuleManagementInstall|File"))
-          .getInputStream(), ((FileItem) vars.getSessionObject("ModuleManagementInstall|File"))
           .getInputStream());
     else
       im.execute();
@@ -836,7 +894,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
             response
                 .sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
           } catch (final Exception ex) {
-            ex.printStackTrace();
+            log4j.error(ex);
           }
         }
       }
@@ -850,11 +908,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
       message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       message.setMessage(Utility.messageBD(this, "WSError", vars.getLanguage()));
       vars.setMessage("ModuleManagement", message);
-      e.printStackTrace();
+      log4j.error(e);
       try {
         response.sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
       } catch (final Exception ex) {
-        ex.printStackTrace();
+        log4j.error(ex);
       }
     }
     if (modules != null && modules.length > 0) {
@@ -895,7 +953,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       } else
         return new String[0];
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
       return (new String[0]);
     }
   }
@@ -911,7 +969,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       } else
         return new String[0];
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error(e);
       return (new String[0]);
     }
   }

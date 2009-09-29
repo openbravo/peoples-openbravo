@@ -897,12 +897,17 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
 * @param {String} rowName - name of the row
 */
   requestColumnTotals: function(rowName){
+    // workaround request sent with rows='undefined' when no rows are selected
+    var rows = this.getSelectedRows();
+    if (rows == "") {
+      rows = "";
+    }
     setCalloutProcessing(true);
     var handlerRef = dojo.hitch(this, "showColumnTotals");
     var params = [];
     params["action"] = "getColumnTotals";
     params["columnName"] = rowName;
-    params["rows"] = this.getSelectedRows();
+    params["rows"] = rows;
     var serviceUrl = {
       url: this.dataUrl,
       handler: handlerRef,

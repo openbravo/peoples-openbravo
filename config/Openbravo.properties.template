@@ -46,7 +46,7 @@ context.name=openbravo
 # Root sources directory, used by modularity
 source.path=/opt/openbravo
 
-#Deploy mode: valid values [class, war]
+#Deploy mode: valid values [class, war, none]
 deploy.mode=class
 
 ############

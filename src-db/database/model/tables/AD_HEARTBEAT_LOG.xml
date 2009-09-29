@@ -65,7 +65,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="OS_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
+      <column name="OS_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="100" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -115,6 +115,10 @@
       </column>
       <column name="CODE_REVISION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[0]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="BEAT_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[U]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_HEARTBEAT_LOG_AD_CLIENT">
