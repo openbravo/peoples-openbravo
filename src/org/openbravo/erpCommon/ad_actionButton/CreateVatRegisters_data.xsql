@@ -42,6 +42,7 @@
          C_DocType
          where
          C_Invoice.C_DocType_ID=C_TaxRegister_Type_Lines.C_DocType_ID
+         and C_TaxRegister_Type_Lines.ISACTIVE = 'Y'
          and C_Invoice.C_DocType_ID=C_DocType.C_DocType_ID
          and C_InvoiceTax.C_Invoice_ID=C_Invoice.C_Invoice_ID 
          and C_InvoiceTax.C_Tax_ID = C_TaxRegister_Type_Lines.C_Tax_ID
