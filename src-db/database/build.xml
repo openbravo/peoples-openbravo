@@ -127,7 +127,35 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
     <antcall target="update.dbupdate.timestamp" />
   </target>
 
+  <target name="fix.date.ORACLE">
+    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue">
+      <classpath>
+        <fileset dir="${base.lib}">
+          <include name="**/*.jar">
+          </include>
+        </fileset>
+      </classpath>
+      <transaction>
+      </transaction>
+    </sql>
+  </target>
+  <target name="fix.date.POSTGRE">
+    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
+          <classpath>
+            <fileset dir="${base.lib}">
+              <include name="**/*.jar">
+              </include>
+            </fileset>
+          </classpath>
+          <transaction>
+        UPDATE ad_system_info SET last_dbupdate=now()
+        </transaction>
+      </sql>
+    </target>
+  
+  
   <target name="update.database.java">
+    <antcall target="fix.date.${bbdd.rdbms}" />
     <java classname="org.openbravo.ddlutils.task.AlterDatabaseJava" failonerror="true" fork="true" maxmemory="${build.maxmemory}">
       <arg value="${bbdd.driver}"/>
       <arg value="${bbdd.owner.url}"/>
