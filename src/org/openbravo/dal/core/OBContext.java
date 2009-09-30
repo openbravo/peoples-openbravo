@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
@@ -103,15 +104,17 @@ public class OBContext implements OBNotSingleton {
 
   /**
    * Sets the OBContext through the information stored in the http session of the request (mainly
-   * the authenticated user).
+   * the authenticated user). Note will not set the context in the http session if the session is
+   * not present.
    * 
    * @param request
    */
   public static synchronized void setOBContext(HttpServletRequest request) {
 
+    final HttpSession session = request.getSession(false);
     OBContext context = null;
-    if (request.getSession() != null) {
-      context = (OBContext) request.getSession().getAttribute(CONTEXT_PARAM);
+    if (session != null) {
+      context = (OBContext) session.getAttribute(CONTEXT_PARAM);
     }
 
     if (context == null) {
@@ -129,7 +132,8 @@ public class OBContext implements OBNotSingleton {
   }
 
   /**
-   * Sets the passed OBContext in the http session.
+   * Sets the passed OBContext in the http session. Will not set it if the passed context is the
+   * admin context or if the http session is invalidated.
    * 
    * @param request
    *          the http request used to get the http session
@@ -137,7 +141,19 @@ public class OBContext implements OBNotSingleton {
    *          the context which will be stored in the session
    */
   public static void setOBContextInSession(HttpServletRequest request, OBContext context) {
-    request.getSession().setAttribute(CONTEXT_PARAM, context);
+    final HttpSession session = request.getSession(false);
+    if (session == null) {
+      // this can happen at logout, then the session is invalidated
+      return;
+    }
+    if (context != null && context == adminContext) {
+      log
+          .warn("Trying to set the admin context in the session, "
+              + "this means that the context has not been reset correctly in a finally block."
+              + " When using the admin context it should always be removed in a finally block by the application");
+      return;
+    }
+    session.setAttribute(CONTEXT_PARAM, context);
   }
 
   /**
@@ -386,11 +402,18 @@ public class OBContext implements OBNotSingleton {
    * @return false if no user was specified in the session, true otherwise
    */
   public boolean setFromRequest(HttpServletRequest request) {
+    final HttpSession session = request.getSession(false);
+
+    if (session == null) {
+      // not set
+      return false;
+    }
+
     String userId = null;
-    for (final Enumeration<?> e = request.getSession().getAttributeNames(); e.hasMoreElements();) {
+    for (final Enumeration<?> e = session.getAttributeNames(); e.hasMoreElements();) {
       final String name = (String) e.nextElement();
       if (name.equalsIgnoreCase(AUTHENTICATED_USER)) {
-        userId = (String) request.getSession().getAttribute(name);
+        userId = (String) session.getAttribute(name);
         break;
       }
     }
@@ -402,7 +425,7 @@ public class OBContext implements OBNotSingleton {
           getSessionValue(request, ORG));
     } catch (final OBSecurityException e) {
       // remove the authenticated user
-      request.getSession().setAttribute(AUTHENTICATED_USER, null);
+      session.setAttribute(AUTHENTICATED_USER, null);
       throw e;
     }
   }
@@ -675,6 +698,10 @@ public class OBContext implements OBNotSingleton {
     return adminModeSet.get() != null || isAdministrator;
   }
 
+  public boolean isAdminContext() {
+    return this == adminContext;
+  }
+
   public boolean setInAdministratorMode(boolean inAdministratorMode) {
     final boolean prevMode = isInAdministratorMode();
     if (inAdministratorMode) {
@@ -721,7 +748,11 @@ public class OBContext implements OBNotSingleton {
   }
 
   private String getSessionValue(HttpServletRequest request, String param) {
-    return (String) request.getSession().getAttribute(param.toUpperCase());
+    final HttpSession session = request.getSession(false);
+    if (session == null) {
+      return null;
+    }
+    return (String) session.getAttribute(param.toUpperCase());
   }
 
   public boolean isSerialized() {

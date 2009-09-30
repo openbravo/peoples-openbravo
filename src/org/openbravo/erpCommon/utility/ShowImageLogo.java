@@ -120,7 +120,11 @@ public class ShowImageLogo extends HttpBaseServlet {
       }
 
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(adminMode);
+      if (OBContext.getOBContext().isAdminContext()) {
+        OBContext.setOBContext((OBContext) null);
+      } else {
+        OBContext.getOBContext().setInAdministratorMode(adminMode);
+      }
     }
   }
 }

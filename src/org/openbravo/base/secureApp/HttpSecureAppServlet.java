@@ -281,6 +281,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       log4j.error("HTTPSecureAppServlet.service() - exception caught: ", e);
       logout(request, response);
       return;
+    } finally {
+      // reset the admin context
+      if (OBContext.getOBContext() != null && OBContext.getOBContext().isAdminContext()) {
+        OBContext.setOBContext((OBContext) null);
+      }
     }
 
     try {
@@ -476,6 +481,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       // finally invalidate the session (this event will be caught by the session listener
       session.invalidate();
     }
+
+    // reset the obcontext
+    OBContext.setOBContext((OBContext) null);
+
     m_AuthManager.logout(request, response);
   }
 
@@ -497,6 +506,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       // finally invalidate the session (this event will be caught by the session listener
       session.invalidate();
     }
+    OBContext.setOBContext((OBContext) null);
 
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
