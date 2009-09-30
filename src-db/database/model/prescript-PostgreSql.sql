@@ -1464,7 +1464,7 @@ begin
                   ELSE NULL::integer
               END),'.')||
               COALESCE(TO_CHAR(CASE PG_TYPE.TYPNAME
-                  WHEN 'bytea'::nameDB_CHECKSUM  THEN 4000
+                  WHEN 'bytea'::name  THEN 4000
                   WHEN 'text'::name THEN 4000
                   WHEN 'oid'::name THEN 4000
                   ELSE CASE PG_ATTRIBUTE.ATTLEN 
