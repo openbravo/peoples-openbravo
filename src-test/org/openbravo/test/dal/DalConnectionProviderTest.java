@@ -19,7 +19,6 @@
 
 package org.openbravo.test.dal;
 
-import org.apache.log4j.Logger;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -32,7 +31,7 @@ import org.openbravo.test.base.BaseTest;
  */
 
 public class DalConnectionProviderTest extends BaseTest {
-  private static final Logger log = Logger.getLogger(DalConnectionProviderTest.class);
+  // private static final Logger log = Logger.getLogger(DalConnectionProviderTest.class);
 
   /**
    * Tests calling database procedures using the dal connection provider

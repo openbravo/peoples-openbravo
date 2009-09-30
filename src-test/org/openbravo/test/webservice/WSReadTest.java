@@ -113,7 +113,6 @@ public class WSReadTest extends BaseWSTest {
     setBigBazaarAdminContext();
     final Configuration cfg = SessionFactoryController.getInstance().getConfiguration();
 
-    int i = 0;
     for (final Iterator<?> it = cfg.getClassMappings(); it.hasNext();) {
       final PersistentClass pc = (PersistentClass) it.next();
       final String entityName = pc.getEntityName();
