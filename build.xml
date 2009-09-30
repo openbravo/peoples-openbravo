@@ -905,6 +905,7 @@ compare.database.structure: refer to compare.database.structure target of databa
         <tokenfilter>
             <replaceregex pattern="(.*VERSION.*\[CDATA\[)(.*\..*\..*)(\]\].*)" replace="\2"/>
         </tokenfilter>
+        <striplinebreaks/>
       </filterchain>
     </loadfile>
   </target>
