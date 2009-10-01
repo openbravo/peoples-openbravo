@@ -293,14 +293,14 @@
 						style="GroupHeader_DarkGray"
 						x="0"
 						y="0"
-						width="190"
+						width="120"
 						height="23"
 						key="staticText"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font pdfFontName="Helvetica"/>
 					</textElement>
-				<text><![CDATA[Business Partner:]]></text>
+				<text><![CDATA[Customer:]]></text>
 				</staticText>
 				<line direction="TopDown">
 					<reportElement
@@ -316,9 +316,9 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="GroupHeader_DarkGray"
-						x="190"
+						x="120"
 						y="0"
-						width="345"
+						width="415"
 						height="23"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
