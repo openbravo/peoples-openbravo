@@ -40,6 +40,7 @@
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
   v_AD_User_ID VARCHAR2(32);
+  v_TemplateInDev CHAR(1);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -196,6 +197,20 @@
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows deleted: ' || v_rowcount) ;
     DBMS_OUTPUT.PUT_LINE('Creating link from Column to Element') ;
+    
+    SELECT count(*)
+      INTO v_rowcount
+      FROM AD_MODULE
+     WHERE TYPE = 'T'
+       AND ISINDEVELOPMENT = 'Y';
+       
+    IF v_rowcount = '0' THEN
+      v_TemplateInDev:='N';
+    ELSE
+      v_TemplateInDev:='Y';
+    END IF;
+      
+    
     --Updates ad_column: element id and name (name is only updated first time)
     --Name is updated with the value in the element regardless the language
     UPDATE AD_COLUMN c
@@ -212,8 +227,9 @@
     WHERE AD_Element_ID IS NULL
       AND EXISTS (SELECT 1 
                     FROM AD_MODULE M
-                    WHERE M.AD_MODULE_ID = C.AD_MODULE_ID
-                     AND M.ISINDEVELOPMENT='Y');
+                    WHERE (M.AD_MODULE_ID = C.AD_MODULE_ID
+                          AND M.ISINDEVELOPMENT='Y')
+                       OR v_TemplateInDev ='Y');
     
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
@@ -229,9 +245,10 @@
     WHERE AD_Element_ID IS NULL
      AND EXISTS (SELECT 1 
                    FROM AD_PROCESS P, AD_MODULE M
-                  WHERE P.AD_PROCESS_ID = AD_PROCESS_PARA.AD_PROCESS_ID
+                  WHERE (P.AD_PROCESS_ID = AD_PROCESS_PARA.AD_PROCESS_ID
                     AND P.AD_MODULE_ID = M.AD_MODULE_ID
-                    AND M.ISINDEVELOPMENT = 'Y');
+                    AND M.ISINDEVELOPMENT = 'Y')
+                    OR v_TemplateInDev ='Y');
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
     COMMIT;
@@ -282,7 +299,7 @@
                                 AD_ELEMENT E, AD_ELEMENT_TRL T                                                   
                            WHERE  C.AD_Element_ID = e.AD_Element_ID
                                AND c.AD_MODULE_ID = M.AD_MODULE_ID
-                               AND M.ISINDEVELOPMENT='Y'
+                               AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
                                AND E.AD_ELEMENT_ID = T.AD_ELEMENT_ID
                                AND T.AD_LANGUAGE = M.AD_LANGUAGE
                                AND (COALESCE(TO_CHAR(COALESCE(T.help, E.help)),' ') != COALESCE(TO_CHAR(C.HELP),' ')
@@ -295,7 +312,7 @@
                            WHERE C.AD_Element_ID = e.AD_Element_ID
                                AND M2.AD_MODULE_ID = E.AD_MODULE_ID
                                AND M.AD_MODULE_ID = C.AD_MODULE_ID
-                               AND M.ISINDEVELOPMENT='Y'
+                               AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
                                AND M.AD_LANGUAGE = M2.AD_LANGUAGE
                                AND (COALESCE(TO_CHAR(E.help),' ') != COALESCE(TO_CHAR(C.HELP),' ')
                                    OR COALESCE(TO_CHAR(E.DESCRIPTION),' ') != COALESCE(TO_CHAR(C.DESCRIPTION),' ')));
@@ -376,7 +393,7 @@
           AND c.AD_Column_ID=AD_FIELD.AD_Column_ID
           AND E.AD_ELEMENT_ID = T.AD_ELEMENT_ID  
           AND AD_FIELD.AD_MODULE_ID = M.AD_MODULE_ID
-          AND M.ISINDEVELOPMENT='Y'
+          AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
           AND T.AD_LANGUAGE = M.AD_LANGUAGE
           AND (AD_FIELD.NAME != COALESCE(T.NAME, e.NAME)
              OR COALESCE(TO_CHAR(AD_FIELD.Description), ' ')<>COALESCE(TO_CHAR(T.Description), TO_CHAR(e.Description), ' ')
@@ -389,7 +406,7 @@
         WHERE e.AD_Element_ID=c.AD_Element_ID 
           AND c.AD_Column_ID=AD_FIELD.AD_Column_ID
           AND AD_FIELD.AD_MODULE_ID = M.AD_MODULE_ID
-          AND M.ISINDEVELOPMENT='Y'
+          AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
           AND E.AD_MODULE_ID = M2.AD_MODULE_ID
           AND M2.AD_LANGUAGE = M.AD_LANGUAGE
           AND (AD_FIELD.NAME != e.NAME
@@ -442,7 +459,7 @@
       AND f.IsCentrallyMaintained='Y' 
       AND f.IsActive='Y'
       AND M.AD_MODULE_ID = F.AD_MODULE_ID
-      AND M.ISINDEVELOPMENT='Y'
+      AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
       AND M.AD_LANGUAGE != E.AD_LANGUAGE
       AND(AD_FIELD_TRL.NAME<>e.NAME OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(e.Description), ' ')
       OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')<>COALESCE(TO_CHAR(e.Help), ' '))
@@ -488,7 +505,7 @@
       AND f.IsCentrallyMaintained='Y' 
       AND f.IsActive='Y'
       AND M.AD_MODULE_ID = F.AD_MODULE_ID
-      AND M.ISINDEVELOPMENT='Y'
+      AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
       AND M1.AD_MODULE_ID = E.AD_MODULE_ID
       AND M.AD_LANGUAGE != M1.AD_LANGUAGE
       AND(AD_FIELD_TRL.NAME<>e.NAME OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(e.Description), ' ')
@@ -578,7 +595,7 @@
           AND c.AD_Column_ID=AD_FIELD.AD_Column_ID
           AND E.AD_ELEMENT_ID = T.AD_ELEMENT_ID  
           AND AD_FIELD.AD_MODULE_ID = M.AD_MODULE_ID
-          AND M.ISINDEVELOPMENT='Y'
+          AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
           AND T.AD_LANGUAGE = M.AD_LANGUAGE
           AND (AD_FIELD.NAME != COALESCE(T.PO_NAME, e.PO_NAME, t.name, e.name)
              OR COALESCE(TO_CHAR(AD_FIELD.Description), ' ')<>COALESCE(TO_CHAR(T.PO_Description), TO_CHAR(e.PO_Description), to_char(t.description), to_char(e.description), ' ')
@@ -591,7 +608,7 @@
         WHERE e.AD_Element_ID=c.AD_Element_ID 
           AND c.AD_Column_ID=AD_FIELD.AD_Column_ID
           AND AD_FIELD.AD_MODULE_ID = M.AD_MODULE_ID
-          AND M.ISINDEVELOPMENT='Y'
+          AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
           AND E.AD_MODULE_ID = M2.AD_MODULE_ID
           AND M2.AD_LANGUAGE = M.AD_LANGUAGE
           AND (AD_FIELD.NAME != e.PO_NAME
@@ -639,7 +656,7 @@
       AND c.AD_Element_ID=e.AD_Element_ID AND c.AD_Process_ID IS NULL
       AND AD_FIELD_TRL.AD_LANGUAGE=e.AD_LANGUAGE  AND f.IsCentrallyMaintained='Y' AND f.IsActive='Y'
       AND M.AD_MODULE_ID = F.AD_MODULE_ID
-      AND M.ISINDEVELOPMENT='Y'
+      AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
       AND M.AD_LANGUAGE != E.AD_LANGUAGE
       AND(AD_FIELD_TRL.NAME<>e.PO_Name OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(e.PO_Description), ' ')
       OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')<>COALESCE(TO_CHAR(e.PO_Help), ' ')) AND (e.PO_Name IS NOT NULL AND e.PO_Name <> '')
@@ -682,7 +699,7 @@
       AND AD_FIELD_TRL.AD_LANGUAGE=M1.AD_LANGUAGE  
       AND f.IsCentrallyMaintained='Y' AND f.IsActive='Y'
       AND M.AD_MODULE_ID = F.AD_MODULE_ID
-      AND M.ISINDEVELOPMENT='Y'
+      AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
       AND M1.AD_MODULE_ID = E.AD_MODULE_ID
       AND M.AD_LANGUAGE != M1.AD_LANGUAGE
       AND(AD_FIELD_TRL.NAME<>e.PO_Name OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(e.PO_Description), ' ')
@@ -782,7 +799,7 @@
             AND P.AD_PROCESS_ID = T.AD_PROCESS_ID         
             AND c.AD_Column_ID=AD_FIELD.AD_Column_ID
             AND AD_FIELD.AD_MODULE_ID = M.AD_MODULE_ID
-            AND M.ISINDEVELOPMENT='Y'
+            AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
             AND T.AD_LANGUAGE= M.AD_LANGUAGE
             AND (COALESCE(T.HELP, P.HELP) != AD_FIELD.HELP 
                 OR COALESCE(T.NAME, P.NAME) != AD_FIELD.NAME
@@ -797,7 +814,7 @@
             AND M2.AD_MODULE_ID = P.AD_MODULE_ID
             AND c.AD_Column_ID=AD_FIELD.AD_Column_ID
             AND AD_FIELD.AD_MODULE_ID = M.AD_MODULE_ID
-            AND M.ISINDEVELOPMENT='Y'
+            AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
             AND M2.AD_LANGUAGE= M.AD_LANGUAGE
             AND (P.HELP != AD_FIELD.HELP
                 OR P.NAME != AD_FIELD.NAME
@@ -841,7 +858,7 @@
       WHERE c.AD_Process_ID=p.AD_Process_ID AND f.AD_Column_ID=c.AD_Column_ID  
       AND f.AD_Field_ID=AD_FIELD_TRL.AD_Field_ID
       AND F.AD_MODULE_ID = M.AD_MODULE_ID
-      AND M.ISINDEVELOPMENT='Y'
+      AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
       AND M.AD_LANGUAGE != P.AD_LANGUAGE
       AND p.AD_LANGUAGE=AD_FIELD_TRL.AD_LANGUAGE  AND f.IsCentrallyMaintained='Y' AND f.IsActive='Y'  AND(AD_FIELD_TRL.NAME<>p.NAME
       OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(p.Description), ' ') OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')<>COALESCE(TO_CHAR(p.Help), ' '))
@@ -875,7 +892,7 @@
       WHERE c.AD_Process_ID=p.AD_Process_ID AND f.AD_Column_ID=c.AD_Column_ID  
       AND f.AD_Field_ID=AD_FIELD_TRL.AD_Field_ID
       AND F.AD_MODULE_ID = M.AD_MODULE_ID
-      AND M.ISINDEVELOPMENT='Y'
+      AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
       AND P.AD_MODULE_ID = M1.AD_MODULE_ID
       AND M.AD_LANGUAGE != M1.AD_LANGUAGE
       AND M1.AD_LANGUAGE=AD_FIELD_TRL.AD_LANGUAGE  
@@ -905,7 +922,7 @@
         FROM AD_PROCESS P
         LEFT JOIN  AD_MODULE M ON P.AD_MODULE_ID = M.AD_MODULE_ID
         WHERE AD_PROCESS_PARA.AD_PROCESS_ID  = P.AD_PROCESS_ID
-              AND M.ISINDEVELOPMENT='Y'
+              AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
       )        
       ;
     -- Parameter Fields
@@ -981,7 +998,7 @@
           AND E.AD_ELEMENT_ID = T.AD_ELEMENT_ID  
           AND AD_PROCESS_PARA.AD_PROCESS_ID  = P.AD_PROCESS_ID
           AND P.AD_MODULE_ID = M.AD_MODULE_ID
-          AND M.ISINDEVELOPMENT='Y'
+          AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
           AND T.AD_LANGUAGE = M.AD_LANGUAGE
           AND(AD_PROCESS_PARA.NAME<>COALESCE(T.NAME,e.NAME)
             OR COALESCE(TO_CHAR(AD_PROCESS_PARA.Description), ' ')<>COALESCE(TO_CHAR(T.DESCRIPTION),TO_CHAR(e.Description), ' ')
@@ -994,7 +1011,7 @@
         WHERE e.AD_Element_ID=AD_PROCESS_PARA.AD_Element_ID 
           AND AD_PROCESS_PARA.AD_PROCESS_ID  = P.AD_PROCESS_ID
           AND P.AD_MODULE_ID = M.AD_MODULE_ID
-          AND M.ISINDEVELOPMENT='Y'
+          AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
           AND E.AD_MODULE_ID = M2.AD_MODULE_ID
           AND M.AD_LANGUAGE = M2.AD_LANGUAGE
           AND(AD_PROCESS_PARA.NAME<>e.NAME
@@ -1038,7 +1055,7 @@
       WHERE et.AD_LANGUAGE=AD_PROCESS_PARA_TRL.AD_LANGUAGE AND f.AD_Element_ID=et.AD_Element_ID
       AND P.AD_PROCESS_ID = F.AD_PROCESS_ID
       AND M.AD_MODULE_ID = P.AD_MODULE_ID
-      AND M.ISINDEVELOPMENT='Y'
+      AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
       AND M.AD_LANGUAGE != ET.AD_LANGUAGE
       AND f.AD_Process_Para_ID=AD_PROCESS_PARA_TRL.AD_Process_Para_ID  AND f.IsCentrallyMaintained='Y'
       AND f.IsActive='Y'  AND(AD_PROCESS_PARA_TRL.NAME<>et.NAME OR COALESCE(TO_CHAR(AD_PROCESS_PARA_TRL.Description), ' ')<>COALESCE(TO_CHAR(et.Description), ' ')
@@ -1076,7 +1093,7 @@
       WHERE M1.AD_LANGUAGE=AD_PROCESS_PARA_TRL.AD_LANGUAGE AND f.AD_Element_ID=et.AD_Element_ID
       AND P.AD_PROCESS_ID = F.AD_PROCESS_ID
       AND M.AD_MODULE_ID = P.AD_MODULE_ID
-      AND M.ISINDEVELOPMENT='Y'
+      AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
       AND et.AD_MODULE_ID = M1.AD_MODULE_ID
       AND M.AD_LANGUAGE != M1.AD_LANGUAGE
       AND f.AD_Process_Para_ID=AD_PROCESS_PARA_TRL.AD_Process_Para_ID  AND f.IsCentrallyMaintained='Y'
@@ -1232,8 +1249,9 @@
     WHERE AD_Window_ID IS NOT NULL AND Action='W'
       AND EXISTS (SELECT 1 
                     FROM AD_MODULE
-                  WHERE AD_MENU.AD_MODULE_ID = AD_MODULE_ID
-                    AND ISINDEVELOPMENT ='Y');
+                  WHERE (AD_MENU.AD_MODULE_ID = AD_MODULE_ID
+                    AND ISINDEVELOPMENT ='Y')
+                    OR v_TemplateInDev ='Y');
     
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
@@ -1261,7 +1279,7 @@
       FROM AD_WINDOW_TRL wt, AD_MENU m, AD_MODULE mo
       WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Window_ID=wt.AD_Window_ID
       AND mo.AD_Module_ID = m.AD_Module_ID
-      AND MO.ISINDEVELOPMENT = 'Y'
+      AND (MO.ISINDEVELOPMENT = 'Y' OR v_TemplateInDev ='Y')
       and mo.AD_Language!= wt.AD_Language
       AND AD_MENU_TRL.AD_LANGUAGE=wt.AD_LANGUAGE  AND m.AD_Window_ID IS NOT NULL  AND m.Action='W'
       )
@@ -1286,7 +1304,7 @@
       FROM AD_WINDOW wt, AD_MENU m, AD_MODULE mo, AD_MODULE mo1
       WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Window_ID=wt.AD_Window_ID
       AND mo.AD_Module_ID = m.AD_Module_ID
-      AND MO.ISINDEVELOPMENT = 'Y'
+      AND (MO.ISINDEVELOPMENT = 'Y' OR v_TemplateInDev ='Y')
       and mo1.AD_Module_ID = wt.AD_Module_ID
       and mo.AD_Language!= mo1.AD_Language
       AND mo1.AD_LANGUAGE=AD_MENU_TRL.AD_LANGUAGE  AND m.AD_Window_ID IS NOT NULL  AND m.Action='W'
@@ -1335,8 +1353,9 @@
     WHERE AD_MENU.AD_Process_ID IS NOT NULL AND AD_MENU.Action IN('R', 'P')
     AND EXISTS (SELECT 1 
                     FROM AD_MODULE
-                  WHERE AD_MENU.AD_MODULE_ID = AD_MODULE_ID
-                    AND ISINDEVELOPMENT ='Y');
+                  WHERE (AD_MENU.AD_MODULE_ID = AD_MODULE_ID
+                    AND ISINDEVELOPMENT ='Y')
+                    OR v_TemplateInDev ='Y');
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
     UPDATE AD_MENU_TRL
@@ -1363,7 +1382,7 @@
       FROM AD_PROCESS_TRL pt, AD_MENU m, AD_MODULE MO
       WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Process_ID=pt.AD_Process_ID
       AND M.AD_MODULE_ID = MO.AD_MODULE_ID
-      AND MO.ISINDEVELOPMENT = 'Y'
+      AND (MO.ISINDEVELOPMENT = 'Y' OR v_TemplateInDev ='Y')
       AND MO.AD_LANGUAGE != AD_MENU_TRL.AD_LANGUAGE
       AND AD_MENU_TRL.AD_LANGUAGE=pt.AD_LANGUAGE  AND m.AD_Process_ID IS NOT NULL  AND Action IN('R', 'P')
       );
@@ -1387,7 +1406,7 @@
       FROM AD_PROCESS pt, AD_MENU m, AD_MODULE MO, AD_MODULE M1
       WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Process_ID=pt.AD_Process_ID
       AND MO.AD_MODULE_ID = M.AD_MODULE_ID
-      AND MO.ISINDEVELOPMENT = 'Y'
+      AND (MO.ISINDEVELOPMENT = 'Y' OR v_TemplateInDev ='Y')
       AND M1.AD_MODULE_ID = PT.AD_MODULE_ID
       AND M1.AD_LANGUAGE != MO.AD_LANGUAGE
       AND AD_MENU_TRL.AD_LANGUAGE=M1.AD_LANGUAGE  AND m.AD_Process_ID IS NOT NULL  AND Action IN('R', 'P')
@@ -1434,8 +1453,9 @@
     WHERE AD_Form_ID IS NOT NULL  AND Action='X'
     AND EXISTS (SELECT 1 
                     FROM AD_MODULE
-                  WHERE AD_MENU.AD_MODULE_ID = AD_MODULE_ID
-                    AND ISINDEVELOPMENT ='Y');
+                  WHERE (AD_MENU.AD_MODULE_ID = AD_MODULE_ID
+                    AND ISINDEVELOPMENT ='Y')
+                    OR v_TemplateInDev ='Y');
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
     UPDATE AD_MENU_TRL
@@ -1462,7 +1482,7 @@
       FROM AD_FORM_TRL ft, AD_MENU m, AD_MODULE MO
       WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Form_ID=ft.AD_Form_ID
       AND MO.AD_MODULE_ID = M.AD_MODULE_ID
-      AND MO.ISINDEVELOPMENT = 'Y'
+      AND (MO.ISINDEVELOPMENT = 'Y' OR v_TemplateInDev ='Y')
       AND MO.AD_LANGUAGE != FT.AD_LANGUAGE
       AND AD_MENU_TRL.AD_LANGUAGE=ft.AD_LANGUAGE  AND m.AD_Form_ID IS NOT NULL  AND Action='X'
       );
@@ -1486,7 +1506,7 @@
       FROM AD_FORM ft, AD_MENU m, AD_MODULE MO, AD_MODULE MO1
       WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Form_ID=ft.AD_Form_ID
       AND MO.AD_MODULE_ID = M.AD_MODULE_ID
-      AND MO.ISINDEVELOPMENT ='Y'
+      AND (MO.ISINDEVELOPMENT ='Y' OR v_TemplateInDev ='Y')
       AND MO1.AD_MODULE_ID = FT.AD_MODULE_ID
       AND MO.AD_LANGUAGE != MO1.AD_LANGUAGE
       AND AD_MENU_TRL.AD_LANGUAGE=MO1.AD_LANGUAGE  AND m.AD_Form_ID IS NOT NULL  AND Action='X'

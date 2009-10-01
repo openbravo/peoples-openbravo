@@ -11,7 +11,7 @@
   'The column ' || COLUMNNAME || ' in table ' || TABLENAME || ' is referenced as search and doesn''t have an associated reference value while having active updateable fields.' AS DESCRIPTION,
   'Y' AS ISACTIVE, 0 AS AD_ORG_ID, 0 AS AD_CLIENT_ID, now() AS CREATED, 0 AS CREATEDBY, now() AS UPDATED, 0 AS UPDATEDBY
 FROM AD_COLUMN, AD_TABLE
-WHERE AD_REFERENCE_ID = 30
+WHERE AD_REFERENCE_ID = '30'
   AND AD_COLUMN.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID
   AND AD_REFERENCE_VALUE_ID IS NULL
   AND AD_TABLE.ISACTIVE = 'Y'
@@ -88,7 +88,7 @@ and exists (select 1 from ad_column c1, ad_field f1, ad_tab t1
         0 as updatedBy
    from ad_column c,
         ad_table t
-   where ad_reference_id = 19
+   where ad_reference_id = '19'
    and c.ad_table_id = t.ad_table_id
    and not exists (select 1 
                     from ad_table 
@@ -348,7 +348,7 @@ and processed = 'N']]></SQL>
 where (isvendor='Y' or iscustomer='Y')
 and  not exists (select 1 
                   from c_bpartner_location l
-                where l.c_bpartner_id = l.c_bpartner_id
+                where l.c_bpartner_id = bp.c_bpartner_id
                 and isbillto='Y')]]></SQL>
 <!--1000016-->  <TYPE><![CDATA[D]]></TYPE>
 <!--1000016--></AD_ALERTRULE>
@@ -392,7 +392,7 @@ and SO_CreditLimit!=0]]></SQL>
        null as ad_user_id,
        name || (case when lastOrder is null 
                        then ' has never made an order' 
-                       else ' made last order '||to_char(round((now()-lastOrder)))||' days ago'
+                       else ' made last order '||to_char(round(to_number((now()-lastOrder))))||' days ago'
                 end ) as description,
        'Y' as isActive,
         ad_org_id, 
@@ -401,7 +401,8 @@ and SO_CreditLimit!=0]]></SQL>
         0 as createdBy,  
         now() as updated,
         0 as updatedBy
-from (select bp.c_bpartner_id, bp.name,
+from (select bp.c_bpartner_id, bp.name, ad_org_id, 
+        ad_client_id, 
              (select max(dateOrdered)
                 from c_order o
                where o.c_bpartner_id = bp.c_bpartner_id) as lastOrder
@@ -453,8 +454,8 @@ and c_settlement_cancel_id is null]]></SQL>
                        where s.m_product_id = po.m_product_id
                         and ad_isOrgIncluded(s.ad_org_id,po.ad_org_id,po.ad_client_id) <> -1) as description,
        'Y' as isActive,
-        ad_org_id, 
-        ad_client_id, 
+        p.ad_org_id, 
+        p.ad_client_id, 
         now() as created,  
         0 as createdBy,  
         now() as updated,
@@ -484,7 +485,7 @@ where p.m_product_id = po.m_product_id
        ad_column_identifier('C_Order',c_order_id,'en_US')||
                     (case when trunc(datepromised) = trunc(now())
                             then ' is planned to be received today'
-                            else ' was planned to be recived '||(to_char(round(now()-datepromised)))||' days ago'
+                            else ' was planned to be recived '||(to_char(round(to_number(now()-datepromised))))||' days ago'
                         end) as description,
        'Y' as isActive,
         ad_org_id, 
@@ -521,7 +522,7 @@ and 0 != (select sum(qtyordered)
        ad_column_identifier('C_Order',c_order_id,'en_US')||
                     (case when trunc(datepromised) = trunc(now())
                             then ' is planned to be received today'
-                            else ' was planned to be recived '||(to_char(round(now()-datepromised)))||' days ago'
+                            else ' was planned to be recived '||(to_char(round(to_number(now()-datepromised))))||' days ago'
                         end) as description,
        'Y' as isActive,
         ad_org_id, 
@@ -573,7 +574,7 @@ and 0 != (select sum(qtyordered)
 	now() AS updated,
 	0 AS updatedBy, 
         r.log AS note
-FROM 	ad_process_run_v r, ad_process_request pr
+FROM 	ad_process_execution_v r, ad_process_request pr
 WHERE	r.status = 'ERR' 
 AND     r.ad_process_request_id = pr.ad_process_request_id]]></SQL>
 <!--FDA0D6B303CD4F289A04FA41844C4B0C-->  <TYPE><![CDATA[D]]></TYPE>
