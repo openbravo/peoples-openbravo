@@ -66,7 +66,7 @@ public class LoginHandler extends HttpBaseServlet {
 
   private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars)
       throws IOException {
-    OBContext.setAdminContext();
+    OBContext.enableAsAdminContext();
     try {
       ActivationKey ak = new ActivationKey();
 
@@ -98,7 +98,7 @@ public class LoginHandler extends HttpBaseServlet {
         goToTarget(res, vars);
       }
     } finally {
-      OBContext.setOBContext((OBContext) null);
+      OBContext.resetAsAdminContext();
     }
 
   }

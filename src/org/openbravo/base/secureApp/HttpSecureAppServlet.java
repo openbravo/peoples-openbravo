@@ -180,9 +180,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     try {
 
-      if (OBContext.getOBContext() == null) {
-        OBContext.setAdminContext();
-      }
+      OBContext.enableAsAdminContext();
 
       final String strUserAuth = m_AuthManager.authenticate(request, response);
 
@@ -222,14 +220,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           strWarehouse = DefaultOptionsData.defaultWarehouse(this, strUserAuth);
           if (strWarehouse == null) {
             if (!strRole.equals("0")) {
-              OBContext.setAdminContext();
-              try {
-                strWarehouse = DefaultOptionsData.getDefaultWarehouse(this, strClient, new OrgTree(
-                    this, strClient).getAccessibleTree(this, strRole).toString());
-
-              } finally {
-                OBContext.setOBContext((OBContext) null);
-              }
+              strWarehouse = DefaultOptionsData.getDefaultWarehouse(this, strClient, new OrgTree(
+                  this, strClient).getAccessibleTree(this, strRole).toString());
             } else
               strWarehouse = "";
           }
@@ -282,10 +274,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       logout(request, response);
       return;
     } finally {
-      // reset the admin context
-      if (OBContext.getOBContext() != null && OBContext.getOBContext().isAdminContext()) {
-        OBContext.setOBContext((OBContext) null);
-      }
+      OBContext.resetAsAdminContext();
     }
 
     try {

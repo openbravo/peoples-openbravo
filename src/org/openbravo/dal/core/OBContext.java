@@ -103,6 +103,40 @@ public class OBContext implements OBNotSingleton {
   }
 
   /**
+   * Checks if there is a context set. If not then sets the Admin Context. If yes then set the admin
+   * mode of the existing context.
+   * 
+   * @see OBContext#resetAsAdminContext()
+   */
+  public static void enableAsAdminContext() {
+    if (OBContext.getOBContext() == null) {
+      OBContext.setAdminContext();
+    } else if (OBContext.getOBContext() == adminContext) {
+      return;
+    } else {
+      OBContext.getOBContext().setInAdministratorMode(true);
+    }
+  }
+
+  /**
+   * Sets the context state back. If the current context is the Admin Context then the current
+   * context is set to null. In the other cases the method {@link #setInAdministratorMode(boolean)}
+   * is called with the parameter false.
+   * 
+   * @see OBContext#enableAsAdminContext()
+   */
+  public static void resetAsAdminContext() {
+    if (OBContext.getOBContext() == null) {
+      return;
+    }
+    if (OBContext.getOBContext() == adminContext) {
+      OBContext.setOBContext((OBContext) null);
+    } else {
+      OBContext.getOBContext().setInAdministratorMode(false);
+    }
+  }
+
+  /**
    * Sets the OBContext through the information stored in the http session of the request (mainly
    * the authenticated user). Note will not set the context in the http session if the session is
    * not present.
