@@ -73,6 +73,7 @@ public class Product extends HttpSecureAppServlet {
       String windowId = vars.getRequestGlobalVariable("WindowID", "Product.windowId");
       String strWarehouse = vars.getGlobalVariable("inpWarehouse", "Product.warehouse", Utility
           .getContext(this, vars, "M_Warehouse_ID", windowId));
+      vars.setSessionValue("Product.adorgid", vars.getStringParameter("inpAD_Org_ID", ""));
       vars.removeSessionValue("Product.key");
       strNameValue = strNameValue + "%";
       vars.setSessionValue("Product.name", strNameValue);
@@ -117,7 +118,8 @@ public class Product extends HttpSecureAppServlet {
       String strPriceList = vars.getRequestGlobalVariable("inpPriceList", "Product.priceList");
       String strDate = vars.getRequestGlobalVariable("inpDate", "Product.date");
       String windowId = vars.getRequestGlobalVariable("WindowID", "Product.windowId");
-      String strOrg = vars.getStringParameter("inpAD_Org_ID");
+      // getGlobalVariable only used to store request value into session, not to read it from there
+      String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Product.adorgid", "");
       vars.removeSessionValue("Product.name");
       strKeyValue = strKeyValue + "%";
       vars.setSessionValue("Product.key", strKeyValue);
@@ -177,7 +179,7 @@ public class Product extends HttpSecureAppServlet {
       }
       String strKey = vars.getGlobalVariable("inpKey", "Product.key", "");
       String strName = vars.getGlobalVariable("inpName", "Product.name", "");
-      String strOrg = vars.getStringParameter("inpAD_Org_ID");
+      String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Product.adorgid", "");
       String strWarehouse = vars.getGlobalVariable("inpWarehouse", "Product.warehouse", "");
       String strPriceList = vars.getGlobalVariable("inpPriceList", "Product.priceList", "");
       String strPriceListVersion = vars.getGlobalVariable("inpPriceListVersion",
@@ -200,6 +202,12 @@ public class Product extends HttpSecureAppServlet {
     vars.removeSessionValue("Product.warehouse");
     vars.removeSessionValue("Product.priceList");
     vars.removeSessionValue("Product.priceListVersion");
+
+    // remove saved adorgid only when called from DEFAULT,KEY
+    // but not when called by clicking search in the selector
+    if (!vars.getStringParameter("newFilter").equals("1")) {
+      vars.removeSessionValue("Product.adorgid");
+    }
   }
 
   private String getPriceListVersion(VariablesSecureApp vars, String strPriceList, String strDate)
@@ -238,9 +246,6 @@ public class Product extends HttpSecureAppServlet {
     xmlDocument.setParameter("name", strNameValue);
     xmlDocument.setParameter("warehouse", strWarehouse);
     xmlDocument.setParameter("priceListVersion", strPriceListVersion);
-
-    // xmlDocument.setParameter("orgs",
-    // vars.getStringParameter("inpAD_Org_ID"));
 
     xmlDocument.setParameter("jsFocusOnField", Utility.focusFieldJS(focusedId));
 
