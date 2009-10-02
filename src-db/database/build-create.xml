@@ -256,7 +256,7 @@ create.database: creates the database from scratch.
           VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0');
           CALL AD_UPDATE_SEQUENCE();
           CALL AD_UPDATE_ACCESS();
-          CALL AD_DB_MODIFIED('Y');
+          SELECT AD_DB_MODIFIED('Y') FROM DUAL;
           UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
           CALL AD_LANGUAGE_CREATE(NULL);
         </transaction>
