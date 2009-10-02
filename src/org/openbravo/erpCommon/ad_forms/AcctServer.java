@@ -501,7 +501,7 @@ public abstract class AcctServer {
     if (log4j.isDebugEnabled())
       log4j.debug("post " + strClave + " tablename: " + tableName);
     try {
-      if (AcctServerData.update(con, conn, tableName, strClave) != 1) {
+      if (AcctServerData.update(conn, tableName, strClave) != 1) {
         log4j.warn("AcctServer - Post -Cannot lock Document - ignored: " + tableName + "_ID="
             + strClave);
         return false;
@@ -616,7 +616,7 @@ public abstract class AcctServer {
               ;
             else {
               // conn.releaseRollbackConnection(con);
-              unlock(conn, con);
+              unlock(conn);
               Status = AcctServer.STATUS_Error;
             }
           }
@@ -625,7 +625,7 @@ public abstract class AcctServer {
       // Commit Doc
       if (!save(conn, con)) { // contains unlock
         // conn.releaseRollbackConnection(con);
-        unlock(conn, con);
+        unlock(conn);
         Status = AcctServer.STATUS_Error;
       }
       // conn.releaseCommitConnection(con);
@@ -634,7 +634,7 @@ public abstract class AcctServer {
       log4j.warn("AcctServer - postCommit" + e);
       Status = AcctServer.STATUS_Error;
       // conn.releaseRollbackConnection(con);
-      unlock(conn, con);
+      unlock(conn);
     }
     return Status;
   } // postCommit
@@ -664,9 +664,9 @@ public abstract class AcctServer {
   /**
    * Unlock Document
    */
-  private void unlock(ConnectionProvider conn, Connection con) {
+  private void unlock(ConnectionProvider conn) {
     try {
-      AcctServerData.updateUnlock(con, conn, tableName, Record_ID);
+      AcctServerData.updateUnlock(conn, tableName, Record_ID);
     } catch (ServletException e) {
       log4j.warn("AcctServer - Document locked: -" + e);
     }
