@@ -155,7 +155,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   @Override
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-    final Variables variables = new Variables(request);
+    Variables variables = new Variables(request);
     // VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // bdErrorGeneral(response, "Error", "No access");
@@ -183,6 +183,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       OBContext.enableAsAdminContext();
 
       final String strUserAuth = m_AuthManager.authenticate(request, response);
+      variables = new Variables(request); // Rebuild variable, auth-mgr could set the role
 
       boolean loggedOK = false;
 
@@ -194,7 +195,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       }
 
       if (strUserAuth != null) {
-        if (variables.getRole().equals("") || !loggedOK) {
+        if (!loggedOK) {
           String strLanguage = "";
           String strIsRTL = "";
           String strRole = "";
@@ -202,9 +203,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           String strOrg = "";
           String strWarehouse = "";
 
-          strRole = DefaultOptionsData.defaultRole(this, strUserAuth);
-          if (strRole == null)
-            strRole = DefaultOptionsData.getDefaultRole(this, strUserAuth);
+          strRole = variables.getRole();
+
+          if (strRole.equals("")) {
+            strRole = DefaultOptionsData.defaultRole(this, strUserAuth);
+            if (strRole == null)
+              strRole = DefaultOptionsData.getDefaultRole(this, strUserAuth);
+          }
           validateDefault(strRole, strUserAuth, "Role");
 
           strOrg = DefaultOptionsData.defaultOrg(this, strUserAuth);
