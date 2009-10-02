@@ -23,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -298,16 +297,16 @@ public class GenerateEntityModelWiki extends BaseTest {
     return sb.toString();
   }
 
-  private void writeFile(String directory, String fileName, String content) throws Exception {
-    final File file = new File(directory, fileName);
-    if (file.exists()) {
-      file.delete();
-    }
-    file.createNewFile();
-    final FileWriter fw = new FileWriter(file);
-    fw.write(content);
-    fw.close();
-  }
+  // private void writeFile(String directory, String fileName, String content) throws Exception {
+  // final File file = new File(directory, fileName);
+  // if (file.exists()) {
+  // file.delete();
+  // }
+  // file.createNewFile();
+  // final FileWriter fw = new FileWriter(file);
+  // fw.write(content);
+  // fw.close();
+  // }
 
   private class EntityComparator implements Comparator<Entity> {
 
@@ -317,13 +316,13 @@ public class GenerateEntityModelWiki extends BaseTest {
     }
   }
 
-  private class EntityTableNameComparator implements Comparator<Entity> {
-
-    @Override
-    public int compare(Entity o1, Entity o2) {
-      return o1.getTableName().compareTo(o2.getTableName());
-    }
-  }
+  // private class EntityTableNameComparator implements Comparator<Entity> {
+  //
+  // @Override
+  // public int compare(Entity o1, Entity o2) {
+  // return o1.getTableName().compareTo(o2.getTableName());
+  // }
+  // }
 
   private String getJavaSourceCode(String className) throws Exception {
     final String srcPath = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
@@ -361,10 +360,10 @@ public class GenerateEntityModelWiki extends BaseTest {
     out.close();
     // get input connection
     BufferedReader in = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
-    String line;
-    while ((line = in.readLine()) != null) {
-      // System.err.println(line);
-    }
+    // String line;
+    // while ((line = in.readLine()) != null) {
+    // // System.err.println(line);
+    // }
     in.close();
   }
 }

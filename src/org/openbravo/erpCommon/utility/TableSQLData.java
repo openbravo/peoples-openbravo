@@ -1493,10 +1493,10 @@ public class TableSQLData implements Serializable {
         addSelectField(getTableName() + "." + prop.getProperty("ColumnName"), prop
             .getProperty("ColumnName"));
         identifier(getTableName(), prop, prop.getProperty("ColumnName") + "_R", getTableName()
-            + "." + prop.getProperty("ColumnName"));
+            + "." + prop.getProperty("ColumnName"), false);
       } else {
         identifier(getTableName(), prop, prop.getProperty("ColumnName"), getTableName() + "."
-            + prop.getProperty("ColumnName"));
+            + prop.getProperty("ColumnName"), false);
       }
     }
     setWindowFilters();
@@ -1516,10 +1516,13 @@ public class TableSQLData implements Serializable {
    *          String with the identifier name.
    * @param realName
    *          String identifying tableName.fieldName, this is maintained through recursivity
+   * @param tableRef
+   *          In case the parent reference is a table the actual name for the column is always
+   *          tableID (used for translation)
    * @throws Exception
    */
-  void identifier(String parentTableName, Properties field, String identifierName, String realName)
-      throws Exception {
+  void identifier(String parentTableName, Properties field, String identifierName, String realName,
+      boolean tableRef) throws Exception {
     String reference;
     if (field == null)
       return;
@@ -1561,7 +1564,8 @@ public class TableSQLData implements Serializable {
         addSelectField(formatField((parentTableName + "." + field.getProperty("ColumnName")),
             reference), identifierName);
     } else {
-      if (!checkTableTranslation(parentTableName, field, reference, identifierName, realName)) {
+      if (!checkTableTranslation(parentTableName, field, reference, identifierName, realName,
+          tableRef)) {
         addSelectField(formatField((parentTableName + "." + field.getProperty("ColumnName")),
             reference), identifierName);
       }
@@ -1578,12 +1582,14 @@ public class TableSQLData implements Serializable {
    * @param reference
    *          String with the id of the reference.
    * @param identifierName
-   *          String with the identifier name.
+   *          String with the identifier name. * @param tableRef In case the parent reference is a
+   *          table the actual name for the column is always tableID
    * @return Boolean to know if the translation were found.
+   * 
    * @throws Exception
    */
   private boolean checkTableTranslation(String tableName, Properties field, String reference,
-      String identifierName, String realName) throws Exception {
+      String identifierName, String realName, boolean tableRef) throws Exception {
     if (tableName == null || tableName.equals("") || field == null)
       return false;
     ComboTableQueryData[] data = ComboTableQueryData.selectTranslatedColumn(getPool(), field
@@ -1595,8 +1601,15 @@ public class TableSQLData implements Serializable {
         + formatField((tableName + "." + field.getProperty("ColumnName")), reference) + " ELSE "
         + formatField(("td_trl" + myIndex + "." + data[0].columnname), reference) + " END)",
         identifierName);
+
+    String columnName;
+    if (tableRef) {
+      columnName = "tableID";
+    } else {
+      columnName = data[0].reference;
+    }
     addFromField("(SELECT AD_Language, " + data[0].reference + ", " + data[0].columnname + " FROM "
-        + data[0].tablename + ") td_trl" + myIndex + " on " + tableName + "." + data[0].reference
+        + data[0].tablename + ") td_trl" + myIndex + " on " + tableName + "." + columnName
         + " = td_trl" + myIndex + "." + data[0].reference + " AND td_trl" + myIndex
         + ".AD_Language = ?", "td_trl" + myIndex, realName);
     addFromParameter("#AD_LANGUAGE", "LANGUAGE", realName);
@@ -1760,12 +1773,12 @@ public class TableSQLData implements Serializable {
       addSelectField("td" + myIndex + ".VALUE", identifierName);
       tables += "value, ";
     }
-    tables += trd[0].keyname + ", " + trd[0].name + " FROM ";
+    tables += trd[0].keyname + " AS tableID, " + trd[0].name + " FROM ";
     Properties fieldsAux = fieldToProperties(trd[0]);
     tables += trd[0].tablename + ") td" + myIndex;
-    tables += " on " + tableName + "." + fieldName + " = td" + myIndex + "." + trd[0].keyname;
+    tables += " on " + tableName + "." + fieldName + " = td" + myIndex + ".tableID";
     addFromField(tables, "td" + myIndex, realName);
-    identifier("td" + myIndex, fieldsAux, identifierName, realName);
+    identifier("td" + myIndex, fieldsAux, identifierName, realName, true);
   }
 
   /**
@@ -1813,7 +1826,7 @@ public class TableSQLData implements Serializable {
     tables += " on " + tableName + "." + parentFieldName + " = td" + myIndex + "." + name + "\n";
     addFromField(tables, "td" + myIndex, realName);
     for (int i = 0; i < trd.length; i++)
-      identifier("td" + myIndex, fieldToProperties(trd[i]), identifierName, realName);
+      identifier("td" + myIndex, fieldToProperties(trd[i]), identifierName, realName, false);
   }
 
   /**

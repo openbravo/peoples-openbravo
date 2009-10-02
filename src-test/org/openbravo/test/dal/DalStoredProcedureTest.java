@@ -67,7 +67,7 @@ public class DalStoredProcedureTest extends BaseTest {
 
     final String procedureName = "C_GetTax";
 
-    final Object tax = CallStoredProcedure.getInstance().call(procedureName, parameters, types);
+    CallStoredProcedure.getInstance().call(procedureName, parameters, types);
   }
 
   /**

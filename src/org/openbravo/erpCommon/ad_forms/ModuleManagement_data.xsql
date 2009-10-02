@@ -77,7 +77,7 @@
            FROM (SELECT 1 
                    FROM AD_MODULE 
                   WHERE STATUS IN ('I','U')
-                  UNION
+                  UNION ALL
                  SELECT 1
                    FROM AD_MODULE_INSTALL) A
       </Sql>

@@ -62,13 +62,13 @@ public class CheckCleanCache extends HttpBaseServlet {
 
     // get instance active status from db
     boolean active = false;
-    OBContext.setAdminContext();
+    OBContext.enableAsAdminContext();
     try {
       ActivationKey ak = new ActivationKey();
       active = ak.isActive();
       log4j.debug("Instance activate: " + active);
     } finally {
-      OBContext.setOBContext((OBContext) null);
+      OBContext.resetAsAdminContext();
     }
 
     PrintWriter pw = response.getWriter();

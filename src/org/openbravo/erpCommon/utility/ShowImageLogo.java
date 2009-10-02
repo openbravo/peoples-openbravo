@@ -54,15 +54,9 @@ public class ShowImageLogo extends HttpBaseServlet {
     String logo = vars.getStringParameter("logo");
     if (logo == null || logo.equals(""))
       return;
-    boolean adminMode = false;
-    if (OBContext.getOBContext() == null) {
-      OBContext.setAdminContext();
-    } else {
-      adminMode = OBContext.getOBContext().isInAdministratorMode();
-    }
-    try {
-      OBContext.getOBContext().setInAdministratorMode(true);
 
+    OBContext.enableAsAdminContext();
+    try {
       Image img = null;
       if (logo.equals("yourcompanylogin")) {
         img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyLoginImage();
@@ -120,7 +114,7 @@ public class ShowImageLogo extends HttpBaseServlet {
       }
 
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(adminMode);
+      OBContext.resetAsAdminContext();
     }
   }
 }
