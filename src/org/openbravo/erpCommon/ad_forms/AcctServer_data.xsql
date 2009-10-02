@@ -54,7 +54,7 @@
      <Parameter name="org"/>
      <Parameter name="dateColumn" type="replace" optional="true" after="ORDER BY a." text="CREATED"/>
    </SqlMethod>
-  <SqlMethod name="update" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="update" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -167,7 +167,7 @@
       <Parameter name="DateAcct"/>
       <Parameter name="DateAcct"/>
    </SqlMethod>
-  <SqlMethod name="updateUnlock" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="updateUnlock" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
