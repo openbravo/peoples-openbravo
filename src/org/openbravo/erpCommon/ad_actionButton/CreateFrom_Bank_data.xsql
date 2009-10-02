@@ -325,7 +325,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT AMOUNT FROM C_DEBT_PAYMENT_V
+        SELECT AMOUNT FROM C_DEBT_PAYMENT
         WHERE C_DEBT_PAYMENT_ID = ?
       ]]>
     </Sql>
