@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5108';
+  var number = '5135';
   return number;
 }
 
@@ -3481,11 +3481,12 @@ function getDateFormat(str_format) {
     format = format.replace("DD","%d");
     format = format.substring(0,8);
   }
+  str_format = str_format.replace("hh","HH").replace(":MM",":mm").replace(".MM",".mm").replace("SS","ss");
   if (str_format==null || str_format=="" || str_format=="null") str_format = defaultDateFormat;
-  else if (str_format.indexOf(" %H:%M:%S")!=-1) format += " %H:%M:%S";
-  else if (str_format.indexOf(" %H:%M")!=-1) format += " %H:%M";
-  else if (str_format.indexOf(" %H.%M.%S")!=-1) format += " %H.%M.%S";
-  else if (str_format.indexOf(" %H.%M")!=-1) format += " %H.%M";
+  else if (str_format.indexOf(" HH:mm:ss")!=-1) format += " %H:%M:%S";
+  else if (str_format.indexOf(" HH:mm")!=-1) format += " %H:%M";
+  else if (str_format.indexOf(" HH.mm.ss")!=-1) format += " %H.%M.%S";
+  else if (str_format.indexOf(" HH.mm")!=-1) format += " %H.%M";
   return format;
 }
 

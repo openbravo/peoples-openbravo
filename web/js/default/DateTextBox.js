@@ -29,11 +29,11 @@ expandDateYear= function(/*String*/ id){
   if (!str_dateFormat) str_dateFormat = defaultDateFormat; 
   if (str_dateFormat.indexOf('YYYY') != -1) {
     var centuryReference = 50;
-    var str_datetime = document.getElementById(id).value;
+    var str_date = document.getElementById(id).value;
     var dateBlock = new Array();
-    dateBlock[1] = getDateBlock(str_datetime, 1);
-    dateBlock[2] = getDateBlock(str_datetime, 2);
-    dateBlock[3] = getDateBlock(str_datetime, 3);
+    dateBlock[1] = getDateBlock(str_date, 1);
+    dateBlock[2] = getDateBlock(str_date, 2);
+    dateBlock[3] = getDateBlock(str_date, 3);
 
     if (!dateBlock[1] || !dateBlock[2] || !dateBlock[3]) {
       return false;
@@ -71,8 +71,8 @@ expandDateYear= function(/*String*/ id){
 }
 
 getDateBlock= function(/*String*/ str_date, block){
-  // datetime parsing and formatting routimes. modify them if you wish other datetime format 
-  //function str2dt (str_datetime) { 
+  // date parsing and formatting routimes. modify them if you wish other date format 
+  //function str2dt (str_date) { 
   var re_date = /^(\d+)[\-|\/|/|:|.|\.](\d+)[\-|\/|/|:|.|\.](\d+)$/; 
   if (!re_date.exec(str_date)) 
     return false; 
@@ -84,6 +84,27 @@ getDateBlock= function(/*String*/ str_date, block){
   else if (block == 2 || block == '2') return dateBlock[2];
   else if (block == 3 || block == '3') return dateBlock[3];
   else dateBlock;
+}
+
+getTimeBlock= function(/*String*/ str_time, block){
+  //time parsing and formatting routimes. modify them if you wish other time format 
+  //function str2dt (str_time) { 
+  if (str_time.indexOf(".") == -1 && str_time.indexOf(":") == -1) {
+    return false;
+  }
+  if (str_time.length != 5 && str_time.length != 8) {
+    return false;
+  }
+  var response = "";
+  var timeBlock = str_time.match(/(\d+)(\d+)/g);
+  if (block == 1 || block == '1') response = timeBlock[0];
+  else if (block == 2 || block == '2') response = timeBlock[1];
+  else if (block == 3 || block == '3') response = timeBlock[2];
+  else response = timeBlock;
+  if ((block == 3 || block == '3') && typeof response  == 'undefined') {
+    response = "00";
+  }
+  return response;
 }
 
 isValidDateTextBox= function(/*String*/ id){
@@ -104,8 +125,24 @@ isMissingDateTextBox= function(/*String*/ id){
     element.style.display="none";
 }
 
-isValidDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
-  if (this.getDate(str_datetime,str_dateFormat)){ 
+isValidDate = function(/*String*/str_datetime, /*String*/str_datetimeFormat) {
+  var isFourDigits = false;
+  if (str_datetimeFormat.indexOf('YYYY') != -1 || str_datetimeFormat.indexOf('%Y') != -1) {
+    isFourDigits = true;
+  }
+  var str_date = str_datetime.substring(0, (isFourDigits?10:8));
+  var str_time = str_datetime.substring((isFourDigits?11:9), str_datetime.length);
+
+  if (str_datetimeFormat.indexOf('%y') != -1 || str_datetimeFormat.indexOf('%Y') != -1) {
+    isFourDigits = false;
+  }
+  var str_dateFormat = str_datetimeFormat.substring(0, (isFourDigits?10:8));
+  var str_timeFormat = str_datetimeFormat.substring((isFourDigits?11:9), str_datetimeFormat.length);
+
+  if (str_time == null || str_time == "") str_time = "00:00:00";
+  if (str_timeFormat == null || str_timeFormat == "") str_timeFormat = "HH:mm:ss";
+
+  if (this.getDateTime(str_date, str_dateFormat, str_time, str_timeFormat)){ 
     return true 
   } else { 
     return false;
@@ -123,16 +160,20 @@ purgeDateFormat= function(/*String*/ str_format){
   return str_format;
 }
 
-getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) { 
+getDateTime = function(/*String*/str_date, /*String*/str_dateFormat, /*String*/str_time, /*String*/str_timeFormat) { 
   var inputDate=new Date(0,0,0); 
-  if (str_datetime.length == 0) return inputDate; 
+  if (str_date.length == 0) return inputDate; 
 
+  if (str_date == null && str_dateFormat == null) {
+    str_date = "1999-01-01";
+    str_dateFormat = "YYYY-MM-DD";
+  }
 
   var dateBlock = new Array();
   var fullYear = false;
-  dateBlock[1] = getDateBlock(str_datetime, 1);
-  dateBlock[2] = getDateBlock(str_datetime, 2);
-  dateBlock[3] = getDateBlock(str_datetime, 3);
+  dateBlock[1] = getDateBlock(str_date, 1);
+  dateBlock[2] = getDateBlock(str_date, 2);
+  dateBlock[3] = getDateBlock(str_date, 3);
 
   if (!dateBlock[1] || !dateBlock[2] || !dateBlock[3]) {
     return false;
@@ -140,6 +181,24 @@ getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
   if (!str_dateFormat) str_dateFormat = defaultDateFormat; 
 
   str_dateFormat = purgeDateFormat(str_dateFormat);
+
+  if ((str_time == null || str_time == "") && (str_timeFormat == null || str_timeFormat == "")) {
+    str_time = "00:00:00";
+    str_timeFormat = "HH:mm:ss";
+  }
+
+  var timeBlock = new Array();
+  timeBlock[1] = getTimeBlock(str_time, 1);
+  timeBlock[2] = getTimeBlock(str_time, 2);
+  timeBlock[3] = getTimeBlock(str_time, 3);
+
+  if (!timeBlock[1] || !timeBlock[2] || !timeBlock[3]) {
+    return false;
+  }
+
+  if (timeBlock[1]>23 || timeBlock[2]>59 || timeBlock[3]>59) {
+    return false;
+  }
 
   switch (str_dateFormat) { 
     case "MM-DD-YYYY": 
@@ -158,7 +217,7 @@ getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
       if (dateBlock[2] < 1 || dateBlock[2] > 31) return false; 
       if (dateBlock[1] < 1 || dateBlock[1] > 12) return false; 
       if (dateBlock[3] < 1 || dateBlock[3] > 9999) return false; 
-      inputDate=new Date(parseFloat(dateBlock[3]), parseFloat(dateBlock[1])-1, parseFloat(dateBlock[2])); 
+      inputDate=new Date(parseFloat(dateBlock[3]), parseFloat(dateBlock[1])-1, parseFloat(dateBlock[2]), timeBlock[1], timeBlock[2], timeBlock[3]);
       if (fullYear) { inputDate.setFullYear(dateBlock[3]); }
       return inputDate; 
     case "YYYY-MM-DD": 
@@ -168,7 +227,7 @@ getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
       if (dateBlock[3] < 1 || dateBlock[3] > 31) return false; 
       if (dateBlock[2] < 1 || dateBlock[2] > 12) return false; 
       if (dateBlock[1] < 1 || dateBlock[1] > 9999) return false; 
-      inputDate=new Date(parseFloat(dateBlock[1]), parseFloat(dateBlock[2])-1, parseFloat(dateBlock[3])); 
+      inputDate=new Date(parseFloat(dateBlock[1]), parseFloat(dateBlock[2])-1, parseFloat(dateBlock[3]), timeBlock[1], timeBlock[2], timeBlock[3]);
       if (fullYear) { inputDate.setFullYear(dateBlock[1]); }
       return inputDate; 
     case "DD-MM-YYYY": 
@@ -179,11 +238,19 @@ getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
       if (dateBlock[1] < 1 || dateBlock[1] > 31) return false; 
       if (dateBlock[2] < 1 || dateBlock[2] > 12) return false; 
       if (dateBlock[3] < 1 || dateBlock[3] > 9999) return false; 
-      inputDate=new Date(parseFloat(dateBlock[3]), parseFloat(dateBlock[2])-1, parseFloat(dateBlock[1])); 
+      inputDate=new Date(parseFloat(dateBlock[3]), parseFloat(dateBlock[2])-1, parseFloat(dateBlock[1]), timeBlock[1], timeBlock[2], timeBlock[3]);
       if (fullYear) { inputDate.setFullYear(dateBlock[3]); }
       return inputDate; 
   }
   return false; 
+}
+
+getDate = function(/*String*/str_date, /*String*/str_dateFormat) { 
+  return getDateTime(str_date, str_dateFormat, null, null);
+}
+
+getTime = function(/*String*/str_time, /*String*/str_timeFormat) { 
+  return getDateTime(null, null, str_time, str_timeFormat);
 }
 
 
@@ -208,7 +275,7 @@ function autoCompleteDate(field, fmt) {
     pos = fmt.indexOf("%H");
     if (pos!=-1) separatorH = fmt.substring(pos + 2, pos + 3);
     while (strDate.charAt(i)) {
-      if (strDate.charAt(i)==separator || strDate.charAt(i)==separatorH) {
+      if (strDate.charAt(i)==separator || strDate.charAt(i)==separatorH || strDate.charAt(i)==" ") {
         i++;
         continue;
       }
