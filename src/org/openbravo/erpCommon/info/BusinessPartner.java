@@ -436,7 +436,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
     // remove saved adorgid only when called from DEFAULT,KEY
     // but not when called by clicking search in the selector
     if (!vars.getStringParameter("newFilter").equals("1")) {
-      vars.removeSessionValue("Project.adorgid");
+      vars.removeSessionValue("BusinessPartner.adorgid");
     }
   }
 
