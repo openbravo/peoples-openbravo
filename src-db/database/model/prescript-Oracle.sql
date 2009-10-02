@@ -129,7 +129,7 @@ end loop;
     from ad_system_info;
                                 
 
-  if aux = v_md5 then
+  if ((aux is null) or (aux = v_md5)) then
     v_Modified := 'N';
   else
     v_Modified := 'Y';
