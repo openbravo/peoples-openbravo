@@ -209,6 +209,7 @@ public class DataGrid extends HttpSecureAppServlet {
     xmlDocument.setParameter("type", type);
     xmlDocument.setParameter("title", title);
     xmlDocument.setParameter("description", description);
+    xmlDocument.setParameter("backendPageSize", String.valueOf(TableSQLData.maxRowsPerGridPage));
     xmlDocument.setData("structure1", data);
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");

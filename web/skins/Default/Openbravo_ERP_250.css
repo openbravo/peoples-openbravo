@@ -1492,21 +1492,25 @@ a.DataGrid_Popup_text_pagerange {
   color: #2985BA;
   font-weight: bold;
   text-decoration: none;
+  font-weight: bold;
 }
 
 a.DataGrid_Popup_text_pagerange:active {
   color: #1d5e84;
   text-decoration: none;
   -moz-outline-style: none;
+  font-weight: bold;
 }
 
 a.DataGrid_Popup_text_pagerange:visited {
   color: #2985BA;
   text-decoration: none;
+  font-weight: bold;
 }
 
 a.DataGrid_Popup_text_pagerange:hover {
   text-decoration: underline;
+  font-weight: bold;
 }
 
 a.DataGrid_Popup_text_pagerange_focus {
@@ -1517,6 +1521,7 @@ a.DataGrid_Popup_text_pagerange_focus {
   border-width: 2px;
   border-color: #2985BA;
   outline: none;
+  font-weight: bold;
 }
 
 /* Table */

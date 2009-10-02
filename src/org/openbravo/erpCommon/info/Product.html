@@ -110,28 +110,20 @@ function gridMovePage(direction) {
 }
 
 function updateHeader(liveGrid, offset) {
-  var maxRowsPerGridPage = getFrame("frameMenu").maxRowsPerGridPage;
-  var currPageStart = (liveGrid.metaData.getBackendPage()*maxRowsPerGridPage);
-  var pageFull = (liveGrid.metaData.getTotalRows() >= maxRowsPerGridPage);
+  var backendPageSize = liveGrid.getBackendPageSize();
+  var currPageStart = (liveGrid.metaData.getBackendPage()*backendPageSize);
+  var pageFull = (liveGrid.metaData.getTotalRows() >= backendPageSize);
   var firstPage = (liveGrid.metaData.getBackendPage() == 0);
-  var res =  "<nobr class='DataGrid_Popup_text_bookmark'>" +((liveGrid.visibleRows>0)?(currPageStart+offset+1):0) + " - "+ (currPageStart+offset+liveGrid.visibleRows) + " / " + (currPageStart+liveGrid.metaData.getTotalRows());
-  var strPrevious = getMessage("GridPreviousPage");
-  var strNext = getMessage("GridNextPage");
-  if (!firstPage || pageFull) {
-      res = res + "<span>&nbsp;&nbsp;&nbsp;</span>";
-  }
+  var res = "<nobr class='DataGrid_Popup_text_bookmark'>";
   if (!firstPage) {
-    res = res + "&nbsp;<a href='#' onclick='gridMovePage(\"PREVIOUSPAGE\"); setWindowElementFocus(\"grid_table_dummy_input\",\"id\");' class='DataGrid_Popup_text_pagerange' id='prevPage_link'>" + strPrevious + " " + maxRowsPerGridPage +"</a>";
+    res = res + "<a href='#' onclick='gridMovePage(\"PREVIOUSPAGE\"); setWindowElementFocus(\"grid_table_dummy_input\",\"id\");' class='DataGrid_Popup_text_pagerange' id='prevPage_link'>" + getMessage("GridPreviousPage") + " " + backendPageSize +"</a>&nbsp;|&nbsp;";
   }
-  if (!firstPage && pageFull) {
-    res = res + "&nbsp;|";
-  }
+  res = res + ((liveGrid.visibleRows>0)?(currPageStart+offset+1):0) + " - "+ (currPageStart+offset+liveGrid.visibleRows) + " / " + (currPageStart+liveGrid.metaData.getTotalRows());
   if (pageFull) {
-    res = res + "&nbsp;<a href='#' onclick='gridMovePage(\"NEXTPAGE\"); setWindowElementFocus(\"grid_table_dummy_input\",\"id\");' class='DataGrid_Popup_text_pagerange' id='nextPage_link'>" + strNext + " " + maxRowsPerGridPage +"</a>";
+    res = res + "&nbsp;|&nbsp;<a href='#' onclick='gridMovePage(\"NEXTPAGE\"); setWindowElementFocus(\"grid_table_dummy_input\",\"id\");' class='DataGrid_Popup_text_pagerange' id='nextPage_link'>" + getMessage("GridNextPage") + " " + backendPageSize +"</a>";
   }
-
-  liveGrid.setGridPaging(!firstPage,pageFull);
   res = res + "</nobr>";
+  liveGrid.setGridPaging(!firstPage,pageFull);
   dojo.byId('bookmark').innerHTML = res;
 }
 
@@ -290,6 +282,7 @@ function updateHeader(liveGrid, offset) {
                   <tr>
                     <td class="DataGrid_Popup_text_container">
                       <div id="bookmark">
+                        <nobr class='DataGrid_Popup_text_bookmark'>&nbsp;</nobr>
                       </div>
                     </td>
                   </tr>

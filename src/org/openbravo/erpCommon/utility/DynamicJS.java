@@ -118,9 +118,6 @@ public class DynamicJS extends HttpSecureAppServlet {
 
     String globals = "";
 
-    // constant used by the updateHeader function of windows having a datagrid
-    globals += "var maxRowsPerGridPage = " + TableSQLData.maxRowsPerGridPage + ";\n";
-
     globals += "var decSeparator_global = '"
         + vars.getSessionValue("#DECIMALSEPARATOR|EUROEDITION") + "';\n";
     globals += "var groupSeparator_global = '"

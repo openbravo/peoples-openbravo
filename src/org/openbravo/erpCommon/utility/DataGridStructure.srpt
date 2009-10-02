@@ -23,7 +23,7 @@
     <title id="fieldTitle">Info</title>
     <description id="fieldDescription">Info</description>
   </status>
-  <datagrid readonly="true" fixed="false">
+  <datagrid id="datagrid" readonly="true" fixed="false" backendPageSize="0">
     <columns id="fieldColumns">
       <column name="xx" identifier="false" visible="true" title="xx" type="xx" width="xxpx" sortable="true" id="fieldColumn"/>
     </columns>

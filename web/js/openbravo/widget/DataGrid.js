@@ -86,6 +86,11 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
   multipleRowSelection: true,
   templateString: "<div></div>",
   templateCssPath: null, // Defined in the skin --- DataGrid.css
+  backendPageSize: 0,
+
+  getBackendPageSize: function() {
+    return this.backendPageSize;
+  },
 
 /**
 * Dojo's function to recreate the control properties in its build process.
@@ -2031,6 +2036,12 @@ dojo.declare("openbravo.widget.DataGrid.Parser", null, {
           }
         }
       }
+
+      // get backendPageSize and store for later use (getters + lineNumbers)
+      var strPageSize = datagrids[0].getAttribute('backendPageSize');
+      var backendPageSize = parseInt(strPageSize);
+      this.datagrid.backendPageSize = backendPageSize;
+
       var validators = datagrids[0].getElementsByTagName('validator');
       for (var i = 0; i < validators.length; i++) {
         openbravo.loadScriptFromUrl(validators[i].getAttribute("src"));
@@ -3382,7 +3393,8 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
       for ( var i=0 ; i < trs.length; i++ ) {
         var row = newRows[i] = this.liveGrid.createRowObject(this.lastOffset + i); 
         var cells = trs[i].getElementsByTagName("td");
-        var values = [this.lastOffset + i + 1];
+        // linenumber calculation
+        var values = [(backendPage * this.liveGrid.getBackendPageSize()) + this.lastOffset + i + 1];
         for ( var j=0; j < cells.length ; j++ ) {
           var cell = cells[j];
           var cellContent = dojox.data.dom.textContent(cell);
