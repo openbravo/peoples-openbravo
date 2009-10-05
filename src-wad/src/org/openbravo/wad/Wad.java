@@ -2748,7 +2748,7 @@ public class Wad extends DefaultHandler {
       boolean isSecondaryKey, String javaPackage) throws ServletException, IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
-    final String[] discard = { "", "", "", "", "", "", "", "" };
+    final String[] discard = { "", "", "", "", "", "", "", "", "", "" };
 
     if (parentsFieldsData == null || parentsFieldsData.length == 0)
       discard[0] = "parent"; // remove the parent tags
@@ -2758,9 +2758,16 @@ public class Wad extends DefaultHandler {
     } // else if (tableName.toUpperCase().startsWith("M_PRODUCT") ||
     // tableName.toUpperCase().startsWith("C_BP") ||
     // tableName.toUpperCase().startsWith("AD_ORG")) discard[1] = "org";
+
+    boolean isHighVolumen = (FieldsData.isHighVolume(pool, strTab).equals("Y"));
+    if (!isHighVolumen || !tablevel.equals("0")) {
+      discard[8] = "sectionIsHighVolume";
+    }
+
     if (selCol == null || selCol.length == 0) {
       discard[2] = "sectionHighVolume";
       discard[3] = "sectionHighVolume1";
+      discard[9] = "sectionIsHighVolume4";
     }
     if (!(windowType.equalsIgnoreCase("T") && tablevel.equals("0")))
       discard[4] = "sectionTransactional";

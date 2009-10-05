@@ -23,6 +23,42 @@
 <SqlClass id="class" name="Almacen" 
 package="org.openbravo.wad.Window">
   <SqlClassComment>WAD Generated class</SqlClassComment>
+
+  <SqlMethod name="selectEdit" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Select for edit</SqlMethodComment>
+    <Sql>&#60;&#33;[CDATA[
+        SELECT <PARAMETER_TMP id="fields">field</PARAMETER_TMP> 
+        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, 
+        (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy) as CreatedByR, 
+        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 
+        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy, 
+        (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy) as UpdatedByR,
+        ? AS LANGUAGE 
+        FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP><PARAMETER_TMP id="tables">tables</PARAMETER_TMP>
+        WHERE 2=2 
+<PARAMETER_TMP id="where">tablesWhere</PARAMETER_TMP>
+        AND 1=1 
+        AND <PARAMETER_TMP id="key">table</PARAMETER_TMP> = ? 
+        <PARAMETER_TMP id="client">AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN ('1') </PARAMETER_TMP>
+        <PARAMETER_TMP id="org">   AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN ('1') </PARAMETER_TMP>
+    ]]&#62;</Sql>
+    <Parameter name="paramLanguage"/>
+<PARAMETER_TMP id="parameters">xx</PARAMETER_TMP>
+<PARAMETER_TMP id="parent">    <Parameter name="param1" optional="true" after="AND 1=1 " id="paramKeyParent"> AND <PARAMETER_TMP id="keyParent">xx</PARAMETER_TMP> = ? </Parameter></PARAMETER_TMP>
+    <Parameter name="key"/>
+    <PARAMETER_TMP id="client">    &#60;Parameter name="adUserClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
+    <PARAMETER_TMP id="org">    &#60;Parameter name="adOrgClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
+
+    <Field name="adUserClient" value="void"/>
+    <Field name="adOrgClient" value="void"/>
+    <Field name="createdby" value="void"/>
+    <PARAMETER_TMP id="hasOrgKey"><Field name="currentAdOrgId" value="void"/></PARAMETER_TMP>
+    <Field name="trBgcolor" value="void"/>
+    <Field name="totalCount" value="void"/>
+    
+  </SqlMethod>
+  
+  <PARAMETER_TMP id="sectionIsHighVolume"><FIELDS_TMP id="sectionIsHighVolume4">
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Select for relation</SqlMethodComment>
     <Sql>&#60;&#33;[CDATA[
@@ -61,32 +97,7 @@ package="org.openbravo.wad.Window">
 <PARAMETER_TMP id="parent">    <Parameter name="param1"/></PARAMETER_TMP>
     <Parameter name="orderbyclause" optional="true" type="replace" after="ORDER BY " text="1"/>
   </SqlMethod>
-
-  <SqlMethod name="selectEdit" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Select for edit</SqlMethodComment>
-    <Sql>&#60;&#33;[CDATA[
-        SELECT <PARAMETER_TMP id="fields">field</PARAMETER_TMP> 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, 
-        (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy) as CreatedByR, 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy, 
-        (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy) as UpdatedByR,
-        ? AS LANGUAGE 
-        FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP><PARAMETER_TMP id="tables">tables</PARAMETER_TMP>
-        WHERE 2=2 
-<PARAMETER_TMP id="where">tablesWhere</PARAMETER_TMP>
-        AND 1=1 
-        AND <PARAMETER_TMP id="key">table</PARAMETER_TMP> = ? 
-        <PARAMETER_TMP id="client">AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN ('1') </PARAMETER_TMP>
-        <PARAMETER_TMP id="org">   AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN ('1') </PARAMETER_TMP>
-    ]]&#62;</Sql>
-    <Parameter name="paramLanguage"/>
-<PARAMETER_TMP id="parameters">xx</PARAMETER_TMP>
-<PARAMETER_TMP id="parent">    <Parameter name="param1" optional="true" after="AND 1=1 " id="paramKeyParent"> AND <PARAMETER_TMP id="keyParent">xx</PARAMETER_TMP> = ? </Parameter></PARAMETER_TMP>
-    <Parameter name="key"/>
-    <PARAMETER_TMP id="client">    &#60;Parameter name="adUserClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
-    <PARAMETER_TMP id="org">    &#60;Parameter name="adOrgClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
-  </SqlMethod>
+  </FIELDS_TMP></PARAMETER_TMP>
 
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment>Create a registry</SqlMethodComment>
