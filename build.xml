@@ -652,7 +652,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="apply.module">
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}">
-      <arg line="${base.src}" />
+      <arg line="'${base.src}'" />
       <classpath refid="project.class.path" />
     </java>
   </target>
