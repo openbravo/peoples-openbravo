@@ -47,7 +47,7 @@
       </column>
       <column name="R_CONTACTINTEREST_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA[get_uuid()]]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_RCONTACTINTEREST">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
