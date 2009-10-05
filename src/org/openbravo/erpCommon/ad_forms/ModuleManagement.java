@@ -688,17 +688,25 @@ public class ModuleManagement extends HttpSecureAppServlet {
     boolean OBPSActiveInstance = ActivationKey.isActiveInstance();
     ArrayList<Module> notAllowedMods = new ArrayList<Module>();
 
+    String notAllowed = "";
+
     for (Module instMod : im.getModulesToInstall()) {
       if (instMod.getIsCommercial()
           && (!OBPSActiveInstance || !ak.isModuleSubscribed(instMod.getModuleID(), true))) {
-        notAllowedMods.add(instMod);
+        if (notAllowed.length() > 0) {
+          notAllowed += ", ";
+        }
+        notAllowed += instMod.getName();
       }
     }
 
     for (Module updMod : im.getModulesToUpdate()) {
       if (updMod.getIsCommercial()
           && (!OBPSActiveInstance || !ak.isModuleSubscribed(updMod.getModuleID(), true))) {
-        notAllowedMods.add(updMod);
+        if (notAllowed.length() > 0) {
+          notAllowed += ", ";
+        }
+        notAllowed += updMod.getName();
       }
     }
 
@@ -716,7 +724,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("theme", vars.getTheme());
-      xmlDocument.setData("modules", FieldProviderFactory.getFieldProviderArray(notAllowedMods));
+      xmlDocument.setParameter("modules", notAllowed);
       response.setContentType("text/html; charset=UTF-8");
       final PrintWriter out = response.getWriter();
       out.println(xmlDocument.print());

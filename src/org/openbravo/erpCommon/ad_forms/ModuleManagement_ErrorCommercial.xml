@@ -31,10 +31,6 @@
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
 
-  <structure name="modules">
-    <FIELD id="name">name</FIELD>
-    <SECTION id="moduleNames"/>
-  </structure>
-  
+  <PARAMETER id="name" name="modules" default=""/>
 
 </REPORT>
