@@ -502,8 +502,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     }
     OBContext.setOBContext((OBContext) null);
 
+    String discard[] = { "continueButton" };
+
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
+        "org/openbravo/base/secureApp/HtmlErrorLogin", discard).createXmlDocument();
 
     xmlDocument.setParameter("messageType", error.getType());
     xmlDocument.setParameter("messageTitle", error.getTitle());
