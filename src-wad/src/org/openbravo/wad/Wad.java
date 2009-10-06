@@ -3647,7 +3647,6 @@ public class Wad extends DefaultHandler {
     if (parentsFieldsData.length > 0) {
       xmlDocumentRHtml.setParameter("keyParent", "inp"
           + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
-      xmlDocumentRHtml.setParameter("parentKeyNameDescription", strParentNameDescription);
       xmlDocumentRHtml.setParameter("parentKeyName", parentsFieldsData[0].name);
     }
 
