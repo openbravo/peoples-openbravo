@@ -60,15 +60,21 @@ var isContextMenuOpened = false;
 
 windowKeyboardCaptureEvents();
 function windowKeyboardCaptureEvents() {
-  document.onmousedown=mouseDownLogic;
-  document.onclick=mouseClickLogic;
+  if (typeof captureOnMouseDown == 'undefined' || captureOnMouseDown != false) {
+    document.onmousedown=mouseDownLogic;
 
+    if (document.layers) {
+      window.captureEvents(Event.ONMOUSEDOWN);
+      window.onmousedown=mouseDownLogic;
+    }
+  }
+  if (typeof captureOnClick == 'undefined' || captureOnClick != false) {
+    document.onclick=mouseClickLogic;
 
-  if (document.layers) {
-    window.captureEvents(Event.ONMOUSEDOWN);
-    window.onmousedown=mouseDownLogic;
-    window.captureEvents(Event.ONCLICK);
-    window.onclick=mouseClickLogic;
+    if (document.layers) {
+      window.captureEvents(Event.ONCLICK);
+      window.onclick=mouseClickLogic;
+    }
   }
 }
 
