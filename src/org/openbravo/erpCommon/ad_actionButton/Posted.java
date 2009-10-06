@@ -149,10 +149,14 @@ public class Posted extends HttpSecureAppServlet {
         return myMessage;
       } else if (!acct.post(strKey, false, vars, this, con) || acct.errors != 0) {
         releaseRollbackConnection(con);
+        String strStatus = acct.getStatus();
         // return (Utility.messageBD(this, "ProcessRunError",
         // vars.getLanguage()) + "\\n" + acct.getInfo(vars));
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError"
-            + "\\n" + acct.getInfo(vars));
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+            strStatus.equals("L") ? "@OtherPostingProcessActive@" : "@ProcessRunError@");
+        if (strStatus.equals("L"))
+          myMessage.setType("Warning");
+        myMessage.setMessage(myMessage.getMessage());
         return myMessage;
       }
       // Create Automatic Matching
