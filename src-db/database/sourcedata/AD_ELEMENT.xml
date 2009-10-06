@@ -9566,10 +9566,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1659-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1659-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1659-->  <COLUMNNAME><![CDATA[PO_Description]]></COLUMNNAME>
-<!--1659-->  <NAME><![CDATA[Purchase Order Description]]></NAME>
+<!--1659-->  <NAME><![CDATA[Description in Purchase Windows]]></NAME>
 <!--1659-->  <PRINTNAME><![CDATA[PO Description]]></PRINTNAME>
-<!--1659-->  <DESCRIPTION><![CDATA[A space to write additional related information for a purchase order.]]></DESCRIPTION>
-<!--1659-->  <HELP><![CDATA[Description in PO Screens]]></HELP>
+<!--1659-->  <DESCRIPTION><![CDATA[A space to write additional related information for a order windows.]]></DESCRIPTION>
+<!--1659-->  <HELP><![CDATA[Description in Purchase Windows]]></HELP>
 <!--1659-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1659--></AD_ELEMENT>
 
@@ -9579,10 +9579,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1660-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1660-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1660-->  <COLUMNNAME><![CDATA[PO_Help]]></COLUMNNAME>
-<!--1660-->  <NAME><![CDATA[Purchase Order Help]]></NAME>
+<!--1660-->  <NAME><![CDATA[Help in Purchase Windows]]></NAME>
 <!--1660-->  <PRINTNAME><![CDATA[PO Help]]></PRINTNAME>
-<!--1660-->  <DESCRIPTION><![CDATA[A comment that adds additional information to help users work with fields within a purchase order.]]></DESCRIPTION>
-<!--1660-->  <HELP><![CDATA[Help for PO Screens]]></HELP>
+<!--1660-->  <DESCRIPTION><![CDATA[A comment that adds additional information to help users work with fields within a purchase window.]]></DESCRIPTION>
+<!--1660-->  <HELP><![CDATA[Help in Purchase Windows]]></HELP>
 <!--1660-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1660--></AD_ELEMENT>
 
@@ -9592,10 +9592,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1661-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1661-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1661-->  <COLUMNNAME><![CDATA[PO_Name]]></COLUMNNAME>
-<!--1661-->  <NAME><![CDATA[Purchase Order Name]]></NAME>
+<!--1661-->  <NAME><![CDATA[Name in Purchase Windows]]></NAME>
 <!--1661-->  <PRINTNAME><![CDATA[PO Name]]></PRINTNAME>
-<!--1661-->  <DESCRIPTION><![CDATA[A identifier for a document which can be used as a search tool for a purchase order.]]></DESCRIPTION>
-<!--1661-->  <HELP><![CDATA[Name on PO Screens]]></HELP>
+<!--1661-->  <DESCRIPTION><![CDATA[A identifier for a document which can be used as a search tool for a purchase window.]]></DESCRIPTION>
+<!--1661-->  <HELP><![CDATA[Name in Purchase Windows]]></HELP>
 <!--1661-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1661--></AD_ELEMENT>
 
@@ -9605,10 +9605,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1662-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1662-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1662-->  <COLUMNNAME><![CDATA[PO_PrintName]]></COLUMNNAME>
-<!--1662-->  <NAME><![CDATA[Print Name on Purchase Order]]></NAME>
+<!--1662-->  <NAME><![CDATA[Print Name on Purchase Window]]></NAME>
 <!--1662-->  <PRINTNAME><![CDATA[PO Print]]></PRINTNAME>
 <!--1662-->  <DESCRIPTION><![CDATA[A option to print the name given in the purchase order document.]]></DESCRIPTION>
-<!--1662-->  <HELP><![CDATA[Print name on PO Screens/Reports]]></HELP>
+<!--1662-->  <HELP><![CDATA[Print name on Purchase Screens/Reports]]></HELP>
 <!--1662-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1662--></AD_ELEMENT>
 
