@@ -24,7 +24,7 @@
    <SqlMethod name="selectDependencies" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT M.NAME, M.AD_MODULE_ID, M.VERSION, '' AS JAVAPACKAGE
+        SELECT M.NAME, M.AD_MODULE_ID, M.VERSION, '' AS JAVAPACKAGE, M2.NAME AS ORIGNAME
           FROM AD_MODULE_DEPENDENCY D, AD_MODULE M, AD_MODULE M2
          WHERE AD_DEPENDENT_MODULE_ID IN ('1')
            AND D.AD_MODULE_ID = M.AD_MODULE_ID
