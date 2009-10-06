@@ -9,8 +9,10 @@
 <!--0-->  <VERSION><![CDATA[2.50.14827]]></VERSION>
 <!--0-->  <DESCRIPTION><![CDATA[Core module is the base one]]></DESCRIPTION>
 <!--0-->  <HELP><![CDATA[Core module is the base one, all developments in core are included as part of the standard Openbravo ERP.]]></HELP>
+<!--0-->  <URL><![CDATA[www.openbravo.com]]></URL>
 <!--0-->  <TYPE><![CDATA[M]]></TYPE>
-<!--0-->  <LICENSE><![CDATA[The Openbravo Public License Version 1.1 ("OBPL") consists of the Mozilla Public License Version 1.1, modified to be specific to Openbravo, with the Additional Terms in Exhibit B. The original Mozilla Public License 1.1 can be found at: http://www.mozilla.org/MPL/MPL-1.1.html]]></LICENSE>
+<!--0-->  <LICENSE><![CDATA[Licensed under the Openbravo Commercial License version 1.0.
+You may obtain a copy of the License at http://www.openbravo.com/legal/license.html or in the legal folder of the Openbravo ERP core distribution.]]></LICENSE>
 <!--0-->  <JAVAPACKAGE><![CDATA[org.openbravo]]></JAVAPACKAGE>
 <!--0-->  <LICENSETYPE><![CDATA[OBPL]]></LICENSETYPE>
 <!--0-->  <AUTHOR><![CDATA[Openbravo SL]]></AUTHOR>
