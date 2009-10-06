@@ -710,7 +710,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
     }
 
-    if (notAllowedMods.size() > 0) {
+    if (notAllowed.length() > 0) {
       String discard[] = { "" };
 
       if (OBPSActiveInstance) {
