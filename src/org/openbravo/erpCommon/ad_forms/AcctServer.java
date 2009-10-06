@@ -504,6 +504,7 @@ public abstract class AcctServer {
       if (AcctServerData.update(conn, tableName, strClave) != 1) {
         log4j.warn("AcctServer - Post -Cannot lock Document - ignored: " + tableName + "_ID="
             + strClave);
+        Status = "L"; // Status locked document
         return false;
       } else
         AcctServerData.delete(con, connectionProvider, AD_Table_ID, Record_ID);
@@ -1484,6 +1485,10 @@ public abstract class AcctServer {
 
   public String getServletInfo() {
     return "Servlet for the accounting";
+  } // end of getServletInfo() method
+
+  public String getStatus() {
+    return Status;
   } // end of getServletInfo() method
 
   public ConnectionProvider getConnectionProvider() {
