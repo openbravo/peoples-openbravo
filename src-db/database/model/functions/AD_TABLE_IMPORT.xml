@@ -219,7 +219,7 @@
           v_AD_Reference_ID:='29';
         ELSIF(Cur_Column.Data_Type='NUMBER') THEN
           v_AD_Reference_ID:='22';
-        ELSIF(Cur_Column.Data_Type='DATE') THEN
+        ELSIF(Cur_Column.Data_Type IN ('DATE', 'TIMESTAMP')) THEN
           v_AD_Reference_ID:='15';
         ELSE
           v_AD_Reference_ID:='10'; -- if not found, use String
