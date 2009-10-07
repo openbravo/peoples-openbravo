@@ -129,7 +129,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="SUPPORT_CONTACT" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
+      <column name="SUPPORT_CONTACT" primaryKey="false" required="false" type="NVARCHAR" size="200" autoIncrement="false">
         <default/>
         <onCreateDefault><![CDATA['www.your-it-service.com']]></onCreateDefault>
       </column>
