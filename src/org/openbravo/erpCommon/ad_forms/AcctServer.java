@@ -506,7 +506,8 @@ public abstract class AcctServer {
             + strClave);
         Status = "L"; // Status locked document
         return false;
-      }
+      } else
+        AcctServerData.delete(con, connectionProvider, AD_Table_ID, Record_ID);
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - Post -TableName -" + tableName + "- ad_client_id -"
             + AD_Client_ID + "- " + tableName + "_id -" + strClave);
