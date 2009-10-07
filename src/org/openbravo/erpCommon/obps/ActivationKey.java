@@ -458,7 +458,7 @@ public class ActivationKey {
    * Returns the status for the commercial module passed as parameter
    * 
    * @param moduleId
-   * @return
+   * @return the status for the commercial module passed as parameter
    */
   public CommercialModuleStatus isModuleSubscribed(String moduleId) {
     HashMap<String, CommercialModuleStatus> moduleList = getSubscribedModules();

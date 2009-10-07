@@ -115,7 +115,7 @@ public class Utility {
    * Checks if a getNumericParameters is needed based on a reference
    * 
    * @param reference
-   * @return
+   * @return true if the passed reference represents a numeric type, false otherwise.
    */
   public static boolean isNumericParameter(String reference) {
     return (!Utility.isID(reference) && (Utility.isDecimalNumber(reference) || Utility
@@ -271,7 +271,8 @@ public class Utility {
   /**
    * 
    * Formats a message String into a String for html presentation. Escapes the &, <, >, " and ®, and
-   * replace the \n by <br/> and \r for space.
+   * replace the \n by <br/>
+   * and \r for space.
    * 
    * IMPORTANT! : this method is designed to transform the output of Utility.messageBD method, and
    * this method replaces \n by \\n and \" by &quote. Because of that, the first replacements revert

@@ -26,21 +26,21 @@ import org.openbravo.xmlEngine.XmlEngine;
 
 /**
  * Manages a generic tree, this class is abstract, for concrete trees subclasses are needed.
- *
+ * 
  * It is able to show a HTML component with the tree, to expand nodes Ajax calls are used, these
  * calls are managed by GenericTreeServlet.
- *
+ * 
  * <br>
  * Usage</br> This class cannot be directly used, instead a subclass implementing the abstract
  * method must be used.
- *
+ * 
  * The purpose is to set the toHml directly in the HTML where the tree is going to be displayed,
  * additionally genericTree.js must be imported in that page. These java classes will show the tree
  * and manage the ajax requests.
- *
+ * 
  * <br>
  * To take into account</br>
- *
+ * 
  * -data is a FieldProvider that must have the following fields: -nodeID : It is the unique
  * identifier for the node -name : It is the short name for the node (it will be displayed in the
  * tree) -display : It indicates whether the node has child elements in order to show or not the
@@ -56,7 +56,7 @@ import org.openbravo.xmlEngine.XmlEngine;
  * the tree in order to allow keyboard navigation -It is necessary to implement in subclasses apart
  * of the abstract method a constructor without parameters, this constructor is used by
  * GenericTreeServlet.
- *
+ * 
  */
 public abstract class GenericTree {
   protected XmlEngine xmlEngine;
@@ -76,7 +76,7 @@ public abstract class GenericTree {
 
   /**
    * This method will assign to data the child nodes (just one level) for the nodeId
-   *
+   * 
    * @param nodeId
    *          Root node for the subtree
    */
@@ -84,7 +84,7 @@ public abstract class GenericTree {
 
   /**
    * This method returns a String with the description for the node
-   *
+   * 
    * @param node
    *          Node ID to retrieve description
    * @return The String with the HTML for the description
@@ -93,25 +93,25 @@ public abstract class GenericTree {
 
   /**
    * Returns true in case the node is the last one at its level
-   *
+   * 
    * @param nodeID
-   * @return
+   * @return true in case the node is the last one at its level
    */
   protected abstract boolean isLastLevelNode(String nodeID);
 
   /**
    * Returns the position relative to the rest of nodes at the same level
-   *
+   * 
    * @param nodeID
-   * @return
+   * @return the position relative to the rest of nodes at the same level
    */
   protected abstract String getNodePosition(String nodeID);
 
   /**
    * Returns the node id for the parent of the passed node
-   *
+   * 
    * @param node
-   * @return
+   * @return the node id for the parent of the passed node
    */
   protected abstract String getParent(String node);
 
@@ -124,7 +124,7 @@ public abstract class GenericTree {
 
   /**
    * This constructor receives a HttpBaseServlet object to set the infrastructure parameters
-   *
+   * 
    * @param base
    */
   public GenericTree(HttpBaseServlet base) {
@@ -133,7 +133,7 @@ public abstract class GenericTree {
 
   /**
    * This constructor receives a HttpBaseServlet object to set the infrastructure parameters
-   *
+   * 
    * @param base
    * @param bSmall
    *          Normal size or small size (true)
@@ -148,7 +148,7 @@ public abstract class GenericTree {
 
   /**
    * Sets the infrastructure parameters from the HttpBaseServlet object passed.
-   *
+   * 
    * @param base
    *          HttpBaseServlet object to obtain the parameters from
    */
@@ -161,7 +161,7 @@ public abstract class GenericTree {
   /**
    * Sets the isSubTree variable to the passed value. Subtrees have different treatment in
    * interface.
-   *
+   * 
    * @param value
    */
   protected void setIsSubTree(boolean value) {
@@ -201,7 +201,7 @@ public abstract class GenericTree {
 
   /**
    * Sets the language
-   *
+   * 
    * @param lang
    */
   public void setLanguage(String lang) {
@@ -217,7 +217,7 @@ public abstract class GenericTree {
 
   /**
    * Set the deep level for the current set of nodes
-   *
+   * 
    * @param l
    */
   protected void setLevel(int l) {
@@ -226,11 +226,11 @@ public abstract class GenericTree {
     for (int i = 0; i < data.length; i++) {
       // endline: set the spotted right line with angles
       if (!isSubTree && i == 0) {
-        FieldProviderFactory.setField((FieldProvider)data[i], "endline", "Tree_FirstNode_Spots");
+        FieldProviderFactory.setField((FieldProvider) data[i], "endline", "Tree_FirstNode_Spots");
       } else if (i == (data.length - 1)) {
-        FieldProviderFactory.setField((FieldProvider)data[i], "endline", "Tree_LastNode_Spots");
+        FieldProviderFactory.setField((FieldProvider) data[i], "endline", "Tree_LastNode_Spots");
       } else {
-        FieldProviderFactory.setField((FieldProvider)data[i], "endline", "Tree_MiddleNode_Spots");
+        FieldProviderFactory.setField((FieldProvider) data[i], "endline", "Tree_MiddleNode_Spots");
       }
 
       // Level tree: sets the spotted left lines
@@ -263,7 +263,7 @@ public abstract class GenericTree {
 
   /**
    * Sets information for the notifications area.
-   *
+   * 
    * @param notifications
    *          HTML string with the text and link
    */
