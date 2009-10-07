@@ -30,7 +30,8 @@ package="org.openbravo.wad.Window">
         SELECT <PARAMETER_TMP id="fields">field</PARAMETER_TMP> 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, 
         (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy) as CreatedByR, 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 
+        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated,
+        to_char(<PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 'YYYYMMDDHH24MISS') as Updated_TS,  
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy, 
         (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy) as UpdatedByR,
         ? AS LANGUAGE 
