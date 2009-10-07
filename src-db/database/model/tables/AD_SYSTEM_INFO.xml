@@ -129,6 +129,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SUPPORT_CONTACT" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA['www.your-it-service.com']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_SYSTEM_INFO_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
