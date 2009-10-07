@@ -1000,6 +1000,12 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     toolbar.prepareEditionTemplate<PARAMETER_TMP id="sameParent">NoSearch</PARAMETER_TMP>("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, vars.getSessionValue("#ShowTest", "N").equals("Y"), "<PARAMETER_TMP id="paramUIPattern">readonly</PARAMETER_TMP>", Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
+    // set updated timestamp to manage locking mechanism
+    if (!boolNew) {
+      xmlDocument.setParameter("updatedTimestamp", (dataField != null ? dataField
+          .getField("updatedTimeStamp") : data[0].getField("updatedTimeStamp")));
+    }
+
     try {
       WindowTabs tabs = new WindowTabs(this, vars, tabId, windowId, true, (strCommand.equalsIgnoreCase("NEW")));
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
