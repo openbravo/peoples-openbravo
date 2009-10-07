@@ -2244,6 +2244,9 @@ function executeWindowButton(id,focus) {
   } else if (top.frames['mainframe']) {
     appWindow = top.frames['mainframe'];
   }
+  if (window.location.href.indexOf('ad_forms/Role.html') != -1) { //Exception for "Role" window
+    appWindow = top;
+  }
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
     if (focus==true) appWindow.document.getElementById(id).focus();
     appWindow.document.getElementById(id).onclick();
