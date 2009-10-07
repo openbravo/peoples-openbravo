@@ -32,5 +32,7 @@
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
 
   <PARAMETER id="name" name="modules" default=""/>
+  <PARAMETER id="expired" name="expired" default=""/>
+  <PARAMETER id="noActiveYet" name="noActiveYet" default=""/>
 
 </REPORT>

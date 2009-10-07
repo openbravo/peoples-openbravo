@@ -29,9 +29,9 @@ import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.zip.CRC32;
 
@@ -69,6 +69,10 @@ public class ActivationKey {
 
   public enum LicenseRestriction {
     NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED
+  }
+
+  public enum CommercialModuleStatus {
+    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET
   }
 
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -411,15 +415,13 @@ public class ActivationKey {
   }
 
   /**
-   * Obtains a list for modules ID the instance is subscribed to.
+   * Obtains a list for modules ID the instance is subscribed to and their statuses
    * 
-   * @param onlyActive
-   *          if this value is true the list will contain only the modules active at this time,
-   *          other case it will contain all the subscribed modules regardless expiration dates
-   * @return ArrayList<String> containing the subscribed modules
+   * @return HashMap<String, CommercialModuleStatus> containing the subscribed modules
    */
-  public ArrayList<String> getSubscribedModules(boolean onlyActive) {
-    ArrayList<String> moduleList = new ArrayList<String>();
+  public HashMap<String, CommercialModuleStatus> getSubscribedModules() {
+    HashMap<String, CommercialModuleStatus> moduleList = new HashMap<String, CommercialModuleStatus>();
+
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
 
     String allModules = getProperty("modules");
@@ -429,30 +431,43 @@ public class ActivationKey {
     Date now = new Date();
     for (String moduleInfo : modulesInfo) {
       String moduleData[] = moduleInfo.split("\\|");
-      if (!onlyActive) {
-        moduleList.add(moduleData[0]);
-      } else {
-        Date validFrom = null;
-        Date validTo = null;
-        try {
-          validFrom = sd.parse(moduleData[1]);
-          if (moduleData.length > 2) {
-            validTo = sd.parse(moduleData[2]);
-          }
 
-          if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
-            moduleList.add(moduleData[0]);
-          }
-        } catch (Exception e) {
-          log.error("Error reading module's dates module:" + moduleData[0], e);
+      Date validFrom = null;
+      Date validTo = null;
+      try {
+        validFrom = sd.parse(moduleData[1]);
+        if (moduleData.length > 2) {
+          validTo = sd.parse(moduleData[2]);
         }
+        if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
+          moduleList.put(moduleData[0], CommercialModuleStatus.ACTIVE);
+        } else if (validFrom.after(now)) {
+          moduleList.put(moduleData[0], CommercialModuleStatus.NO_ACTIVE_YET);
+        } else if (validTo != null && validTo.before(now)) {
+          moduleList.put(moduleData[0], CommercialModuleStatus.EXPIRED);
+        }
+      } catch (Exception e) {
+        log.error("Error reading module's dates module:" + moduleData[0], e);
       }
+
     }
     return moduleList;
   }
 
-  public boolean isModuleSubscribed(String moduleId, boolean onlyActive) {
-    return getSubscribedModules(onlyActive).contains(moduleId);
+  /**
+   * Returns the status for the commercial module passed as parameter
+   * 
+   * @param moduleId
+   * @return
+   */
+  public CommercialModuleStatus isModuleSubscribed(String moduleId) {
+    HashMap<String, CommercialModuleStatus> moduleList = getSubscribedModules();
+
+    if (!moduleList.containsKey(moduleId)) {
+      return CommercialModuleStatus.NO_SUBSCRIBED;
+    }
+
+    return moduleList.get(moduleId);
   }
 
 }
