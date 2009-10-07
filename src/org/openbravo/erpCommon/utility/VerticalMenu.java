@@ -34,7 +34,6 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.HeartbeatData;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
-import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -115,8 +114,6 @@ public class VerticalMenu extends HttpSecureAppServlet {
     xmlDocument.setParameter("autosave", "var autosave = "
         + (vars.getSessionValue("#Autosave").equals("")
             || vars.getSessionValue("#Autosave").equalsIgnoreCase("N") ? "false" : "true") + ";");
-    xmlDocument.setParameter("opsinstance", "var opsInstance = " + ActivationKey.isActiveInstance()
-        + ";");
     final StringBuffer menu = new StringBuffer();
     menu.append(generarMenuVertical(dataMenu, strDireccion, "0", open));
     menu.append(generateMenuSearchs(vars, open));
