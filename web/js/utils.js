@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5135';
+  var number = '5210';
   return number;
 }
 
@@ -4235,6 +4235,11 @@ function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupIn
 
   var number = obj.value;
   var isValid = checkNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
+  if (obj.getAttribute('maxlength')) {
+    if (obj.value.length > obj.getAttribute('maxlength')) {
+      isValid = false;
+    }
+  }
   updateNumberMiniMB(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
   if (!isValid) {
     return false;
