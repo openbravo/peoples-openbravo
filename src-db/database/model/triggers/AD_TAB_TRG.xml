@@ -30,7 +30,7 @@ BEGIN
 
 
    --Check tab name starts with a upper case letter
-   IF not substr(:new.Name,1,1) between 'A' and 'Z' THEN
+   IF (not (substr(:new.Name,1,1) between 'A' and 'Z')) THEN
      RAISE_APPLICATION_ERROR(-20000, '@TabName1stCharUpper@') ;
    END IF;
 
