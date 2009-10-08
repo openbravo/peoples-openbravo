@@ -363,10 +363,23 @@ public class DataGrid extends HttpSecureAppServlet {
                 e.printStackTrace();
               }
             }
-            strRowsData.append(value.replaceAll("<b>", "").replaceAll("<B>", "").replaceAll("</b>",
-                "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll("<I>", "").replaceAll(
-                "</i>", "").replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>",
-                "&nbsp;").replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(value
+                .replaceAll("<b>", "").replaceAll("<B>", "")
+                .replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "")
+                .replaceAll("</i>", "").replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;")
+                .replaceAll("<h1>", "&nbsp;").replaceAll("<H1>", "&nbsp;")
+                .replaceAll("</h1>", "&nbsp;").replaceAll("</H1>", "")
+                .replaceAll("<h2>", "&nbsp;").replaceAll("<H2>", "&nbsp;")
+                .replaceAll("</h2>", "&nbsp;").replaceAll("</H2>", "")
+                .replaceAll("<h3>", "&nbsp;").replaceAll("<H3>", "&nbsp;")
+                .replaceAll("</h3>", "&nbsp;").replaceAll("</H3>", "")
+                .replaceAll("<li>", "&nbsp;").replaceAll("<LI>", "&nbsp;")
+                .replaceAll("</li>", "&nbsp;").replaceAll("</LI>", "")
+                .replaceAll("<ul>", "&nbsp;").replaceAll("<UL>", "&nbsp;")
+                .replaceAll("</ul>", "&nbsp;").replaceAll("</UL>", ""));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
