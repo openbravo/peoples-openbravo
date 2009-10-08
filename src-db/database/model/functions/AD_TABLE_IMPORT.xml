@@ -71,6 +71,7 @@
     v_PInstance_Log_ID VARCHAR2(32);
     v_Client_ID VARCHAR2(32);
     v_Aux NUMBER;
+    v_missingColumns boolean;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -306,6 +307,7 @@
     
     --Check common columns
     IF (v_Record_ID is not null) THEN
+      v_missingColumns := false;
       FOR Cur_CommonCols IN (select columnname
                               from ad_column c
                              where c.ad_table_id = '100'
@@ -314,7 +316,7 @@
                                                  from ad_column c1
                                                 where c1.ad_table_id = v_Record_ID
                                                  and lower(c1.columnname) = lower(c.columnname))) LOOP
-        v_Result := 0;
+        v_missingColumns := true;
         v_Message := '@MissingCommonColumn@: '||Cur_CommonCols.columnname||'<br/>'||v_Message;
       END LOOP;
       
@@ -331,8 +333,13 @@
             from ad_table
             where ad_table_id = v_record_ID;
             
-          v_Result := 0;
+          v_missingColumns := true;
           v_Message := '@MissingPrimaryKeyColumn@: '||v_tablename||'_ID<br/>'||v_Message;
+        END IF;
+        
+        IF (v_MissingColumns) THEN
+          v_Result :=0;
+          v_Message := '@MissingRequiredColumns@<br/>'|| v_message;
         END IF;
     END IF;
     
