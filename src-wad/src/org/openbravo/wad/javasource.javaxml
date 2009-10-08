@@ -33,6 +33,7 @@ import org.openbravo.erpCommon.ad_actionButton.*;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.utils.FormatUtilities;
+import org.openbravo.utils.Replace;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.exception.OBException;
@@ -1254,10 +1255,19 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
                 data.<KEY_TMP id="keyData">Almacen</KEY_TMP> = strSequence;</PARAMETER_TMP>  
             }
             <PARAMETER_TMP id="client">if (Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),data.adClientId) <FIELDS_TMP id="sectionOrganizationCheck"> &amp;&amp; Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),data.adOrgId)</FIELDS_TMP>){</PARAMETER_TMP>
-		            if(type == 'I')
-		                    total = data.insert(con, this);
-		                else
-		                    total = data.update(con, this);		            
+		     if(type == 'I') {
+		       total = data.insert(con, this);
+		     } else {
+		       //Check the version of the record we are saving is the one in DB
+		       if (<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.getCurrentDBTimestamp(this, data.<KEY_TMP id="keyData">Almacen</KEY_TMP>).equals(
+                vars.getStringParameter("updatedTimestamp"))) {
+                total = data.update(con, this);
+               } else {
+                 myError.setMessage(Replace.replace(Replace.replace(Utility.messageBD(this,
+                    "SavingModifiedRecord", vars.getLanguage()), "\\n", "&lt;br/&gt;"), "&amp;quot;", "\""));
+                 myError.setType("Error");
+               } 
+		     }		            
           <PARAMETER_TMP id="client">
             }
                 else {
