@@ -89,7 +89,7 @@ public class CheckSum {
       String rt[] = { obDir + "src-db/database/sourcedata", obDir + "modules" };
       return rt;
     } else if (type.equals("md5.wad")) {
-      String rt[] = { obDir + "src-wad/lib/openbravo-wad.jar" };
+      String rt[] = { obDir + "src-wad/src" };
       return rt;
     } else if (type.equals("md5.skins")) {
       String rt[] = { obDir + "web/skins" };
