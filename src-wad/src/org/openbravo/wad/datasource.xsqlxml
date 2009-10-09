@@ -31,7 +31,7 @@ package="org.openbravo.wad.Window">
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, 
         (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy) as CreatedByR, 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated,
-        to_char(<PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 'YYYYMMDDHH24MISS') as Updated_TS,  
+        to_char(<PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 'YYYYMMDDHH24MISS') as Updated_Time_Stamp,  
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy, 
         (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy) as UpdatedByR,
         ? AS LANGUAGE 
@@ -275,5 +275,13 @@ package="org.openbravo.wad.Window">
     ]]&#62;</Sql>
     <Parameter name="id"/>
   </SqlMethod>
-
+  
+  <SqlMethod name="getCurrentDBTimestamp" type="preparedStatement" return="string">
+    <Sql>&#60;&#33;[CDATA[ 
+        SELECT to_char(Updated, 'YYYYMMDDHH24MISS') as Updated_Time_Stamp
+          FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP>
+         WHERE <PARAMETER_TMP id="key">key</PARAMETER_TMP> = ? 
+    ]]&#62;</Sql>
+    <Parameter name="id"/>
+  </SqlMethod>
 </SqlClass>
