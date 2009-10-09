@@ -26,6 +26,8 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.modules.VersionUtility;
+import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
 import org.openbravo.model.ad.ui.Element;
@@ -85,6 +87,8 @@ public class ModuleValidator implements SystemValidator {
 
     // check dependency on core
     checkDepencyOnCore(module, result);
+
+    checkDependencyVersion(module, result);
 
     checkJavaPath(module, moduleDir, module.getJavaPackage(), result);
 
@@ -172,6 +176,51 @@ public class ModuleValidator implements SystemValidator {
     final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
     obc.add(Expression.eq("module", module));
     return obc.count() > 0;
+  }
+
+  /**
+   * Checks the defined dependency versions are present in DB
+   * 
+   * @param module
+   * @param result
+   */
+  private void checkDependencyVersion(Module module, SystemValidationResult result) {
+    for (ModuleDependency dependentModule : module.getModuleDependencyList()) {
+      String depDefinedVersion = dependentModule.getFirstVersion();
+      String depActualVersion = dependentModule.getDependentModule().getVersion();
+
+      if (dependentModule.isIncluded()) {
+        // for inclusions check the dependency matches exactly with the defined one
+        if (!depActualVersion.equals(depDefinedVersion)) {
+          result.addError(SystemValidationType.MODULE_ERROR, module.getName()
+              + " defines inclussion of module " + dependentModule.getDependentModule().getName()
+              + " in version " + depDefinedVersion + ", but actual version in DB is "
+              + depActualVersion + ". They must exactly match.");
+        }
+        // check dependencies for included modules recursively
+        checkDependencyVersion(dependentModule.getDependentModule(), result);
+      } else {
+        VersionUtility.VersionComparator vc = new VersionComparator();
+        if (vc.compare(depDefinedVersion, depActualVersion) == 1) {
+          result.addError(SystemValidationType.MODULE_ERROR, module.getName()
+              + " defines dependency on " + dependentModule.getDependentModule().getName()
+              + " start version " + depDefinedVersion + ", but actual version in DB is "
+              + depActualVersion);
+        } else if (dependentModule.getLastVersion() == null
+            && vc.compareMajorVersions(depDefinedVersion, depActualVersion) != 0) {
+          result.addError(SystemValidationType.MODULE_ERROR, module.getName()
+              + " defines dependency on " + dependentModule.getDependentModule().getName()
+              + " start version " + depDefinedVersion + ", but actual version in DB is "
+              + depActualVersion + ". Which has a different major version.");
+        } else if (dependentModule.getLastVersion() != null
+            && vc.compare(depActualVersion, dependentModule.getLastVersion()) == 1) {
+          result.addError(SystemValidationType.MODULE_ERROR, module.getName()
+              + " defines dependency on " + dependentModule.getDependentModule().getName()
+              + " end version " + dependentModule.getLastVersion()
+              + ", but actual version in DB is " + depActualVersion);
+        }
+      }
+    }
   }
 
   private void checkDepencyOnCore(Module module, SystemValidationResult result) {
