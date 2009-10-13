@@ -210,10 +210,6 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <taskdef resource="axis-tasks.properties" classpathref="project.class.path" />
   
-  <taskdef name="CheckSumCondition" classname="org.openbravo.utils.CheckSumCondition">
-    <classpath refid="project.class.path" />
-  </taskdef>
-
   <target name="init" depends="code.rev">
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set." />
   </target>
@@ -248,6 +244,10 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="update.database.if.no.local" />
     
     <antcall target="wad.lib" />
+    
+    <taskdef name="CheckSumCondition" classname="org.openbravo.utils.CheckSumCondition">
+      <classpath refid="project.class.path" />
+    </taskdef>
     
     <CheckSumCondition obDir="${basedir}"
                        type="md5.wad"
@@ -303,6 +303,10 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="compile.complete.war" />
     
     <!-- Calculate wad checksum to enable smartbuild-->
+    <taskdef name="CheckSumCondition" classname="org.openbravo.utils.CheckSumCondition">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    
     <CheckSumCondition obDir="${basedir}"
                            type="md5.wad"
                            property="test.md5.wad"/>
