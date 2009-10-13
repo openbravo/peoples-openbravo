@@ -149,6 +149,7 @@ build.war: build a war file in the lib directory.
     </java>
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${build.sqlc}'/src */src" />
+      <jvmarg value="-Dsqlc.queryExecutionStrategy=traditional"/>
       <classpath refid="project.class.path" />
     </java>
     <copy file="${base.src}/buildAD.xml" tofile="${build.AD}/build.xml" />

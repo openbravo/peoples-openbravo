@@ -96,6 +96,12 @@ generateSprites=no
 # use js/css minimization (in local-context and war-file)
 minimizeJSandCSS=yes
 
+# How sqlc should execute the queries embedded in xsql file at compilation time
+# traditional: only uses the base query ignoring all optional parameters
+# optimized: includes most optional parameter to achieve better performance
+# If optimized fails for some xsql files, downgrade level to traditional
+sqlc.queryExecutionStrategy=optimized
+
 ##################
 # Authentication #
 ##################
