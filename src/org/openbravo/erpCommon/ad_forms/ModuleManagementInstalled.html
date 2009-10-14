@@ -94,12 +94,12 @@ var baseDirectory = "../../../../../web/";
         if (XMLHttpRequestObj.responseText) {
           strText = XMLHttpRequestObj.responseText;
 
-          elements = strText.split("|");
+          var elements = strText.split("|");
           document.getElementById('notifications').innerHTML=elements[0];
           for (var i=1;i<elements.length;i++) {
-            updates = elements[i].split(",");
-            icon = document.getElementById("icon2_"+updates[0]);
-            link = document.getElementById("link_"+updates[0]);
+            var updates = elements[i].split(",");
+            var icon = document.getElementById("icon2_"+updates[0]);
+            var link = document.getElementById("link_"+updates[0]);
             if (icon!=null) {
               icon.className="Tree_Icon_Update";
             }
