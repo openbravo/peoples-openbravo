@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -111,12 +111,13 @@
         INTO v_TableName
         FROM AD_Table 
         WHERE AD_Table_ID=v_AD_Table_ID;
-        
-        EXECUTE IMMEDIATE 
+        IF (v_Record_ID!=0) THEN
+         EXECUTE IMMEDIATE 
           'SELECT AD_Org_ID 
           FROM ' ||  v_TableName || '
           WHERE ' || v_TableName || '_ID =''' || v_Record_ID || ''' AND AD_CLIENT_ID =''' || v_AD_Client_ID || ''' '
           INTO v_AD_Org_ID;
+        END IF;
     END IF;
     
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
