@@ -891,6 +891,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       final String javaDateTimeFormat = properties.getProperty("dateTimeFormat.java");
       vars.setSessionValue("#AD_JavaDateTimeFormat", javaDateTimeFormat);
 
+      final String sqlDateTimeFormat = properties.getProperty("dateTimeFormat.sql");
+      vars.setSessionValue("#AD_SqlDateTimeFormat", sqlDateTimeFormat);
+
       final String jsDateFormat = properties.getProperty("dateFormat.js");
       vars.setSessionValue("#AD_JsDateFormat", jsDateFormat);
 
