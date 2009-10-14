@@ -996,6 +996,14 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     else
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpWindows/<PARAMETER_TMP id="path">Window</PARAMETER_TMP>/<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_NonEditable",discard).createXmlDocument();
 
+    boolean concurrentSave = vars.getSessionValue(tabId + "|concurrentSave").equals("true");
+    if (concurrentSave) {
+      xmlDocument.setParameter("concurrentSave", "var modifiedConcurrently = true;");
+    } else {
+      xmlDocument.setParameter("concurrentSave", "var modifiedConcurrently = false;");
+    }
+    vars.removeSessionValue(tabId + "|concurrentSave");
+
     xmlDocument.setParameter("tabId", tabId);
     ToolBar toolbar = new ToolBar(this, editableTab, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>", (strCommand.equals("NEW") || boolNew || (dataField==null &amp;&amp; (data==null || data.length==0))), "document.frmMain.inp<FIELD_TMP id="keyData">Clave</FIELD_TMP>", "", "..<PARAMETER_TMP id="paramReportPDF">xx</PARAMETER_TMP>", "<PARAMETER_TMP id="paramReportDirectPrint">xx</PARAMETER_TMP>".equals("Y"), "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", strReplaceWith, true, false, false, Utility.hasTabAttachments(this, vars, tabId, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>));
     toolbar.prepareEditionTemplate<PARAMETER_TMP id="sameParent">NoSearch</PARAMETER_TMP>("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, vars.getSessionValue("#ShowTest", "N").equals("Y"), "<PARAMETER_TMP id="paramUIPattern">readonly</PARAMETER_TMP>", Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
@@ -1014,7 +1022,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       // if (!str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) xmlDocument.setParameter("childTabContainer", tabs.childTabs(false));
 	  // else xmlDocument.setParameter("childTabContainer", tabs.childTabs(true));
 	  xmlDocument.setParameter("childTabContainer", tabs.childTabs(false));
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb(), false, !concurrentSave);
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.editionTemplate(strCommand.equals("NEW")));
@@ -1266,6 +1274,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
                  myError.setMessage(Replace.replace(Replace.replace(Utility.messageBD(this,
                     "SavingModifiedRecord", vars.getLanguage()), "\\n", "&lt;br/&gt;"), "&amp;quot;", "\""));
                  myError.setType("Error");
+                 vars.setSessionValue(tabId + "|concurrentSave", "true");
                } 
 		     }		            
           <PARAMETER_TMP id="client">

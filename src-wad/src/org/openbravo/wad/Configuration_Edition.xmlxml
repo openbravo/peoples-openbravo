@@ -55,6 +55,7 @@
   
   <PARAMETER id="updatedTimestamp" name="updatedTimestamp" attribute="value" default=""></PARAMETER>
   
+  <PARAMETER id="concurrentSave" name="concurrentSave" default=""></PARAMETER>
   
   <PARAMETER_TMP id="hasParent"><PARAMETER id="parentOrg" name="parentOrg" default="" attribute="value"/> </PARAMETER_TMP>
   <FIELDS_TMP id="paramHiddenColumns"></FIELDS_TMP>
