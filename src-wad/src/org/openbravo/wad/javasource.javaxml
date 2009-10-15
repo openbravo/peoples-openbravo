@@ -1240,7 +1240,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         Connection con = null;
         try {
             con = this.getTransactionConnection();
-            data = getEditVariables(con, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);            
+            data = getEditVariables(con, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+            data.dateTimeFormat = vars.getSessionValue("#AD_SqlDateTimeFormat");            
             String strSequence = "";
             if(type == 'I') {                
 <PARAMETER_TMP id="keySequence">        strSequence = SequenceIdData.getUUID();

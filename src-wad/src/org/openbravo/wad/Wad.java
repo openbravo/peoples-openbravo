@@ -3118,7 +3118,9 @@ public class Wad extends DefaultHandler {
         fieldsDataUpdate[i].name = ((i > 0) ? ", " : "") + fieldsDataUpdate[i].name;
         if (WadUtility.isTimeField(fieldsDataUpdate[i].reference))
           fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?,'HH24:MI:SS')";
-        else
+        else if (fieldsDataUpdate[i].reference.equals("16")) { // datetime
+          fieldsDataUpdate[i].xmlFormat = "TO_DATE(?, ?)";
+        } else
           fieldsDataUpdate[i].xmlFormat = WadUtility.sqlCasting(pool,
               fieldsDataUpdate[i].reference, fieldsDataUpdate[i].referencevalue)
               + "(?)";
@@ -3126,10 +3128,25 @@ public class Wad extends DefaultHandler {
       xmlDocumentXsql.setData("structure3", fieldsDataUpdate);
     }
     {
-      final FieldsData fieldsDataParameter[] = FieldsData.selectUpdatables(pool, strTab);
-      for (int i = 0; i < fieldsDataParameter.length; i++) {
-        fieldsDataParameter[i].name = Sqlc.TransformaNombreColumna(fieldsDataParameter[i].name);
+      final FieldsData fieldsDataParameterTmp[] = FieldsData.selectUpdatables(pool, strTab);
+      ArrayList<String> fieldParam = new ArrayList<String>();
+      for (int i = 0; i < fieldsDataParameterTmp.length; i++) {
+        fieldParam.add(Sqlc.TransformaNombreColumna(fieldsDataParameterTmp[i].name));
+        fieldsDataParameterTmp[i].name = Sqlc
+            .TransformaNombreColumna(fieldsDataParameterTmp[i].name);
+        if (fieldsDataParameterTmp[i].reference.equals("16")) {
+          // add extra sqldatetime to datetime reference
+          fieldParam.add("dateTimeFormat");
+        }
       }
+      FieldsData fieldsDataParameter[] = new FieldsData[fieldParam.size()];
+      int i = 0;
+      for (String paramName : fieldParam) {
+        fieldsDataParameter[i] = new FieldsData();
+        fieldsDataParameter[i].name = paramName;
+        i++;
+      }
+
       xmlDocumentXsql.setData("structure4", fieldsDataParameter);
     }
     {

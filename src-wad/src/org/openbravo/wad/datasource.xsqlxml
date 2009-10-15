@@ -58,7 +58,7 @@ package="org.openbravo.wad.Window">
     <PARAMETER_TMP id="hasOrgKey"><Field name="currentAdOrgId" value="void"/></PARAMETER_TMP>
     <Field name="trBgcolor" value="void"/>
     <Field name="totalCount" value="void"/>
-    
+    <Field name="dateTimeFormat" value=""/>
   </SqlMethod>
   
   <PARAMETER_TMP id="sectionIsHighVolume"><FIELDS_TMP id="sectionIsHighVolume4">
