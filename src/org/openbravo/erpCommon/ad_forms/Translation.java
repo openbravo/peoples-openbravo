@@ -558,7 +558,6 @@ public class Translation extends HttpSecureAppServlet {
         rows++;
       }
       rs.close();
-      releaseStatement(st);
 
       log4j.info("exportTrl - Records=" + rows + ", DTD=" + document.getDoctype());
 
