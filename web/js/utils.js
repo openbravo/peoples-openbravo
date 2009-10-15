@@ -54,7 +54,6 @@ var isInputFile = false;
 
 var isPageLoading = true;
 var isUserChanges = false;
-var modifiedConcurrently = false;
 var isTabClick = false;
 var isButtonClick = false;
 var calloutProcessedObj = null;
@@ -370,7 +369,7 @@ function checkForChanges(f) {
 		}		
 		var promptConfirmation = typeof top.appFrame.confirmOnChanges == 'undefined' ? true : top.appFrame.confirmOnChanges;
 		var hasUserChanges = typeof top.appFrame.isUserChanges == 'undefined' ? false : top.appFrame.isUserChanges;
-		if (modifiedConcurrently ||(form.inpLastFieldChanged && (hasUserChanges || isButtonClick || isTabClick))) { // if the inpLastFieldChanged exists and there is a user change
+		if (form.inpLastFieldChanged && (hasUserChanges || isButtonClick || isTabClick)) { // if the inpLastFieldChanged exists and there is a user change
 			var autoSaveFlag = autosave;		
 			if (promptConfirmation && hasUserChanges) {
 				autoSaveFlag = showJSMessage(25);

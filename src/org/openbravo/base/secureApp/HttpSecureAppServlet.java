@@ -1172,10 +1172,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
             final VariablesSecureApp vars = new VariablesSecureApp(request);
             final String strTabId = vars.getStringParameter("inpTabId");
-
-            if (!vars.getSessionValue(strTabId + "|concurrentSave").equals("true")) {
-              vars.setSessionObject(strTabId + "|failedAutosave", true);
-            }
+            vars.setSessionObject(strTabId + "|failedAutosave", true);
 
             if (!popupWindow) {
               vars.setSessionValue(strTabId + "|requestURL", request.getRequestURL().toString());
