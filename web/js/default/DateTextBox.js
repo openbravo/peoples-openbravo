@@ -140,7 +140,7 @@ isValidDate = function(/*String*/str_datetime, /*String*/str_datetimeFormat) {
   var str_timeFormat = str_datetimeFormat.substring((isFourDigits?11:9), str_datetimeFormat.length);
 
   if (str_time == null || str_time == "") str_time = "00:00:00";
-  if (str_timeFormat == null || str_timeFormat == "") str_timeFormat = "HH:mm:ss";
+  if (str_timeFormat == null || str_timeFormat == "") str_timeFormat = "HH24:MI:SS";
 
   if (this.getDateTime(str_date, str_dateFormat, str_time, str_timeFormat)){ 
     return true 
@@ -184,7 +184,7 @@ getDateTime = function(/*String*/str_date, /*String*/str_dateFormat, /*String*/s
 
   if ((str_time == null || str_time == "") && (str_timeFormat == null || str_timeFormat == "")) {
     str_time = "00:00:00";
-    str_timeFormat = "HH:mm:ss";
+    str_timeFormat = "HH24:MI:SS";
   }
 
   var timeBlock = new Array();
