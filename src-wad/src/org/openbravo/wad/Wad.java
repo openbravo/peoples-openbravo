@@ -3170,12 +3170,16 @@ public class Wad extends DefaultHandler {
             && !fieldsDataValue[i].name.equalsIgnoreCase("CreatedBy")
             && !fieldsDataValue[i].name.equalsIgnoreCase("Updated")
             && !fieldsDataValue[i].name.equalsIgnoreCase("UpdatedBy")) {
-          if (WadUtility.isTimeField(fieldsDataValue[i].reference))
+          if (WadUtility.isTimeField(fieldsDataValue[i].reference)) {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_TIMESTAMP(?, 'HH24:MI:SS')";
-          else
+          } else if (fieldsDataValue[i].reference.equals("16")) {
+            // datetime
+            fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_DATE(?, ?)";
+          } else {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "")
                 + WadUtility.sqlCasting(pool, fieldsDataValue[i].reference,
                     fieldsDataValue[i].referencevalue) + "(?)";
+          }
         } else
           fieldsDataValue[i].name = "";
       }
@@ -3193,6 +3197,11 @@ public class Wad extends DefaultHandler {
           fieldsDataParameterInsert[i].name = Sqlc
               .TransformaNombreColumna(fieldsDataParameterInsert[i].name);
           vecAux.addElement(fieldsDataParameterInsert[i]);
+          if (fieldsDataParameterInsert[i].reference.equals("16")) {
+            FieldsData paramDateTime = new FieldsData();
+            paramDateTime.name = "dateTimeFormat";
+            vecAux.addElement(paramDateTime);
+          }
         }
       }
       FieldsData[] fieldsDataParameterInsert1 = null;
