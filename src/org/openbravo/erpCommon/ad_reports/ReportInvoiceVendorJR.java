@@ -167,10 +167,16 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
     try {
-      data = InvoiceEditionData.select(this, strCurrencyId, Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "InvoiceVendorJR"), Utility.getContext(this, vars, "#User_Client",
-          "InvoiceVendorJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-          strcBpartnetId, strcProjectId, strissotrx);
+      if (strcProjectId != null && !strcProjectId.equals(""))
+        data = InvoiceEditionData.selectProject(this, strCurrencyId, Utility.getContext(this, vars,
+            "#AccessibleOrgTree", "InvoiceVendorJR"), Utility.getContext(this, vars,
+            "#User_Client", "InvoiceVendorJR"), strDateFrom, DateTimeData.nDaysAfter(this,
+             strDateTo, "1"), strcBpartnetId, strcProjectId, strissotrx);
+      else
+        data = InvoiceEditionData.select(this, strCurrencyId, Utility.getContext(this, vars,
+            "#AccessibleOrgTree", "InvoiceVendorJR"), Utility.getContext(this, vars,
+            "#User_Client", "InvoiceVendorJR"), strDateFrom, DateTimeData.nDaysAfter(this,
+            strDateTo, "1"), strcBpartnetId, strcProjectId, strissotrx);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }

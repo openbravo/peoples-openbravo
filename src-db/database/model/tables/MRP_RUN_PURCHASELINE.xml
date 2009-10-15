@@ -123,6 +123,10 @@
       <index name="MRP_RUN_PURCHLINE_PURCHASE_ID" unique="false">
         <index-column name="MRP_RUN_PURCHASE_ID"/>
       </index>
+      <index name="MRP_RUN_PURHCLINE_PURCH_PROD" unique="false">
+        <index-column name="MRP_RUN_PURCHASE_ID"/>
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
       <check name="MRPRUNPURLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="MRPRUNPURLN_ISFIXED_CHECK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>
     </table>

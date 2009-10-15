@@ -104,6 +104,9 @@
       <foreign-key foreignTable="MA_PROCESS" name="MAPROCESS_MAWRPHASE">
         <reference local="MA_PROCESS_ID" foreign="MA_PROCESS_ID"/>
       </foreign-key>
+      <index name="MA_WRPHASE_WORKREQUIREMENT" unique="false">
+        <index-column name="MA_WORKREQUIREMENT_ID"/>
+      </index>
       <check name="MA_WRPHASE_CLOSED_CHECK"><![CDATA[CLOSED IN ('Y', 'N')]]></check>
       <check name="MA_WRPHASE_GROUPUSE_CHECK"><![CDATA[GROUPUSE IN ('Y', 'N')]]></check>
       <check name="MA_WRPHASE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
