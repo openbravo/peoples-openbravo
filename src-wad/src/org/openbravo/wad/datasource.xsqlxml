@@ -27,12 +27,12 @@ package="org.openbravo.wad.Window">
   <SqlMethod name="selectEdit" type="preparedStatement" return="multiple">
     <SqlMethodComment>Select for edit</SqlMethodComment>
     <Sql>&#60;&#33;[CDATA[
-        SELECT <PARAMETER_TMP id="fields">field</PARAMETER_TMP> 
-        to_char(<PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, ?) as created, 
+        SELECT to_char(<PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, ?) as created, 
         (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy) as CreatedByR, 
         to_char(<PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, ?) as updated, 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy, 
         (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy) as UpdatedByR,
+        <PARAMETER_TMP id="fields">field</PARAMETER_TMP> 
         ? AS LANGUAGE 
         FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP><PARAMETER_TMP id="tables">tables</PARAMETER_TMP>
         WHERE 2=2 
@@ -44,6 +44,7 @@ package="org.openbravo.wad.Window">
     ]]&#62;</Sql>
     <Parameter name="dateTimeFormat"/>
     <Parameter name="dateTimeFormat"/>
+    <PARAMETER_TMP id="parameterFields">xx</PARAMETER_TMP>
     <Parameter name="paramLanguage"/>
 <PARAMETER_TMP id="parameters">xx</PARAMETER_TMP>
 <PARAMETER_TMP id="parent">    <Parameter name="param1" optional="true" after="AND 1=1 " id="paramKeyParent"> AND <PARAMETER_TMP id="keyParent">xx</PARAMETER_TMP> = ? </Parameter></PARAMETER_TMP>
