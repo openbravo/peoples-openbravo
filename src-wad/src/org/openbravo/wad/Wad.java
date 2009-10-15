@@ -3132,8 +3132,6 @@ public class Wad extends DefaultHandler {
       ArrayList<String> fieldParam = new ArrayList<String>();
       for (int i = 0; i < fieldsDataParameterTmp.length; i++) {
         fieldParam.add(Sqlc.TransformaNombreColumna(fieldsDataParameterTmp[i].name));
-        fieldsDataParameterTmp[i].name = Sqlc
-            .TransformaNombreColumna(fieldsDataParameterTmp[i].name);
         if (fieldsDataParameterTmp[i].reference.equals("16")) {
           // add extra sqldatetime to datetime reference
           fieldParam.add("dateTimeFormat");
