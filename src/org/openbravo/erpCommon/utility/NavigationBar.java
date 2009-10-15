@@ -89,10 +89,11 @@ public class NavigationBar {
       toolbar.append("  <TD class=\"Main_NavBar_separator_cell\"></TD>\n");
     }
     toolbar.append("  <TD class=\"Main_NavBar_LeftButton_cell\">\n");
-    toolbar
-        .append(
-            "    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onClick=\"submitCommandForm('DEFAULT', false, null, '")
-        .append(servlet_action);
+    toolbar.append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onClick=\"");
+    if (!validateChangesOnRefresh) {
+      toolbar.append("document.frmMain.autosave.value='N'; ");
+    }
+    toolbar.append("submitCommandForm('DEFAULT', false, null, '").append(servlet_action);
     toolbar.append("', '_self', null, ").append(validateChangesOnRefresh ? "true" : "false")
         .append(");return false;\" border=\"0\" onmouseover=\"window.status='");
     auxText = Utility.messageBD(conn, "Refresh", language);

@@ -54,6 +54,7 @@
   <PARAMETER_TMP id="hasOrgKey"><PARAMETER id="paramCurrentOrgId" name = "paramCurrentOrgId" attribute="value" default=""/></PARAMETER_TMP>
   
   <PARAMETER id="updatedTimestamp" name="updatedTimestamp" attribute="value" default=""></PARAMETER>
+  <PARAMETER id="autosave" name="autosave" attribute="value" default="N"></PARAMETER>
   
   
   <PARAMETER_TMP id="hasParent"><PARAMETER id="parentOrg" name="parentOrg" default="" attribute="value"/> </PARAMETER_TMP>
