@@ -630,7 +630,7 @@ public class Translation extends HttpSecureAppServlet {
       // handler.getUpdateCount();
       return "";
     } catch (final Exception e) {
-      translationlog4j.error("importTrl", e);
+      translationlog4j.error("importTrlFile - error parsing file: " + fileName, e);
       return e.toString();
     }
   } // importTrl
