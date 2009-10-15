@@ -333,16 +333,6 @@
     </Sql>
     <Parameter name="cDebtPaymentId"/>
   </SqlMethod>
-  <SqlMethod name="selectPaymentWithHeldAmount" type="preparedStatement" return="String">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT WITHHOLDINGAMOUNT FROM C_DEBT_PAYMENT
-        WHERE C_DEBT_PAYMENT_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="cDebtPaymentId"/>
-  </SqlMethod>
   <SqlMethod name="processSettlement" connection="true" type="callableStatement"  return="object" object="CreateFromBankData">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
