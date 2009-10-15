@@ -36,7 +36,7 @@
           Ad_Column_Identifier(to_char('C_BankAccount'), to_char(C_BankAccount_ID), to_char(?)) AS BANK,
           (CASE IsReceipt WHEN 'Y' THEN (p_amount - p_woamount) ELSE (p_amount - p_woamount)*(-1) END) AS AMOUNT,
           (CASE IsReceipt WHEN 'Y' THEN (p_amount - p_woamount) ELSE (p_amount - p_woamount)*(-1) END) AS AMOUNT2,
-          C_Currency_Convert(p_amount,b.C_Currency_ID,
+          C_Currency_Convert((CASE IsReceipt WHEN 'Y' THEN (p_amount) ELSE (p_amount)*(-1) END),b.C_Currency_ID,
           	(select c_currency_id from c_bankaccount c where c.c_bankaccount_id = b.c_bankaccount_id),
           	to_date(?),to_char(null),AD_Client_ID,AD_Org_ID
           ) AS CONVERTED
