@@ -95,6 +95,10 @@
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MASEQPRODUCT">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
+      <index name="MA_SEQUENCEPRODUCT_PROD_SEQ" unique="false">
+        <index-column name="M_PRODUCT_ID"/>
+        <index-column name="MA_SEQUENCE_ID"/>
+      </index>
       <index name="MA_SEQ_PROD_SEQ_ID" unique="false">
         <index-column name="MA_SEQUENCE_ID"/>
       </index>
