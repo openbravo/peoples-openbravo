@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5210';
+  var number = '5230';
   return number;
 }
 
@@ -3484,12 +3484,15 @@ function getDateFormat(str_format) {
     format = format.replace("DD","%d");
     format = format.substring(0,8);
   }
-  str_format = str_format.replace("hh","HH").replace(":MM",":mm").replace(".MM",".mm").replace("SS","ss");
+  str_format = str_format.replace("hh","HH").replace("HH24","HH").replace("mi","MI").replace("ss","SS");
+  str_format = str_format.replace("%H","HH").replace("HH:%m","HH:MI").replace("HH.%m","HH.MI").replace("%S","SS");
+  str_format = str_format.replace("HH:mm","HH:MI").replace("HH.mm","HH.MI");
+  str_format = str_format.replace("HH:MM","HH:MI").replace("HH.MM","HH.MI");
   if (str_format==null || str_format=="" || str_format=="null") str_format = defaultDateFormat;
-  else if (str_format.indexOf(" HH:mm:ss")!=-1) format += " %H:%M:%S";
-  else if (str_format.indexOf(" HH:mm")!=-1) format += " %H:%M";
-  else if (str_format.indexOf(" HH.mm.ss")!=-1) format += " %H.%M.%S";
-  else if (str_format.indexOf(" HH.mm")!=-1) format += " %H.%M";
+  else if (str_format.indexOf(" HH:MI:SS")!=-1) format += " %H:%M:%S";
+  else if (str_format.indexOf(" HH:MI")!=-1) format += " %H:%M";
+  else if (str_format.indexOf(" HH.MI.SS")!=-1) format += " %H.%M.%S";
+  else if (str_format.indexOf(" HH.MI")!=-1) format += " %H.%M";
   return format;
 }
 
