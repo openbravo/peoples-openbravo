@@ -836,9 +836,10 @@ public class Wad extends DefaultHandler {
       final Vector<Object> vecParameters = new Vector<Object>();
       final Vector<Object> vecTableParameters = new Vector<Object>();
       final Vector<Object> vecTotalParameters = new Vector<Object>();
+      final Vector<String> vecFieldParameters = new Vector<String>();
       processTable(parentsFieldsData, tabsData.tabid, vecFields, vecTables, vecWhere, vecOrder,
           vecParameters, tableName, tabsData.windowtype, tabsData.tablevel, vecTableParameters,
-          fieldsData);
+          fieldsData, vecFieldParameters);
       final StringBuffer strFields = new StringBuffer();
       log4j.debug("Executing de select conformation");
       for (int i = 0; i < vecTableParameters.size(); i++) {
@@ -1028,7 +1029,7 @@ public class Wad extends DefaultHandler {
             keyColumnName, strFields.toString(), strTables.toString(), strOrder.toString(),
             strWhere.toString(), vecParameters, tabsData.filterclause, selCol, tabsData.tablevel,
             tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey,
-            tabsData.javapackage);
+            tabsData.javapackage, vecFieldParameters);
 
         /************************************************
          * JAVA of the combo reloads
@@ -1267,14 +1268,15 @@ public class Wad extends DefaultHandler {
    *          Vector of the from clause parameters.
    * @param fieldsDataSelectAux
    *          Array with the fields of the tab.
+   * @param vecFieldParameters
    * @throws ServletException
    * @throws IOException
    */
   private void processTable(FieldsData[] parentsFieldsData, String strTab,
       Vector<Object> vecFields, Vector<Object> vecTables, Vector<Object> vecWhere,
       Vector<Object> vecOrder, Vector<Object> vecParameters, String tableName, String windowType,
-      String tablevel, Vector<Object> vecTableParameters, FieldsData[] fieldsDataSelectAux)
-      throws ServletException, IOException {
+      String tablevel, Vector<Object> vecTableParameters, FieldsData[] fieldsDataSelectAux,
+      Vector<String> vecFieldParameters) throws ServletException, IOException {
     int ilist = 0;
     final int itable = 0;
     final Vector<Object> vecCounters = new Vector<Object>();
@@ -1295,8 +1297,14 @@ public class Wad extends DefaultHandler {
         } else if (fieldsData[i].reference.equals("20")) {
           vecFields.addElement("COALESCE(" + tableName + "." + fieldsData[i].name + ", 'N') AS "
               + fieldsData[i].name);
-        } else
+        } else if (fieldsData[i].reference.equals("16")) { // datetime
+          vecFields.addElement("TO_CHAR(" + tableName + "." + fieldsData[i].name + ", ?) AS "
+              + fieldsData[i].name);
+          vecFieldParameters.addElement("<Parameter name=\"dateTimeFormat\"/>");
+        } else {
           vecFields.addElement(tableName + "." + fieldsData[i].name);
+        }
+
         if (fieldsData[i].reference.equals("19") && // TableDir
             fieldsData[i].isdisplayed.equals("Y")) {
           final Vector<Object> vecSubFields = new Vector<Object>();
@@ -2745,7 +2753,8 @@ public class Wad extends DefaultHandler {
       String strTables, String strOrder, String strWhere, Vector<Object> vecParametersTop,
       String strFilter, EditionFieldsData[] selCol, String tablevel, String windowType,
       Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
-      boolean isSecondaryKey, String javaPackage) throws ServletException, IOException {
+      boolean isSecondaryKey, String javaPackage, Vector<String> vecFieldParameters)
+      throws ServletException, IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
     final String[] discard = { "", "", "", "", "", "", "", "", "", "" };
@@ -2803,7 +2812,6 @@ public class Wad extends DefaultHandler {
       parentsFieldsData[0].name = WadUtility.columnName(parentsFieldsData[0].name,
           parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule);
     }
-
     xmlDocumentXsql.setParameter("fields", strFields);
 
     // Relation select
@@ -2812,13 +2820,21 @@ public class Wad extends DefaultHandler {
     xmlDocumentXsql.setParameter("filter", strFilter);
     xmlDocumentXsql.setParameter("order", strOrder);
     final StringBuffer strParameters = new StringBuffer();
+    final StringBuffer strParametersFields = new StringBuffer();
+
+    for (String param : vecFieldParameters) {
+      strParametersFields.append(param);
+    }
+
     for (int i = 0; i < vecTableParametersTop.size(); i++) {
       strParameters.append(vecTableParametersTop.elementAt(i).toString()).append("\n");
     }
     for (int i = 0; i < vecParametersTop.size(); i++) {
       strParameters.append(vecParametersTop.elementAt(i).toString()).append("\n");
     }
+    xmlDocumentXsql.setParameter("parameterFields", strParametersFields.toString());
     xmlDocumentXsql.setParameter("parameters", strParameters.toString());
+
     // Parent field
     if (parentsFieldsData != null && parentsFieldsData.length > 0) {
       final Vector<Object> vecCounters = new Vector<Object>();
@@ -3102,7 +3118,9 @@ public class Wad extends DefaultHandler {
         fieldsDataUpdate[i].name = ((i > 0) ? ", " : "") + fieldsDataUpdate[i].name;
         if (WadUtility.isTimeField(fieldsDataUpdate[i].reference))
           fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?,'HH24:MI:SS')";
-        else
+        else if (fieldsDataUpdate[i].reference.equals("16")) { // datetime
+          fieldsDataUpdate[i].xmlFormat = "TO_DATE(?, ?)";
+        } else
           fieldsDataUpdate[i].xmlFormat = WadUtility.sqlCasting(pool,
               fieldsDataUpdate[i].reference, fieldsDataUpdate[i].referencevalue)
               + "(?)";
@@ -3110,10 +3128,23 @@ public class Wad extends DefaultHandler {
       xmlDocumentXsql.setData("structure3", fieldsDataUpdate);
     }
     {
-      final FieldsData fieldsDataParameter[] = FieldsData.selectUpdatables(pool, strTab);
-      for (int i = 0; i < fieldsDataParameter.length; i++) {
-        fieldsDataParameter[i].name = Sqlc.TransformaNombreColumna(fieldsDataParameter[i].name);
+      final FieldsData fieldsDataParameterTmp[] = FieldsData.selectUpdatables(pool, strTab);
+      ArrayList<String> fieldParam = new ArrayList<String>();
+      for (int i = 0; i < fieldsDataParameterTmp.length; i++) {
+        fieldParam.add(Sqlc.TransformaNombreColumna(fieldsDataParameterTmp[i].name));
+        if (fieldsDataParameterTmp[i].reference.equals("16")) {
+          // add extra sqldatetime to datetime reference
+          fieldParam.add("dateTimeFormat");
+        }
       }
+      FieldsData fieldsDataParameter[] = new FieldsData[fieldParam.size()];
+      int i = 0;
+      for (String paramName : fieldParam) {
+        fieldsDataParameter[i] = new FieldsData();
+        fieldsDataParameter[i].name = paramName;
+        i++;
+      }
+
       xmlDocumentXsql.setData("structure4", fieldsDataParameter);
     }
     {
@@ -3139,12 +3170,16 @@ public class Wad extends DefaultHandler {
             && !fieldsDataValue[i].name.equalsIgnoreCase("CreatedBy")
             && !fieldsDataValue[i].name.equalsIgnoreCase("Updated")
             && !fieldsDataValue[i].name.equalsIgnoreCase("UpdatedBy")) {
-          if (WadUtility.isTimeField(fieldsDataValue[i].reference))
+          if (WadUtility.isTimeField(fieldsDataValue[i].reference)) {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_TIMESTAMP(?, 'HH24:MI:SS')";
-          else
+          } else if (fieldsDataValue[i].reference.equals("16")) {
+            // datetime
+            fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_DATE(?, ?)";
+          } else {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "")
                 + WadUtility.sqlCasting(pool, fieldsDataValue[i].reference,
                     fieldsDataValue[i].referencevalue) + "(?)";
+          }
         } else
           fieldsDataValue[i].name = "";
       }
@@ -3162,6 +3197,11 @@ public class Wad extends DefaultHandler {
           fieldsDataParameterInsert[i].name = Sqlc
               .TransformaNombreColumna(fieldsDataParameterInsert[i].name);
           vecAux.addElement(fieldsDataParameterInsert[i]);
+          if (fieldsDataParameterInsert[i].reference.equals("16")) {
+            FieldsData paramDateTime = new FieldsData();
+            paramDateTime.name = "dateTimeFormat";
+            vecAux.addElement(paramDateTime);
+          }
         }
       }
       FieldsData[] fieldsDataParameterInsert1 = null;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -105,7 +105,6 @@ public class WADDateTime extends WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", (textButton.equals("") ? "" : "btn_") + getData("CssSize"));
     xmlDocument.setParameter("hasButton", (textButton.equals("") ? "TextButton_ContentCell" : ""));
-    xmlDocument.setParameter("maxlength", getData("FieldLength"));
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
     xmlDocument.setParameter("invalid", WADControl.invalid);
     xmlDocument.setParameter("missing", WADControl.missing);
@@ -148,7 +147,6 @@ public class WADDateTime extends WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", (textButton.equals("") ? "" : "btn_") + getData("CssSize"));
     xmlDocument.setParameter("hasButton", (textButton.equals("") ? "TextButton_ContentCell" : ""));
-    xmlDocument.setParameter("maxlength", getData("FieldLength"));
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
     xmlDocument.setParameter("invalid", WADControl.invalid);
     xmlDocument.setParameter("missing", WADControl.missing);
@@ -183,7 +181,12 @@ public class WADDateTime extends WADControl {
   public String toJava() {
     StringBuffer text = new StringBuffer();
     text.append("xmlDocument.setParameter(\"").append(getData("ColumnName")).append(
-        "_Format\", vars.getSessionValue(\"#AD_SqlDateFormat\"));");
+        "_Format\", vars.getSessionValue(\"#AD_SqlDateTimeFormat\"));");
+    text
+        .append("xmlDocument.setParameter(\"")
+        .append(getData("ColumnName"))
+        .append(
+            "_Maxlength\", Integer.toString(vars.getSessionValue(\"#AD_SqlDateTimeFormat\").length()));");
     return text.toString();
   }
 }

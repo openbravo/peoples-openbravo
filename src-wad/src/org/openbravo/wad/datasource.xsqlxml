@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,12 +27,12 @@ package="org.openbravo.wad.Window">
   <SqlMethod name="selectEdit" type="preparedStatement" return="multiple">
     <SqlMethodComment>Select for edit</SqlMethodComment>
     <Sql>&#60;&#33;[CDATA[
-        SELECT <PARAMETER_TMP id="fields">field</PARAMETER_TMP> 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, 
+        SELECT to_char(<PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, ?) as created, 
         (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy) as CreatedByR, 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 
+        to_char(<PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, ?) as updated, 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy, 
         (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy) as UpdatedByR,
+        <PARAMETER_TMP id="fields">field</PARAMETER_TMP> 
         ? AS LANGUAGE 
         FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP><PARAMETER_TMP id="tables">tables</PARAMETER_TMP>
         WHERE 2=2 
@@ -42,6 +42,9 @@ package="org.openbravo.wad.Window">
         <PARAMETER_TMP id="client">AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN ('1') </PARAMETER_TMP>
         <PARAMETER_TMP id="org">   AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN ('1') </PARAMETER_TMP>
     ]]&#62;</Sql>
+    <Parameter name="dateTimeFormat"/>
+    <Parameter name="dateTimeFormat"/>
+    <PARAMETER_TMP id="parameterFields">xx</PARAMETER_TMP>
     <Parameter name="paramLanguage"/>
 <PARAMETER_TMP id="parameters">xx</PARAMETER_TMP>
 <PARAMETER_TMP id="parent">    <Parameter name="param1" optional="true" after="AND 1=1 " id="paramKeyParent"> AND <PARAMETER_TMP id="keyParent">xx</PARAMETER_TMP> = ? </Parameter></PARAMETER_TMP>
@@ -55,7 +58,7 @@ package="org.openbravo.wad.Window">
     <PARAMETER_TMP id="hasOrgKey"><Field name="currentAdOrgId" value="void"/></PARAMETER_TMP>
     <Field name="trBgcolor" value="void"/>
     <Field name="totalCount" value="void"/>
-    
+    <Field name="dateTimeFormat" value=""/>
   </SqlMethod>
   
   <PARAMETER_TMP id="sectionIsHighVolume"><FIELDS_TMP id="sectionIsHighVolume4">
