@@ -59,7 +59,7 @@ public class WADValidator {
 
   private void validateIdentifier(WADValidationResult result) {
     try {
-      WADValidatorData data[] = WADValidatorData.select(conn, getTabIDs());
+      WADValidatorData data[] = WADValidatorData.checkIdentifier(conn, getTabIDs());
       for (WADValidatorData issue : data) {
         result.addError(WADValidationType.MISSING_IDENTIFIER, issue.windowname + " > "
             + issue.tabname + ": table " + issue.tablename + " has not identifier.");

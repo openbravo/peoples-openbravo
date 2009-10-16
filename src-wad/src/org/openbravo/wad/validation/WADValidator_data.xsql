@@ -19,7 +19,7 @@
 -->
 
 <SqlClass name="WADValidatorData" package="org.openbravo.wad.validation">
-  <SqlMethod name="select" type="preparedStatement" return="multiple">
+  <SqlMethod name="checkIdentifier" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
         select tb.ad_window_id, tb.ad_tab_id, tb.ad_table_id, 
