@@ -53,6 +53,7 @@ public class WADValidator {
     WADValidationResult result = new WADValidationResult();
     if (tabs != null && tabs.length > 0) {
       validateIdentifier(result);
+      validateKey(result);
     }
     return result;
   }
@@ -63,6 +64,19 @@ public class WADValidator {
       for (WADValidatorData issue : data) {
         result.addError(WADValidationType.MISSING_IDENTIFIER, issue.windowname + " > "
             + issue.tabname + ": table " + issue.tablename + " has not identifier.");
+      }
+    } catch (Exception e) {
+      result.addWarning(WADValidationType.SQL,
+          "Error when executing query for validating identifiers: " + e.getMessage());
+    }
+  }
+
+  private void validateKey(WADValidationResult result) {
+    try {
+      WADValidatorData data[] = WADValidatorData.checkKey(conn, getTabIDs());
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.MISSING_KEY, issue.windowname + " > " + issue.tabname
+            + ": table " + issue.tablename + " has not primary key.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
