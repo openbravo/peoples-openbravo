@@ -524,21 +524,21 @@ build.war: build a war file in the lib directory.
     <copy todir="${base.context}/web" encoding="UTF-8">
       <fileset dir="${base.modules}">
         <include name="*/web/*/**" />
-        <exclude name="*/web/**/skins/**" />
+        <exclude name="*/web/*/skins/**" />
       </fileset>
       <mapper type="regexp" from="(.*)(\${file.separator}web)(.*)" to="\3" />
     </copy>
 
     <copy todir="${base.context}/web/skins/ltr" encoding="UTF-8">
       <fileset dir="${base.modules}">
-        <include name="*/web/*/**/skins/**" />
+        <include name="*/web/*/skins/**" />
       </fileset>
       <mapper type="regexp" from="(.*)(\${file.separator}web)(.*\${file.separator})(skins\${file.separator})(.*)" to="\3\5" />
     </copy>
 
     <copy todir="${base.context}/web/skins/rtl" encoding="UTF-8">
       <fileset dir="${base.modules}">
-        <include name="*/web/*/**/skins/**" />
+        <include name="*/web/*/skins/**" />
       </fileset>
       <mapper type="regexp" from="(.*)(\${file.separator}web)(.*\${file.separator})(skins\${file.separator})(.*)" to="\3\5" />
     </copy>
