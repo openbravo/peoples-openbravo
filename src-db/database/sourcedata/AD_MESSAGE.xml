@@ -63656,6 +63656,17 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--322D72C9F8D240AD8FB1168560954D08-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--322D72C9F8D240AD8FB1168560954D08--></AD_MESSAGE>
 
+<!--338EF3E59A594EFC807843510BDEAF46--><AD_MESSAGE>
+<!--338EF3E59A594EFC807843510BDEAF46-->  <AD_MESSAGE_ID><![CDATA[338EF3E59A594EFC807843510BDEAF46]]></AD_MESSAGE_ID>
+<!--338EF3E59A594EFC807843510BDEAF46-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--338EF3E59A594EFC807843510BDEAF46-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--338EF3E59A594EFC807843510BDEAF46-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--338EF3E59A594EFC807843510BDEAF46-->  <VALUE><![CDATA[SystemLoginRequired]]></VALUE>
+<!--338EF3E59A594EFC807843510BDEAF46-->  <MSGTEXT><![CDATA[It is required a System role to login.]]></MSGTEXT>
+<!--338EF3E59A594EFC807843510BDEAF46-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--338EF3E59A594EFC807843510BDEAF46-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--338EF3E59A594EFC807843510BDEAF46--></AD_MESSAGE>
+
 <!--33ED747B6F0B4F27B0000B5F1818F8BB--><AD_MESSAGE>
 <!--33ED747B6F0B4F27B0000B5F1818F8BB-->  <AD_MESSAGE_ID><![CDATA[33ED747B6F0B4F27B0000B5F1818F8BB]]></AD_MESSAGE_ID>
 <!--33ED747B6F0B4F27B0000B5F1818F8BB-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -63751,7 +63762,7 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--3AC018B68C664063832D84ECDF0E1B68-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3AC018B68C664063832D84ECDF0E1B68-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3AC018B68C664063832D84ECDF0E1B68-->  <VALUE><![CDATA[NUMBER_OF_CONCURRENT_USERS_REACHED]]></VALUE>
-<!--3AC018B68C664063832D84ECDF0E1B68-->  <MSGTEXT><![CDATA[You have exceeded the number of Global Concurrent Users licensed to use this system. <br>Please wait until one or more users log out of the system and then retry again.<br>Contact your Openbravo Business Partner if you want to purchase a subscription for additional users.]]></MSGTEXT>
+<!--3AC018B68C664063832D84ECDF0E1B68-->  <MSGTEXT><![CDATA[You have exceeded the number of Global Concurrent Users licensed to use this system. <br>You only can login as System Administrator or wait until one or more users log out of the system and then retry again.<br>Contact your Openbravo Business Partner if you want to purchase a subscription for additional users.]]></MSGTEXT>
 <!--3AC018B68C664063832D84ECDF0E1B68-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--3AC018B68C664063832D84ECDF0E1B68-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3AC018B68C664063832D84ECDF0E1B68--></AD_MESSAGE>
@@ -64103,7 +64114,7 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <VALUE><![CDATA[OPS_INSTANCE_NOT_ACTIVE]]></VALUE>
-<!--5F53F7FE0703477883226EA1287EC5BF-->  <MSGTEXT><![CDATA[Your Professional Subscription has expired. However no data has been lost.<br>To renew your Professional Subscription, contact your assigned partner.]]></MSGTEXT>
+<!--5F53F7FE0703477883226EA1287EC5BF-->  <MSGTEXT><![CDATA[Your Professional Subscription has expired. However no data has been lost.<br>To renew your Professional Subscription, contact your assigned partner.<br>Only System Administrator users can log in.]]></MSGTEXT>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5F53F7FE0703477883226EA1287EC5BF--></AD_MESSAGE>

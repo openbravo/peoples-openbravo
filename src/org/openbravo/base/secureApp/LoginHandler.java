@@ -56,7 +56,7 @@ public class LoginHandler extends HttpBaseServlet {
 
       if (strUserAuth != null) {
         req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
-        checkLicenseAndGo(res, vars);
+        checkLicenseAndGo(res, vars, strUserAuth);
       } else {
         goToRetry(res, vars, null, "Identification failure. Try again.", "Error",
             "../security/Login_FS.html");
@@ -64,11 +64,26 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
-  private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars)
-      throws IOException {
+  private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars,
+      String strUserAuth) throws IOException {
     OBContext.enableAsAdminContext();
     try {
       ActivationKey ak = new ActivationKey();
+      boolean hasSystem = false;
+
+      try {
+        hasSystem = SeguridadData.hasSystemRole(this, strUserAuth);
+      } catch (Exception ignore) {
+        log4j.error(ignore);
+      }
+      String msgType, action;
+      if (hasSystem) {
+        msgType = "Warning";
+        action = "../security/Menu.html";
+      } else {
+        msgType = "Error";
+        action = "../security/Login_FS.html";
+      }
 
       switch (ak.checkOPSLimitations()) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
@@ -76,8 +91,6 @@ public class LoginHandler extends HttpBaseServlet {
             .getLanguage());
         String title = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE", vars
             .getLanguage());
-        String msgType = "Error";
-        String action = "../security/Login_FS.html";
         goToRetry(res, vars, msg, title, msgType, action);
         break;
       case NUMBER_OF_SOFT_USERS_REACHED:
@@ -90,8 +103,6 @@ public class LoginHandler extends HttpBaseServlet {
       case OPS_INSTANCE_NOT_ACTIVE:
         msg = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE", vars.getLanguage());
         title = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE_TITLE", vars.getLanguage());
-        action = "../security/Menu.html";
-        msgType = "Warning";
         goToRetry(res, vars, msg, title, msgType, action);
         break;
       default:

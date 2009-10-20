@@ -312,5 +312,17 @@
      <Parameter name="role"/>
      <Parameter name="id"/>
    </SqlMethod>
+   
+   <SqlMethod name="hasSystemRole" type="preparedStatement" return="boolean">
+     <Sql><![CDATA[
+          select count(*) AS TOTAL
+           FROM AD_USER U, AD_USER_ROLES UR, AD_ROLE R
+          WHERE U.AD_USER_ID = UR.AD_USER_ID
+            AND UR.AD_ROLE_ID = R.AD_ROLE_ID
+            AND R.USERLEVEL='S'
+            AND U.AD_USER_ID=?
+     ]]></Sql>
+     <Parameter name="user"/>
+   </SqlMethod>
 
 </SqlClass>
