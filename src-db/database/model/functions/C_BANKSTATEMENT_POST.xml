@@ -117,13 +117,17 @@
       v_AD_Client_ID,
       v_AD_Org_ID
     FROM C_BANKSTATEMENT
-    WHERE C_BankStatement_ID=v_Record_ID;
+    WHERE C_BankStatement_ID=v_Record_ID
+    FOR UPDATE;
 		IF(v_Processing='Y') THEN
 		RAISE_APPLICATION_ERROR(-20000, '@OtherProcessActive@') ;
 		END IF;
 		IF(v_Posted='Y') THEN
 		RAISE_APPLICATION_ERROR(-20000, '@BankStatementDocumentPosted@') ;
 		END IF;
+    UPDATE C_BANKSTATEMENT
+    SET PROCESSING='Y'
+    WHERE C_BANKSTATEMENT_ID = v_Record_ID;
     IF(NOT FINISH_PROCESS) THEN
       DECLARE
         Cur_AutomaticSettlementCancel RECORD;
@@ -202,7 +206,8 @@
           UPDATE C_BANKSTATEMENT
              SET PROCESSED = 'N',
                  StatementDifference=NULL,
-                 EndingBalance=0
+                 EndingBalance=0,
+                 PROCESSING = 'N'
            WHERE C_BANKSTATEMENT_ID = v_Record_ID;
           FINISH_PROCESS := true;
        END IF;
@@ -655,7 +660,8 @@
           SET StatementDifference=v_Total,
           EndingBalance=COALESCE(BeginningBalance, 0) + v_Total,
           Processed='Y',
-          Updated=now()
+          Updated=now(),
+          Processing='N'
         WHERE C_BankStatement_ID=v_Record_ID;
       END;
     END IF;--FINISH_PROCESS
