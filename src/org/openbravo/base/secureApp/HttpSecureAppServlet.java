@@ -463,6 +463,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     boolean retValue = true;
 
+    // NOTE: if the logic here changes then also the logic in the
+    // EntityAccessChecker.hasCorrectAccessLevel needs to be updated
+    // Centralizing the logic seemed difficult because of build dependencies
     if (accessLevel.equals("4") && userLevel.indexOf("S") == -1)
       retValue = false;
     else if (accessLevel.equals("1") && userLevel.indexOf("O") == -1)

@@ -550,7 +550,6 @@ public class OBContext implements OBNotSingleton {
       }
 
       Check.isNotNull(getRole(), "Role may not be null");
-      setUserLevel(getRole().getUserLevel());
 
       if (orgId != null) {
         final Organization o = getOne(Organization.class, "select r from "
@@ -679,6 +678,11 @@ public class OBContext implements OBNotSingleton {
 
   public void setRole(Role role) {
     isAdministrator = ((String) DalUtil.getId(role)).equals("0");
+    setUserLevel(role.getUserLevel());
+    entityAccessChecker = null;
+    writableOrganizations = null;
+    readableClients = null;
+    readableOrganizations = null;
     this.role = role;
   }
 
@@ -713,6 +717,9 @@ public class OBContext implements OBNotSingleton {
   }
 
   public String[] getReadableClients() {
+    if (readableClients == null) {
+      setReadableClients(getRole());
+    }
     return readableClients;
   }
 
