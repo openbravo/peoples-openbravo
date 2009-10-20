@@ -435,7 +435,7 @@ public class ActivationKey {
       String moduleId = iterator.next();
       if (subscribedModules.get(moduleId) == CommercialModuleStatus.EXPIRED) {
         Module module = OBDal.getInstance().get(Module.class, moduleId);
-        if (module.getStatus().equals("A")) {
+        if (module != null && module.getStatus().equals("A")) {
           result.add(module);
         }
       }
