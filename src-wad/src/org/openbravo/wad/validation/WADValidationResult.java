@@ -116,12 +116,19 @@ public class WADValidationResult {
       }
     }
 
+    if (errors.size() > 0) {
+      log.error("The following errors during validation do not stop the");
+      log.error("compilation process to allow backwards compatibility for");
+      log.error("modules, but they MUST be fixed because in future core ");
+      log.error("releases they will not be allowed.");
+    }
+
     for (WADValidationType type : errors.keySet()) {
       log.error("+++++++++++++++++++++++++++++++++++++++++++++++++++");
       log.error("Errors for Validation type: " + type.getDescription());
       log.error("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-      for (String warn : errors.get(type)) {
-        log.warn(warn);
+      for (String error : errors.get(type)) {
+        log.error(error);
       }
     }
 

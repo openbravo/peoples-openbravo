@@ -291,6 +291,7 @@ public class Wad extends DefaultHandler {
       log4j.info("Web path: " + webPath);
       log4j.info("Src path: " + strBaseSrc);
       log4j.info("Quick mode: " + quick);
+      log4j.info("Stop on failed verification:" + failOnErrorVerification);
 
       final File fileFin = new File(dirFin);
       if (!fileFin.exists()) {

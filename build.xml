@@ -105,7 +105,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="local" value="true" />
   <property name="apply.modules.complete.compilation" value="false" />
   <property name="calculate.core.revision" value="true"/>
-  <property name="stopOnWadError" value="true"/>
+  <property name="stopOnWadError" value="false"/>
 
   <available file=".hg" property="is.hg" />
 
