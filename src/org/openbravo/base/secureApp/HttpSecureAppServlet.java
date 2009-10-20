@@ -189,8 +189,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
       boolean loggedOK = false;
 
-      System.out.println("dbs-:" + variables.getDBSession());
-
       if (!variables.getDBSession().equals("")) {
         loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
         if (!loggedOK) {
