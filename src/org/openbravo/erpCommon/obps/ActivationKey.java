@@ -29,9 +29,11 @@ import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.zip.CRC32;
 
@@ -48,6 +50,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
+import org.openbravo.model.ad.module.Module;
 
 public class ActivationKey {
 
@@ -68,7 +71,7 @@ public class ActivationKey {
   private boolean notActiveYet = false;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED
   }
 
   public enum CommercialModuleStatus {
@@ -290,6 +293,7 @@ public class ActivationKey {
    * @return {@link LicenseRestriction} with the status of the restrictions
    */
   public LicenseRestriction checkOPSLimitations() {
+    LicenseRestriction result = LicenseRestriction.NO_RESTRICTION;
     if (!isOPSInstance())
       return LicenseRestriction.NO_RESTRICTION;
 
@@ -305,7 +309,6 @@ public class ActivationKey {
       Long maxUsers = new Long(getProperty("limitusers"));
 
       if (maxUsers != 0) {
-
         boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
         OBContext.getOBContext().setInAdministratorMode(true);
 
@@ -319,11 +322,16 @@ public class ActivationKey {
         }
 
         if (softUsers != null && currentSessions >= softUsers) {
-          return LicenseRestriction.NUMBER_OF_SOFT_USERS_REACHED;
+          result = LicenseRestriction.NUMBER_OF_SOFT_USERS_REACHED;
         }
       }
     }
-    return LicenseRestriction.NO_RESTRICTION;
+
+    if (getExpiredInstalledModules().size() > 0) {
+      result = LicenseRestriction.MODULE_EXPIRED;
+    }
+
+    return result;
   }
 
   public String toString(ConnectionProvider conn, String lang) {
@@ -412,6 +420,27 @@ public class ActivationKey {
 
   public boolean isNotActiveYet() {
     return notActiveYet;
+  }
+
+  /**
+   * Obtains a List of all the modules that are installed in the instace which licenses has expired.
+   * 
+   * @return List of the expired modules
+   */
+  public ArrayList<Module> getExpiredInstalledModules() {
+    ArrayList<Module> result = new ArrayList<Module>();
+    HashMap<String, CommercialModuleStatus> subscribedModules = getSubscribedModules();
+    Iterator<String> iterator = subscribedModules.keySet().iterator();
+    while (iterator.hasNext()) {
+      String moduleId = iterator.next();
+      if (subscribedModules.get(moduleId) == CommercialModuleStatus.EXPIRED) {
+        Module module = OBDal.getInstance().get(Module.class, moduleId);
+        if (module.getStatus().equals("A")) {
+          result.add(module);
+        }
+      }
+    }
+    return result;
   }
 
   /**

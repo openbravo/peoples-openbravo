@@ -192,7 +192,8 @@ public class Role extends HttpSecureAppServlet {
       ActivationKey ak = new ActivationKey();
       LicenseRestriction limitation = ak.checkOPSLimitations();
       if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
-          || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED) {
+          || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
+          || limitation == LicenseRestriction.MODULE_EXPIRED) {
         // allow only system login
         datarole = RoleComboData.selectSystem(this, vars.getUser());
       } else {

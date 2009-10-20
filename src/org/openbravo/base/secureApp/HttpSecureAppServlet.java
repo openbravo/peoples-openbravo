@@ -211,7 +211,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           ActivationKey ak = new ActivationKey();
           LicenseRestriction limitation = ak.checkOPSLimitations();
           if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
-              || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED) {
+              || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
+              || limitation == LicenseRestriction.MODULE_EXPIRED) {
             // it is only allowed to log as system administrator
             strRole = DefaultOptionsData.getDefaultSystemRole(this, strUserAuth);
             if (strRole == null || strRole.equals("")) {

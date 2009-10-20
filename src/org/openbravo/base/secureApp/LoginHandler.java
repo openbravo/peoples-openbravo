@@ -23,6 +23,7 @@ import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class LoginHandler extends HttpBaseServlet {
@@ -103,6 +104,16 @@ public class LoginHandler extends HttpBaseServlet {
       case OPS_INSTANCE_NOT_ACTIVE:
         msg = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE", vars.getLanguage());
         title = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE_TITLE", vars.getLanguage());
+        goToRetry(res, vars, msg, title, msgType, action);
+        break;
+      case MODULE_EXPIRED:
+        msg = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED", vars.getLanguage());
+        title = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED_TITLE", vars.getLanguage());
+        StringBuffer expiredMoudules = new StringBuffer();
+        for (Module module : ak.getExpiredInstalledModules()) {
+          expiredMoudules.append("<br/>").append(module.getName());
+        }
+        msg += expiredMoudules.toString();
         goToRetry(res, vars, msg, title, msgType, action);
         break;
       default:
