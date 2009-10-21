@@ -288,11 +288,24 @@ public class ActivationKey {
   }
 
   /**
+   * Deprecated, use instead {@link ActivationKey#checkOPSLimitations(String)}
+   * 
+   * @return
+   */
+  @Deprecated
+  public LicenseRestriction checkOPSLimitations() {
+    return checkOPSLimitations("");
+  }
+
+  /**
    * Checks the current activation key
+   * 
+   * @param currentSession
+   *          Current session, not to be taken into account
    * 
    * @return {@link LicenseRestriction} with the status of the restrictions
    */
-  public LicenseRestriction checkOPSLimitations() {
+  public LicenseRestriction checkOPSLimitations(String currentSession) {
     LicenseRestriction result = LicenseRestriction.NO_RESTRICTION;
     if (!isOPSInstance())
       return LicenseRestriction.NO_RESTRICTION;
@@ -314,6 +327,9 @@ public class ActivationKey {
 
         OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
         obCriteria.add(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true));
+        if (currentSession != null && !currentSession.equals("")) {
+          obCriteria.add(Expression.ne(Session.PROPERTY_ID, currentSession));
+        }
         int currentSessions = obCriteria.list().size();
         OBContext.getOBContext().setInAdministratorMode(adminMode);
 

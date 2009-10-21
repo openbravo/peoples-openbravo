@@ -207,7 +207,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           String strWarehouse = "";
 
           ActivationKey ak = new ActivationKey();
-          LicenseRestriction limitation = ak.checkOPSLimitations();
+          LicenseRestriction limitation = ak.checkOPSLimitations(variables.getDBSession());
           if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
               || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
               || limitation == LicenseRestriction.MODULE_EXPIRED) {

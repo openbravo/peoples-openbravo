@@ -190,7 +190,7 @@ public class Role extends HttpSecureAppServlet {
     RoleComboData[] datarole = null;
     try {
       ActivationKey ak = new ActivationKey();
-      LicenseRestriction limitation = ak.checkOPSLimitations();
+      LicenseRestriction limitation = ak.checkOPSLimitations(vars.getDBSession());
       if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
           || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
           || limitation == LicenseRestriction.MODULE_EXPIRED) {

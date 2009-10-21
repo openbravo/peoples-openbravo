@@ -86,7 +86,7 @@ public class LoginHandler extends HttpBaseServlet {
         action = "../security/Login_FS.html";
       }
 
-      switch (ak.checkOPSLimitations()) {
+      switch (ak.checkOPSLimitations(vars.getDBSession())) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
         String msg = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED", vars
             .getLanguage());
