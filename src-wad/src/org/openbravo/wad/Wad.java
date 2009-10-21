@@ -3935,6 +3935,7 @@ public class Wad extends DefaultHandler {
 
     final StringBuffer html = new StringBuffer();
     final StringBuffer labelsHTML = new StringBuffer();
+    ArrayList<String> labels = new ArrayList<String>();
 
     String strFieldGroup = "";
 
@@ -3950,8 +3951,12 @@ public class Wad extends DefaultHandler {
       html.append(auxControl.toXml()).append("\n");
       auxControl.setData("AdColumnId", efd[i].getField("adColumnId"));
       final String labelXML = auxControl.toLabelXML();
-      if (!labelXML.trim().equals(""))
-        labelsHTML.append(auxControl.toLabelXML()).append("\n");
+      if (!labelXML.trim().equals("")) {
+        String xml = auxControl.toLabelXML();
+        if (!labels.contains(xml)) {
+          labels.add(xml);
+        }
+      }
 
       // FieldGroups
       if (WadUtility.isNewGroup(auxControl, strFieldGroup)) {
@@ -3964,7 +3969,10 @@ public class Wad extends DefaultHandler {
         final String labelXMLfg = fieldLabel.toLabelXML();
         labelsHTML.append(labelXMLfg).append("\n");
       }
+    }
 
+    for (String label : labels) {
+      labelsHTML.append(label).append("\n");
     }
 
     xmlDocument.setParameter("fields", html.toString());
