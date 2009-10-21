@@ -5876,8 +5876,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--475-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--475-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--475-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
+<!--475-->  <FILTERCLAUSE><![CDATA[session_active='Y']]></FILTERCLAUSE>
 <!--475-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--475-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--475-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--475--></AD_TAB>
 
 <!--476--><AD_TAB>
