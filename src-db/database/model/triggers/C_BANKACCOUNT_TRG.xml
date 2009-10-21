@@ -29,9 +29,9 @@
     ************************************************************************/
     TYPE RECORD IS REF CURSOR;
   Cur_Defaults RECORD;
-    
+
 BEGIN
-    
+
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
@@ -43,13 +43,14 @@ BEGIN
       FROM C_AcctSchema_Default d
       WHERE EXISTS
         (
-      SELECT 1 
+      SELECT 1
       FROM AD_Org_AcctSchema
       WHERE (AD_IsOrgIncluded(AD_Org_ID, :new.AD_ORG_ID, :new.AD_Client_ID)<>-1
           or AD_IsOrgIncluded(:new.AD_ORG_ID, AD_Org_ID, :new.AD_Client_ID)<>-1)
       AND IsActive = 'Y'
       AND AD_Org_AcctSchema.C_AcctSchema_ID = d.C_AcctSchema_ID
         )
+      AND D.AD_CLIENT_ID = :new.AD_Client_ID
       )
     LOOP
       INSERT
