@@ -97,7 +97,7 @@
       ELSIF(Cur_Parameter.ParameterName='AD_Org_ID') THEN
         v_AD_Org_ID:=Cur_Parameter.P_String;
         IF (v_AD_Org_ID IS NULL) THEN
-          v_AD_Org_ID:=0;
+          v_AD_Org_ID:='0';
         END IF;
         DBMS_OUTPUT.PUT_LINE('  AD_ORG_ID=' || v_AD_Org_ID) ;
       ELSE
@@ -111,7 +111,7 @@
         INTO v_TableName
         FROM AD_Table 
         WHERE AD_Table_ID=v_AD_Table_ID;
-        IF (v_Record_ID!=0) THEN
+        IF (v_Record_ID!='0') THEN
          EXECUTE IMMEDIATE 
           'SELECT AD_Org_ID 
           FROM ' ||  v_TableName || '
