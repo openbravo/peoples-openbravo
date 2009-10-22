@@ -172,7 +172,7 @@
                now(), ?, ?,
                TO_DATE(?), TO_DATE(?), (SELECT (COALESCE(Max(Line),0))+10 FROM C_BankStatementLine WHERE C_BankStatement_ID = ?),
                p.C_Debt_Payment_ID, Description,
-               C_Currency_Convert(p.Amount,p.C_Currency_ID, (SELECT A.C_CURRENCY_ID
+               C_Currency_Convert(p.Amount-coalesce(p.writeoffamt,0),p.C_Currency_ID, (SELECT A.C_CURRENCY_ID
                                                               FROM C_BANKSTATEMENT S, C_BANKACCOUNT A
                                                               WHERE S.C_BANKACCOUNT_ID = A.C_BANKACCOUNT_ID
                                                               AND S.C_BankStatement_ID = ?),TO_DATE(?),null,p.AD_Client_ID,p.AD_Org_ID),
@@ -181,7 +181,7 @@
                   FROM C_BANKSTATEMENT S, C_BANKACCOUNT A
                   WHERE S.C_BANKACCOUNT_ID = A.C_BANKACCOUNT_ID
                   AND S.C_BankStatement_ID = ?),
-               C_Currency_Convert(p.Amount,p.C_Currency_ID, (SELECT A.C_CURRENCY_ID
+               C_Currency_Convert(p.Amount-coalesce(p.writeoffamt,0),p.C_Currency_ID, (SELECT A.C_CURRENCY_ID
                                                                               FROM C_BANKSTATEMENT S, C_BANKACCOUNT A
                                                                               WHERE S.C_BANKACCOUNT_ID = A.C_BANKACCOUNT_ID
                                                                               AND S.C_BankStatement_ID = ?),TO_DATE(?),null,p.AD_Client_ID,p.AD_Org_ID)- TO_NUMBER(?)
@@ -323,11 +323,11 @@
     <Parameter name="cSettlementId"/>
     <Parameter name="cDebtPaymentId"/>
   </SqlMethod>
-  <SqlMethod name="selectPaymentAmount" type="preparedStatement" return="String">
+  <SqlMethod name="selectPaymentFinalAmount" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT AMOUNT FROM C_DEBT_PAYMENT
+        SELECT AMOUNT-COALESCE(WRITEOFFAMT,0) as FINALAMOUNT FROM C_DEBT_PAYMENT
         WHERE C_DEBT_PAYMENT_ID = ?
       ]]>
     </Sql>
