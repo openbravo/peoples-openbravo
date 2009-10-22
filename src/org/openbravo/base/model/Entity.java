@@ -47,7 +47,6 @@ import org.openbravo.base.validation.PropertyValidator;
  */
 
 public class Entity {
-  // private static final Logger log = Logger.getLogger(Entity.class);
   private static final Logger log = Logger.getLogger(Entity.class);
 
   private List<UniqueConstraint> uniqueConstraints = new ArrayList<UniqueConstraint>();
