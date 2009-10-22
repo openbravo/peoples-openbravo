@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.util.Check;
@@ -47,6 +48,7 @@ import org.openbravo.base.validation.PropertyValidator;
 
 public class Entity {
   // private static final Logger log = Logger.getLogger(Entity.class);
+  private static final Logger log = Logger.getLogger(Entity.class);
 
   private List<UniqueConstraint> uniqueConstraints = new ArrayList<UniqueConstraint>();
 
@@ -232,7 +234,44 @@ public class Entity {
   }
 
   public void setName(String name) {
-    this.name = name;
+    // repair the name if it contains any illegal character
+    this.name = removeIllegalChars(name);
+  }
+
+  private String removeIllegalChars(String fromName) {
+    final char[] chars = fromName.toCharArray();
+    final StringBuilder newName = new StringBuilder();
+    boolean nameChanged = false;
+    for (char c : chars) {
+      boolean hasIllegalChar = false;
+      for (char illegalChar : NamingUtil.ILLEGAL_ENTITY_NAME_CHARS) {
+        if (c == illegalChar) {
+          hasIllegalChar = true;
+          break;
+        }
+      }
+      if (hasIllegalChar) {
+        nameChanged = true;
+        continue;
+      }
+      newName.append(c);
+    }
+    if (nameChanged) {
+      log.warn("The entity name " + fromName
+          + " contains illegal characters, it has been repaired to " + newName);
+    } else {
+      // check for other less normal characters
+      for (char c : fromName.trim().toCharArray()) {
+        final boolean normalChar = ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')
+            || ('a' <= c && c <= 'z') || c == '_';
+        if (!normalChar) {
+          log.warn("The entity name " + fromName + " contains a character (" + c
+              + ") which could result in issues in HQL or "
+              + "webservices. Use characters from a to z, A to Z or 0 to 9 or the _");
+        }
+      }
+    }
+    return newName.toString();
   }
 
   public String getClassName() {

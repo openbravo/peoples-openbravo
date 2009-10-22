@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.model.Column;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.Table;
@@ -79,6 +80,24 @@ public class RuntimeModelTest extends BaseTest {
       }
     }
     assertEquals(0, tablesWithoutPK.size());
+  }
+
+  /**
+   * Check the AD_Table.name for illegal characters
+   */
+  public void testTableName() {
+    for (final Table t : ModelProvider.getInstance().getTables()) {
+      final char[] chars = t.getName().toCharArray();
+      for (char c : chars) {
+        for (char illegalChar : NamingUtil.ILLEGAL_ENTITY_NAME_CHARS) {
+          if (c == illegalChar) {
+            fail("Name " + t.getName()
+                + " has an illegal character (shown here between the > and <): >" + illegalChar
+                + "<");
+          }
+        }
+      }
+    }
   }
 
   /**

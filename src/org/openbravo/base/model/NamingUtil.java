@@ -36,6 +36,8 @@ import org.openbravo.base.exception.OBException;
 public class NamingUtil {
   private static final Logger log = org.apache.log4j.Logger.getLogger(NamingUtil.class);
 
+  public static final char[] ILLEGAL_ENTITY_NAME_CHARS = new char[] { '.', ',', ' ', '/', '\\' };
+
   public static final String ENTITY_NAME_CONSTANT = "ENTITY_NAME";
   public static final String PROPERTY_CONSTANT_PREFIX = "PROPERTY_";
 
