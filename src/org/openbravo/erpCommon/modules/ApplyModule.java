@@ -20,6 +20,9 @@
 package org.openbravo.erpCommon.modules;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
@@ -132,30 +135,32 @@ public class ApplyModule {
       ModuleUtiltiy.orderModuleByDependency(pool, ds);
 
       if (ds != null && ds.length > 0) {
-        log4j.info(ds.length
-            + " System reference possible datasets found. Checking if they are present...");
-        for (int i = 0; i < ds.length; i++) {
-
-          String strPath;
-          if (ds[i].adModuleId.equals("0"))
-            strPath = obDir + "/referencedata/standard";
-          else
-            strPath = obDir + "/modules/" + ds[i].javapackage + "/referencedata/standard";
-
-          // Obtain dataset xml file and check whether it is present
-          File datasetFile = new File(strPath + "/" + Utility.wikifiedName(ds[i].dsName) + ".xml");
-          if (!datasetFile.exists()) {
-            continue;
+        // build list of reference data modules which have files to import
+        List<ApplyModuleData> dsToImport = new ArrayList<ApplyModuleData>();
+        for (ApplyModuleData amd : ds) {
+          // Obtain dataset xml-file and check whether it is present
+          String strImportFile = dataSet2ImportFilename(amd);
+          File datasetFile = new File(strImportFile);
+          if (datasetFile.exists()) {
+            dsToImport.add(amd);
           }
-          log4j.info("Importing data from module " + ds[i].name + ". Dataset: "
-              + Utility.wikifiedName(ds[i].dsName) + ".xml");
+        }
+
+        log4j.info(dsToImport.size() + " reference data modules have data files");
+        for (ApplyModuleData amd : dsToImport) {
+
+          String strImportFile = dataSet2ImportFilename(amd);
+
+          File datasetFile = new File(strImportFile);
+          log4j.info("Importing data from " + amd.name + " module. Dataset: "
+              + Utility.wikifiedName(amd.dsName) + ".xml");
 
           // Import data from the xml file
           final String strXml = Utility.fileToString(datasetFile.getPath());
           final DataImportService importService = DataImportService.getInstance();
           final ImportResult result = importService.importDataFromXML(OBDal.getInstance().get(
               Client.class, "0"), OBDal.getInstance().get(Organization.class, "0"), strXml, OBDal
-              .getInstance().get(Module.class, ds[i].adModuleId));
+              .getInstance().get(Module.class, amd.adModuleId));
           if (result.hasErrorOccured()) {
             log4j.error(result.getErrorMessages());
             if (result.getException() != null) {
@@ -186,6 +191,20 @@ public class ApplyModule {
       e.printStackTrace();
       throw new OBException(e);
     }
+  }
+
+  /**
+   * Helper function to construct the data-file name for a dataset.
+   */
+  private String dataSet2ImportFilename(ApplyModuleData ds) throws FileNotFoundException {
+    String strPath;
+    if (ds.adModuleId.equals("0"))
+      strPath = obDir + "/referencedata/standard";
+    else
+      strPath = obDir + "/modules/" + ds.javapackage + "/referencedata/standard";
+
+    strPath = strPath + "/" + Utility.wikifiedName(ds.dsName) + ".xml";
+    return strPath;
   }
 
   public static void main(String[] args) {

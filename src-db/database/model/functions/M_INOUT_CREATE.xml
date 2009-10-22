@@ -92,7 +92,7 @@
       l.M_Product_ID IS NULL)) -- Don't include Direct Ship's
       AND
       DirectShip='N' 
-    ORDER BY l.M_Product_ID, l.M_Warehouse_id, l.c_uom_id, l.m_attributesetinstance_id, 
+    ORDER BY l.line, l.M_Product_ID, l.M_Warehouse_id, l.c_uom_id, l.m_attributesetinstance_id, 
       l.m_product_uom_id, qtyordered-qtydelivered;
     ol Cur_OrderLine%ROWTYPE;
     CURSOR Cur_Storage (p_Product varchar, p_Warehouse varchar, p_UOM varchar, p_Product_UOM varchar, p_Attribute varchar) IS

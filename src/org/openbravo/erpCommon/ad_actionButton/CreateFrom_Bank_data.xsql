@@ -36,7 +36,7 @@
           Ad_Column_Identifier(to_char('C_BankAccount'), to_char(C_BankAccount_ID), to_char(?)) AS BANK,
           (CASE IsReceipt WHEN 'Y' THEN (p_amount - p_woamount) ELSE (p_amount - p_woamount)*(-1) END) AS AMOUNT,
           (CASE IsReceipt WHEN 'Y' THEN (p_amount - p_woamount) ELSE (p_amount - p_woamount)*(-1) END) AS AMOUNT2,
-          C_Currency_Convert(p_amount,b.C_Currency_ID,
+          C_Currency_Convert((CASE IsReceipt WHEN 'Y' THEN (p_amount) ELSE (p_amount)*(-1) END),b.C_Currency_ID,
           	(select c_currency_id from c_bankaccount c where c.c_bankaccount_id = b.c_bankaccount_id),
           	to_date(?),to_char(null),AD_Client_ID,AD_Org_ID
           ) AS CONVERTED
@@ -258,7 +258,7 @@
         C_BPARTNER_ID, C_CURRENCY_ID,
         PAYMENTRULE, ISPAID, AMOUNT, WRITEOFFAMT, DATEPLANNED,
         ISMANUAL, ISVALID,
-        CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, GENERATE_PROCESSED, STATUS_INITIAL
+        CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, GENERATE_PROCESSED, STATUS_INITIAL, C_WITHHOLDING_ID, WITHHOLDINGAMOUNT
       )
       SELECT ?, C_DEBT_PAYMENT.AD_CLIENT_ID, C_DEBT_PAYMENT.AD_ORG_ID, C_DEBT_PAYMENT.ISACTIVE,
         NOW(), ?, NOW(), ?,
@@ -266,7 +266,7 @@
         C_DEBT_PAYMENT.C_BPARTNER_ID, C_DEBT_PAYMENT.C_CURRENCY_ID,
         C_DEBT_PAYMENT.PAYMENTRULE, C_DEBT_PAYMENT.ISPAID, TO_NUMBER(?), C_DEBT_PAYMENT.WRITEOFFAMT, C_DEBT_PAYMENT.DATEPLANNED,
         'N', 'N',
-        'N', 'N', 'N', STATUS
+        'N', 'N', 'N', STATUS, C_DEBT_PAYMENT.C_WITHHOLDING_ID, C_DEBT_PAYMENT.WITHHOLDINGAMOUNT*TO_NUMBER(?)/C_DEBT_PAYMENT.AMOUNT
         FROM C_DEBT_PAYMENT LEFT JOIN C_INVOICE ON C_DEBT_PAYMENT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
         WHERE C_DEBT_PAYMENT_ID = ?
       ]]>
@@ -275,6 +275,7 @@
     <Parameter name="adUserId"/>
     <Parameter name="adUserId"/>
     <Parameter name="cSettlementId"/>
+    <Parameter name="amount"/>
     <Parameter name="amount"/>
     <Parameter name="cPaymentId"/>
   </SqlMethod>
@@ -291,7 +292,7 @@
         C_BPARTNER_ID, C_CURRENCY_ID,
         PAYMENTRULE, ISPAID, AMOUNT, WRITEOFFAMT, DATEPLANNED,
         ISMANUAL, ISVALID,
-        CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, GENERATE_PROCESSED, STATUS_INITIAL
+        CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, GENERATE_PROCESSED, STATUS_INITIAL, C_WITHHOLDING_ID, WITHHOLDINGAMOUNT
       )
       SELECT get_uuid(), C_DEBT_PAYMENT.AD_CLIENT_ID, C_DEBT_PAYMENT.AD_ORG_ID, C_DEBT_PAYMENT.ISACTIVE,
         NOW(), ?, NOW(), ?,
@@ -299,7 +300,7 @@
         C_DEBT_PAYMENT.C_BPARTNER_ID, C_DEBT_PAYMENT.C_CURRENCY_ID,
         C_DEBT_PAYMENT.PAYMENTRULE, C_DEBT_PAYMENT.ISPAID, C_DEBT_PAYMENT.AMOUNT-TO_NUMBER(?), C_DEBT_PAYMENT.WRITEOFFAMT, C_DEBT_PAYMENT.DATEPLANNED,
         'N', 'N',
-        'N', 'N', 'N', C_DEBT_PAYMENT.STATUS
+        'N', 'N', 'N', C_DEBT_PAYMENT.STATUS, C_DEBT_PAYMENT.C_WITHHOLDING_ID, C_DEBT_PAYMENT.WITHHOLDINGAMOUNT*(C_DEBT_PAYMENT.AMOUNT-TO_NUMBER(?))/C_DEBT_PAYMENT.AMOUNT
         FROM C_DEBT_PAYMENT LEFT JOIN C_INVOICE ON C_DEBT_PAYMENT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
         WHERE C_DEBT_PAYMENT_ID = ?
       ]]>
@@ -307,6 +308,7 @@
     <Parameter name="adUserId"/>
     <Parameter name="adUserId"/>
     <Parameter name="cSettlementId"/>
+    <Parameter name="amount"/>
     <Parameter name="amount"/>
     <Parameter name="cPaymentId"/>
   </SqlMethod>

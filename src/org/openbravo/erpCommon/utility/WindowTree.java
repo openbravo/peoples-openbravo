@@ -32,6 +32,9 @@ import org.openbravo.data.Sqlc;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
+
 /**
  * @author Fernando Iriazabal
  * 
@@ -80,6 +83,18 @@ public class WindowTree extends HttpSecureAppServlet {
       }
       vars.setSessionValue("WindowTree|tabId", strTabId);
       PrintWriter out = response.getWriter();
+
+      if (strResult != "") {
+        // create OBError and serizalize it using JSON
+        OBError error = new OBError();
+        error.setType("Error");
+        error.setTitle("Error");
+        error.setMessage(strResult);
+        XStream xs = new XStream(new JettisonMappedXmlDriver());
+        xs.alias("OBError", OBError.class);
+        strResult = xs.toXML(error);
+      }
+
       out.print(strResult);
       out.close();
       // response.sendRedirect(strDireccion + request.getServletPath() +

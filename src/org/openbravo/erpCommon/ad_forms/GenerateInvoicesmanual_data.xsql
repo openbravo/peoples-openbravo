@@ -37,6 +37,7 @@
       AND ic.C_BPartner_ID=bp.C_BPartner_ID
       AND ic.C_DocType_ID=dt.C_DocType_ID
       AND l.value = ic.term
+      AND ic.term <> 'N'
       AND AD_Reference_ID='150'
       AND ic.ad_client_id in ('1')
       AND ic.ad_org_id in ('1')
@@ -67,6 +68,7 @@
       AND ic.C_BPartner_ID=bp.C_BPartner_ID
       AND ic.C_DocType_ID=dt.C_DocType_ID
       AND l.value = ic.term
+      AND ic.term <> 'N'
       AND AD_Reference_ID='150'
       AND ic.ad_client_id in ('1')
       AND ic.ad_org_id in ('1')

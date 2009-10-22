@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class LoginHandler extends HttpBaseServlet {
@@ -55,7 +57,7 @@ public class LoginHandler extends HttpBaseServlet {
 
       if (strUserAuth != null) {
         req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
-        checkLicenseAndGo(res, vars);
+        checkLicenseAndGo(res, vars, strUserAuth);
       } else {
         goToRetry(res, vars, null, "Identification failure. Try again.", "Error",
             "../security/Login_FS.html");
@@ -63,40 +65,62 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
-  private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars)
-      throws IOException {
-    OBContext.setAdminContext();
+  private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars,
+      String strUserAuth) throws IOException {
+    OBContext.enableAsAdminContext();
     try {
       ActivationKey ak = new ActivationKey();
+      boolean hasSystem = false;
 
-      switch (ak.checkOPSLimitations()) {
+      try {
+        hasSystem = SeguridadData.hasSystemRole(this, strUserAuth);
+      } catch (Exception ignore) {
+        log4j.error(ignore);
+      }
+      String msgType, action;
+      if (hasSystem) {
+        msgType = "Warning";
+        action = "../security/Menu.html";
+      } else {
+        msgType = "Error";
+        action = "../security/Login_FS.html";
+      }
+
+      switch (ak.checkOPSLimitations(vars.getDBSession())) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
-        String msg = "You have exceeded the number of Global Concurrent Users licensed to use this system.<br/>";
-        msg += "Please wait until one or more users log out of the system and then retry again.<br/>";
-        msg += "Contact your Openbravo Business Partner if you want to purchase a subscription for additional users.";
-        String msgType = "Error";
-        String action = "../security/Login_FS.html";
-        goToRetry(res, vars, msg, "Maximum number of concurrent users reached", msgType, action);
+        String msg = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED", vars
+            .getLanguage());
+        String title = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE", vars
+            .getLanguage());
+        goToRetry(res, vars, msg, title, msgType, action);
         break;
       case NUMBER_OF_SOFT_USERS_REACHED:
-        msg = "You have exceeded the number of Global Concurrent Users licensed to use this system.<br/>";
-        msg += "Contact your Openbravo Business Partner if you want to purchase a subscription for additional users.";
+        msg = Utility.messageBD(myPool, "NUMBER_OF_SOFT_USERS_REACHED", vars.getLanguage());
+        title = Utility.messageBD(myPool, "NUMBER_OF_SOFT_USERS_REACHED_TITLE", vars.getLanguage());
         action = "../security/Menu.html";
         msgType = "Warning";
-        goToRetry(res, vars, msg, "Maximum number of concurrent users reached", msgType, action);
+        goToRetry(res, vars, msg, title, msgType, action);
         break;
       case OPS_INSTANCE_NOT_ACTIVE:
-        msg = "Your Professional Subscription has expired. However no data has been lost.<br/>";
-        msg += "To renew your Professional Subscription, contact your assigned partner.";
-        action = "../security/Menu.html";
-        msgType = "Warning";
-        goToRetry(res, vars, msg, "Expired subscription", msgType, action);
+        msg = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE", vars.getLanguage());
+        title = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE_TITLE", vars.getLanguage());
+        goToRetry(res, vars, msg, title, msgType, action);
+        break;
+      case MODULE_EXPIRED:
+        msg = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED", vars.getLanguage());
+        title = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED_TITLE", vars.getLanguage());
+        StringBuffer expiredMoudules = new StringBuffer();
+        for (Module module : ak.getExpiredInstalledModules()) {
+          expiredMoudules.append("<br/>").append(module.getName());
+        }
+        msg += expiredMoudules.toString();
+        goToRetry(res, vars, msg, title, msgType, action);
         break;
       default:
         goToTarget(res, vars);
       }
     } finally {
-      OBContext.setOBContext((OBContext) null);
+      OBContext.resetAsAdminContext();
     }
 
   }

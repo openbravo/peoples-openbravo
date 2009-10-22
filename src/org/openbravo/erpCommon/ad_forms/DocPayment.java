@@ -40,7 +40,7 @@ public class DocPayment extends AcctServer {
 
   /**
    * Constructor
-   *
+   * 
    * @param AD_Client_ID
    *          AD_Client_ID
    */
@@ -55,7 +55,7 @@ public class DocPayment extends AcctServer {
 
   /**
    * Load Specific Document Details
-   *
+   * 
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -71,7 +71,7 @@ public class DocPayment extends AcctServer {
 
   /**
    * Load Payment Line. Settlement Cancel
-   *
+   * 
    * @return DocLine Array
    */
   private DocLine[] loadLines(ConnectionProvider conn) {
@@ -124,7 +124,7 @@ public class DocPayment extends AcctServer {
 
   /**
    * Get Source Currency Balance - always zero
-   *
+   * 
    * @return Zero (always balanced)
    */
   public BigDecimal getBalance() {
@@ -134,9 +134,9 @@ public class DocPayment extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for STT, APP.
-   *
+   * 
    * <pre>
-   *
+   * 
    *  Flow:
    *    1. Currency conversion variations
    *    2. Non manual DPs in settlement
@@ -147,9 +147,9 @@ public class DocPayment extends AcctServer {
    *    4. Conceptos contables (manual sett and cancelation DP)
    *    5. Writeoff
    *    6. Bank in transit
-   *
+   * 
    * </pre>
-   *
+   * 
    * @param as
    *          accounting schema
    * @return Fact
@@ -193,23 +193,25 @@ public class DocPayment extends AcctServer {
       BigDecimal convertTotal = new BigDecimal(convertedAmt).add(new BigDecimal(convertWithHold));
 
       if (line.isManual.equals("N")) { // 2* Normal debt-payments
-    	String finalConvertedAmt = "";
-    	if(!C_Currency_ID.equals(as.m_C_Currency_ID)){
-    		this.MultiCurrency = true;
-	    	//Final conversion needed when currency of the document and currency of the accounting schema are different
-		    finalConvertedAmt = convertAmount(convertTotal.toString(), line.isReceipt.equals("Y"), DateAcct,
-		              line.conversionDate, C_Currency_ID, as.m_C_Currency_ID, null, as, fact,
-		              Fact_Acct_Group_ID, conn);
-    	}else finalConvertedAmt = convertTotal.toString();
+        String finalConvertedAmt = "";
+        if (!C_Currency_ID.equals(as.m_C_Currency_ID)) {
+          this.MultiCurrency = true;
+          // Final conversion needed when currency of the document and currency of the accounting
+          // schema are different
+          finalConvertedAmt = convertAmount(convertTotal.toString(), line.isReceipt.equals("Y"),
+              DateAcct, line.conversionDate, C_Currency_ID, as.m_C_Currency_ID, null, as, fact,
+              Fact_Acct_Group_ID, conn);
+        } else
+          finalConvertedAmt = convertTotal.toString();
         if (!line.C_Settlement_Generate_ID.equals(Record_ID)) { // 2.1*
           // Cancelled
           // DP
-          finalConvertedAmt = getConvertedAmt(finalConvertedAmt, as.m_C_Currency_ID,
-                    C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
+          finalConvertedAmt = getConvertedAmt(finalConvertedAmt, as.m_C_Currency_ID, C_Currency_ID,
+              DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
           fact.createLine(line, getAccountBPartner(line.m_C_BPartner_ID, as, line.isReceipt
               .equals("Y"), line.dpStatus, conn), C_Currency_ID, (line.isReceipt.equals("Y") ? ""
-              : finalConvertedAmt), (line.isReceipt.equals("Y") ? finalConvertedAmt
-              : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+              : finalConvertedAmt), (line.isReceipt.equals("Y") ? finalConvertedAmt : ""),
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         } else { // 2.2* Generated DP
           if (log4j.isDebugEnabled())
             log4j.debug("Genenarted DP");
@@ -219,8 +221,9 @@ public class DocPayment extends AcctServer {
               log4j.debug("Not paid");
             fact.createLine(line, getAccountBPartner(line.m_C_BPartner_ID, as, line.isReceipt
                 .equals("Y"), line.dpStatus, conn), C_Currency_ID,
-                (line.isReceipt.equals("Y") ? convertedAmt : ""), (line.isReceipt.equals("Y") ? ""
-                    : convertedAmt), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+                (line.isReceipt.equals("Y") ? convertTotal.toString() : ""), (line.isReceipt
+                    .equals("Y") ? "" : convertTotal.toString()), Fact_Acct_Group_ID,
+                nextSeqNo(SeqNo), DocumentType, conn);
           }
         }
 
@@ -318,16 +321,16 @@ public class DocPayment extends AcctServer {
               .equals(Record_ID)))) {
         BigDecimal finalLineAmt = new BigDecimal(line.Amount);
         String idSchema = as.getC_AcctSchema_ID();
-        if(line.C_WITHHOLDING_ID!=null && !line.C_WITHHOLDING_ID.equals("")){
-	        String IdAccount = WithholdingManualData.select_accounts(conn, line.C_WITHHOLDING_ID,
-	            idSchema);
-	        //
-	        String sWithHoldAmt = getConvertedAmt(line.WithHoldAmt, line.C_Currency_ID_From,
-	                C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
+        if (line.C_WITHHOLDING_ID != null && !line.C_WITHHOLDING_ID.equals("")) {
+          String IdAccount = WithholdingManualData.select_accounts(conn, line.C_WITHHOLDING_ID,
+              idSchema);
+          //
+          String sWithHoldAmt = getConvertedAmt(line.WithHoldAmt, line.C_Currency_ID_From,
+              C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
 
-	        fact.createLine(line, Account.getAccount(conn, IdAccount), C_Currency_ID, (line.isReceipt
-	            .equals("Y") ? sWithHoldAmt : ""), (line.isReceipt.equals("Y") ? "" : sWithHoldAmt),
-	            Fact_Acct_Group_ID, "999999", DocumentType, conn);
+          fact.createLine(line, Account.getAccount(conn, IdAccount), C_Currency_ID, (line.isReceipt
+              .equals("Y") ? sWithHoldAmt : ""), (line.isReceipt.equals("Y") ? "" : sWithHoldAmt),
+              Fact_Acct_Group_ID, "999999", DocumentType, conn);
         }
         if (line.WriteOffAmt != null && !line.WriteOffAmt.equals("")
             && !line.WriteOffAmt.equals("0"))
@@ -465,7 +468,7 @@ public class DocPayment extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   *
+   * 
    * @param cBPartnerId
    *          business partner id
    * @param as
@@ -512,7 +515,7 @@ public class DocPayment extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   *
+   * 
    * @param strcBankstatementlineId
    *          Line
    * @param as
@@ -552,7 +555,7 @@ public class DocPayment extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   *
+   * 
    * @param strcCashlineId
    *          Line Id
    * @param as
@@ -601,7 +604,7 @@ public class DocPayment extends AcctServer {
 
   /**
    * Get Document Confirmation
-   *
+   * 
    * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {

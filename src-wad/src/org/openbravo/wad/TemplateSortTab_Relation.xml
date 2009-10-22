@@ -35,7 +35,6 @@
 <PARAMETER id="claveReport" name = "key" default=" " attribute="onclick" replace="yy"/>
 <PARAMETER id="fieldKeyNameButtons" name = "key" default=" " attribute="onclick" replace="xx"/>
 <PARAMETER id="paramParentxx" name="parentKeyName" attribute="id" replace="xx" default=""/>
-<PARAMETER id="fieldParentKeyNameDescription" name="parentKeyNameDescription" default=""/>
 
 <DISCARD id="discard"/>
 </REPORT>

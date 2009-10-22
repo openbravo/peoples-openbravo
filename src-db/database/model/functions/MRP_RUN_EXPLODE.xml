@@ -106,7 +106,7 @@ BEGIN
         END IF;
 
         -- skip processing if product did not change from last row
-        if (v_lastProductID = Cur_Run_Lines.M_PRODUCT_ID) THEN
+        if (v_lastProductID <> Cur_Run_Lines.M_PRODUCT_ID) THEN
 
           v_ResultStr := 'Other dependant products';
           FOR Cur_Parents IN (SELECT pt.PRODUCED

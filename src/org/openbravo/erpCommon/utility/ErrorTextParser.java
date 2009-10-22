@@ -152,12 +152,12 @@ abstract class ErrorTextParser {
    * @return human-readable name
    */
   protected String getTableName(String tableName) {
-    String res;
     try {
-      res = ErrorTextParserData.selectTableName(conn, tableName);
-      return res;
+      String pkColumnName = tableName + "_ID";
+      return ErrorTextParserData.selectColumnName(conn, language, pkColumnName);
     } catch (ServletException e) {
-      log4j.error("Error while trying to get ad_table.name for tablename: " + tableName, e);
+      log4j.error(
+          "Error while trying to name for table via ad_element for tablename: " + tableName, e);
     }
     return tableName;
   }

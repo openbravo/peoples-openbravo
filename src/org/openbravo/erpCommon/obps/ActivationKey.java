@@ -32,6 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.zip.CRC32;
 
@@ -48,6 +50,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
+import org.openbravo.model.ad.module.Module;
 
 public class ActivationKey {
 
@@ -68,7 +71,11 @@ public class ActivationKey {
   private boolean notActiveYet = false;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED
+  }
+
+  public enum CommercialModuleStatus {
+    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET
   }
 
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -281,11 +288,25 @@ public class ActivationKey {
   }
 
   /**
+   * Deprecated, use instead {@link ActivationKey#checkOPSLimitations(String)}
+   * 
+   * @return
+   */
+  @Deprecated
+  public LicenseRestriction checkOPSLimitations() {
+    return checkOPSLimitations("");
+  }
+
+  /**
    * Checks the current activation key
+   * 
+   * @param currentSession
+   *          Current session, not to be taken into account
    * 
    * @return {@link LicenseRestriction} with the status of the restrictions
    */
-  public LicenseRestriction checkOPSLimitations() {
+  public LicenseRestriction checkOPSLimitations(String currentSession) {
+    LicenseRestriction result = LicenseRestriction.NO_RESTRICTION;
     if (!isOPSInstance())
       return LicenseRestriction.NO_RESTRICTION;
 
@@ -301,12 +322,14 @@ public class ActivationKey {
       Long maxUsers = new Long(getProperty("limitusers"));
 
       if (maxUsers != 0) {
-
         boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
         OBContext.getOBContext().setInAdministratorMode(true);
 
         OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
         obCriteria.add(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true));
+        if (currentSession != null && !currentSession.equals("")) {
+          obCriteria.add(Expression.ne(Session.PROPERTY_ID, currentSession));
+        }
         int currentSessions = obCriteria.list().size();
         OBContext.getOBContext().setInAdministratorMode(adminMode);
 
@@ -315,11 +338,16 @@ public class ActivationKey {
         }
 
         if (softUsers != null && currentSessions >= softUsers) {
-          return LicenseRestriction.NUMBER_OF_SOFT_USERS_REACHED;
+          result = LicenseRestriction.NUMBER_OF_SOFT_USERS_REACHED;
         }
       }
     }
-    return LicenseRestriction.NO_RESTRICTION;
+
+    if (getExpiredInstalledModules().size() > 0) {
+      result = LicenseRestriction.MODULE_EXPIRED;
+    }
+
+    return result;
   }
 
   public String toString(ConnectionProvider conn, String lang) {
@@ -411,15 +439,34 @@ public class ActivationKey {
   }
 
   /**
-   * Obtains a list for modules ID the instance is subscribed to.
+   * Obtains a List of all the modules that are installed in the instace which licenses has expired.
    * 
-   * @param onlyActive
-   *          if this value is true the list will contain only the modules active at this time,
-   *          other case it will contain all the subscribed modules regardless expiration dates
-   * @return ArrayList<String> containing the subscribed modules
+   * @return List of the expired modules
    */
-  public ArrayList<String> getSubscribedModules(boolean onlyActive) {
-    ArrayList<String> moduleList = new ArrayList<String>();
+  public ArrayList<Module> getExpiredInstalledModules() {
+    ArrayList<Module> result = new ArrayList<Module>();
+    HashMap<String, CommercialModuleStatus> subscribedModules = getSubscribedModules();
+    Iterator<String> iterator = subscribedModules.keySet().iterator();
+    while (iterator.hasNext()) {
+      String moduleId = iterator.next();
+      if (subscribedModules.get(moduleId) == CommercialModuleStatus.EXPIRED) {
+        Module module = OBDal.getInstance().get(Module.class, moduleId);
+        if (module != null && module.getStatus().equals("A")) {
+          result.add(module);
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Obtains a list for modules ID the instance is subscribed to and their statuses
+   * 
+   * @return HashMap<String, CommercialModuleStatus> containing the subscribed modules
+   */
+  public HashMap<String, CommercialModuleStatus> getSubscribedModules() {
+    HashMap<String, CommercialModuleStatus> moduleList = new HashMap<String, CommercialModuleStatus>();
+
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
 
     String allModules = getProperty("modules");
@@ -429,30 +476,43 @@ public class ActivationKey {
     Date now = new Date();
     for (String moduleInfo : modulesInfo) {
       String moduleData[] = moduleInfo.split("\\|");
-      if (!onlyActive) {
-        moduleList.add(moduleData[0]);
-      } else {
-        Date validFrom = null;
-        Date validTo = null;
-        try {
-          validFrom = sd.parse(moduleData[1]);
-          if (moduleData.length > 2) {
-            validTo = sd.parse(moduleData[2]);
-          }
 
-          if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
-            moduleList.add(moduleData[0]);
-          }
-        } catch (Exception e) {
-          log.error("Error reading module's dates module:" + moduleData[0], e);
+      Date validFrom = null;
+      Date validTo = null;
+      try {
+        validFrom = sd.parse(moduleData[1]);
+        if (moduleData.length > 2) {
+          validTo = sd.parse(moduleData[2]);
         }
+        if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
+          moduleList.put(moduleData[0], CommercialModuleStatus.ACTIVE);
+        } else if (validFrom.after(now)) {
+          moduleList.put(moduleData[0], CommercialModuleStatus.NO_ACTIVE_YET);
+        } else if (validTo != null && validTo.before(now)) {
+          moduleList.put(moduleData[0], CommercialModuleStatus.EXPIRED);
+        }
+      } catch (Exception e) {
+        log.error("Error reading module's dates module:" + moduleData[0], e);
       }
+
     }
     return moduleList;
   }
 
-  public boolean isModuleSubscribed(String moduleId, boolean onlyActive) {
-    return getSubscribedModules(onlyActive).contains(moduleId);
+  /**
+   * Returns the status for the commercial module passed as parameter
+   * 
+   * @param moduleId
+   * @return the status for the commercial module passed as parameter
+   */
+  public CommercialModuleStatus isModuleSubscribed(String moduleId) {
+    HashMap<String, CommercialModuleStatus> moduleList = getSubscribedModules();
+
+    if (!moduleList.containsKey(moduleId)) {
+      return CommercialModuleStatus.NO_SUBSCRIBED;
+    }
+
+    return moduleList.get(moduleId);
   }
 
 }

@@ -80,6 +80,14 @@ public class DalRequestFilter implements Filter {
       }
 
       // note OBContext is set to null in DalThreadHandler
+      @Override
+      public void doFinal(boolean errorOccured) {
+        if (OBContext.getOBContext() != null) {
+          // set the obcontext in the session
+          OBContext.setOBContextInSession((HttpServletRequest) request, OBContext.getOBContext());
+        }
+        super.doFinal(errorOccured);
+      }
     };
 
     dth.run();

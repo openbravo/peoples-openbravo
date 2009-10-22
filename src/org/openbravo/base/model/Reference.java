@@ -107,4 +107,8 @@ public class Reference extends ModelObject {
   public boolean isDatetime() {
     return getId().equals("16");
   }
+
+  public boolean isDate() {
+    return getId().equals("15");
+  }
 }

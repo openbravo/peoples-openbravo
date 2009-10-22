@@ -715,6 +715,7 @@ public class ImportModule {
         md.setModuleID((String) dynModule.get("AD_DEPENDENT_MODULE_ID"));
         md.setVersionStart((String) dynModule.get("STARTVERSION"));
         md.setVersionEnd((String) dynModule.get("ENDVERSION"));
+        md.setModuleName((String) dynModule.get("DEPENDANT_MODULE_NAME"));
         dep.add(md);
       }
     }

@@ -674,20 +674,6 @@ public abstract class AcctServer {
     }
   } // unlock
 
-  /**
-   * Unlock Document
-   */
-  private void unlock(ConnectionProvider conn, Connection con) {
-    try {
-      AcctServerData.updateUnlock(conn, tableName, Record_ID);
-    } catch (ServletException e) {
-      log4j.warn("AcctServer - Document locked: -" + e);
-    }
-    /*
-     * if (i>0){ releaseCommitConnection(con); }else{ releaseRollbackConnection(con); }
-     */
-  } // unlock
-
   @Deprecated
   // Deprecated in 2.50 because of a missing connection needed
   public boolean loadDocument(FieldProvider[] data, boolean force, ConnectionProvider conn) {

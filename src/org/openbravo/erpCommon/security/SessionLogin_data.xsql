@@ -29,6 +29,7 @@
       <Sql>
         select * from ad_session
       </Sql>
+      <Field name="supportContact" value=""/>
    </SqlMethod>
    <SqlMethod name="insert" type="preparedStatement" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
@@ -90,6 +91,13 @@
         SELECT AD_SESSION_ID, SERVER_URL
           FROM AD_SESSION
          WHERE SESSION_ACTIVE = 'Y'
+    ]]></Sql>
+  </SqlMethod>
+  
+  <SqlMethod name="selectSupportContact" type="preparedStatement" return="string">
+    <Sql><![CDATA[
+        SELECT SUPPORT_CONTACT
+          FROM AD_SYSTEM_INFO
     ]]></Sql>
   </SqlMethod>
   

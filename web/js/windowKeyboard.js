@@ -60,15 +60,21 @@ var isContextMenuOpened = false;
 
 windowKeyboardCaptureEvents();
 function windowKeyboardCaptureEvents() {
-  document.onmousedown=mouseDownLogic;
-  document.onclick=mouseClickLogic;
+  if (typeof captureOnMouseDown == 'undefined' || captureOnMouseDown != false) {
+    document.onmousedown=mouseDownLogic;
 
+    if (document.layers) {
+      window.captureEvents(Event.ONMOUSEDOWN);
+      window.onmousedown=mouseDownLogic;
+    }
+  }
+  if (typeof captureOnClick == 'undefined' || captureOnClick != false) {
+    document.onclick=mouseClickLogic;
 
-  if (document.layers) {
-    window.captureEvents(Event.ONMOUSEDOWN);
-    window.onmousedown=mouseDownLogic;
-    window.captureEvents(Event.ONCLICK);
-    window.onclick=mouseClickLogic;
+    if (document.layers) {
+      window.captureEvents(Event.ONCLICK);
+      window.onclick=mouseClickLogic;
+    }
   }
 }
 
@@ -226,8 +232,14 @@ function cursorFocus(obj, event) {
     focusedWindowElement = obj;
     setWindowElementFocus(focusedWindowElement, "obj", event);
   } else if (event == 'onclick') {
-    if (selectedArea == 'window') setWindowElementFocus(focusedWindowElement, "obj", event);
-    if (selectedArea == 'tabs') setTabFocus(focusedTab);
+    if (selectedArea == 'window') {
+      //setWindowElementFocus(focusedWindowElement, "obj", event);
+      if (obj != focusedWindowElement) {
+        eraseWindowElementFocus(focusedWindowElement);
+      }
+    } else if (selectedArea == 'tabs') {
+      setTabFocus(focusedTab);
+    }
   }
   return true;
 }

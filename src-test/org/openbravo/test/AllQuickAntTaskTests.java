@@ -23,6 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.openbravo.test.dal.DalConnectionProviderTest;
+import org.openbravo.test.dal.DalStoredProcedureTest;
 import org.openbravo.test.dal.DalTest;
 import org.openbravo.test.dal.OBContextTest;
 import org.openbravo.test.dal.ValidationTest;
@@ -72,6 +73,7 @@ public class AllQuickAntTaskTests {
     // suite.addTestSuite(MappingGenerationTest.class);
     suite.addTestSuite(ValidationTest.class);
     suite.addTestSuite(OBContextTest.class);
+    suite.addTestSuite(DalStoredProcedureTest.class);
 
     // expression
     // suite.addTestSuite(EvaluationTest.class);

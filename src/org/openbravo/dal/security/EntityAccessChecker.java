@@ -61,6 +61,19 @@ import org.openbravo.model.ad.ui.Window;
 
 public class EntityAccessChecker implements OBNotSingleton {
 
+  // Table Access Level:
+  // "6";"System/Client"
+  // "1";"Organization"
+  // "3";"Client/Organization"
+  // "4";"System only"
+  // "7";"All"
+
+  // User level:
+  // "S";"System"
+  // " C";"Client"
+  // "  O";"Organization"
+  // " CO";"Client+Organization"
+
   private String roleId;
 
   private Set<Entity> writableEntities = new HashSet<Entity>();
@@ -86,6 +99,8 @@ public class EntityAccessChecker implements OBNotSingleton {
   public void initialize() {
 
     final ModelProvider mp = ModelProvider.getInstance();
+    final String userLevel = obContext.getUserLevel();
+
     // Don't use dal because otherwise we can end up in infinite loops
     final String qryStr = "select wa from " + WindowAccess.class.getName() + " wa where role.id='"
         + getRoleId() + "'";
@@ -106,6 +121,12 @@ public class EntityAccessChecker implements OBNotSingleton {
         if (e == null) { // happens for AD_Client_Info and views
           continue;
         }
+
+        final String accessLevel = t.getTable().getDataAccessLevel();
+        if (!hasCorrectAccessLevel(userLevel, accessLevel)) {
+          continue;
+        }
+
         if (writeAccess) {
           writableEntities.add(e);
           readableEntities.add(e);
@@ -121,6 +142,11 @@ public class EntityAccessChecker implements OBNotSingleton {
     @SuppressWarnings("unchecked")
     final List<TableAccess> tas = SessionHandler.getInstance().createQuery(tafQryStr).list();
     for (final TableAccess ta : tas) {
+      final String accessLevel = ta.getTable().getDataAccessLevel();
+      if (!hasCorrectAccessLevel(userLevel, accessLevel)) {
+        continue;
+      }
+
       final String tableName = ta.getTable().getName();
       final Entity e = mp.getEntityByTableName(tableName);
 
@@ -144,6 +170,32 @@ public class EntityAccessChecker implements OBNotSingleton {
     }
 
     isInitialized = true;
+  }
+
+  /**
+   * Checks if a certain user access level and a certain data access level match. Meaning that with
+   * a certain user access level it is allowed to view something with a certain data access level.
+   * 
+   * @param userLevel
+   *          the user level as defined in the role of the user
+   * @param accessLevel
+   *          the data access level defined in the table
+   * @return true if access is allowed, false otherwise
+   */
+  private boolean hasCorrectAccessLevel(String userLevel, String accessLevel) {
+    // copied from HttpSecureAppServlet.
+    if (accessLevel.equals("4") && userLevel.indexOf("S") == -1) {
+      return false;
+    } else if (accessLevel.equals("1") && userLevel.indexOf("O") == -1) {
+      return false;
+    } else if (accessLevel.equals("3")
+        && (!(userLevel.indexOf("C") != -1 || userLevel.indexOf("O") != -1))) {
+      return false;
+    } else if (accessLevel.equals("6")
+        && (!(userLevel.indexOf("S") != -1 || userLevel.indexOf("C") != -1))) {
+      return false;
+    }
+    return true;
   }
 
   /**

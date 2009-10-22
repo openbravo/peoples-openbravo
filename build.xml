@@ -105,9 +105,8 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="local" value="true" />
   <property name="apply.modules.complete.compilation" value="false" />
   <property name="calculate.core.revision" value="true"/>
+  <property name="stopOnWadError" value="false"/>
 
-
-  
   <available file=".hg" property="is.hg" />
 
   <condition property="calculate.core.rev">
@@ -209,7 +208,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   </path>
 
   <taskdef resource="axis-tasks.properties" classpathref="project.class.path" />
-
+  
   <target name="init" depends="code.rev">
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set." />
   </target>
@@ -244,13 +243,17 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="update.database.if.no.local" />
     
     <antcall target="wad.lib" />
-
-    <checksum file="${base.src.wad}/lib/openbravo-wad.jar" algorithm="MD5" property="test.md5.wad" />
+    
+    <taskdef name="CheckSumCondition" classname="org.openbravo.utils.CheckSumCondition">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    
+    <CheckSumCondition obDir="${basedir}"
+                       type="md5.wad"
+                       property="test.md5.wad"/>
 
     <condition property="new.wad">
-      <not>
-        <equals arg1="${test.md5.wad}" arg2="${md5.wad}" />
-      </not>
+        <istrue value="${test.md5.wad}"/>
     </condition>
 
     <antcall target="trl.lib" />
@@ -297,6 +300,15 @@ compare.database.structure: refer to compare.database.structure target of databa
   <target name="compile.complete.deploy">
     <antcall target="compile.complete.development" />
     <antcall target="compile.complete.war" />
+    
+    <!-- Calculate wad checksum to enable smartbuild-->
+    <taskdef name="CheckSumCondition" classname="org.openbravo.utils.CheckSumCondition">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    
+    <CheckSumCondition obDir="${basedir}"
+                           type="md5.wad"
+                           property="test.md5.wad"/>
   </target>
 
   <target name="compile.complete.development" depends="init" if="mode.class">
@@ -361,7 +373,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="generate.java.doc">
-    <javadoc sourcepath="${base.src}:${base.src.test}:${build.AD}:${base.src.gen}:build/javasqlc/src/:build/javasqlc/srcAD" Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" linksource="no" maxmemory="1024M">
+    <javadoc sourcepath="${base.src}:${base.src.test}:${build.AD}:${base.src.core}/src:${base.src.gen}:build/javasqlc/src/:build/javasqlc/srcAD" Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" linksource="no" maxmemory="1024M">
       <excludepackage name="org.openbravo.erpWindows.*"/>
       <classpath>
         <path refid="project.class.path"/>
@@ -610,6 +622,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="db.apply.modules.sampledata" if="apply.modules.on.create">
+    <antcall target="generate.entities" />
     <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
@@ -651,7 +664,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="apply.module">
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}">
-      <arg line="${base.src}" />
+      <arg line="'${base.src}'" />
       <classpath refid="project.class.path" />
     </java>
   </target>
@@ -904,6 +917,7 @@ compare.database.structure: refer to compare.database.structure target of databa
         <tokenfilter>
             <replaceregex pattern="(.*VERSION.*\[CDATA\[)(.*\..*\..*)(\]\].*)" replace="\2"/>
         </tokenfilter>
+        <striplinebreaks/>
       </filterchain>
     </loadfile>
   </target>

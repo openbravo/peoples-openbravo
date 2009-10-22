@@ -241,12 +241,19 @@ public class XmlDocument implements XmlComponentValue {
           + xmlTemplate.xmlEngine.fileBaseLocation);
 
       if (hasParameterValue != null && !hasParameterValue.isEmpty()) {
-        if (hasParameterValue.get("tabId") != null
-            && hasParameterValue.get("tabId").strValue != null) {
-          log4jXmlDocument.debug("print(strBlank) - tabId: "
-              + hasParameterValue.get("tabId").strValue);
-          handler.setTabId(hasParameterValue.get("tabId").strValue);
-          handler.setXmlDocumentType(TranslationHandler.ADWINDOW);
+        // check marker-parameter: is the template is a (generated) window?
+        if (hasParameterValue.get("isGeneratedWindow") != null) {
+          if (hasParameterValue.get("tabId") != null
+              && hasParameterValue.get("tabId").strValue != null) {
+            log4jXmlDocument.debug("print(strBlank) - tabId: "
+                + hasParameterValue.get("tabId").strValue);
+            handler.setTabId(hasParameterValue.get("tabId").strValue);
+            handler.setXmlDocumentType(TranslationHandler.ADWINDOW);
+          } else {
+            log4jXmlDocument.error("Generated window with templateFile: "
+                + xmlTemplate.fileConfiguration
+                + " has no tabId parameter; no translation will be done.");
+          }
         }
         if (hasParameterValue.get("processId") != null
             && hasParameterValue.get("processId").strValue != null

@@ -357,9 +357,9 @@ public class EntityXMLConverter implements OBNotSingleton {
                 .getPrimitiveReferencedEntity(obObject, p);
             final BaseOBObject obValue = OBDal.getInstance().get(referedEntity.getName(), strValue);
             if (obValue == null) {
-              log.error("Object (with id:" + obObject.getId() + "): The value " + strValue
-                  + " used in this object is not valid, there is no " + referedEntity.getName()
-                  + " with that id");
+              log.error("Object (" + obObject.getEntityName() + "(" + obObject.getId()
+                  + ")): The value " + strValue + " used in this object is not valid, there is no "
+                  + referedEntity.getName() + " with that id");
               // Check.isNotNull(obValue, "The value " + strValue + " used in treeNode "
               // + treeNode.getId() + " is not valid, there is no " + referedEntity.getName()
               // + " with that id");

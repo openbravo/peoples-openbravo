@@ -68,6 +68,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
       String strNameValue = vars.getRequestGlobalVariable("inpNameValue", "BusinessPartner.name");
       final String strIDValue = vars.getStringParameter("inpIDValue");
       final String strKeyValue = vars.getGlobalVariable("inpKey", "BusinessPartner.key", "");
+      vars.setSessionValue("BusinessPartner.adorgid", vars.getStringParameter("inpAD_Org_ID", ""));
       if (!strIDValue.equals("")) {
         final String strNameAux = BusinessPartnerData.existsActual(this, strNameValue, strIDValue);
         if (!strNameAux.equals(""))
@@ -96,7 +97,8 @@ public class BusinessPartner extends HttpSecureAppServlet {
       final String strIsSOTrxTab = vars.getStringParameter("inpisSOTrxTab");
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "BusinessPartner.key");
       final String strIDValue = vars.getStringParameter("inpIDValue");
-      final String strOrg = vars.getStringParameter("inpAD_Org_ID");
+      // getGlobalVariable only used to store request value into session, not to read it from there
+      String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "BusinessPartner.adorgid", "");
       if (!strIDValue.equals("")) {
         final String strNameAux = BusinessPartnerData.existsActualValue(this, strKeyValue,
             strIDValue);
@@ -425,12 +427,17 @@ public class BusinessPartner extends HttpSecureAppServlet {
   private void clearSessionValue(VariablesSecureApp vars) {
     vars.removeSessionValue("BusinessPartner.key");
     vars.removeSessionValue("BusinessPartner.name");
-    vars.removeSessionValue("BusinessPartner.adorgid");
     vars.removeSessionValue("BusinessPartner.contact");
     vars.removeSessionValue("BusinessPartner.zip");
     vars.removeSessionValue("BusinessPartner.provincia");
     vars.removeSessionValue("BusinessPartner.bpartner");
     vars.removeSessionValue("BusinessPartner.city");
+
+    // remove saved adorgid only when called from DEFAULT,KEY
+    // but not when called by clicking search in the selector
+    if (!vars.getStringParameter("newFilter").equals("1")) {
+      vars.removeSessionValue("BusinessPartner.adorgid");
+    }
   }
 
   @Override

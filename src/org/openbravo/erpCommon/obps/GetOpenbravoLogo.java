@@ -47,13 +47,13 @@ public class GetOpenbravoLogo extends HttpBaseServlet {
 
     // get instance active status from db
     boolean active = false;
-    OBContext.setAdminContext();
+    OBContext.enableAsAdminContext();
     try {
       ActivationKey ak = new ActivationKey();
       active = ak.isActive();
       log4j.debug("GetOpsLogo: activated: " + active);
     } finally {
-      OBContext.setOBContext((OBContext) null);
+      OBContext.resetAsAdminContext();
     }
 
     String activeLogo;

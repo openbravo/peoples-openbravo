@@ -35,16 +35,6 @@
     <Field name="columnname" value="void"/>
   </SqlMethod>
 
-  <SqlMethod name="selectTableName" type="preparedStatement" return="String">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      select ad_table.name
-      from ad_table
-      where upper(ad_table.tablename) = upper(?)
-    </Sql>
-    <Parameter name="tablename"/>
-  </SqlMethod>
-
   <SqlMethod name="selectColumnName" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

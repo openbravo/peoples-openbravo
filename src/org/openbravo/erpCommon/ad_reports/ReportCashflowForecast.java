@@ -125,9 +125,17 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
           "ReportCashflowForecast|AcctNo"));
 
       try {
-        dataDetail = ReportCashflowForecastData.selectAllLines(this, vars.getSqlDateFormat(), vars
-            .getLanguage(), vars.getRequestGlobalVariable("inpcBankAccountId",
-            "ReportCashflowForecast|AcctNo"), strDateMax, "BANKACCOUNT, ISRECEIPT desc");
+        if (strBreakDate.equals("")) {
+          dataDetail = ReportCashflowForecastData.selectAllLines(this, vars.getSqlDateFormat(),
+              vars.getLanguage(), vars.getRequestGlobalVariable("inpcBankAccountId",
+                  "ReportCashflowForecast|AcctNo"), strDateMax,
+              "BANKACCOUNT, ISRECEIPT desc,DATEPLANNED,INVOICENO ");
+        } else {
+          dataDetail = ReportCashflowForecastData.selectAllLines(this, vars.getSqlDateFormat(),
+              vars.getLanguage(), vars.getRequestGlobalVariable("inpcBankAccountId",
+                  "ReportCashflowForecast|AcctNo"), strDateMax,
+              "BANKACCOUNT,DATEPLANNED,ISRECEIPT desc,INVOICENO ");
+        }
         String strReportName = (("on".equals(strBreakDate)) ? "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_perDay.jrxml"
             : "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast.jrxml");
         renderJR(vars, response, strReportName, "pdf", parameters, dataDetail, null);

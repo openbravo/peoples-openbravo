@@ -101,9 +101,11 @@ public class UninstallModule {
           moduleIdList);
       if (dependencies != null && dependencies.length > 0) {
         for (int i = 0; i < dependencies.length; i++) {
-          log4j.error(dependencies[i].name
-              + " cannot uninstall module because it is part of a dependency");
-          addLog(dependencies[i].name + " @CannotUninstallDependency@", MSG_ERROR);
+          log4j.error(dependencies[i].origname
+              + " cannot uninstall module because it is part of a dependency for "
+              + dependencies[i].origname);
+          addLog(dependencies[i].origname + " @IsDependencyOf@ " + dependencies[i].name
+              + ". @CannotUninstallDependency@", MSG_ERROR);
           try {
             ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "",
                 "cannot uninstall module because it is part of a dependency "

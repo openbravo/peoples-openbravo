@@ -174,7 +174,7 @@ public class RuntimeModelTest extends BaseTest {
       for (final String tableName : tables)
         log.debug(tableName);
     }
-    // assertEquals(0, tables.size());
+    assertEquals(0, tables.size());
   }
 
   /**

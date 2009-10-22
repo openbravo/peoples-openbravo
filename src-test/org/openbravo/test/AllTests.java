@@ -25,6 +25,7 @@ import junit.framework.TestSuite;
 import org.openbravo.test.dal.DalConnectionProviderTest;
 import org.openbravo.test.dal.DalCopyTest;
 import org.openbravo.test.dal.DalQueryTest;
+import org.openbravo.test.dal.DalStoredProcedureTest;
 import org.openbravo.test.dal.DalTest;
 import org.openbravo.test.dal.DynamicEntityTest;
 import org.openbravo.test.dal.HiddenUpdateTest;
@@ -67,6 +68,7 @@ public class AllTests {
     suite.addTestSuite(DalQueryTest.class);
     suite.addTestSuite(DalConnectionProviderTest.class);
     suite.addTestSuite(DalCopyTest.class);
+    suite.addTestSuite(DalStoredProcedureTest.class);
 
     // model
     suite.addTestSuite(RuntimeModelTest.class);

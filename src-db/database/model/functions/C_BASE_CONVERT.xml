@@ -49,12 +49,10 @@
     v_CurTo_ID VARCHAR2(32);
   BEGIN
     -- Get Currency
-    SELECT MAX(ac.C_Currency_ID)
+     SELECT c.C_Currency_ID
     INTO v_CurTo_ID
-    FROM AD_ClientInfo ci,
-      C_AcctSchema ac
-    WHERE ci.C_AcctSchema1_ID=ac.C_AcctSchema_ID
-      AND ci.AD_Client_ID=p_Client_ID;
+    FROM AD_Client c
+    WHERE c.AD_Client_ID=p_Client_ID;
     -- Same as Currency_Conversion - if currency/rate not found - return 0
     IF(v_CurTo_ID IS NULL) THEN
       RETURN NULL;

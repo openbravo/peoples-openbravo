@@ -26,76 +26,71 @@
   <SqlClassComment></SqlClassComment>
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-     SELECT ORGID, SEARCHKEY, NAME, PERCENTAGE, ATTR, SUM(QTY) AS QTY, UNIT, COST, SUM(QTY*COST) AS VALUE,
-     M_GET_PARETO_ABC(?, ?, ?, PERCENTAGE) AS ISABC,
-     '' AS PADRE, '' AS ID
-     FROM  
-     (
-     SELECT 
-      SUM(MSD.QTYONHAND) AS QTY,
-      MA.DESCRIPTION AS ATTR,
-      AD_ORG.NAME AS ORGID,
-      PR.VALUE AS SEARCHKEY,
-      PR.NAME,
-      C_CURRENCY_CONVERT(M_GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV'), ?, ?, TO_DATE(COALESCE(MC.DATEFROM,NOW())), NULL, MC.AD_CLIENT_ID, MC.AD_ORG_ID)  AS COST, 
-      100 * (C_CURRENCY_CONVERT(M_GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV'), ?, ?, TO_DATE(COALESCE(MC.DATEFROM,NOW())), NULL, MC.AD_CLIENT_ID, MC.AD_ORG_ID) / 
-      		(SELECT SUM(C_CURRENCY_CONVERT(M_GET_PRODUCT_COST(PR1.M_PRODUCT_ID,to_date(now()),'AV'), ?, ?, TO_DATE(COALESCE(MC.DATEFROM,NOW())), NULL, MC.AD_CLIENT_ID, MC.AD_ORG_ID)) 
-                                                           from M_WAREHOUSE MW1  
-                                                           LEFT JOIN M_LOCATOR ML1 ON ML1.M_WAREHOUSE_ID=MW1.M_WAREHOUSE_ID
-                                                           LEFT JOIN M_STORAGE_DETAIL MSD1 ON ML1.M_LOCATOR_ID=MSD1.M_LOCATOR_ID
-                                                           LEFT JOIN M_PRODUCT PR1 ON MSD1.M_PRODUCT_ID=PR1.M_PRODUCT_ID 
-                                                           LEFT JOIN M_COSTING MC ON PR1.M_PRODUCT_ID=MC.M_PRODUCT_ID
-                                                           LEFT JOIN M_ATTRIBUTESETINSTANCE MA ON MSD1.M_ATTRIBUTESETINSTANCE_ID=MA.M_ATTRIBUTESETINSTANCE_ID  
-                                                           WHERE MSD1.QTYONHAND>0
-                                                           AND 1=1
-                                                           AND 2=2
-                                                           AND 6=6  
-                                                           ) ) as PERCENTAGE,
-      PR.M_PRODUCT_ID,
-      MW.AD_ORG_ID,
-      C_UOM.NAME AS UNIT
-     FROM
-     M_WAREHOUSE MW 
-       LEFT JOIN M_LOCATOR ML ON ML.M_WAREHOUSE_ID=MW.M_WAREHOUSE_ID
-       LEFT JOIN M_STORAGE_DETAIL MSD ON ML.M_LOCATOR_ID=MSD.M_LOCATOR_ID
-       LEFT JOIN M_PRODUCT PR ON MSD.M_PRODUCT_ID=PR.M_PRODUCT_ID
-       LEFT JOIN M_COSTING MC ON PR.M_PRODUCT_ID=MC.M_PRODUCT_ID
-       LEFT JOIN M_ATTRIBUTESETINSTANCE MA ON MSD.M_ATTRIBUTESETINSTANCE_ID=MA.M_ATTRIBUTESETINSTANCE_ID,
-       AD_ORG, C_UOM   
-     WHERE 3=3
-       AND 4=4
-       AND 5=5
-       AND MSD.QTYONHAND>0
-       AND C_CURRENCY_CONVERT(M_GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV'), ?, ?, TO_DATE(COALESCE(MC.DATEFROM,NOW())), NULL, MC.AD_CLIENT_ID, MC.AD_ORG_ID) IS NOT NULL
-       AND C_CURRENCY_CONVERT(M_GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV'), ?, ?, TO_DATE(COALESCE(MC.DATEFROM,NOW())), NULL, MC.AD_CLIENT_ID, MC.AD_ORG_ID) <> 0
-       AND MW.AD_ORG_ID = AD_ORG.AD_ORG_ID
-       AND PR.C_UOM_ID = C_UOM.C_UOM_ID
-     GROUP BY AD_ORG.NAME ,PR.VALUE, PR.NAME, MA.DESCRIPTION, PR.M_PRODUCT_ID, MW.AD_ORG_ID, C_UOM.NAME, MC.DATEFROM, MC.AD_CLIENT_ID, MC.AD_ORG_ID 
-     ) BBB GROUP BY BBB.ORGID, BBB.SEARCHKEY, BBB.NAME, BBB.PERCENTAGE, BBB.ATTR, BBB.UNIT, BBB.COST
-     ORDER BY ORGID ASC, PERCENTAGE DESC
+    <Sql><![CDATA[
+      select orgid, searchkey, name, unit, qty, cost, value, percentage,
+      m_get_pareto_abc(?, ad_org_id, ?, percentage) as isabc, '' as padre, '' as id
+      from (
+        select ad_column_identifier('AD_Org',w.ad_org_id, ?) as orgid,
+          p.value as searchkey, p.name as name,
+          ad_column_identifier('C_Uom', p.c_uom_id, ?) as unit,
+          w.ad_org_id, sd.m_product_id, sum(sd.qtyonhand) as qty,
+          c_currency_convert(c.cost, ?, ?, to_date(now()), w.ad_client_id, w.ad_org_id) as cost, 
+          c_currency_convert(sum(sd.qtyonhand*c.cost), ?, ?, to_date(now()), w.ad_client_id, w.ad_org_id) as value, 
+          100*sum(sd.qtyonhand*c.cost)/(
+            select sum(c_aux.cost * sd_aux.qtyonhand)
+            from m_locator l_aux, m_warehouse w_aux, m_storage_detail sd_aux, m_costing c_aux
+            where sd_aux.m_locator_id = l_aux.m_locator_id
+              and l_aux.m_warehouse_id = w_aux.m_warehouse_id
+              and w_aux.ad_org_id = w.ad_org_id
+              and sd_aux.m_product_id = c_aux.m_product_id
+              and sd_aux.qtyonhand > 0
+              and c_aux.datefrom = (select max(c_aux1.datefrom)
+                                    from m_costing c_aux1
+                                    where c_aux1.m_product_id = c_aux.m_product_id
+                                      and c_aux1.ad_client_id = ?
+                                      and datefrom <= now())
+              and c_aux.dateto > now()
+              and c_aux.ad_client_id = ?
+              and w_aux.ad_client_id = c_aux.ad_client_id
+              and 1=1
+              and 2=2
+              ) as percentage
+          from m_locator l, m_warehouse w, m_storage_detail sd, m_costing c, m_product p
+          where sd.m_locator_id = l.m_locator_id
+            and l.m_warehouse_id = w.m_warehouse_id
+            and sd.m_product_id = c.m_product_id
+            and sd.m_product_id = p.m_product_id
+            and sd.qtyonhand > 0
+            and c.datefrom = (select max(c1.datefrom)
+                              from m_costing c1
+                              where c.m_product_id = c1.m_product_id
+                                and c1.ad_client_id = ?
+                                and c1.datefrom <= now())
+            and c.dateto > now()
+            and c.ad_client_id=?
+            and w.ad_client_id=c.ad_client_id
+            and 3=3
+            and 4=4
+          group by w.ad_org_id, sd.m_product_id, c.cost, w.ad_client_id, w.ad_org_id, p.name, p.value, p.c_uom_id) a
+        order by orgid, percentage desc
     ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="mWarehouseId"/>
-    <Parameter name="adOrgId"/> 
-    <Parameter name="adClientId"/>  
+    <Parameter name="adClientId"/>
+    <Parameter name="language"/>
+    <Parameter name="language"/>
     <Parameter name="cCurrencyBase"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyBase"/>
     <Parameter name="cCurrencyConv"/> 
-    <Parameter name="cCurrencyBase"/>
-    <Parameter name="cCurrencyConv"/> 
-    <Parameter name="mWarehouseId" optional="true" after="1=1" text=" AND MW1.M_WAREHOUSE_ID = ? "/>
-    <Parameter name="adOrgId" optional="true" after="2=2" text=" AND MW1.AD_ORG_ID = ? "/>
-    <Parameter name="adClientId" optional="true" after="6=6" text=" AND MW1.AD_CLIENT_ID = ? "/>    
-    <Parameter name="mWarehouseId" optional="true" after="3=3" text=" AND MW.M_WAREHOUSE_ID = ? "/>    
-    <Parameter name="adOrgId" optional="true" after="4=4" text=" AND MW.AD_ORG_ID = ? "/>
-    <Parameter name="adClientId" optional="true" after="5=5" text=" AND MW.AD_CLIENT_ID = ? "/>
-    <Parameter name="cCurrencyBase"/>
-    <Parameter name="cCurrencyConv"/> 
-    <Parameter name="cCurrencyBase"/>
-    <Parameter name="cCurrencyConv"/> 
+    <Parameter name="adClientId"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="mWarehouseId" optional="true" after="1=1" text=" AND w_aux.M_WAREHOUSE_ID = ? "/>
+    <Parameter name="adOrgId" optional="true" after="2=2" text=" AND w_aux.AD_ORG_ID = ? "/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="mWarehouseId" optional="true" after="3=3" text=" AND W.M_WAREHOUSE_ID = ? "/>    
+    <Parameter name="adOrgId" optional="true" after="4=4" text=" AND W.AD_ORG_ID = ? "/>
   </SqlMethod>
 
   <SqlMethod name="set" type="constant" return="multiple">

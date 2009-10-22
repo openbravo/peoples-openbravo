@@ -65,7 +65,7 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND M_TRANSACTION.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE >= to_date(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE < to_date(?)]]></Parameter>
-    <Parameter name="reference" optional="true" after="AND 1=1"><![CDATA[ AND M_ATTRIBUTESETINSTANCE.DESCRIPTION = ?]]></Parameter>
+    <Parameter name="reference" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_ATTRIBUTESETINSTANCE.DESCRIPTION) LIKE '%'||UPPER(?)||'%']]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="set" type="constant" return="multiple">

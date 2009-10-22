@@ -109,7 +109,8 @@ class WindowTreeChecks {
       throws ServletException {
     String result = "";
     if (TreeType.equals("MM")) { // Menu
-      result = "";
+      result = WindowTreeChecksData.isMenuItemInDev(conn, nodeId) ? "" : Utility.messageBD(conn,
+          "CannotReorderNotDevModules", vars.getLanguage());
     } else if (TreeType.equals("OO")) { // Organization
       result = "";
     } else if (TreeType.equals("PR")) { // Product

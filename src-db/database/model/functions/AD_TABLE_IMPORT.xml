@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -48,6 +48,7 @@
     -- Parameter Variables
     --
     Cur_Column RECORD;
+    Cur_CommonCols RECORD;
     --
     v_NextNo VARCHAR2(32) ;
     v_count NUMBER(10):=0;
@@ -63,12 +64,14 @@
     v_DefaultValue NVARCHAR2(2000):='';
     v_SeqNo NUMBER(10) ;
     v_columnName VARCHAR2(40) ;
+    v_TableName  VARCHAR2(40) ;
     v_LastColumnName VARCHAR2(40) ;
     v_varchar2 VARCHAR2(32767) ;
     v_FieldLength NUMBER(10) ;
     v_PInstance_Log_ID VARCHAR2(32);
     v_Client_ID VARCHAR2(32);
     v_Aux NUMBER;
+    v_missingColumns boolean;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -219,7 +222,7 @@
           v_AD_Reference_ID:='29';
         ELSIF(Cur_Column.Data_Type='NUMBER') THEN
           v_AD_Reference_ID:='22';
-        ELSIF(Cur_Column.Data_Type='DATE') THEN
+        ELSIF(Cur_Column.Data_Type IN ('DATE', 'TIMESTAMP')) THEN
           v_AD_Reference_ID:='15';
         ELSE
           v_AD_Reference_ID:='10'; -- if not found, use String
@@ -300,6 +303,47 @@
     END LOOP; --  All new columns
     -- Summary info
     v_Message:='@Created@ = ' || v_count;
+    
+    
+    --Check common columns
+    IF (v_Record_ID is not null) THEN
+      v_missingColumns := false;
+      FOR Cur_CommonCols IN (select columnname
+                              from ad_column c
+                             where c.ad_table_id = '100'
+                               and lower(c.columnname) in ('ad_client_id','ad_org_id','isactive','created','updated','createdby','updatedby')
+                               and not exists (select 1 
+                                                 from ad_column c1
+                                                where c1.ad_table_id = v_Record_ID
+                                                 and lower(c1.columnname) = lower(c.columnname))) LOOP
+        v_missingColumns := true;
+        v_Message := '@MissingCommonColumn@: '||Cur_CommonCols.columnname||'<br/>'||v_Message;
+      END LOOP;
+      
+      select count(*)
+        into v_count
+        from ad_column c, ad_table t
+       where lower(columnname) = lower(t.tablename)||'_id'
+         and t.ad_table_id = c.ad_table_id
+         and t.ad_table_id = v_Record_ID;
+         
+        IF v_Count = 0 THEN
+          select tablename
+            into v_TableName
+            from ad_table
+            where ad_table_id = v_record_ID;
+            
+          v_missingColumns := true;
+          v_Message := '@MissingPrimaryKeyColumn@: '||v_tablename||'_ID<br/>'||v_Message;
+        END IF;
+        
+        IF (v_MissingColumns) THEN
+          v_Result :=0;
+          v_Message := '@MissingRequiredColumns@<br/>'|| v_message;
+        END IF;
+    END IF;
+    
+    
     --<<FINISH_PROCESS>>
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -310,6 +354,9 @@
     END IF;
     -- Commented by cromero 19102006 COMMIT;
     RETURN;
+    
+    
+    
   END; --BODY
 EXCEPTION
 WHEN OTHERS THEN

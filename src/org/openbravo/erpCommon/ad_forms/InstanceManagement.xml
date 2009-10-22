@@ -30,6 +30,5 @@
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <PARAMETER id="instanceInfo" name="instanceInfo" default=""/>
   <PARAMETER id="OPSdaysLeft" name="OPSdaysLeft" dafault=""/>
-  <PARAMETER id="paramOpsinstance" name="opsinstance" default="var opsInstance = false;"/>
 
 </REPORT>

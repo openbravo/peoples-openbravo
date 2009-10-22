@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.AccessLevel;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -30,8 +31,10 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.validation.AccessLevelChecker;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -50,6 +53,52 @@ import org.openbravo.test.base.BaseTest;
  */
 
 public class AccessLevelTest extends BaseTest {
+
+  /**
+   * Test that the access level is tested correctly
+   */
+  public void testUserDataAccessLevel() {
+    // Table Access Level:
+    // "6";"System/Client"
+    // "1";"Organization"
+    // "3";"Client/Organization"
+    // "4";"System only"
+    // "7";"All"
+
+    // User level:
+    // "S";"System"
+    // " C";"Client"
+    // "  O";"Organization"
+    // " CO";"Client+Organization"
+
+    setUserContext("0");
+    final List<Table> tables = OBDal.getInstance().createCriteria(Table.class).list();
+    // SmallBazaar role --> CO
+    final Role role = OBDal.getInstance().get(Role.class, "1000000");
+    setUserContext("100");
+    OBContext.getOBContext().setRole(role);
+    final String userLevel = OBContext.getOBContext().getUserLevel();
+    assertEquals("CO", userLevel.trim());
+    boolean testDone = false;
+    for (Table t : tables) {
+      final Entity entity = ModelProvider.getInstance().getEntityByTableName(t.getDBTableName());
+      if (t.getDataAccessLevel().contains("6") || t.getDataAccessLevel().contains("4")) {
+        try {
+          // ignore these
+          if (OBContext.getOBContext().getEntityAccessChecker().isDerivedReadable(entity)) {
+            continue;
+          }
+          testDone = true;
+          OBContext.getOBContext().getEntityAccessChecker().checkReadable(entity);
+          fail("Incorrect access level check for entity " + entity + " and userlevel " + userLevel
+              + " data access level " + t.getDataAccessLevel());
+        } catch (OBSecurityException e) {
+          // correct
+        }
+      }
+    }
+    assertTrue(testDone);
+  }
 
   /**
    * Tests/checks if the current client/org of the all objects in the database is valid for the

@@ -321,6 +321,17 @@ public class VersionUtility {
         return 0;
       }
     }
+
+    /**
+     * Compare just major versions without taking into account minor part
+     * 
+     * @param ver1
+     * @param ver2
+     * @return
+     */
+    public int compareMajorVersions(String ver1, String ver2) {
+      return versionCompare(ver1, ver2, true);
+    }
   }
 
   static private int versionCompare(String ver1, String ver2) {

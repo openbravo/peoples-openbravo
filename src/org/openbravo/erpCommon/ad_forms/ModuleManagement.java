@@ -41,6 +41,7 @@ import org.openbravo.erpCommon.modules.ModuleTree;
 import org.openbravo.erpCommon.modules.UninstallModule;
 import org.openbravo.erpCommon.modules.VersionUtility;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.CommercialModuleStatus;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.HttpsUtils;
@@ -688,27 +689,73 @@ public class ModuleManagement extends HttpSecureAppServlet {
     boolean OBPSActiveInstance = ActivationKey.isActiveInstance();
     ArrayList<Module> notAllowedMods = new ArrayList<Module>();
 
+    String notSubscribed = "";
+    String expired = "";
+    String notActiveYet = "";
+
     for (Module instMod : im.getModulesToInstall()) {
-      if (instMod.getIsCommercial()
-          && (!OBPSActiveInstance || !ak.isModuleSubscribed(instMod.getModuleID(), true))) {
-        notAllowedMods.add(instMod);
+      if (instMod.getIsCommercial()) {
+        if (!OBPSActiveInstance
+            || ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+          if (notSubscribed.length() > 0) {
+            notSubscribed += ", ";
+          }
+          notSubscribed += instMod.getName();
+        } else if (ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.EXPIRED) {
+          if (expired.length() > 0) {
+            expired += ", ";
+          }
+          expired += instMod.getName();
+        } else if (ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.NO_ACTIVE_YET) {
+          if (notActiveYet.length() > 0) {
+            notActiveYet += ", ";
+          }
+          notActiveYet += instMod.getName();
+        }
       }
     }
 
     for (Module updMod : im.getModulesToUpdate()) {
-      if (updMod.getIsCommercial()
-          && (!OBPSActiveInstance || !ak.isModuleSubscribed(updMod.getModuleID(), true))) {
-        notAllowedMods.add(updMod);
+      if (updMod.getIsCommercial()) {
+        if (!OBPSActiveInstance
+            || ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+          if (notSubscribed.length() > 0) {
+            notSubscribed += ", ";
+          }
+          notSubscribed += updMod.getName();
+
+        } else if (ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.EXPIRED) {
+          if (expired.length() > 0) {
+            expired += ", ";
+          }
+          expired += updMod.getName();
+        } else if (ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.NO_ACTIVE_YET) {
+          if (notActiveYet.length() > 0) {
+            notActiveYet += ", ";
+          }
+          notActiveYet += updMod.getName();
+        }
       }
     }
 
-    if (notAllowedMods.size() > 0) {
-      String discard[] = { "" };
+    if (notSubscribed.length() > 0 || expired.length() > 0 || notActiveYet.length() > 0) {
+      String discard[] = { "", "", "", "" };
 
-      if (OBPSActiveInstance) {
-        discard[0] = "CEInstance";
+      if (!OBPSActiveInstance) {
+        discard[0] = "OBPSInstance-NotActive";
+        discard[1] = "OBPSInstance-Expired";
+        discard[2] = "OBPSInstance-NoActiveYet";
       } else {
-        discard[0] = "OBPSInstance";
+        discard[0] = "CEInstance";
+        if (notSubscribed.length() == 0) {
+          discard[1] = "OBPSInstance-NotActive";
+        }
+        if (expired.length() == 0) {
+          discard[2] = "OBPSInstance-Expired";
+        }
+        if (notActiveYet.length() == 0) {
+          discard[3] = "OBPSInstance-NoActiveYet";
+        }
       }
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_forms/ModuleManagement_ErrorCommercial", discard)
@@ -716,7 +763,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("theme", vars.getTheme());
-      xmlDocument.setData("modules", FieldProviderFactory.getFieldProviderArray(notAllowedMods));
+      xmlDocument.setParameter("modules", notSubscribed);
+      xmlDocument.setParameter("expired", expired);
+      xmlDocument.setParameter("noActiveYet", notActiveYet);
       response.setContentType("text/html; charset=UTF-8");
       final PrintWriter out = response.getWriter();
       out.println(xmlDocument.print());

@@ -3,7 +3,7 @@
     <table name="AD_LANGUAGE" primaryKey="AD_LANGUAGE_KEY">
       <column name="AD_LANGUAGE_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA[get_uuid()]]></onCreateDefault>
       </column>
       <column name="AD_LANGUAGE" primaryKey="false" required="true" type="VARCHAR" size="6" autoIncrement="false">
         <default/>

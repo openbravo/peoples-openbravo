@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +45,8 @@ import org.openbravo.wad.controls.WADGrid;
 import org.openbravo.wad.controls.WADHidden;
 import org.openbravo.wad.controls.WADLabelControl;
 import org.openbravo.wad.controls.WadControlLabelBuilder;
+import org.openbravo.wad.validation.WADValidationResult;
+import org.openbravo.wad.validation.WADValidator;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
 import org.xml.sax.helpers.DefaultHandler;
@@ -258,7 +261,12 @@ public class Wad extends DefaultHandler {
       else
         quick = argv[16].equals("quick");
 
-      // System.out.println("16: " + argv[16] + " l " + argv.length);
+      boolean failOnErrorVerification;
+      if (argv.length <= 17 || argv[17].equals("true")) {
+        failOnErrorVerification = true;
+      } else {
+        failOnErrorVerification = false;
+      }
 
       if (quick) {
         module = "%";
@@ -283,6 +291,7 @@ public class Wad extends DefaultHandler {
       log4j.info("Web path: " + webPath);
       log4j.info("Src path: " + strBaseSrc);
       log4j.info("Quick mode: " + quick);
+      log4j.info("Stop on failed verification:" + failOnErrorVerification);
 
       final File fileFin = new File(dirFin);
       if (!fileFin.exists()) {
@@ -349,6 +358,32 @@ public class Wad extends DefaultHandler {
         return;
       }
 
+      // Calculate windows to generate
+      String strCurrentWindow;
+      final StringTokenizer st = new StringTokenizer(strWindowName, ",", false);
+      ArrayList<TabsData> td = new ArrayList<TabsData>();
+      while (st.hasMoreTokens()) {
+        strCurrentWindow = st.nextToken().trim();
+        TabsData tabsDataAux[];
+        if (quick)
+          tabsDataAux = TabsData.selectQuick(wad.pool);
+        else if (module.equals("%"))
+          tabsDataAux = TabsData.selectTabs(wad.pool, strCurrentWindow);
+        else
+          tabsDataAux = TabsData.selectTabsinModules(wad.pool, strCurrentWindow, module);
+        td.addAll(Arrays.asList(tabsDataAux));
+      }
+      TabsData[] tabsData = td.toArray(new TabsData[0]);
+      log4j.info(tabsData.length + " tabs to compile.");
+
+      log4j.info("Verifing tabs...");
+      WADValidator validator = new WADValidator(wad.pool, tabsData);
+      WADValidationResult validationResult = validator.validate();
+      validationResult.printLog();
+      if (validationResult.hasErrors() && failOnErrorVerification) {
+        throw new Exception("Tabs verification has errors");
+      }
+
       // Call to update the table identifiers
       log4j.info("Updating table identifiers");
       WadData.updateIdentifiers(wad.pool, quick ? "Y" : "N");
@@ -385,29 +420,18 @@ public class Wad extends DefaultHandler {
           log4j.info("No changes in web.xml");
       }
 
-      String strCurrentWindow;
-      final StringTokenizer st = new StringTokenizer(strWindowName, ",", false);
-      while (st.hasMoreTokens()) {
-        strCurrentWindow = st.nextToken().trim();
-        TabsData tabsData[];
-        if (quick)
-          tabsData = TabsData.selectQuick(wad.pool);
-        else if (module.equals("%"))
-          tabsData = TabsData.selectTabs(wad.pool, strCurrentWindow);
-        else
-          tabsData = TabsData.selectTabsinModules(wad.pool, strCurrentWindow, module);
-        if (tabsData.length == 0)
-          log4j.info("No windows to compile");
-        if (generateTabs) {
-          for (int i = 0; i < tabsData.length; i++) {
-            // don't compile if it is in an unactive branch
-            if (wad.allTabParentsActive(tabsData[i].tabid)) {
-              log4j.info("Processing Window: " + tabsData[i].windowname + " - Tab: "
-                  + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
-              log4j.debug("Processing: " + tabsData[i].tabid);
-              wad.processTab(fileFin, fileFinReloads, tabsData[i], fileTrl, dirBaseTrl,
-                  translateStr, fileBase, fileBaseAplication);
-            }
+      if (tabsData.length == 0)
+        log4j.info("No windows to compile");
+
+      if (generateTabs) {
+        for (int i = 0; i < tabsData.length; i++) {
+          // don't compile if it is in an unactive branch
+          if (wad.allTabParentsActive(tabsData[i].tabid)) {
+            log4j.info("Processing Window: " + tabsData[i].windowname + " - Tab: "
+                + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
+            log4j.debug("Processing: " + tabsData[i].tabid);
+            wad.processTab(fileFin, fileFinReloads, tabsData[i], fileTrl, dirBaseTrl, translateStr,
+                fileBase, fileBaseAplication);
           }
         }
       }
@@ -836,9 +860,10 @@ public class Wad extends DefaultHandler {
       final Vector<Object> vecParameters = new Vector<Object>();
       final Vector<Object> vecTableParameters = new Vector<Object>();
       final Vector<Object> vecTotalParameters = new Vector<Object>();
+      final Vector<String> vecFieldParameters = new Vector<String>();
       processTable(parentsFieldsData, tabsData.tabid, vecFields, vecTables, vecWhere, vecOrder,
           vecParameters, tableName, tabsData.windowtype, tabsData.tablevel, vecTableParameters,
-          fieldsData);
+          fieldsData, vecFieldParameters);
       final StringBuffer strFields = new StringBuffer();
       log4j.debug("Executing de select conformation");
       for (int i = 0; i < vecTableParameters.size(); i++) {
@@ -1028,7 +1053,7 @@ public class Wad extends DefaultHandler {
             keyColumnName, strFields.toString(), strTables.toString(), strOrder.toString(),
             strWhere.toString(), vecParameters, tabsData.filterclause, selCol, tabsData.tablevel,
             tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey,
-            tabsData.javapackage);
+            tabsData.javapackage, vecFieldParameters);
 
         /************************************************
          * JAVA of the combo reloads
@@ -1267,14 +1292,15 @@ public class Wad extends DefaultHandler {
    *          Vector of the from clause parameters.
    * @param fieldsDataSelectAux
    *          Array with the fields of the tab.
+   * @param vecFieldParameters
    * @throws ServletException
    * @throws IOException
    */
   private void processTable(FieldsData[] parentsFieldsData, String strTab,
       Vector<Object> vecFields, Vector<Object> vecTables, Vector<Object> vecWhere,
       Vector<Object> vecOrder, Vector<Object> vecParameters, String tableName, String windowType,
-      String tablevel, Vector<Object> vecTableParameters, FieldsData[] fieldsDataSelectAux)
-      throws ServletException, IOException {
+      String tablevel, Vector<Object> vecTableParameters, FieldsData[] fieldsDataSelectAux,
+      Vector<String> vecFieldParameters) throws ServletException, IOException {
     int ilist = 0;
     final int itable = 0;
     final Vector<Object> vecCounters = new Vector<Object>();
@@ -1295,8 +1321,14 @@ public class Wad extends DefaultHandler {
         } else if (fieldsData[i].reference.equals("20")) {
           vecFields.addElement("COALESCE(" + tableName + "." + fieldsData[i].name + ", 'N') AS "
               + fieldsData[i].name);
-        } else
+        } else if (fieldsData[i].reference.equals("16")) { // datetime
+          vecFields.addElement("TO_CHAR(" + tableName + "." + fieldsData[i].name + ", ?) AS "
+              + fieldsData[i].name);
+          vecFieldParameters.addElement("<Parameter name=\"dateTimeFormat\"/>");
+        } else {
           vecFields.addElement(tableName + "." + fieldsData[i].name);
+        }
+
         if (fieldsData[i].reference.equals("19") && // TableDir
             fieldsData[i].isdisplayed.equals("Y")) {
           final Vector<Object> vecSubFields = new Vector<Object>();
@@ -2745,10 +2777,11 @@ public class Wad extends DefaultHandler {
       String strTables, String strOrder, String strWhere, Vector<Object> vecParametersTop,
       String strFilter, EditionFieldsData[] selCol, String tablevel, String windowType,
       Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
-      boolean isSecondaryKey, String javaPackage) throws ServletException, IOException {
+      boolean isSecondaryKey, String javaPackage, Vector<String> vecFieldParameters)
+      throws ServletException, IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
-    final String[] discard = { "", "", "", "", "", "", "", "" };
+    final String[] discard = { "", "", "", "", "", "", "", "", "", "" };
 
     if (parentsFieldsData == null || parentsFieldsData.length == 0)
       discard[0] = "parent"; // remove the parent tags
@@ -2758,9 +2791,16 @@ public class Wad extends DefaultHandler {
     } // else if (tableName.toUpperCase().startsWith("M_PRODUCT") ||
     // tableName.toUpperCase().startsWith("C_BP") ||
     // tableName.toUpperCase().startsWith("AD_ORG")) discard[1] = "org";
+
+    boolean isHighVolumen = (FieldsData.isHighVolume(pool, strTab).equals("Y"));
+    if (!isHighVolumen || !tablevel.equals("0")) {
+      discard[8] = "sectionIsHighVolume";
+    }
+
     if (selCol == null || selCol.length == 0) {
       discard[2] = "sectionHighVolume";
       discard[3] = "sectionHighVolume1";
+      discard[9] = "sectionIsHighVolume4";
     }
     if (!(windowType.equalsIgnoreCase("T") && tablevel.equals("0")))
       discard[4] = "sectionTransactional";
@@ -2796,7 +2836,6 @@ public class Wad extends DefaultHandler {
       parentsFieldsData[0].name = WadUtility.columnName(parentsFieldsData[0].name,
           parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule);
     }
-
     xmlDocumentXsql.setParameter("fields", strFields);
 
     // Relation select
@@ -2805,13 +2844,21 @@ public class Wad extends DefaultHandler {
     xmlDocumentXsql.setParameter("filter", strFilter);
     xmlDocumentXsql.setParameter("order", strOrder);
     final StringBuffer strParameters = new StringBuffer();
+    final StringBuffer strParametersFields = new StringBuffer();
+
+    for (String param : vecFieldParameters) {
+      strParametersFields.append(param);
+    }
+
     for (int i = 0; i < vecTableParametersTop.size(); i++) {
       strParameters.append(vecTableParametersTop.elementAt(i).toString()).append("\n");
     }
     for (int i = 0; i < vecParametersTop.size(); i++) {
       strParameters.append(vecParametersTop.elementAt(i).toString()).append("\n");
     }
+    xmlDocumentXsql.setParameter("parameterFields", strParametersFields.toString());
     xmlDocumentXsql.setParameter("parameters", strParameters.toString());
+
     // Parent field
     if (parentsFieldsData != null && parentsFieldsData.length > 0) {
       final Vector<Object> vecCounters = new Vector<Object>();
@@ -3095,7 +3142,9 @@ public class Wad extends DefaultHandler {
         fieldsDataUpdate[i].name = ((i > 0) ? ", " : "") + fieldsDataUpdate[i].name;
         if (WadUtility.isTimeField(fieldsDataUpdate[i].reference))
           fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?,'HH24:MI:SS')";
-        else
+        else if (fieldsDataUpdate[i].reference.equals("16")) { // datetime
+          fieldsDataUpdate[i].xmlFormat = "TO_DATE(?, ?)";
+        } else
           fieldsDataUpdate[i].xmlFormat = WadUtility.sqlCasting(pool,
               fieldsDataUpdate[i].reference, fieldsDataUpdate[i].referencevalue)
               + "(?)";
@@ -3103,10 +3152,23 @@ public class Wad extends DefaultHandler {
       xmlDocumentXsql.setData("structure3", fieldsDataUpdate);
     }
     {
-      final FieldsData fieldsDataParameter[] = FieldsData.selectUpdatables(pool, strTab);
-      for (int i = 0; i < fieldsDataParameter.length; i++) {
-        fieldsDataParameter[i].name = Sqlc.TransformaNombreColumna(fieldsDataParameter[i].name);
+      final FieldsData fieldsDataParameterTmp[] = FieldsData.selectUpdatables(pool, strTab);
+      ArrayList<String> fieldParam = new ArrayList<String>();
+      for (int i = 0; i < fieldsDataParameterTmp.length; i++) {
+        fieldParam.add(Sqlc.TransformaNombreColumna(fieldsDataParameterTmp[i].name));
+        if (fieldsDataParameterTmp[i].reference.equals("16")) {
+          // add extra sqldatetime to datetime reference
+          fieldParam.add("dateTimeFormat");
+        }
       }
+      FieldsData fieldsDataParameter[] = new FieldsData[fieldParam.size()];
+      int i = 0;
+      for (String paramName : fieldParam) {
+        fieldsDataParameter[i] = new FieldsData();
+        fieldsDataParameter[i].name = paramName;
+        i++;
+      }
+
       xmlDocumentXsql.setData("structure4", fieldsDataParameter);
     }
     {
@@ -3132,12 +3194,16 @@ public class Wad extends DefaultHandler {
             && !fieldsDataValue[i].name.equalsIgnoreCase("CreatedBy")
             && !fieldsDataValue[i].name.equalsIgnoreCase("Updated")
             && !fieldsDataValue[i].name.equalsIgnoreCase("UpdatedBy")) {
-          if (WadUtility.isTimeField(fieldsDataValue[i].reference))
+          if (WadUtility.isTimeField(fieldsDataValue[i].reference)) {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_TIMESTAMP(?, 'HH24:MI:SS')";
-          else
+          } else if (fieldsDataValue[i].reference.equals("16")) {
+            // datetime
+            fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_DATE(?, ?)";
+          } else {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "")
                 + WadUtility.sqlCasting(pool, fieldsDataValue[i].reference,
                     fieldsDataValue[i].referencevalue) + "(?)";
+          }
         } else
           fieldsDataValue[i].name = "";
       }
@@ -3155,6 +3221,11 @@ public class Wad extends DefaultHandler {
           fieldsDataParameterInsert[i].name = Sqlc
               .TransformaNombreColumna(fieldsDataParameterInsert[i].name);
           vecAux.addElement(fieldsDataParameterInsert[i]);
+          if (fieldsDataParameterInsert[i].reference.equals("16")) {
+            FieldsData paramDateTime = new FieldsData();
+            paramDateTime.name = "dateTimeFormat";
+            vecAux.addElement(paramDateTime);
+          }
         }
       }
       FieldsData[] fieldsDataParameterInsert1 = null;
@@ -3640,7 +3711,6 @@ public class Wad extends DefaultHandler {
     if (parentsFieldsData.length > 0) {
       xmlDocumentRHtml.setParameter("keyParent", "inp"
           + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
-      xmlDocumentRHtml.setParameter("parentKeyNameDescription", strParentNameDescription);
       xmlDocumentRHtml.setParameter("parentKeyName", parentsFieldsData[0].name);
     }
 
@@ -3865,6 +3935,7 @@ public class Wad extends DefaultHandler {
 
     final StringBuffer html = new StringBuffer();
     final StringBuffer labelsHTML = new StringBuffer();
+    ArrayList<String> labels = new ArrayList<String>();
 
     String strFieldGroup = "";
 
@@ -3880,8 +3951,12 @@ public class Wad extends DefaultHandler {
       html.append(auxControl.toXml()).append("\n");
       auxControl.setData("AdColumnId", efd[i].getField("adColumnId"));
       final String labelXML = auxControl.toLabelXML();
-      if (!labelXML.trim().equals(""))
-        labelsHTML.append(auxControl.toLabelXML()).append("\n");
+      if (!labelXML.trim().equals("")) {
+        String xml = auxControl.toLabelXML();
+        if (!labels.contains(xml)) {
+          labels.add(xml);
+        }
+      }
 
       // FieldGroups
       if (WadUtility.isNewGroup(auxControl, strFieldGroup)) {
@@ -3894,7 +3969,10 @@ public class Wad extends DefaultHandler {
         final String labelXMLfg = fieldLabel.toLabelXML();
         labelsHTML.append(labelXMLfg).append("\n");
       }
+    }
 
+    for (String label : labels) {
+      labelsHTML.append(label).append("\n");
     }
 
     xmlDocument.setParameter("fields", html.toString());

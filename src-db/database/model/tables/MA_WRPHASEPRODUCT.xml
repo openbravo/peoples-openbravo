@@ -87,6 +87,10 @@
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MAWRPHASEPRODUCT">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
+      <index name="MA_WRPHASEPRODUCT_PROD_PHASE" unique="false">
+        <index-column name="M_PRODUCT_ID"/>
+        <index-column name="MA_WRPHASE_ID"/>
+      </index>
       <check name="MAWRPHASEPROD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="MAWRPHASPRODT_PRODTYPE_CHECK"><![CDATA[PRODUCTIONTYPE IN ('+', '-')]]></check>
     </table>

@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SL
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+    * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -28,6 +28,11 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
+
+   --Check tab name starts with a upper case letter
+   IF (not (substr(:new.Name,1,1) between 'A' and 'Z')) THEN
+     RAISE_APPLICATION_ERROR(-20000, '@TabName1stCharUpper@') ;
+   END IF;
 
     -- Insert AD_Tab Trigger
     --  for Translation

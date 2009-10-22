@@ -47,7 +47,9 @@ BEGIN
        'Y', now(), :new.CreatedBy,
       now(), :new.CreatedBy
     FROM AD_Role
-    WHERE AD_Client_ID=:new.AD_Client_ID;
+    WHERE AD_Client_ID=:new.AD_Client_ID
+      AND IsManual='N';
+      
     --  Create TreeNode --
     --  get AD_Tree_ID + ParentID
     SELECT c.AD_Tree_Org_ID,

@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '4844';
+  var number = '5230';
   return number;
 }
 
@@ -2244,6 +2244,9 @@ function executeWindowButton(id,focus) {
   } else if (top.frames['mainframe']) {
     appWindow = top.frames['mainframe'];
   }
+  if (window.location.href.indexOf('ad_forms/Role.html') != -1) { //Exception for "Role" window
+    appWindow = top;
+  }
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
     if (focus==true) appWindow.document.getElementById(id).focus();
     appWindow.document.getElementById(id).onclick();
@@ -3481,11 +3484,15 @@ function getDateFormat(str_format) {
     format = format.replace("DD","%d");
     format = format.substring(0,8);
   }
+  str_format = str_format.replace("hh","HH").replace("HH24","HH").replace("mi","MI").replace("ss","SS");
+  str_format = str_format.replace("%H","HH").replace("HH:%m","HH:MI").replace("HH.%m","HH.MI").replace("%S","SS");
+  str_format = str_format.replace("HH:mm","HH:MI").replace("HH.mm","HH.MI");
+  str_format = str_format.replace("HH:MM","HH:MI").replace("HH.MM","HH.MI");
   if (str_format==null || str_format=="" || str_format=="null") str_format = defaultDateFormat;
-  else if (str_format.indexOf(" %H:%M:%S")!=-1) format += " %H:%M:%S";
-  else if (str_format.indexOf(" %H:%M")!=-1) format += " %H:%M";
-  else if (str_format.indexOf(" %H.%M.%S")!=-1) format += " %H.%M.%S";
-  else if (str_format.indexOf(" %H.%M")!=-1) format += " %H.%M";
+  else if (str_format.indexOf(" HH:MI:SS")!=-1) format += " %H:%M:%S";
+  else if (str_format.indexOf(" HH:MI")!=-1) format += " %H:%M";
+  else if (str_format.indexOf(" HH.MI.SS")!=-1) format += " %H.%M.%S";
+  else if (str_format.indexOf(" HH.MI")!=-1) format += " %H.%M";
   return format;
 }
 
@@ -4231,6 +4238,11 @@ function blurNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupIn
 
   var number = obj.value;
   var isValid = checkNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
+  if (obj.getAttribute('maxlength')) {
+    if (obj.value.length > obj.getAttribute('maxlength')) {
+      isValid = false;
+    }
+  }
   updateNumberMiniMB(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
   if (!isValid) {
     return false;
