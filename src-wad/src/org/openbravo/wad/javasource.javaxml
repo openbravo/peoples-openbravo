@@ -33,6 +33,7 @@ import org.openbravo.erpCommon.ad_actionButton.*;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.utils.FormatUtilities;
+import org.openbravo.utils.Replace;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.exception.OBException;
@@ -1000,6 +1001,21 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     toolbar.prepareEditionTemplate<PARAMETER_TMP id="sameParent">NoSearch</PARAMETER_TMP>("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, vars.getSessionValue("#ShowTest", "N").equals("Y"), "<PARAMETER_TMP id="paramUIPattern">readonly</PARAMETER_TMP>", Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
+    // set updated timestamp to manage locking mechanism
+    if (!boolNew) {
+      xmlDocument.setParameter("updatedTimestamp", (dataField != null ? dataField
+          .getField("updatedTimeStamp") : data[0].getField("updatedTimeStamp")));
+    }
+    
+    boolean concurrentSave = vars.getSessionValue(tabId + "|concurrentSave").equals("true");
+    if (concurrentSave) {
+      //after concurrent save error, force autosave
+      xmlDocument.setParameter("autosave", "Y");
+    } else {
+      xmlDocument.setParameter("autosave", "N");
+    }
+    vars.removeSessionValue(tabId + "|concurrentSave");
+
     try {
       WindowTabs tabs = new WindowTabs(this, vars, tabId, windowId, true, (strCommand.equalsIgnoreCase("NEW")));
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
@@ -1007,7 +1023,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       // if (!str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) xmlDocument.setParameter("childTabContainer", tabs.childTabs(false));
 	  // else xmlDocument.setParameter("childTabContainer", tabs.childTabs(true));
 	  xmlDocument.setParameter("childTabContainer", tabs.childTabs(false));
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb(), false, !concurrentSave);
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.editionTemplate(strCommand.equals("NEW")));
@@ -1249,10 +1265,20 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
                 data.<KEY_TMP id="keyData">Almacen</KEY_TMP> = strSequence;</PARAMETER_TMP>  
             }
             <PARAMETER_TMP id="client">if (Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),data.adClientId) <FIELDS_TMP id="sectionOrganizationCheck"> &amp;&amp; Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),data.adOrgId)</FIELDS_TMP>){</PARAMETER_TMP>
-		            if(type == 'I')
-		                    total = data.insert(con, this);
-		                else
-		                    total = data.update(con, this);		            
+		     if(type == 'I') {
+		       total = data.insert(con, this);
+		     } else {
+		       //Check the version of the record we are saving is the one in DB
+		       if (<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.getCurrentDBTimestamp(this, data.<KEY_TMP id="keyData">Almacen</KEY_TMP>).equals(
+                vars.getStringParameter("updatedTimestamp"))) {
+                total = data.update(con, this);
+               } else {
+                 myError.setMessage(Replace.replace(Replace.replace(Utility.messageBD(this,
+                    "SavingModifiedRecord", vars.getLanguage()), "\\n", "&lt;br/&gt;"), "&amp;quot;", "\""));
+                 myError.setType("Error");
+                 vars.setSessionValue(tabId + "|concurrentSave", "true");
+               } 
+		     }		            
           <PARAMETER_TMP id="client">
             }
                 else {
