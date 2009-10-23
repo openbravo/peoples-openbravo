@@ -38,6 +38,7 @@ import org.openbravo.erpCommon.utility.AntExecutor;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.ModuleLog;
+import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.service.system.ReloadContext;
 import org.openbravo.service.system.RestartTomcat;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -208,7 +209,6 @@ public class ApplyModules extends HttpSecureAppServlet {
       final Vector<String> tasks = new Vector<String>();
 
       final String unnappliedModules = getUnnapliedModules();
-
       if (ApplyModulesData.isUpdatingCoreOrTemplate(this)) {
         tasks.add("update.database");
         tasks.add("core.lib");
@@ -227,6 +227,11 @@ public class ApplyModules extends HttpSecureAppServlet {
         tasks.add("apply.modules");
         ant.setProperty("module", unnappliedModules);
       }
+
+      //We first shutdown the background process, so that it doesn't interfere
+      //with the rebuild process
+      OBScheduler.getInstance().getScheduler().shutdown(true);
+
 
       ant.runTask(tasks);
 
