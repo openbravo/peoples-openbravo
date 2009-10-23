@@ -227,12 +227,12 @@ public class ApplyModules extends HttpSecureAppServlet {
         tasks.add("apply.modules");
         ant.setProperty("module", unnappliedModules);
       }
-
-      //We first shutdown the background process, so that it doesn't interfere
-      //with the rebuild process
+      response.setContentType("text/plain; charset=UTF-8");
+      out.print("Shutting down scheduler (background processes) ...");
+      // We first shutdown the background process, so that it doesn't interfere
+      // with the rebuild process
       OBScheduler.getInstance().getScheduler().shutdown(true);
-
-
+      out.println(" done.\n");
       ant.runTask(tasks);
 
       ant.setFinished(true);
@@ -243,7 +243,6 @@ public class ApplyModules extends HttpSecureAppServlet {
         createModuleLog(true, null);
       }
 
-      response.setContentType("text/plain; charset=UTF-8");
       out.println("finished");
       out.close();
     } catch (final Exception e) {
