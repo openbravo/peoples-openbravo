@@ -65100,8 +65100,8 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--DD486C2E01F64B2F989DE923C43D41DB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--DD486C2E01F64B2F989DE923C43D41DB-->  <VALUE><![CDATA[SavingModifiedRecord]]></VALUE>
 <!--DD486C2E01F64B2F989DE923C43D41DB-->  <MSGTEXT><![CDATA[You are trying to save a record that is not up to date because it has been modified by another user/process.
-<b>Your edition will be lost!</b>
-You can revert your changes by reloading the current record from database clicking on the <a class="LabelLink_noicon" href="#" onclick="document.frmMain.autosave.value='N'; submitCommandForm('DEFAULT'); return true;">reload button</a>.]]></MSGTEXT>
+<b>Your changes will be lost!</b>
+You can revert your changes by reloading the current record from the database clicking on the <a class="LabelLink_noicon" href="#" onclick="document.frmMain.autosave.value='N'; submitCommandForm('DEFAULT'); return true;">reload button</a>.]]></MSGTEXT>
 <!--DD486C2E01F64B2F989DE923C43D41DB-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--DD486C2E01F64B2F989DE923C43D41DB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--DD486C2E01F64B2F989DE923C43D41DB--></AD_MESSAGE>
