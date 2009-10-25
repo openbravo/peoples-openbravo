@@ -68,35 +68,31 @@ public class BaseWebServiceServlet extends HttpServlet {
     }
   }
 
-  private void doService(HttpServletRequest request, HttpServletResponse response)
+  protected void doService(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
       super.service(request, response);
       response.setStatus(200);
     } catch (final InvalidRequestException e) {
       SessionHandler.getInstance().setDoRollback(true);
-      e.printStackTrace(System.err);
       response.setStatus(400);
       final Writer w = response.getWriter();
       w.write(WebServiceUtil.getInstance().createErrorXML(e));
       w.close();
     } catch (final InvalidContentException e) {
       SessionHandler.getInstance().setDoRollback(true);
-      e.printStackTrace(System.err);
       response.setStatus(409);
       final Writer w = response.getWriter();
       w.write(WebServiceUtil.getInstance().createErrorXML(e));
       w.close();
     } catch (final ResourceNotFoundException e) {
       SessionHandler.getInstance().setDoRollback(true);
-      e.printStackTrace(System.err);
       response.setStatus(404);
       final Writer w = response.getWriter();
       w.write(WebServiceUtil.getInstance().createErrorXML(e));
       w.close();
     } catch (final OBSecurityException e) {
       SessionHandler.getInstance().setDoRollback(true);
-      e.printStackTrace(System.err);
       response.setStatus(401);
       final Writer w = response.getWriter();
       w.write(WebServiceUtil.getInstance().createErrorXML(e));
@@ -111,7 +107,7 @@ public class BaseWebServiceServlet extends HttpServlet {
     }
   }
 
-  private boolean isLoggedIn(HttpServletRequest request, HttpServletResponse response) {
+  protected boolean isLoggedIn(HttpServletRequest request, HttpServletResponse response) {
     final String login = request.getParameter(LOGIN_PARAM);
     final String password = request.getParameter(PASSWORD_PARAM);
     String userId = null;
@@ -129,7 +125,7 @@ public class BaseWebServiceServlet extends HttpServlet {
     }
   }
 
-  private String doBasicAuthentication(HttpServletRequest request) {
+  protected String doBasicAuthentication(HttpServletRequest request) {
     try {
       final String auth = request.getHeader("Authorization");
       if (auth == null) {
