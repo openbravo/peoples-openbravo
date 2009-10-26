@@ -39,6 +39,7 @@ BEGIN
       AND IsActive = 'Y'
       AND AD_Org_AcctSchema.C_AcctSchema_ID = d.C_AcctSchema_ID
       )
+    AND d.AD_CLIENT_ID
     )
   LOOP
     INSERT
