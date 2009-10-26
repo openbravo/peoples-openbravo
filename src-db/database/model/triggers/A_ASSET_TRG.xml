@@ -42,6 +42,7 @@ BEGIN
 			      AND IsActive = 'Y'
 			      AND AD_Org_AcctSchema.C_AcctSchema_ID = d1.C_AcctSchema_ID
 			      )
+			 AND d1.AD_CLIENT_ID
 			) LOOP   
 
       Ad_Sequence_Next('A_Asset_Acct', Cur_Defaults.AD_Client_ID, v_Acct_ID) ;
