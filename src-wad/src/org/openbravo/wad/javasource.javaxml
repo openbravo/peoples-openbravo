@@ -683,7 +683,9 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       if (data==null || data.length==0) return;
       <FIELDS_TMP id="sectionDetailParentSession">    vars.setSessionValue(windowId + "|<FIELD_TMP id="fieldRealName8">claveAlmacen</FIELD_TMP>", data[0].<FIELD_TMP id="fieldName8">claveAlmacen</FIELD_TMP>);</FIELDS_TMP>
       vars.setSessionValue(windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>); //to ensure key parent is set for EM_* cols
-      <LISTS_TMP id="sectionDetailParentParams">      
+
+      FieldProvider dataField = null; // Define this so that auxiliar inputs using SQL will work
+      <LISTS_TMP id="sectionDetailParentParams">
       vars.setSessionValue(windowId + "|<LIST_TMP id="fieldParentNameParam">Almacen</LIST_TMP>", <LIST_TMP id="paramParentCode">dd</LIST_TMP>);
       </LISTS_TMP>
   }
