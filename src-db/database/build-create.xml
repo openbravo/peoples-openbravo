@@ -162,7 +162,7 @@ create.database: creates the database from scratch.
         ALTER SYSTEM SET OPEN_CURSORS = 10000 SCOPE=BOTH;
       </transaction>
     </sql>
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue">
+    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -205,7 +205,7 @@ create.database: creates the database from scratch.
         UPDATE pg_authid SET rolcatupdate=true WHERE rolname='${bbdd.user}';
       </transaction>
     </sql>
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" autocommit="true">
+    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" autocommit="true">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">

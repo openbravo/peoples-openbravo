@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +45,8 @@ import org.openbravo.wad.controls.WADGrid;
 import org.openbravo.wad.controls.WADHidden;
 import org.openbravo.wad.controls.WADLabelControl;
 import org.openbravo.wad.controls.WadControlLabelBuilder;
+import org.openbravo.wad.validation.WADValidationResult;
+import org.openbravo.wad.validation.WADValidator;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
 import org.xml.sax.helpers.DefaultHandler;
@@ -258,7 +261,12 @@ public class Wad extends DefaultHandler {
       else
         quick = argv[16].equals("quick");
 
-      // System.out.println("16: " + argv[16] + " l " + argv.length);
+      boolean failOnErrorVerification;
+      if (argv.length <= 17 || argv[17].equals("true")) {
+        failOnErrorVerification = true;
+      } else {
+        failOnErrorVerification = false;
+      }
 
       if (quick) {
         module = "%";
@@ -283,6 +291,7 @@ public class Wad extends DefaultHandler {
       log4j.info("Web path: " + webPath);
       log4j.info("Src path: " + strBaseSrc);
       log4j.info("Quick mode: " + quick);
+      log4j.info("Stop on failed verification:" + failOnErrorVerification);
 
       final File fileFin = new File(dirFin);
       if (!fileFin.exists()) {
@@ -349,6 +358,32 @@ public class Wad extends DefaultHandler {
         return;
       }
 
+      // Calculate windows to generate
+      String strCurrentWindow;
+      final StringTokenizer st = new StringTokenizer(strWindowName, ",", false);
+      ArrayList<TabsData> td = new ArrayList<TabsData>();
+      while (st.hasMoreTokens()) {
+        strCurrentWindow = st.nextToken().trim();
+        TabsData tabsDataAux[];
+        if (quick)
+          tabsDataAux = TabsData.selectQuick(wad.pool);
+        else if (module.equals("%"))
+          tabsDataAux = TabsData.selectTabs(wad.pool, strCurrentWindow);
+        else
+          tabsDataAux = TabsData.selectTabsinModules(wad.pool, strCurrentWindow, module);
+        td.addAll(Arrays.asList(tabsDataAux));
+      }
+      TabsData[] tabsData = td.toArray(new TabsData[0]);
+      log4j.info(tabsData.length + " tabs to compile.");
+
+      log4j.info("Verifing tabs...");
+      WADValidator validator = new WADValidator(wad.pool, tabsData);
+      WADValidationResult validationResult = validator.validate();
+      validationResult.printLog();
+      if (validationResult.hasErrors() && failOnErrorVerification) {
+        throw new Exception("Tabs verification has errors");
+      }
+
       // Call to update the table identifiers
       log4j.info("Updating table identifiers");
       WadData.updateIdentifiers(wad.pool, quick ? "Y" : "N");
@@ -385,29 +420,18 @@ public class Wad extends DefaultHandler {
           log4j.info("No changes in web.xml");
       }
 
-      String strCurrentWindow;
-      final StringTokenizer st = new StringTokenizer(strWindowName, ",", false);
-      while (st.hasMoreTokens()) {
-        strCurrentWindow = st.nextToken().trim();
-        TabsData tabsData[];
-        if (quick)
-          tabsData = TabsData.selectQuick(wad.pool);
-        else if (module.equals("%"))
-          tabsData = TabsData.selectTabs(wad.pool, strCurrentWindow);
-        else
-          tabsData = TabsData.selectTabsinModules(wad.pool, strCurrentWindow, module);
-        if (tabsData.length == 0)
-          log4j.info("No windows to compile");
-        if (generateTabs) {
-          for (int i = 0; i < tabsData.length; i++) {
-            // don't compile if it is in an unactive branch
-            if (wad.allTabParentsActive(tabsData[i].tabid)) {
-              log4j.info("Processing Window: " + tabsData[i].windowname + " - Tab: "
-                  + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
-              log4j.debug("Processing: " + tabsData[i].tabid);
-              wad.processTab(fileFin, fileFinReloads, tabsData[i], fileTrl, dirBaseTrl,
-                  translateStr, fileBase, fileBaseAplication);
-            }
+      if (tabsData.length == 0)
+        log4j.info("No windows to compile");
+
+      if (generateTabs) {
+        for (int i = 0; i < tabsData.length; i++) {
+          // don't compile if it is in an unactive branch
+          if (wad.allTabParentsActive(tabsData[i].tabid)) {
+            log4j.info("Processing Window: " + tabsData[i].windowname + " - Tab: "
+                + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
+            log4j.debug("Processing: " + tabsData[i].tabid);
+            wad.processTab(fileFin, fileFinReloads, tabsData[i], fileTrl, dirBaseTrl, translateStr,
+                fileBase, fileBaseAplication);
           }
         }
       }
@@ -3911,6 +3935,7 @@ public class Wad extends DefaultHandler {
 
     final StringBuffer html = new StringBuffer();
     final StringBuffer labelsHTML = new StringBuffer();
+    ArrayList<String> labels = new ArrayList<String>();
 
     String strFieldGroup = "";
 
@@ -3926,8 +3951,12 @@ public class Wad extends DefaultHandler {
       html.append(auxControl.toXml()).append("\n");
       auxControl.setData("AdColumnId", efd[i].getField("adColumnId"));
       final String labelXML = auxControl.toLabelXML();
-      if (!labelXML.trim().equals(""))
-        labelsHTML.append(auxControl.toLabelXML()).append("\n");
+      if (!labelXML.trim().equals("")) {
+        String xml = auxControl.toLabelXML();
+        if (!labels.contains(xml)) {
+          labels.add(xml);
+        }
+      }
 
       // FieldGroups
       if (WadUtility.isNewGroup(auxControl, strFieldGroup)) {
@@ -3940,7 +3969,10 @@ public class Wad extends DefaultHandler {
         final String labelXMLfg = fieldLabel.toLabelXML();
         labelsHTML.append(labelXMLfg).append("\n");
       }
+    }
 
+    for (String label : labels) {
+      labelsHTML.append(label).append("\n");
     }
 
     xmlDocument.setParameter("fields", html.toString());

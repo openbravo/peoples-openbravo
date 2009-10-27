@@ -108,8 +108,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       OBError myMessage = null;
       myMessage = new OBError();
       try {
-        data = ReportParetoProductData.select(this, strWarehouse, strAD_Org_ID, strClient,
-            strBaseCurrencyId, strCurrencyId);
+        data = ReportParetoProductData.select(this, strWarehouse, strClient, vars.getLanguage(),
+            strBaseCurrencyId, strCurrencyId, strAD_Org_ID);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }

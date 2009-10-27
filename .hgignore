@@ -2,6 +2,8 @@ syntax: glob
 
 .classpath
 .settings
+.idea
+*.iml
 attachments
 bin
 build

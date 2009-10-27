@@ -5152,7 +5152,7 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--566-->  <TABLENAME><![CDATA[AD_Session]]></TABLENAME>
 <!--566-->  <CLASSNAME><![CDATA[Session]]></CLASSNAME>
 <!--566-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--566-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--566-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--566-->  <AD_WINDOW_ID><![CDATA[264]]></AD_WINDOW_ID>
 <!--566-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--566-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>

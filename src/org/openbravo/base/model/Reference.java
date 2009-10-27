@@ -66,7 +66,7 @@ public class Reference extends ModelObject {
     primitiveTypes.put("16", Date.class);
     primitiveTypes.put("17", String.class);
     primitiveTypes.put("20", Boolean.class);
-    primitiveTypes.put("22", Float.class);
+    primitiveTypes.put("22", BigDecimal.class);
     primitiveTypes.put("23", byte[].class); // Binary/Blob Data
     primitiveTypes.put("24", Timestamp.class);
     primitiveTypes.put("26", Object.class); // RowID is not used
@@ -106,5 +106,9 @@ public class Reference extends ModelObject {
 
   public boolean isDatetime() {
     return getId().equals("16");
+  }
+
+  public boolean isDate() {
+    return getId().equals("15");
   }
 }

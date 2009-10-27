@@ -360,10 +360,9 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="wad" depends="init">
-
     <antcall target="update.wad.status" inheritall="true" inheritrefs="true"/>
-    <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}'" />
+    <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="true">
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick' '${stopOnWadError}'" />
       <classpath refid="project.class.path" />
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true" />
@@ -379,7 +378,7 @@ build.war: build a war file in the lib directory.
   <target name="wad.quick" depends="init">
     <antcall target="update.wad.status" inheritall="true" inheritrefs="true"/>
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick' '${stopOnWadError}'" />
       <classpath refid="project.class.path" />
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true" />
@@ -554,21 +553,21 @@ build.war: build a war file in the lib directory.
     <copy todir="${base.context}/web" encoding="UTF-8">
       <fileset dir="${base.modules}">
         <include name="*/web/*/**" />
-        <exclude name="*/web/**/skins/**" />
+        <exclude name="*/web/*/skins/**" />
       </fileset>
       <mapper type="regexp" from="(.*)(\${file.separator}web)(.*)" to="\3" />
     </copy>
 
     <copy todir="${base.context}/web/skins/ltr" encoding="UTF-8">
       <fileset dir="${base.modules}">
-        <include name="*/web/*/**/skins/**" />
+        <include name="*/web/*/skins/**" />
       </fileset>
       <mapper type="regexp" from="(.*)(\${file.separator}web)(.*\${file.separator})(skins\${file.separator})(.*)" to="\3\5" />
     </copy>
 
     <copy todir="${base.context}/web/skins/rtl" encoding="UTF-8">
       <fileset dir="${base.modules}">
-        <include name="*/web/*/**/skins/**" />
+        <include name="*/web/*/skins/**" />
       </fileset>
       <mapper type="regexp" from="(.*)(\${file.separator}web)(.*\${file.separator})(skins\${file.separator})(.*)" to="\3\5" />
     </copy>

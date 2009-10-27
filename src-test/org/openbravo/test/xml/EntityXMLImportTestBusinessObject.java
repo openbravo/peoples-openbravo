@@ -19,6 +19,7 @@
 
 package org.openbravo.test.xml;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -349,7 +350,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
         ptl.setNextBusinessDay(true);
         ptl.setRest(true);
         ptl.setPaymentTerms(pt);
-        ptl.setPercentageDue(1.0f);
+        ptl.setPercentageDue(new BigDecimal(1));
         pt.getFinancialMgmtPaymentTermLineList().add(ptl);
       }
       result.add(pt);

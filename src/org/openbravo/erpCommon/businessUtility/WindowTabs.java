@@ -641,8 +641,12 @@ public class WindowTabs {
         } else {
           text.append("false"); // Don't validate on previously saved record
         }
-      } else {
-        text.append("false"); // Don't validate in Grid mode
+      } else { // Grid
+        if (this.level >= _level) {
+          text.append("isUserChanges"); // validate when user has changed something
+        } else {
+          text.append("(dijit.byId('grid').metaData.totalRows == 0)"); // Validate on empty grid
+        }
       }
       text.append(", null, '");
       text.append(Utility.getTabURL(conn, _tabId, _tabName)).append("', '_self', null, true);");
