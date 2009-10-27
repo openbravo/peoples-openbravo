@@ -1297,6 +1297,175 @@ div.calendar {
 
 /*
  *************************
+ * CheckList
+ *************************
+*/
+
+.CheckList_RebuildSystemWindow_title {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  color: #404040;
+  font-size: 10pt;
+  padding-left: 0px;
+  font-weight: bold;
+}
+
+.CheckList_RebuildSystemWindow_textarea {
+  overflow: auto;
+  width: 400px;
+  height: 125px;
+  background-color: white;
+  font-family: monospace;
+  font-size: 9pt;
+  border: #505050 1px solid;
+  padding-left: 8px;
+  white-space: nowrap;
+}
+
+.CheckList_Row {
+  clear: left;
+  height: 19px;
+}
+
+.CheckList_Padding_0 {
+  width: 0px;
+  height: 0px;
+  float: left;
+}
+
+.CheckList_Padding_1 {
+  width: 33px;
+  height: 1px;
+  float: left;
+}
+
+.CheckList_Padding_2 {
+  width: 66px;
+  height: 1px;
+  float: left;
+}
+
+.CheckList_Padding_3 {
+  width: 66px;
+  height: 1px;
+  float: left;
+}
+
+.CheckList_Icon_Success {
+  width: 25px;
+  height: 25px;
+  float: left;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Common/CheckList/iconOk.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.CheckList_Icon_Error {
+  width: 25px;
+  height: 25px;
+  float: left;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Common/CheckList/iconError.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.CheckList_Icon_Warning {
+  width: 25px;
+  height: 25px;
+  float: left;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Common/CheckList/iconWarning.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.CheckList_Icon_Exception {
+  width: 25px;
+  height: 25px;
+  float: left;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Common/CheckList/iconError.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.CheckList_Icon_Pending {
+  width: 25px;
+  height: 25px;
+  float: left;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Common/CheckList/iconPending.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.CheckList_Icon_Processing {
+  width: 25px;
+  height: 25px;
+  float: left;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Common/CheckList/iconProcessing.gif);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.CheckList_Text_Container {
+  height: 19px;
+  float: left;
+  padding: 0 5 0 10;
+}
+
+.CheckList_Text_Title {
+  color: #404040;
+  font-size: 10pt;
+  font-weight: normal;
+  font-family: tahoma,arial,helvetica,sans-serif;
+  padding: 2 0 0 0;
+  float: left;
+}
+
+.CheckList_Text_Separator {
+  width: 8px;
+  height: 19px;
+  float: left;
+}
+
+.CheckList_Text_Message_Error {
+  color: #FF0000;
+  font-size: 10pt;
+  font-weight: bold;
+  font-family: tahoma,arial,helvetica,sans-serif;
+  padding: 2 0 0 0;
+  float: left;
+}
+
+.CheckList_Text_Message_Exception {
+  color: #FF0000;
+  font-size: 10pt;
+  font-weight: bold;
+  font-family: tahoma,arial,helvetica,sans-serif;
+  padding: 2 0 0 0;
+  float: left;
+}
+
+.CheckList_Text_Message_Warning {
+  color: #F9AE55;
+  font-size: 10pt;
+  font-weight: bold;
+  font-family: tahoma,arial,helvetica,sans-serif;
+  padding: 2 0 0 0;
+  float: left;
+}
+
+.CheckList_Text_Message_Processing {
+  color: #404040;
+  font-size: 10pt;
+  font-weight: normal;
+  font-family: tahoma,arial,helvetica,sans-serif;
+  padding: 2 15 0 0;
+  float: left;
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-image: url(Common/CheckList/dots.gif);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+}
+
+/*
+ *************************
  * Combo
  *************************
 */
