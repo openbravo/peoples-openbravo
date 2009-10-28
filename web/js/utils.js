@@ -1068,7 +1068,23 @@ function byDefaultAction(action) {
 * Stops the propagation and the default action of the browser shortchut
 * @param {Event} evt Event handling object.
 */
+var previousOnKeyPress = "";
+
+/**
+* Stops the propagation and the default action of the browser shortchut
+* @param {Event} evt Event handling object.
+*/
 function stopKeyPressEvent(evt) {
+  previousOnKeyPress = document.onkeypress;
+  document.onkeypress = stopKeyPressPropagation;
+  return true;
+}
+
+/**
+* Stops the propagation and the default action of the browser shortchut
+* @param {Event} evt Event handling object.
+*/
+function stopKeyPressPropagation(evt) {
   try {
     if (evt.ctrlKey) {
       evt.cancelBubble = true;
@@ -1084,6 +1100,7 @@ function stopKeyPressEvent(evt) {
         }
     }
   } catch(e) {}
+  document.onkeypress = previousOnKeyPress;
 }
 
 
@@ -1233,64 +1250,64 @@ function keyControl(pushedKey) {
             }
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
             var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
-            //if (!keyArray[i].propagateKey || isGridFocused) document.onkeypress = stopKeyPressEvent;
+            //if (!keyArray[i].propagateKey || isGridFocused) stopKeyPressEvent();
             if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
-              if (!keyArray[i].propagateKey || isGridFocused) document.onkeypress = stopKeyPressEvent;
+              if (!keyArray[i].propagateKey || isGridFocused) stopKeyPressEvent();
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 if (!keyArray[i].propagateKey || isGridFocused) 
                   return false; else 
                   return true;
               } catch (e) {
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 return true;
               }
-              document.onkeypress = startKeyPressEvent;
+              startKeyPressEvent();
               return true;
             } else if (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
-              if (!keyArray[i].propagateKey || isGridFocused) document.onkeypress = stopKeyPressEvent;
+              if (!keyArray[i].propagateKey || isGridFocused) stopKeyPressEvent();
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 if (!keyArray[i].propagateKey || isGridFocused) 
                   return false; else 
                   return true;
               } catch (e) {
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 return true;
               }
-              document.onkeypress = startKeyPressEvent;
+              startKeyPressEvent();
               return true;
             } else if (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 if (!keyArray[i].propagateKey || isGridFocused) 
                   return false; else 
                   return true;
               } catch (e) {
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 return true;
               }
-              document.onkeypress = startKeyPressEvent;
+              startKeyPressEvent();
               return true;
             } else if (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 if (!keyArray[i].propagateKey || isGridFocused) 
                   return false; else 
                   return true;
               } catch (e) {
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 return true;
               }
-              document.onkeypress = startKeyPressEvent;
+              startKeyPressEvent();
               return true;
             }
           }
@@ -1314,7 +1331,7 @@ function keyControl(pushedKey) {
                 }
               }
               if (!keyArray[i].propagateKey || isGridFocused) 
-                //document.onkeypress = stopKeyPressEvent;
+                //stopKeyPressEvent();
               if (keyArray[i].field==null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
                 var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
                 try {
@@ -1324,71 +1341,71 @@ function keyControl(pushedKey) {
                     return false; else 
                     return true;
                 } catch (e) {
-                  document.onkeypress = startKeyPressEvent;
+                  startKeyPressEvent();
                   return true;
                 }
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 return true;
               }
             }
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
             var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
-            //if (!keyArray[i].propagateKey || isGridFocused) document.onkeypress = stopKeyPressEvent;
+            //if (!keyArray[i].propagateKey || isGridFocused) stopKeyPressEvent();
             if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 if (!keyArray[i].propagateKey || isGridFocused) 
                   return false; else 
                   return true;
               } catch (e) {
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 return true;
               }
-              document.onkeypress = startKeyPressEvent;
+              startKeyPressEvent();
               return true;
             } else if (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 if (!keyArray[i].propagateKey || isGridFocused) 
                   return false; else 
                   return true;
               } catch (e) {
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 return true;
               }
-              document.onkeypress = startKeyPressEvent;
+              startKeyPressEvent();
               return true;
             } else if (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 if (!keyArray[i].propagateKey || isGridFocused) 
                   return false; else 
                   return true;
               } catch (e) {
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 return true;
               }
-              document.onkeypress = startKeyPressEvent;
+              startKeyPressEvent();
               return true;
             } else if (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 if (!keyArray[i].propagateKey || isGridFocused) 
                   return false; else 
                   return true;
               } catch (e) {
-                document.onkeypress = startKeyPressEvent;
+                startKeyPressEvent();
                 return true;
               }
-              document.onkeypress = startKeyPressEvent;
+              startKeyPressEvent();
               return true;
             }
           }
