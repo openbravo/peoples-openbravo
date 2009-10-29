@@ -62,7 +62,7 @@ var calloutProcessedObj = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5331';
+  var number = '5336';
   return number;
 }
 
@@ -1215,7 +1215,7 @@ function keyControl(pushedKey) {
         if (keyCode == obtainKeyCode(keyArray[i].key)) {
           if (keyArray[i].auxKey == null || keyArray[i].auxKey == "" || keyArray[i].auxKey == "null") {
             if (!pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
-              if (!keyArray[i].propagateKey || isGridFocused) {
+              if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
                 if (window.event && window.event.keyCode == 116) { //F5 Special case
                   window.event.keyCode = 8;
                   keyCode = 8;
@@ -1238,7 +1238,7 @@ function keyControl(pushedKey) {
                     propagateEnter = true;
                     return false;
                   }
-                  if (!keyArray[i].propagateKey || isGridFocused) {
+                  if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
                     return false;
                   } else {
                     //return true;
@@ -1250,14 +1250,14 @@ function keyControl(pushedKey) {
             }
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
             var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
-            //if (!keyArray[i].propagateKey || isGridFocused) stopKeyPressEvent();
+            //if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) { stopKeyPressEvent(); }
             if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
-              if (!keyArray[i].propagateKey || isGridFocused) stopKeyPressEvent();
+              if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) { stopKeyPressEvent(); }
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1267,12 +1267,12 @@ function keyControl(pushedKey) {
               startKeyPressEvent();
               return true;
             } else if (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
-              if (!keyArray[i].propagateKey || isGridFocused) stopKeyPressEvent();
+              if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) { stopKeyPressEvent(); }
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1286,7 +1286,7 @@ function keyControl(pushedKey) {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1300,7 +1300,7 @@ function keyControl(pushedKey) {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1316,7 +1316,7 @@ function keyControl(pushedKey) {
         if (keyCode == obtainKeyCode(keyArray[i].key)) {
           if (keyArray[i].auxKey == null || keyArray[i].auxKey == "" || keyArray[i].auxKey == "null") {
             if (!pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
-              if (!keyArray[i].propagateKey || isGridFocused) {
+              if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
                 if (window.event && window.event.keyCode == 116) { //F5 Special case
                   window.event.keyCode = 8;
                   keyCode = 8;
@@ -1330,14 +1330,14 @@ function keyControl(pushedKey) {
                   keyCode = 8;
                 }
               }
-              if (!keyArray[i].propagateKey || isGridFocused) 
+              if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                 //stopKeyPressEvent();
               if (keyArray[i].field==null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
                 var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
                 try {
                   eval(evalfuncTrl);
                   thereIsShortcut = true;
-                  if (!keyArray[i].propagateKey || isGridFocused) 
+                  if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                     return false; else 
                     return true;
                 } catch (e) {
@@ -1350,13 +1350,13 @@ function keyControl(pushedKey) {
             }
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
             var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
-            //if (!keyArray[i].propagateKey || isGridFocused) stopKeyPressEvent();
+            //if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) stopKeyPressEvent();
             if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1370,7 +1370,7 @@ function keyControl(pushedKey) {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1384,7 +1384,7 @@ function keyControl(pushedKey) {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1398,7 +1398,7 @@ function keyControl(pushedKey) {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
