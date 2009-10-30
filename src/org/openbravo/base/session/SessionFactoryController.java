@@ -27,6 +27,8 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.PostgreSQLDialect;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.core.DalSessionFactory;
 
 /**
  * Initializes and provides the session factory to the rest of the application. There are subclasses
@@ -147,7 +149,10 @@ public abstract class SessionFactoryController {
       configuration.getProperties().setProperty(Environment.USE_SECOND_LEVEL_CACHE, "false");
       configuration.getProperties().setProperty(Environment.USE_QUERY_CACHE, "false");
 
-      sessionFactory = configuration.buildSessionFactory();
+      final DalSessionFactory dalSessionFactory = OBProvider.getInstance().get(
+          DalSessionFactory.class);
+      dalSessionFactory.setDelegateSessionFactory(configuration.buildSessionFactory());
+      sessionFactory = dalSessionFactory;
 
       log.debug("Session Factory initialized");
     } catch (final Throwable t) {
