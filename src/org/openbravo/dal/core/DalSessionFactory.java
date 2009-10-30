@@ -33,10 +33,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.classic.Session;
 import org.hibernate.engine.FilterDefinition;
+import org.hibernate.engine.SessionImplementor;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.stat.Statistics;
 import org.openbravo.base.session.SessionFactoryController;
+import org.openbravo.database.SessionInfo;
 
 /**
  * The DalSessionFactory directly delegates all calls to a real SessionFactory except for the calls
@@ -158,7 +160,7 @@ public class DalSessionFactory implements SessionFactory {
    */
   public Session openSession() throws HibernateException {
     final Session session = delegateSessionFactory.openSession();
-    // ((SessionImplementor)session).connection()
+    SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection());
     return session;
   }
 
@@ -167,7 +169,7 @@ public class DalSessionFactory implements SessionFactory {
    */
   public Session openSession(Connection connection, Interceptor interceptor) {
     final Session session = delegateSessionFactory.openSession(connection, interceptor);
-    // ((SessionImplementor)session).connection()
+    SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection());
     return session;
   }
 
@@ -176,7 +178,7 @@ public class DalSessionFactory implements SessionFactory {
    */
   public Session openSession(Connection connection) {
     final Session session = delegateSessionFactory.openSession(connection);
-    // ((SessionImplementor)session).connection()
+    SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection());
     return session;
   }
 
@@ -185,7 +187,7 @@ public class DalSessionFactory implements SessionFactory {
    */
   public Session openSession(Interceptor interceptor) throws HibernateException {
     final Session session = delegateSessionFactory.openSession(interceptor);
-    // ((SessionImplementor)session).connection()
+    SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection());
     return session;
   }
 
@@ -194,7 +196,7 @@ public class DalSessionFactory implements SessionFactory {
    */
   public StatelessSession openStatelessSession() {
     final StatelessSession session = delegateSessionFactory.openStatelessSession();
-    // ((SessionImplementor)session).connection()
+    SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection());
     return session;
   }
 
@@ -203,7 +205,7 @@ public class DalSessionFactory implements SessionFactory {
    */
   public StatelessSession openStatelessSession(Connection connection) {
     final StatelessSession session = delegateSessionFactory.openStatelessSession(connection);
-    // ((SessionImplementor)session).connection()
+    SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection());
     return session;
   }
 }
