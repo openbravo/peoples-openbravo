@@ -197,11 +197,14 @@ public class ConnectionProviderImpl implements ConnectionProvider {
       conn = DriverManager
           .getConnection("jdbc:apache:commons:dbcp:" + contextName + "_" + poolName);
     } catch (SQLException ex) {
-      log4j.error(ex);
+      log4j.error("Error getting connection", ex);
       throw new NoConnectionAvailableException(
           "There are no connections available in jdbc:apache:commons:dbcp:" + contextName + "_"
               + poolName);
     }
+
+    SessionInfo.setDBSessionInfo(conn);
+
     return conn;
   }
 

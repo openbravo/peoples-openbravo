@@ -20,12 +20,14 @@
 package org.openbravo.dal.core;
 
 import java.io.Serializable;
+import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.engine.SessionImplementor;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
@@ -33,6 +35,7 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.Identifiable;
 import org.openbravo.base.util.Check;
+import org.openbravo.database.SessionInfo;
 
 /**
  * Keeps the Hibernate Session and Transaction in a ThreadLocal so that it is available throughout
@@ -196,7 +199,12 @@ public class SessionHandler implements OBNotSingleton {
     setSession(createSession());
     getSession().setFlushMode(FlushMode.COMMIT);
     Check.isTrue(tx == null, "tx must be null before begin");
+
     tx = getSession().beginTransaction();
+
+    Connection conn = ((SessionImplementor) getSession()).connection();
+    SessionInfo.setDBSessionInfo(conn);
+
     log.debug("Transaction started");
   }
 

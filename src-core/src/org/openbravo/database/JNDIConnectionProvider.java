@@ -117,11 +117,16 @@ public class JNDIConnectionProvider implements ConnectionProvider {
   }
 
   public Connection getConnection(String poolName) throws NoConnectionAvailableException {
+    Connection conn = null;
     try {
-      return pools.get(poolName).ds.getConnection();
+      conn = pools.get(poolName).ds.getConnection();
     } catch (SQLException e) {
       throw new NoConnectionAvailableException(e.getMessage());
     }
+
+    SessionInfo.setDBSessionInfo(conn);
+
+    return conn;
   }
 
   public String getRDBMS() {

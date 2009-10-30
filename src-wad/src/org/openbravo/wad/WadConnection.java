@@ -31,6 +31,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.exception.NoConnectionAvailableException;
 
 public class WadConnection implements ConnectionProvider {
@@ -102,6 +103,8 @@ public class WadConnection implements ConnectionProvider {
       log4j.info("Getting Connection: " + this.bbdd + ',' + dbLogin);
       this.myPool = DriverManager.getConnection(this.bbdd, dbLogin, dbPassword);
       this.myPool.setAutoCommit(true);
+
+      SessionInfo.setDBSessionInfo(this.myPool);
     } catch (Exception e) {
       log4j.error(e);
       throw new SQLException("Failed when creating database connections pool");
