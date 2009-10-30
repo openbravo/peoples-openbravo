@@ -55,7 +55,6 @@ public class SessionInfo {
    */
   static public void setDBSessionInfo(Connection conn) {
     try {
-      System.out.println("catalog:" + conn.getCatalog());
       getPreparedStatement(conn, "delete from ad_context_info").executeUpdate();
       PreparedStatement ps = getPreparedStatement(
           conn,
