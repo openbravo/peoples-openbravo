@@ -16,6 +16,12 @@ Begin
 End;
 /-- END
 
+
+Begin  
+  execute immediate 'Drop table AD_CONTEXT_INFO';
+  Exception when others then null;
+End;
+/-- END
  -- create temporary tables
 
 
@@ -35,6 +41,15 @@ End;
    )
    ON COMMIT PRESERVE ROWS
 /-- END 
+ 
+   CREATE GLOBAL TEMPORARY TABLE AD_CONTEXT_INFO
+   ( 
+     AD_USER_ID VARCHAR2(32 BYTE), 
+     AD_SESSION_ID VARCHAR2(32 BYTE), 
+     PROCESSTYPE VARCHAR2(60 BYTE), 
+     PROCESSID VARCHAR2(32 BYTE)
+   ) ON COMMIT PRESERVE ROWS ;
+/-- END
 
 
 
