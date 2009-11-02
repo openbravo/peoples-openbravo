@@ -22,7 +22,7 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
 
   @Override
   public String[] getExcludedTables() {
-    return new String[] { "PLAN_TABLE", "AD_SYSTEM_MODEL", "C_TEMP_SELECTION", "C_TEMP_SELECTION2" };
+    return new String[] { "PLAN_TABLE", "AD_SYSTEM_MODEL", "C_TEMP_SELECTION", "C_TEMP_SELECTION2", "AD_CONTEXT_INFO" };
   }
 
   public String[] getExcludedViews() {
