@@ -17,10 +17,27 @@ End;
 /-- END
 
 
-Begin  
-  execute immediate 'Drop table AD_CONTEXT_INFO';
-  Exception when others then null;
-End;
+DECLARE
+  AUX NUMBER;
+BEGIN
+  --Create temporary session table only in case it does not exist
+  --if it is tried to be deleted ORA-00911 can happen if there are 
+  --open sessions using the table
+  SELECT COUNT(*)
+    INTO AUX
+    FROM USER_TABLES
+   WHERE TABLE_NAME = 'AD_CONTEXT_INFO';
+   
+   IF (AUX=0) THEN
+     EXECUTE IMMEDIATE 'CREATE GLOBAL TEMPORARY TABLE AD_CONTEXT_INFO
+						   ( 
+						     AD_USER_ID VARCHAR2(32 BYTE), 
+						     AD_SESSION_ID VARCHAR2(32 BYTE), 
+						     PROCESSTYPE VARCHAR2(60 BYTE), 
+						     PROCESSID VARCHAR2(32 BYTE)
+						   ) ON COMMIT PRESERVE ROWS';   
+   END IF;
+END;
 /-- END
  -- create temporary tables
 
@@ -42,15 +59,6 @@ End;
    ON COMMIT PRESERVE ROWS
 /-- END 
  
-   CREATE GLOBAL TEMPORARY TABLE AD_CONTEXT_INFO
-   ( 
-     AD_USER_ID VARCHAR2(32 BYTE), 
-     AD_SESSION_ID VARCHAR2(32 BYTE), 
-     PROCESSTYPE VARCHAR2(60 BYTE), 
-     PROCESSID VARCHAR2(32 BYTE)
-   ) ON COMMIT PRESERVE ROWS ;
-/-- END
-
 
 
 CREATE OR REPLACE FUNCTION C_CREATE_TEMPORARY_TABLES RETURN VARCHAR2
