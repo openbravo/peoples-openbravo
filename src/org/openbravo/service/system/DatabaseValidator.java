@@ -115,9 +115,9 @@ public class DatabaseValidator implements SystemValidator {
       } else if (view != null) {
         dbViews.remove(view.getName().toUpperCase());
       } else {
-        if (moduleId == null
-            || (adTable.getDataPackage().getModule() != null && adTable.getDataPackage()
-                .getModule().getId().equals(moduleId))) {
+        if ((moduleId == null || (adTable.getDataPackage().getModule() != null && adTable
+            .getDataPackage().getModule().getId().equals(moduleId)))
+            && !adTable.getDBTableName().equalsIgnoreCase("AD_AUDIT_TRAIL")) {
           checkTableWithoutPrimaryKey(dbTable, result);
           checkForeignKeys(dbTable, result);
           checkMaxObjectNameLength(dbTable, result);
@@ -129,8 +129,9 @@ public class DatabaseValidator implements SystemValidator {
 
     // only check this one if the global validate check is done
     for (org.apache.ddlutils.model.Table dbTable : tmpDBTablesByName.values()) {
-      // ignore errors related to C_TEMP_SELECTION
-      if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")) {
+      // ignore errors related to C_TEMP_SELECTION and AD_CONTEXT_INFO
+      if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")
+          && !dbTable.getName().toUpperCase().startsWith("AD_CONTEXT_INFO")) {
         result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
             + dbTable.getName() + " present in the database "
             + " but not defined in the Application Dictionary");
