@@ -38,6 +38,7 @@ import org.hibernate.jdbc.BorrowedConnectionProxy;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.stat.Statistics;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.database.SessionInfo;
 
@@ -166,8 +167,8 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection());
-
+      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection(),
+          OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
@@ -184,8 +185,8 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection());
-
+      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection(),
+          OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
@@ -202,8 +203,8 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection());
-
+      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection(),
+          OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
@@ -220,8 +221,8 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection());
-
+      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection(),
+          OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
@@ -238,7 +239,8 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection());
+      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection(),
+          OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
 
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
@@ -256,7 +258,8 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection());
+      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection(),
+          OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
 
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);

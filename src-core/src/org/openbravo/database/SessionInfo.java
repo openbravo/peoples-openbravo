@@ -53,9 +53,29 @@ public class SessionInfo {
    * @param conn
    *          Connection where the session information will be stored in
    */
-  static public void setDBSessionInfo(Connection conn) {
+  static public void setDBSessionInfo(Connection conn, String rdbms) {
     try {
-      getPreparedStatement(conn, "delete from ad_context_info").executeUpdate();
+      if (rdbms.equals("ORACLE")) {
+        // Clean up temporary table
+        getPreparedStatement(conn, "delete from ad_context_info").executeUpdate();
+      } else { // POSTGRESQL
+        // Create temporary table
+        ResultSet rs = getPreparedStatement(
+            conn,
+            "select count(*) from information_schema.tables where table_name='ad_context_info' and table_type = 'LOCAL TEMPORARY'")
+            .executeQuery();
+
+        if (rs.next() && rs.getString(1).equals("0")) {
+          System.out.println("pg create");
+          StringBuffer sql = new StringBuffer();
+          sql.append("CREATE GLOBAL TEMPORARY TABLE AD_CONTEXT_INFO");
+          sql.append("(AD_USER_ID VARCHAR(32), ");
+          sql.append("  AD_SESSION_ID VARCHAR(32),");
+          sql.append("  PROCESSTYPE VARCHAR(60), ");
+          sql.append("  PROCESSID VARCHAR(32))");
+          getPreparedStatement(conn, sql.toString()).execute();
+        }
+      }
       PreparedStatement ps = getPreparedStatement(
           conn,
           "insert into ad_context_info (ad_user_id, ad_session_id, processType, processId) values (?, ?, ?, ?)");
