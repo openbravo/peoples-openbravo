@@ -4314,12 +4314,12 @@ function numberInputEvent(command, obj, evt) {
     focusNumberInput(obj, getInputNumberMask(obj));
     return true;
   } else if (command == "onblur") {
-    blurNumberInput(obj, getInputNumberMask(obj));
     return true;
   } else if (command == "onkeydown") {
     manageDecPoint(obj, null, evt);
     return true;
   } else if (command == "onchange") {
+    blurNumberInput(obj, getInputNumberMask(obj));
     return true;
   }
 }
