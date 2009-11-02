@@ -22,19 +22,17 @@
 *  clear forms, pop up confirmation messages, submit the form, etc.
 */
 
-<!--
+
 var baseFrameServlet = "../security/Login_FS.html";
 var gColorSelected = "#c0c0c0";
 var gWhiteColor = "#F2EEEE";
-var arrGeneralChange=new Array();
+var arrGeneralChange=[];
 var dateFormat;
 var defaultDateFormat = "%d-%m-%Y";
 
 //Days of a Month
-daysOfMonth = new Array( 
-new Array(0,31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31), //No leap year
-new Array (0,31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31) //Leap year
-);
+var daysOfMonth = [[0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],  //No leap year
+                   [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]]; //Leap year
 
 var gByDefaultAction;
 var gSubmitted=false;
@@ -57,6 +55,16 @@ var isUserChanges = false;
 var isTabClick = false;
 var isButtonClick = false;
 var calloutProcessedObj = null;
+
+var debugMode = false; // Flag to output debug messages in Firebug
+
+/**
+ * Checks if Firebug's console is available and you are in debug mode
+ * @return Boolean
+ */
+function isDebugEnabled() {
+  return debugMode && typeof console === 'object';
+}
 
 /**
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
@@ -187,6 +195,7 @@ function submitFormGetParams(Command, action) {
   }
   if (params!="") frm.action += params;
   frm.target="_self";
+  removeOnUnloadHandler(frm); // Prevents opener reload
   frm.submit();
   return true;
 }
@@ -238,11 +247,13 @@ function submitForm(field, value, form, bolOneFormSubmission, isCallOut, frameNa
       gSubmitted=1;
       if (isCallOut) setGWaitingCallOut(true, frameName);
       field.value = value;
+      removeOnUnloadHandler(form); // Prevents opener reload
       form.submit();
     }
   } else {
     if (isCallOut) setGWaitingCallOut(true, frameName);
     field.value = value;
+    removeOnUnloadHandler(form); // Prevents opener reload
     form.submit();
   }
   return true;
@@ -298,17 +309,19 @@ function logClick(hiddenInput) {
  * @return
  */
 function reloadOpener() {
- if(top.opener) {
-   var f = top.opener.top.frames['appFrame'];
-   if(f == null) {
-     f = top.opener;
-   }
-   var buttonRefresh = f.document.getElementById('buttonRefresh');
-   var commandType = f.document.getElementById('paramCommandType');
-   if(buttonRefresh && commandType && commandType.value === "NEW") {
-     buttonRefresh.onclick();
-   }
- }
+  if(top.opener) {
+    var f = getFrame('appFrame');
+    if(f == null) {
+      f = top.opener;
+    }
+    if(isDebugEnabled()) {
+      console.info("getFrame - f: %o", f);
+    }
+    var buttonRefresh = f.document.getElementById('buttonRefresh');
+    if(buttonRefresh !== null) {
+      buttonRefresh.onclick();
+    }
+  }
 }
 
  /**
@@ -316,7 +329,29 @@ function reloadOpener() {
   * @return
   */
 function removeOnUnload() {
-	window.onunload = null;
+  window.onunload = null;
+}
+
+/**
+ * Checks if the window is a pop-up and removes the onUnload handler
+ * All pop-ups must include IsPopUpCall hidden input
+ * @param f
+ * @return
+ */
+function removeOnUnloadHandler(form) {
+  var f = form;
+  if(f === null) {
+    f = document.forms[0];
+  }
+  if(typeof f.isPopUpCall !== 'undefined' && f.isPopUpCall.value === '1') {
+    // Checking for a onunload event handler
+    if(typeof window.onunload === 'function') {
+      if(isDebugEnabled()) {
+        console.log("Removing onUnload handler");
+      }
+      removeOnUnload();
+    }
+  }
 }
 
 /**

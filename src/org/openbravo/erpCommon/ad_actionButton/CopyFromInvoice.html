@@ -33,12 +33,7 @@
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
   <script type="text/javascript">
-    if(top.opener) {
-	  var commandType = top.opener.document.getElementById('paramCommandType');
-	  if(commandType && commandType.value === "NEW") {
-	    window.onunload = reloadOpener;
-	  }
-	}
+	window.onunload = reloadOpener; // reloads opener on closing
     dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
   </script>
   <script language="JavaScript" type="text/javascript" id="paramDirectory">
@@ -51,7 +46,7 @@
   }
 
   function submitThisPage(strCommand) {
-   // submitCommandForm(strCommand, false, null, null, '_top');
+   window.onunload = null; // Removes onunload handler on submitting
    submitCommandForm(strCommand, false);//, null, null, '_top');
     return true;
   }

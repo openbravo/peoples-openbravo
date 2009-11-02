@@ -41,12 +41,7 @@
   <script language="JavaScript" src="../../../../../web/js/calculator.js" type="text/javascript"></script>
 
   <script type="text/javascript">
-  if(top.opener) {
-	  var commandType = top.opener.document.getElementById('paramCommandType');
-	  if(commandType && commandType.value === "NEW") {
-	    window.onunload = reloadOpener;
-	  }
-  }
+  window.onunload = reloadOpener; // reloads opener on closing
   dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
   </script>
 

@@ -37,11 +37,8 @@
 <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript">
 
- var appFrame = top.opener.top.appFrame;
- var commandType = appFrame.document.getElementById('paramCommandType');
- if(commandType && commandType.value === "NEW") {
-   window.onunload = reloadOpener;
- }
+window.onunload = reloadOpener; // reloads opener on closing
+ 
 
 function validate() {
   var frm = document.frmMain;
