@@ -152,7 +152,7 @@
       <unique name="TREETYPE">
         <unique-column name="TREETYPE"/>
       </unique>
-      <check name="ADTABLE_FULLAUDIT_CHECK"><![CDATA[ISFULLYAUDITED = 'N' OR UPPER(TABLENAME) != 'AD_AUDIT_TRAIL']]></check>
+      <check name="ADTABLE_FULLAUDIT_CHECK"><![CDATA[(ISFULLYAUDITED = 'N') OR (UPPER((TABLENAME)) <> 'AD_AUDIT_TRAIL')]]></check>
       <check name="ADTABLE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="ADTABLE_ISDELETEABLE_CHECK"><![CDATA[ISDELETEABLE IN ('Y', 'N')]]></check>
       <check name="ADTABLE_ISHIGHVOLUME_CHECK"><![CDATA[ISHIGHVOLUME IN ('Y', 'N')]]></check>
