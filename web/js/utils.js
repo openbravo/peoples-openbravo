@@ -22,19 +22,17 @@
 *  clear forms, pop up confirmation messages, submit the form, etc.
 */
 
-<!--
+
 var baseFrameServlet = "../security/Login_FS.html";
 var gColorSelected = "#c0c0c0";
 var gWhiteColor = "#F2EEEE";
-var arrGeneralChange=new Array();
+var arrGeneralChange=[];
 var dateFormat;
 var defaultDateFormat = "%d-%m-%Y";
 
 //Days of a Month
-daysOfMonth = new Array( 
-new Array(0,31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31), //No leap year
-new Array (0,31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31) //Leap year
-);
+var daysOfMonth = [[0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],  //No leap year
+                   [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]]; //Leap year
 
 var gByDefaultAction;
 var gSubmitted=false;
@@ -58,11 +56,21 @@ var isTabClick = false;
 var isButtonClick = false;
 var calloutProcessedObj = null;
 
+var debugMode = false; // Flag to output debug messages in Firebug
+
+/**
+ * Checks if Firebug's console is available and you are in debug mode
+ * @return Boolean
+ */
+function isDebugEnabled() {
+  return debugMode && typeof console === 'object';
+}
+
 /**
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5331';
+  var number = '5366';
   return number;
 }
 
@@ -187,6 +195,7 @@ function submitFormGetParams(Command, action) {
   }
   if (params!="") frm.action += params;
   frm.target="_self";
+  removeOnUnloadHandler(frm); // Prevents opener reload
   frm.submit();
   return true;
 }
@@ -238,11 +247,13 @@ function submitForm(field, value, form, bolOneFormSubmission, isCallOut, frameNa
       gSubmitted=1;
       if (isCallOut) setGWaitingCallOut(true, frameName);
       field.value = value;
+      removeOnUnloadHandler(form); // Prevents opener reload
       form.submit();
     }
   } else {
     if (isCallOut) setGWaitingCallOut(true, frameName);
     field.value = value;
+    removeOnUnloadHandler(form); // Prevents opener reload
     form.submit();
   }
   return true;
@@ -298,17 +309,19 @@ function logClick(hiddenInput) {
  * @return
  */
 function reloadOpener() {
- if(top.opener) {
-   var f = top.opener.top.frames['appFrame'];
-   if(f == null) {
-     f = top.opener;
-   }
-   var buttonRefresh = f.document.getElementById('buttonRefresh');
-   var commandType = f.document.getElementById('paramCommandType');
-   if(buttonRefresh && commandType && commandType.value === "NEW") {
-     buttonRefresh.onclick();
-   }
- }
+  if(top.opener) {
+    var f = getFrame('appFrame');
+    if(f == null) {
+      f = top.opener;
+    }
+    if(isDebugEnabled()) {
+      console.info("getFrame - f: %o", f);
+    }
+    var buttonRefresh = f.document.getElementById('buttonRefresh');
+    if(buttonRefresh !== null) {
+      buttonRefresh.onclick();
+    }
+  }
 }
 
  /**
@@ -316,7 +329,29 @@ function reloadOpener() {
   * @return
   */
 function removeOnUnload() {
-	window.onunload = null;
+  window.onunload = null;
+}
+
+/**
+ * Checks if the window is a pop-up and removes the onUnload handler
+ * All pop-ups must include IsPopUpCall hidden input
+ * @param f
+ * @return
+ */
+function removeOnUnloadHandler(form) {
+  var f = form;
+  if(f === null) {
+    f = document.forms[0];
+  }
+  if(typeof f.isPopUpCall !== 'undefined' && f.isPopUpCall.value === '1') {
+    // Checking for a onunload event handler
+    if(typeof window.onunload === 'function') {
+      if(isDebugEnabled()) {
+        console.log("Removing onUnload handler");
+      }
+      removeOnUnload();
+    }
+  }
 }
 
 /**
@@ -1215,7 +1250,7 @@ function keyControl(pushedKey) {
         if (keyCode == obtainKeyCode(keyArray[i].key)) {
           if (keyArray[i].auxKey == null || keyArray[i].auxKey == "" || keyArray[i].auxKey == "null") {
             if (!pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
-              if (!keyArray[i].propagateKey || isGridFocused) {
+              if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
                 if (window.event && window.event.keyCode == 116) { //F5 Special case
                   window.event.keyCode = 8;
                   keyCode = 8;
@@ -1238,7 +1273,7 @@ function keyControl(pushedKey) {
                     propagateEnter = true;
                     return false;
                   }
-                  if (!keyArray[i].propagateKey || isGridFocused) {
+                  if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
                     return false;
                   } else {
                     //return true;
@@ -1250,14 +1285,14 @@ function keyControl(pushedKey) {
             }
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
             var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
-            //if (!keyArray[i].propagateKey || isGridFocused) stopKeyPressEvent();
+            //if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) { stopKeyPressEvent(); }
             if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
-              if (!keyArray[i].propagateKey || isGridFocused) stopKeyPressEvent();
+              if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) { stopKeyPressEvent(); }
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1267,12 +1302,12 @@ function keyControl(pushedKey) {
               startKeyPressEvent();
               return true;
             } else if (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
-              if (!keyArray[i].propagateKey || isGridFocused) stopKeyPressEvent();
+              if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) { stopKeyPressEvent(); }
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1286,7 +1321,7 @@ function keyControl(pushedKey) {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1300,7 +1335,7 @@ function keyControl(pushedKey) {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1316,7 +1351,7 @@ function keyControl(pushedKey) {
         if (keyCode == obtainKeyCode(keyArray[i].key)) {
           if (keyArray[i].auxKey == null || keyArray[i].auxKey == "" || keyArray[i].auxKey == "null") {
             if (!pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
-              if (!keyArray[i].propagateKey || isGridFocused) {
+              if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
                 if (window.event && window.event.keyCode == 116) { //F5 Special case
                   window.event.keyCode = 8;
                   keyCode = 8;
@@ -1330,14 +1365,14 @@ function keyControl(pushedKey) {
                   keyCode = 8;
                 }
               }
-              if (!keyArray[i].propagateKey || isGridFocused) 
+              if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                 //stopKeyPressEvent();
               if (keyArray[i].field==null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
                 var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
                 try {
                   eval(evalfuncTrl);
                   thereIsShortcut = true;
-                  if (!keyArray[i].propagateKey || isGridFocused) 
+                  if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                     return false; else 
                     return true;
                 } catch (e) {
@@ -1350,13 +1385,13 @@ function keyControl(pushedKey) {
             }
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
             var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
-            //if (!keyArray[i].propagateKey || isGridFocused) stopKeyPressEvent();
+            //if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) stopKeyPressEvent();
             if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1370,7 +1405,7 @@ function keyControl(pushedKey) {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1384,7 +1419,7 @@ function keyControl(pushedKey) {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -1398,7 +1433,7 @@ function keyControl(pushedKey) {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if (!keyArray[i].propagateKey || isGridFocused) 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                   return false; else 
                   return true;
               } catch (e) {
@@ -4285,6 +4320,7 @@ function numberInputEvent(command, obj, evt) {
     manageDecPoint(obj, null, evt);
     return true;
   } else if (command == "onchange") {
+    blurNumberInput(obj, getInputNumberMask(obj));
     return true;
   }
 }

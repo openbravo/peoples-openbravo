@@ -387,7 +387,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 			</groupFooter>
 		</group>
 		<group  name="NAME2" >
-			<groupExpression><![CDATA[$F{NAME2}]]></groupExpression>
+			<groupExpression><![CDATA[$F{STATEMENTDATE}]]></groupExpression>
 			<groupHeader>
 			<band height="70"  isSplitAllowed="true" >
 				<line direction="TopDown">

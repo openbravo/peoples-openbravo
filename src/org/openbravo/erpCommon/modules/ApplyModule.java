@@ -132,7 +132,8 @@ public class ApplyModule {
       log4j.info("Looking for reference data modules");
 
       final ApplyModuleData[] ds = ApplyModuleData.selectClientReferenceModules(pool);
-      ModuleUtiltiy.orderModuleByDependency(pool, ds);
+
+      ModuleUtiltiy.orderModuleByDependency(ds);
 
       if (ds != null && ds.length > 0) {
         // build list of reference data modules which have files to import

@@ -1072,7 +1072,11 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       // import coa
       if (!strCreateAccounting.equals("")) {
         InitialOrgSetupData[] dataCOA = InitialOrgSetupData.selectCOAModules(this, strModules);
-        ModuleUtiltiy.orderModuleByDependency(this, dataCOA);
+        try {
+          ModuleUtiltiy.orderModuleByDependency(dataCOA);
+        } catch (Exception e) {
+          log4j.error("Error ordering modules", e);
+        }
 
         final DataImportService myData = DataImportService.getInstance();
         for (int i = 0; i < dataCOA.length; i++) {

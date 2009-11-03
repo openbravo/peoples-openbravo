@@ -143,6 +143,11 @@ cWithHoldId varchar2(32);
     v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
     v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
     v_org_bule_id AD_Org.AD_Org_ID%TYPE;
+    
+    v_PeriodStartDate DATE;
+    v_PeriodEndDate DATE;
+    v_DocNo_Org_ID AD_Sequence.AD_Org_ID%TYPE;
+    
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -241,6 +246,42 @@ cWithHoldId varchar2(32);
 
           IF V_InvoiceLines_count=0 THEN
             RAISE_APPLICATION_ERROR(-20000, '@InvoicesNeedLines@');
+          END IF;
+          /*
+          * Avoids repeating the same document number for the same organization tree within the same fiscal year
+          */
+          SELECT PERIODSTARTDATE, PERIODENDDATE
+            INTO v_PeriodStartDate, v_PeriodEndDate
+            FROM (SELECT Y.C_CALENDAR_ID, Y.C_YEAR_ID,
+                    MIN(P.STARTDATE) AS PERIODSTARTDATE, MAX(P.ENDDATE) AS PERIODENDDATE
+                    FROM C_YEAR Y, C_PERIOD P
+                    WHERE Y.C_YEAR_ID = P.C_YEAR_ID
+                    AND Y.ISACTIVE = 'Y'
+                    AND P.ISACTIVE = 'Y'
+                    AND Y.C_CALENDAR_ID = (SELECT O.C_CALENDAR_ID 
+                                            FROM AD_ORG O
+                                            WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(v_Org_ID))
+                    GROUP BY Y.C_CALENDAR_ID, Y.C_YEAR_ID) A
+            WHERE PERIODSTARTDATE <= v_DateInvoiced
+            AND PERIODENDDATE+1 > v_DateInvoiced ;
+          IF (v_PeriodStartDate IS NOT NULL AND v_PeriodEndDate IS NOT NULL) THEN
+            SELECT S.AD_ORG_ID   
+              INTO v_DocNo_Org_ID
+              FROM C_DOCTYPE D LEFT JOIN AD_SEQUENCE S ON D.DOCNOSEQUENCE_ID = S.AD_SEQUENCE_ID        
+              WHERE C_DOCTYPE_ID = v_DocTypeTarget_ID ;
+            IF (v_DocNo_Org_ID IS NOT NULL) THEN
+              SELECT COUNT(*)
+                INTO v_count
+                FROM C_INVOICE I
+                WHERE I.DOCUMENTNO = v_DocumentNo
+                AND I.DATEINVOICED >= v_PeriodStartDate
+                AND I.DATEINVOICED < v_PeriodEndDate+1 
+                AND I.C_INVOICE_ID <> v_Record_ID 
+                AND AD_ISORGINCLUDED(I.AD_ORG_ID, v_DocNo_Org_ID, I.AD_CLIENT_ID) <> -1 ;
+              IF (v_count<>0) THEN
+                RAISE_APPLICATION_ERROR(-20000, '@DifferentDocumentNo@') ;
+              END IF;
+            END IF;
           END IF;
     END IF;    
     IF(NOT FINISH_PROCESS) THEN
