@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5361';
+  var number = '5366';
   return number;
 }
 
@@ -4314,6 +4314,7 @@ function numberInputEvent(command, obj, evt) {
     focusNumberInput(obj, getInputNumberMask(obj));
     return true;
   } else if (command == "onblur") {
+    blurNumberInput(obj, getInputNumberMask(obj));
     return true;
   } else if (command == "onkeydown") {
     manageDecPoint(obj, null, evt);
