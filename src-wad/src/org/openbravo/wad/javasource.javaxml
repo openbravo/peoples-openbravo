@@ -33,6 +33,7 @@ import org.openbravo.erpCommon.ad_actionButton.*;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.utils.FormatUtilities;
+import org.openbravo.utils.Replace;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.exception.OBException;
@@ -678,11 +679,13 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   }
 
 <PARAMETER_TMP id="parent">  private void refreshParentSession(VariablesSecureApp vars, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>) throws IOException,ServletException {
-      <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data[] data = <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectEdit(this, vars.getLanguage()<PARAMETER_TMP id="parentwhereclause"></PARAMETER_TMP><PARAMETER_TMP id="grandfather">, vars.getSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>")</PARAMETER_TMP>, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel));
+      <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data[] data = <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectEdit(this, vars.getSessionValue("#AD_SqlDateTimeFormat"), vars.getLanguage()<PARAMETER_TMP id="parentwhereclause"></PARAMETER_TMP><PARAMETER_TMP id="grandfather">, vars.getSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>")</PARAMETER_TMP>, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel));
       if (data==null || data.length==0) return;
       <FIELDS_TMP id="sectionDetailParentSession">    vars.setSessionValue(windowId + "|<FIELD_TMP id="fieldRealName8">claveAlmacen</FIELD_TMP>", data[0].<FIELD_TMP id="fieldName8">claveAlmacen</FIELD_TMP>);</FIELDS_TMP>
       vars.setSessionValue(windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>); //to ensure key parent is set for EM_* cols
-      <LISTS_TMP id="sectionDetailParentParams">      
+
+      FieldProvider dataField = null; // Define this so that auxiliar inputs using SQL will work
+      <LISTS_TMP id="sectionDetailParentParams">
       vars.setSessionValue(windowId + "|<LIST_TMP id="fieldParentNameParam">Almacen</LIST_TMP>", <LIST_TMP id="paramParentCode">dd</LIST_TMP>);
       </LISTS_TMP>
   }
@@ -702,7 +705,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     }
 
     private void refreshSessionNew(VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException,ServletException {
-      <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectEdit(this, vars.getLanguage()<PARAMETER_TMP id="whereClauseParams"></PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, vars.getStringParameter("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", "")<PARAMETER_TMP id="client">, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARAMETER_TMP>);
+      <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectEdit(this, vars.getSessionValue("#AD_SqlDateTimeFormat"), vars.getLanguage()<PARAMETER_TMP id="whereClauseParams"></PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, vars.getStringParameter("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", "")<PARAMETER_TMP id="client">, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARAMETER_TMP>);
       if (data==null || data.length==0) return;
       refreshSessionEdit(vars, data);
     }
@@ -940,7 +943,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
           <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data1 = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.select(this, vars.getLanguage()<PARAMETER_TMP id="whereClauseParams"></PARAMETER_TMP><FIELDS_TMP id="isTransactional">, strParamTransaccional</FIELDS_TMP><FIELDS_TMP id="sectionFilter">, strParamFilter</FIELDS_TMP><PARAMETER_TMP id="sectionIsHighVolume2Edit">, strParam<PARAMETER_TMP id="searchName2Edit">xx</PARAMETER_TMP></PARAMETER_TMP><PARAMETER_TMP id="sectionIsHighVolume4">, strParamSessionDate, vars.getUser()</PARAMETER_TMP><PARAMETER_TMP id="client">, Utility.getContext(this, vars, "#User_Client", windowId, accesslevel)</PARAMETER_TMP><PARAMETER_TMP id="org">, Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, strOrderByFilter);
           data = new <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[1];
           if (data1!=null &#38;&#38; data1.length!=0) data[0] = data1[0];
-        } else </FIELDS_TMP></PARAMETER_TMP>data = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectEdit(this, vars.getLanguage()<PARAMETER_TMP id="whereClauseParams"></PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="client">, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARAMETER_TMP>);
+        } else </FIELDS_TMP></PARAMETER_TMP>data = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectEdit(this, vars.getSessionValue("#AD_SqlDateTimeFormat"), vars.getLanguage()<PARAMETER_TMP id="whereClauseParams"></PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="client">, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARAMETER_TMP>);
   
         if (!str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("") &amp;&amp; (data == null || data.length==0)) {
           response.sendRedirect(strDireccion + request.getServletPath() + "?Command=RELATION");
@@ -956,7 +959,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
           response.sendRedirect(strDireccion + request.getServletPath() + "?Command=RELATION");
           return;
         } else {
-          data = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectEdit(this, vars.getLanguage()<PARAMETER_TMP id="whereClauseParams"></PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="client">, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARAMETER_TMP>);
+          data = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectEdit(this, vars.getSessionValue("#AD_SqlDateTimeFormat"), vars.getLanguage()<PARAMETER_TMP id="whereClauseParams"></PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="client">, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARAMETER_TMP>);
         }
       }
 </FIELDS_TMP>
@@ -1007,6 +1010,21 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     toolbar.prepareEditionTemplate<PARAMETER_TMP id="sameParent">NoSearch</PARAMETER_TMP>("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, vars.getSessionValue("#ShowTest", "N").equals("Y"), "<PARAMETER_TMP id="paramUIPattern">readonly</PARAMETER_TMP>", Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
+    // set updated timestamp to manage locking mechanism
+    if (!boolNew) {
+      xmlDocument.setParameter("updatedTimestamp", (dataField != null ? dataField
+          .getField("updatedTimeStamp") : data[0].getField("updatedTimeStamp")));
+    }
+    
+    boolean concurrentSave = vars.getSessionValue(tabId + "|concurrentSave").equals("true");
+    if (concurrentSave) {
+      //after concurrent save error, force autosave
+      xmlDocument.setParameter("autosave", "Y");
+    } else {
+      xmlDocument.setParameter("autosave", "N");
+    }
+    vars.removeSessionValue(tabId + "|concurrentSave");
+
     try {
       WindowTabs tabs = new WindowTabs(this, vars, tabId, windowId, true, (strCommand.equalsIgnoreCase("NEW")));
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
@@ -1014,7 +1032,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       // if (!str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) xmlDocument.setParameter("childTabContainer", tabs.childTabs(false));
 	  // else xmlDocument.setParameter("childTabContainer", tabs.childTabs(true));
 	  xmlDocument.setParameter("childTabContainer", tabs.childTabs(false));
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb(), false, !concurrentSave);
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.editionTemplate(strCommand.equals("NEW")));
@@ -1247,7 +1265,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         Connection con = null;
         try {
             con = this.getTransactionConnection();
-            data = getEditVariables(con, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);            
+            data = getEditVariables(con, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+            data.dateTimeFormat = vars.getSessionValue("#AD_SqlDateTimeFormat");            
             String strSequence = "";
             if(type == 'I') {                
 <PARAMETER_TMP id="keySequence">        strSequence = SequenceIdData.getUUID();
@@ -1255,10 +1274,20 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
                 data.<KEY_TMP id="keyData">Almacen</KEY_TMP> = strSequence;</PARAMETER_TMP>  
             }
             <PARAMETER_TMP id="client">if (Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),data.adClientId) <FIELDS_TMP id="sectionOrganizationCheck"> &amp;&amp; Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),data.adOrgId)</FIELDS_TMP>){</PARAMETER_TMP>
-		            if(type == 'I')
-		                    total = data.insert(con, this);
-		                else
-		                    total = data.update(con, this);		            
+		     if(type == 'I') {
+		       total = data.insert(con, this);
+		     } else {
+		       //Check the version of the record we are saving is the one in DB
+		       if (<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.getCurrentDBTimestamp(this, data.<KEY_TMP id="keyData">Almacen</KEY_TMP>).equals(
+                vars.getStringParameter("updatedTimestamp"))) {
+                total = data.update(con, this);
+               } else {
+                 myError.setMessage(Replace.replace(Replace.replace(Utility.messageBD(this,
+                    "SavingModifiedRecord", vars.getLanguage()), "\\n", "&lt;br/&gt;"), "&amp;quot;", "\""));
+                 myError.setType("Error");
+                 vars.setSessionValue(tabId + "|concurrentSave", "true");
+               } 
+		     }		            
           <PARAMETER_TMP id="client">
             }
                 else {

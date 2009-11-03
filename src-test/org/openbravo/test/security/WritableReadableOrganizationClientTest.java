@@ -19,6 +19,7 @@
 
 package org.openbravo.test.security;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -110,7 +111,7 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
     final List<Costing> cs = obc.list();
     assertEquals(1, cs.size());
     final Costing c = cs.get(0);
-    c.setCost(c.getCost() + 1);
+    c.setCost(c.getCost().add(new BigDecimal(1)));
 
     // switch usercontext to force exception
     setUserContext("1000002");

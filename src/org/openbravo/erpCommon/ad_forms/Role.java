@@ -32,6 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
@@ -183,7 +186,23 @@ public class Role extends HttpSecureAppServlet {
     xmlDocument.setData("structureLang", LanguageComboData.select(this));
 
     // Role
-    RoleComboData[] datarole = RoleComboData.select(this, vars.getUser());
+    OBContext.enableAsAdminContext();
+    RoleComboData[] datarole = null;
+    try {
+      ActivationKey ak = new ActivationKey();
+      LicenseRestriction limitation = ak.checkOPSLimitations(vars.getDBSession());
+      if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
+          || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
+          || limitation == LicenseRestriction.MODULE_EXPIRED) {
+        // allow only system login
+        datarole = RoleComboData.selectSystem(this, vars.getUser());
+      } else {
+
+        datarole = RoleComboData.select(this, vars.getUser());
+      }
+    } finally {
+      OBContext.resetAsAdminContext();
+    }
 
     // Client
     List<ClientData> vecClients = new ArrayList<ClientData>();

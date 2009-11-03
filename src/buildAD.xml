@@ -25,6 +25,7 @@
   <target name="buildAD">
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}'/Openbravo.properties .xsql ../srcAD '${build.sqlc}'/src" />
+      <jvmarg value="-Dsqlc.queryExecutionStrategy=traditional"/>
       <classpath refid="project.class.path" />
     </java>
 

@@ -77,7 +77,6 @@ public class VariablesSecureApp extends VariablesBase {
    * Constructor used to make an empty/manual instance of this class.
    * 
    * @param strUser
-   * @param strUser
    *          ID of the user as specified by the AD_USER_ID column within the AD_USER database
    *          table.
    * @param strClient

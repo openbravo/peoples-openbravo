@@ -29,14 +29,14 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 /**
  * Manages the tree of installed modules.
- *
+ * 
  * It implements GenericTree, detailed description is in that API doc.
  */
 public class ModuleTree extends GenericTree {
 
   /**
    * Constructor to generate a root tree
-   *
+   * 
    * @param base
    */
   public ModuleTree(HttpBaseServlet base) {
@@ -46,7 +46,7 @@ public class ModuleTree extends GenericTree {
 
   /**
    * Constructor to generate a root tree
-   *
+   * 
    * @param base
    * @param bSmall
    *          Normal size or small size (true)
@@ -79,7 +79,7 @@ public class ModuleTree extends GenericTree {
 
   /**
    * Generates a subtree with nodeId as root node
-   *
+   * 
    * @param nodeId
    */
   public void setSubTree(String nodeId, String level) {
@@ -97,7 +97,7 @@ public class ModuleTree extends GenericTree {
 
   /**
    * Returns a HTML with the description for the given node
-   *
+   * 
    * @param node
    * @return a HTML String with the description for the given node
    */
@@ -163,7 +163,7 @@ public class ModuleTree extends GenericTree {
 
   /**
    * Set the icons (module type) and subicons (update available) for each node
-   *
+   * 
    * @param modules
    */
   private void setIcons(FieldProvider[] modules) {
@@ -171,11 +171,11 @@ public class ModuleTree extends GenericTree {
       return;
     for (int i = 0; i < modules.length; i++) {
       if (modules[i].getField("type").equals("M"))
-    	  FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Module");
+        FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Module");
       if (modules[i].getField("type").equals("P"))
-    	  FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Pack");
+        FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Pack");
       if (modules[i].getField("type").equals("T"))
-    	  FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Template");
+        FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Template");
 
       boolean updateAvailable = modules[i].getField("updateAvailable") != null
           && !modules[i].getField("updateAvailable").equals("");
@@ -183,13 +183,13 @@ public class ModuleTree extends GenericTree {
           && hasChildUpdate(modules[i].getField("nodeId"));
 
       if (updateAvailable || updateAvailableInChildNode)
-      	FieldProviderFactory.setField(modules[i], "icon2", "Tree_Icon_Update");
+        FieldProviderFactory.setField(modules[i], "icon2", "Tree_Icon_Update");
     }
   }
 
   /**
    * Returns true in case one of the descendant of the current node has an update available
-   *
+   * 
    * @param node
    * @return
    */
@@ -236,9 +236,9 @@ public class ModuleTree extends GenericTree {
 
   /**
    * Returns the node id for the parent of the passed node
-   *
+   * 
    * @param node
-   * @return
+   * @return the node id for the parent of the passed node
    */
   protected String getParent(String node) {
     try {

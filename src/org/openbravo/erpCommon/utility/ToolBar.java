@@ -316,12 +316,6 @@ public class ToolBar {
         Utility.messageBD(conn, "GotoNextRange", language), ""));
 
     buttons.put("SEPARATOR7", new ToolBar_Space(base_direction));
-    buttons.put("CAPTURE", new ToolBar_Button(base_direction, "Capture", Utility.messageBD(conn,
-        "Capture", language), ""));
-    buttons.put("CHECK_CONTENT", new ToolBar_Button(base_direction, "CheckContent", Utility
-        .messageBD(conn, "CheckContent", language), ""));
-    buttons.put("CHECK_ELEMENT", new ToolBar_Button(base_direction, "CheckElement", Utility
-        .messageBD(conn, "CheckElement", language), ""));
     buttons.put("HR1", new ToolBar_HR());
     buttons.put("RELATED_INFO", new ToolBar_Button(base_direction, "RelatedInfo", Utility
         .messageBD(conn, "Linked Items", language), getButtonScript("RELATED_INFO")));
@@ -560,9 +554,6 @@ public class ToolBar {
     removeElement("PREVIOUS_RELATION_DISABLED");
     removeElement("NEXT_RELATION");
     removeElement("NEXT_RELATION_DISABLED");
-    removeElement("CAPTURE");
-    removeElement("CHECK_CONTENT");
-    removeElement("CHECK_ELEMENT");
     removeElement("EMAIL");
     removeElement("PRINT");
     if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
@@ -617,9 +608,6 @@ public class ToolBar {
     removeElement("PREVIOUS_RELATION_DISABLED");
     removeElement("NEXT_RELATION");
     removeElement("NEXT_RELATION_DISABLED");
-    removeElement("CAPTURE");
-    removeElement("CHECK_CONTENT");
-    removeElement("CHECK_ELEMENT");
     if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
       buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn,
           "Print", language), pdf));
@@ -672,9 +660,6 @@ public class ToolBar {
     removeElement(hasPrevious ? "PREVIOUS_RELATION_DISABLED" : "PREVIOUS_RELATION");
     removeElement(hasNext ? "NEXT_RELATION_DISABLED" : "NEXT_RELATION");
 
-    removeElement("CAPTURE");
-    removeElement("CHECK_CONTENT");
-    removeElement("CHECK_ELEMENT");
     removeElement("RELATED_INFO"); // Modified
     if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
       buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn,
@@ -728,9 +713,6 @@ public class ToolBar {
     removeElement("PREVIOUS_RELATION_DISABLED");
     removeElement("NEXT_RELATION");
     removeElement("NEXT_RELATION_DISABLED");
-    removeElement("CAPTURE");
-    removeElement("CHECK_CONTENT");
-    removeElement("CHECK_ELEMENT");
 
     if (!excelScript.equals("") && excelScript != null)
       buttons.put("EXCEL", new ToolBar_Button(base_direction, "Excel", Utility.messageBD(conn,
@@ -776,9 +758,6 @@ public class ToolBar {
     removeElement("PREVIOUS_RELATION_DISABLED");
     removeElement("NEXT_RELATION");
     removeElement("NEXT_RELATION_DISABLED");
-    removeElement("CAPTURE");
-    removeElement("CHECK_CONTENT");
-    removeElement("CHECK_ELEMENT");
 
     removeElement("AUDIT_SHOW_EDITION_DISABLED");
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
@@ -868,9 +847,7 @@ public class ToolBar {
   }
 
   private void removeAllTests() {
-    removeElement("CAPTURE");
-    removeElement("CHECK_CONTENT");
-    removeElement("CHECK_ELEMENT");
+
   }
 
   private void removeReadOnly() {
@@ -1004,9 +981,6 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("NEXT_RELATION_DISABLED"), lastType,
           false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR7"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("CAPTURE"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("CHECK_CONTENT"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("CHECK_ELEMENT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("HR1"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("RELATED_INFO"), lastType, true));
     }

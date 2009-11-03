@@ -39,7 +39,7 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" type="text/javascript" src="../../../../../web/js/DHTMLgoodies/drag-drop-folder-tree.js"></script>
 <script language="JavaScript" type="text/javascript" id="paramKeyField">
 function getKeyField() {
-	return document.frmMain.inpKey;
+    return document.frmMain.inpKey;
 }
 </script>
   <script language="JavaScript" type="text/javascript">
@@ -79,18 +79,11 @@ function getKeyField() {
         }
         if (strText == "") {
           showJSMessage(22);
-        }else if (strText != "") {
-          strText = XMLHttpRequestObj.responseXML;
-          var node = strText.getElementsByTagName("xml-structure");
+        } else {
+          //Expecting msg in JSON format
+          var msg = eval("("+strText+")");;
           initialize_MessageBox('messageBoxID');
-          if(node.length){
-            node = node[0].getElementsByTagName("status");
-            var type = node[0].getElementsByTagName("type");
-            var title = node[0].getElementsByTagName("title");
-            var description = node[0].getElementsByTagName("description");
-            setValues_MessageBox('messageBoxID',getChildText(type[0]),getChildText(title[0]),getChildText(description[0]));
-          }
-          if (getChildText(type[0]) == 'Success') document.frmMain.reset();
+          setValues_MessageBox('messageBoxID',msg.OBError.type, msg.OBError.title, msg.OBError.message);
         }
       }
       return true;
@@ -189,8 +182,8 @@ function getKeyField() {
     try {
       onloadFunctions();
     } catch (e) {}
-	resizeMessageBoxContainer(); 
-	resizeMenuArea();
+    resizeMessageBoxContainer(); 
+    resizeMenuArea();
 
     setWindowElementFocus('firstElement');
     

@@ -34,6 +34,7 @@
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
   v_Record_ID_Log VARCHAR2(32);
+  v_Count NUMBER:=0;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Document RECORD;
@@ -114,6 +115,11 @@ BEGIN
         
         -- Action: Close if not permanently closed
       ELSIF(p_PeriodAction='C') THEN
+        SELECT COUNT(DISTINCT C_YEAR.YEAR) INTO v_Count FROM C_PERIOD, C_PERIODCONTROL, C_YEAR WHERE 
+          C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID AND C_PERIODCONTROL.PERIODSTATUS='O' AND C_YEAR.YEAR<p_Year;                  
+        IF (v_Count>=1) THEN           
+          RAISE_APPLICATION_ERROR(-20000, '@YearNotClose@');
+        END IF;
         IF (p_IsRecursive='Y') THEN
          FOR Cur_Document IN
             (SELECT C_PERIODCONTROL_ID

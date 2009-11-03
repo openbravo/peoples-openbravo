@@ -78,21 +78,15 @@ BEGIN
     BEGIN --BODY
 
   for Cur_Cursor in (
-     SELECT ORGID, SEARCHKEY, NAME, COST, PERCENTAGE,
-     M_GET_PARETO_ABC(v_warehouse_ID, v_org_ID, v_client_ID, PERCENTAGE) AS ISABC,
+     SELECT M_GET_PARETO_ABC(v_warehouse_ID, AD_ORG_ID, v_client_ID, PERCENTAGE) AS ISABC,
      AD_ORG_ID, AD_CLIENT_ID, M_PRODUCT_ID
      FROM
      (
      SELECT
-      AD_ORG.NAME AS ORGID,
-      PR.VALUE AS SEARCHKEY,
-      PR.NAME,
-      M_GET_PRODUCT_COST(PR.M_PRODUCT_ID,TO_DATE(now()),'AV') AS COST,
-      100*(M_GET_PRODUCT_COST(PR.M_PRODUCT_ID,TO_DATE(now()),'AV')/ (SELECT SUM(M_GET_PRODUCT_COST(PR1.M_PRODUCT_ID,TO_DATE(now()),'AV'))
+      100*SUM(MSD.QTYONHAND)*(M_GET_PRODUCT_COST(MSD.M_PRODUCT_ID,TO_DATE(now()),'AV')/ (SELECT SUM(msd1.qtyonhand*M_GET_PRODUCT_COST(MSD1.M_PRODUCT_ID,TO_DATE(now()),'AV'))
                                                            from M_WAREHOUSE MW1
                                                            LEFT JOIN M_LOCATOR ML1 ON ML1.M_WAREHOUSE_ID=MW1.M_WAREHOUSE_ID
                                                            LEFT JOIN M_STORAGE_DETAIL MSD1 ON ML1.M_LOCATOR_ID=MSD1.M_LOCATOR_ID
-                                                           LEFT JOIN M_PRODUCT PR1 ON MSD1.M_PRODUCT_ID=PR1.M_PRODUCT_ID
                                                            WHERE MSD1.QTYONHAND>0
                                                            AND (v_warehouse_ID IS NULL OR MW1.M_WAREHOUSE_ID = v_warehouse_ID)
                                                            AND (v_org_ID IS NULL OR MW1.AD_ORG_ID = v_org_ID)
@@ -100,21 +94,20 @@ BEGIN
                                                            ) ) as PERCENTAGE,
       MW.AD_ORG_ID,
       MW.AD_CLIENT_ID,
-      PR.M_PRODUCT_ID
+      MSD.M_PRODUCT_ID
      FROM
      M_WAREHOUSE MW
        LEFT JOIN M_LOCATOR ML ON ML.M_WAREHOUSE_ID=MW.M_WAREHOUSE_ID
        LEFT JOIN M_STORAGE_DETAIL MSD ON ML.M_LOCATOR_ID=MSD.M_LOCATOR_ID
-       LEFT JOIN M_PRODUCT PR ON MSD.M_PRODUCT_ID=PR.M_PRODUCT_ID, AD_ORG
      WHERE (v_warehouse_ID IS NULL OR MW.M_WAREHOUSE_ID = v_warehouse_ID)
        AND (v_org_ID IS NULL OR MW.AD_ORG_ID = v_org_ID)
        AND (v_client_ID IS NULL OR MW.AD_CLIENT_ID = v_client_ID)
        AND MSD.QTYONHAND>0
-       AND M_GET_PRODUCT_COST(PR.M_PRODUCT_ID,TO_DATE(now()),'AV') IS NOT NULL
-       AND M_GET_PRODUCT_COST(PR.M_PRODUCT_ID,TO_DATE(now()),'AV') <> 0
-       AND MSD.AD_ORG_ID = AD_ORG.AD_ORG_ID
-     GROUP BY AD_ORG.NAME ,PR.VALUE, PR.NAME, MW.AD_ORG_ID, MW.AD_CLIENT_ID, PR.M_PRODUCT_ID
-     ORDER BY PERCENTAGE DESC) BBB) loop
+       AND M_GET_PRODUCT_COST(MSD.M_PRODUCT_ID,TO_DATE(now()),'AV') IS NOT NULL
+       AND M_GET_PRODUCT_COST(MSD.M_PRODUCT_ID,TO_DATE(now()),'AV') <> 0
+     GROUP BY MW.AD_ORG_ID, MW.AD_CLIENT_ID, MSD.M_PRODUCT_ID
+     ) BBB
+     ORDER BY PERCENTAGE DESC) loop
 
      SELECT COUNT(*)
      INTO v_exist

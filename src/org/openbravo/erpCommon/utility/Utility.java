@@ -58,20 +58,17 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
-import org.openbravo.model.ad.domain.ListTrl;
-import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.FormatUtilities;
@@ -115,7 +112,7 @@ public class Utility {
    * Checks if a getNumericParameters is needed based on a reference
    * 
    * @param reference
-   * @return
+   * @return true if the passed reference represents a numeric type, false otherwise.
    */
   public static boolean isNumericParameter(String reference) {
     return (!Utility.isID(reference) && (Utility.isDecimalNumber(reference) || Utility
@@ -271,7 +268,8 @@ public class Utility {
   /**
    * 
    * Formats a message String into a String for html presentation. Escapes the &, <, >, " and ®, and
-   * replace the \n by <br/> and \r for space.
+   * replace the \n by <br/>
+   * and \r for space.
    * 
    * IMPORTANT! : this method is designed to transform the output of Utility.messageBD method, and
    * this method replaces \n by \\n and \" by &quote. Because of that, the first replacements revert
@@ -2350,43 +2348,29 @@ public class Utility {
    *         name but the passed value
    */
   public static String getListValueName(String ListName, String value, String lang) {
-    OBCriteria<Reference> obCriteria = OBDal.getInstance().createCriteria(Reference.class);
-    obCriteria.add(Expression.and(Expression.eq(Reference.PROPERTY_NAME, ListName), Expression.eq(
-        Reference.PROPERTY_VALIDATIONTYPE, "L")));
-    List<Reference> refs = obCriteria.list();
+    // Try to obtain the translated value
+    String hql = "  select rlt.name as name " + " from ADReference r, " + "      ADList rl,"
+        + "      ADListTrl rlt" + " where rl.reference = r" + "  and rlt.listReference = rl"
+        + "  and rlt.language.language = '" + lang + "'" + "  and r.name =  '" + ListName + "'"
+        + "  and rl.searchKey = '" + value + "'";
+    Query q = OBDal.getInstance().getSession().createQuery(hql);
 
-    if (refs.size() != 1) {
-      return value; // reference not found
+    if (q.list().size() > 0) {
+      return (String) q.list().get(0);
     }
-    Reference reference = refs.get(0);
 
-    org.openbravo.model.ad.domain.List val = null;
-    for (org.openbravo.model.ad.domain.List list : reference.getADListList()) {
-      if (list.getSearchKey().compareTo(value) == 0) {
-        if (val != null) {
-          // val already set, value occurs > 1
-          // can this situation ever occur?
-          // should this be an error?
-          return value;
-        }
-        val = list;
-      }
-    }
-    if (val == null) {
+    // No translated value obtained, get the standard one
+    hql = "  select rl.name " + " from ADReference r, " + "      ADList rl"
+        + " where rl.reference = r" + "  and r.name =  '" + ListName + "'"
+        + "  and rl.searchKey = '" + value + "'";
+    q = OBDal.getInstance().getSession().createQuery(hql);
+
+    if (q.list().size() > 0) {
+      return (String) q.list().get(0);
+    } else {
+      // Nothing found, return the value
       return value;
     }
-
-    // no language, return untranslated value
-    if (lang == null || lang.equals("")) {
-      return val.getName();
-    }
-
-    for (ListTrl listTrl : val.getADListTrlList()) {
-      if (listTrl.getLanguage().getName().equals(lang)) {
-        return listTrl.getName();
-      }
-    }
-    return val.getName();
   }
 
   /**

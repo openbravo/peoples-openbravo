@@ -24,6 +24,8 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Properties;
 
 public class CheckSum {
@@ -52,6 +54,14 @@ public class CheckSum {
           return !s.equals(".svn") && !s.endsWith(".orig");
         }
       });
+
+      // sort files alphabetically to ensure the order does not change from one checksum to another
+      Arrays.sort(list, new Comparator<File>() {
+        public int compare(final File f1, final File f2) {
+          return f1.toString().compareTo(f2.toString());
+        }
+      });
+
       for (File element : list)
         getCheckSum(cs, element);
     } else {
@@ -89,7 +99,7 @@ public class CheckSum {
       String rt[] = { obDir + "src-db/database/sourcedata", obDir + "modules" };
       return rt;
     } else if (type.equals("md5.wad")) {
-      String rt[] = { obDir + "src-wad/lib/openbravo-wad.jar" };
+      String rt[] = { obDir + "src-wad/src" };
       return rt;
     } else if (type.equals("md5.skins")) {
       String rt[] = { obDir + "web/skins" };

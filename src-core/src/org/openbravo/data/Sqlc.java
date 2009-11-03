@@ -58,6 +58,7 @@ public class Sqlc extends DefaultHandler {
   String strDBUser;
   String strDBPassword;
   String javaDateFormat;
+  String queryExecutionStrategy;
   static String javaFileName;
   Connection connection;
   Sql sql;
@@ -79,6 +80,9 @@ public class Sqlc extends DefaultHandler {
   StringBuffer buffer;
   static ArrayList<String> includeDirectories;
   static int errorNum;
+  private static boolean queryWithOptionalParameterTypeNone = false;
+  private static boolean queryWithOptionalParameterWithoutType = false;
+  private static boolean queryWithOptionalParameterTypeArgument = false;
 
   static Logger log4j = Logger.getLogger(Sqlc.class); // log4j
 
@@ -155,6 +159,13 @@ public class Sqlc extends DefaultHandler {
     log4j.info("Write TXT Files: " + sqlc.writeTxtFiles);
 
     sqlc.connect(strFileConnection);
+
+    // use specified queryExecutionModel
+    if (sqlc.queryExecutionStrategy.equals("optimized")) {
+      queryWithOptionalParameterWithoutType = true;
+      queryWithOptionalParameterTypeNone = true;
+      queryWithOptionalParameterTypeArgument = true;
+    }
 
     final File path = new File(dirIni);
     if (!path.exists()) {
@@ -244,7 +255,7 @@ public class Sqlc extends DefaultHandler {
           if (parse)
             parseSqlFile(list[i], sqlc, parser, strFilter, fileFin, parent);
         } catch (final IOException e) {
-          log4j.error("IOException: " + e);
+          log4j.error("IOException: ", e);
         }
       }
     }
@@ -319,11 +330,11 @@ public class Sqlc extends DefaultHandler {
         try {
           parser.parse(new InputSource(new FileReader(fileParsing)));
         } catch (final IOException e) {
-          e.printStackTrace();
+          log4j.error("Error parsing xsql file", e);
         } catch (final SAXException e) {
-          e.printStackTrace();
+          log4j.error("Error parsing xsql file", e);
         } catch (final Exception e) {
-          e.printStackTrace();
+          log4j.error("Error parsing xsql file", e);
         }
         if (!sqlc.first) {
           sqlc.printEndClass();
@@ -354,8 +365,7 @@ public class Sqlc extends DefaultHandler {
           log4j.debug("File: " + fileParsing + " \tskipped");
       }
     } catch (final IOException e) {
-      e.printStackTrace();
-      log4j.error("Problem at close of the file");
+      log4j.error("Problem closing the file", e);
     }
   }
 
@@ -508,7 +518,7 @@ public class Sqlc extends DefaultHandler {
         try {
           printFunctionConstant();
         } catch (final IOException ex) {
-          ex.printStackTrace();
+          log4j.error("Error in printFunctionConstant", ex);
         }
       } else {
         query();
@@ -517,13 +527,13 @@ public class Sqlc extends DefaultHandler {
           try {
             printInitClass();
           } catch (final IOException ex) {
-            ex.printStackTrace();
+            log4j.error("Error in printInitClass", ex);
           }
         }
         try {
           printFunctionSql();
         } catch (final IOException ex) {
-          ex.printStackTrace();
+          log4j.error("Error in printFunctionSql", ex);
         }
       }
       sql = new Sql();
@@ -565,10 +575,20 @@ public class Sqlc extends DefaultHandler {
       strDBPassword = properties.getProperty("bbdd.password");
       if (properties.getProperty("bbdd.rdbms").equalsIgnoreCase("POSTGRE"))
         strURL += "/" + properties.getProperty("bbdd.sid");
+      // read from properties file
+      queryExecutionStrategy = properties.getProperty("sqlc.queryExecutionStrategy");
+      // override with value passed from command line/build.xml invocation
+      queryExecutionStrategy = System.getProperty("sqlc.queryExecutionStrategy",
+          queryExecutionStrategy);
+      // if strategy is not set, default to optimized
+      if (queryExecutionStrategy == null) {
+        queryExecutionStrategy = "optimized";
+      }
     } catch (final IOException e) {
-      e.printStackTrace();
+      log4j.error("Error reading propery file", e);
     }
 
+    log4j.info("QueryExecutionStrategy: " + queryExecutionStrategy);
     log4j.info("Loading driver: " + strDriver);
     Class.forName(strDriver);
     log4j.info("Driver loaded");
@@ -588,12 +608,58 @@ public class Sqlc extends DefaultHandler {
   }
 
   private void query() {
+    // try to build a more complete query string, but appending the optional parameters where this
+    // is possible, this should lead to improved execution time of the query and compile time (here
+    // in Sqlc)
+    StringBuilder querySql = new StringBuilder();
+
+    int posSQL = 0;
+    for (final Parameter parameter : sql.vecParameter) {
+      if (parameter.boolOptional) {
+        if (parameter.strAfter == null) {
+          parameter.strAfter = "WHERE";
+          parameter.strText = parameter.strName + " = ? AND";
+        }
+        if (parameter.strName != null && !parameter.strInOut.equals("out")) {
+          int posFinalAfter = posFinal(sql.strSQL, parameter.strAfter);
+          if (posFinalAfter != -1) {
+            querySql.append(imprimirSubstring2(sql.strSQL, posSQL, posFinalAfter));
+            posSQL = posFinalAfter;
+            if (parameter.strInOut.equals("none")) {
+              if (queryWithOptionalParameterTypeNone) {
+                querySql.append(parameter.strText).append('\n');
+              }
+            } else if (parameter.strInOut.equals("argument")) {
+              if (queryWithOptionalParameterTypeArgument) {
+                // heuristic: search for strText ending in "_ID in"
+                if (parameter.strText.trim().endsWith("_ID IN")) {
+                  querySql.append(parameter.strText);
+                  querySql.append("('1')");
+                  querySql.append('\n');
+                }
+              }
+            } else if (parameter.strInOut.equals("replace")) {
+              // don't append replace type parameters
+            } else { // without type
+              if (queryWithOptionalParameterWithoutType) {
+                querySql.append(parameter.strText).append('\n');
+              }
+            }
+          } else if (parameter.strInOut.equals("replace")) {
+            // don't append replace type parameters
+          }
+        }
+      }
+    }
+    querySql.append(imprimirSubstring2(sql.strSQL, posSQL, sql.strSQL.length()));
+
     try {
       if (preparedStatement != null)
         preparedStatement.close();
-      preparedStatement = connection.prepareStatement(sql.strSQL);
+      preparedStatement = connection.prepareStatement(querySql.toString());
       if (log4j.isDebugEnabled())
         log4j.debug("Prepared statement: " + sql.strSQL);
+
       /*
        * Commented because it is not a supported operation ResultSetMetaData rsmdPS =
        * preparedStatement.getMetaData (); // Get the number of columns in the result set int
@@ -602,7 +668,11 @@ public class Sqlc extends DefaultHandler {
        */
       int i = 1;
       for (final Parameter parameter : sql.vecParameter) {
-        if (!parameter.boolOptional) {
+        boolean isParameterWithoutType = !parameter.strInOut.equals("out")
+            && !parameter.strInOut.equals("none") && !parameter.strInOut.equals("argument")
+            && !parameter.strInOut.equals("replace");
+        if (!parameter.boolOptional
+            || (parameter.boolOptional && (isParameterWithoutType && queryWithOptionalParameterWithoutType))) {
           if (parameter.type == java.sql.Types.INTEGER) {
             if (parameter.strDefault == null) {
               if (log4j.isDebugEnabled())
@@ -644,13 +714,11 @@ public class Sqlc extends DefaultHandler {
     } catch (final SQLException e) {
       error = true;
       errorNum++;
-      log4j.error("SQL error in query: " + sql.strSQL + "Exception:" + e);
-      e.printStackTrace();
+      log4j.error("SQL error in query: " + querySql, e);
     } catch (final Exception e) {
       error = true;
       errorNum++;
-      log4j.error("Error in query. Exception:" + e);
-      e.printStackTrace();
+      log4j.error("Error in query.", e);
     }
   }
 
@@ -1151,8 +1219,7 @@ public class Sqlc extends DefaultHandler {
                 + ".InitRecordNumber = Integer.toString(firstRegister);\n");
         }
       } catch (final SQLException e) {
-        log4j.error("SQL Exception error:" + e);
-        e.printStackTrace();
+        log4j.error("SQL Exception error:", e);
       }
       if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) {
         out2.append("        vector.addElement(object" + sqlcName + ");\n");
@@ -1421,8 +1488,8 @@ public class Sqlc extends DefaultHandler {
     out2.append("}\n");
   }
 
-  private int posFinal(String strSQL, String strPattern) {
-    int index = sql.strSQL.indexOf(strPattern);
+  private static int posFinal(String strSQL, String strPattern) {
+    int index = strSQL.indexOf(strPattern);
     if (index != -1)
       index = index + strPattern.length();
     return index;
@@ -1443,11 +1510,20 @@ public class Sqlc extends DefaultHandler {
     }
   }
 
+  private static StringBuilder imprimirSubstring2(final String strSQL, int posIni, int posFin) {
+    StringBuilder res = new StringBuilder();
+    final String[] strSqlVector = stringToVector(strSQL.substring(posIni, posFin), true);
+    for (int i = 0; i < strSqlVector.length; i++) {
+      res.append(strSqlVector[i]).append('\n');
+    }
+    return res;
+  }
+
   /**
    * Convert a string with the character 0A (10 decimal) in an array of the text separated by this
    * character
    **/
-  private String[] stringToVector(String strSQL, boolean suppressBlankLines) {
+  private static String[] stringToVector(String strSQL, boolean suppressBlankLines) {
     final byte tab[] = { 10 };
     final String strTab = new String(tab);
     final Vector<String> vector = new Vector<String>();
@@ -1517,7 +1593,7 @@ public class Sqlc extends DefaultHandler {
       log4j.info("javaDateFormat: " + javaDateFormat);
     } catch (final IOException e) {
       // catch possible io errors from readLine()
-      e.printStackTrace();
+      log4j.error("Error loading property file", e);
     }
   }
 }

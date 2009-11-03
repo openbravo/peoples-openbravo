@@ -50,7 +50,7 @@ BEGIN
     AND(Processed='Y'
     OR Posted='Y') ;
   IF (v_RO > 0) THEN
-    IF (DELETING) THEN
+    IF (DELETING OR INSERTING) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
     IF (UPDATING) THEN
@@ -64,6 +64,7 @@ BEGIN
          OR :new.REJECTEDQUANTITY <> :old.REJECTEDQUANTITY
          OR :new.SECONDARYQTY <> :old.SECONDARYQTY
         OR :new.SECONDARYUNIT <> :old.SECONDARYUNIT
+         OR :new.PROCESSED <> :old.PROCESSED
         ) THEN
         RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
       END IF;

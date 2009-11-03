@@ -69,8 +69,8 @@ public class CallProcess {
    *          {@link ProcessInstance#getRecordID()}
    * @param parameters
    *          are translated into process parameters
-   * @return the created instance with the result ({@link ProcessInstance#getResult()) or error
-   *         (@link ProcessInstance#getErrorMsg()})
+   * @return the created instance with the result ({@link ProcessInstance#getResult()}) or error (
+   *         {@link ProcessInstance#getErrorMsg()})
    */
   public ProcessInstance call(String processName, String recordID, Map<String, String> parameters) {
     final OBCriteria<org.openbravo.model.ad.ui.Process> processCriteria = OBDal.getInstance()
@@ -96,8 +96,8 @@ public class CallProcess {
    *          {@link ProcessInstance#getRecordID()}
    * @param parameters
    *          are translated into process parameters
-   * @return the created instance with the result ({@link ProcessInstance#getResult()) or error
-   *         (@link ProcessInstance#getErrorMsg()})
+   * @return the created instance with the result ({@link ProcessInstance#getResult()}) or error (
+   *         {@link ProcessInstance#getErrorMsg()})
    */
   public ProcessInstance call(org.openbravo.model.ad.ui.Process process, String recordID,
       Map<String, String> parameters) {

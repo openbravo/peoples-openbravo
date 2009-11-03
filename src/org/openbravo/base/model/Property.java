@@ -84,6 +84,7 @@ public class Property {
   private Module module;
 
   private boolean isDatetime;
+  private boolean isDate;
 
   // keeps track of the index of this property in the entity.getProperties()
   // gives a lot of performance/memory improvements when getting property values
@@ -101,6 +102,7 @@ public class Property {
     setPrimitive(fromColumn.isPrimitiveType());
     setPrimitiveType(fromColumn.getPrimitiveType());
     setDatetime(fromColumn.getReference().isDatetime());
+    setDate(fromColumn.getReference().isDate());
     setIdentifier(fromColumn.isIdentifier());
     setParent(fromColumn.isParent());
     setColumnName(fromColumn.getColumnName());
@@ -930,5 +932,13 @@ public class Property {
 
   public void setDatetime(boolean isDatetime) {
     this.isDatetime = isDatetime;
+  }
+
+  public boolean isDate() {
+    return isDate;
+  }
+
+  public void setDate(boolean isDate) {
+    this.isDate = isDate;
   }
 }

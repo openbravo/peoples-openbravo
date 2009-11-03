@@ -1649,8 +1649,11 @@ public class TableSQLData implements Serializable {
           + (getVars() == null ? ""
               : (", '" + getVars().getSessionValue("#AD_SqlDateFormat") + "'")) + ")";
     } else if (reference.equals("16")) {
-
-      result = "(" + field + ")";
+      // DATE-TIME
+      result = "TO_CHAR("
+          + field
+          + (getVars() == null ? ""
+              : (", '" + getVars().getSessionValue("#AD_SqlDateTimeFormat") + "'")) + ")";
     } else if (reference.equals("24")) {
       // TIME
       result = "TO_CHAR(" + field + ", 'HH24:MI:SS')";

@@ -161,6 +161,7 @@ public class Login extends HttpBaseServlet {
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", strTheme);
+    xmlDocument.setParameter("itService", SessionLoginData.selectSupportContact(this));
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -181,7 +182,7 @@ public class Login extends HttpBaseServlet {
   // public void printPageOptions(HttpServletResponse response,
   // VariablesSecureApp vars) throws IOException, ServletException {
   // XmlDocument xmlDocument =
-  //xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_Options_F1").createXmlDocument
+  // xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_Options_F1").createXmlDocument
   // ();
   //    
   // RoleComboData[] data = RoleComboData.select(this, vars.getUser());

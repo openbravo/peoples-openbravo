@@ -60,7 +60,7 @@ public class XMLTypeConverter implements OBSingleton {
    *          the Date to format
    * @return the String representation of the Date in xml format
    */
-  public String toXML(Date dt) {
+  public synchronized String toXML(Date dt) {
     return xmlDateFormat.format(dt);
   }
 
@@ -129,7 +129,7 @@ public class XMLTypeConverter implements OBSingleton {
    * @return the converted object
    */
   @SuppressWarnings("unchecked")
-  public <T extends Object> T fromXML(Class<T> targetClass, String xml) {
+  public synchronized <T extends Object> T fromXML(Class<T> targetClass, String xml) {
     if (xml.length() == 0) {
       return null;
     }

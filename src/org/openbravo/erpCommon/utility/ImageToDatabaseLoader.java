@@ -54,6 +54,9 @@ public class ImageToDatabaseLoader extends BaseDalInitializingTask {
         }
       }
 
+      OBDal.getInstance().get(SystemInformation.class, "0").setSupportContact(
+          "www.your-it-service.com");
+
     } catch (Exception e) {
       getLog().error(e);
     } finally {

@@ -106,7 +106,7 @@
      <SqlMethodComment></SqlMethodComment>
      <Sql>
        <![CDATA[
-        SELECT c.ColumnName, (case when c.AD_Reference_ID='16' then '15' else c.ad_Reference_id end) as ad_reference_id, c.AD_Reference_Value_ID, c.AD_Val_Rule_ID,
+        SELECT c.ColumnName, c.ad_Reference_id, c.AD_Reference_Value_ID, c.AD_Val_Rule_ID,
         c.FieldLength, c.DefaultValue, c.IsKey, c.IsParent, c.IsMandatory, c.IsUpdateable,
         c.ReadOnlyLogic, c.IsIdentifier, c.SeqNo, c.IsTranslated, c.IsEncrypted, c.VFormat,
         c.ValueMin, c.ValueMax, c.IsSelectionColumn, c.AD_Process_ID, c.IsSessionAttr,

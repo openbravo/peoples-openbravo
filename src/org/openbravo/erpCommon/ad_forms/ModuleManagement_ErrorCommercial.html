@@ -213,13 +213,28 @@
             
             <tr>
               <td class="PlainText_normal" colspan="4" style="padding: 0 0 10 0; text-align: left;">
-                <span id="OBPSInstance">
-                <p class="Label_ReadOnly_Text"><FIELDS_TMP id="moduleNames"><FIELD_TMP id="name"></FIELD_TMP></FIELDS_TMP>&nbsp;is released under a commercial license that requires acquiring an activation key before installation.</p>
+                <span id="OBPSInstance-NotActive">
+                <p class="Label_ReadOnly_Text">The following module(s) are released under a commercial license that require acquiring an activation key before installation:&nbsp;<FIELD_TMP id="name"></FIELD_TMP></p>
                 <p><a class="Label_ReadOnly_Text LabelLink_noicon" href="http://www.openbravo.com/product/erp/module/acquire" target="_blank">Learn how</a>&nbsp;to acquire and activate commercial modules.</p>
+                <br/>
                 </span>
+                
+                <span id="OBPSInstance-Expired">
+                <p class="Label_ReadOnly_Text">The following module(s) are released under a commercial license that has expired:&nbsp;<FIELD_TMP id="expired"></FIELD_TMP></p>
+                <p><a class="Label_ReadOnly_Text LabelLink_noicon" href="http://www.openbravo.com/product/erp/module/acquire" target="_blank">Learn how</a>&nbsp;to renew licenses for commercial modules.</p>
+                <br/>
+                </span>
+                
+                <span id="OBPSInstance-NoActiveYet">
+                <p class="Label_ReadOnly_Text">The following module(s) are released under a commercial license that is not active yet:&nbsp;<FIELD_TMP id="noActiveYet"></FIELD_TMP></p>
+                <p><a class="Label_ReadOnly_Text LabelLink_noicon" href="http://www.openbravo.com/product/erp/module/acquire" target="_blank">Learn how</a>&nbsp;to renew licenses for commercial modules.</p>
+                <br/>
+                </span>
+                
                 <span id="CEInstance">
-                <p class="Label_ReadOnly_Text"><FIELDS_TMP id="moduleNames"><FIELD_TMP id="name"></FIELD_TMP></FIELDS_TMP>&nbsp;is a commercial module that requires a subscription to an Openbravo Professional Edition.</p>
+                <p class="Label_ReadOnly_Text">The following module(s) are commercial module(s) that require a subscription to an Openbravo Professional Edition:&nbsp;<FIELD_TMP id="name"></FIELD_TMP></p>
                 <p><a class="Label_ReadOnly_Text LabelLink_noicon" href="http://www.openbravo.com/product/erp/acquire" target="_blank">Learn how</a>&nbsp;to acquire and activate your subscription.</p>
+                <br/>
                 </span>
                </td>
             </tr>

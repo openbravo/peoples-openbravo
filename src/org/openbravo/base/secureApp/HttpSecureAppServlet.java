@@ -53,6 +53,8 @@ import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
@@ -191,6 +193,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
         if (!loggedOK) {
           m_AuthManager.logout(request, response);
+          return;
         }
       }
 
@@ -203,32 +206,53 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           String strOrg = "";
           String strWarehouse = "";
 
-          strRole = variables.getRole();
+          ActivationKey ak = new ActivationKey();
+          LicenseRestriction limitation = ak.checkOPSLimitations(variables.getDBSession());
+          if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
+              || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
+              || limitation == LicenseRestriction.MODULE_EXPIRED) {
+            // it is only allowed to log as system administrator
+            strRole = DefaultOptionsData.getDefaultSystemRole(this, strUserAuth);
+            if (strRole == null || strRole.equals("")) {
+              final OBError roleError = new OBError();
+              roleError.setType("Error");
+              roleError.setMessage(Utility.messageBD(this, "SystemLoginRequired", variables
+                  .getLanguage()));
+              invalidLogin(request, response, roleError);
 
-          if (strRole.equals("")) {
-            strRole = DefaultOptionsData.defaultRole(this, strUserAuth);
-            if (strRole == null)
-              strRole = DefaultOptionsData.getDefaultRole(this, strUserAuth);
-          }
-          validateDefault(strRole, strUserAuth, "Role");
+              return;
+            }
+            strClient = "0";
+            strOrg = "0";
+            strWarehouse = "";
+          } else {
+            strRole = variables.getRole();
 
-          strOrg = DefaultOptionsData.defaultOrg(this, strUserAuth);
-          if (strOrg == null)
-            strOrg = DefaultOptionsData.getDefaultOrg(this, strRole);
-          validateDefault(strOrg, strRole, "Org");
+            if (strRole.equals("")) {
+              strRole = DefaultOptionsData.defaultRole(this, strUserAuth);
+              if (strRole == null)
+                strRole = DefaultOptionsData.getDefaultRole(this, strUserAuth);
+            }
+            validateDefault(strRole, strUserAuth, "Role");
 
-          strClient = DefaultOptionsData.defaultClient(this, strUserAuth);
-          if (strClient == null)
-            strClient = DefaultOptionsData.getDefaultClient(this, strRole);
-          validateDefault(strClient, strRole, "Client");
+            strOrg = DefaultOptionsData.defaultOrg(this, strUserAuth);
+            if (strOrg == null)
+              strOrg = DefaultOptionsData.getDefaultOrg(this, strRole);
+            validateDefault(strOrg, strRole, "Org");
 
-          strWarehouse = DefaultOptionsData.defaultWarehouse(this, strUserAuth);
-          if (strWarehouse == null) {
-            if (!strRole.equals("0")) {
-              strWarehouse = DefaultOptionsData.getDefaultWarehouse(this, strClient, new OrgTree(
-                  this, strClient).getAccessibleTree(this, strRole).toString());
-            } else
-              strWarehouse = "";
+            strClient = DefaultOptionsData.defaultClient(this, strUserAuth);
+            if (strClient == null)
+              strClient = DefaultOptionsData.getDefaultClient(this, strRole);
+            validateDefault(strClient, strRole, "Client");
+
+            strWarehouse = DefaultOptionsData.defaultWarehouse(this, strUserAuth);
+            if (strWarehouse == null) {
+              if (!strRole.equals("0")) {
+                strWarehouse = DefaultOptionsData.getDefaultWarehouse(this, strClient, new OrgTree(
+                    this, strClient).getAccessibleTree(this, strRole).toString());
+              } else
+                strWarehouse = "";
+            }
           }
 
           DefaultOptionsData dataLanguage[] = DefaultOptionsData.defaultLanguage(this, strUserAuth);
@@ -249,7 +273,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               strRole, strClient, strOrg, strWarehouse)) {
             readProperties(vars, globalParameters.getOpenbravoPropertiesPath());
             readNumberFormat(vars, globalParameters.getFormatPath());
-            saveLoginBD(request, vars, strClient, strOrg);
+            saveLoginBD(request, vars, "0", "0");
           } else {
             // Re-login
             log4j.error("Unable to fill session Arguments for: " + strUserAuth);
@@ -439,6 +463,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     boolean retValue = true;
 
+    // NOTE: if the logic here changes then also the logic in the
+    // EntityAccessChecker.hasCorrectAccessLevel needs to be updated
+    // Centralizing the logic seemed difficult because of build dependencies
     if (accessLevel.equals("4") && userLevel.indexOf("S") == -1)
       retValue = false;
     else if (accessLevel.equals("1") && userLevel.indexOf("O") == -1)
@@ -502,8 +529,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     }
     OBContext.setOBContext((OBContext) null);
 
+    String discard[] = { "continueButton" };
+
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
+        "org/openbravo/base/secureApp/HtmlErrorLogin", discard).createXmlDocument();
 
     xmlDocument.setParameter("messageType", error.getType());
     xmlDocument.setParameter("messageTitle", error.getTitle());
@@ -889,6 +918,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       final String javaDateTimeFormat = properties.getProperty("dateTimeFormat.java");
       vars.setSessionValue("#AD_JavaDateTimeFormat", javaDateTimeFormat);
 
+      final String sqlDateTimeFormat = properties.getProperty("dateTimeFormat.sql");
+      vars.setSessionValue("#AD_SqlDateTimeFormat", sqlDateTimeFormat);
+
       final String jsDateFormat = properties.getProperty("dateFormat.js");
       vars.setSessionValue("#AD_JsDateFormat", jsDateFormat);
 
@@ -1170,7 +1202,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
             final VariablesSecureApp vars = new VariablesSecureApp(request);
             final String strTabId = vars.getStringParameter("inpTabId");
-            vars.setSessionObject(strTabId + "|failedAutosave", true);
+            if (!vars.getSessionValue(strTabId + "|concurrentSave").equals("true")) {
+              vars.setSessionObject(strTabId + "|failedAutosave", true);
+            }
 
             if (!popupWindow) {
               vars.setSessionValue(strTabId + "|requestURL", request.getRequestURL().toString());

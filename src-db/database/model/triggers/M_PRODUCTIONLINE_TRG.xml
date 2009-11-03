@@ -53,7 +53,7 @@ BEGIN
     AND(p.Processed='Y'
     OR p.Posted='Y') ;
   IF (v_RO > 0) THEN
-    IF (DELETING) THEN
+    IF (DELETING OR INSERTING) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
     IF (UPDATING) THEN

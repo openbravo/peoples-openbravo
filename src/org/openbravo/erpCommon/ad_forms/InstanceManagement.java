@@ -250,8 +250,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    xmlDocument.setParameter("opsinstance", "var opsInstance = " + ActivationKey.isActiveInstance()
-        + ";");
+
     if (!activationKey.isOPSInstance())
       xmlDocument.setParameter("instanceInfo", Utility.messageBD(this, "OPSCommunityInstance",
           vars.getLanguage()).replace("\\n", "\n"));

@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2008 Openbravo SL
+ * All portions are Copyright (C) 2008-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -86,16 +86,17 @@
             AND M.ISACTIVE = 'Y'
             AND 1=1
             AND M.HASREFERENCEDATA = 'Y'
-            AND AD_DATASET.ACCESSLEVEL IN ('3','6') AND EXPORTALLOWED = 'Y'
+            AND AD_DATASET.ACCESSLEVEL IN ('3','6','1') AND EXPORTALLOWED = 'Y'
             AND NOT EXISTS (SELECT 1 FROM AD_CLIENTMODULE CM
                             WHERE CM.ad_module_id = M.ad_module_id
-                            AND CM.AD_CLIENT_ID = ?)
+                            AND CM.AD_CLIENT_ID = ?
+                            AND CM.VERSION = M.VERSION)
             AND NOT EXISTS (SELECT 1 FROM AD_ORGMODULE OM
                             WHERE OM.ad_module_id = M.ad_module_id
                             AND OM.AD_CLIENT_ID = ?
                             AND (AD_IsOrgIncluded(?, OM.AD_Org_ID, OM.AD_Client_ID)<>-1
                             OR AD_IsOrgIncluded(OM.AD_Org_ID, ?, OM.AD_Client_ID)<>-1)
-                            AND VERSION = M.VERSION))A
+                            AND OM.VERSION = M.VERSION))A
           ORDER BY A.SeqNo
           ]]>
       </Sql>

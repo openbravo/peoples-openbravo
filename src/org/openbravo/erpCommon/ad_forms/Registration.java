@@ -96,7 +96,7 @@ public class Registration extends HttpSecureAppServlet {
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
 
     String url = "var url = 'http://www.openbravo.com/embedreg/form";
-    if (sysInfo.getSystemIdentifier() != null) {
+    if (sysInfo != null && sysInfo.getSystemIdentifier() != null) {
       url += "?system_id=" + sysInfo.getSystemIdentifier();
     }
     url += "';";

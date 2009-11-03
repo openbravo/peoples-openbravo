@@ -37,9 +37,9 @@
  v_Oldmultiplier NUMBER:=1;
  v_Processed VARCHAR(60);
  v_Aux NUMBER;
-    
+
 BEGIN
-    
+
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
@@ -111,7 +111,6 @@ BEGIN
     IF (:old.IsValid = 'Y' AND ((:old.IsActive <> :new.IsActive)
                    OR (:old.IsReceipt<>:new.IsReceipt)
                OR (COALESCE(:old.C_Settlement_Generate_ID,'0')<>COALESCE(:new.C_Settlement_Generate_ID,'0'))
-               OR (COALESCE(:old.Writeoffamt,'0')<>COALESCE(:new.Writeoffamt,'0'))
                -- OR (COALESCE(:old.C_Invoice_ID,'0')<>COALESCE(:new.C_Invoice_ID,'0'))
                 OR (COALESCE(:old.C_BPartner_ID,'0')<>COALESCE(:new.C_BPartner_ID,'0'))
                OR (:old.C_Currency_ID<>:new.C_Currency_ID)

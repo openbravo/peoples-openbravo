@@ -22,7 +22,6 @@
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="paramDirectory" name="directory"/>
 	<PARAMETER id="paramAutosave" name="autosave" default="var autosave = false;"/>
-    <PARAMETER id="paramOpsinstance" name="opsinstance" default="var opsInstance = false;"/>
 	<PARAMETER id="paramMenu" name="menu"/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="fieldUserName" name="userName"/>

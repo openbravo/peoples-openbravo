@@ -137,13 +137,15 @@
       SELECT COUNT(*)
       INTO v_Count
       FROM M_COSTING
-      WHERE M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID;
+      WHERE M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID
+        AND AD_CLIENT_ID = v_Client;
       IF(v_Count>0) THEN
         FOR Cur_ProdCost IN
           (SELECT COST, DATETO, M_COSTING_ID
           FROM M_COSTING
           WHERE M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID
             AND DATEFROM <= Cur_InOutLine.MOVEMENTDATE
+            AND AD_CLIENT_ID = v_Client
           ORDER BY DATETO DESC, M_COSTING_ID
           )
         LOOP
@@ -158,7 +160,8 @@
           SELECT MIN(DATEFROM) INTO v_Date
           FROM M_COSTING
           WHERE M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID
-            AND DATEFROM > Cur_InOutLine.MOVEMENTDATE;
+            AND DATEFROM > Cur_InOutLine.MOVEMENTDATE
+            AND AD_CLIENT_ID = v_Client;
         END IF;
       ELSE
         v_Cost:=NULL;
@@ -168,7 +171,8 @@
         INTO v_Qty
         FROM M_TRANSACTION
         WHERE M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID
-          AND MOVEMENTDATE<Cur_InOutLine.MOVEMENTDATE;
+          AND MOVEMENTDATE<Cur_InOutLine.MOVEMENTDATE
+          AND AD_CLIENT_ID = v_Client;
       ELSE
         v_Qty:=0;
       END IF;
@@ -208,6 +212,7 @@
             AND M_PRODUCTPRICE.M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID
             AND M_PRICELIST.M_PRICELIST_ID = M_PRICELIST_VERSION.M_PRICELIST_ID
             AND M_PRICELIST_VERSION.VALIDFROM<Cur_InOutLine.MOVEMENTDATE
+            AND M_PRICELIST.AD_CLIENT_ID = v_Client
           ORDER BY M_PRICELIST_VERSION.VALIDFROM DESC
           )
         LOOP

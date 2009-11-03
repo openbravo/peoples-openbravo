@@ -178,7 +178,7 @@
         <onCreateDefault/>
       </column>
       <column name="CANCELPRICEAD" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default/>
+        <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="C_ORDER_DISCOUNT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">

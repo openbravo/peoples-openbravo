@@ -66,7 +66,7 @@ public class AntExecutor {
       project.setBasedir(this.baseDir);
       ProjectHelper.getProjectHelper().parse(project, new File(buildFile));
     } catch (final BuildException e) {
-      throw new Exception("ErrorLoadingBuildXML");
+      throw new Exception("ErrorLoadingBuildXML", e);
     }
   }
 

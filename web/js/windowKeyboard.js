@@ -42,6 +42,7 @@ var defaultActionElement = null;
 var defaultActionType = null;
 
 var isTabPressed = null;
+var isOBTabBehavior = true;
 var isFirstTime = true;
 var isReadOnlyWindow =  false;
 
@@ -60,15 +61,21 @@ var isContextMenuOpened = false;
 
 windowKeyboardCaptureEvents();
 function windowKeyboardCaptureEvents() {
-  document.onmousedown=mouseDownLogic;
-  document.onclick=mouseClickLogic;
+  if (typeof captureOnMouseDown == 'undefined' || captureOnMouseDown != false) {
+    document.onmousedown=mouseDownLogic;
 
+    if (document.layers) {
+      window.captureEvents(Event.ONMOUSEDOWN);
+      window.onmousedown=mouseDownLogic;
+    }
+  }
+  if (typeof captureOnClick == 'undefined' || captureOnClick != false) {
+    document.onclick=mouseClickLogic;
 
-  if (document.layers) {
-    window.captureEvents(Event.ONMOUSEDOWN);
-    window.onmousedown=mouseDownLogic;
-    window.captureEvents(Event.ONCLICK);
-    window.onclick=mouseClickLogic;
+    if (document.layers) {
+      window.captureEvents(Event.ONCLICK);
+      window.onclick=mouseClickLogic;
+    }
   }
 }
 
@@ -868,42 +875,57 @@ function getLastWindowElement() {
   return obj;
 }
 
-function windowTabKey(state) {
-  if (state==true) {
-    if (isTabBlocked == false) {
-      isTabPressed = true;
-      isSelectedComboOpened = false;
-      if (selectedArea == 'window') {
-        var obj = getNextWindowElement();
-        setWindowElementFocus(obj);
-      } else if (selectedArea == 'tabs') {
-        var obj = getNextTab();
-        setTabFocus(obj);
-      }
-    }
-  } else {
-    isTabPressed = false;
+function setOBTabBehavior(state) {
+  if (state == true) {
+    isOBTabBehavior = true;
+  } else if (state == false) {
+    isOBTabBehavior = false;
   }
-  return false;
+  return true;
+}
+
+function windowTabKey(state) {
+  if (isOBTabBehavior) {
+    if (state==true) {
+      if (isTabBlocked == false) {
+        isTabPressed = true;
+        isSelectedComboOpened = false;
+        if (selectedArea == 'window') {
+          var obj = getNextWindowElement();
+          setWindowElementFocus(obj);
+        } else if (selectedArea == 'tabs') {
+          var obj = getNextTab();
+          setTabFocus(obj);
+        }
+      }
+    } else {
+      isTabPressed = false;
+    }
+    return false;
+  }
+  return true;
 }
 
 function windowShiftTabKey(state) {
-  if (state==true) {
-    if (isTabBlocked == false) {
-      isTabPressed = true;
-      isSelectedComboOpened = false;
-      if (selectedArea == 'window') {
-        var obj = getPreviousWindowElement();
-        setWindowElementFocus(obj);
-      } else if (selectedArea == 'tabs') {
-        var obj = getPreviousTab();
-        setTabFocus(obj);
+  if (isOBTabBehavior) {
+    if (state==true) {
+      if (isTabBlocked == false) {
+        isTabPressed = true;
+        isSelectedComboOpened = false;
+        if (selectedArea == 'window') {
+          var obj = getPreviousWindowElement();
+          setWindowElementFocus(obj);
+        } else if (selectedArea == 'tabs') {
+          var obj = getPreviousTab();
+          setTabFocus(obj);
+        }
       }
+    } else {
+      isTabPressed = false;
     }
-  } else {
-    isTabPressed = false;
+    return false;
   }
-  return false;
+  return true;
 }
 
 function windowEnterKey() {

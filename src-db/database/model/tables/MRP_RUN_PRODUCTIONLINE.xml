@@ -135,8 +135,15 @@
       <foreign-key foreignTable="MRP_RUN_PRODUCTIONLINE" name="PARENT_MRP_RUN_PRODUCTIONLINE">
         <reference local="PARENT_ID" foreign="MRP_RUN_PRODUCTIONLINE_ID"/>
       </foreign-key>
+      <index name="MRP_PRODUCTIONLINE_ID_PROD_ID" unique="false">
+        <index-column name="MRP_RUN_PRODUCTION_ID"/>
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
       <index name="MRP_RUN_PRODLINE_PRODUCTION_ID" unique="false">
         <index-column name="MRP_RUN_PRODUCTION_ID"/>
+      </index>
+      <index name="MRP_RUN_PRODUCTIONLINE_PARENT" unique="false">
+        <index-column name="PARENT_ID"/>
       </index>
       <check name="MRPRUNPRLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="MRPRUNPRLN_ISFIXED_CHECK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>
