@@ -55,10 +55,7 @@ public class SessionInfo {
    */
   static public void setDBSessionInfo(Connection conn, String rdbms) {
     try {
-      if (rdbms.equals("ORACLE")) {
-        // Clean up temporary table
-        getPreparedStatement(conn, "delete from ad_context_info").executeUpdate();
-      } else { // POSTGRESQL
+      if (rdbms.equals("POSTGRE")) {
         // Create temporary table
         ResultSet rs = getPreparedStatement(
             conn,
@@ -72,10 +69,13 @@ public class SessionInfo {
           sql.append("(AD_USER_ID VARCHAR(32), ");
           sql.append("  AD_SESSION_ID VARCHAR(32),");
           sql.append("  PROCESSTYPE VARCHAR(60), ");
-          sql.append("  PROCESSID VARCHAR(32))");
+          sql.append("  PROCESSID VARCHAR(32)) on commit preserve rows");
           getPreparedStatement(conn, sql.toString()).execute();
         }
       }
+      // Clean up temporary table
+      getPreparedStatement(conn, "delete from ad_context_info").executeUpdate();
+
       PreparedStatement ps = getPreparedStatement(
           conn,
           "insert into ad_context_info (ad_user_id, ad_session_id, processType, processId) values (?, ?, ?, ?)");
@@ -84,6 +84,8 @@ public class SessionInfo {
       ps.setString(3, SessionInfo.getProcessType());
       ps.setString(4, SessionInfo.getProcessId());
       ps.executeUpdate();
+      // System.out.println(SessionInfo.getUserId() + "-" + SessionInfo.getSessionId() + "-"
+      // + SessionInfo.getProcessType() + "-" + SessionInfo.getProcessId());
     } catch (Exception e) {
       log4j.error("Error setting audit info", e);
     }
