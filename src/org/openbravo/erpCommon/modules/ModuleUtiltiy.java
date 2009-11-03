@@ -25,16 +25,22 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axis.AxisFault;
 import org.apache.log4j.Logger;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.HttpsUtils;
+import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.module.ModuleDependency;
 import org.openbravo.services.webservice.WebServiceImpl;
 import org.openbravo.services.webservice.WebServiceImplServiceLocator;
 
@@ -49,88 +55,64 @@ public class ModuleUtiltiy {
   /**
    * It receives an ArrayList<String> with modules IDs and returns the same list ordered taking into
    * account the module dependency tree.
+   * <p/>
+   * Note that the module list must be a complete list of modules, no dependencies will be checked
+   * for more than one level of deep, this means that passing an incomplete list might not be
+   * ordered correctly.
    * 
-   * @param conn
-   *          DB connection
    * @param modules
    *          List of module to order
    * @return modules list ordered
+   * @throws Exception
    */
-  public static ArrayList<String> orderByDependency(ConnectionProvider conn,
-      ArrayList<String> modules) {
-    try {
-      ArrayList<String> rt = new ArrayList<String>(); // return object
-      ArrayList<String> checked = new ArrayList<String>(); // checked list
-      // to avoid
-      // endless
-      // loops
+  public static List<String> orderByDependency(List<String> modules) throws Exception {
 
-      ArrayList<String> roots = selectRoots(conn); // selects all the root
-      // nodes (no
-      // dependencies) from
-      // the complete tree
-
-      for (int i = 0; i < roots.size(); i++) {
-        if (rt.indexOf(roots.get(i)) == -1 && modules.indexOf(roots.get(i)) != -1)
-          rt.add(roots.get(i)); // Adds all the root trees in the
-        // return list
-
-        checked.add(roots.get(i));
-        checkTree(conn, roots.get(i), rt, modules, checked);
-      }
-
-      return rt;
-    } catch (Exception e) {
-      log4j.error(e);
-      return modules;
-    }
-  }
-
-  private static ArrayList<String> selectRoots(ConnectionProvider conn) throws ServletException {
-    ArrayList<String> rt = new ArrayList<String>();
-
-    ModuleUtilityData module[] = ModuleUtilityData.selectRootNodes(conn);
-    if (module != null) {
-      for (int i = 0; i < module.length; i++) {
-        rt.add(module[i].adModuleId);
-      }
-    }
-
+    Map<String, List<String>> modsWithDeps = getModsDeps(modules);
+    List<String> rt = orderDependencies(modsWithDeps);
     return rt;
   }
 
-  private static void checkTree(ConnectionProvider conn, String root, ArrayList<String> rt,
-      ArrayList<String> list, ArrayList<String> checked) throws ServletException {
-    ModuleUtilityData parents[] = ModuleUtilityData.selectParents(conn, root);
-    if (parents == null || parents.length == 0)
-      return;
-    for (int i = 0; i < parents.length; i++) {
-      if (checked.indexOf(parents[i].adModuleId) == -1) {
-        checked.add(parents[i].adModuleId);
-        if (list.indexOf(parents[i].adModuleId) != -1) {
-          rt.add(parents[i].adModuleId);
-        }
-        checkTree(conn, parents[i].adModuleId, rt, list, checked);
-      }
+  /**
+   * Deprecated use {@link ModuleUtiltiy#orderByDependency(ArrayList)} instead
+   * 
+   * @param conn
+   * @param modules
+   * @return
+   * @throws Exception
+   */
+  @Deprecated
+  public static ArrayList<String> orderByDependency(ConnectionProvider conn,
+      ArrayList<String> modules) {
+    try {
+      return (ArrayList<String>) orderByDependency(modules);
+    } catch (Exception e) {
+      log4j.error("error in orderByDependency", e);
+      return modules;
     }
   }
 
   /**
    * Modifies the passed modules {@link FieldProvider} parameter ordering it taking into account
    * dependencies.
+   * <p/>
+   * Note that the module list must be a complete list of modules, no dependencies will be checked
+   * for more than one level of deep, this means that passing an incomplete list might not be
+   * ordered correctly.
    * 
    * @param modules
    *          {@link FieldProvider} that will be sorted. It must contain at least a field named
    *          <i>adModuleId</i>
+   * @throws Exception
    */
-  public static void orderModuleByDependency(ConnectionProvider pool, FieldProvider[] modules) {
+  public static void orderModuleByDependency(FieldProvider[] modules) throws Exception {
     if (modules == null || modules.length == 0)
       return;
     final ArrayList<String> list = new ArrayList<String>();
     for (int i = 0; i < modules.length; i++) {
       list.add((String) modules[i].getField("adModuleId"));
     }
-    final ArrayList<String> orderList = orderByDependency(pool, list);
+    List<String> orderList = orderByDependency(list);
+
     final FieldProvider[] rt = new FieldProvider[modules.length];
     int j = 0;
     for (int i = 0; i < orderList.size(); i++) {
@@ -143,6 +125,82 @@ public class ModuleUtiltiy {
     }
     modules = rt;
     return;
+  }
+
+  /**
+   * Deprecated, use instead {@link ModuleUtiltiy#orderModuleByDependency(FieldProvider[])}
+   * 
+   * @param pool
+   * @param modules
+   */
+  @Deprecated
+  public static void orderModuleByDependency(ConnectionProvider pool, FieldProvider[] modules) {
+    try {
+      orderModuleByDependency(modules);
+    } catch (Exception e) {
+      log4j.error("Error in orderModuleByDependency", e);
+    }
+  }
+
+  /**
+   * Orders modules by dependencies. It adds to a List the modules that have not dependencies to the
+   * ones in the list and calls itself recursively
+   */
+  private static List<String> orderDependencies(Map<String, List<String>> modsWithDeps)
+      throws Exception {
+    ArrayList<String> rt = new ArrayList<String>();
+
+    for (String moduleId : modsWithDeps.keySet()) {
+      if (noDependenciesFromModule(moduleId, modsWithDeps)) {
+        rt.add(moduleId);
+      }
+    }
+
+    for (String modId : rt) {
+      modsWithDeps.remove(modId);
+    }
+
+    if (rt.size() == 0) {
+      throw new Exception("Recursive module dependencies found!" + modsWithDeps.size());
+    }
+
+    if (modsWithDeps.size() != 0) {
+      rt.addAll(orderDependencies(modsWithDeps));
+    }
+    return rt;
+  }
+
+  /**
+   * Checks the module has not dependencies to other modules in the list
+   * 
+   */
+  private static boolean noDependenciesFromModule(String checkModule,
+      Map<String, List<String>> modsWithDeps) {
+
+    List<String> moduleDependencies = modsWithDeps.get(checkModule);
+
+    for (String module : modsWithDeps.keySet()) {
+      if (moduleDependencies.contains(module)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Returns a Map with all the modules and their dependencies
+   */
+  private static Map<String, List<String>> getModsDeps(List<String> modules) {
+    Map<String, List<String>> rt = new HashMap<String, List<String>>();
+    for (String moduleId : modules) {
+      Module module = OBDal.getInstance().get(Module.class, moduleId);
+      ArrayList<String> deps = new ArrayList<String>();
+      for (ModuleDependency dep : module.getModuleDependencyList()) {
+        deps.add(dep.getDependentModule().getId());
+      }
+      rt.put(moduleId, deps);
+    }
+    return rt;
   }
 
   /**

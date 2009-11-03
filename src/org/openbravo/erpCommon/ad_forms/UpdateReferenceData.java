@@ -190,7 +190,11 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
     if (strModules != null && !strModules.equals("")) {
       UpdateReferenceDataData[] data = UpdateReferenceDataData.selectModules(this, strModules,
           strOrganization);
-      ModuleUtiltiy.orderModuleByDependency(this, data);
+      try {
+        ModuleUtiltiy.orderModuleByDependency(data);
+      } catch (Exception e) {
+        log4j.error("Error ordering modules", e);
+      }
       if (data != null && data.length != 0) {
         DataImportService myData = DataImportService.getInstance();
         m_info.append(SALTO_LINEA).append(
