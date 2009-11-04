@@ -1570,7 +1570,11 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
       // Import Reference data
       InitialClientSetupData[] data = InitialClientSetupData.selectRDModules(this, strModules);
-      ModuleUtiltiy.orderModuleByDependency(this, data);
+      try {
+        ModuleUtiltiy.orderModuleByDependency(data);
+      } catch (Exception e) {
+        log4j.error("Error ordering modules", e);
+      }
 
       if (data != null && data.length != 0) {
         DataImportService myData = DataImportService.getInstance();
