@@ -154,11 +154,40 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
     <antcall target="update.dbupdate.timestamp" />
   </target>
 
+  <target name="update.database.mod.java">
+    <java classname="org.openbravo.ddlutils.task.AlterDatabaseModJava" failonerror="true" fork="true" maxmemory="${build.maxmemory}">
+      <arg value="${bbdd.driver}"/>
+      <arg value="${bbdd.owner.url}"/>
+      <arg value="${bbdd.user}"/>
+      <arg value="${bbdd.password}"/>
+      <arg value="com.openbravo.db.OpenbravoExcludeFilter"/>
+      <arg value="model"/>
+      <arg value="com.openbravo.db.OpenbravoMetadataFilter"/>
+      <arg value="sourcedata"/>
+      <arg value="${bbdd.object}"/>
+      <arg value="false"/>
+      <arg value="${bbdd.verbosity}"/>
+      <arg value="${base.modules}/"/>
+      <arg value="${base.config}/"/>
+      <arg value="*/src-db/database/model"/>
+      <arg value="${base.modules}/"/>
+      <arg value="*/src-db/database/sourcedata"/>
+      <arg value="${module}"/>
+      <arg value="0"/>
+      <arg value="${base.config}/Openbravo.properties"/>
+      <arg value="${force}"/>
+      <classpath refid="runtime-classpath" />
+    </java>
+    <antcall target="database.postupdate.${bbdd.rdbms}" />
+    <antcall target="update.dbupdate.timestamp" />
+  </target>
+  
   <target name="update.database.mod">
     <alterdatabasedatamod driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="DEBUG" basedir="${base.modules}/" baseConfig="${base.config}" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" module="${module}" userId="0" propertiesFile="${base.config}/Openbravo.properties" force="${force}" />
     <antcall target="database.postupdate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
   </target>
+  
   <target name="clean.database.ORACLE">
     <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue">
       <classpath>
