@@ -160,7 +160,8 @@ build.war: build a war file in the lib directory.
   <target name="update.sqlc.status" >
       	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
       	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB42' </transaction>
+      	  	       <transaction> UPDATE ad_system_info SET system_status='RB42' ;
+                     DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
       	</sql>
   </target>
 
@@ -309,7 +310,8 @@ build.war: build a war file in the lib directory.
   <target name="update.compilesqlc.status" >
       	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
       	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB43' </transaction>
+      	  	       <transaction> UPDATE ad_system_info SET system_status='RB43';
+                    DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
       	</sql>
   </target>
 
@@ -371,7 +373,8 @@ build.war: build a war file in the lib directory.
   <target name="update.wad.status" >
       	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
       	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB41' </transaction>
+      	  	       <transaction> UPDATE ad_system_info SET system_status='RB41' ;
+                     DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
       	</sql>
   </target>
 
@@ -421,7 +424,8 @@ build.war: build a war file in the lib directory.
   <target name="update.postsrc.status" >
       	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
       	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB44' </transaction>
+      	  	       <transaction> UPDATE ad_system_info SET system_status='RB44' ;
+                     DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
       	</sql>
   </target>
 
@@ -755,7 +759,8 @@ build.war: build a war file in the lib directory.
   <target name="update.copyfiles.status" >
       	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
       	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB45' </transaction>
+      	  	       <transaction> UPDATE ad_system_info SET system_status='RB45' ;
+                     DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
       	</sql>
   </target>
 
@@ -775,7 +780,8 @@ build.war: build a war file in the lib directory.
   <target name="update.finalcompile.status" >
       	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
       	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB50' </transaction>
+      	  	       <transaction> UPDATE ad_system_info SET system_status='RB50' ;
+                     DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
       	</sql>
   </target>
   <target name="compile.web" depends="build.web.folder">
