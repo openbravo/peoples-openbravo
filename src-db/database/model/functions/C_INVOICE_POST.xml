@@ -1423,6 +1423,7 @@ cWithHoldId varchar2(32);
             CurLines RECORD;
             p_DateInvoiced DATE;
             v_totalQtyInvoiced NUMBER;
+            v_NewPendingToInvoice NUMBER;
             v_deliveredQty NUMBER;
             v_inOutStatus varchar2(60) ;
           BEGIN
@@ -1434,6 +1435,17 @@ cWithHoldId varchar2(32);
               (SELECT * FROM C_INVOICELINE  WHERE C_INVOICE_ID=v_Record_ID  ORDER BY line)
             LOOP
               IF(CurLines.C_OrderLine_ID IS NOT NULL) THEN
+                --Check that qty pending to invoice is higher or equal to the qty being invoiced
+                SELECT qtyordered - qtyinvoiced - CurLines.QtyInvoiced
+                  INTO v_NewPendingToInvoice
+                FROM c_orderline
+                WHERE c_orderline.c_orderline_id = CurLines.c_orderline_id;
+                IF (v_NewPendingToInvoice <0 ) THEN
+                  v_Message := '@NotPossibleCompleteInvoice@' || ' ' || v_DocumentNo;
+                  v_Message := v_Message || ' ' || '@line@' || CurLines.line || '. ';
+                  v_Message := v_Message || '@QtyInvoicedHigherOrdered@';
+                  RAISE_APPLICATION_ERROR(-20000, v_Message);
+                END IF;
                 UPDATE C_ORDERLINE
                   SET QtyInvoiced=QtyInvoiced + CurLines.QtyInvoiced,
                   DateInvoiced=p_DateInvoiced,

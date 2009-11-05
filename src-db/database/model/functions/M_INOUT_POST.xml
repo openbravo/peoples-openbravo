@@ -489,6 +489,29 @@
           * Reverse Correction
           */
         ELSIF(Cur_InOut.DocStatus='CO' AND Cur_InOut.DocAction='RC') THEN
+          --Check that there isn't any line with an invoice if the order's 
+          --invoice rule is after delivery
+          select count(*), max(line) into v_count, v_line
+          from (
+          SELECT m_inoutline.m_inoutline_id, m_inoutline.line
+          from m_inoutline, c_order, c_orderline, c_invoiceline, m_inout, c_invoice
+          where m_inoutline.c_orderline_id = c_orderline.c_orderline_id
+            and c_orderline.c_order_id = c_order.c_order_id
+            and c_orderline.c_orderline_id = c_invoiceline.c_orderline_id
+            and m_inoutline.m_inout_id = m_inout.m_inout_id
+            and c_invoiceline.c_invoice_id = c_invoice.c_invoice_id
+            and m_inout.m_inout_id = Cur_InOut.m_inout_id
+            and m_inout.issotrx = 'Y'
+            and c_order.invoicerule in ('D', 'O', 'S')
+            and c_invoice.processed='Y'
+          group by m_inoutline.m_inoutline_id, m_inoutline.line
+          having sum(c_invoiceline.qtyinvoiced) > 0
+          ) a;
+          IF (v_count > 0 ) THEN
+            v_Message := '@InoutDocumentno@' || ': ' || Cur_InOut.DocumentNo || ' ' || '@line@' || ': ' || v_line || '. ';
+            v_Message := v_Message || '@VoidShipmentInvoiced@';
+            RAISE_APPLICATION_ERROR(-20000, v_Message);
+          END IF;
           v_ResultStr:='CreateInOut';
           SELECT COALESCE(C_DOCTYPE_REVERSED_ID, C_DOCTYPE_ID)
           INTO v_DoctypeReversed_ID
