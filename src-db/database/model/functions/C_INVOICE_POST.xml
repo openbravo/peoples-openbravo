@@ -248,7 +248,7 @@ cWithHoldId varchar2(32);
             RAISE_APPLICATION_ERROR(-20000, '@InvoicesNeedLines@');
           END IF;
           /*
-          * Avoids repeating the same document number for the same organization tree within the same fiscal year
+          * Avoids repeating the same documentno for the same organization tree within the same fiscal year
           */
           SELECT PERIODSTARTDATE, PERIODENDDATE
             INTO v_PeriodStartDate, v_PeriodEndDate
