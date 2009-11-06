@@ -5,15 +5,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
@@ -27,7 +27,7 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-    <![CDATA[      
+    <![CDATA[
     select lpad(oi.taxID,10)                                                             AS NIF,
     TO_CHAR(now(), 'DD')||TO_CHAR(now(), 'MM')||TO_CHAR(now(), 'YY')                     AS HOY,
     TO_CHAR(r.duedate, 'DD')||TO_CHAR(r.duedate, 'MM')||TO_CHAR(r.duedate, 'YY')         AS DUEDATE,
@@ -77,34 +77,35 @@
     <![CDATA[
       SELECT LPAD(BP.TAXID,12,' ')                      AS NIF, BP.TAXID,
              LPAD(TO_CHAR(ROUND(DP.AMOUNT*100)),12,'0')                   AS PAYAMT,
-             SUBSTR(TRIM(LPAD(BP_A.ACCOUNTNO,20,'0')),1,4)|| /*BANCO*/ 
-             SUBSTR(TRIM(LPAD(BP_A.ACCOUNTNO,20,'0')),5,4)|| /*OFICINA*/ 
+             SUBSTR(TRIM(LPAD(BP_A.ACCOUNTNO,20,'0')),1,4)|| /*BANCO*/
+             SUBSTR(TRIM(LPAD(BP_A.ACCOUNTNO,20,'0')),5,4)|| /*OFICINA*/
              SUBSTR(TRIM(LPAD(BP_A.ACCOUNTNO,20,'0')),11) AS N_CUENTA,
              SUBSTR(TRIM(LPAD(BP_A.ACCOUNTNO,20,'0')),9,2)AS DC, BP_A.ACCOUNTNO AS ACCT,
-             REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(RPAD(COALESCE(BP.NAME2,BP.NAME),36,' ')),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS nombre, 
+             REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(RPAD(COALESCE(BP.NAME2,BP.NAME),36,' ')),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS nombre,
              REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(COALESCE(BP.NAME2,BP.NAME)),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS NOM,
-             REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(RPAD(L.ADDRESS1||' '||L.ADDRESS2,36,' ')),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS DOMICILIO,
-             REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(L.ADDRESS2||L.ADDRESS1),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS DOM,
-             REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(RPAD(L.POSTAL,5)||RPAD(L.CITY,31,' ')),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS PLAZA, 
-             REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(L.POSTAL||L.CITY),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS PLA,
-             REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(RPAD(COALESCE(to_char(R.DESCRIPTION),' '),36,' ')),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS PROVINCIA, 
+             REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(RPAD(COALESCE(L.ADDRESS1,'')||' '||COALESCE(L.ADDRESS2,''),36,' ')),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS DOMICILIO,
+             REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(COALESCE(L.ADDRESS2,'')||COALESCE(L.ADDRESS1,'')),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS DOM,
+             REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(RPAD(COALESCE(L.POSTAL,''),5)||RPAD(COALESCE(L.CITY,''),31,' ')),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS PLAZA,
+             REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(COALESCE(L.POSTAL,'')||COALESCE(L.CITY,'')),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS PLA,
+             REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(RPAD(COALESCE(to_char(R.DESCRIPTION),' '),36,' ')),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS PROVINCIA,
              REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(R.DESCRIPTION),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS PROV,
              REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(RPAD(COALESCE(to_char(DP.DESCRIPTION),' '),36,' ')),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U') AS CONCEPTO
              FROM c_remittanceline S, C_DEBT_PAYMENT DP,
                                   C_BPARTNER BP left join C_BP_BANKACCOUNT BP_A on BP.C_BPARTNER_ID = BP_A.C_BPARTNER_ID
                                   LEFT JOIN C_BPARTNER_LOCATION BP_L on BP.C_BPARTNER_ID = BP_L.C_BPARTNER_ID
-                                  LEFT JOIN C_LOCATION L on BP_L.C_LOCATION_ID = L.C_LOCATION_ID 
-                                  LEFT JOIN C_REGION R on L.C_REGION_ID = R.C_REGION_ID 
+                                  LEFT JOIN C_LOCATION L on BP_L.C_LOCATION_ID = L.C_LOCATION_ID
+                                  LEFT JOIN C_REGION R on L.C_REGION_ID = R.C_REGION_ID
       WHERE S.C_debt_payment_id = DP.C_debt_payment_id
       AND DP.C_BPARTNER_ID = BP.C_BPARTNER_ID
       AND BP_L.C_BPARTNER_LOCATION_ID = COALESCE(C_GETBPLOCATIONID(BP.C_BPARTNER_ID, 'B'),BP_L.C_BPARTNER_LOCATION_ID)
+      AND (BP_A.C_BPARTNER_ID IS NULL OR BP_A.ISACTIVE = 'Y')
       and s.C_Remittance_ID = ?
     ]]>
     </Sql>
     <Parameter name="cRemittanceId"/>
     </SqlMethod>
-  
-  
+
+
   <SqlMethod name="selectTotal" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -119,14 +120,14 @@
     <Parameter name="cRemittanceId"/>
     </SqlMethod>
 
-    
+
   <SqlMethod name="selectNLineas" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-       SELECT LPAD(?,10,'0') AS LINEAS, 
-              LPAD(?,8,'0')  AS ORDENANTES, 
-              LPAD(' ',13,' ') AS HUECO 
+       SELECT LPAD(?,10,'0') AS LINEAS,
+              LPAD(?,8,'0')  AS ORDENANTES,
+              LPAD(' ',13,' ') AS HUECO
          FROM DUAL
     ]]>
     </Sql>
@@ -147,7 +148,7 @@
     <Parameter name="pDueDate"/>
     </SqlMethod>
 
-<!--    
+<!--
    <SqlMethod name="selectParam" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -167,7 +168,7 @@
     </SqlMethod>
 
     <Parameter name="cRemittanceId"/>
-    </SqlMethod> 
+    </SqlMethod>
   <SqlMethod name="selectComprobacion1" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -183,8 +184,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT COUNT(*) 
-      FROM c_remittanceLine rl 
+      SELECT COUNT(*)
+      FROM c_remittanceLine rl
     WHERE rl.c_remittance_id = ?
     ]]>
     </Sql>
@@ -216,6 +217,6 @@
     ]]>
     </Sql>
     <Parameter name="cRemittanceId"/>
-    </SqlMethod> 
+    </SqlMethod>
     -->
 </SqlClass>
