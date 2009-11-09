@@ -253,8 +253,8 @@ public class DataImportService implements OBSingleton {
         OBDal.getInstance().rollbackAndClose();
         rolledBack = true;
         final Throwable realThrowable = DbUtility.getUnderlyingSQLException(t);
-        log.error(realThrowable);
-        realThrowable.printStackTrace(System.err);
+        log.error(realThrowable.getMessage(), realThrowable);
+        // realThrowable.printStackTrace(System.err);
         ir.setException(realThrowable);
       } finally {
         OBContext.getOBContext().setInAdministratorMode(prevMode);
