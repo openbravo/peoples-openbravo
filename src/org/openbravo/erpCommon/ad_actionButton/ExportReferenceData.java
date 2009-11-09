@@ -89,11 +89,12 @@ public class ExportReferenceData extends HttpSecureAppServlet {
 
       final String xml = DataExportService.getInstance().exportDataSetToXML(myDataset,
           data[0].adModuleId, new java.util.HashMap<String, Object>());
-      File myFolder = new File(vars.getSessionValue("#sourcePath") + "/modules/"
-          + module[0].javapackage + "/referencedata/standard");
-      File myFile = new File(vars.getSessionValue("#sourcePath") + "/modules/"
-          + module[0].javapackage + "/referencedata/standard/" + Utility.wikifiedName(data[0].name)
-          + ".xml");
+      File myFolder = new File(vars.getSessionValue("#sourcePath")
+          + (data[0].adModuleId.equals("0") ? "" : "/modules/" + module[0].javapackage)
+          + "/referencedata/standard");
+      File myFile = new File(vars.getSessionValue("#sourcePath")
+          + (data[0].adModuleId.equals("0") ? "" : "/modules/" + module[0].javapackage)
+          + "/referencedata/standard/" + Utility.wikifiedName(data[0].name) + ".xml");
       if (!myFolder.exists())
         myFolder.mkdirs();
       FileOutputStream myOutputStream = new FileOutputStream(myFile);
