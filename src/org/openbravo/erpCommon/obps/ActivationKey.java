@@ -81,132 +81,127 @@ public class ActivationKey {
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
 
   public ActivationKey() {
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
-    try {
-      org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-          org.openbravo.model.ad.system.System.class, "0");
-      strPublicKey = sys.getInstanceKey();
-      String activationKey = sys.getActivationKey();
+    org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+        org.openbravo.model.ad.system.System.class, "0");
+    strPublicKey = sys.getInstanceKey();
+    String activationKey = sys.getActivationKey();
 
-      if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
-          || activationKey.equals("")) {
-        hasActivationKey = false;
-        setLogger();
-        return;
-      }
-
-      PublicKey pk = getPublicKey(strPublicKey);
-      if (pk == null) {
-        hasActivationKey = true;
-        errorMessage = "@NotAValidKey@";
-        setLogger();
-        return;
-      }
-      hasActivationKey = true;
-      try {
-        PublicKey obPk = getPublicKey(OB_PUBLIC_KEY); // get OB public key to check signature
-        Signature signer = Signature.getInstance("MD5withRSA");
-        signer.initVerify(obPk);
-
-        Cipher cipher = Cipher.getInstance("RSA");
-
-        ByteArrayInputStream bis = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64
-            .decodeBase64(activationKey.getBytes()));
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-        // Encryptation only accepts 128B size, it must be chuncked
-        final byte[] buf = new byte[128];
-        final byte[] signature = new byte[128];
-
-        // read the signature
-        if (!(bis.read(signature) > 0)) {
-          isActive = false;
-          errorMessage = "@NotSigned@";
-          setLogger();
-          return;
-        }
-
-        // decrypt
-        while ((bis.read(buf)) > 0) {
-          cipher.init(Cipher.DECRYPT_MODE, pk);
-          bos.write(cipher.doFinal(buf));
-        }
-
-        // verify signature
-        signer.update(bos.toByteArray());
-        boolean signed = signer.verify(signature);
-        log.debug("signature length:" + buf.length);
-        log.debug("singature:" + (new BigInteger(signature).toString(16).toUpperCase()));
-        log.debug("signed:" + signed);
-        if (!signed) {
-          isActive = false;
-          errorMessage = "@NotSigned@";
-          setLogger();
-          return;
-        }
-
-        byte[] props = bos.toByteArray();
-
-        ByteArrayInputStream isProps = new ByteArrayInputStream(props);
-        InputStreamReader reader = new InputStreamReader(isProps, "UTF-8");
-        instanceProperties = new Properties();
-
-        instanceProperties.load(reader);
-      } catch (Exception e) {
-        isActive = false;
-        errorMessage = "@NotAValidKey@";
-        e.printStackTrace();
-        setLogger();
-        return;
-      }
-
-      // Check for dates to know if the instance is active
-      SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
-      Date startDate = null;
-      Date endDate = null;
-
-      try {
-        startDate = sd.parse(getProperty("startdate"));
-
-        if (getProperty("enddate") != null)
-          endDate = sd.parse(getProperty("enddate"));
-
-      } catch (Exception e) {
-        errorMessage = "@ErrorReadingDates@";
-        isActive = false;
-        log.error(e);
-        setLogger();
-        return;
-      }
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "dateFormat.java");
-      SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      Date now = new Date();
-      if (startDate == null || now.before(startDate)) {
-        isActive = false;
-        notActiveYet = true;
-        errorMessage = "@OPSNotActiveTill@ " + outputFormat.format(startDate);
-        messageType = "Warning";
-        setLogger();
-        return;
-      }
-      if (endDate != null) {
-        pendingTime = ((endDate.getTime() - now.getTime()) / MILLSECS_PER_DAY) + 1;
-        if (now.after(endDate)) {
-          isActive = false;
-          hasExpired = true;
-
-          errorMessage = "@OPSActivationExpired@ " + outputFormat.format(endDate);
-
-          setLogger();
-          return;
-        }
-      }
-      isActive = true;
+    if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
+        || activationKey.equals("")) {
+      hasActivationKey = false;
       setLogger();
-    } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      return;
     }
+
+    PublicKey pk = getPublicKey(strPublicKey);
+    if (pk == null) {
+      hasActivationKey = true;
+      errorMessage = "@NotAValidKey@";
+      setLogger();
+      return;
+    }
+    hasActivationKey = true;
+    try {
+      PublicKey obPk = getPublicKey(OB_PUBLIC_KEY); // get OB public key to check signature
+      Signature signer = Signature.getInstance("MD5withRSA");
+      signer.initVerify(obPk);
+
+      Cipher cipher = Cipher.getInstance("RSA");
+
+      ByteArrayInputStream bis = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64
+          .decodeBase64(activationKey.getBytes()));
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+      // Encryptation only accepts 128B size, it must be chuncked
+      final byte[] buf = new byte[128];
+      final byte[] signature = new byte[128];
+
+      // read the signature
+      if (!(bis.read(signature) > 0)) {
+        isActive = false;
+        errorMessage = "@NotSigned@";
+        setLogger();
+        return;
+      }
+
+      // decrypt
+      while ((bis.read(buf)) > 0) {
+        cipher.init(Cipher.DECRYPT_MODE, pk);
+        bos.write(cipher.doFinal(buf));
+      }
+
+      // verify signature
+      signer.update(bos.toByteArray());
+      boolean signed = signer.verify(signature);
+      log.debug("signature length:" + buf.length);
+      log.debug("singature:" + (new BigInteger(signature).toString(16).toUpperCase()));
+      log.debug("signed:" + signed);
+      if (!signed) {
+        isActive = false;
+        errorMessage = "@NotSigned@";
+        setLogger();
+        return;
+      }
+
+      byte[] props = bos.toByteArray();
+
+      ByteArrayInputStream isProps = new ByteArrayInputStream(props);
+      InputStreamReader reader = new InputStreamReader(isProps, "UTF-8");
+      instanceProperties = new Properties();
+
+      instanceProperties.load(reader);
+    } catch (Exception e) {
+      isActive = false;
+      errorMessage = "@NotAValidKey@";
+      e.printStackTrace();
+      setLogger();
+      return;
+    }
+
+    // Check for dates to know if the instance is active
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+    Date startDate = null;
+    Date endDate = null;
+
+    try {
+      startDate = sd.parse(getProperty("startdate"));
+
+      if (getProperty("enddate") != null)
+        endDate = sd.parse(getProperty("enddate"));
+
+    } catch (Exception e) {
+      errorMessage = "@ErrorReadingDates@";
+      isActive = false;
+      log.error(e);
+      setLogger();
+      return;
+    }
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
+        "dateFormat.java");
+    SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
+    Date now = new Date();
+    if (startDate == null || now.before(startDate)) {
+      isActive = false;
+      notActiveYet = true;
+      errorMessage = "@OPSNotActiveTill@ " + outputFormat.format(startDate);
+      messageType = "Warning";
+      setLogger();
+      return;
+    }
+    if (endDate != null) {
+      pendingTime = ((endDate.getTime() - now.getTime()) / MILLSECS_PER_DAY) + 1;
+      if (now.after(endDate)) {
+        isActive = false;
+        hasExpired = true;
+
+        errorMessage = "@OPSActivationExpired@ " + outputFormat.format(endDate);
+
+        setLogger();
+        return;
+      }
+    }
+    isActive = true;
+    setLogger();
   }
 
   @SuppressWarnings( { "static-access", "unchecked" })
