@@ -28,7 +28,7 @@
      <SqlMethodComment></SqlMethodComment>
      <Sql>
      <![CDATA[
-       SELECT pv.MA_ProcessPlan_Version_ID AS CLAVE, p.NAME || ' - ' || pv.DOCUMENTNO AS NAME,  pv.MA_ProcessPlan_Version_ID AS id 
+       SELECT pv.MA_ProcessPlan_ID AS PADRE, p.NAME || ' - ' || pv.DOCUMENTNO AS NAME,  pv.MA_ProcessPlan_Version_ID AS ID 
        FROM MA_ProcessPlan p, MA_ProcessPlan_Version pv
        WHERE p.ISACTIVE = 'Y'
         AND PV.MA_PROCESSPLAN_ID=P.MA_PROCESSPLAN_ID
