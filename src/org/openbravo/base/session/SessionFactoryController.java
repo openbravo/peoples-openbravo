@@ -148,6 +148,9 @@ public abstract class SessionFactoryController {
       // access and updates go through hibernate.
       configuration.getProperties().setProperty(Environment.USE_SECOND_LEVEL_CACHE, "false");
       configuration.getProperties().setProperty(Environment.USE_QUERY_CACHE, "false");
+      // TODO: consider setting isolation level explicitly
+      // configuration.getProperties().setProperty(Environment.ISOLATION,
+      // "" + Connection.TRANSACTION_READ_COMMITTED);
 
       final DalSessionFactory dalSessionFactory = OBProvider.getInstance().get(
           DalSessionFactory.class);
