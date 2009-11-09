@@ -221,14 +221,12 @@ public class SystemService implements OBSingleton {
     } else {
       hql = updatePart + " where client=:clientId";
     }
-    System.err.println(hql);
     try {
       SessionHandler.getInstance().getSession().createQuery(hql).setString("clientId",
           client.getId()).executeUpdate();
     } catch (IllegalArgumentException ex) {
       // handle a special case, that the entity name or a property name
       // is a reserved hql word.
-      System.err.println(ex.getMessage());
       if (ex.getMessage().indexOf("node to traverse cannot be null") != -1) {
         // in this case use an inefficient method
         nullifyPerObject(e, client);

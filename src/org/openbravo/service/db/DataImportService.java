@@ -181,7 +181,6 @@ public class DataImportService implements OBSingleton {
             importProcessor.process(xec.getToInsert(), xec.getToUpdate());
           } catch (final Exception e) {
             // note on purpose caught and set in ImportResult
-            e.printStackTrace(System.err);
             ir.setException(e);
             ir.setErrorMessages(e.getMessage());
             OBDal.getInstance().rollbackAndClose();
@@ -254,7 +253,6 @@ public class DataImportService implements OBSingleton {
         rolledBack = true;
         final Throwable realThrowable = DbUtility.getUnderlyingSQLException(t);
         log.error(realThrowable.getMessage(), realThrowable);
-        // realThrowable.printStackTrace(System.err);
         ir.setException(realThrowable);
       } finally {
         OBContext.getOBContext().setInAdministratorMode(prevMode);
@@ -425,7 +423,6 @@ public class DataImportService implements OBSingleton {
           importProcessor.process(xec.getToInsert(), xec.getToUpdate());
         } catch (final Exception e) {
           // note on purpose caught and set in ImportResult
-          e.printStackTrace(System.err);
           ir.setException(e);
           ir.setErrorMessages(e.getMessage());
           OBDal.getInstance().rollbackAndClose();
@@ -458,9 +455,9 @@ public class DataImportService implements OBSingleton {
       }
       OBDal.getInstance().rollbackAndClose();
       rolledBack = true;
-      t.printStackTrace(System.err);
-      if (!isBatchUpdateException)
+      if (!isBatchUpdateException) {
         ir.setException(t);
+      }
 
     } finally {
       if (rolledBack) {

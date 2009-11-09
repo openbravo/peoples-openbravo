@@ -74,7 +74,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
         this.context = null;
         log.info("Deactivated session:" + sessionId);
       } catch (ServletException e1) {
-        log.error(e1);
+        log.error(e1.getMessage(), e1);
       }
     }
 

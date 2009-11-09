@@ -62,8 +62,7 @@ public class ImportClientProcess implements org.openbravo.scheduling.Process {
       if (ir.hasErrorOccured()) {
         final StringBuilder sb = new StringBuilder();
         if (ir.getException() != null) {
-          ir.getException().printStackTrace(System.err);
-          log.error(ir.getException());
+          log.error(ir.getException().getMessage(), ir.getException());
           sb.append(ir.getException().getMessage());
         }
         if (ir.getErrorMessages() != null) {
@@ -94,8 +93,7 @@ public class ImportClientProcess implements org.openbravo.scheduling.Process {
       }
       bundle.setResult(msg);
     } catch (final Exception e) {
-      log.error(e);
-      e.printStackTrace(System.err);
+      log.error(e.getMessage(), e);
       final OBError msg = new OBError();
       msg.setType("Error");
       msg.setMessage(e.getMessage());
