@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
@@ -56,6 +57,7 @@ public class CreateFrom extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
+
     if (vars.commandIn("DEFAULT")) {
       final String strKey = vars.getGlobalVariable("inpKey", "CreateFrom|key");
       final String strTableId = vars.getGlobalVariable("inpTableId", "CreateFrom|tableId");
@@ -177,6 +179,11 @@ public class CreateFrom extends HttpSecureAppServlet {
       final String strKey = vars.getRequiredStringParameter("inpKey");
       final String strTableId = vars.getStringParameter("inpTableId");
       final String strWindowId = vars.getStringParameter("inpWindowId");
+
+      // Set this special case for auditing
+      SessionInfo.setProcessType("CF");
+      SessionInfo.setProcessId(strTableId);
+
       final OBError myMessage = saveMethod(vars, strKey, strTableId, strProcessId, strWindowId);
       final String strTabId = vars.getGlobalVariable("inpTabId", "CreateFrom|tabId");
       vars.setMessage(strTabId, myMessage);
