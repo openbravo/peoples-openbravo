@@ -260,13 +260,10 @@ public class OBInterceptor extends EmptyInterceptor {
         onUpdate(t, propertyNames, currentState);
       }
     } catch (Exception e) {
-      final Exception originalException = e;
-      e.printStackTrace(System.err);
-      while (e instanceof SQLException) {
+      while (e instanceof SQLException && e != ((SQLException) e).getNextException()) {
         e = ((SQLException) e).getNextException();
-        e.printStackTrace(System.err);
       }
-      throw new OBException(originalException);
+      throw new OBException(e);
     }
 
     // do a check for writeaccess

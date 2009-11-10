@@ -109,8 +109,7 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
       bundle.setResult(msg);
 
     } catch (final Exception e) {
-      log.error(e);
-      e.printStackTrace(System.err);
+      log.error(e.getMessage(), e);
       final OBError msg = new OBError();
       msg.setType("Error");
       msg.setMessage(e.getMessage());

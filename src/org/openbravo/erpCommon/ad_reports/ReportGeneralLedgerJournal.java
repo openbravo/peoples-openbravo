@@ -44,6 +44,18 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Keeps a comma-separated list of the accounting entries that has been shown, from the newest one
+   * to the oldest one. Used for navigation purposes
+   */
+  private static final String PREVIOUS_ACCTENTRIES = "ReportGeneralLedgerJournal.previousAcctEntries";
+
+  /**
+   * Keeps a comma-separated list of the line's range that has been shown, from the newest one to
+   * the oldest one. Used for navigation purposes
+   */
+  private static final String PREVIOUS_RANGE = "ReportGeneralLedgerJournal.previousRange";
+
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -73,8 +85,11 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       log4j.debug("********DEFAULT***************  strShowClosing: " + strShowClosing);
       log4j.debug("********DEFAULT***************  strShowReg: " + strShowReg);
       log4j.debug("********DEFAULT***************  strShowOpening: " + strShowOpening);
-      if (vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0").equals("0"))
+      if (vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0").equals("0")) {
         vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
+        vars.setSessionValue(PREVIOUS_ACCTENTRIES, "0");
+        vars.setSessionValue(PREVIOUS_RANGE, "");
+      }
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable,
           strRecord, "", strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening);
     } else if (vars.commandIn("DIRECT")) {
@@ -99,10 +114,6 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strDocument = vars.getRequestGlobalVariable("inpDocument",
           "ReportGeneralLedgerJournal|Document");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
-      String strRecord = vars.getRequestGlobalVariable("inpRecord",
-          "ReportGeneralLedgerJournal|Record");
-      String strTable = vars.getRequestGlobalVariable("inpTable",
-          "ReportGeneralLedgerJournal|Table");
       String strShowClosing = vars.getRequestGlobalVariable("inpShowClosing",
           "ReportGeneralLedgerJournal|ShowClosing");
       String strShowReg = vars.getRequestGlobalVariable("inpShowReg",
@@ -119,6 +130,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       log4j.debug("********FIND***************  strShowReg1: " + strShowReg1);
       log4j.debug("********FIND***************  strShowOpening1: " + strShowOpening1);
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
+      vars.setSessionValue(PREVIOUS_ACCTENTRIES, "0");
+      vars.setSessionValue(PREVIOUS_RANGE, "");
       setHistoryCommand(request, "DEFAULT");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, "", "", "",
           strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening);
@@ -146,15 +159,36 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       // "ReportGeneralLedgerJournal|Table");
       String strTable = vars.getStringParameter("inpTable");
       String strRecord = vars.getStringParameter("inpRecord");
-      vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
+      // vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
       setHistoryCommand(request, "DEFAULT");
       printPagePDF(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable,
           strRecord, "", strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening);
     } else if (vars.commandIn("PREVIOUS_RELATION")) {
       String strInitRecord = vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
-          "ReportGeneralLedgerJournal");
-      int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
+      String strPreviousRecordRange = vars.getSessionValue(PREVIOUS_RANGE);
+
+      String[] previousRecord = strPreviousRecordRange.split(",");
+      strPreviousRecordRange = previousRecord[0];
+      int intRecordRange = strPreviousRecordRange.equals("") ? 0 : Integer
+          .parseInt(strPreviousRecordRange);
+      strPreviousRecordRange = previousRecord[1];
+      intRecordRange += strPreviousRecordRange.equals("") ? 0 : Integer
+          .parseInt(strPreviousRecordRange);
+
+      // Remove parts of the previous range
+      StringBuffer sb_previousRange = new StringBuffer();
+      for (int i = 2; i < previousRecord.length; i++) {
+        sb_previousRange.append(previousRecord[i] + ",");
+      }
+      vars.setSessionValue(PREVIOUS_RANGE, sb_previousRange.toString());
+
+      // Remove parts of the previous accounting entries
+      String[] previousAcctEntries = vars.getSessionValue(PREVIOUS_ACCTENTRIES).split(",");
+      StringBuffer sb_previousAcctEntries = new StringBuffer();
+      for (int i = 2; i < previousAcctEntries.length; i++) {
+        sb_previousAcctEntries.append(previousAcctEntries[i] + ",");
+      }
+
       if (strInitRecord.equals("") || strInitRecord.equals("0"))
         vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
       else {
@@ -162,19 +196,11 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         initRecord -= intRecordRange;
         strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
         vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", strInitRecord);
+        vars.setSessionValue(PREVIOUS_ACCTENTRIES, sb_previousAcctEntries.toString());
       }
+
       response.sendRedirect(strDireccion + request.getServletPath());
     } else if (vars.commandIn("NEXT_RELATION")) {
-      String strInitRecord = vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
-          "ReportGeneralLedgerJournal");
-      int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
-      int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
-      if (initRecord == 0)
-        initRecord = 1;
-      initRecord += intRecordRange;
-      strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
-      vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", strInitRecord);
       response.sendRedirect(strDireccion + request.getServletPath());
     } else
       pageError(response);
@@ -186,7 +212,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strShowReg, String strShowOpening) throws IOException, ServletException {
     String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
         "ReportGeneralLedgerJournal");
-    int intRecordRange = (strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange));
+    int intRecordRangePredefined = (strRecordRange.equals("") ? 0 : Integer
+        .parseInt(strRecordRange));
     String strInitRecord = vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber");
     int initRecordNumber = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
     if (log4j.isDebugEnabled())
@@ -195,21 +222,78 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
     ReportGeneralLedgerJournalData[] data = null;
+    ReportGeneralLedgerJournalData[] dataCountLines = null;
     String strPosition = "0";
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedgerJournal", false,
         "", "", "imprimir();return false;", false, "ad_reports", strReplaceWith, false, true);
     toolbar.setEmail(false);
+    int totalAcctEntries = 0;
+    int lastRecordNumber = 0;
     if (vars.commandIn("FIND") || vars.commandIn("DEFAULT")
         && !vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber").equals("0")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening);
       String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
       String strOrgFamily = getFamily(strTreeOrg, strOrg);
       if (strRecord.equals("")) {
+        // Stores the number of lines per accounting entry
+        dataCountLines = ReportGeneralLedgerJournalData.selectCountGroupedLines(this, Utility
+            .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(
+            this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom, DateTimeData
+            .nDaysAfter(this, strDateTo, "1"), strDocument, strcAcctSchemaId, strOrgFamily,
+            strCheck);
+        String strInitAcctEntries = vars.getSessionValue(PREVIOUS_ACCTENTRIES);
+        int acctEntries = (strInitAcctEntries.equals("") ? 0 : Integer.parseInt(strInitAcctEntries
+            .split(",")[0]));
+
+        for (ReportGeneralLedgerJournalData i : dataCountLines)
+          totalAcctEntries += Integer.parseInt(i.groupedlines);
+
+        int groupedLines[] = new int[intRecordRangePredefined];
+        int i = 1;
+        while (groupedLines[i - 1] <= intRecordRangePredefined
+            && dataCountLines.length >= acctEntries) {
+          if (dataCountLines.length > acctEntries) {
+            groupedLines[i] = groupedLines[i - 1]
+                + Integer.parseInt(dataCountLines[acctEntries].groupedlines);
+            i++;
+          }
+          acctEntries++;
+        }
+
+        int intRecordRangeUsed;
+        if (dataCountLines.length != acctEntries - 1) {
+          if (i == 2) {
+            // The first entry is bigger than the predefined range
+            intRecordRangeUsed = groupedLines[i - 1];
+            acctEntries++;
+          } else {
+            intRecordRangeUsed = groupedLines[i - 2];
+          }
+        } else {
+          // Include also the last entry
+          intRecordRangeUsed = groupedLines[i - 1];
+        }
+
+        // Hack for sqlC first record
+        if (initRecordNumber == 0) {
+          lastRecordNumber = initRecordNumber + intRecordRangeUsed + 1;
+        } else {
+          lastRecordNumber = initRecordNumber + intRecordRangeUsed;
+        }
+        vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", String
+            .valueOf(lastRecordNumber));
+
+        // Stores historical for navigation purposes
+        vars.setSessionValue(PREVIOUS_ACCTENTRIES, String.valueOf(acctEntries - 1) + ","
+            + vars.getSessionValue(PREVIOUS_ACCTENTRIES));
+        vars.setSessionValue(PREVIOUS_RANGE, String.valueOf(intRecordRangeUsed) + ","
+            + vars.getSessionValue(PREVIOUS_RANGE));
+
         data = ReportGeneralLedgerJournalData.select(this, Utility.getContext(this, vars,
             "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
             "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(
             this, strDateTo, "1"), strDocument, strcAcctSchemaId, strOrgFamily, strCheck,
-            initRecordNumber, intRecordRange);
+            initRecordNumber, intRecordRangeUsed);
         if (data != null && data.length > 0)
           strPosition = ReportGeneralLedgerJournalData.selectCount(this, Utility.getContext(this,
               vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
@@ -220,7 +304,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         data = ReportGeneralLedgerJournalData.selectDirect(this, Utility.getContext(this, vars,
             "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
             "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord, initRecordNumber,
-            intRecordRange);
+            intRecordRangePredefined);
         if (data != null && data.length > 0)
           strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this, Utility.getContext(
               this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
@@ -231,7 +315,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       data = ReportGeneralLedgerJournalData.selectDirect(this, Utility.getContext(this, vars,
           "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
           "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord, initRecordNumber,
-          intRecordRange);
+          intRecordRangePredefined);
       if (data != null && data.length > 0)
         strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this, Utility.getContext(
             this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
@@ -241,7 +325,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       data = ReportGeneralLedgerJournalData.selectDirect2(this, Utility.getContext(this, vars,
           "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
           "#AccessibleOrgTree", "ReportGeneralLedger"), strFactAcctGroupId, initRecordNumber,
-          intRecordRange);
+          intRecordRangePredefined);
       if (data != null && data.length > 0)
         strPosition = ReportGeneralLedgerJournalData.selectCountDirect2(this, Utility.getContext(
             this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
@@ -259,16 +343,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       data = ReportGeneralLedgerJournalData.set("0");
       data[0].rownum = "0";
     } else {
-      /*
-       * String[] discard = {"withoutPrevious", "withoutNext"}; if (data==null || data.length==0 ||
-       * initRecordNumber<=1) discard[0] = new String("hasPrevious"); if (data==null ||
-       * data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
-       * xmlDocument =xmlEngine.readXmlTemplate(
-       * "org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal",
-       * discard).createXmlDocument();
-       */
       boolean hasPrevious = !(data == null || data.length == 0 || initRecordNumber <= 1);
-      boolean hasNext = !(data == null || data.length == 0 || data.length < intRecordRange);
+      boolean hasNext = !(data == null || data.length == 0 || lastRecordNumber >= totalAcctEntries);
       toolbar
           .prepareRelationBarTemplate(true, true,
               "submitCommandForm('XLS', false, null, 'ReportGeneralLedgerJournal.xls', 'EXCEL');return false;");

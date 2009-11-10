@@ -62,7 +62,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strAttribute = vars.getStringParameter("inpmAttributesetinstanceId");
       String strTabId = vars.getStringParameter("inpTabId");
       String strQty = vars.getNumericParameter("inpqtyordered");
-      String cancelPriceAd = vars.getNumericParameter("inpcancelpricead");
+      String cancelPriceAd = vars.getStringParameter("inpcancelpricead");
 
       try {
         printPage(response, vars, strChanged, strQtyOrdered, strPriceActual, strDiscount,

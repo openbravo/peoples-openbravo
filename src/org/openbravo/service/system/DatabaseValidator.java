@@ -149,8 +149,6 @@ public class DatabaseValidator implements SystemValidator {
       }
     }
 
-    // System.err.println(updateSql);
-
     checkIncorrectClientOrganizationName(result);
 
     return result;
@@ -512,14 +510,6 @@ public class DatabaseValidator implements SystemValidator {
       }
     }
   }
-
-  // private void dumpDataType(org.apache.ddlutils.model.Table dbTable) {
-  // System.err.println(">>>>>>>>>>>>>> Table >>> " + dbTable.getName());
-  // for (org.apache.ddlutils.model.Column dbColumn :
-  // dbTable.getColumns()) {
-  // System.err.println(dbColumn.getType() + " " + dbColumn.getSize());
-  // }
-  // }
 
   public Database getDatabase() {
     return database;

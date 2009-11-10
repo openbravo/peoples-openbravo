@@ -43,7 +43,6 @@ public class ApplyModuleTask extends DalInitializingTask {
       final AntExecutor antExecutor = new AntExecutor(baseDir.getAbsolutePath());
       antExecutor.runTask("apply.module.forked");
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
       throw new OBException(e);
     }
   }

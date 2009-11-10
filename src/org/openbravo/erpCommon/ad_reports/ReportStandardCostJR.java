@@ -147,9 +147,10 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
     xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this,
         Utility.getContext(this, vars, "#User_Client", "ReportStandardCostJR"), Utility.getContext(
             this, vars, "#AccessibleOrgTree", "ReportStandardCostJR")));
-    xmlDocument.setData("reportMA_PROCESSVERSIONPLAN", "liststructure", ProcessPlanVersionComboData
-        .select(this, Utility.getContext(this, vars, "#User_Client", "ReportStandardCostJR"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportStandardCostJR")));
+    xmlDocument.setParameter("standardCostReports", Utility.arrayDobleEntrada(
+        "arrStandardCostReports", ProcessPlanVersionComboData.select(this, Utility.getContext(this,
+            vars, "#User_Client", "ReportStandardCostJR"), Utility.getContext(this, vars,
+            "#AccessibleOrgTree", "ReportStandardCostJR"))));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

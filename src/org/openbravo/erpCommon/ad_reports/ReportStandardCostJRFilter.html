@@ -75,6 +75,7 @@ function onloadFunctions(){
 		updateMenuIcon('buttonMenu');
 
 		setWindowElementFocus('firstElement');
+		refreshComboReports();
 	}
 
 	function onResizeDo(){
@@ -89,8 +90,18 @@ function onloadFunctions(){
 	    	return false;
 		}
 	}
-		
+	function refreshComboReports() {
+	    var cmbStandardCost = document.frmMain.reportMA_PROCESSPLAN;
+	    var cmbStandardCostReports = document.frmMain.reportMA_PROCESSVERSIONPLAN;
+	    changeComboData(cmbStandardCostReports, arrStandardCostReports, cmbStandardCost.options[cmbStandardCost.selectedIndex].value, true);
+	    return true;
+	}
+
+	
 	</script>
+	<script language="JavaScript" type="text/javascript" id="paramArrayStandardCostReports">
+         var arrStandardCostReports=null;
+    </script>
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <form method="post" action="ReportStandardCostJR.html" name="frmMain" id="form">
@@ -249,14 +260,15 @@ function onloadFunctions(){
                 </tr>
 		<tr>
                   <td class="TitleCell"><span class="LabelText">Plan</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpmaProcessPlanId" id="reportMA_PROCESSPLAN" class="Combo Combo_TwoCells_width">
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpmaProcessPlanId" id="reportMA_PROCESSPLAN" class="Combo Combo_TwoCells_width" onchange="refreshComboReports(); logChanges(this); return true;">
                       <option value=""> <div id="sectionDetail"></div></option>
                     </select></td>
                   <td class="TitleCell"><span class="LabelText">Version</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpmaProcessPlanVersionId" id="reportMA_PROCESSVERSIONPLAN" class="Combo Combo_TwoCells_width">
+                  <td class="Combo_ContentCell" colspan="2"> <select name="reportMA_PROCESSVERSIONPLAN" id="reportMA_PROCESSVERSIONPLAN" class="Combo Combo_TwoCells_width">
                       <option value=""> <div id="sectionDetail"></div></option>
                     </select></td>
-                </tr><tr>
+                </tr>
+                <tr>
                   <td class="TitleCell"><span class="LabelText">Date</span></td>
                   <td class="TextBox_btn_ContentCell" colspan="2">
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">

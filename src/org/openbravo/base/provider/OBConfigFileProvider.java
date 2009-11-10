@@ -124,8 +124,7 @@ public class OBConfigFileProvider implements OBSingleton {
         }
       }
     } catch (final Throwable t) {
-      t.printStackTrace(System.err);
-      log.error(t);
+      log.error(t.getMessage(), t);
     }
   }
 
@@ -154,8 +153,7 @@ public class OBConfigFileProvider implements OBSingleton {
         }
       }
     } catch (final Throwable t) {
-      t.printStackTrace(System.err);
-      log.error(t);
+      log.error(t.getMessage(), t);
     }
   }
 

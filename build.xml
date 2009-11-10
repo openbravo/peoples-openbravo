@@ -590,7 +590,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.db}" target="update.database.script" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="export.database" depends="init,code.rev">
+  <target name="export.database" depends="init,code.rev,generate.entities">
     <antcall target="database.lib" />
     <antcall target="core.lib" />
     <ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true" />
