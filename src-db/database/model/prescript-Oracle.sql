@@ -136,7 +136,7 @@ AS
   PRAGMA AUTONOMOUS_TRANSACTION; --To allow DML within a function in a select        
 BEGIN
 v_md5:='';
-for c1 in (select text from user_source order by name,line) loop
+for c1 in (select text from user_source where not (type = 'TRIGGER' and name like 'AU\_%' escape '\') order by name,line) loop
      v_md5 := dbms_obfuscation_toolkit.md5(input_string => v_md5||c1.text);
 end loop;
 for c1 in (select * from user_tab_cols order by table_name, column_id) loop
