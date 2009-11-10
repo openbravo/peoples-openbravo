@@ -20,8 +20,12 @@
 package org.openbravo.service.system;
 
 import java.io.File;
+import java.util.List;
 
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
@@ -96,11 +100,12 @@ public class ModuleValidator implements SystemValidator {
 
     checkHasUIArtifact(module, result);
 
+    checkHasIllegalId(module, result);
+
     if (module.getLicenseText() == null || module.getLicenseType() == null) {
       result.addError(SystemValidationType.MODULE_ERROR,
-
-      "The license and/or the licenseType of the Module " + module.getName()
-          + " are not set, before exporting these " + "fields should be set");
+          "The license and/or the licenseType of the Module " + module.getName()
+              + " are not set, before exporting these " + "fields should be set");
     }
 
     // industry template
@@ -169,6 +174,55 @@ public class ModuleValidator implements SystemValidator {
     if (reportError) {
       result.addError(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
           + " has UI Artifacts, " + "translation required should be set to 'Y', it is now 'N'.");
+    }
+  }
+
+  // checks https://issues.openbravo.com/view.php?id=7905
+  // Add to validation: module artifacts shouldn't use id's in the range of 100.000-799.999 as these
+  // are used for old customizations
+  private void checkHasIllegalId(Module module, SystemValidationResult result) {
+    for (Entity entity : ModelProvider.getInstance().getModel()) {
+      Property moduleProperty = null;
+      for (Property property : entity.getProperties()) {
+        if (property.getTargetEntity() != null && property.getTargetEntity() == module.getEntity()) {
+          moduleProperty = property;
+          break;
+        }
+      }
+      // check the artifacts pointing to a module
+      if (moduleProperty != null) {
+        final OBCriteria<BaseOBObject> obCriteria = OBDal.getInstance().createCriteria(
+            entity.getName());
+        obCriteria.setFilterOnActive(false);
+        obCriteria.setFilterOnReadableClients(false);
+        obCriteria.setFilterOnReadableOrganization(false);
+        obCriteria.add(Expression.eq(moduleProperty.getName(), module));
+        for (BaseOBObject baseOBObject : obCriteria.list()) {
+          checkIllegalId(baseOBObject, result, module);
+        }
+      }
+    }
+  }
+
+  private void checkIllegalId(BaseOBObject baseOBObject, SystemValidationResult result,
+      Module module) {
+    final String id = (String) baseOBObject.getId();
+    if (id.compareTo("100000") > 0 && id.compareTo("799999") < 0 && id.length() == 6) {
+      result.addError(SystemValidationType.CUSTOMIZATION_ID, "Module " + module.getName()
+          + " has an artifact (" + baseOBObject
+          + ") with an id in the customization range 100000 to 799999. This is not allowed.");
+    }
+
+    // also check the children
+    for (Property property : baseOBObject.getEntity().getProperties()) {
+      if (property.isOneToMany()) {
+        @SuppressWarnings("unchecked")
+        final List<BaseOBObject> children = (List<BaseOBObject>) baseOBObject.get(property
+            .getName());
+        for (BaseOBObject child : children) {
+          checkIllegalId(child, result, module);
+        }
+      }
     }
   }
 
