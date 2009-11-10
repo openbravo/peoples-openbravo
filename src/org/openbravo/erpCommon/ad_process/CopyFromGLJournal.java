@@ -98,8 +98,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       for (int i = 0; data != null && i < data.length; i++) {
         String strSequence = SequenceIdData.getUUID();
         String strDocumentNo = Utility.getDocumentNo(this, vars, windowId, "GL_Journal", Utility
-            .getContext(this, vars, "C_DocTypeTarget_ID", "132"), Utility.getContext(this, vars,
-            "C_DocType_ID", "132"), false, true);
+            .getContext(this, vars, "C_DocTypeTarget_ID", "132"), data[i].cDoctypeId, false, true);
         try {
           if (CopyFromGLJournalData.insertGLJournal(conn, this, strSequence, vars.getClient(), vars
               .getOrg(), vars.getUser(), data[i].cAcctschemaId, data[i].cDoctypeId, "DR", "CO",
@@ -151,9 +150,9 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
     return myError;
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDescription,
-      String strDocumentNo, String strWindow, String strTab, String strKey) throws IOException,
-      ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strDescription, String strDocumentNo, String strWindow, String strTab, String strKey)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Button process copy GLJournalBatch details");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
