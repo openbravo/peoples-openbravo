@@ -141,7 +141,6 @@ public class Wad extends DefaultHandler {
     String strBaseSrc;
     boolean complete;
     boolean quick;
-
     if (argv.length < 1) {
       log4j.error("Usage: java Wad connection.xml [{% || Window} [destinyDir]]");
       return;
@@ -3334,117 +3333,122 @@ public class Wad extends DefaultHandler {
     final Vector<Object> vecReloads = new Vector<Object>();
     final Vector<Object> vecTotal = new Vector<Object>();
     FieldsData[] result = null;
-    for (int i = 0; i < data.length; i++) {
-      final String code = data[i].whereclause
-          + ((!data[i].whereclause.equals("") && !data[i].referencevalue.equals("")) ? " AND " : "")
-          + data[i].referencevalue;
-      data[i].columnname = "inp" + Sqlc.TransformaNombreColumna(data[i].columnname);
-      data[i].whereclause = WadUtility.getComboReloadText(code, vecFields, parentsFieldsData,
-          vecReloads, "inp");
-      if (data[i].whereclause.equals("") && data[i].type.equals("R"))
-        data[i].whereclause = "\"inpadOrgId\"";
-      if (data[i].reference.equals("17") && data[i].whereclause.equals(""))
-        data[i].whereclause = "\"inp" + data[i].columnname + "\"";
-      if (!data[i].whereclause.equals("")
-          && data[i].isdisplayed.equals("Y")
-          && (data[i].reference.equals("17") || data[i].reference.equals("18") || data[i].reference
-              .equals("19"))) {
-        if (data[i].name.equalsIgnoreCase("AD_Org_ID")) {
-          if (parentsFieldsData == null || parentsFieldsData.length == 0)
-            data[i].orgcode = "Utility.getContext(this, vars, \"#User_Org\", windowId, "
-                + accesslevel + ")";
-          else
-            data[i].orgcode = "Utility.getReferenceableOrg(this, vars, parentOrg, windowId, "
-                + accesslevel + ")";
-        } else
-          data[i].orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
 
-        if (data[i].reference.equals("17")) { // List
-          data[i].tablename = "List";
-          data[i].tablenametrl = "List";
-          data[i].htmltext = "select";
-          data[i].htmltexttrl = "selectLanguage";
-          data[i].xmltext = ", \"" + data[i].nameref + "\"";
-          data[i].xmltexttrl = data[i].xmltext + ", vars.getLanguage()";
-          data[i].xmltext += ", \"\"";
-          data[i].xmltexttrl += ", \"\"";
-        } else if (data[i].reference.equals("18")) { // Table
-          final FieldsData[] tables = FieldsData.selectColumnTable(pool, strTab, data[i].id);
-          if (tables == null || tables.length == 0)
-            throw new ServletException("No se ha encontrado la Table para la columnId: "
-                + data[i].id);
-          final StringBuffer where = new StringBuffer();
-          final Vector<Object> vecFields1 = new Vector<Object>();
-          final Vector<Object> vecTables = new Vector<Object>();
-          final Vector<Object> vecWhere = new Vector<Object>();
-          final Vector<Object> vecParameters = new Vector<Object>();
-          final Vector<Object> vecTableParameters = new Vector<Object>();
-          WadUtility.columnIdentifier(pool, tables[0].tablename, true, tables[0], 0, 0, true,
-              vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
-          where.append(tables[0].whereclause);
-          data[i].tablename = "TableList";
-          data[i].htmltext = "select" + tables[0].referencevalue;
-          if (!tables[0].columnname.equals("")) {
-            data[i].htmltext += "_" + tables[0].columnname;
-            data[i].tablename = "TableListVal";
-            if (!where.toString().equals(""))
-              where.append(" AND ");
-            where.append(tables[0].defaultvalue);
-          }
-          data[i].tablenametrl = data[i].tablename + "Trl";
-          data[i].htmltexttrl = data[i].htmltext;
-          data[i].xmltext = "";
-          if (vecTableParameters.size() > 0) {
-            data[i].xmltext = ", vars.getLanguage()";
-          }
-          data[i].xmltext += ", Utility.getContext(this, vars, \"#User_Org\", windowId), Utility.getContext(this, vars, \"#User_Client\", windowId)";
-          data[i].xmltext += WadUtility.getWadComboReloadContext(where.toString(), isSOTrx);
-          data[i].xmltexttrl = data[i].xmltext;
-          if (vecParameters.size() > 0 && vecTableParameters.size() == 0) {
-            data[i].xmltext += ", vars.getLanguage()";
-            data[i].xmltexttrl += ", vars.getLanguage()";
-          }
-          data[i].xmltext += ", \"\"";
-          data[i].xmltexttrl += ", \"\"";
-        } else if (data[i].reference.equals("19")) { // TableDir
-          final FieldsData[] tableDir = FieldsData.selectColumnTableDir(pool, strTab, data[i].id);
-          if (tableDir == null || tableDir.length == 0)
-            throw new ServletException("No se ha encontrado la TableDir para la columnId: "
-                + data[i].id);
-          data[i].tablename = "TableDir";
-          data[i].htmltext = "select" + tableDir[0].referencevalue;
-          final String table_Name = tableDir[0].name.substring(0, tableDir[0].name.length() - 3);
-          final Vector<Object> vecFields1 = new Vector<Object>();
-          final Vector<Object> vecTables = new Vector<Object>();
-          final Vector<Object> vecWhere = new Vector<Object>();
-          final Vector<Object> vecParameters = new Vector<Object>();
-          final Vector<Object> vecTableParameters = new Vector<Object>();
-          WadUtility.columnIdentifier(pool, table_Name, true, tableDir[0], 0, 0, true, vecFields1,
-              vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
-          data[i].xmltext = "";
-          if (vecTableParameters.size() > 0) {
-            data[i].xmltext = ", vars.getLanguage()";
-          }
-          data[i].xmltext += ", Utility.getContext(this, vars, \"#User_Org\", windowId), Utility.getContext(this, vars, \"#User_Client\", windowId)";
-          if (!tableDir[0].columnname.equals("")) {
-            data[i].htmltext += "_" + tableDir[0].columnname;
-            data[i].tablename = "TableDirVal";
-            data[i].xmltext += WadUtility.getWadComboReloadContext(tableDir[0].defaultvalue,
-                isSOTrx);
-          } else {
+    for (int i = 0; i < data.length; i++) {
+      // Do not reload parent combo, it shouldn't be changed preventing inactive elements removal
+      if (parentsFieldsData == null || parentsFieldsData.length == 0
+          || !data[i].columnname.equalsIgnoreCase(parentsFieldsData[0].name)) {
+        final String code = data[i].whereclause
+            + ((!data[i].whereclause.equals("") && !data[i].referencevalue.equals("")) ? " AND "
+                : "") + data[i].referencevalue;
+        data[i].columnname = "inp" + Sqlc.TransformaNombreColumna(data[i].columnname);
+        data[i].whereclause = WadUtility.getComboReloadText(code, vecFields, parentsFieldsData,
+            vecReloads, "inp");
+        if (data[i].whereclause.equals("") && data[i].type.equals("R"))
+          data[i].whereclause = "\"inpadOrgId\"";
+        if (data[i].reference.equals("17") && data[i].whereclause.equals(""))
+          data[i].whereclause = "\"inp" + data[i].columnname + "\"";
+        if (!data[i].whereclause.equals("")
+            && data[i].isdisplayed.equals("Y")
+            && (data[i].reference.equals("17") || data[i].reference.equals("18") || data[i].reference
+                .equals("19"))) {
+          if (data[i].name.equalsIgnoreCase("AD_Org_ID")) {
+            if (parentsFieldsData == null || parentsFieldsData.length == 0)
+              data[i].orgcode = "Utility.getContext(this, vars, \"#User_Org\", windowId, "
+                  + accesslevel + ")";
+            else
+              data[i].orgcode = "Utility.getReferenceableOrg(this, vars, parentOrg, windowId, "
+                  + accesslevel + ")";
+          } else
+            data[i].orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
+
+          if (data[i].reference.equals("17")) { // List
+            data[i].tablename = "List";
+            data[i].tablenametrl = "List";
+            data[i].htmltext = "select";
+            data[i].htmltexttrl = "selectLanguage";
+            data[i].xmltext = ", \"" + data[i].nameref + "\"";
+            data[i].xmltexttrl = data[i].xmltext + ", vars.getLanguage()";
+            data[i].xmltext += ", \"\"";
+            data[i].xmltexttrl += ", \"\"";
+          } else if (data[i].reference.equals("18")) { // Table
+            final FieldsData[] tables = FieldsData.selectColumnTable(pool, strTab, data[i].id);
+            if (tables == null || tables.length == 0)
+              throw new ServletException("No se ha encontrado la Table para la columnId: "
+                  + data[i].id);
+            final StringBuffer where = new StringBuffer();
+            final Vector<Object> vecFields1 = new Vector<Object>();
+            final Vector<Object> vecTables = new Vector<Object>();
+            final Vector<Object> vecWhere = new Vector<Object>();
+            final Vector<Object> vecParameters = new Vector<Object>();
+            final Vector<Object> vecTableParameters = new Vector<Object>();
+            WadUtility.columnIdentifier(pool, tables[0].tablename, true, tables[0], 0, 0, true,
+                vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+            where.append(tables[0].whereclause);
+            data[i].tablename = "TableList";
+            data[i].htmltext = "select" + tables[0].referencevalue;
+            if (!tables[0].columnname.equals("")) {
+              data[i].htmltext += "_" + tables[0].columnname;
+              data[i].tablename = "TableListVal";
+              if (!where.toString().equals(""))
+                where.append(" AND ");
+              where.append(tables[0].defaultvalue);
+            }
+            data[i].tablenametrl = data[i].tablename + "Trl";
+            data[i].htmltexttrl = data[i].htmltext;
+            data[i].xmltext = "";
+            if (vecTableParameters.size() > 0) {
+              data[i].xmltext = ", vars.getLanguage()";
+            }
+            data[i].xmltext += ", Utility.getContext(this, vars, \"#User_Org\", windowId), Utility.getContext(this, vars, \"#User_Client\", windowId)";
+            data[i].xmltext += WadUtility.getWadComboReloadContext(where.toString(), isSOTrx);
+            data[i].xmltexttrl = data[i].xmltext;
+            if (vecParameters.size() > 0 && vecTableParameters.size() == 0) {
+              data[i].xmltext += ", vars.getLanguage()";
+              data[i].xmltexttrl += ", vars.getLanguage()";
+            }
+            data[i].xmltext += ", \"\"";
+            data[i].xmltexttrl += ", \"\"";
+          } else if (data[i].reference.equals("19")) { // TableDir
+            final FieldsData[] tableDir = FieldsData.selectColumnTableDir(pool, strTab, data[i].id);
+            if (tableDir == null || tableDir.length == 0)
+              throw new ServletException("No se ha encontrado la TableDir para la columnId: "
+                  + data[i].id);
             data[i].tablename = "TableDir";
+            data[i].htmltext = "select" + tableDir[0].referencevalue;
+            final String table_Name = tableDir[0].name.substring(0, tableDir[0].name.length() - 3);
+            final Vector<Object> vecFields1 = new Vector<Object>();
+            final Vector<Object> vecTables = new Vector<Object>();
+            final Vector<Object> vecWhere = new Vector<Object>();
+            final Vector<Object> vecParameters = new Vector<Object>();
+            final Vector<Object> vecTableParameters = new Vector<Object>();
+            WadUtility.columnIdentifier(pool, table_Name, true, tableDir[0], 0, 0, true,
+                vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+            data[i].xmltext = "";
+            if (vecTableParameters.size() > 0) {
+              data[i].xmltext = ", vars.getLanguage()";
+            }
+            data[i].xmltext += ", Utility.getContext(this, vars, \"#User_Org\", windowId), Utility.getContext(this, vars, \"#User_Client\", windowId)";
+            if (!tableDir[0].columnname.equals("")) {
+              data[i].htmltext += "_" + tableDir[0].columnname;
+              data[i].tablename = "TableDirVal";
+              data[i].xmltext += WadUtility.getWadComboReloadContext(tableDir[0].defaultvalue,
+                  isSOTrx);
+            } else {
+              data[i].tablename = "TableDir";
+            }
+            data[i].tablenametrl = data[i].tablename + "Trl";
+            data[i].htmltexttrl = data[i].htmltext;
+            data[i].xmltexttrl = data[i].xmltext;
+            if (vecParameters.size() > 0 && vecTableParameters.size() == 0) {
+              data[i].xmltext += ", vars.getLanguage()";
+              data[i].xmltexttrl += ", vars.getLanguage()";
+            }
+            data[i].xmltext += ", \"\"";
+            data[i].xmltexttrl += ", \"\"";
           }
-          data[i].tablenametrl = data[i].tablename + "Trl";
-          data[i].htmltexttrl = data[i].htmltext;
-          data[i].xmltexttrl = data[i].xmltext;
-          if (vecParameters.size() > 0 && vecTableParameters.size() == 0) {
-            data[i].xmltext += ", vars.getLanguage()";
-            data[i].xmltexttrl += ", vars.getLanguage()";
-          }
-          data[i].xmltext += ", \"\"";
-          data[i].xmltexttrl += ", \"\"";
+          vecTotal.addElement(data[i]);
         }
-        vecTotal.addElement(data[i]);
       }
     }
     if (vecTotal != null && vecTotal.size() > 0) {
