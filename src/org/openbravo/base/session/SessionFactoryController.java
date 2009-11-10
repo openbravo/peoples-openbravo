@@ -146,8 +146,12 @@ public abstract class SessionFactoryController {
 
       // second-level caching is disabled for now because not all data
       // access and updates go through hibernate.
+      // TODO: move to configuration file
       configuration.getProperties().setProperty(Environment.USE_SECOND_LEVEL_CACHE, "false");
       configuration.getProperties().setProperty(Environment.USE_QUERY_CACHE, "false");
+      configuration.getProperties().setProperty(Environment.DEFAULT_BATCH_FETCH_SIZE, "50");
+      configuration.getProperties().setProperty(Environment.STATEMENT_BATCH_SIZE, "10");
+      configuration.getProperties().setProperty(Environment.STATEMENT_FETCH_SIZE, "50");
       // TODO: consider setting isolation level explicitly
       // configuration.getProperties().setProperty(Environment.ISOLATION,
       // "" + Connection.TRANSACTION_READ_COMMITTED);

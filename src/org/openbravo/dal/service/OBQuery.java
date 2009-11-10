@@ -26,6 +26,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -82,6 +84,18 @@ public class OBQuery<E extends BaseOBObject> {
   @SuppressWarnings("unchecked")
   public Iterator<E> iterate() {
     return createQuery().iterate();
+  }
+
+  /**
+   * Makes it possible to get a {@link ScrollableResults} from the underlying Query object.
+   * 
+   * @param scrollMode
+   *          the scroll mode to be used
+   * @return the scrollable results which can be scrolled in the direction supported by the
+   *         scrollMode
+   */
+  public ScrollableResults scroll(ScrollMode scrollMode) {
+    return createQuery().scroll(scrollMode);
   }
 
   /**

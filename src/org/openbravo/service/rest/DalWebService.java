@@ -29,9 +29,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
+import org.hibernate.ScrollMode;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.util.Check;
 import org.openbravo.base.util.CheckException;
 import org.openbravo.dal.core.DalMappingGenerator;
 import org.openbravo.dal.core.OBContext;
@@ -63,6 +65,12 @@ import org.openbravo.service.web.WebServiceUtil;
 public class DalWebService implements WebService {
 
   private static final long serialVersionUID = 1L;
+
+  public static final String PARAMETER_WHERE = "where";
+  public static final String PARAMETER_ORDERBY = "orderBy";
+  public static final String PARAMETER_FIRSTRESULT = "firstResult";
+  public static final String PARAMETER_MAXRESULT = "maxResult";
+  public static final String PARAMETER_INCLUDECHILDREN = "includeChildren";
 
   /**
    * Performs the GET REST operation. This service handles multiple types of request: the request
@@ -109,14 +117,20 @@ public class DalWebService implements WebService {
         }
       }
 
+      final String includeChildrenStr = request.getParameter(PARAMETER_INCLUDECHILDREN);
+      boolean includeChildren = true;
+      if (includeChildrenStr != null) {
+        includeChildren = Boolean.parseBoolean(includeChildrenStr);
+      }
+
       if (id == null) {
         // show all of type entityname
 
         // check if there is a whereClause
-        final String where = request.getParameter("where");
-        final String orderBy = request.getParameter("orderBy");
-        final String firstResult = request.getParameter("firstResult");
-        final String maxResult = request.getParameter("maxResult");
+        final String where = request.getParameter(PARAMETER_WHERE);
+        final String orderBy = request.getParameter(PARAMETER_ORDERBY);
+        final String firstResult = request.getParameter(PARAMETER_FIRSTRESULT);
+        final String maxResult = request.getParameter(PARAMETER_MAXRESULT);
 
         String whereOrderByClause = "";
         if (where != null) {
@@ -154,15 +168,38 @@ public class DalWebService implements WebService {
           w.close();
           return;
         } else {
-          final StringWriter sw = new StringWriter();
+          // do a bit more efficient for large datasets if there is no
+          // template, in this case send the output directly to the
+          // browser
+          final boolean sendOutputDirectToBrowser = request.getParameter("template") == null;
+          final Writer writer;
+          if (sendOutputDirectToBrowser) {
+            response.setContentType("text/xml;charset=UTF-8");
+            writer = response.getWriter();
+          } else {
+            writer = new StringWriter();
+          }
           final EntityXMLConverter exc = EntityXMLConverter.newInstance();
           exc.setOptionEmbedChildren(true);
-          exc.setOptionIncludeChildren(true);
+          exc.setOptionIncludeChildren(includeChildren);
           exc.setOptionIncludeReferenced(false);
           exc.setOptionExportClientOrganizationReferences(true);
-          exc.setOutput(sw);
-          exc.process(obq.list());
-          xml = sw.toString();
+          exc.setOutput(writer);
+          // use the iterator because it can handle large data sets
+          exc.setDataScroller(obq.scroll(ScrollMode.FORWARD_ONLY));
+          exc.process(new ArrayList<BaseOBObject>());
+          if (sendOutputDirectToBrowser) {
+            // must be the response writer
+            Check.isSameObject(writer, response.getWriter());
+            writer.flush();
+            writer.close();
+            // and go away
+            return;
+          } else {
+            // must be a string writer in this case
+            Check.isInstanceOf(writer, StringWriter.class);
+            xml = writer.toString();
+          }
         }
       } else {
         final BaseOBObject result = OBDal.getInstance().get(entityName, id);
@@ -173,7 +210,7 @@ public class DalWebService implements WebService {
         final StringWriter sw = new StringWriter();
         final EntityXMLConverter exc = EntityXMLConverter.newInstance();
         exc.setOptionEmbedChildren(true);
-        exc.setOptionIncludeChildren(true);
+        exc.setOptionIncludeChildren(includeChildren);
         exc.setOptionIncludeReferenced(false);
         exc.setOptionExportClientOrganizationReferences(true);
         exc.setOutput(sw);
