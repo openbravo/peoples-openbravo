@@ -246,13 +246,9 @@ public class EntityXMLConverter implements OBNotSingleton {
         final List<BaseOBObject> localToProcess = getToProcess();
         // reset the toProcess so that new objects are added to a new list
         replaceToProcess();
-        int cnt = 0;
         for (BaseOBObject bob : localToProcess) {
           export(bob, !firstRound);
           getOutput().flush();
-          if ((cnt++ % 100) == 0) {
-            OBDal.getInstance().getSession().clear();
-          }
         }
         firstRound = false;
       }
