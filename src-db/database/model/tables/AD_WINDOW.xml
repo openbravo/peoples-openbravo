@@ -84,7 +84,6 @@
       <unique name="AD_WINDOW_NAME">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
-        <unique-column name="AD_MODULE_ID"/>
       </unique>
       <check name="AD_WINDOW_NAME_CHECK"><![CDATA[(INSTR(NAME, (CHR(39))) = 0) AND (INSTR(NAME, TO_CHAR('_')) = 0)]]></check>
       <check name="ADWINDOW_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
