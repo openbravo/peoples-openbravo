@@ -104,7 +104,7 @@ public class WadConnection implements ConnectionProvider {
       this.myPool = DriverManager.getConnection(this.bbdd, dbLogin, dbPassword);
       this.myPool.setAutoCommit(true);
 
-      SessionInfo.setDBSessionInfo(this.myPool, this.rdbms);
+      SessionInfo.setDBSessionInfo(this.myPool);
     } catch (Exception e) {
       log4j.error(e);
       throw new SQLException("Failed when creating database connections pool");

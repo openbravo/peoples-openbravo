@@ -167,8 +167,10 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection(),
-          OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
+      Connection conn = ((SessionImplementor) session).connection();
+      SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("bbdd.rdbms"));
+      SessionInfo.setDBSessionInfo(conn);
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
@@ -185,8 +187,10 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection(),
-          OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
+      Connection conn = ((SessionImplementor) session).connection();
+      SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("bbdd.rdbms"));
+      SessionInfo.setDBSessionInfo(conn);
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
@@ -203,8 +207,10 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection(),
-          OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
+      Connection conn = ((SessionImplementor) session).connection();
+      SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("bbdd.rdbms"));
+      SessionInfo.setDBSessionInfo(conn);
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
@@ -221,8 +227,10 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection(),
-          OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
+      Connection conn = ((SessionImplementor) session).connection();
+      SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("bbdd.rdbms"));
+      SessionInfo.setDBSessionInfo(conn);
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
@@ -239,9 +247,10 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection(),
-          OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
-
+      Connection conn = ((SessionImplementor) session).connection();
+      SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("bbdd.rdbms"));
+      SessionInfo.setDBSessionInfo(conn);
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
@@ -258,9 +267,10 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.setDBSessionInfo(((SessionImplementor) session).connection(),
-          OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
-
+      Connection conn = ((SessionImplementor) session).connection();
+      SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("bbdd.rdbms"));
+      SessionInfo.setDBSessionInfo(conn);
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }

@@ -203,7 +203,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
               + poolName);
     }
 
-    SessionInfo.setDBSessionInfo(conn, this.rdbms);
+    SessionInfo.setDBSessionInfo(conn);
 
     return conn;
   }

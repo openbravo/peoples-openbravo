@@ -124,7 +124,7 @@ public class JNDIConnectionProvider implements ConnectionProvider {
       throw new NoConnectionAvailableException(e.getMessage());
     }
 
-    SessionInfo.setDBSessionInfo(conn, pools.get(poolName).rdbms);
+    SessionInfo.setDBSessionInfo(conn);
 
     return conn;
   }

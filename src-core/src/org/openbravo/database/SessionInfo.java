@@ -27,7 +27,7 @@ import java.sql.SQLException;
 import org.apache.log4j.Logger;
 
 /**
- * This class is used to maitain session information which will be used for audit purposes.
+ * This class is used to maintain session information which will be used for audit purposes.
  * 
  */
 public class SessionInfo {
@@ -48,12 +48,15 @@ public class SessionInfo {
   }
 
   /**
-   * Inserts in the session table the information about the Openbravo session
+   * Creates the needed infrastructure for audit. Which is temporary session table for PostgreSQL
+   * connections
    * 
    * @param conn
-   *          Connection where the session information will be stored in
+   *          Connection to database
+   * @param rdbms
+   *          Database, only action is take for POSTGRESQL
    */
-  static public void setDBSessionInfo(Connection conn, String rdbms) {
+  static public void initDB(Connection conn, String rdbms) {
     try {
       if (rdbms.equals("POSTGRE")) {
         // Create temporary table
@@ -73,6 +76,19 @@ public class SessionInfo {
           getPreparedStatement(conn, sql.toString()).execute();
         }
       }
+    } catch (Exception e) {
+      log4j.error("Error g", e);
+    }
+  }
+
+  /**
+   * Inserts in the session table the information about the Openbravo session
+   * 
+   * @param conn
+   *          Connection where the session information will be stored in
+   */
+  static public void setDBSessionInfo(Connection conn) {
+    try {
       // Clean up temporary table
       getPreparedStatement(conn, "delete from ad_context_info").executeUpdate();
 
@@ -84,8 +100,6 @@ public class SessionInfo {
       ps.setString(3, SessionInfo.getProcessType());
       ps.setString(4, SessionInfo.getProcessId());
       ps.executeUpdate();
-      // System.out.println(SessionInfo.getUserId() + "-" + SessionInfo.getSessionId() + "-"
-      // + SessionInfo.getProcessType() + "-" + SessionInfo.getProcessId());
     } catch (Exception e) {
       log4j.error("Error setting audit info", e);
     }
