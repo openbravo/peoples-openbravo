@@ -54,40 +54,43 @@ class FieldGroupLabelsData implements FieldProvider {
   public static FieldGroupLabelsData[] selectFieldGroupTrl(ConnectionProvider connectionProvider,
       String ad_tab_id, String language, int firstRegister, int numberRegisters)
       throws ServletException {
-    String strSql = "";
-    strSql = strSql
-        + "			select  "
-        + "			  tab.name as tabName"
-        + "			  , fgroup.ad_fieldgroup_id as fieldGroupId "
-        + "			  , fgroup.name as fieldGroupName "
-        + "			  , fgroupTrl.name as fieldGroupTrlName  "
-        + "			from "
-        + "			  ad_tab tab "
-        + "			  , ad_field field "
-        + "			  , ad_fieldgroup fgroup "
-        + "			  , ad_fieldgroup_trl fgroupTrl "
-        + "			where "
-        + "			  tab.ad_tab_id = field.ad_tab_id "
-        + "			  and field.ad_fieldgroup_id = fGroup.ad_fieldGroup_id "
-        + "			  and tab.ad_tab_id = ?  "
-        + "			  and ((fgroup.ad_fieldgroup_id = fgroupTrl.ad_fieldgroup_id and fgroupTrl.ad_language = ? ) "
-        + "				or fgroupTrl.ad_fieldgroup_id is null) "
-        + "			UNION "
-        + "			select "
-        + "			  tab.name as tabName"
-        + "				,fgroup.ad_fieldgroup_id "
-        + "				, fgroup.name "
-        + "				, fgroupTrl.name "
-        + "			from "
-        + "			  ad_tab tab "
-        + "			  , ad_fieldgroup fgroup "
-        + "			  , ad_fieldgroup_trl fgroupTrl "
-        + "			where "
-        + "				fgroup.ad_fieldgroup_id = '1000100001' "
-        + "			  	and tab.ad_tab_id = ?  "
-        + "			  	and ((fgroup.ad_fieldgroup_id = fgroupTrl.ad_fieldgroup_id and fgroupTrl.ad_language = ? ) "
-        + "					or fgroupTrl.ad_fieldgroup_id is null) "
-        + "				and fgroup.ad_fieldgroup_id = fgroupTrl.ad_fieldgroup_id ";
+    StringBuffer strSql = new StringBuffer();
+    strSql
+        .append("    select t.name as tabName, fg.ad_fieldGroup_ID as fieldGroupId, fg.name as fieldGroupName, fg.name as fieldGroupTrlName");
+    strSql.append("    from ad_tab t,");
+    strSql.append("         ad_field f,");
+    strSql.append("         ad_fieldGroup fg,");
+    strSql.append("         ad_module mg");
+    strSql.append("   where t.ad_tab_id = ?");
+    strSql.append("     and f.ad_tab_id = t.ad_tab_id");
+    strSql.append("     and f.ad_fieldGroup_ID = fg.ad_fieldGroup_ID");
+    strSql.append("     and mg.ad_module_id = fg.ad_module_id");
+    strSql.append("     and mg.ad_language = ?");
+    strSql.append("  union ");
+    strSql
+        .append("  select t.name as tabName, fg.ad_fieldGroup_ID, fg.name, coalesce(fgt.name, fg.name)");
+    strSql.append("    from ad_tab t,");
+    strSql.append("         ad_field f,");
+    strSql.append("         ad_module mg,");
+    strSql.append("         ad_fieldGroup fg left join ad_fieldGroup_trl fgt ");
+    strSql.append("                            on fg.ad_fieldGroup_ID = fgt.ad_fieldGroup_ID");
+    strSql.append("                           and fgt.ad_language = ?");
+    strSql.append("   where t.ad_tab_id = ?");
+    strSql.append("     and f.ad_tab_id = t.ad_tab_id");
+    strSql.append("     and f.ad_fieldGroup_ID = fg.ad_fieldGroup_ID");
+    strSql.append("     and mg.ad_module_id = fg.ad_module_id");
+    strSql.append("     and mg.ad_language != ?");
+
+    // Audit Field group
+    strSql.append("  union");
+    strSql
+        .append("   select t.name as tabName, fg.ad_fieldGroup_ID, fg.name, coalesce(fgt.name, fg.name) ");
+    strSql.append("     from ad_tab t,");
+    strSql.append("          ad_fieldGroup fg left join ad_fieldGroup_Trl fgt");
+    strSql.append("                             on fg.ad_fieldGroup_ID = fgt.ad_fieldGroup_ID");
+    strSql.append("                            and fgt.ad_language = ?");
+    strSql.append("    where fg.ad_fieldGroup_ID = '1000100001' ");
+    strSql.append("      and t.ad_tab_id = ?");
 
     ResultSet result;
     Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
@@ -95,15 +98,16 @@ class FieldGroupLabelsData implements FieldProvider {
 
     int iParameter = 0;
     try {
-      st = connectionProvider.getPreparedStatement(strSql);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, language);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, ad_tab_id);
-      iParameter++;
-      UtilSql.setValue(st, iParameter, 12, null, language);
+      st = connectionProvider.getPreparedStatement(strSql.toString());
+      UtilSql.setValue(st, ++iParameter, 12, null, ad_tab_id);
+      UtilSql.setValue(st, ++iParameter, 12, null, language);
+
+      UtilSql.setValue(st, ++iParameter, 12, null, language);
+      UtilSql.setValue(st, ++iParameter, 12, null, ad_tab_id);
+      UtilSql.setValue(st, ++iParameter, 12, null, language);
+
+      UtilSql.setValue(st, ++iParameter, 12, null, language);
+      UtilSql.setValue(st, ++iParameter, 12, null, ad_tab_id);
 
       result = st.executeQuery();
       long countRecord = 0;

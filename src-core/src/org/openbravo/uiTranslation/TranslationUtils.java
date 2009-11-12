@@ -85,21 +85,14 @@ class TranslationUtils {
     FieldGroupLabelsData[] fieldGroupLabels;
     try {
       List<WindowLabel> windowLabelsCol = new ArrayList<WindowLabel>();
-      if (lang.equals("") || lang.equals(moduleLang) || moduleLang.equals("")) {
-        fieldLabels = FieldLabelsData.select(con, tabId, lang);
-        fieldGroupLabels = FieldGroupLabelsData.select(con, tabId);
-        populateFieldLabels(windowLabelsCol, fieldLabels);
-        if (fieldGroupLabels.length > 0) {
-          populateFieldGroupLabels(windowLabelsCol, fieldGroupLabels);
-        }
-      } else {
-        fieldLabels = FieldLabelsData.select(con, tabId, lang);
-        fieldGroupLabels = FieldGroupLabelsData.selectFieldGroupTrl(con, tabId, lang);
-        populateFieldLabels(windowLabelsCol, fieldLabels);
-        if (fieldGroupLabels.length > 0) {
-          populateFieldGroupLabels(windowLabelsCol, fieldGroupLabels);
-        }
+
+      fieldLabels = FieldLabelsData.select(con, tabId, lang);
+      fieldGroupLabels = FieldGroupLabelsData.selectFieldGroupTrl(con, tabId, lang);
+      populateFieldLabels(windowLabelsCol, fieldLabels);
+      if (fieldGroupLabels.length > 0) {
+        populateFieldGroupLabels(windowLabelsCol, fieldGroupLabels);
       }
+
       WindowLabel[] windowLabels = new WindowLabel[windowLabelsCol.size()];
       return windowLabelsCol.toArray(windowLabels);
     } catch (ServletException e) {
