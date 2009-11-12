@@ -1,0 +1,939 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Rebuild the System</title>
+  <link rel="shortcut icon" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS"></link>
+  <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
+  <script language="JavaScript" type="text/javascript" id="paramLanguage"></script>
+  <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+  <script language="JavaScript" type="text/javascript" id="paramDirectory"></script>
+  <script language="JavaScript" type="text/javascript">
+    function closeThisPage() {
+      window.close();
+      return true;
+    }
+  </script>
+  <script language="JavaScript" type="text/javascript">
+    var lc_isChronoEnabled = true;
+    var current_state=0;
+    var possible_states=[11,12,13,14,15,21,31,41,42,43,44,45,50,60];
+    var error_status=['','','','','','','','','','','','','',''];
+    var numofwarns=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    var numoferrs=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    var warnings=[];
+    var errors=[];
+    var start=false;
+    var mainTimeout;
+
+    
+    function restart() {
+        if (document.frmMain.option[0].checked) {
+          window.opener.submitCommandForm('RESTART', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
+          closeThisPage();
+          return false;
+        } else if (document.frmMain.option[1].checked) {
+          window.opener.submitCommandForm('RELOAD', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
+          closeThisPage();
+          return false;
+        } else if (document.frmMain.option[2].checked) {
+          closeThisPage();
+        }
+      } 
+
+    function getError1(paramXMLParticular, XMLHttpRequestObj) {
+        var strText = "";
+        if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
+          try {
+            if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
+          } catch (e) {
+            initialize_MessageBox('messageBoxID');
+            setValues_MessageBox('messageBoxID','ERROR','ERROR',e);
+          }
+          if (strText == "") {
+            showJSMessage(22);
+          } else {
+            //Expecting msg in JSON format
+            var msg = eval("("+strText+")");;
+            initialize_MessageBox('messageBoxID');
+            setValues_MessageBox('messageBoxID',msg.OBError.type, msg.OBError.title, msg.OBError.message);
+            if(msg.OBError.type!="Error"){
+                displayLogicElement('restartOptions',true);
+            }
+          }
+        }
+        return true;
+    }
+      
+    
+    function getError() {
+      var frm = document.frmMain;
+      var paramXMLReq = null;
+      return submitXmlHttpRequest(getError1, frm, "GETERR", "ApplyModules.html", false, null, paramXMLReq);
+    }
+    
+    function finalize() {
+      processing = false;
+      top.opener.setProcessingMode('window', false);
+      //document.getElementById('buttonOK').setAttribute('onclick','window.opener.submitCommandForm("DEFAULT", false, null, "ModuleManagement.html", "_self", null, true);closeThisPage();return false;');
+      
+      setTimeout("getError()",100);
+    }
+    
+    function endProcess(paramXMLParticular, XMLHttpRequestObj) {
+        var strText = "";
+        var id = "";
+        var imageId = "";
+        try {
+          if (XMLHttpRequestObj != null && XMLHttpRequestObj.responseText) {
+            strText = XMLHttpRequestObj.responseText
+            addText(strText);
+          }
+        } catch (e) {}
+        if (getReadyStateHandler(XMLHttpRequestObj)) finalize();
+        return true;
+    }
+    
+    function startProcessing() {
+      startLocalChrono('localChrono');
+      processing = true;
+      top.opener.setProcessingMode('window', true, false);
+      var frm = document.frmMain;
+      //displayLogicElement('buttonOK',false);
+      //displayLogicElement('buttonCancel',false);
+      displayLogicElement('confirmation',false);
+      displayLogicElement('rebuildTable',true);
+      var paramXMLReq = null;
+      return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false, null, paramXMLReq);
+    }
+    
+    function stopLocalChrono() {
+      lc_isChronoEnabled = false;
+    }
+
+    function startLocalChrono(destiny) {
+      var referenceDate = new Date();
+      referenceDate = referenceDate.getTime();
+      LocalChrono(destiny, referenceDate);
+    }
+
+    function getStatusIndex(state){
+      for(i=0;i<possible_states.length;i++){
+          if(possible_states[i]==state){
+              return i;
+          }
+      }
+    }
+
+    function askForErrorStatus(paramXMLParticular, XMLHttpRequestObj) {
+    	var strText = "";
+        if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
+          try {
+            if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
+          } catch (e) {
+          }
+
+          var msg = eval("("+strText+")");
+          
+          var state=msg.Response.state;
+          var errorStatus=msg.Response.statusofstate;
+          var stateindex=getStatusIndex(state);
+          progList_changeStatus(correspondingNode(state), errorStatus);
+          error_status[stateindex]=errorStatus;
+          insertWarnsAndErrors(msg.Response);
+        }
+    }
+
+    function correspondingNode(state_index){
+        state_index=parseFloat(state_index)/10;
+        return state_index.toString();
+    }
+
+    
+    function insertWarnsAndErrors(response){
+        if(response.statusofstate=="Warning"){
+            var warns=response.warnings.string;
+            if(warns!=null){
+                if(!(warns instanceof Array)){
+                    warns=[warns];
+                }
+                if(numofwarns[getStatusIndex(response.state)]<warns.length){
+                    for(i=numofwarns[getStatusIndex(response.state)];i<warns.length;i++){
+                            warnings.push(warns[i]);
+                            progList_addTextToTextArea('<i>Warning: </i>'+warns[i]);
+                    }
+                    numofwarns[getStatusIndex(response.state)]=warns.length;
+                }
+            }
+        }
+        if(response.statusofstate=="Error"){
+            var errs=response.errors.string;
+            if(errs!=null){
+                if(!(errs instanceof Array)){
+                    errs=[errs];
+                }
+                if(numoferrs[getStatusIndex(response.state)]<errs.length){
+                    for(i=numoferrs[getStatusIndex(response.state)];i<errs.length;i++){
+                            warnings.push(errs[i]);
+                            progList_addTextToTextArea('<b>Error: </b>'+errs[i]);
+                    }
+                    numoferrs[getStatusIndex(response.state)]=errs.length;
+                }
+            }
+        }
+    }
+    
+    function update(paramXMLParticular, XMLHttpRequestObj) {
+    	var strText = "";
+        if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
+          try {
+            if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
+          } catch (e) {
+          }
+
+          var msg = eval("("+strText+")");
+          
+          var state=msg.Response.state;
+          if(state=="11" || start==true){
+             if(state=="60"){
+                 clearTimeout(mainTimeout);
+             }
+             start=true;
+	         var errorStatus=msg.Response.statusofstate;
+	         var stateindex=getStatusIndex(state);
+	         if(stateindex>current_state){
+	           for(i=current_state;i<stateindex;i++){
+	               //We need to ask for warning/error state for the intermediate status
+	               document.getElementById("reqStatus").value=possible_states[i];
+	               submitXmlHttpRequest(askForErrorStatus, frmMain, "REQUESTERRORSTATE", "ApplyModules.html", false, null, null);
+	           }
+	         }
+	         
+	         error_status[getStatusIndex(state)]=errorStatus;
+	         progList_changeStatus(correspondingNode(state), errorStatus, msg.Response.lastmessage);
+
+	         insertWarnsAndErrors(msg.Response);
+	         
+	         current_state=stateindex;
+	         var ind11=getStatusIndex(11);
+	         if(error_status[ind11]=='Success' && error_status[ind11+1]=='Success' && error_status[ind11+2]=='Success' && error_status[ind11+3]=='Success' && error_status[ind11+4]=='Success'){
+	             progList_changeStatus('1', 'Success');
+	         }else if(error_status[ind11]=='Error' || error_status[ind11+1]=='Error'|| error_status[ind11+2]=='Error'|| error_status[ind11+3]=='Error'|| error_status[ind11+4]=='Error'){
+	             progList_changeStatus('1', 'Error');
+	         }else if(error_status[ind11]=='Warning' || error_status[ind11+1]=='Warning'|| error_status[ind11+2]=='Warning'|| error_status[ind11+3]=='Warning'|| error_status[ind11+4]=='Warning'){
+	             progList_changeStatus('1', 'Warning');
+	         }
+
+	         var ind41=getStatusIndex(41);
+             if(error_status[ind41]=='Success' && error_status[ind41+1]=='Success' && error_status[ind41+2]=='Success' && error_status[ind41+3]=='Success' && error_status[ind41+4]=='Success'){
+	             progList_changeStatus('4', 'Success');
+	         }else if(error_status[ind41]=='Error' || error_status[ind41+1]=='Error'|| error_status[ind41+2]=='Error'|| error_status[ind41+3]=='Error'|| error_status[ind41+4]=='Error'){
+	             progList_changeStatus('4', 'Error');
+	         }else if(error_status[ind41]=='Warning' || error_status[ind41+1]=='Warning'|| error_status[ind41+2]=='Warning'|| error_status[ind41+3]=='Warning'|| error_status[ind41+4]=='Warning'){
+	             progList_changeStatus('4', 'Warning');
+	         }
+	      
+          }
+          
+        }
+    }
+
+    function LocalChrono(destiny, referenceDate) {
+      var actualDate = new Date();
+      actualDate = actualDate.getTime();
+
+      var difDate = actualDate - referenceDate;
+      difDate = difDate / 1000;
+      difDate = Math.floor(difDate);
+
+      var seconds = difDate%60;
+      var minutes = Math.floor(difDate/60);
+
+      var seconds_string = seconds.toString();
+      var minutes_string = minutes.toString();
+
+      if (seconds_string.length == 1) {
+        seconds_string = "0" + seconds_string;
+      }
+      if (minutes_string.length == 1) {
+        minutes_string = "0" + minutes_string;
+      }
+      var output = minutes_string + ":" + seconds_string;
+      document.getElementById(destiny).innerHTML=output;
+
+
+      submitXmlHttpRequest(update, frmMain, "UPDATESTATUS", "ApplyModules.html", false, null, null);
+      
+
+      if (lc_isChronoEnabled) {
+        mainTimeout=setTimeout(function() {LocalChrono(destiny, referenceDate);},1000);
+      }
+    }
+
+    function progList_changeStatus(node, newStatus, text) {
+	      node=node.toString();
+	      if (newStatus == "Success") {
+	        document.getElementById("icon_" + node).className = "CheckList_Icon_Success";
+	        document.getElementById("processing_" + node).innerHTML = " ";
+	        document.getElementById("processing_" + node).style.display = "none";
+	        document.getElementById("error_" + node).style.display = "none";
+	        document.getElementById("exception_" + node).style.display = "none";
+	        document.getElementById("warning_" + node).style.display = "none";
+	      } else if (newStatus == "Error") {
+	        document.getElementById("icon_" + node).className = "CheckList_Icon_Error";
+	        document.getElementById("processing_" + node).innerHTML = " ";
+	        document.getElementById("processing_" + node).style.display = "none";
+	        document.getElementById("error_" + node).style.display = "";
+	        document.getElementById("exception_" + node).style.display = "none";
+	        document.getElementById("warning_" + node).style.display = "none";
+	      } else if (newStatus == "Exception") {
+	        document.getElementById("icon_" + node).className = "CheckList_Icon_Exception";
+	        document.getElementById("processing_" + node).innerHTML = " ";
+	        document.getElementById("processing_" + node).style.display = "none";
+	        document.getElementById("error_" + node).style.display = "none";
+	        document.getElementById("exception_" + node).style.display = "";
+	        document.getElementById("warning_" + node).style.display = "none";
+	      } else if (newStatus == "Warning") {
+	        document.getElementById("icon_" + node).className = "CheckList_Icon_Warning";
+	        document.getElementById("processing_" + node).innerHTML = " ";
+	        document.getElementById("processing_" + node).style.display = "none";
+	        document.getElementById("error_" + node).style.display = "none";
+	        document.getElementById("exception_" + node).style.display = "none";
+	        document.getElementById("warning_" + node).style.display = "";
+	      } else if (newStatus == "Pending") {
+	        document.getElementById("icon_" + node).className = "CheckList_Icon_Pending";
+	        document.getElementById("processing_" + node).innerHTML = " ";
+	        document.getElementById("processing_" + node).style.display = "none";
+	        document.getElementById("error_" + node).style.display = "none";
+	        document.getElementById("exception_" + node).style.display = "none";
+	        document.getElementById("warning_" + node).style.display = "none";
+	      } else if (newStatus == "Processing") {
+	        document.getElementById("icon_" + node).className = "CheckList_Icon_Processing";
+	        if (text) {
+	          document.getElementById("processing_" + node).innerHTML = text;
+	        } else {
+	          document.getElementById("processing_" + node).innerHTML = " ";
+	        }
+	        document.getElementById("processing_" + node).style.display = "";
+	        document.getElementById("error_" + node).style.display = "none";
+	        document.getElementById("exception_" + node).style.display = "none";
+	        document.getElementById("warning_" + node).style.display = "none";
+	      }
+    }
+
+    function progList_setTextToTextArea(text) {
+      document.getElementById('warningsAndErrors').innerHTML = text;
+    }
+
+    function progList_addTextToTextArea(text) {
+      document.getElementById('warningsAndErrors').innerHTML += text+"<br>";
+    }
+
+    function resetAllStates(){
+        progList_changeStatus('1', 'Pending');
+        progList_changeStatus('1.1', 'Pending');
+        progList_changeStatus('1.2', 'Pending');
+        progList_changeStatus('1.3', 'Pending');
+        progList_changeStatus('1.4', 'Pending');
+        progList_changeStatus('1.5', 'Pending');
+        progList_changeStatus('2.1', 'Pending');
+        progList_changeStatus('3.1', 'Pending');
+        progList_changeStatus('4', 'Pending');
+        progList_changeStatus('4.1', 'Pending');
+        progList_changeStatus('4.2', 'Pending');
+        progList_changeStatus('4.3', 'Pending');
+        progList_changeStatus('4.4', 'Pending');
+        progList_changeStatus('5', 'Pending');
+    }
+
+  </script>
+    <script language="JavaScript" type="text/javascript">
+
+    function onLoadDo() {
+      this.windowTables = new Array(
+        new windowTableId('client', 'buttonOK')
+      );
+      setWindowTableParentElement();
+      enableShortcuts('popup');
+      setBrowserAutoComplete(false);
+
+      setWindowElementFocus('firstElement');
+      displayLogicElement('confirmation',true);
+      displayLogicElement('rebuildTable',false);
+      displayLogicElement('restartOptions',false);
+    }
+
+    function onResizeDo() {
+    }
+    
+    function onUnloadDo() {
+      try {
+        top.opener.setProcessingMode('window', false);
+      }
+      catch (e) {}
+    }
+
+    var processing = false;
+
+</script>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onunload="onUnloadDo();" id="paramMessage">
+  <form id="form" method="post" action="ApplyModules.html" name="frmMain" target="hiddenFrame">
+    <input type="hidden" name="Command"></input>
+    <input type="hidden" name="IsPopUpCall" value="1"></input>
+    <input type="hidden" name="inpLastFieldChanged"></input>
+    <input type="hidden" name="inpSelected" id="paramSelected" value=""></input>
+    <input type="hidden" name="reqStatus" id="reqStatus" value=""></input>
+    <div class="Popup_ContentPane_CircleLogo">
+
+      <div class="Popup_WindowLogo">
+        <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../web/images/blank.gif" border="0/"></img>
+      </div>
+    </div>
+
+    <table cellspacing="0" cellpadding="0" width="100%">
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar">
+
+            <tr class="Popup_NavBar_bg"><td></td>
+              <td class="Popup_NavBar_separator_cell"></td>
+              <td class="Popup_NavBar_bg_logo_left"></td>
+              <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo"></img></td>
+              <td class="Popup_NavBar_bg_logo_right"></td>
+              <td class="Popup_NavBar_Popup_title_cell"><span>Rebuild the System (New!!!)</span></td>
+              <td class="Popup_NavBar_separator_cell"></td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_SeparatorBar">
+            <tr>
+              <td class="Popup_SeparatorBar_bg"></td>
+
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
+            
+            <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxHIDDEN">
+              <tbody>
+                <tr class="MessageBox_TopMargin">
+
+                  <td class="MessageBox_LeftMargin"></td>
+                  <td></td>
+                  <td class="MessageBox_RightMargin"></td>
+                </tr>
+                <tr>
+                  <td class="MessageBox_LeftMargin"></td>
+                  <td>
+
+                    <table cellpadding="0" cellspacing="0" style="width: 100%;">
+
+                      <tbody>
+                        <tr>
+                          <td class="MessageBox_LeftTrans">
+                            <table style="width: 100%; height: 100%" cellpadding="0" cellspacing="0">
+                              <tbody>
+                              <tr>
+                                <td class="MessageBox_TopLeft"></td>
+                              </tr>
+                              <tr>
+
+                                <td class="MessageBox_Left"></td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                          <td class="MessageBox_bg">
+
+                            <table class="MessageBox_Top">
+                              <tbody>
+
+                                <tr>
+                                  <td>
+                                    <span>
+                                      <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
+                                        <tbody>
+                                          <tr>
+                                            <td class="MessageBox_Icon_ContentCell">
+                                              <div class="MessageBox_Icon"></div>
+                                            </td>
+
+                                            <td style="vertical-align: top;" id="messageBoxIDContent">
+                                              <span>
+                                                <div class="MessageBox_TextTitle" id="messageBoxIDTitle"></div>
+                                                <div class="MessageBox_TextDescription" id="messageBoxIDMessage"></div>
+                                                <div class="MessageBox_TextSeparator"></div>
+                                              </span>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+
+                                      </table>
+                                    </span>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+
+                          </td>
+                          <td class="MessageBox_RightTrans">
+
+                            <table style="width: 100%; height: 100%" cellpadding="0" cellspacing="0">
+                              <tbody>
+                              <tr>
+                                <td class="MessageBox_TopRight"></td>
+                              </tr>
+                              <tr>
+                                <td class="MessageBox_Right"></td>
+                              </tr>
+                              </tbody>
+
+                            </table>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td rowspan="2" class="MessageBox_BottomLeft">
+                          </td>
+                          <td class="MessageBox_BottomTrans MessageBox_bg">
+                          </td>
+                          <td rowspan="2" class="MessageBox_BottomRight">
+
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="MessageBox_Bottom">
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                  </td>
+                  <td class="MessageBox_RightMargin"></td>
+                </tr>
+                <tr class="MessageBox_BottomMargin">
+                  <td class="MessageBox_LeftMargin"></td>
+                  <td></td>
+                  <td class="MessageBox_RightMargin"></td>
+                </tr>
+              </tbody>
+
+            </table>
+            
+            
+            <table style="width: 550px !important;" cellspacing="0" cellpadding="0" border ="0" class="Login_Home_TableEdition" id="confirmation">
+              <tr><td style="height: 20px;"></td></tr>
+              <tr>
+                <td colspan="2">
+                  <div style="overflow: auto;">
+                    <span class="PlainText_normal" style="font-size: 10pt; padding-left: 165px">Do you want to rebuild the system now?</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="height: 20px;"></td></tr>
+                <td class="Button_RightAlign_ContentCell">
+                  <div>
+                    <button type="button" 
+                      id="buttonOK" 
+                      class="ButtonLink" 
+                      onclick="startProcessing();return false;" 
+                      onfocus="buttonEvent('onfocus', this); window.status='Accept'; return true;" 
+                      onblur="buttonEvent('onblur', this);" 
+                      onkeyup="buttonEvent('onkeyup', this);" 
+                      onkeydown="buttonEvent('onkeydown', this);" 
+                      onkeypress="buttonEvent('onkeypress', this);" 
+                      onmouseup="buttonEvent('onmouseup', this);" 
+                      onmousedown="buttonEvent('onmousedown', this);" 
+                      onmouseover="buttonEvent('onmouseover', this); window.status='Accept'; return true;" 
+                      onmouseout="buttonEvent('onmouseout', this);">
+                      <table class="Button">
+                        <tr>
+                          <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border="0" /></td>
+                          <td class="Button_text Button_width">Yes</td>
+                          <td class="Button_right"></td>
+                        </tr>
+                      </table>
+                    </button>
+                 </div>
+               </td>
+               <td class="Button_LeftAlign_ContentCell">
+                <button type="button" 
+                  id="buttonCancel" 
+                  class="ButtonLink" 
+                  onclick="closeThisPage();return false;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;" 
+                  onblur="buttonEvent('onblur', this);" 
+                  onkeyup="buttonEvent('onkeyup', this);" 
+                  onkeydown="buttonEvent('onkeydown', this);" 
+                  onkeypress="buttonEvent('onkeypress', this);" 
+                  onmouseup="buttonEvent('onmouseup', this);" 
+                  onmousedown="buttonEvent('onmousedown', this);" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Cancel'; return true;" 
+                  onmouseout="buttonEvent('onmouseout', this);">
+                  <table class="Button">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border="0" /></td>
+                      <td class="Button_text Button_width">Cancel</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </button>
+               </td>
+               <td></td>
+             </tr>
+            </table>
+            
+            <table class="Popup_Client_TablePopup" cellpadding="0" cellspacing="0" style="margin-top: 15px;" id="rebuildTable">
+              <tr>
+                <td class="TablePopup_OneCell_width"></td>
+                <td class="TablePopup_OneCell_width"></td>
+                <td class="TablePopup_OneCell_width"></td>
+                <td class="TablePopup_OneCell_width"></td>
+              </tr>
+
+              <tr><td colspan="4">
+                <div style="overflow: auto; width: 600px;">
+                  <span class="CheckList_RebuildSystemWindow_title">Estimated total time for rebuild: 3-7 minutes. Elapsed time: <span id="localChrono">00:00</span>.</br> Do not close this window.</span>
+                 </div>
+              </td></tr>
+
+              <tr><td colspan="4">
+
+
+                <div class="TextArea_FourCells_width" id="CheckList">
+                  <div style="padding: 15 5 15 5;" id="CheckListContainer">
+
+                    <div class="CheckList_Row" id="node_1">
+                      <div id="padding_1" class="CheckList_Padding_0"></div>
+                      <div id="icon_1" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                       <div class="CheckList_Text_Title" id="title_1">Database update</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_1" style="display: none;"> </div>
+                      <div class="CheckList_Text_Message_Error" id="error_1" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_1" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_1" style="display: none;">WARNING</div>
+                    </div>
+                    
+                    <div class="CheckList_Row" id="node_1.1">
+                      <div id="padding_1.1" class="CheckList_Padding_1"></div>
+                      <div id="icon_1.1" class="CheckList_Icon_Processing"></div>
+                      <div class="CheckList_Text_Container">
+                       <div class="CheckList_Text_Title" id="title_1.1">DAL initialization</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_1.1" style="display: none;"> </div>
+                      <div class="CheckList_Text_Message_Error" id="error_1.1" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_1.1" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_1.1" style="display: none;">WARNING</div>
+                    </div>
+                    
+                    <div class="CheckList_Row" id="node_1.2">
+                      <div id="padding_1.2" class="CheckList_Padding_1"></div>
+                      <div id="icon_1.2" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                       <div class="CheckList_Text_Title" id="title_1.2">Database model load</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_1.2" style="display: none;"> </div>
+                      <div class="CheckList_Text_Message_Error" id="error_1.2" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_1.2" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_1.2" style="display: none;">WARNING</div>
+                    </div>
+                    
+                    <div class="CheckList_Row" id="node_1.3">
+                      <div id="padding_1.3" class="CheckList_Padding_1"></div>
+                      <div id="icon_1.3" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                       <div class="CheckList_Text_Title" id="title_1.3">Generation of change list</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_1.3" style="display: none;"> </div>
+                      <div class="CheckList_Text_Message_Error" id="error_1.3" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_1.3" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_1.3" style="display: none;">WARNING</div>
+                    </div>
+                    
+                    <div class="CheckList_Row" id="node_1.4">
+                      <div id="padding_1.4" class="CheckList_Padding_1"></div>
+                      <div id="icon_1.4" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                       <div class="CheckList_Text_Title" id="title_1.4">Database structure update</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_1.4" style="display: none;"> </div>
+                      <div class="CheckList_Text_Message_Error" id="error_1.4" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_1.4" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_1.4" style="display: none;">WARNING</div>
+                    </div>
+                    
+                    <div class="CheckList_Row" id="node_1.5">
+                      <div id="padding_1.5" class="CheckList_Padding_1"></div>
+                      <div id="icon_1.5" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                       <div class="CheckList_Text_Title" id="title_1.5">Database data update</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_1.5" style="display: none;"> </div>
+                      <div class="CheckList_Text_Message_Error" id="error_1.5" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_1.5" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_1.5" style="display: none;">WARNING</div>
+                    </div>
+                    
+                    <div class="CheckList_Row" id="node_2.1">
+                      <div id="padding_2.1" class="CheckList_Padding_0"></div>
+                      <div id="icon_2.1" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                        <div class="CheckList_Text_Title" id="title_2.1">Entity generation</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_2.1" style="display: none;"> </div>
+                      <div class="CheckList_Text_Message_Error" id="error_2.1" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_2.1" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_2.1" style="display: none;">WARNING</div>
+                    </div>
+
+                    <div class="CheckList_Row" id="node_3.1">
+                      <div id="padding_3.1" class="CheckList_Padding_0"></div>
+                      <div id="icon_3.1" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                        <div class="CheckList_Text_Title" id="title_3.1">Reference data and translation info loading</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_3.1" style="display: none;"> </div>
+                      <div class="CheckList_Text_Message_Error" id="error_3.1" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_3.1" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_3.1" style="display: none;">WARNING</div>
+                    </div>
+
+                    <div class="CheckList_Row" id="node_4">
+                      <div id="padding_4" class="CheckList_Padding_0"></div>
+                      <div id="icon_4" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                        <div class="CheckList_Text_Title" id="title_4">Source compilation</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_4" style="display: none;"></div>
+                      <div class="CheckList_Text_Message_Error" id="error_4" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_4" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_4" style="display: none;">WARNING</div>
+                    </div>
+
+                    <div class="CheckList_Row" id="node_4.1">
+                      <div id="padding_4.1" class="CheckList_Padding_1"></div>
+                      <div id="icon_4.1" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                        <div class="CheckList_Text_Title" id="title_4.1">WAD generation</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_4.1" style="display: none;"></div>
+                      <div class="CheckList_Text_Message_Error" id="error_4.1" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_4.1" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_4.1" style="display: none;">WARNING</div>
+                    </div>
+
+                    <div class="CheckList_Row" id="node_4.2">
+                      <div id="padding_4.2" class="CheckList_Padding_1"></div>
+                      <div id="icon_4.2" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                        <div class="CheckList_Text_Title" id="title_4.2">xsql class generation</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_4.2" style="display: none;"></div>
+                      <div class="CheckList_Text_Message_Error" id="error_4.2" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_4.2" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_4.2" style="display: none;">WARNING</div>
+                    </div>
+
+                    <div class="CheckList_Row" id="node_4.3">
+                      <div id="padding_4.3" class="CheckList_Padding_1"></div>
+                      <div id="icon_4.3" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                        <div class="CheckList_Text_Title" id="title_4.3">Java compilation</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_4.3" style="display: none;"></div>
+                      <div class="CheckList_Text_Message_Error" id="error_4.3" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_4.3" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_4.3" style="display: none;">WARNING</div>
+                    </div>
+
+                    <div class="CheckList_Row" id="node_4.4">
+                      <div id="padding_4.4" class="CheckList_Padding_1"></div>
+                      <div id="icon_4.4" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                        <div class="CheckList_Text_Title" id="title_4.4">WebContent folder generation</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_4.4" style="display: none;"></div>
+                      <div class="CheckList_Text_Message_Error" id="error_4.4" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_4.4" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_4.4" style="display: none;">WARNING</div>
+                    </div>
+
+                    <div class="CheckList_Row" id="node_4.5">
+                      <div id="padding_4.5" class="CheckList_Padding_1"></div>
+                      <div id="icon_4.5" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                        <div class="CheckList_Text_Title" id="title_4.5">Deploying files to server</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_4.5" style="display: none;"></div>
+                      <div class="CheckList_Text_Message_Error" id="error_4.5" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_4.5" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_4.5" style="display: none;">WARNING</div>
+                    </div>
+
+                    <div class="CheckList_Row" id="node_5">
+                      <div id="padding_5" class="CheckList_Padding_0"></div>
+                      <div id="icon_5" class="CheckList_Icon_Pending"></div>
+                      <div class="CheckList_Text_Container">
+                        <div class="CheckList_Text_Title" id="title_5">Rebuild successful, context needs to be restarted</div>
+                      </div>
+                      <div class="CheckList_Text_Separator"></div>
+                      <div class="CheckList_Text_Message_Processing" id="processing_5" style="display: none;"> </div>
+                      <div class="CheckList_Text_Message_Error" id="error_5" style="display: none;">ERROR</div>
+                      <div class="CheckList_Text_Message_Exception" id="exception_5" style="display: none;">EXCEPTION</div>
+                      <div class="CheckList_Text_Message_Warning" id="warning_5" style="display: none;">WARNING</div>
+                    </div>
+
+
+              </td></tr>
+
+              <tr><td colspan="4">
+                <div style="overflow: auto; width: 600px;">
+                  <span class="CheckList_RebuildSystemWindow_title">Warnings and errors:</span>
+                </div>
+              </td></tr>
+
+              <tr>
+                <tr><td height="10"></td></tr>
+                <td colspan="4">
+                  <div class="CheckList_RebuildSystemWindow_textarea" id="warningsAndErrors">
+                </td>
+              </tr>
+
+
+              <tr><td height="10"></td></tr>
+              <tr>
+                <td></td>
+                <td colspan="2">
+                  <div>
+                    <button type="button" id="buttonContinue" class="ButtonLink" onclick="alert('Show log'); return false;" onfocus="buttonEvent('onfocus', this); window.status='Show log'; return true;" onblur="buttonEvent('onblur', this);" onkeyup="buttonEvent('onkeyup', this);" onkeydown="buttonEvent('onkeydown', this);" onkeypress="buttonEvent('onkeypress', this);" onmouseup="buttonEvent('onmouseup', this);" onmousedown="buttonEvent('onmousedown', this);" onmouseover="buttonEvent('onmouseover', this); window.status='Show log'; return true;" onmouseout="buttonEvent('onmouseout', this);">
+                      <table class="Button">
+                        <tr>
+                          <td class="Button_left"><img class="Button_Icon" alt="Show log" title="Show log" src="../web/images/blank.gif" border="0"></img></td>
+                          <td class="Button_text">Show log</td>
+                          <td class="Button_right"></td>
+                        </tr>
+
+                      </table>
+                    </button>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+              
+          </div>
+        </td>
+
+      </tr>
+    </table>
+    
+    
+    
+    <table class="Popup_Client_TablePopup" cellpadding="0" cellspacing="0" id="restartOptions" style="margin-top: 5px;">
+              
+              <tr><td colspan="2">
+                <div style="overflow: auto; width: 600px;">
+                  <span class="PlainText_normal">In order for the changes to take effect, you need to restart the servlet container or reload the Openbravo application.</span>
+                </div>
+              </td></tr>
+              <tr><td height="10"></td></tr>
+              <tr>
+                <td colspan="4"><span class="Radio_container_NOT_focused"><input name="option" required="true" value="restart" type="radio" checked></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Restart servlet container now <a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1');return false;" target="_blank" href="#restart">learn more</a></span></td>
+              </tr>
+              <tr>
+                <td colspan="4"><span class="Radio_container_NOT_Focused"><input name="option" required="true" value="reload" type="radio"></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Reload the Openbravo application now <a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1');return false;" target="_blank" href="#reload">learn more</a></span></td>
+              </tr>
+              <tr>
+                <td colspan="4"><span class="Radio_container_NOT_Focused"><input name="option" required="true" value="doNothing" type="radio"></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Don't do anything now. I will reload the Openbravo application manually later <a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1');return false;" target="_blank" href="#nothing">learn more</a></span></td>
+              </tr>
+
+              <tr><td height="20"></td></tr>
+              <tr>
+                <td></td>
+                <td>
+                  <div>
+                    <button type="button" 
+                      id="buttonContinue" 
+                      class="ButtonLink" 
+                      onclick="restart();return false;" 
+                      onfocus="buttonEvent('onfocus', this); window.status='Continue'; return true;" 
+                      onblur="buttonEvent('onblur', this);" 
+                      onkeyup="buttonEvent('onkeyup', this);" 
+                      onkeydown="buttonEvent('onkeydown', this);" 
+                      onkeypress="buttonEvent('onkeypress', this);" 
+                      onmouseup="buttonEvent('onmouseup', this);" 
+                      onmousedown="buttonEvent('onmousedown', this);" 
+                      onmouseover="buttonEvent('onmouseover', this); window.status='Continue'; return true;" 
+                      onmouseout="buttonEvent('onmouseout', this);">
+                      <table class="Button">
+                        <tr>
+                          <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Continue" title="Continue" src="../../../../../web/images/blank.gif" border="0" /></td>
+                          <td class="Button_text Button_width">Continue</td>
+                          <td class="Button_right"></td>
+                        </tr>
+                      </table>
+                    </button>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+            </table>
+  </form>
+
+
+</body></html>
+              
