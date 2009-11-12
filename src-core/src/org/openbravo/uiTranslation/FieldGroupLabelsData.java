@@ -40,20 +40,12 @@ class FieldGroupLabelsData implements FieldProvider {
     }
   }
 
+  /**
+   * Obtains all field group labels for a tab in the specific language. If language is not found the
+   * base label is taken.
+   */
   public static FieldGroupLabelsData[] selectFieldGroupTrl(ConnectionProvider connectionProvider,
       String ad_tab_id, String language) throws ServletException {
-    return selectFieldGroupTrl(connectionProvider, ad_tab_id, language, 0, 0);
-  }
-
-  public static FieldGroupLabelsData[] selectFieldGroupTrl(ConnectionProvider connectionProvider,
-      String ad_tab_id, String language, String keyValue, String keyName, int numberRegisters)
-      throws ServletException {
-    return selectFieldGroupTrl(connectionProvider, ad_tab_id, language, 0, numberRegisters);
-  }
-
-  public static FieldGroupLabelsData[] selectFieldGroupTrl(ConnectionProvider connectionProvider,
-      String ad_tab_id, String language, int firstRegister, int numberRegisters)
-      throws ServletException {
     StringBuffer strSql = new StringBuffer();
     strSql
         .append("    select t.name as tabName, fg.ad_fieldGroup_ID as fieldGroupId, fg.name as fieldGroupName, fg.name as fieldGroupTrlName");
@@ -111,13 +103,8 @@ class FieldGroupLabelsData implements FieldProvider {
 
       result = st.executeQuery();
       long countRecord = 0;
-      long countRecordSkip = 1;
-      boolean continueResult = true;
-      while (countRecordSkip < firstRegister && continueResult) {
-        continueResult = result.next();
-        countRecordSkip++;
-      }
-      while (continueResult && result.next()) {
+
+      while (result.next()) {
         countRecord++;
         FieldGroupLabelsData objectFieldGroupLabelsData = new FieldGroupLabelsData();
         objectFieldGroupLabelsData.tabname = UtilSql.getValue(result, "TABNAME");
@@ -125,11 +112,7 @@ class FieldGroupLabelsData implements FieldProvider {
         objectFieldGroupLabelsData.fieldgroupname = UtilSql.getValue(result, "FIELDGROUPNAME");
         objectFieldGroupLabelsData.fieldgrouptrlname = UtilSql
             .getValue(result, "FIELDGROUPTRLNAME");
-        objectFieldGroupLabelsData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectFieldGroupLabelsData);
-        if (countRecord >= numberRegisters && numberRegisters != 0) {
-          continueResult = false;
-        }
       }
       result.close();
     } catch (SQLException e) {
@@ -151,17 +134,54 @@ class FieldGroupLabelsData implements FieldProvider {
     return (objectFieldGroupLabelsData);
   }
 
+  /**
+   * Do not use. Use instead
+   * {@link FieldGroupLabelsData#selectFieldGroupTrl(ConnectionProvider, String, String)}
+   */
+  @Deprecated
+  public static FieldGroupLabelsData[] selectFieldGroupTrl(ConnectionProvider connectionProvider,
+      String ad_tab_id, String language, String keyValue, String keyName, int numberRegisters)
+      throws ServletException {
+    return selectFieldGroupTrl(connectionProvider, ad_tab_id, language);
+  }
+
+  /**
+   * Do not use. Use instead
+   * {@link FieldGroupLabelsData#selectFieldGroupTrl(ConnectionProvider, String, String)}
+   */
+  @Deprecated
+  public static FieldGroupLabelsData[] selectFieldGroupTrl(ConnectionProvider connectionProvider,
+      String ad_tab_id, String language, int firstRegister, int numberRegisters)
+      throws ServletException {
+    return selectFieldGroupTrl(connectionProvider, ad_tab_id, language);
+  }
+
+  /**
+   * Do not use. Use instead
+   * {@link FieldGroupLabelsData#selectFieldGroupTrl(ConnectionProvider, String, String)}
+   */
+  @Deprecated
   public static FieldGroupLabelsData[] select(ConnectionProvider connectionProvider,
       String ad_tab_id) throws ServletException {
     return select(connectionProvider, ad_tab_id, 0, 0);
   }
 
+  /**
+   * Do not use. Use instead
+   * {@link FieldGroupLabelsData#selectFieldGroupTrl(ConnectionProvider, String, String)}
+   */
+  @Deprecated
   public static FieldGroupLabelsData[] select(ConnectionProvider connectionProvider,
       String ad_tab_id, String keyValue, String keyName, int numberRegisters)
       throws ServletException {
     return select(connectionProvider, ad_tab_id, 0, numberRegisters);
   }
 
+  /**
+   * Do not use. Use instead
+   * {@link FieldGroupLabelsData#selectFieldGroupTrl(ConnectionProvider, String, String)}
+   */
+  @Deprecated
   public static FieldGroupLabelsData[] select(ConnectionProvider connectionProvider,
       String ad_tab_id, int firstRegister, int numberRegisters) throws ServletException {
     String strSql = "";
