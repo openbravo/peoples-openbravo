@@ -20,19 +20,25 @@ package org.openbravo.erpCommon.ad_process;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.AntExecutor;
 import org.openbravo.erpCommon.utility.OBError;
@@ -42,6 +48,9 @@ import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.service.system.ReloadContext;
 import org.openbravo.service.system.RestartTomcat;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 
 /**
  * Servlet for the Apply Modules method.
@@ -62,6 +71,10 @@ public class ApplyModules extends HttpSecureAppServlet {
       printPage(request, response, vars);
     } else if (vars.commandIn("STARTAPPLY")) {
       startApply(response, vars);
+    } else if (vars.commandIn("UPDATESTATUS")) {
+      update(response, vars);
+    } else if (vars.commandIn("REQUESTERRORSTATE")) {
+      requesterrorstate(response, vars);
     } else if (vars.commandIn("UPDATELOG")) {
       updateLog(response, vars);
     } else if (vars.commandIn("GETERR")) {
@@ -98,7 +111,7 @@ public class ApplyModules extends HttpSecureAppServlet {
     }
 
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/ApplyModules").createXmlDocument();
+        "org/openbravo/erpCommon/ad_process/ApplyModulesNew").createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -175,6 +188,118 @@ public class ApplyModules extends HttpSecureAppServlet {
     RestartTomcat.restart();
   }
 
+  private ApplyModulesResponse fillResponse(String state) {
+    ApplyModulesResponse pet = new ApplyModulesResponse();
+    pet.setState(Integer.parseInt(state.replace("RB", "")));
+    PreparedStatement ps = null;
+    PreparedStatement ps2 = null;
+    PreparedStatement ps3 = null;
+    try {
+      ps = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN' AND SYSTEM_STATUS LIKE ?");
+      ps.setString(1, "%" + state);
+      ps.executeQuery();
+      ResultSet rs = ps.getResultSet();
+      ArrayList<String> warnings = new ArrayList<String>();
+      while (rs.next()) {
+        warnings.add(rs.getString(1));
+      }
+      String[] warns = new String[warnings.size()];
+      for (int i = 0; i < warnings.size(); i++)
+        warns[i] = warnings.get(i);
+      pet.setWarnings(warnings.toArray(new String[0]));
+
+      ps2 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND SYSTEM_STATUS LIKE ?");
+      ps2.setString(1, "%" + state);
+      ps2.executeQuery();
+      ResultSet rs2 = ps2.getResultSet();
+      ArrayList<String> errors = new ArrayList<String>();
+      while (rs2.next()) {
+        errors.add(rs2.getString(1));
+      }
+      String[] errs = new String[errors.size()];
+      for (int i = 0; i < errors.size(); i++)
+        errs[i] = errors.get(i);
+      pet.setErrors(errs);
+
+      ps3 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG ORDER BY CREATED DESC");
+      ps3.executeQuery();
+      ResultSet rs3 = ps3.getResultSet();
+      if (rs3.next()) {
+        pet.setLastmessage(rs3.getString(1));
+      }
+
+    } catch (Exception e) {
+      log4j.error("Error while building Response object", e);
+    } finally {
+      try {
+        releasePreparedStatement(ps3);
+        releasePreparedStatement(ps2);
+        releasePreparedStatement(ps);
+      } catch (SQLException e2) {
+        e2.printStackTrace();
+      }
+    }
+    return pet;
+  }
+
+  private void update(HttpServletResponse response, VariablesSecureApp vars) {
+    PreparedStatement ps = null;
+    try {
+      ps = getPreparedStatement("SELECT SYSTEM_STATUS FROM AD_SYSTEM_INFO");
+      ps.executeQuery();
+      ResultSet rs = ps.getResultSet();
+      rs.next();
+      String state = rs.getString(1);
+      ApplyModulesResponse pet = fillResponse(state);
+      if (pet.getErrors().length > 0)
+        pet.setStatusofstate("Error");
+      else if (pet.getWarnings().length > 0)
+        pet.setStatusofstate("Warning");
+      else
+        pet.setStatusofstate("Processing");
+      response.setContentType("text/plain; charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      String strResult;
+      XStream xs = new XStream(new JettisonMappedXmlDriver());
+      xs.alias("Response", ApplyModulesResponse.class);
+      strResult = xs.toXML(pet);
+      out.print(strResult);
+      out.close();
+    } catch (Exception e) {
+      log4j.error("Error while updating the system status in the rebuild window.", e);
+    } finally {
+      if (ps != null)
+        try {
+          releasePreparedStatement(ps);
+        } catch (SQLException e) {
+          log4j.error(e);
+        }
+    }
+  }
+
+  private void requesterrorstate(HttpServletResponse response, VariablesSecureApp vars) {
+    String state = vars.getStringParameter("reqStatus");
+    ApplyModulesResponse pet = fillResponse(state);
+    if (pet.getErrors().length > 0)
+      pet.setStatusofstate("Error");
+    else if (pet.getWarnings().length > 0)
+      pet.setStatusofstate("Warning");
+    else
+      pet.setStatusofstate("Success");
+    response.setContentType("text/plain; charset=UTF-8");
+    try {
+      final PrintWriter out = response.getWriter();
+      String strResult;
+      XStream xs = new XStream(new JettisonMappedXmlDriver());
+      xs.alias("Response", ApplyModulesResponse.class);
+      strResult = xs.toXML(pet);
+      out.print(strResult);
+      out.close();
+    } catch (IOException e) {
+      log4j.error("Error while updating the system status in the rebuild window.", e);
+    }
+  }
+
   /**
    * Method to be called via AJAX. Creates a new AntExecutor object, saves it in session and
    * executes the apply modules task on it.
@@ -187,20 +312,47 @@ public class ApplyModules extends HttpSecureAppServlet {
   private void startApply(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     // final PrintStream oldOut=System.out;
+    boolean admin = OBContext.getOBContext().setInAdministratorMode(true);
+    PreparedStatement ps = null;
+    PreparedStatement ps2 = null;
+    PreparedStatement ps3 = null;
+    AntExecutor ant = null;
     try {
-      final AntExecutor ant = new AntExecutor(vars.getSessionValue("#sourcePath"));
+      ps = getPreparedStatement("DELETE FROM AD_ERROR_LOG");
+      ps.executeUpdate();
+      ps2 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB11'");
+      ps2.executeUpdate();
+
+      Properties props = new Properties();
+      props.setProperty("log4j.appender.DB", "org.openbravo.utils.OBRebuildAppender");
+      props.setProperty("log4j.appender.DB.Basedir", vars.getSessionValue("#sourcePath"));
+      props.setProperty("log4j.rootCategory", "INFO,R,DB");
+      PropertyConfigurator.configure(props);
+
+      ant = new AntExecutor(vars.getSessionValue("#sourcePath"));
       String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "-apply.log";
       // final OBPrintStream obps=new OBPrintStream(new
       // PrintStream(response.getOutputStream()));
       // System.setOut(obps);
 
       // ant.setOBPrintStreamLog(response.getWriter());
-      final PrintStream out = new PrintStream(response.getOutputStream());
-      ant.setOBPrintStreamLog(new PrintStream(out));
 
-      fileName = ant.setLogFile(fileName);
+      final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/erpCommon/ad_process/ApplyModulesNew").createXmlDocument();
+
+      response.setContentType("text/html; charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+
+      out.println(xmlDocument.print());
+
+      out.flush();
+      ant.setLogFile(fileName);
+      // final PrintStream out = new PrintStream(response.getOutputStream());
+      // ant.setOBPrintStreamLog(new PrintWriter(out));
+
+      // fileName = ant.setLogFile(fileName);
       // obps.setLogFile(new File(fileName+".db"));
-      ant.setLogFileInOBPrintStream(new File(fileName));
+      // ant.setLogFileInOBPrintStream(new File(fileName));
       vars.setSessionObject("ApplyModules|Log", ant);
 
       // do not execute tranlsation process (all entries should be already in the module)
@@ -228,22 +380,24 @@ public class ApplyModules extends HttpSecureAppServlet {
         ant.setProperty("module", unnappliedModules);
       }
       response.setContentType("text/plain; charset=UTF-8");
-      out.print("Shutting down scheduler (background processes) ...");
       // We first shutdown the background process, so that it doesn't interfere
       // with the rebuild process
       OBScheduler.getInstance().getScheduler().shutdown(true);
-      out.println(" done.\n");
       ant.runTask(tasks);
 
-      ant.setFinished(true);
+      // ant.setFinished(true);
 
-      if (ant.hasErrorOccured()) {
-        createModuleLog(false, ant.getErr());
-      } else {
-        createModuleLog(true, null);
+      /*
+       * if (ant.hasErrorOccured()) { createModuleLog(false, ant.getErr()); } else {
+       * createModuleLog(true, null); }
+       */
+      PreparedStatement psErr = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
+      psErr.executeQuery();
+      ResultSet rsErr = psErr.getResultSet();
+      if (!rsErr.next()) {
+        ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB60'");
+        ps3.executeUpdate();
       }
-
-      out.println("finished");
       out.close();
     } catch (final Exception e) {
       e.printStackTrace();
@@ -253,7 +407,18 @@ public class ApplyModules extends HttpSecureAppServlet {
       createModuleLog(false, e.getMessage());
       OBDal.getInstance().commitAndClose();
     } finally {
-      // System.setOut(oldOut);
+      try {
+        Properties props = new Properties();
+        props.setProperty("log4j.rootCategory", "INFO,R");
+        PropertyConfigurator.configure(props);
+        ant.closeLogFile();
+        releasePreparedStatement(ps);
+        releasePreparedStatement(ps2);
+        releasePreparedStatement(ps3);
+      } catch (SQLException e) {
+        log4j.error(e);
+      }
+      OBContext.getOBContext().setInAdministratorMode(admin);
     }
   }
 
@@ -316,39 +481,46 @@ public class ApplyModules extends HttpSecureAppServlet {
    */
   private void getError(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: print page errors");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/businessUtility/MessageJS").createXmlDocument();
-    String type = "Hidden";
-    String title = "";
-    String description = "";
-    final String strLanguage = vars.getLanguage();
-
+    OBError error = new OBError();
+    PreparedStatement ps;
+    PreparedStatement ps2;
     try {
-      final AntExecutor ant = (AntExecutor) vars.getSessionObject("ApplyModules|Log");
-      if (ant != null)
-        description = ant.getErr();
-      if (description.startsWith("SuccessRebuild")) {
-        type = "Success";
-        title = Utility.messageBD(this, type, strLanguage);
-        description = "<![CDATA[" + Utility.messageBD(this, description, strLanguage) + "]]>";
+      ps = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
+      ps.executeQuery();
+      ResultSet rs = ps.getResultSet();
+      if (rs.next()) {
+        error.setType("Error");
+        error.setTitle("Error");
+        error
+            .setMessage("An error has occurred in the build. For a list of actions to take, go to <a href=\"http://wiki.openbravo.com/wiki/Projects/Improved_Upgrade_Process\" target=\"_blank\">this link</a>.");
+
       } else {
-        type = "Error";
-        title = Utility.messageBD(this, type, strLanguage);
-        description = "<![CDATA[" + description + "]]>";
+        ps2 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN'");
+        ps2.executeQuery();
+        ResultSet rs2 = ps2.getResultSet();
+        if (rs2.next()) {
+          error.setType("Warning");
+          error.setTitle("Warning");
+          error
+              .setMessage("There were warnings on the build. The application will run, but you should check them to see if there were important. Go to <a href=\"http://wiki.openbravo.com/wiki/Projects/Improved_Upgrade_Process\" target=\"_blank\">this link</a> for more information. <b>You must now restart the application container</b> to see the changes.");
+
+        } else {
+          error.setType("Success");
+          error.setTitle("Success");
+          error
+              .setMessage("The build was completed succesfully. <b>You must now restart the application container</b> to see the changes.");
+        }
       }
-      xmlDocument.setParameter("type", type);
-      xmlDocument.setParameter("title", title);
-      xmlDocument.setParameter("description", Utility.formatMessageBDToHtml(description));
-      response.setContentType("text/xml; charset=UTF-8");
-      response.setHeader("Cache-Control", "no-cache");
-      final PrintWriter out = response.getWriter();
-      out.println(xmlDocument.print());
-      out.close();
-    } catch (final Exception e) {
-      description = "";
+    } catch (Exception e) {
+      log4j.error("Error while returning the error to the rebuild window", e);
     }
+
+    XStream xs = new XStream(new JettisonMappedXmlDriver());
+    xs.alias("OBError", OBError.class);
+    String strResult = xs.toXML(error);
+    final PrintWriter out = response.getWriter();
+    out.print(strResult);
+    out.close();
   }
 
   /**

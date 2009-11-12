@@ -19,7 +19,9 @@
 package org.openbravo.erpCommon.utility;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -30,6 +32,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
+import org.apache.tools.ant.listener.Log4jListener;
 import org.openbravo.utils.OBLogAppender;
 
 /**
@@ -46,6 +49,8 @@ public class AntExecutor {
   private OBPrintStream err;
   private String returnMessage;
   private PrintWriter out;
+
+  private FileOutputStream logFile;
 
   /**
    * Initializes a newly created AntExecutor object assigning it the build.xml file to execute tasks
@@ -117,17 +122,34 @@ public class AntExecutor {
    * @return - The complete file name (including directory)
    * @throws Exception
    */
-  public String setLogFile(String name) throws Exception {
-    final File dir = new File(baseDir + "/log");
-    if (!dir.exists())
-      if (!dir.mkdir())
-        return null;
-    return setLogFile(baseDir + "/log", name);
-  }
-
+  // public String setLogFile(String name) throws Exception {
+  // final File dir = new File(baseDir + "/log");
+  // if (!dir.exists())
+  // if (!dir.mkdir())
+  // return null;
+  // return setLogFile(baseDir + "/log", name);
+  // }
   public void setLogFileInOBPrintStream(File f) {
     log.setLogFile(f);
     err.setLogFile(f);
+  }
+
+  public void setLogFile(String filename) {
+    File file = new File(baseDir + "/log", filename);
+    final DefaultLogger logger1 = new DefaultLogger();
+    try {
+      logFile = new FileOutputStream(file);
+      PrintStream ps = new PrintStream(logFile);
+      logger1.setOutputPrintStream(ps);
+      logger1.setErrorPrintStream(ps);
+      logger1.setMessageOutputLevel(Project.MSG_INFO);
+      project.addBuildListener(logger1);
+
+      Log4jListener listener = new Log4jListener();
+      project.addBuildListener(listener);
+    } catch (FileNotFoundException e) {
+      logger.error("Error assigning rebuild log file.", e);
+    }
   }
 
   /**
@@ -273,5 +295,14 @@ public class AntExecutor {
 
   public boolean hasErrorOccured() {
     return !getErr().startsWith("SuccessRebuild");
+  }
+
+  public void closeLogFile() {
+    try {
+      if (logFile != null) {
+        logFile.close();
+      }
+    } catch (IOException e) {
+    }
   }
 }

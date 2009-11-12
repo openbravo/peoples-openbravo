@@ -799,7 +799,6 @@ build.war: build a war file in the lib directory.
       </zipfileset>
       <classes dir="${build}" />
     </war>
-	<antcall target="update.finalcompile.status" inheritall="true" inheritrefs="true"/>
   </target>
 
   <target name="generate-wsdd">

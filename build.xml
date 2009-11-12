@@ -309,6 +309,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <CheckSumCondition obDir="${basedir}"
                            type="md5.wad"
                            property="test.md5.wad"/>
+    <antcall target="update.finalcompile.status" />
   </target>
 
   <target name="compile.complete.development" depends="init" if="mode.class">
@@ -550,10 +551,18 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="db.apply.modules.sampledata" />
   </target>
 
+  <target name="update.generate.entities.status" >
+        <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
+                   <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+                   <transaction> UPDATE ad_system_info SET system_status='RB21' ;
+                     DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
+        </sql>
+  </target>
   <target name="update.database" depends="init,code.rev">
     <antcall target="database.lib" />
     <antcall target="core.lib" />
     <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
+    <antcall target="update.generate.entities.status" inheritall="true" inheritrefs="true"/>
     <antcall target="generate.entities.quick" />
     <antcall target="db.apply.modules" />
   </target>
@@ -633,7 +642,8 @@ compare.database.structure: refer to compare.database.structure target of databa
   <target name="apply.modules">
     <echo>Applying ${module} modules...</echo>
     <antcall target="update.database.mod" />
-    
+
+    <antcall target="update.generate.entities.status" inheritall="true" inheritrefs="true"/>
     <antcall target="generate.entities" />
     
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
@@ -663,6 +673,11 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="apply.module">
+    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
+               <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+               <transaction> UPDATE ad_system_info SET system_status='RB31' ;
+                 DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
+    </sql>
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}">
       <arg line="'${base.src}'" />
       <classpath refid="project.class.path" />
