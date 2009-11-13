@@ -561,7 +561,7 @@ import.database.data: refer to import.database.data target of database.
     <ant dir="${base.db}" target="update.database.script" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="export.database" depends="init, core.lib, database.lib, generate.entities">
+  <target name="export.database" depends="init, core.lib, database.lib, generate.entities.quick">
     <ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true" />
   </target>
 
