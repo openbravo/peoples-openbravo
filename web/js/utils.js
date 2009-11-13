@@ -63,7 +63,7 @@ var debugMode = false; // Flag to output debug messages in Firebug
  * @return Boolean
  */
 function isDebugEnabled() {
-  return debugMode && typeof console === 'object';
+  return debugMode && typeof window.console === 'object';
 }
 
 /**
@@ -340,7 +340,7 @@ function removeOnUnload() {
  */
 function removeOnUnloadHandler(form) {
   var f = form;
-  if(f === null) {
+  if(typeof f === 'undefined' || f === null) {
     f = document.forms[0];
   }
   if(typeof f.isPopUpCall !== 'undefined' && f.isPopUpCall.value === '1') {
