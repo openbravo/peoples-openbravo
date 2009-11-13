@@ -26,4 +26,6 @@
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="processHelp" name="help" replaceCharacters="htmlHelp" default=""/>
+  <PARAMETER id="buttonLog" name="buttonLog" attribute="onclick" replace="xx"/>
+  <PARAMETER id="logfile" name="logfile" attribute="value" replace="xx"/>
 </REPORT>

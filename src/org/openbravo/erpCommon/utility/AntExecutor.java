@@ -135,7 +135,7 @@ public class AntExecutor {
   }
 
   public void setLogFile(String filename) {
-    File file = new File(baseDir + "/log", filename);
+    File file = new File(baseDir + "/log", filename + "-apply.log");
     final DefaultLogger logger1 = new DefaultLogger();
     try {
       logFile = new FileOutputStream(file);

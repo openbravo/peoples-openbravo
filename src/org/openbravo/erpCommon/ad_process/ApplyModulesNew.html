@@ -85,6 +85,7 @@
             if(msg.OBError.type!="Error"){
                 displayLogicElement('restartOptions',true);
             }
+            document.getElementById("rebuildMessage").style.display = "none";
           }
         }
         return true;
@@ -109,12 +110,6 @@
         var strText = "";
         var id = "";
         var imageId = "";
-        try {
-          if (XMLHttpRequestObj != null && XMLHttpRequestObj.responseText) {
-            strText = XMLHttpRequestObj.responseText
-            addText(strText);
-          }
-        } catch (e) {}
         if (getReadyStateHandler(XMLHttpRequestObj)) finalize();
         return true;
     }
@@ -176,35 +171,44 @@
 
     
     function insertWarnsAndErrors(response){
-        if(response.statusofstate=="Warning"){
-            var warns=response.warnings.string;
-            if(warns!=null){
-                if(!(warns instanceof Array)){
-                    warns=[warns];
-                }
-                if(numofwarns[getStatusIndex(response.state)]<warns.length){
-                    for(i=numofwarns[getStatusIndex(response.state)];i<warns.length;i++){
-                            warnings.push(warns[i]);
-                            progList_addTextToTextArea('<i>Warning: </i>'+warns[i]);
-                    }
-                    numofwarns[getStatusIndex(response.state)]=warns.length;
-                }
-            }
-        }
-        if(response.statusofstate=="Error"){
-            var errs=response.errors.string;
-            if(errs!=null){
-                if(!(errs instanceof Array)){
-                    errs=[errs];
-                }
-                if(numoferrs[getStatusIndex(response.state)]<errs.length){
-                    for(i=numoferrs[getStatusIndex(response.state)];i<errs.length;i++){
-                            warnings.push(errs[i]);
-                            progList_addTextToTextArea('<b>Error: </b>'+errs[i]);
-                    }
-                    numoferrs[getStatusIndex(response.state)]=errs.length;
-                }
-            }
+        if(start==true){
+	        if(response.statusofstate=="Warning"){
+	            var warns=response.warnings.string;
+	            if(warns!=null){
+	                if(!(warns instanceof Array)){
+	                    warns=[warns];
+	                }
+	                if(numofwarns[getStatusIndex(response.state)]<warns.length){
+	                    for(i=numofwarns[getStatusIndex(response.state)];i<warns.length;i++){
+	                    	    var old=document.getElementById("warning_"+correspondingNode(response.state)).title;
+	                    	    if(old===""){
+		                    	    old="Warnings: ";
+	                    	    }else{
+		                    	    old+=",";
+	                    	    }
+	                    	    document.getElementById("warning_"+correspondingNode(response.state)).title=old+warns[i];
+	                            warnings.push(warns[i]);
+	                            progList_addTextToTextArea('<i>Warning: </i>'+warns[i]);
+	                    }
+	                    numofwarns[getStatusIndex(response.state)]=warns.length;
+	                }
+	            }
+	        }
+	        if(response.statusofstate=="Error"){
+	            var errs=response.errors.string;
+	            if(errs!=null){
+	                if(!(errs instanceof Array)){
+	                    errs=[errs];
+	                }
+	                if(numoferrs[getStatusIndex(response.state)]<errs.length){
+	                    for(i=numoferrs[getStatusIndex(response.state)];i<errs.length;i++){
+	                            warnings.push(errs[i]);
+	                            progList_addTextToTextArea('<b>Error: </b>'+errs[i]);
+	                    }
+	                    numoferrs[getStatusIndex(response.state)]=errs.length;
+	                }
+	            }
+	        }
         }
     }
     
@@ -409,6 +413,7 @@
     <input type="hidden" name="inpLastFieldChanged"></input>
     <input type="hidden" name="inpSelected" id="paramSelected" value=""></input>
     <input type="hidden" name="reqStatus" id="reqStatus" value=""></input>
+    <input type="hidden" name="logfile" id="logfile" value="xx"></input>
     <div class="Popup_ContentPane_CircleLogo">
 
       <div class="Popup_WindowLogo">
@@ -427,7 +432,7 @@
               <td class="Popup_NavBar_bg_logo_left"></td>
               <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo"></img></td>
               <td class="Popup_NavBar_bg_logo_right"></td>
-              <td class="Popup_NavBar_Popup_title_cell"><span>Rebuild the System (New!!!)</span></td>
+              <td class="Popup_NavBar_Popup_title_cell"><span>Rebuild the System</span></td>
               <td class="Popup_NavBar_separator_cell"></td>
             </tr>
 
@@ -633,10 +638,60 @@
 
               <tr><td colspan="4">
                 <div style="overflow: auto; width: 600px;">
-                  <span class="CheckList_RebuildSystemWindow_title">Estimated total time for rebuild: 3-7 minutes. Elapsed time: <span id="localChrono">00:00</span>.</br> Do not close this window.</span>
+                  <span id="rebuildMessage" class="CheckList_RebuildSystemWindow_title">Estimated total time for rebuild: 3-7 minutes. Elapsed time: <span id="localChrono">00:00</span>.</br> Do not close this window.</span>
                  </div>
               </td></tr>
 
+    
+    <tr><td><table class="Popup_Client_TablePopup" cellpadding="0" cellspacing="0" id="restartOptions" style="margin-top: 5px;">
+              
+              <tr><td colspan="2">
+                <div style="overflow: auto; width: 600px;">
+                  <span class="PlainText_normal">In order for the changes to take effect, you need to restart the servlet container or reload the Openbravo application.</span>
+                </div>
+              </td></tr>
+              <tr><td height="10"></td></tr>
+              <tr>
+                <td colspan="4"><span class="Radio_container_NOT_focused"><input name="option" required="true" value="restart" type="radio" checked></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Restart servlet container now &nbsp;<a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1');return false;" target="_blank" href="#restart">learn more</a></span></td>
+              </tr>
+              <tr>
+                <td colspan="4"><span class="Radio_container_NOT_Focused"><input name="option" required="true" value="reload" type="radio"></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Reload the Openbravo application now &nbsp;<a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1');return false;" target="_blank" href="#reload">learn more</a></span></td>
+              </tr>
+              <tr>
+                <td colspan="4"><span class="Radio_container_NOT_Focused"><input name="option" required="true" value="doNothing" type="radio"></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Don't do anything now. I will reload the Openbravo application manually later &nbsp;<a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1');return false;" target="_blank" href="#nothing">learn more</a></span></td>
+              </tr>
+
+              <tr><td height="20"></td></tr>
+              <tr>
+                <td></td>
+                <td>
+                  <div>
+                    <button type="button" 
+                      id="buttonContinue" 
+                      class="ButtonLink" 
+                      onclick="restart();return false;" 
+                      onfocus="buttonEvent('onfocus', this); window.status='Continue'; return true;" 
+                      onblur="buttonEvent('onblur', this);" 
+                      onkeyup="buttonEvent('onkeyup', this);" 
+                      onkeydown="buttonEvent('onkeydown', this);" 
+                      onkeypress="buttonEvent('onkeypress', this);" 
+                      onmouseup="buttonEvent('onmouseup', this);" 
+                      onmousedown="buttonEvent('onmousedown', this);" 
+                      onmouseover="buttonEvent('onmouseover', this); window.status='Continue'; return true;" 
+                      onmouseout="buttonEvent('onmouseout', this);">
+                      <table class="Button">
+                        <tr>
+                          <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Continue" title="Continue" src="../../../../../web/images/blank.gif" border="0" /></td>
+                          <td class="Button_text Button_width">Continue</td>
+                          <td class="Button_right"></td>
+                        </tr>
+                      </table>
+                    </button>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+            </table></td></tr>
               <tr><td colspan="4">
 
 
@@ -857,10 +912,9 @@
 
               <tr><td height="10"></td></tr>
               <tr>
-                <td></td>
-                <td colspan="2">
+                <td colspan="4">
                   <div>
-                    <button type="button" id="buttonContinue" class="ButtonLink" onclick="alert('Show log'); return false;" onfocus="buttonEvent('onfocus', this); window.status='Show log'; return true;" onblur="buttonEvent('onblur', this);" onkeyup="buttonEvent('onkeyup', this);" onkeydown="buttonEvent('onkeydown', this);" onkeypress="buttonEvent('onkeypress', this);" onmouseup="buttonEvent('onmouseup', this);" onmousedown="buttonEvent('onmousedown', this);" onmouseover="buttonEvent('onmouseover', this); window.status='Show log'; return true;" onmouseout="buttonEvent('onmouseout', this);">
+                    <button type="button" id="buttonLog" class="ButtonLink" onclick="openNewBrowser('../utility/ShowFile?filePath=xx', 'Openbravo');return false;" onfocus="buttonEvent('onfocus', this); window.status='Show log'; return true;" onblur="buttonEvent('onblur', this);" onkeyup="buttonEvent('onkeyup', this);" onkeydown="buttonEvent('onkeydown', this);" onkeypress="buttonEvent('onkeypress', this);" onmouseup="buttonEvent('onmouseup', this);" onmousedown="buttonEvent('onmousedown', this);" onmouseover="buttonEvent('onmouseover', this); window.status='Show log'; return true;" onmouseout="buttonEvent('onmouseout', this);">
                       <table class="Button">
                         <tr>
                           <td class="Button_left"><img class="Button_Icon" alt="Show log" title="Show log" src="../web/images/blank.gif" border="0"></img></td>
@@ -882,56 +936,6 @@
     </table>
     
     
-    
-    <table class="Popup_Client_TablePopup" cellpadding="0" cellspacing="0" id="restartOptions" style="margin-top: 5px;">
-              
-              <tr><td colspan="2">
-                <div style="overflow: auto; width: 600px;">
-                  <span class="PlainText_normal">In order for the changes to take effect, you need to restart the servlet container or reload the Openbravo application.</span>
-                </div>
-              </td></tr>
-              <tr><td height="10"></td></tr>
-              <tr>
-                <td colspan="4"><span class="Radio_container_NOT_focused"><input name="option" required="true" value="restart" type="radio" checked></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Restart servlet container now <a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1');return false;" target="_blank" href="#restart">learn more</a></span></td>
-              </tr>
-              <tr>
-                <td colspan="4"><span class="Radio_container_NOT_Focused"><input name="option" required="true" value="reload" type="radio"></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Reload the Openbravo application now <a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1');return false;" target="_blank" href="#reload">learn more</a></span></td>
-              </tr>
-              <tr>
-                <td colspan="4"><span class="Radio_container_NOT_Focused"><input name="option" required="true" value="doNothing" type="radio"></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Don't do anything now. I will reload the Openbravo application manually later <a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1');return false;" target="_blank" href="#nothing">learn more</a></span></td>
-              </tr>
-
-              <tr><td height="20"></td></tr>
-              <tr>
-                <td></td>
-                <td>
-                  <div>
-                    <button type="button" 
-                      id="buttonContinue" 
-                      class="ButtonLink" 
-                      onclick="restart();return false;" 
-                      onfocus="buttonEvent('onfocus', this); window.status='Continue'; return true;" 
-                      onblur="buttonEvent('onblur', this);" 
-                      onkeyup="buttonEvent('onkeyup', this);" 
-                      onkeydown="buttonEvent('onkeydown', this);" 
-                      onkeypress="buttonEvent('onkeypress', this);" 
-                      onmouseup="buttonEvent('onmouseup', this);" 
-                      onmousedown="buttonEvent('onmousedown', this);" 
-                      onmouseover="buttonEvent('onmouseover', this); window.status='Continue'; return true;" 
-                      onmouseout="buttonEvent('onmouseout', this);">
-                      <table class="Button">
-                        <tr>
-                          <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Continue" title="Continue" src="../../../../../web/images/blank.gif" border="0" /></td>
-                          <td class="Button_text Button_width">Continue</td>
-                          <td class="Button_right"></td>
-                        </tr>
-                      </table>
-                    </button>
-                  </div>
-                </td>
-                <td></td>
-              </tr>
-            </table>
   </form>
 
 

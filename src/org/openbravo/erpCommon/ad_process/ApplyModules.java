@@ -110,12 +110,15 @@ public class ApplyModules extends HttpSecureAppServlet {
       return;
     }
 
+    String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_process/ApplyModulesNew").createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("help", ApplyModulesData.getHelp(this, vars.getLanguage()));
+    xmlDocument.setParameter("buttonLog", fileName);
+    xmlDocument.setParameter("logfile", fileName);
     {
       final OBError myMessage = vars.getMessage("ApplyModules");
       vars.removeMessage("ApplyModules");
@@ -330,29 +333,12 @@ public class ApplyModules extends HttpSecureAppServlet {
       PropertyConfigurator.configure(props);
 
       ant = new AntExecutor(vars.getSessionValue("#sourcePath"));
-      String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "-apply.log";
-      // final OBPrintStream obps=new OBPrintStream(new
-      // PrintStream(response.getOutputStream()));
-      // System.setOut(obps);
-
-      // ant.setOBPrintStreamLog(response.getWriter());
-
-      final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_process/ApplyModulesNew").createXmlDocument();
 
       response.setContentType("text/html; charset=UTF-8");
       final PrintWriter out = response.getWriter();
 
-      out.println(xmlDocument.print());
+      ant.setLogFile(vars.getStringParameter("logfile"));
 
-      out.flush();
-      ant.setLogFile(fileName);
-      // final PrintStream out = new PrintStream(response.getOutputStream());
-      // ant.setOBPrintStreamLog(new PrintWriter(out));
-
-      // fileName = ant.setLogFile(fileName);
-      // obps.setLogFile(new File(fileName+".db"));
-      // ant.setLogFileInOBPrintStream(new File(fileName));
       vars.setSessionObject("ApplyModules|Log", ant);
 
       // do not execute tranlsation process (all entries should be already in the module)
@@ -379,7 +365,7 @@ public class ApplyModules extends HttpSecureAppServlet {
         tasks.add("apply.modules");
         ant.setProperty("module", unnappliedModules);
       }
-      response.setContentType("text/plain; charset=UTF-8");
+
       // We first shutdown the background process, so that it doesn't interfere
       // with the rebuild process
       OBScheduler.getInstance().getScheduler().shutdown(true);
@@ -490,9 +476,8 @@ public class ApplyModules extends HttpSecureAppServlet {
       ResultSet rs = ps.getResultSet();
       if (rs.next()) {
         error.setType("Error");
-        error.setTitle("Error");
-        error
-            .setMessage("An error has occurred in the build. For a list of actions to take, go to <a href=\"http://wiki.openbravo.com/wiki/Projects/Improved_Upgrade_Process\" target=\"_blank\">this link</a>.");
+        error.setTitle(Utility.messageBD(myPool, "Error", vars.getLanguage()));
+        error.setMessage(Utility.messageBD(myPool, "BuildError", vars.getLanguage()));
 
       } else {
         ps2 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN'");
@@ -500,15 +485,13 @@ public class ApplyModules extends HttpSecureAppServlet {
         ResultSet rs2 = ps2.getResultSet();
         if (rs2.next()) {
           error.setType("Warning");
-          error.setTitle("Warning");
-          error
-              .setMessage("There were warnings on the build. The application will run, but you should check them to see if there were important. Go to <a href=\"http://wiki.openbravo.com/wiki/Projects/Improved_Upgrade_Process\" target=\"_blank\">this link</a> for more information. <b>You must now restart the application container</b> to see the changes.");
+          error.setTitle(Utility.messageBD(myPool, "Warning", vars.getLanguage()));
+          error.setMessage(Utility.messageBD(myPool, "BuildWarning", vars.getLanguage()));
 
         } else {
           error.setType("Success");
-          error.setTitle("Success");
-          error
-              .setMessage("The build was completed succesfully. <b>You must now restart the application container</b> to see the changes.");
+          error.setTitle(Utility.messageBD(myPool, "Success", vars.getLanguage()));
+          error.setMessage(Utility.messageBD(myPool, "BuildSuccessful", vars.getLanguage()));
         }
       }
     } catch (Exception e) {
