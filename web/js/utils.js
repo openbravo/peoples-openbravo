@@ -343,7 +343,7 @@ function removeOnUnloadHandler(form) {
   if(typeof f === 'undefined' || f === null) {
     f = document.forms[0];
   }
-  if(typeof f.isPopUpCall !== 'undefined' && f.isPopUpCall.value === '1') {
+  if(typeof f.IsPopUpCall !== 'undefined' && f.IsPopUpCall.value === '1') {
     // Checking for a onunload event handler
     if(typeof window.onunload === 'function') {
       if(isDebugEnabled()) {
