@@ -95,9 +95,6 @@ public class ModuleUtiltiy {
    * Modifies the passed modules {@link FieldProvider} parameter ordering it taking into account
    * dependencies.
    * <p/>
-   * Note that the module list must be a complete list of modules, no dependencies will be checked
-   * for more than one level of deep, this means that passing an incomplete list might not be
-   * ordered correctly.
    * 
    * @param modules
    *          {@link FieldProvider} that will be sorted. It must contain at least a field named
@@ -105,26 +102,28 @@ public class ModuleUtiltiy {
    * @throws Exception
    */
   public static void orderModuleByDependency(FieldProvider[] modules) throws Exception {
-    if (modules == null || modules.length == 0)
-      return;
-    final ArrayList<String> list = new ArrayList<String>();
-    for (int i = 0; i < modules.length; i++) {
-      list.add((String) modules[i].getField("adModuleId"));
+    List<Module> allModules = OBDal.getInstance().createCriteria(Module.class).list();
+    ArrayList<String> allMdoulesId = new ArrayList<String>();
+    for (Module mod : allModules) {
+      allMdoulesId.add(mod.getId());
     }
-    List<String> orderList = orderByDependency(list);
+    List<String> modulesOrder = orderByDependency(allMdoulesId);
 
-    final FieldProvider[] rt = new FieldProvider[modules.length];
-    int j = 0;
-    for (int i = 0; i < orderList.size(); i++) {
-      for (FieldProvider module : modules) {
-        if (module.getField("adModuleId").equals(orderList.get(i))) {
-          rt[j] = module;
-          j++;
+    FieldProvider[] fpModulesOrder = new FieldProvider[modules.length];
+    int i = 0;
+    for (String modId : modulesOrder) {
+      for (int j = 0; j < modules.length; j++) {
+        if (modules[j].getField("adModuleId").equals(modId)) {
+          fpModulesOrder[i] = modules[j];
+          i++;
         }
       }
     }
-    modules = rt;
-    return;
+
+    for (int j = 0; j < modules.length; j++) {
+      modules[j] = fpModulesOrder[j];
+    }
+
   }
 
   /**
