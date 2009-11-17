@@ -37,7 +37,8 @@ BEGIN
   IF (UPDATING) THEN
     v_check := (:new.tableName != :old.tableName) 
             or (:new.Name != :old.Name) 
-            or (:new.AD_Package_ID != :old.AD_Package_ID);
+            or (:new.AD_Package_ID != :old.AD_Package_ID)
+            or (:new.IsView != :old.IsView);
   END IF;
   
   IF v_check THEN
@@ -58,7 +59,7 @@ BEGIN
       UNION
        SELECT 1
          FROM AD_EXCEPTIONS 
-         WHERE TYPE='TABLE'
+         WHERE ((TYPE='TABLE' AND :new.IsView = 'N') or (TYPE='VIEW' AND :new.IsView = 'Y'))
          AND UPPER(NAME1)=UPPER(:new.Tablename)) AA;
       
      IF v_Aux = 0 THEN
