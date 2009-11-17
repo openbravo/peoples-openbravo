@@ -136,8 +136,8 @@ BEGIN
         v_currencyratetype := 'S';
 
       select c_calendar_id into v_calendar_ID
-      from ad_clientinfo
-      where ad_client_id = v_client_id;
+      from ad_org
+      where ad_org_id = ad_org_getcalendarowner(v_org_id);
 
       select c_period_id into v_period_id
       from c_period
