@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axis.AxisFault;
 import org.apache.log4j.Logger;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -102,26 +103,32 @@ public class ModuleUtiltiy {
    * @throws Exception
    */
   public static void orderModuleByDependency(FieldProvider[] modules) throws Exception {
-    List<Module> allModules = OBDal.getInstance().createCriteria(Module.class).list();
-    ArrayList<String> allMdoulesId = new ArrayList<String>();
-    for (Module mod : allModules) {
-      allMdoulesId.add(mod.getId());
-    }
-    List<String> modulesOrder = orderByDependency(allMdoulesId);
+    boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
+    OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      List<Module> allModules = OBDal.getInstance().createCriteria(Module.class).list();
+      ArrayList<String> allMdoulesId = new ArrayList<String>();
+      for (Module mod : allModules) {
+        allMdoulesId.add(mod.getId());
+      }
+      List<String> modulesOrder = orderByDependency(allMdoulesId);
 
-    FieldProvider[] fpModulesOrder = new FieldProvider[modules.length];
-    int i = 0;
-    for (String modId : modulesOrder) {
-      for (int j = 0; j < modules.length; j++) {
-        if (modules[j].getField("adModuleId").equals(modId)) {
-          fpModulesOrder[i] = modules[j];
-          i++;
+      FieldProvider[] fpModulesOrder = new FieldProvider[modules.length];
+      int i = 0;
+      for (String modId : modulesOrder) {
+        for (int j = 0; j < modules.length; j++) {
+          if (modules[j].getField("adModuleId").equals(modId)) {
+            fpModulesOrder[i] = modules[j];
+            i++;
+          }
         }
       }
-    }
 
-    for (int j = 0; j < modules.length; j++) {
-      modules[j] = fpModulesOrder[j];
+      for (int j = 0; j < modules.length; j++) {
+        modules[j] = fpModulesOrder[j];
+      }
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(adminMode);
     }
 
   }
