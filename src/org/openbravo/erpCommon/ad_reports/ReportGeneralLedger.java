@@ -70,10 +70,18 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|C_ElementValue_IDFROM", "");
       String strcelementvalueto = vars.getGlobalVariable("inpcElementValueIdTo",
           "ReportGeneralLedger|C_ElementValue_IDTO", "");
-      String strcelementvaluefromdes = vars.getGlobalVariable("inpElementValueIdFrom_DES",
-          "ReportGeneralLedger|inpElementValueIdFrom_DES", "");
-      String strcelementvaluetodes = vars.getGlobalVariable("inpElementValueIdTo_DES",
-          "ReportGeneralLedger|inpElementValueIdTo_DES", "");
+      String strcelementvaluefromdes = "", strcelementvaluetodes = "";
+      if (!strcelementvaluefrom.equals(""))
+        strcelementvaluefromdes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+            strcelementvaluefrom);
+      if (!strcelementvalueto.equals(""))
+        strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+            strcelementvalueto);
+      strcelementvaluefromdes = (strcelementvaluefromdes.equals("null")) ? ""
+          : strcelementvaluefromdes;
+      strcelementvaluetodes = (strcelementvaluetodes.equals("null")) ? "" : strcelementvaluetodes;
+      vars.setSessionValue("inpElementValueIdFrom_DES", strcelementvaluefromdes);
+      vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportGeneralLedger|cBpartnerId", "", IsIDFilter.instance);
@@ -97,10 +105,15 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
           "ReportGeneralLedger|C_ElementValue_IDTO");
-      String strcelementvaluefromdes = vars.getRequestGlobalVariable("inpElementValueIdFrom_DES",
-          "ReportGeneralLedger|inpElementValueIdFrom_DES");
-      String strcelementvaluetodes = vars.getRequestGlobalVariable("inpElementValueIdTo_DES",
-          "ReportGeneralLedger|inpElementValueIdTo_DES");
+      String strcelementvaluefromdes = "", strcelementvaluetodes = "";
+      if (!strcelementvaluefrom.equals(""))
+        strcelementvaluefromdes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+            strcelementvaluefrom);
+      if (!strcelementvalueto.equals(""))
+        strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+            strcelementvalueto);
+      vars.setSessionValue("inpElementValueIdFrom_DES", strcelementvaluefromdes);
+      vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportGeneralLedger|cBpartnerId", IsIDFilter.instance);
@@ -247,6 +260,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
         if (strcelementvalueto.equals("")) {
           strcelementvalueto = strcelementvaluefrom;
+          strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+              strcelementvalueto);
+          vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
+
         }
         if (log4j.isDebugEnabled())
           log4j.debug("##################### strcelementvaluefrom= " + strcelementvaluefrom);
@@ -280,6 +297,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                   oraLimit2, (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
                       : "C_BPARTNER_ID, ");
       } else {
+        strcelementvalueto = "";
+        strcelementvaluetodes = "";
+        vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
         if (strHide.equals(""))
           data = ReportGeneralLedgerData
               .selectAll(
