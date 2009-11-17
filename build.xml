@@ -50,14 +50,9 @@ install.source: install the ERP from sources (from subversion).
 eclipse.install.source: install the ERP from sources for eclipse (from Mercurial).
 create.database: refer to create.database target of database.
 update.database: refer to update.database target of database.
-create.database.structure: refer to create.database.structure target of database.
-update.database.structure: refer to update.database.structure target of database.
 create.database.script: refer to create.database.script target of database.
 update.database.script: refer to update.database.script target of database.
 export.database: exports database structure and data to xml files.
-export.database.structure: refer to export.database.structure target of database.
-export.database.data: refer to export.database.data target of database.
-import.database.data: refer to import.database.data target of database.
 -->
 <project name="openbravo" default="compile.complete" basedir=".">
   <property environment="env" />
@@ -545,14 +540,6 @@ import.database.data: refer to import.database.data target of database.
     <ant dir="${base.db}" target="update.customized.database" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="create.database.structure" depends="init, core.lib">
-    <ant dir="${base.db}" target="create.database.structure" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="update.database.structure" depends="init, core.lib">
-    <ant dir="${base.db}" target="update.database.structure" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="create.database.script" depends="init, core.lib">
     <ant dir="${base.db}" target="create.database.script" inheritAll="true" inheritRefs="true" />
   </target>
@@ -565,20 +552,8 @@ import.database.data: refer to import.database.data target of database.
     <ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="export.database.structure" depends="init, core.lib">
-    <ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="export.config.script" depends="init, core.lib">
     <ant dir="${base.db}" target="export.config.script" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="export.database.data" depends="init, core.lib">
-    <ant dir="${base.db}" target="export.database.data" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="import.database.data" depends="init, core.lib">
-    <ant dir="${base.db}" target="import.database.data" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="db.apply.modules" if="apply.modules.on.create">
