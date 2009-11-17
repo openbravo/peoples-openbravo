@@ -228,7 +228,9 @@ public class OBQuery<E extends BaseOBObject> {
         }
       }
     }
-    OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
+    if (!OBContext.getOBContext().isInAdministratorMode()) {
+      OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
+    }
 
     if (isFilterOnReadableOrganization() && e.isOrganizationPartOfKey()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix

@@ -289,8 +289,13 @@ public class EntityXMLConverter implements OBNotSingleton {
 
     // depending on the security only a limited set of
     // properties is exported
-    final boolean onlyIdentifierProps = OBContext.getOBContext().getEntityAccessChecker()
-        .isDerivedReadable(obObject.getEntity());
+    boolean onlyIdentifierProps;
+    if (OBContext.getOBContext().isInAdministratorMode()) {
+      onlyIdentifierProps = false;
+    } else {
+      onlyIdentifierProps = OBContext.getOBContext().getEntityAccessChecker().isDerivedReadable(
+          obObject.getEntity());
+    }
 
     final List<Property> exportableProperties;
     // second 'and' is necessary because referenced entities are not part of the dataset
