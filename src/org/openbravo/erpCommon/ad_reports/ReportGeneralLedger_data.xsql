@@ -357,7 +357,7 @@
     <Sql><![CDATA[
       SELECT COALESCE(TO_CHAR(NAME),TO_CHAR(''))
       FROM C_ELEMENTVALUE
-      WHERE C_ELEMENTVALUE_ID = TO_NUMBER(?)
+      WHERE C_ELEMENTVALUE_ID = ?
     ]]></Sql>
     <Parameter name="elementValueId"/>
   </SqlMethod>

@@ -80,7 +80,7 @@ function validate() {
 		return false;
     } else if ((evFrom != null && evFrom != "" && (evTo == null || evTo == ""))
     		   ||  (evTo != null && evTo != "" && (evFrom == null || evFrom == ""))) {
-    	mensaje(27);
+    	showJSMessage(27);
     	return false;
 	}
 	markCheckedAllElements(frm.inpcBPartnerId_IN);
