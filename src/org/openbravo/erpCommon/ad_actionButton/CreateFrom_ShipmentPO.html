@@ -106,7 +106,13 @@ function checkAllCreateLines(chk, bolCheck)
 {
   if (bolCheck==null) bolCheck = false;
   if (!chk) return false;
-  else if (!chk.length) chk.checked = bolCheck;
+  else if (!chk.length){
+	  chk.checked = bolCheck;
+	  var frm = document.frmMain;
+	  frm.elements["inpmovementqty" + chk[i].value].disabled=!bolCheck; 
+	  frm.elements["inpquantityorder" + chk[i].value].disabled=!bolCheck;
+	  frm.elements["inpmProductUomId" + chk[i].value].disabled=!bolCheck;
+  }
   else {
     var total = chk.length;
     for (var i=0;i<total;i++) {
