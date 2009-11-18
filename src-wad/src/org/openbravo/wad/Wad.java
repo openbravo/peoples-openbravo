@@ -794,7 +794,6 @@ public class Wad extends DefaultHandler {
       final String windowName = FormatUtilities.replace(tabsData.windowname);
       final String tableName = FieldsData.tableName(pool, tabsData.tabid);
       final String isSOTrx = FieldsData.isSOTrx(pool, tabsData.tabid);
-      WADControl.initMessages(pool, "en_US");
       final TabsData[] allTabs = getPrimaryTabs(tabsData.key, tabsData.tabid, Integer.valueOf(
           tabsData.tablevel).intValue(), HEIGHT_TABS, INCR_TABS);
       final FieldsData[] fieldsData = FieldsData.select(pool, tabsData.tabid);
