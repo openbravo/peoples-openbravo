@@ -495,6 +495,29 @@ public abstract class AcctServer {
     this.m_as = retValue;
   }
 
+  private void reloadAcctSchemaArray(String adOrgId) throws ServletException {
+    if (log4j.isDebugEnabled())
+      log4j
+          .debug("AcctServer - reloadAcctSchemaArray - " + AD_Table_ID + ", AD_ORG_ID: " + adOrgId);
+    AcctSchema acct = null;
+    ArrayList<Object> new_as = new ArrayList<Object>();
+    // We reload again all the acct schemas of the client
+    m_as = AcctSchema.getAcctSchemaArray(connectionProvider, AD_Client_ID, AD_Org_ID);
+    // Filter the right acct schemas for the organization
+    for (int i = 0; i < (this.m_as).length; i++) {
+      acct = m_as[i];
+      if (AcctSchemaData.selectAcctSchemaTable2(connectionProvider, acct.m_C_AcctSchema_ID,
+          AD_Table_ID, adOrgId)) {
+        new_as.add(new AcctSchema(connectionProvider, acct.m_C_AcctSchema_ID));
+      }
+    }
+    AcctSchema[] retValue = new AcctSchema[new_as.size()];
+    new_as.toArray(retValue);
+    if (log4j.isDebugEnabled())
+      log4j.debug("AcctServer - RELOADING ARRAY: " + retValue.length);
+    this.m_as = retValue;
+  }
+
   public boolean post(String strClave, boolean force, VariablesSecureApp vars,
       ConnectionProvider conn, Connection con) throws ServletException {
     Record_ID = strClave;
@@ -549,7 +572,7 @@ public abstract class AcctServer {
     // AD_Client_ID);
     if (!DocumentType.equals(DOCTYPE_GLJournal))
       // m_as = AcctSchema.getAcctSchemaArray(conn, AD_Client_ID, AD_Org_ID);
-      reloadAcctSchemaArray();
+      reloadAcctSchemaArray(AD_Org_ID);
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Post - Antes de new Fact - C_CURRENCY_ID = "
     // + C_Currency_ID);
