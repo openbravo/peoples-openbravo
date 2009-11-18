@@ -100,7 +100,9 @@ public class ModuleValidator implements SystemValidator {
 
     checkHasUIArtifact(module, result);
 
-    checkHasIllegalId(module, result);
+    // disable this check until this issue has been commented:
+    // https://issues.openbravo.com/view.php?id=7905
+    // checkHasIllegalId(module, result);
 
     if (module.getLicenseText() == null || module.getLicenseType() == null) {
       result.addError(SystemValidationType.MODULE_ERROR,
