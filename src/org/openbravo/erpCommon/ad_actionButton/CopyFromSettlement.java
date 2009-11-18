@@ -105,6 +105,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     String strDebe = "";
     String strHaber = "";
     String strImporte = "";
+    String strCBPartnerId_D = "";
     try {
       conn = getTransactionConnection();
       CopyFromSettlementData[] data = CopyFromSettlementData.select(this, strKey);
@@ -114,6 +115,10 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
             data[i].cDebtPaymentId);
         strDebtPayment = SequenceIdData.getUUID();
         strCBPartnerId = vars.getStringParameter("inpcBpartnerId" + data[i].cDebtPaymentId);
+        strCBPartnerId_D = vars.getStringParameter("inpcBpartnerId_D" + data[i].cDebtPaymentId);
+        if (strCBPartnerId_D.equals("")) {
+          strCBPartnerId = "";
+        }
         strDate = vars.getStringParameter("inpDate" + data[i].cDebtPaymentId);
         strImporte = vars.getStringParameter("inpAmount" + data[i].cDebtPaymentId);
         try {
