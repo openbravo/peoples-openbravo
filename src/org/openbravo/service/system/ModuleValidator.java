@@ -25,6 +25,7 @@ import java.util.List;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -32,6 +33,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.modules.VersionUtility;
 import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
 import org.openbravo.model.ad.ui.Element;
@@ -99,6 +101,8 @@ public class ModuleValidator implements SystemValidator {
     checkJavaPackages(module, result);
 
     checkHasUIArtifact(module, result);
+
+    checkTableName(module, result);
 
     // disable this check until this issue has been commented:
     // https://issues.openbravo.com/view.php?id=7905
@@ -301,6 +305,25 @@ public class ModuleValidator implements SystemValidator {
           + " or any of its ancestors " + "does not depend on the Core module.");
     }
 
+  }
+
+  private void checkTableName(Module module, SystemValidationResult result) {
+    for (org.openbravo.model.ad.module.DataPackage pckg : module.getDataPackageList()) {
+      OBCriteria<Table> tablesCriteria = OBDal.getInstance().createCriteria(Table.class);
+      tablesCriteria.add(Expression.eq(Table.PROPERTY_DATAPACKAGE, pckg));
+      final List<Table> tables = tablesCriteria.list();
+      for (Table table : tables) {
+        final String name = table.getName();
+        if (NamingUtil.doesNameHaveIllegalChars(name)) {
+          result.addError(SystemValidationType.WRONG_NAME, "Table " + table.getName()
+              + " has a name containing illegal characters such as dot, comma, /, etc.");
+        } else if (NamingUtil.doesNameContainNonNormalCharacters(name)) {
+          result.addWarning(SystemValidationType.WRONG_NAME, "Table " + table.getName()
+              + " has a name containing less normal characters, "
+              + "it is best to only use characters from a to z, A to Z, 0 to 9 or _");
+        }
+      }
+    }
   }
 
   private void checkJavaPackages(Module module, SystemValidationResult result) {
