@@ -99,8 +99,6 @@ public class WADInteger extends WADControl {
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
     xmlDocument.setParameter("hasButton", (textButton.equals("") ? "TextButton_ContentCell" : ""));
-    xmlDocument.setParameter("invalid", WADControl.invalid);
-    xmlDocument.setParameter("missing", WADControl.missing);
     xmlDocument.setParameter("button", textButton);
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData(
@@ -144,8 +142,6 @@ public class WADInteger extends WADControl {
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
     xmlDocument.setParameter("hasButton", (textButton.equals("") ? "TextButton_ContentCell" : ""));
-    xmlDocument.setParameter("invalid", WADControl.invalid);
-    xmlDocument.setParameter("missing", WADControl.missing);
     xmlDocument.setParameter("button", textButton);
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));

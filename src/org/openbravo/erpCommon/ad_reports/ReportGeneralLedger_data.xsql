@@ -351,4 +351,14 @@
       <Parameter name="client" type="replace" optional="true" after="AND P.AD_CLIENT_ID IN (" text="'1'"/>
       <Parameter name="orgs" type="replace" optional="true" after="AND P.AD_ORG_ID IN (" text="'1'"/>
    </SqlMethod>
+   
+  <SqlMethod name="selectSubaccountDescription" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT COALESCE(TO_CHAR(NAME),TO_CHAR(''))
+      FROM C_ELEMENTVALUE
+      WHERE C_ELEMENTVALUE_ID = ?
+    ]]></Sql>
+    <Parameter name="elementValueId"/>
+  </SqlMethod>
 </SqlClass>

@@ -99,7 +99,7 @@
      </Sql>
      <Parameter name="client"/>
    </SqlMethod>
-  <SqlMethod name="delete" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="delete" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -179,7 +179,7 @@
      <Parameter name="tableName"  type="replace" optional="true" after="WHERE " text="CLAVE"/>
      <Parameter name="Record_ID"/>
    </SqlMethod>
-  <SqlMethod name="updateSave" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="updateSave" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[

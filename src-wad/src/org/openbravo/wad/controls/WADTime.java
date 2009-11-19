@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -105,8 +105,6 @@ public class WADTime extends WADControl {
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
     xmlDocument.setParameter("hasButton", (textButton.equals("") ? "TextButton_ContentCell" : ""));
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
-    xmlDocument.setParameter("invalid", WADControl.invalid);
-    xmlDocument.setParameter("missing", WADControl.missing);
     xmlDocument.setParameter("button", textButton);
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData(
@@ -148,8 +146,6 @@ public class WADTime extends WADControl {
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
     xmlDocument.setParameter("hasButton", (textButton.equals("") ? "TextButton_ContentCell" : ""));
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
-    xmlDocument.setParameter("invalid", WADControl.invalid);
-    xmlDocument.setParameter("missing", WADControl.missing);
     xmlDocument.setParameter("button", textButton);
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));

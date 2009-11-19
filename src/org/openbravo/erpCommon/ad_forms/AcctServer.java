@@ -507,7 +507,7 @@ public abstract class AcctServer {
         Status = "L"; // Status locked document
         return false;
       } else
-        AcctServerData.delete(con, connectionProvider, AD_Table_ID, Record_ID);
+        AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - Post -TableName -" + tableName + "- ad_client_id -"
             + AD_Client_ID + "- " + tableName + "_id -" + strClave);
@@ -519,8 +519,11 @@ public abstract class AcctServer {
       FieldProvider data[] = getObjectFieldProvider();
       if (getDocumentConfirmation(conn, Record_ID) && post(data, force, vars, conn, con)) {
         success++;
-      } else
+      } else {
         errors++;
+        Status = AcctServer.STATUS_Error;
+        save(conn);
+      }
     } catch (ServletException e) {
       log4j.error(e);
       return false;
@@ -625,7 +628,7 @@ public abstract class AcctServer {
         }
       }
       // Commit Doc
-      if (!save(conn, con)) { // contains unlock
+      if (!save(conn)) { // contains unlock
         // conn.releaseRollbackConnection(con);
         unlock(conn);
         Status = AcctServer.STATUS_Error;
@@ -648,15 +651,15 @@ public abstract class AcctServer {
    *          connection
    * @return true if saved
    */
-  private final boolean save(ConnectionProvider conn, Connection con) {
+  private final boolean save(ConnectionProvider conn) {
     // if (log4j.isDebugEnabled()) log4j.debug ("AcctServer - save - ->" +
     // Status);
     int no = 0;
     try {
-      no = AcctServerData.updateSave(con, conn, tableName, Status, Record_ID);
+      no = AcctServerData.updateSave(conn, tableName, Status, Record_ID);
       // If Status is not posted (Error...) then the created accounting is deleted
       if (!Status.equals(AcctServer.STATUS_Posted))
-        AcctServerData.delete(con, connectionProvider, AD_Table_ID, Record_ID);
+        AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);
     } catch (ServletException e) {
       log4j.warn(e);
     }
@@ -771,7 +774,7 @@ public abstract class AcctServer {
       }
       // delete it
       try {
-        AcctServerData.delete(con, connectionProvider, AD_Table_ID, Record_ID);
+        AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);
       } catch (ServletException e) {
         log4j.warn(e);
       }
