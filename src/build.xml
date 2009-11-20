@@ -346,7 +346,7 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="wadvalidation">
-    <taskdef name="WADValidation" classname="org.openbravo.service.system.WADValidatorTask">
+    <taskdef name="WADValidation" classname="org.openbravo.wad.validation.WADValidatorTask">
             <classpath refid="project.class.path" />
           </taskdef>
         

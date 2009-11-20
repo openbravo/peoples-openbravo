@@ -17,10 +17,10 @@
  ************************************************************************
  */
 
-package org.openbravo.service.system;
+package org.openbravo.wad.validation;
 
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.service.system.WADValidationResult.WADValidationType;
+import org.openbravo.wad.validation.WADValidationResult.WADValidationType;
 
 /**
  * Performs a series of validations for WAD tabs. It does not use DAL but sqlc not to have to init

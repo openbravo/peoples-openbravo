@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.service.system;
+package org.openbravo.wad.validation;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;

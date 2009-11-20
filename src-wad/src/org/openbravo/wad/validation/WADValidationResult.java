@@ -17,7 +17,7 @@
  ************************************************************************
  */
 
-package org.openbravo.service.system;
+package org.openbravo.wad.validation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
