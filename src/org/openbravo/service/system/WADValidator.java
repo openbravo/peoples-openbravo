@@ -42,7 +42,8 @@ public class WADValidator {
    */
   public WADValidator(ConnectionProvider conn, String modules) {
     checkAll = (modules == null || modules.equals("%") || modules.equals("")) ? "Y" : "N";
-    this.modules = checkAll.equals("Y") ? "" : modules;
+    this.modules = "'"
+        + (checkAll.equals("Y") ? "%" : modules.replace(", ", ",").replace(",", "', '")) + "'";
     this.conn = conn;
   }
 
@@ -55,14 +56,18 @@ public class WADValidator {
     WADValidationResult result = new WADValidationResult();
     validateIdentifier(result);
     validateKey(result);
+    validateModelObject(result);
     return result;
   }
 
+  /**
+   * Validates tables have at least one column set as identifier
+   */
   private void validateIdentifier(WADValidationResult result) {
     try {
       WADValidatorData data[] = WADValidatorData.checkIdentifier(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.MISSING_IDENTIFIER, "Table " + issue.tablename
+        result.addError(WADValidationType.MISSING_IDENTIFIER, "Table " + issue.objectname
             + " has not identifier.");
       }
     } catch (Exception e) {
@@ -71,16 +76,33 @@ public class WADValidator {
     }
   }
 
+  /**
+   * Validates tables have a primary key column
+   */
   private void validateKey(WADValidationResult result) {
     try {
       WADValidatorData data[] = WADValidatorData.checkKey(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.MISSING_KEY, "Table " + issue.tablename
+        result.addError(WADValidationType.MISSING_KEY, "Table " + issue.objectname
             + " has not primary key.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
-          "Error when executing query for validating identifiers: " + e.getMessage());
+          "Error when executing query for validating primary keys: " + e.getMessage());
+    }
+  }
+
+  private void validateModelObject(WADValidationResult result) {
+    try {
+      WADValidatorData data[] = WADValidatorData.checkModelObject(conn, modules, checkAll);
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.MODEL_OBJECT, issue.objecttype + " " + issue.objectname
+            + " has classname: " + issue.currentvalue + ". But it should be in "
+            + issue.expectedvalue + " package.");
+      }
+    } catch (Exception e) {
+      result.addWarning(WADValidationType.SQL,
+          "Error when executing query for validating moel object: " + e.getMessage());
     }
   }
 }

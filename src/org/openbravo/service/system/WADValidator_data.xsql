@@ -22,7 +22,7 @@
   <SqlMethod name="checkIdentifier" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-          select t.tablename
+          select t.tablename as objectName
           from ad_table t, ad_module m, ad_package p
          where not exists (select 1
                              from ad_column c
@@ -33,14 +33,17 @@
            and (m.javapackage in ('1') or 'Y'=?)
       ]]>
     </Sql>
-    <Parameter name="module" optional="true" type="replace" after="and m.javapackage in (" text="'1'"/>
+    <Field name="objecttype" value=""/>
+    <Field name="currentvalue" value=""/>
+    <Field name="expectedvalue" value=""/>
+    <Parameter name="module" optional="true" type="replace" after="m.javapackage in (" text="'1'"/>
     <Parameter name="checkAll"/>
   </SqlMethod>
   
   <SqlMethod name="checkKey" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-        select t.tablename
+        select t.tablename as objectName
           from ad_table t, ad_module m, ad_package p
          where not exists (select 1
                              from ad_column c
@@ -51,8 +54,53 @@
            and (m.javapackage in ('1') or 'Y'=?)
       ]]>
     </Sql>
-    <Parameter name="module" optional="true" type="replace" after="and m.javapackage in (" text="'1'"/>
+    <Parameter name="module" optional="true" type="replace" after="m.javapackage in (" text="'1'"/>
     <Parameter name="checkAll"/>
   </SqlMethod>
+  
+  
+  <SqlMethod name="checkModelObject" type="preparedStatement" return="multiple">
+    <Sql>
+      <![CDATA[
+        select to_char(p.name) objectname, 'Process' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue 
+          from ad_model_object o, ad_process p, ad_module m
+         where o.ad_process_id = p.ad_process_id
+           and p.ad_module_id = m.ad_module_id
+           and o.classname not like m.javapackage||'.%'
+           and (1=1 and m.javapackage in ('1') or 'Y'=?)
+         union
+        select to_char(f.name), 'Form' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue 
+          from ad_model_object o, ad_form f, ad_module m
+         where o.ad_form_id = f.ad_form_id
+           and f.ad_module_id = m.ad_module_id
+           and o.classname not like m.javapackage||'.%'
+           and (2=2 and m.javapackage in ('2') or 'Y'=?)
+         union
+        select to_char(c.name), 'Callout' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue 
+          from ad_model_object o, ad_callout c, ad_module m
+         where o.ad_callout_id = c.ad_callout_id
+           and c.ad_module_id = m.ad_module_id
+           and o.classname not like m.javapackage||'.%'
+           and (3=3 and m.javapackage in ('3') or 'Y'=?)
+         union
+        select to_char(r.name), 'Reference' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue 
+          from ad_model_object o, ad_reference r, ad_module m
+         where o.ad_reference_id = r.ad_reference_id
+           and r.ad_module_id = m.ad_module_id
+           and o.classname not like m.javapackage||'.%'
+           and (4=4 and m.javapackage in ('4') or 'Y'=?)
+         order by 4, 2, 1
+      ]]>
+    </Sql>
+    <Parameter name="module" optional="true" type="replace" after="1=1 and m.javapackage in (" text="'1'"/>
+    <Parameter name="checkAll"/>
+    <Parameter name="module" optional="true" type="replace" after="2=2 and m.javapackage in (" text="'2'"/>
+    <Parameter name="checkAll"/>
+    <Parameter name="module" optional="true" type="replace" after="3=3 and m.javapackage in (" text="'3'"/>
+    <Parameter name="checkAll"/>
+    <Parameter name="module" optional="true" type="replace" after="4=4 and m.javapackage in (" text="'4'"/>
+    <Parameter name="checkAll"/>
+  </SqlMethod>
+  
   
 </SqlClass>
