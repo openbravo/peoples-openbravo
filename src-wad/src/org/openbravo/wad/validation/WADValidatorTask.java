@@ -29,7 +29,6 @@ public class WADValidatorTask extends Task {
 
   @Override
   public void execute() throws BuildException {
-    System.out.println("stop on error:" + stoponerror);
     CPStandAlone conn = new CPStandAlone(propertiesFile);
     WADValidator val = new WADValidator(conn, modules);
     WADValidationResult result = val.validate();

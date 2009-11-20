@@ -875,4 +875,8 @@ export.database: exports database structure and data to xml files.
   <target name="load.logoimages">
     <ant dir="${base.src}" target="load.logoimages" inheritAll="true" inheritRefs="true" />
   </target>
+  
+  <target name="validate.wad">
+    <ant dir="${base.src}" target="wadvalidation" inheritAll="true" inheritRefs="true" />
+  </target>
 </project>
