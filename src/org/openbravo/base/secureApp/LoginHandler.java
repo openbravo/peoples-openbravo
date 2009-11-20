@@ -21,9 +21,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class LoginHandler extends HttpBaseServlet {
@@ -116,9 +118,23 @@ public class LoginHandler extends HttpBaseServlet {
         msg += expiredMoudules.toString();
         goToRetry(res, vars, msg, title, msgType, action);
         break;
-      default:
-        goToTarget(res, vars);
       }
+
+      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+      if (sysInfo.getSystemStatus() == null || sysInfo.getSystemStatus().equals("RB70")
+          || this.globalParameters.getOBProperty("safe.mode", "false").equalsIgnoreCase("false")) {
+        // Last build went fine and tomcat was restarted. We should login as usual
+        goToTarget(res, vars);
+      } else if (sysInfo.getSystemStatus().equals("RB60")) {
+        String msg = Utility.messageBD(myPool, "TOMCAT_NOT_RESTARTED", vars.getLanguage());
+        String title = Utility.messageBD(myPool, "TOMCAT_NOT_RESTARTED_TITLE", vars.getLanguage());
+        goToRetry(res, vars, msg, title, "Warning", "../security/Menu.html");
+      } else {
+        String msg = Utility.messageBD(myPool, "LAST_BUILD_FAILED", vars.getLanguage());
+        String title = Utility.messageBD(myPool, "LAST_BUILD_FAILED_TITLE", vars.getLanguage());
+        goToRetry(res, vars, msg, title, msgType, action);
+      }
+
     } finally {
       OBContext.resetAsAdminContext();
     }

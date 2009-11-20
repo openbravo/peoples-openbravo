@@ -43,6 +43,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.AntExecutor;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.ModuleLog;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.service.system.ReloadContext;
@@ -314,11 +315,12 @@ public class ApplyModules extends HttpSecureAppServlet {
    */
   private void startApply(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    // final PrintStream oldOut=System.out;
+    User currentUser = OBContext.getOBContext().getUser();
     boolean admin = OBContext.getOBContext().setInAdministratorMode(true);
     PreparedStatement ps = null;
     PreparedStatement ps2 = null;
     PreparedStatement ps3 = null;
+    PreparedStatement updateSession = null;
     AntExecutor ant = null;
     try {
       ps = getPreparedStatement("DELETE FROM AD_ERROR_LOG");
@@ -369,14 +371,13 @@ public class ApplyModules extends HttpSecureAppServlet {
       // We first shutdown the background process, so that it doesn't interfere
       // with the rebuild process
       OBScheduler.getInstance().getScheduler().shutdown(true);
+
+      // We also cancel sessions opened for users different from the current one
+      updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
+      updateSession.setString(1, currentUser.getId());
+      updateSession.executeUpdate();
       ant.runTask(tasks);
 
-      // ant.setFinished(true);
-
-      /*
-       * if (ant.hasErrorOccured()) { createModuleLog(false, ant.getErr()); } else {
-       * createModuleLog(true, null); }
-       */
       PreparedStatement psErr = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
       psErr.executeQuery();
       ResultSet rsErr = psErr.getResultSet();
@@ -401,6 +402,7 @@ public class ApplyModules extends HttpSecureAppServlet {
         releasePreparedStatement(ps);
         releasePreparedStatement(ps2);
         releasePreparedStatement(ps3);
+        releasePreparedStatement(updateSession);
       } catch (SQLException e) {
         log4j.error(e);
       }

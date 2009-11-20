@@ -124,3 +124,9 @@ pentahoServer=
 
 validate.model=true
 isMinorVersion=false
+
+##############
+# Safe mode  #
+##############
+
+safe.mode=false
