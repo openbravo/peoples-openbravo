@@ -17,11 +17,11 @@
  ************************************************************************
  */
 
-package org.openbravo.wad.validation;
+package org.openbravo.service.system;
 
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.wad.validation.WADValidationResult.WADValidationType;
+import org.openbravo.service.system.WADValidationResult.WADValidationType;
 
 /**
  * Performs a series of validations for WAD tabs

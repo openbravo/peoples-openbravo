@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 
-<SqlClass name="WADValidatorData" package="org.openbravo.wad.validation">
+<SqlClass name="WADValidatorData" package="org.openbravo.service.system">
   <SqlMethod name="checkIdentifier" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
