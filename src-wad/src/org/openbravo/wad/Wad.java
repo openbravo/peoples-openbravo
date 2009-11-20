@@ -45,8 +45,6 @@ import org.openbravo.wad.controls.WADGrid;
 import org.openbravo.wad.controls.WADHidden;
 import org.openbravo.wad.controls.WADLabelControl;
 import org.openbravo.wad.controls.WadControlLabelBuilder;
-import org.openbravo.wad.validation.WADValidationResult;
-import org.openbravo.wad.validation.WADValidator;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
 import org.xml.sax.helpers.DefaultHandler;
@@ -260,13 +258,6 @@ public class Wad extends DefaultHandler {
       else
         quick = argv[16].equals("quick");
 
-      boolean failOnErrorVerification;
-      if (argv.length <= 17 || argv[17].equals("true")) {
-        failOnErrorVerification = true;
-      } else {
-        failOnErrorVerification = false;
-      }
-
       if (quick) {
         module = "%";
         strWindowName = "xx";
@@ -290,7 +281,6 @@ public class Wad extends DefaultHandler {
       log4j.info("Web path: " + webPath);
       log4j.info("Src path: " + strBaseSrc);
       log4j.info("Quick mode: " + quick);
-      log4j.info("Stop on failed verification:" + failOnErrorVerification);
 
       final File fileFin = new File(dirFin);
       if (!fileFin.exists()) {
@@ -374,14 +364,6 @@ public class Wad extends DefaultHandler {
       }
       TabsData[] tabsData = td.toArray(new TabsData[0]);
       log4j.info(tabsData.length + " tabs to compile.");
-
-      log4j.info("Verifing tabs...");
-      WADValidator validator = new WADValidator(wad.pool, tabsData);
-      WADValidationResult validationResult = validator.validate();
-      validationResult.printLog();
-      if (validationResult.hasErrors() && failOnErrorVerification) {
-        throw new Exception("Tabs verification has errors");
-      }
 
       // Call to update the table identifiers
       log4j.info("Updating table identifiers");

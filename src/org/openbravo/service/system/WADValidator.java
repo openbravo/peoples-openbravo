@@ -28,7 +28,7 @@ import org.openbravo.service.system.WADValidationResult.WADValidationType;
  * 
  */
 public class WADValidator {
-  private String moduleId;
+  private String modules;
   private ConnectionProvider conn;
   private String checkAll;
 
@@ -40,9 +40,9 @@ public class WADValidator {
    * @param moduleId
    *          Module to check
    */
-  public WADValidator(ConnectionProvider conn, String moduleId) {
-    checkAll = (moduleId == null || moduleId.equals("%") || moduleId.equals("")) ? "Y" : "N";
-    this.moduleId = checkAll.equals("Y") ? "" : moduleId;
+  public WADValidator(ConnectionProvider conn, String modules) {
+    checkAll = (modules == null || modules.equals("%") || modules.equals("")) ? "Y" : "N";
+    this.modules = checkAll.equals("Y") ? "" : modules;
     this.conn = conn;
   }
 
@@ -60,7 +60,7 @@ public class WADValidator {
 
   private void validateIdentifier(WADValidationResult result) {
     try {
-      WADValidatorData data[] = WADValidatorData.checkIdentifier(conn, moduleId, checkAll);
+      WADValidatorData data[] = WADValidatorData.checkIdentifier(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
         result.addError(WADValidationType.MISSING_IDENTIFIER, "Table " + issue.tablename
             + " has not identifier.");
@@ -73,7 +73,7 @@ public class WADValidator {
 
   private void validateKey(WADValidationResult result) {
     try {
-      WADValidatorData data[] = WADValidatorData.checkKey(conn, moduleId, checkAll);
+      WADValidatorData data[] = WADValidatorData.checkKey(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
         result.addError(WADValidationType.MISSING_KEY, "Table " + issue.tablename
             + " has not primary key.");

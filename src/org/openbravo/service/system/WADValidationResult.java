@@ -106,7 +106,7 @@ public class WADValidationResult {
   /**
    * Prints the result in the log
    */
-  public void printLog() {
+  public void printLog(boolean stopOnError) {
     for (WADValidationType type : warnings.keySet()) {
       log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
       log.warn("Warnings for Validation type: " + type.getDescription());
@@ -116,7 +116,7 @@ public class WADValidationResult {
       }
     }
 
-    if (errors.size() > 0) {
+    if (!stopOnError && errors.size() > 0) {
       log.error("The following errors during validation do not stop the");
       log.error("compilation process to allow backwards compatibility for");
       log.error("modules, but they MUST be fixed because in future core ");
