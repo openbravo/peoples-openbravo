@@ -22,38 +22,37 @@
   <SqlMethod name="checkIdentifier" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-        select tb.ad_window_id, tb.ad_tab_id, tb.ad_table_id, 
-               w.name as windowname, tb.name as tabname, t.tablename
-          from ad_tab tb, ad_table t, ad_window w
+          select t.tablename
+          from ad_table t, ad_module m, ad_package p
          where not exists (select 1
                              from ad_column c
-                            where c.ad_table_id = tb.ad_table_id
+                            where c.ad_table_id = t.ad_table_id
                               and c.isidentifier = 'Y')
-          and w.ad_window_id = tb.ad_window_id
-          and t.ad_table_id = tb.ad_table_id
-          and tb.ad_tab_id in ('1')
+           and t.ad_package_id = p.ad_package_id
+           and m.ad_module_id = p.ad_module_id
+           and (m.javapackage in ('1') or 'Y'=?)
       ]]>
     </Sql>
-    <Parameter name="tabs" optional="true" type="replace" after="and tb.ad_tab_id in (" text="'1'"/>
+    <Parameter name="module" optional="true" type="replace" after="and m.javapackage in (" text="'1'"/>
+    <Parameter name="checkAll"/>
   </SqlMethod>
   
   <SqlMethod name="checkKey" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-        select distinct tb.ad_window_id, tb.ad_tab_id, tb.ad_table_id, 
-               w.name as windowname, tb.name as tabname, t.tablename
-          from ad_tab tb, ad_tab tb1, ad_table t, ad_window w
+        select t.tablename
+          from ad_table t, ad_module m, ad_package p
          where not exists (select 1
                              from ad_column c
-                            where c.ad_table_id = tb.ad_table_id
+                            where c.ad_table_id = t.ad_table_id
                               and c.iskey = 'Y')
-          and w.ad_window_id = tb.ad_window_id
-          and t.ad_table_id = tb.ad_table_id
-          and tb1.ad_tab_id in ('1')
-          and tb.ad_window_id = tb1.ad_window_id
+           and t.ad_package_id = p.ad_package_id
+           and m.ad_module_id = p.ad_module_id
+           and (m.javapackage in ('1') or 'Y'=?)
       ]]>
     </Sql>
-    <Parameter name="tabs" optional="true" type="replace" after="and tb1.ad_tab_id in (" text="'1'"/>
+    <Parameter name="module" optional="true" type="replace" after="and m.javapackage in (" text="'1'"/>
+    <Parameter name="checkAll"/>
   </SqlMethod>
   
 </SqlClass>

@@ -19,28 +19,30 @@
 
 package org.openbravo.service.system;
 
-import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.service.system.WADValidationResult.WADValidationType;
 
 /**
- * Performs a series of validations for WAD tabs
+ * Performs a series of validations for WAD tabs. It does not use DAL but sqlc not to have to init
+ * DAL for each compilation.
  * 
  */
 public class WADValidator {
-  private FieldProvider[] tabs;
+  private String moduleId;
   private ConnectionProvider conn;
+  private String checkAll;
 
   /**
    * Constructor
    * 
    * @param conn
    *          Database ConnectionProvider
-   * @param tabs
-   *          Tabs to check
+   * @param moduleId
+   *          Module to check
    */
-  public WADValidator(ConnectionProvider conn, FieldProvider[] tabs) {
-    this.tabs = tabs;
+  public WADValidator(ConnectionProvider conn, String moduleId) {
+    checkAll = (moduleId == null || moduleId.equals("%") || moduleId.equals("")) ? "Y" : "N";
+    this.moduleId = checkAll.equals("Y") ? "" : moduleId;
     this.conn = conn;
   }
 
@@ -51,19 +53,17 @@ public class WADValidator {
    */
   public WADValidationResult validate() {
     WADValidationResult result = new WADValidationResult();
-    if (tabs != null && tabs.length > 0) {
-      validateIdentifier(result);
-      validateKey(result);
-    }
+    validateIdentifier(result);
+    validateKey(result);
     return result;
   }
 
   private void validateIdentifier(WADValidationResult result) {
     try {
-      WADValidatorData data[] = WADValidatorData.checkIdentifier(conn, getTabIDs());
+      WADValidatorData data[] = WADValidatorData.checkIdentifier(conn, moduleId, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.MISSING_IDENTIFIER, issue.windowname + " > "
-            + issue.tabname + ": table " + issue.tablename + " has not identifier.");
+        result.addError(WADValidationType.MISSING_IDENTIFIER, "Table " + issue.tablename
+            + " has not identifier.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
@@ -73,25 +73,14 @@ public class WADValidator {
 
   private void validateKey(WADValidationResult result) {
     try {
-      WADValidatorData data[] = WADValidatorData.checkKey(conn, getTabIDs());
+      WADValidatorData data[] = WADValidatorData.checkKey(conn, moduleId, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.MISSING_KEY, issue.windowname + " > " + issue.tabname
-            + ": table " + issue.tablename + " has not primary key.");
+        result.addError(WADValidationType.MISSING_KEY, "Table " + issue.tablename
+            + " has not primary key.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
           "Error when executing query for validating identifiers: " + e.getMessage());
     }
-  }
-
-  private String getTabIDs() {
-    StringBuffer result = new StringBuffer();
-    for (FieldProvider tab : tabs) {
-      if (result.length() > 0) {
-        result.append(", ");
-      }
-      result.append("'").append(tab.getField("tabId")).append("'");
-    }
-    return result.toString();
   }
 }
