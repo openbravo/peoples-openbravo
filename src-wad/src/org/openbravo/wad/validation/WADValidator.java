@@ -57,6 +57,7 @@ public class WADValidator {
     validateIdentifier(result);
     validateKey(result);
     validateModelObject(result);
+    validateModelObjectMapping(result);
     return result;
   }
 
@@ -92,6 +93,9 @@ public class WADValidator {
     }
   }
 
+  /**
+   * Validates all classes defined in model object are inside the module package
+   */
   private void validateModelObject(WADValidationResult result) {
     try {
       WADValidatorData data[] = WADValidatorData.checkModelObject(conn, modules, checkAll);
@@ -99,6 +103,23 @@ public class WADValidator {
         result.addError(WADValidationType.MODEL_OBJECT, issue.objecttype + " " + issue.objectname
             + " has classname: " + issue.currentvalue + ". But it should be in "
             + issue.expectedvalue + " package.");
+      }
+    } catch (Exception e) {
+      result.addWarning(WADValidationType.SQL,
+          "Error when executing query for validating moel object: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Validates all mappings for modules start by the java package
+   */
+  private void validateModelObjectMapping(WADValidationResult result) {
+    try {
+      WADValidatorData data[] = WADValidatorData.checkModelObjectMapping(conn, modules, checkAll);
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.MODEL_OBJECT_MAPPING, issue.objecttype + " "
+            + issue.objectname + " has mapping: " + issue.currentvalue
+            + ". But it should start with /" + issue.expectedvalue + ".");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
