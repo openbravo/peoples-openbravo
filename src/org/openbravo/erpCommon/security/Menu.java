@@ -26,8 +26,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.ValueListFilter;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Menu extends HttpSecureAppServlet {
@@ -39,8 +50,56 @@ public class Menu extends HttpSecureAppServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
+    final String url = request.getQueryString();
+    // System.out.println("url: " + url);
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String targetmenu = vars.getSessionValue("targetmenu");
+
+    if (url.equals("")) { // Trying to deep-link?
+
+      try {
+
+        OBContext.setAdminContext();
+
+        final String tabId = vars.getStringParameter("tabId", IsIDFilter.instance);
+        final String windowId = vars.getStringParameter("windowId", IsIDFilter.instance);
+        final String recordId = vars.getStringParameter("recordId", IsIDFilter.instance);
+
+        final String[] allowedCommands = { "DEFAULT", "NEW", "EDIT", "GRID" };
+        final ValueListFilter listFilter = new ValueListFilter(allowedCommands);
+        final String command = vars.getStringParameter("Command", listFilter);
+
+        if (command == null) {
+          throw new ServletException("URL not valid"); // FIXME: Error message should be translated
+        }
+
+        if (!tabId.equals("") && !windowId.equals("")) {
+
+          final Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+          final Window window = OBDal.getInstance().get(Window.class, windowId);
+
+          if (!tab.getWindow().equals(window)) {
+            throw new ServletException("URL not valid"); // FIXME: Better Error message
+          }
+
+          Table table = tab.getTable();
+          Entity e = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName());
+          Property p = e.getIdProperties().get(0);
+          // System.out.println("columname: " + p.getColumnName());
+
+          vars.setSessionValue(windowId + "|" + p.getColumnName(), recordId);
+
+          final String type = command.equals("GRID") ? "R" : "E";
+          final String tabURL = Utility.getTabURL(this, tabId, type);
+          targetmenu = tabURL + "?dl=1&" + url;
+        }
+      } catch (Exception e) {
+        log4j.error("Error in deep-linking: " + e.getMessage(), e);
+        throw new ServletException(e.getMessage());
+      } finally {
+        // Remove Admin context
+      }
+    }
     String textDirection = vars.getSessionValue("#TextDirection", "LTR");
     printPageFrameIdentificacion(response, "../utility/VerticalMenu.html",
         (targetmenu.equals("") ? "../utility/Home.html" : targetmenu),
