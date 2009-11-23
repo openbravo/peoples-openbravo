@@ -772,7 +772,7 @@ public class Wad extends DefaultHandler {
       throws Exception {
     try {
       final String tabNamePresentation = tabsData.realtabname;
-      final String tabName = FormatUtilities.replace(tabNamePresentation);
+      final String tabName = FormatUtilities.replace(tabNamePresentation) + tabsData.tabid;
       final String windowName = FormatUtilities.replace(tabsData.windowname);
       final String tableName = FieldsData.tableName(pool, tabsData.tabid);
       final String isSOTrx = FieldsData.isSOTrx(pool, tabsData.tabid);
@@ -1647,7 +1647,8 @@ public class Wad extends DefaultHandler {
     FieldsData[] fieldsParentSession = null;
     FieldsData[] auxiliarPFields = null;
     if (parentTab != -1) {
-      xmlDocument.setParameter("parentClass", FormatUtilities.replace(allTabs[parentTab].tabname));
+      xmlDocument.setParameter("parentClass", FormatUtilities.replace(allTabs[parentTab].tabname)
+          + allTabs[parentTab].tabid);
       fieldsParentSession = FieldsData.selectSession(pool, allTabs[parentTab].tabid);
       for (int i = 0; i < fieldsParentSession.length; i++) {
         fieldsParentSession[i].name = Sqlc.TransformaNombreColumna(fieldsParentSession[i].name);
@@ -2205,7 +2206,8 @@ public class Wad extends DefaultHandler {
     FieldsData[] fieldsParentSession = null;
     FieldsData[] auxiliarPFields = null;
     if (parentTab != -1) {
-      xmlDocument.setParameter("parentClass", FormatUtilities.replace(allTabs[parentTab].tabname));
+      xmlDocument.setParameter("parentClass", FormatUtilities.replace(allTabs[parentTab].tabname)
+          + allTabs[parentTab].tabid);
       fieldsParentSession = FieldsData.selectSession(pool, allTabs[parentTab].tabid);
       for (int i = 0; i < fieldsParentSession.length; i++) {
         fieldsParentSession[i].name = Sqlc.TransformaNombreColumna(fieldsParentSession[i].name);
@@ -2224,6 +2226,7 @@ public class Wad extends DefaultHandler {
               .TransformaNombreColumna(auxiliarPFields[i].columnname);
           if (auxiliarPFields[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
             auxiliarPFields[i].defaultvalue = FormatUtilities.replace(allTabs[parentTab].tabname)
+                + allTabs[parentTab].tabid
                 + "Data.selectAux"
                 + auxiliarPFields[i].reference
                 + "(this"
