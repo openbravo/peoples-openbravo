@@ -44,10 +44,6 @@
       <Parameter name="user"/>
       <Parameter name="passwd"/>
    </SqlMethod>
-   <SqlMethod name="autentificado" type="preparedStatement" return="boolean">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>SELECT 1 FROM DUAL</Sql>
-   </SqlMethod>
    <SqlMethod name="loggedOK" type="preparedStatement" return="boolean">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
@@ -57,12 +53,6 @@
             AND ISACTIVE = 'Y'
       </Sql>
       <Parameter name="adSessionId"/>
-   </SqlMethod>
-   <SqlMethod name="autorizado" type="preparedStatement" return="boolean">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT 1 FROM DUAL
-      </Sql>
    </SqlMethod>
 
    <SqlMethod name="isUserRole" type="preparedStatement" return="Boolean" default="false">
