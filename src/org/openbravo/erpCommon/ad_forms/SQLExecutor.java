@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -246,18 +246,15 @@ public class SQLExecutor extends HttpSecureAppServlet {
         dataHeader[i] = new SQLExecutorData();
         dataHeader[i].header = data[0].name.elementAt(i);
       }
-      dataBuffer.append("<tr>\n");
       for (int j = 0; j < data.length; j++) {
-        if (j != 0) {
-          int evenOdd = j % 2;
-          dataBuffer.append("<tr class=\"TableDetailRow" + String.valueOf(evenOdd) + "\">\n");
-          for (int k = 0; k < data[0].name.size(); k++) {
-            dataBuffer.append("<td>");
-            dataBuffer.append(data[j].getField(Integer.toString(k)));
-            dataBuffer.append("</td>\n");
-          }
-          dataBuffer.append("</tr>\n");
+        int evenOdd = j % 2;
+        dataBuffer.append("<tr class=\"TableDetailRow" + String.valueOf(evenOdd) + "\">\n");
+        for (int k = 0; k < data[0].name.size(); k++) {
+          dataBuffer.append("<td>");
+          dataBuffer.append(data[j].getField(Integer.toString(k)));
+          dataBuffer.append("</td>\n");
         }
+        dataBuffer.append("</tr>\n");
       }
     }
     /*
