@@ -772,7 +772,9 @@ public class Wad extends DefaultHandler {
       throws Exception {
     try {
       final String tabNamePresentation = tabsData.realtabname;
-      final String tabName = FormatUtilities.replace(tabNamePresentation) + tabsData.tabid;
+      // tabName contains tab's UUID for non core tabs
+      final String tabName = FormatUtilities.replace(tabNamePresentation)
+          + (tabsData.tabmodule.equals("0") ? "" : tabsData.tabid);
       final String windowName = FormatUtilities.replace(tabsData.windowname);
       final String tableName = FieldsData.tableName(pool, tabsData.tabid);
       final String isSOTrx = FieldsData.isSOTrx(pool, tabsData.tabid);
@@ -1648,7 +1650,7 @@ public class Wad extends DefaultHandler {
     FieldsData[] auxiliarPFields = null;
     if (parentTab != -1) {
       xmlDocument.setParameter("parentClass", FormatUtilities.replace(allTabs[parentTab].tabname)
-          + allTabs[parentTab].tabid);
+          + (allTabs[parentTab].tabmodule.equals("0") ? "" : allTabs[parentTab].tabid));
       fieldsParentSession = FieldsData.selectSession(pool, allTabs[parentTab].tabid);
       for (int i = 0; i < fieldsParentSession.length; i++) {
         fieldsParentSession[i].name = Sqlc.TransformaNombreColumna(fieldsParentSession[i].name);
@@ -2207,7 +2209,7 @@ public class Wad extends DefaultHandler {
     FieldsData[] auxiliarPFields = null;
     if (parentTab != -1) {
       xmlDocument.setParameter("parentClass", FormatUtilities.replace(allTabs[parentTab].tabname)
-          + allTabs[parentTab].tabid);
+          + (allTabs[parentTab].tabmodule.equals("0") ? "" : allTabs[parentTab].tabid));
       fieldsParentSession = FieldsData.selectSession(pool, allTabs[parentTab].tabid);
       for (int i = 0; i < fieldsParentSession.length; i++) {
         fieldsParentSession[i].name = Sqlc.TransformaNombreColumna(fieldsParentSession[i].name);
@@ -2226,7 +2228,7 @@ public class Wad extends DefaultHandler {
               .TransformaNombreColumna(auxiliarPFields[i].columnname);
           if (auxiliarPFields[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
             auxiliarPFields[i].defaultvalue = FormatUtilities.replace(allTabs[parentTab].tabname)
-                + allTabs[parentTab].tabid
+                + (allTabs[parentTab].tabmodule.equals("0") ? "" : allTabs[parentTab].tabid)
                 + "Data.selectAux"
                 + auxiliarPFields[i].reference
                 + "(this"
@@ -4513,7 +4515,8 @@ public class Wad extends DefaultHandler {
    */
   private void debugTab(TabsData tab, String strTab, int level, int heightTabs, int incrTabs,
       int mayor) throws ServletException {
-    final String tabName = FormatUtilities.replace(tab.tabname);
+    final String tabName = FormatUtilities.replace(tab.tabname)
+        + (tab.tabmodule.equals("0") ? "" : tab.tabid);
     if (strTab.equals(tab.tabid)) {
       tab.tdClass = "";
       tab.href = "return false;";

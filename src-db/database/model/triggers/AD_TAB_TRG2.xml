@@ -56,10 +56,15 @@ BEGIN
     END IF;
 
     SELECT AD_MAPPING_FORMAT(TO_CHAR(W.NAME)), 
-           AD_MAPPING_FORMAT(TO_CHAR(:new.NAME))||:new.AD_Tab_ID
+           AD_MAPPING_FORMAT(TO_CHAR(:new.NAME))
     INTO v_WindowName, v_ClassName
     FROM AD_WINDOW W
     WHERE W.AD_WINDOW_ID = :new.AD_WINDOW_ID;
+    
+    --Add tab id to name for non core modules
+    IF (:new.AD_Module_ID != '0') THEN
+      v_ClassName := v_ClassName || :new.AD_Tab_ID;
+    END IF;
     
     IF v_JavaPackage IS NOT NULL THEN
       v_ModuleMapping := '/'||v_JavaPackage;
@@ -257,6 +262,11 @@ BEGIN
   INTO v_WindowName, v_ClassName
   FROM AD_WINDOW W
   WHERE W.AD_WINDOW_ID = :new.AD_WINDOW_ID;
+  
+  --Add tab id to name for non core modules
+  IF (:new.AD_Module_ID != '0') THEN
+    v_ClassName := v_ClassName || :new.AD_Tab_ID;
+  END IF;
 
   IF (v_JavaPackage IS NOT NULL)  THEN
     v_ModuleMapping := '/'||v_JavaPackage;
