@@ -405,7 +405,7 @@ export.database: exports database structure and data to xml files.
                   stableDBdir="${stableDBdir}"
                   testDBdir="${base.src.db}/database"
                   verbosity="${bbdd.verbosity}"
-                  userId="0" 
+                  userId="0" adminMode="true" 
                   propertiesFile="${base.config}/Openbravo.properties"/>    
   </target>
 
@@ -599,7 +599,7 @@ export.database: exports database structure and data to xml files.
     <taskdef name="applyModule" classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
       <classpath refid="project.class.path" />
     </taskdef>
-    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties"/>
+    <applyModule userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties"/>
   </target>
 
   <target name="apply.module">
@@ -730,12 +730,12 @@ export.database: exports database structure and data to xml files.
     </taskdef>
 
     <echo message="Validating Module..." />
-    <validateModules moduleJavaPackage="${module}" failOnError="false" userId="0" propertiesFile="${base.config}/Openbravo.properties" type="module" />
+    <validateModules moduleJavaPackage="${module}" failOnError="false" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" />
 
     <antcall target="obx.export.database" />
     <antcall target="obx.export.config.script" />
 
-    <extractModule moduleName="${module}" userId="0" propertiesFile="${base.config}/Openbravo.properties" exportRD="${obx.export.RD}" />
+    <extractModule moduleName="${module}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" exportRD="${obx.export.RD}" />
   </target>
 
   <target name="diagnostic">

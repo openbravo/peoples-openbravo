@@ -265,23 +265,23 @@ cWithHoldId varchar2(32);
             WHERE PERIODSTARTDATE <= v_DateInvoiced
             AND PERIODENDDATE+1 > v_DateInvoiced ;
           IF (v_PeriodStartDate IS NOT NULL AND v_PeriodEndDate IS NOT NULL) THEN
-            SELECT S.AD_ORG_ID   
+            SELECT D.AD_ORG_ID   
               INTO v_DocNo_Org_ID
-              FROM C_DOCTYPE D LEFT JOIN AD_SEQUENCE S ON D.DOCNOSEQUENCE_ID = S.AD_SEQUENCE_ID        
-              WHERE C_DOCTYPE_ID = v_DocTypeTarget_ID ;
-            IF (v_DocNo_Org_ID IS NOT NULL) THEN
-              SELECT COUNT(*)
-                INTO v_count
-                FROM C_INVOICE I
-                WHERE I.DOCUMENTNO = v_DocumentNo
-                AND I.DATEINVOICED >= v_PeriodStartDate
-                AND I.DATEINVOICED < v_PeriodEndDate+1 
-                AND I.C_INVOICE_ID <> v_Record_ID 
-                AND AD_ISORGINCLUDED(I.AD_ORG_ID, v_DocNo_Org_ID, I.AD_CLIENT_ID) <> -1 ;
+              FROM C_DOCTYPE D
+              WHERE D.C_DOCTYPE_ID = v_DocTypeTarget_ID ;
+            SELECT COUNT(*)
+              INTO v_count
+              FROM C_INVOICE I
+              WHERE I.DOCUMENTNO = v_DocumentNo
+              AND I.C_DOCTYPETARGET_ID = v_DocTypeTarget_ID
+              AND I.DATEINVOICED >= v_PeriodStartDate
+              AND I.DATEINVOICED < v_PeriodEndDate+1 
+              AND I.C_INVOICE_ID <> v_Record_ID 
+              AND AD_ISORGINCLUDED(I.AD_ORG_ID, v_DocNo_Org_ID, I.AD_CLIENT_ID) <> -1
+              AND I.AD_CLIENT_ID = v_Client_ID ;
               IF (v_count<>0) THEN
                 RAISE_APPLICATION_ERROR(-20000, '@DifferentDocumentNo@') ;
               END IF;
-            END IF;
           END IF;
     END IF;    
     IF(NOT FINISH_PROCESS) THEN

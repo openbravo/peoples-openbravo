@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,10 +36,8 @@
   <PARAMETER id="fieldButton" name="button"/>
   <PARAMETER id="xxinvalidSpan" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xxinvalidSpanText" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xxinvalidSpanText" name="invalid"/>
   <PARAMETER id="xxmissingSpan" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xxmissingSpanText" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xxmissingSpanText" name="missing"/>
 
   <DISCARD id="discard"/>
 </REPORT>
