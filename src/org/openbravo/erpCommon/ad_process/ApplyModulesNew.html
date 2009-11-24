@@ -239,7 +239,7 @@
 	         }
 	         
 	         error_status[getStatusIndex(state)]=errorStatus;
-	         progList_changeStatus(correspondingNode(state), errorStatus, msg.Response.lastmessage);
+	         progList_changeStatus(correspondingNode(state), errorStatus, msg.Response.lastmessage.substring(0,50));
 
 	         insertWarnsAndErrors(msg.Response);
 	         
