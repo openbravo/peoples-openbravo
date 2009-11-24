@@ -76,11 +76,11 @@ public abstract class SessionFactoryController {
     SessionFactoryController.runningInWebContainer = runningInWebContainer;
   }
 
-  public static SessionFactoryController getInstance() {
+  public static synchronized SessionFactoryController getInstance() {
     return instance;
   }
 
-  public static void setInstance(SessionFactoryController sfc) {
+  public static synchronized void setInstance(SessionFactoryController sfc) {
     if (sfc != null) {
       log.debug("Setting instance of " + sfc.getClass().getName()
           + " as session factory controller");

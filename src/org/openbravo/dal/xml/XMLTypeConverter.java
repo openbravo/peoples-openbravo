@@ -40,14 +40,14 @@ public class XMLTypeConverter implements OBSingleton {
 
   private static XMLTypeConverter instance = new XMLTypeConverter();
 
-  public static XMLTypeConverter getInstance() {
+  public static synchronized XMLTypeConverter getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(XMLTypeConverter.class);
     }
     return instance;
   }
 
-  public static void setInstance(XMLTypeConverter instance) {
+  public static synchronized void setInstance(XMLTypeConverter instance) {
     XMLTypeConverter.instance = instance;
   }
 

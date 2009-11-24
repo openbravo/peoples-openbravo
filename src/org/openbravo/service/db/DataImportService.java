@@ -71,14 +71,14 @@ public class DataImportService implements OBSingleton {
 
   private static DataImportService instance;
 
-  public static DataImportService getInstance() {
+  public static synchronized DataImportService getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(DataImportService.class);
     }
     return instance;
   }
 
-  public static void setInstance(DataImportService instance) {
+  public static synchronized void setInstance(DataImportService instance) {
     DataImportService.instance = instance;
   }
 
