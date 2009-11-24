@@ -309,7 +309,6 @@ compare.database.structure: refer to compare.database.structure target of databa
     <CheckSumCondition obDir="${basedir}"
                            type="md5.wad"
                            property="test.md5.wad"/>
-    <antcall target="update.finalcompile.status" />
   </target>
 
   <target name="compile.complete.development" depends="init" if="mode.class">
@@ -626,13 +625,11 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="db.apply.modules" if="apply.modules.on.create">
-    <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
   </target>
 
   <target name="db.apply.modules.sampledata" if="apply.modules.on.create">
     <antcall target="generate.entities" />
-    <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
     <antcall target="load.logoimages" />
@@ -640,7 +637,6 @@ compare.database.structure: refer to compare.database.structure target of databa
 
 
   <target name="apply.modules">
-    <echo>Applying ${module} modules...</echo>
     <antcall target="update.database.mod" />
 
     <antcall target="update.generate.entities.status" inheritall="true" inheritrefs="true"/>
@@ -657,6 +653,8 @@ compare.database.structure: refer to compare.database.structure target of databa
     </condition>
     
     <antcall target="apply.modules.compile"/>
+    <ant dir="${base.db}" target="setApplied.${bbdd.rdbms}" inheritAll="true" inheritRefs="true" />
+     
   </target>
   
   <target name="apply.module.forked">

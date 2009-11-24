@@ -26,7 +26,7 @@
          SELECT JAVAPACKAGE AS NAME
            FROM AD_MODULE M
           WHERE ISACTIVE='Y'
-            AND (STATUS='I' OR STATUS='U')  
+            AND (STATUS='I' OR STATUS='U' OR STATUS='P')  
             AND NOT EXISTS (SELECT 1 
                               FROM AD_MODULE_INSTALL
                              WHERE AD_MODULE_ID = M.AD_MODULE_ID)

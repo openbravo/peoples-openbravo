@@ -70,6 +70,8 @@ public class ApplyModules extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       printPage(request, response, vars);
+    } else if (vars.commandIn("TOMCAT")) {
+      printPageTomcat(request, response, vars);
     } else if (vars.commandIn("STARTAPPLY")) {
       startApply(response, vars);
     } else if (vars.commandIn("UPDATESTATUS")) {
@@ -113,7 +115,7 @@ public class ApplyModules extends HttpSecureAppServlet {
 
     String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/ApplyModulesNew").createXmlDocument();
+        "org/openbravo/erpCommon/ad_process/ApplyModules").createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -129,6 +131,39 @@ public class ApplyModules extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  /**
+   * Prints a page that only allows the user to restart or reload Tomcat
+   * 
+   * @param response
+   * @param vars
+   * @throws IOException
+   * @throws ServletException
+   */
+  private void printPageTomcat(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars) throws IOException, ServletException {
+
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_process/RestartTomcat").createXmlDocument();
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    // xmlDocument.setParameter("help", ApplyModulesData.getHelp(this, vars.getLanguage()));
+
+    final OBError myMessage = vars.getMessage("ApplyModules");
+    vars.removeMessage("ApplyModules");
+    if (myMessage != null) {
+      xmlDocument.setParameter("messageType", myMessage.getType());
+      xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+      xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+    }
+
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
 
@@ -370,7 +405,11 @@ public class ApplyModules extends HttpSecureAppServlet {
 
       // We first shutdown the background process, so that it doesn't interfere
       // with the rebuild process
-      OBScheduler.getInstance().getScheduler().shutdown(true);
+      try {
+        OBScheduler.getInstance().getScheduler().shutdown(true);
+      } catch (Exception e) {
+        // We will not log an exception if the scheduler complains. The user shouldn't notice this
+      }
 
       // We also cancel sessions opened for users different from the current one
       updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
@@ -479,7 +518,9 @@ public class ApplyModules extends HttpSecureAppServlet {
       if (rs.next()) {
         error.setType("Error");
         error.setTitle(Utility.messageBD(myPool, "Error", vars.getLanguage()));
-        error.setMessage(Utility.messageBD(myPool, "BuildError", vars.getLanguage()));
+        error
+            .setMessage(Utility.messageBD(myPool, "BuildError", vars.getLanguage())
+                + "<a href=\"http://wiki.openbravo.com/wiki/UpgradeTips\" target=\"_blank\">this link</a>.");
 
       } else {
         ps2 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN'");
@@ -488,7 +529,10 @@ public class ApplyModules extends HttpSecureAppServlet {
         if (rs2.next()) {
           error.setType("Warning");
           error.setTitle(Utility.messageBD(myPool, "Warning", vars.getLanguage()));
-          error.setMessage(Utility.messageBD(myPool, "BuildWarning", vars.getLanguage()));
+          error
+              .setMessage(Utility.messageBD(myPool, "BuildWarning", vars.getLanguage())
+                  + "<a href=\"http://wiki.openbravo.com/wiki/UpgradeTips\" target=\"_blank\">this link</a>."
+                  + Utility.messageBD(myPool, "BuildWarning2", vars.getLanguage()));
 
         } else {
           error.setType("Success");

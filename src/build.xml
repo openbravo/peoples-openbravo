@@ -327,7 +327,6 @@ build.war: build a war file in the lib directory.
 	  <antcall inheritall="true" target="calculate.instance.version"/>
 	</target>
 	<target name="calculate.instance.version" depends="calculate.version.from.hg, calculate.version.from.file">
-		<echo message="Instance version: ${instance.version}"/>
 	    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" delimiter="/">
 	      <classpath>
 	        <fileset dir="${base.lib}">
@@ -780,7 +779,7 @@ build.war: build a war file in the lib directory.
   <target name="update.finalcompile.status" >
       	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
       	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB50' ;
+      	  	       <transaction> UPDATE ad_system_info SET system_status='RB51' ;
                      DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
       	</sql>
   </target>

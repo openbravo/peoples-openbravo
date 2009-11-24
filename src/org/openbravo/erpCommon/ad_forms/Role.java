@@ -33,10 +33,12 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -190,10 +192,13 @@ public class Role extends HttpSecureAppServlet {
     RoleComboData[] datarole = null;
     try {
       ActivationKey ak = new ActivationKey();
+      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+      boolean correctSystemStatus = sysInfo.getSystemStatus() == null
+          || sysInfo.getSystemStatus().equals("RB70");
       LicenseRestriction limitation = ak.checkOPSLimitations(vars.getDBSession());
       if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
           || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
-          || limitation == LicenseRestriction.MODULE_EXPIRED) {
+          || limitation == LicenseRestriction.MODULE_EXPIRED || !correctSystemStatus) {
         // allow only system login
         datarole = RoleComboData.selectSystem(this, vars.getUser());
       } else {

@@ -450,6 +450,36 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
     </sql>
   </target>
 
+  <target name="setApplied.ORACLE">
+    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="abort" autocommit="true">
+      <classpath>
+        <fileset dir="${base.lib}">
+          <include name="**/*.jar">
+          </include>
+        </fileset>
+      </classpath>
+      <transaction>
+          UPDATE AD_MODULE SET STATUS='A',ISINDEVELOPMENT='N' WHERE STATUS='P';
+          DELETE FROM AD_MODULE WHERE STATUS = 'U';
+      </transaction>
+    </sql>
+  </target>
+
+  <target name="setApplied.POSTGRE">
+    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="abort" autocommit="true">
+      <classpath>
+        <fileset dir="${base.lib}">
+          <include name="**/*.jar">
+          </include>
+        </fileset>
+      </classpath>
+      <transaction>
+          UPDATE AD_MODULE SET STATUS='A',ISINDEVELOPMENT='N' WHERE STATUS='P';
+          DELETE FROM AD_MODULE WHERE STATUS = 'U';
+      </transaction>
+    </sql>
+  </target>
+  
   <target name="update.customized.database">
     <altercustomizeddatabasedata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" password="${bbdd.password}" filter="com.openbravo.db.OpenbravoMetadataFilter" model="model" orgModel="../originalDatabase/model" data="${basedir}/sourcedata" orgData="${basedir}/../originalDatabase/sourcedata" verbosity="${bbdd.verbosity}" />
     <antcall target="database.postcreate.${bbdd.rdbms}" />

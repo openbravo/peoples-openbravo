@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
+/*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -12,20 +13,32 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
+ */
 -->
-<REPORT>
-  <template file="ApplyModulesNew.html"/>
-  <PARAMETER id="paramLanguage" name="language" default=""/>
-  <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
-  <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
-  <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
-  <PARAMETER id="paramDirectory" name="directory" default=""/>
-  <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-  <PARAMETER id="processHelp" name="help" replaceCharacters="htmlHelp" default=""/>
-  <PARAMETER id="buttonLog" name="buttonLog" attribute="onclick" replace="xx"/>
-  <PARAMETER id="logfile" name="logfile" attribute="value" replace="xx"/>
-</REPORT>
+
+
+
+<SqlClass name="SystemStatusListenerData" package="org.openbravo.base">
+
+   <SqlMethod name="getSystemStatus" type="preparedStatement" return="String">
+      <SqlMethodComment>Gets the system status value, from Ad_System_Info table</SqlMethodComment>
+      <Sql>
+        SELECT SYSTEM_STATUS 
+        FROM AD_SYSTEM_INFO 
+      </Sql>
+   </SqlMethod>
+   
+   <SqlMethod name="setSystemStatus" type="preparedStatement" return="rowCount">
+      <SqlMethodComment>Sets the system status value, from Ad_System_Info table</SqlMethodComment>
+      <Sql>
+        UPDATE AD_SYSTEM_INFO
+        SET SYSTEM_STATUS = ?
+      </Sql>
+      <Parameter name="systemStatus"/>
+   </SqlMethod>
+
+</SqlClass>
