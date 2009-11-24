@@ -95,7 +95,7 @@ public class OBContext implements OBNotSingleton {
    */
   public static void setAdminContext() {
     if (adminContext == null) {
-      setOBContext("0");
+      setOBContext("0", "0", "0", "0");
       adminContext = getOBContext();
     } else {
       setOBContext(adminContext);

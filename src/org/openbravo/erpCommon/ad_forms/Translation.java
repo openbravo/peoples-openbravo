@@ -197,7 +197,8 @@ public class Translation extends HttpSecureAppServlet {
       for (int i = 0; i < modulesTables.length; i++) {
         exportModulesTrl(rootDirectory, AD_Client_ID, AD_Language, modulesTables[i].c);
       }
-
+      // We need to also export translations for some tables which are considered reference data
+      // and are imported using datasets (such as Masterdata: UOMs, Currencies, ...)
       exportReferenceData(rootDirectory, AD_Language);
 
       exportContibutors(directory, AD_Language);
@@ -423,10 +424,8 @@ public class Translation extends HttpSecureAppServlet {
       if (m_IsCentrallyMaintained) {
         sql.append(" AND ").append("o.IsCentrallyMaintained='N'");
       }
-      /*
-       * AdClient !=0 not supported if (AD_Client_ID >= 0){ sql.append(" AND "
-       * ).append("o.AD_Client_ID='").append(AD_Client_ID).append("'"); }
-       */
+      // AdClient !=0 not supported
+      sql.append(" AND o.AD_Client_ID='0' ");
 
       if (!exportReferenceData) {
         String strParentTable = null;

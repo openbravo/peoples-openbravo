@@ -32,7 +32,7 @@ BEGIN
    WHERE AD_MODULE_ID = :new.AD_Module_ID;
 
    IF v_type = 'T' THEN
-     RAISE_APPLICATION_ERROR(-20000, '@JavaPackageNotAllowedInTemplate@');
+     RAISE_APPLICATION_ERROR(-20000, '@DataPackageNotAllowedInTemplate@');
    END IF;
 
 

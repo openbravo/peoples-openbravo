@@ -105,8 +105,8 @@ BEGIN
                        where m.ad_module_id = ad_menu.ad_module_id
                        and m1.ad_module_id = :new.ad_module_id
                        and ad_menu.AD_WINDOW_ID = :new.AD_Window_ID
-                       and m1.ad_language = m.ad_language
-                       and AD_Menu_Trl.ad_language = m1.ad_language);
+                       and AD_Menu_Trl.ad_language = m1.ad_language
+                       and AD_Menu_Trl.ad_menu_id = ad_menu.ad_menu_id);
         
     IF (COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')) THEN
         -- Update Menu
