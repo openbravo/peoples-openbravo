@@ -55,7 +55,7 @@ public class Menu extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String targetmenu = vars.getSessionValue("targetmenu");
 
-    if (url.equals("")) { // Trying to deep-link?
+    if (url != null && !url.equals("")) { // Trying to deep-link
 
       try {
 
@@ -97,7 +97,7 @@ public class Menu extends HttpSecureAppServlet {
         log4j.error("Error in deep-linking: " + e.getMessage(), e);
         throw new ServletException(e.getMessage());
       } finally {
-        // Remove Admin context
+        OBContext.setOBContext(vars.getUser()); // FIXME: Fix return user context
       }
     }
     String textDirection = vars.getSessionValue("#TextDirection", "LTR");
