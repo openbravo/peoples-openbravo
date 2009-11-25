@@ -49,7 +49,7 @@
         ]]>
         </Sql>
         <Field name="position" value="count"/>
-			<Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
+		<Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="documentno" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
@@ -67,22 +67,32 @@
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
+   
+   <SqlMethod name="set" type="constant" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql></Sql>
+   </SqlMethod>
 
    <SqlMethod name="countRows" type="preparedStatement" return="String">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-          SELECT COUNT(*) AS RN1
-          FROM C_ORDER o, C_ORDERLINE ol, M_PRODUCT p, C_BPARTNER b
-          WHERE o.C_ORDER_ID = ol.C_ORDER_ID 
-          AND o.C_BPARTNER_ID = b.C_BPARTNER_ID 
-          AND ol.M_PRODUCT_ID = p.M_PRODUCT_ID
-          AND o.AD_CLIENT_ID IN ('1') 
-          AND o.AD_ORG_ID IN ('1') 
-          AND o.IsActive='Y' 
-          AND o.ISSOTRX = 'Y'
+          SELECT count(*) AS value FROM ( SELECT '0' AS rn1, B.*  FROM (
+	          SELECT 1
+	          FROM C_ORDER o, C_ORDERLINE ol, M_PRODUCT p, C_BPARTNER b
+	          WHERE o.C_ORDER_ID = ol.C_ORDER_ID 
+	          AND o.C_BPARTNER_ID = b.C_BPARTNER_ID 
+	          AND ol.M_PRODUCT_ID = p.M_PRODUCT_ID
+	          AND o.AD_CLIENT_ID IN ('1') 
+	          AND o.AD_ORG_ID IN ('1') 
+	          AND o.IsActive='Y' 
+	          AND o.ISSOTRX = '1'
+	          AND 1=1
+	       ) B
+	       ) A 
         ]]>
         </Sql>
+        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Field name="position" value="count"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_ORG_ID IN (" text="'1'"/>
@@ -97,12 +107,12 @@
         <Parameter name="product" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.M_Product_ID = ? ]]></Parameter>
         <Parameter name="isdelivered" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYDELIVERED, 0)) <> 0 ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYINVOICED, 0)) <> 0 ]]></Parameter>
+        <Parameter name="isSoTr" type="replace" optional="true" after="o.ISSOTRX = '" text="1"/>
+        <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
+        <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
+        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
-   <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-   </SqlMethod>
    <SqlMethod name="selectSOTrx" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
