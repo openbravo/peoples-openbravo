@@ -83,14 +83,13 @@
       <Sql>
       <![CDATA[
           SELECT COUNT(*) AS value FROM ( SELECT '0' AS rn1, B.* FROM (
-            SELECT 1 AS RN1
-            FROM C_Invoice_v i
+            SELECT 1 FROM C_Invoice_v i
             WHERE i.AD_Client_ID IN ('1') 
             AND i.AD_Org_ID IN ('1') 
             AND i.IsActive='Y'
             AND 1=1
           ) B
-          ) A
+          ) A 
         ]]>
         </Sql>
         <Field name="position" value="count"/>
