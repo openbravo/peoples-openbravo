@@ -129,4 +129,9 @@ isMinorVersion=false
 # Safe mode  #
 ##############
 
+# This property is used to activate/deactivate the safe mode of Openbravo ERP
+# When this property is activated, if the last build wasn't succesful, or Tomcat
+# wasn't restarted, users will only be able to login in the application 
+# with role System Administrator
+
 safe.mode=false
