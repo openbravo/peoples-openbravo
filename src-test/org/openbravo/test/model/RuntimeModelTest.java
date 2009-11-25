@@ -83,7 +83,10 @@ public class RuntimeModelTest extends BaseTest {
   }
 
   /**
-   * Check the AD_Table.name for illegal characters
+   * Check the AD_Table.name for illegal characters.
+   * 
+   * See issue https://issues.openbravo.com/view.php?id=10624 Spaces in AD_TABLE.name should be
+   * handled better, currently the entity name contains a space resulting in errors in HQL
    */
   public void testTableName() {
     for (final Table t : ModelProvider.getInstance().getTables()) {

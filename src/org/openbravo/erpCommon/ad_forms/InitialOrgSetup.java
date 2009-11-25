@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -1072,7 +1073,11 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       // import coa
       if (!strCreateAccounting.equals("")) {
         InitialOrgSetupData[] dataCOA = InitialOrgSetupData.selectCOAModules(this, strModules);
-        ModuleUtiltiy.orderModuleByDependency(this, dataCOA);
+        try {
+          ModuleUtiltiy.orderModuleByDependency(dataCOA);
+        } catch (Exception e) {
+          log4j.error("Error ordering modules", e);
+        }
 
         final DataImportService myData = DataImportService.getInstance();
         for (int i = 0; i < dataCOA.length; i++) {
@@ -1105,7 +1110,11 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       }
       // import rd
       InitialOrgSetupData[] data = InitialOrgSetupData.selectRDModules(this, strModules);
-      ModuleUtiltiy.orderModuleByDependency(this, data);
+      try {
+        ModuleUtiltiy.orderModuleByDependency(data);
+      } catch (Exception e) {
+        log4j.error("Error ordering modules", e);
+      }
       if (data != null && data.length != 0) {
         final DataImportService myData = DataImportService.getInstance();
         StringBuffer strError = new StringBuffer("");
@@ -1184,7 +1193,13 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     for (int i = 0; i < modules.length; i++) {
       list.add(modules[i].adModuleId);
     }
-    final ArrayList<String> orderList = ModuleUtiltiy.orderByDependency(this, list);
+    List<String> orderList = null;
+    try {
+      orderList = ModuleUtiltiy.orderByDependency(list);
+    } catch (Exception e) {
+      log4j.error("Error ordering modules", e);
+      orderList = list;
+    }
     final InitialOrgSetupData[] rt = new InitialOrgSetupData[orderList.size()];
     for (int i = 0; i < orderList.size(); i++) {
       int j = 0;

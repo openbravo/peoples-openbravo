@@ -40,6 +40,7 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
+ 
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -54,6 +55,7 @@
     v_Updated_Total NUMBER:=0;
     v_Created_Total NUMBER:=0;
     v_rowcount NUMBER;
+    v_count  NUMBER;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -563,6 +565,25 @@
     END LOOP;
     v_Message:='@Created@=' || v_Created_Total || ', @Updated@=' || v_Updated_Total;
     --<<FINISH_PROCESS>>
+    --Extension point for Transitory Account
+    SELECT count(*) INTO v_count
+   FROM DUAL
+   where exists (select 1 from ad_ep_procedures where ad_extension_points_id = 'C13A8C820A9E437CA970FF46D6E00580');
+         IF (v_count=1) THEN
+                        DECLARE
+                                v_ep_instance VARCHAR(32);        
+                                v_extension_point_id VARCHAR(32) := 'C13A8C820A9E437CA970FF46D6E00580';
+                         BEGIN
+                                v_ep_instance := get_uuid();
+                                AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AD_Client_ID',
+                                v_AD_Client_ID, NULL, NULL, NULL, NULL, NULL, NULL); 
+                                AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'C_AcctSchema_ID',
+                                v_C_AcctSchema_ID, NULL, NULL, NULL, NULL, NULL, NULL);
+                                AD_EXTENSION_POINT_HANDLER(v_ep_instance, v_extension_point_id);
+                                DELETE FROM ad_ep_instance_para
+                                WHERE ad_ep_instance_id = v_ep_instance;
+                        END;
+          END IF;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;

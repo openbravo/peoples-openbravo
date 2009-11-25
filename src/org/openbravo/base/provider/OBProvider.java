@@ -20,7 +20,7 @@
 package org.openbravo.base.provider;
 
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -51,7 +51,7 @@ public class OBProvider {
     OBProvider.instance = instance;
   }
 
-  private Map<String, Registration> registrations = new HashMap<String, Registration>();
+  private Map<String, Registration> registrations = new Hashtable<String, Registration>();
 
   /**
    * Returns true if the clz is registered.

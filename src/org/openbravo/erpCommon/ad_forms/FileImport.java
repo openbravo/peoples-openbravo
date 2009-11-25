@@ -273,7 +273,7 @@ public class FileImport extends HttpSecureAppServlet {
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "FileImport.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb(), false, false);
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "FileImport.html",
           strReplaceWith);

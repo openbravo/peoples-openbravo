@@ -39,14 +39,14 @@ public class Evaluator implements OBSingleton {
 
   private static Evaluator instance = new Evaluator();
 
-  public static Evaluator getInstance() {
+  public static synchronized Evaluator getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(Evaluator.class);
     }
     return instance;
   }
 
-  public static void setInstance(Evaluator instance) {
+  public static synchronized void setInstance(Evaluator instance) {
     Evaluator.instance = instance;
   }
 

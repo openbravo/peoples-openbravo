@@ -58,16 +58,16 @@ BEGIN
   -- Access for all
   INSERT
   INTO AD_WorkFlow_Access
-    (
+    ( 
       AD_WorkFlow_ID, AD_Role_ID, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
-      IsReadWrite
+      IsReadWrite, AD_WorkFlow_Access_ID
     )
   SELECT :new.AD_WorkFlow_ID,
     r.AD_Role_ID, r.AD_CLIENT_ID, r.AD_ORG_ID,
      'Y', now(), '0',
-    now(), '0', 'Y'
+    now(), '0', 'Y', get_uuid()
   FROM AD_Role r
    WHERE isManual='N';
  END IF;

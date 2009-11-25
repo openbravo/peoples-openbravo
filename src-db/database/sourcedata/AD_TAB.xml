@@ -6654,7 +6654,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--529-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--529-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--529-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--529-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--529-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--529--></AD_TAB>
 
 <!--530--><AD_TAB>

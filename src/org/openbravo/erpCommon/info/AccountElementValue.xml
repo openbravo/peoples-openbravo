@@ -24,6 +24,7 @@
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 
 	<PARAMETER id="fieldOrgs" name="orgs" replace="xx" attribute="value" />
+    <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>
 
 	<PARAMETER id="grid" name="grid" attribute="numrows" />
 	<PARAMETER id="grid" name="grid_Offset" attribute="offset" />
@@ -41,5 +42,9 @@
 	<SUBREPORT id="reportAD_Org_ID" name="reportAD_Org_ID" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected" withId="AD_Org_ID"/>
 	</SUBREPORT>
+    <SUBREPORT id="reportC_ACCTSCHEMA_ID" name="reportC_ACCTSCHEMA_ID" report="org/openbravo/erpCommon/reference/List">
+      <ARGUMENT name="parameterListSelected" withId="paramC_ACCTSCHEMA_ID"/>
+    </SUBREPORT>
+  
 	<DISCARD id="discard"/>
 </REPORT>

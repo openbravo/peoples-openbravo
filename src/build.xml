@@ -100,21 +100,21 @@ build.war: build a war file in the lib directory.
     <taskdef name="validateDatabase" classname="org.openbravo.service.system.SystemValidationTask">
       <classpath refid="project.class.path" />
     </taskdef>
-    <validateDatabase userId="0" propertiesFile="${base.config}/Openbravo.properties" type="database" />
+    <validateDatabase userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="database" />
   </target>
 
   <target name="validate.modules">
     <taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">
       <classpath refid="project.class.path" />
     </taskdef>
-    <validateModules userId="0" propertiesFile="${base.config}/Openbravo.properties" type="module" />
+    <validateModules userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" />
   </target>
   
   <target name="load.logoimages">
     <taskdef name="imageloading" classname="org.openbravo.erpCommon.utility.ImageToDatabaseLoader">
       <classpath refid="project.class.path" />
     </taskdef>
-    <imageloading userId="0" propertiesFile="${base.config}/Openbravo.properties" basePath="${basedir}/../"
+    <imageloading userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" basePath="${basedir}/../"
       imagePaths="web/images/CompanyLogo_big.png,web/images/SupportLogo_big.png,web/images/CompanyLogo_small.png,web/skins/Default/Login/initialOpenbravoLogo.png,web/images/CompanyLogo_big.png"
       propertyNames="yourCompanyLoginImage,yourItServiceLoginImage,yourCompanyMenuImage,yourCompanyBigImage,yourCompanyDocumentImage"/>
   </target>
@@ -187,7 +187,8 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </taskdef>
     <echo message="Exporting sample reference data" />
-    <exportsampledata userId="0" propertiesFile="${base.config}/Openbravo.properties" clients="SmallBazaar" />
+    <exportsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" clients="SmallBazaar" />
+    <exportsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" clients="Accounting Test" />
   </target>
 
   <target name="import.sample.data" description="Import Sample Data" depends="generate.entities">
@@ -195,7 +196,7 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </taskdef>
     <echo message="Importing sample reference data" />
-    <importsampledata userId="0" propertiesFile="${base.config}/Openbravo.properties" />
+    <importsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" />
     <ant dir="${base.db}" target="database.postupdate.${bbdd.rdbms}" inheritAll="true" inheritRefs="true" />
   </target>
 

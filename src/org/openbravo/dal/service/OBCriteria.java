@@ -130,7 +130,9 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
     final OBContext obContext = OBContext.getOBContext();
     final Entity e = getEntity();
 
-    OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
+    if (!OBContext.getOBContext().isInAdministratorMode()) {
+      OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
+    }
 
     if (isFilterOnReadableOrganization() && e.isOrganizationPartOfKey()) {
       add(Restrictions.in("id." + PROPERTY_ORGANIZATION + ".id", obContext

@@ -37,7 +37,7 @@ BEGIN
   OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')
   OR COALESCE(:old.AD_Module_ID,'.') <> COALESCE(:new.AD_Module_ID,'.')))
  THEN
-    SELECT JavaPackage
+    SELECT (CASE WHEN M.AD_MODULE_ID ='0' THEN NULL ELSE JavaPackage END)
       INTO  v_JavaPackage
       FROM AD_MODULE M
      WHERE AD_MODULE_ID = :New.AD_Module_ID;

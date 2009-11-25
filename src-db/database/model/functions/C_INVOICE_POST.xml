@@ -143,6 +143,11 @@ cWithHoldId varchar2(32);
     v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
     v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
     v_org_bule_id AD_Org.AD_Org_ID%TYPE;
+    
+    v_PeriodStartDate DATE;
+    v_PeriodEndDate DATE;
+    v_DocNo_Org_ID AD_Sequence.AD_Org_ID%TYPE;
+    
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -241,6 +246,42 @@ cWithHoldId varchar2(32);
 
           IF V_InvoiceLines_count=0 THEN
             RAISE_APPLICATION_ERROR(-20000, '@InvoicesNeedLines@');
+          END IF;
+          /*
+          * Avoids repeating the same documentno for the same organization tree within the same fiscal year
+          */
+          SELECT PERIODSTARTDATE, PERIODENDDATE
+            INTO v_PeriodStartDate, v_PeriodEndDate
+            FROM (SELECT Y.C_CALENDAR_ID, Y.C_YEAR_ID,
+                    MIN(P.STARTDATE) AS PERIODSTARTDATE, MAX(P.ENDDATE) AS PERIODENDDATE
+                    FROM C_YEAR Y, C_PERIOD P
+                    WHERE Y.C_YEAR_ID = P.C_YEAR_ID
+                    AND Y.ISACTIVE = 'Y'
+                    AND P.ISACTIVE = 'Y'
+                    AND Y.C_CALENDAR_ID = (SELECT O.C_CALENDAR_ID 
+                                            FROM AD_ORG O
+                                            WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(v_Org_ID))
+                    GROUP BY Y.C_CALENDAR_ID, Y.C_YEAR_ID) A
+            WHERE PERIODSTARTDATE <= v_DateInvoiced
+            AND PERIODENDDATE+1 > v_DateInvoiced ;
+          IF (v_PeriodStartDate IS NOT NULL AND v_PeriodEndDate IS NOT NULL) THEN
+            SELECT D.AD_ORG_ID   
+              INTO v_DocNo_Org_ID
+              FROM C_DOCTYPE D
+              WHERE D.C_DOCTYPE_ID = v_DocTypeTarget_ID ;
+            SELECT COUNT(*)
+              INTO v_count
+              FROM C_INVOICE I
+              WHERE I.DOCUMENTNO = v_DocumentNo
+              AND I.C_DOCTYPETARGET_ID = v_DocTypeTarget_ID
+              AND I.DATEINVOICED >= v_PeriodStartDate
+              AND I.DATEINVOICED < v_PeriodEndDate+1 
+              AND I.C_INVOICE_ID <> v_Record_ID 
+              AND AD_ISORGINCLUDED(I.AD_ORG_ID, v_DocNo_Org_ID, I.AD_CLIENT_ID) <> -1
+              AND I.AD_CLIENT_ID = v_Client_ID ;
+              IF (v_count<>0) THEN
+                RAISE_APPLICATION_ERROR(-20000, '@DifferentDocumentNo@') ;
+              END IF;
           END IF;
     END IF;    
     IF(NOT FINISH_PROCESS) THEN
@@ -1382,6 +1423,7 @@ cWithHoldId varchar2(32);
             CurLines RECORD;
             p_DateInvoiced DATE;
             v_totalQtyInvoiced NUMBER;
+            v_NewPendingToInvoice NUMBER;
             v_deliveredQty NUMBER;
             v_inOutStatus varchar2(60) ;
           BEGIN
@@ -1393,6 +1435,17 @@ cWithHoldId varchar2(32);
               (SELECT * FROM C_INVOICELINE  WHERE C_INVOICE_ID=v_Record_ID  ORDER BY line)
             LOOP
               IF(CurLines.C_OrderLine_ID IS NOT NULL) THEN
+                --Check that qty pending to invoice is higher or equal to the qty being invoiced
+                SELECT qtyordered - qtyinvoiced - CurLines.QtyInvoiced
+                  INTO v_NewPendingToInvoice
+                FROM c_orderline
+                WHERE c_orderline.c_orderline_id = CurLines.c_orderline_id;
+                IF (v_NewPendingToInvoice <0 ) THEN
+                  v_Message := '@NotPossibleCompleteInvoice@' || ' ' || v_DocumentNo;
+                  v_Message := v_Message || ' ' || '@line@' || CurLines.line || '. ';
+                  v_Message := v_Message || '@QtyInvoicedHigherOrdered@';
+                  RAISE_APPLICATION_ERROR(-20000, v_Message);
+                END IF;
                 UPDATE C_ORDERLINE
                   SET QtyInvoiced=QtyInvoiced + CurLines.QtyInvoiced,
                   DateInvoiced=p_DateInvoiced,

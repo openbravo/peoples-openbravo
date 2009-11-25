@@ -74,7 +74,7 @@ public class WADImageBLOB extends WADControl {
     if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y"))
       discard[0] = "paramInactive";
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADImage", discard).createXmlDocument();
+        "org/openbravo/wad/controls/WADImageBLOB", discard).createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -101,10 +101,12 @@ public class WADImageBLOB extends WADControl {
   public String toJava() {
     StringBuffer text = new StringBuffer();
     if (getData("IsDisplayed").equals("Y")) {
-      text.append("String strCurrentImageURL"+getData("ColumnName")+" = (dataField==null?data[0].getField(\"");
+      text.append("String strCurrentImageURL" + getData("ColumnName")
+          + " = (dataField==null?data[0].getField(\"");
       text.append(getData("ColumnNameInp")).append("\"):dataField.getField(\"");
       text.append(getData("ColumnNameInp")).append("\"));\n");
-      text.append("if (strCurrentImageURL"+getData("ColumnName")+"==null || strCurrentImageURL"+getData("ColumnName")+".equals(\"\")){\n");
+      text.append("if (strCurrentImageURL" + getData("ColumnName") + "==null || strCurrentImageURL"
+          + getData("ColumnName") + ".equals(\"\")){\n");
       text.append("  xmlDocument.setParameter(\"").append(getData("ColumnName")).append(
           "Class\", \"Image_NotAvailable_medium\");\n");
       text.append("}\n");

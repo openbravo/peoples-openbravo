@@ -1357,8 +1357,10 @@ public class CreateFrom extends HttpSecureAppServlet {
               && new BigDecimal(strProposedAmt).signum() != 0
               && new BigDecimal(strProposedAmt).compareTo(finalAmount) != 0) {
             final String strSettlement = SequenceIdData.getUUID();
+            final String strDocNo = Utility.getDocumentNoConnection(conn, this, vars.getClient(),
+                "C_Settlement", true);
             CreateFromBankData.insertSettlement(conn, this, strSettlement, vars.getUser(),
-                strStatementDate, strDebtPaymentId);
+                strDocNo, strStatementDate, strDebtPaymentId);
             final String strNewPayment = SequenceIdData.getUUID();
             CreateFromBankData.insertPayment(conn, this, strNewPayment, vars.getUser(),
                 strSettlement, strProposedAmt, strDebtPaymentId);

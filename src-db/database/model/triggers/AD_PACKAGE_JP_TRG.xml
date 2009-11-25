@@ -20,11 +20,20 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_Aux NUMBER;
-    
+  v_Type VARCHAR2(60);
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
+
+   SELECT Type
+   INTO v_type
+    FROM AD_MODULE
+   WHERE AD_MODULE_ID = :new.AD_Module_ID;
+
+   IF v_type = 'T' THEN
+     RAISE_APPLICATION_ERROR(-20000, '@DataPackageNotAllowedInTemplate@');
+   END IF;
 
 
     SELECT COUNT(*)

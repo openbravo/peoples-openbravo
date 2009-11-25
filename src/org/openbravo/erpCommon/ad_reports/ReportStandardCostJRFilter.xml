@@ -43,12 +43,13 @@
     <SUBREPORT id="reportMA_PROCESSPLAN" name="reportMA_PROCESSPLAN" report="org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="parameterListSelected" withId="paramProcessPlanId"/>
     </SUBREPORT>
-    <SUBREPORT id="reportMA_PROCESSVERSIONPLAN" name="reportMA_PROCESSVERSIONPLAN" report="org/openbravo/erpCommon/reference/List">
+    <!--<SUBREPORT id="reportMA_PROCESSVERSIONPLAN" name="reportMA_PROCESSVERSIONPLAN" report="org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="parameterListSelected" withId="paramProcessPlanVersionId"/>
     </SUBREPORT>
-    <SECTION id="sectionOrganizacion"/>
+    --><SECTION id="sectionOrganizacion"/>
   </structure>
   <PARAMETER id="paramC_Currency_ID" name="ccurrencyid" attribute="value"/>
+  <PARAMETER id="paramArrayStandardCostReports" name="standardCostReports"/>
   <SUBREPORT id="reportC_Currency_ID" name="reportC_Currency_ID" report="org/openbravo/erpCommon/reference/List">
   	<ARGUMENT name="parameterListSelected" withId="paramC_Currency_ID"/>
   </SUBREPORT>

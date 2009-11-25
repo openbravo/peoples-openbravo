@@ -210,3 +210,20 @@ function messageResponse(paramArray, XMLHttpRequestObj) {
   }
   return true;
 }
+
+/**
+ * sets the translated messages in the validation span for missing and invalid value validation
+ */
+function setValidationMessages() {
+  var missing = getMessage("Missing");
+  var missingElements = document.getElementsByName("missingText");  
+  for (i = 0; i < missingElements.length; i++) {
+    missingElements[i].innerHTML = missing;
+  }
+  
+  var invalid = getMessage("Invalid");
+  var invalidElements = document.getElementsByName("invalidText");
+  for (i = 0; i < invalidElements.length; i++) {
+	  invalidElements[i].innerHTML = invalid;
+  }
+}

@@ -1338,9 +1338,15 @@ public class Utility {
         // to be made here, as we disabled getContext (where it was before)
         if (strAux == null || strAux.equals(""))
           strAux = vars.getSessionValue(tab + "|param" + name);
-        // language needs to be read from preference, to enable translation for ComboTableData
-        if ((strAux == null || strAux.equals("")) && name.equals("#AD_LANGUAGE"))
+
+        // Do not use context values for the fields that are in the search pop up
+        String strAllFields = vars.getSessionValue("buscador.searchFilds");
+        if (strAllFields == null) {
+          strAllFields = "";
+        }
+        if ((strAux == null || strAux.equals("")) && !strAllFields.contains("|" + name + "|")) {
           strAux = Utility.getContext(conn, vars, name, window);
+        }
       } else {
         strAux = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(name));
         if (log4j.isDebugEnabled())

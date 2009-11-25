@@ -36,9 +36,6 @@ public class WADControl {
   private String validation = "";
   private String onload = "";
   private ConnectionProvider conn = null;
-  public static String invalid = "";
-  public static String range = "";
-  public static String missing = "";
 
   private WADLabelControl label;
 
@@ -163,26 +160,6 @@ public class WADControl {
     return text;
   }
 
-  public static void initMessages(ConnectionProvider conn, String strLang) {
-    try {
-      invalid = WADControlData.getMessage(conn, strLang, "JSInvalid");
-      missing = WADControlData.getMessage(conn, strLang, "JSMissing");
-      range = WADControlData.getMessage(conn, strLang, "JSRange");
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-  }
-
-  public void generateMessages() {
-    try {
-      invalid = WADControlData.getMessage(getConnection(), getData("AD_Language"), "JSInvalid");
-      missing = WADControlData.getMessage(getConnection(), getData("AD_Language"), "JSMissing");
-      range = WADControlData.getMessage(getConnection(), getData("AD_Language"), "JSRange");
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-  }
-
   private void generateJSCode() {
     addImport("ValidationTextBox", "../../../../../web/js/default/ValidationTextBox.js");
     if (getData("IsMandatory").equals("Y")) {
@@ -230,7 +207,6 @@ public class WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    xmlDocument.setParameter("missing", missing);
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData(
         "IsUpdateable").equals("N"));
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
@@ -256,7 +232,6 @@ public class WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    xmlDocument.setParameter("missing", missing);
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));

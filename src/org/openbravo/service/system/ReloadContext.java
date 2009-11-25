@@ -51,7 +51,6 @@ public class ReloadContext {
       final AntExecutor antExecutor = new AntExecutor(baseDir.getAbsolutePath());
       antExecutor.runTask("tomcat.reload.do");
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
       throw new OBException(e);
     }
   }
@@ -68,7 +67,6 @@ public class ReloadContext {
       final AntExecutor antExecutor = new AntExecutor(baseDirPath);
       antExecutor.runTask("tomcat.reload");
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
       throw new OBException(e);
     }
   }

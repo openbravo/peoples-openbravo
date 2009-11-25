@@ -67,16 +67,21 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
   // is used to set default data in a constructor of the generated class
   // without a security check
   protected void setDefaultValue(String propName, Object value) {
+    if (!getEntity().hasProperty(propName)) {
+      log.warn("Property " + propName + " does not exist for entity " + getEntityName()
+          + ". This is not necessarily a problem, this can happen when modules are uninstalled.");
+      return;
+    }
     try {
       getEntity().checkValidPropertyAndValue(propName, value);
       Check.isNotNull(value, "Null default values are not allowed");
       setDataValue(propName, value);
     } catch (ValidationException ve) {
       // do not fail here so that build tasks can still continue
-      log.error(ve.getMessage());
+      log.error(ve.getMessage(), ve);
     } catch (CheckException ce) {
       // do not fail here so that build tasks can still continue
-      log.error(ce.getMessage());
+      log.error(ce.getMessage(), ce);
     }
   }
 

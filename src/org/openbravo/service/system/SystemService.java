@@ -50,14 +50,14 @@ import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 public class SystemService implements OBSingleton {
   private static SystemService instance;
 
-  public static SystemService getInstance() {
+  public static synchronized SystemService getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(SystemService.class);
     }
     return instance;
   }
 
-  public static void setInstance(SystemService instance) {
+  public static synchronized void setInstance(SystemService instance) {
     SystemService.instance = instance;
   }
 
@@ -221,14 +221,12 @@ public class SystemService implements OBSingleton {
     } else {
       hql = updatePart + " where client=:clientId";
     }
-    System.err.println(hql);
     try {
       SessionHandler.getInstance().getSession().createQuery(hql).setString("clientId",
           client.getId()).executeUpdate();
     } catch (IllegalArgumentException ex) {
       // handle a special case, that the entity name or a property name
       // is a reserved hql word.
-      System.err.println(ex.getMessage());
       if (ex.getMessage().indexOf("node to traverse cannot be null") != -1) {
         // in this case use an inefficient method
         nullifyPerObject(e, client);

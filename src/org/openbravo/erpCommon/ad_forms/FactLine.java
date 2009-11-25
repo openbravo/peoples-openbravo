@@ -443,7 +443,11 @@ public class FactLine {
      * Fill variables
      */
     String AD_Client_ID = getAD_Client_ID();
-    String AD_Org_ID = getAD_Org_ID(conn);
+    String AD_Org_ID = "";
+    if (m_docLine != null)
+      AD_Org_ID = m_docLine.m_AD_Org_ID;
+    if (AD_Org_ID == null || AD_Org_ID.equals(""))
+      AD_Org_ID = getAD_Org_ID(conn);
 
     // Set Account
     String Account_ID = "";

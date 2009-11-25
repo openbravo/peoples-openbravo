@@ -495,6 +495,29 @@ public abstract class AcctServer {
     this.m_as = retValue;
   }
 
+  private void reloadAcctSchemaArray(String adOrgId) throws ServletException {
+    if (log4j.isDebugEnabled())
+      log4j
+          .debug("AcctServer - reloadAcctSchemaArray - " + AD_Table_ID + ", AD_ORG_ID: " + adOrgId);
+    AcctSchema acct = null;
+    ArrayList<Object> new_as = new ArrayList<Object>();
+    // We reload again all the acct schemas of the client
+    m_as = AcctSchema.getAcctSchemaArray(connectionProvider, AD_Client_ID, AD_Org_ID);
+    // Filter the right acct schemas for the organization
+    for (int i = 0; i < (this.m_as).length; i++) {
+      acct = m_as[i];
+      if (AcctSchemaData.selectAcctSchemaTable2(connectionProvider, acct.m_C_AcctSchema_ID,
+          AD_Table_ID, adOrgId)) {
+        new_as.add(new AcctSchema(connectionProvider, acct.m_C_AcctSchema_ID));
+      }
+    }
+    AcctSchema[] retValue = new AcctSchema[new_as.size()];
+    new_as.toArray(retValue);
+    if (log4j.isDebugEnabled())
+      log4j.debug("AcctServer - RELOADING ARRAY: " + retValue.length);
+    this.m_as = retValue;
+  }
+
   public boolean post(String strClave, boolean force, VariablesSecureApp vars,
       ConnectionProvider conn, Connection con) throws ServletException {
     Record_ID = strClave;
@@ -507,7 +530,7 @@ public abstract class AcctServer {
         Status = "L"; // Status locked document
         return false;
       } else
-        AcctServerData.delete(con, connectionProvider, AD_Table_ID, Record_ID);
+        AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - Post -TableName -" + tableName + "- ad_client_id -"
             + AD_Client_ID + "- " + tableName + "_id -" + strClave);
@@ -519,8 +542,11 @@ public abstract class AcctServer {
       FieldProvider data[] = getObjectFieldProvider();
       if (getDocumentConfirmation(conn, Record_ID) && post(data, force, vars, conn, con)) {
         success++;
-      } else
+      } else {
         errors++;
+        Status = AcctServer.STATUS_Error;
+        save(conn);
+      }
     } catch (ServletException e) {
       log4j.error(e);
       return false;
@@ -546,7 +572,7 @@ public abstract class AcctServer {
     // AD_Client_ID);
     if (!DocumentType.equals(DOCTYPE_GLJournal))
       // m_as = AcctSchema.getAcctSchemaArray(conn, AD_Client_ID, AD_Org_ID);
-      reloadAcctSchemaArray();
+      reloadAcctSchemaArray(AD_Org_ID);
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Post - Antes de new Fact - C_CURRENCY_ID = "
     // + C_Currency_ID);
@@ -625,7 +651,7 @@ public abstract class AcctServer {
         }
       }
       // Commit Doc
-      if (!save(conn, con)) { // contains unlock
+      if (!save(conn)) { // contains unlock
         // conn.releaseRollbackConnection(con);
         unlock(conn);
         Status = AcctServer.STATUS_Error;
@@ -648,15 +674,15 @@ public abstract class AcctServer {
    *          connection
    * @return true if saved
    */
-  private final boolean save(ConnectionProvider conn, Connection con) {
+  private final boolean save(ConnectionProvider conn) {
     // if (log4j.isDebugEnabled()) log4j.debug ("AcctServer - save - ->" +
     // Status);
     int no = 0;
     try {
-      no = AcctServerData.updateSave(con, conn, tableName, Status, Record_ID);
+      no = AcctServerData.updateSave(conn, tableName, Status, Record_ID);
       // If Status is not posted (Error...) then the created accounting is deleted
       if (!Status.equals(AcctServer.STATUS_Posted))
-        AcctServerData.delete(con, connectionProvider, AD_Table_ID, Record_ID);
+        AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);
     } catch (ServletException e) {
       log4j.warn(e);
     }
@@ -771,7 +797,7 @@ public abstract class AcctServer {
       }
       // delete it
       try {
-        AcctServerData.delete(con, connectionProvider, AD_Table_ID, Record_ID);
+        AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);
       } catch (ServletException e) {
         log4j.warn(e);
       }

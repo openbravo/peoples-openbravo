@@ -37,6 +37,7 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
+import org.hibernate.ScrollableResults;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -115,6 +116,8 @@ public class EntityXMLConverter implements OBNotSingleton {
   // and which ones have been considered already
   private List<BaseOBObject> toProcess = new ArrayList<BaseOBObject>();
   private Set<BaseOBObject> allToProcessObjects = new HashSet<BaseOBObject>();
+  // the iterator is used in case of large sets of data
+  private ScrollableResults dataScroller = null;
 
   private TransformerHandler xmlHandler;
   private Writer output;
@@ -225,12 +228,27 @@ public class EntityXMLConverter implements OBNotSingleton {
           + XMLConstants.OB_ROOT_ELEMENT, rootAttrs);
 
       boolean firstRound = true;
-      while (toProcess.size() > 0) {
+      while (toProcess.size() > 0 || dataScroller != null) {
+        if (dataScroller != null) {
+          int cnt = 0;
+          while (dataScroller.next()) {
+            export((BaseOBObject) dataScroller.get(0), !firstRound);
+            getOutput().flush();
+            if ((cnt++ % 100) == 0) {
+              OBDal.getInstance().getSession().clear();
+            }
+          }
+          firstRound = false;
+          dataScroller.close();
+          dataScroller = null;
+        }
+
         final List<BaseOBObject> localToProcess = getToProcess();
         // reset the toProcess so that new objects are added to a new list
         replaceToProcess();
         for (BaseOBObject bob : localToProcess) {
           export(bob, !firstRound);
+          getOutput().flush();
         }
         firstRound = false;
       }
@@ -271,8 +289,13 @@ public class EntityXMLConverter implements OBNotSingleton {
 
     // depending on the security only a limited set of
     // properties is exported
-    final boolean onlyIdentifierProps = OBContext.getOBContext().getEntityAccessChecker()
-        .isDerivedReadable(obObject.getEntity());
+    boolean onlyIdentifierProps;
+    if (OBContext.getOBContext().isInAdministratorMode()) {
+      onlyIdentifierProps = false;
+    } else {
+      onlyIdentifierProps = OBContext.getOBContext().getEntityAccessChecker().isDerivedReadable(
+          obObject.getEntity());
+    }
 
     final List<Property> exportableProperties;
     // second 'and' is necessary because referenced entities are not part of the dataset
@@ -649,4 +672,11 @@ public class EntityXMLConverter implements OBNotSingleton {
     }
   }
 
+  public ScrollableResults getDataScroller() {
+    return dataScroller;
+  }
+
+  public void setDataScroller(ScrollableResults dataScroller) {
+    this.dataScroller = dataScroller;
+  }
 }

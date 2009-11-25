@@ -23,7 +23,16 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT ml.AD_ORG_ID, ml.C_DP_MANAGEMENTLINE_ID, STATUS_FROM, STATUS_TO, DP.ISRECEIPT, AMOUNT, DP.C_BPARTNER_ID, ML.C_DEBT_PAYMENT_ID, DP.C_CURRENCY_ID
+        SELECT ml.AD_ORG_ID, ml.C_DP_MANAGEMENTLINE_ID, STATUS_FROM, STATUS_TO, DP.ISRECEIPT, AMOUNT, DP.C_BPARTNER_ID,
+        ML.C_DEBT_PAYMENT_ID, DP.C_CURRENCY_ID, TRUNC(COALESCE((SELECT O.DATEACCT
+                                  FROM C_ORDER O
+                                        WHERE DP.C_ORDER_ID = O.C_ORDER_ID),
+                                     (SELECT I.DATEACCT
+                                       FROM C_INVOICE I
+                                        WHERE DP.C_INVOICE_ID = I.C_INVOICE_ID),
+                                    (SELECT ST2.DATEACCT
+                                     FROM C_SETTLEMENT ST2
+                                     WHERE DP.C_SETTLEMENT_GENERATE_ID = ST2.C_SETTLEMENT_ID))) AS CONVERSIONDATE
           FROM C_DP_MANAGEMENTLINE ML,
                C_DEBT_PAYMENT   DP
          WHERE C_DP_MANAGEMENT_ID = ?

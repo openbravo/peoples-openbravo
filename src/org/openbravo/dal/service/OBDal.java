@@ -123,11 +123,13 @@ public class OBDal implements OBSingleton {
     // TODO: log using entityName
     log.debug("Saving object " + obj.getClass().getName());
     setClientOrganization(obj);
-    if (obj instanceof BaseOBObject) {
-      OBContext.getOBContext().getEntityAccessChecker().checkWritable(
-          ((BaseOBObject) obj).getEntity());
+    if (!OBContext.getOBContext().isInAdministratorMode()) {
+      if (obj instanceof BaseOBObject) {
+        OBContext.getOBContext().getEntityAccessChecker().checkWritable(
+            ((BaseOBObject) obj).getEntity());
+      }
+      SecurityChecker.getInstance().checkWriteAccess(obj);
     }
-    SecurityChecker.getInstance().checkWriteAccess(obj);
     SessionHandler.getInstance().save(obj);
   }
 
@@ -394,6 +396,9 @@ public class OBDal implements OBSingleton {
     // allow read access to those, otherwise it is really
     // difficult to use querying on these very generic values
     if (entityName.equals(Client.ENTITY_NAME) || entityName.equals(Organization.ENTITY_NAME)) {
+      return;
+    }
+    if (OBContext.getOBContext().isInAdministratorMode()) {
       return;
     }
     final Entity e = ModelProvider.getInstance().getEntity(entityName);

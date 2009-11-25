@@ -71,14 +71,14 @@ public class DataImportService implements OBSingleton {
 
   private static DataImportService instance;
 
-  public static DataImportService getInstance() {
+  public static synchronized DataImportService getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(DataImportService.class);
     }
     return instance;
   }
 
-  public static void setInstance(DataImportService instance) {
+  public static synchronized void setInstance(DataImportService instance) {
     DataImportService.instance = instance;
   }
 
@@ -181,7 +181,6 @@ public class DataImportService implements OBSingleton {
             importProcessor.process(xec.getToInsert(), xec.getToUpdate());
           } catch (final Exception e) {
             // note on purpose caught and set in ImportResult
-            e.printStackTrace(System.err);
             ir.setException(e);
             ir.setErrorMessages(e.getMessage());
             OBDal.getInstance().rollbackAndClose();
@@ -252,8 +251,9 @@ public class DataImportService implements OBSingleton {
       } catch (final Throwable t) {
         OBDal.getInstance().rollbackAndClose();
         rolledBack = true;
-        t.printStackTrace(System.err);
-        ir.setException(t);
+        final Throwable realThrowable = DbUtility.getUnderlyingSQLException(t);
+        log.error(realThrowable.getMessage(), realThrowable);
+        ir.setException(realThrowable);
       } finally {
         OBContext.getOBContext().setInAdministratorMode(prevMode);
         if (rolledBack) {
@@ -423,7 +423,6 @@ public class DataImportService implements OBSingleton {
           importProcessor.process(xec.getToInsert(), xec.getToUpdate());
         } catch (final Exception e) {
           // note on purpose caught and set in ImportResult
-          e.printStackTrace(System.err);
           ir.setException(e);
           ir.setErrorMessages(e.getMessage());
           OBDal.getInstance().rollbackAndClose();
@@ -456,9 +455,9 @@ public class DataImportService implements OBSingleton {
       }
       OBDal.getInstance().rollbackAndClose();
       rolledBack = true;
-      t.printStackTrace(System.err);
-      if (!isBatchUpdateException)
+      if (!isBatchUpdateException) {
         ir.setException(t);
+      }
 
     } finally {
       if (rolledBack) {

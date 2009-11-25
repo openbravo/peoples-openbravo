@@ -5663,6 +5663,15 @@
     <attribute>C_Country_ID</attribute>
     <searchKey>100</searchKey>
   </ADPreference>
+  <ADProcessAccess id="5163A7B5FC6B442A96B642B8B4FFF524">
+    <id>5163A7B5FC6B442A96B642B8B4FFF524</id>
+    <process id="462033447A1548F09BBFB0683FA976CC"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
   <ADProcessAccess id="5E4DB943A61516CFE040007F01002944">
     <id>5E4DB943A61516CFE040007F01002944</id>
     <process id="122"/>
@@ -10757,6 +10766,15 @@
     <active>true</active>
     <editableField>true</editableField>
   </ADProcessAccess>
+  <ADProcessAccess id="BFDC7F3A742C4E8F8723389323244734">
+    <id>BFDC7F3A742C4E8F8723389323244734</id>
+    <process id="462033447A1548F09BBFB0683FA976CC"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
   <ADTaskAccess id="5E4DB943ACEB16CFE040007F01002944">
     <id>5E4DB943ACEB16CFE040007F01002944</id>
     <oSTask id="800004"/>
@@ -10775,6 +10793,15 @@
     <active>true</active>
     <editableField>true</editableField>
   </ADTaskAccess>
+  <ADWindowAccess id="5BC584E1CFD04984BD5C7E6A7E55DD5C">
+    <id>5BC584E1CFD04984BD5C7E6A7E55DD5C</id>
+    <window id="227"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
   <ADWindowAccess id="5E4DB943ACF016CFE040007F01002944">
     <id>5E4DB943ACF016CFE040007F01002944</id>
     <window id="110"/>
@@ -13664,6 +13691,15 @@
     <active>true</active>
     <editableField>true</editableField>
   </ADWindowAccess>
+  <ADWindowAccess id="61B7E7FEFF2F4434900300C0B2172927">
+    <id>61B7E7FEFF2F4434900300C0B2172927</id>
+    <window id="227"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
   <ADWindowAccess id="682565E58CBDD515E040007F01011C04">
     <id>682565E58CBDD515E040007F01011C04</id>
     <window id="125"/>
@@ -13713,6 +13749,24 @@
     <id>682565E58CC3D515E040007F01011C04</id>
     <window id="138"/>
     <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="98BE033EDE6443748C3FEF5D45F647D0">
+    <id>98BE033EDE6443748C3FEF5D45F647D0</id>
+    <window id="A9FD6A5AED3546EC83DB567882646D2E"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="9A79E28691174C54A14937ED1AF40FA0">
+    <id>9A79E28691174C54A14937ED1AF40FA0</id>
+    <window id="A9FD6A5AED3546EC83DB567882646D2E"/>
+    <role id="1000005"/>
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
@@ -15006,6 +15060,9 @@
     <checkOrderOrganization>true</checkOrderOrganization>
     <checkShipmentOrganization>true</checkShipmentOrganization>
     <groupInvoiceLinesInAccounting>false</groupInvoiceLinesInAccounting>
+    <yourCompanyMenuImage xsi:nil="true"/>
+    <yourCompanyBigImage xsi:nil="true"/>
+    <yourCompanyDocumentImage xsi:nil="true"/>
     <client id="1000001"/>
   </ClientInformation>
   <OrganizationInformation id="1000001">
@@ -15018,6 +15075,7 @@
     <businessPartner xsi:nil="true"/>
     <logo xsi:nil="true"/>
     <referenceOrder>false</referenceOrder>
+    <yourCompanyDocumentImage xsi:nil="true"/>
     <organization id="1000001"/>
   </OrganizationInformation>
   <FinancialMgmtPeriodControl id="1001287">
@@ -19329,6 +19387,8 @@
     <value>211</value>
     <accountingEntryDescription>Accounts payable</accountingEntryDescription>
     <recordID2>19000114</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000448">
     <id>1000448</id>
@@ -19374,6 +19434,8 @@
     <value>116</value>
     <accountingEntryDescription>Tax Receivables</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000449">
     <id>1000449</id>
@@ -19419,6 +19481,8 @@
     <value>122</value>
     <accountingEntryDescription>Product asset</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000450">
     <id>1000450</id>
@@ -19464,6 +19528,8 @@
     <value>211</value>
     <accountingEntryDescription>Accounts payable</accountingEntryDescription>
     <recordID2>19000116</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000451">
     <id>1000451</id>
@@ -19509,6 +19575,8 @@
     <value>116</value>
     <accountingEntryDescription>Tax Receivables</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000452">
     <id>1000452</id>
@@ -19554,6 +19622,8 @@
     <value>122</value>
     <accountingEntryDescription>Product asset</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000453">
     <id>1000453</id>
@@ -19599,6 +19669,8 @@
     <value>511</value>
     <accountingEntryDescription>Cost of goods sold</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000454">
     <id>1000454</id>
@@ -19644,6 +19716,8 @@
     <value>122</value>
     <accountingEntryDescription>Product asset</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000464">
     <id>1000464</id>
@@ -19689,6 +19763,8 @@
     <value>511</value>
     <accountingEntryDescription>Cost of goods sold</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000465">
     <id>1000465</id>
@@ -19734,6 +19810,8 @@
     <value>122</value>
     <accountingEntryDescription>Product asset</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000466">
     <id>1000466</id>
@@ -19779,6 +19857,8 @@
     <value>511</value>
     <accountingEntryDescription>Cost of goods sold</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000467">
     <id>1000467</id>
@@ -19824,6 +19904,8 @@
     <value>122</value>
     <accountingEntryDescription>Product asset</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000468">
     <id>1000468</id>
@@ -19869,6 +19951,8 @@
     <value>114</value>
     <accountingEntryDescription>Accounts receivable</accountingEntryDescription>
     <recordID2>19000118</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000469">
     <id>1000469</id>
@@ -19914,6 +19998,8 @@
     <value>214</value>
     <accountingEntryDescription>Tax Due</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000470">
     <id>1000470</id>
@@ -19959,6 +20045,8 @@
     <value>411</value>
     <accountingEntryDescription>Sales</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000471">
     <id>1000471</id>
@@ -20004,6 +20092,8 @@
     <value>114</value>
     <accountingEntryDescription>Accounts receivable</accountingEntryDescription>
     <recordID2>19000117</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000472">
     <id>1000472</id>
@@ -20049,6 +20139,8 @@
     <value>214</value>
     <accountingEntryDescription>Tax Due</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000473">
     <id>1000473</id>
@@ -20094,6 +20186,8 @@
     <value>411</value>
     <accountingEntryDescription>Sales</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000474">
     <id>1000474</id>
@@ -20139,6 +20233,8 @@
     <value>114</value>
     <accountingEntryDescription>Accounts receivable</accountingEntryDescription>
     <recordID2>19000115</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000475">
     <id>1000475</id>
@@ -20184,6 +20280,8 @@
     <value>214</value>
     <accountingEntryDescription>Tax Due</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000476">
     <id>1000476</id>
@@ -20229,6 +20327,8 @@
     <value>411</value>
     <accountingEntryDescription>Sales</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000477">
     <id>1000477</id>
@@ -20274,6 +20374,8 @@
     <value>112</value>
     <accountingEntryDescription>Bank Account</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000478">
     <id>1000478</id>
@@ -20319,6 +20421,8 @@
     <value>113</value>
     <accountingEntryDescription>Bank in transit</accountingEntryDescription>
     <recordID2>19000115</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000479">
     <id>1000479</id>
@@ -20364,6 +20468,8 @@
     <value>112</value>
     <accountingEntryDescription>Bank Account</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000480">
     <id>1000480</id>
@@ -20409,6 +20515,8 @@
     <value>113</value>
     <accountingEntryDescription>Bank in transit</accountingEntryDescription>
     <recordID2>19000114</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000481">
     <id>1000481</id>
@@ -20454,6 +20562,8 @@
     <value>113</value>
     <accountingEntryDescription>Bank in transit</accountingEntryDescription>
     <recordID2>19000118</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000482">
     <id>1000482</id>
@@ -20499,6 +20609,8 @@
     <value>111</value>
     <accountingEntryDescription>Petty Cash</accountingEntryDescription>
     <recordID2 xsi:nil="true"/>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000483">
     <id>1000483</id>
@@ -20544,6 +20656,8 @@
     <value>114</value>
     <accountingEntryDescription>Accounts receivable</accountingEntryDescription>
     <recordID2>19000118</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000484">
     <id>1000484</id>
@@ -20589,6 +20703,8 @@
     <value>113</value>
     <accountingEntryDescription>Bank in transit</accountingEntryDescription>
     <recordID2>19000118</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000485">
     <id>1000485</id>
@@ -20634,6 +20750,8 @@
     <value>211</value>
     <accountingEntryDescription>Accounts payable</accountingEntryDescription>
     <recordID2>19000114</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000486">
     <id>1000486</id>
@@ -20679,6 +20797,8 @@
     <value>113</value>
     <accountingEntryDescription>Bank in transit</accountingEntryDescription>
     <recordID2>19000114</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000487">
     <id>1000487</id>
@@ -20724,6 +20844,8 @@
     <value>114</value>
     <accountingEntryDescription>Accounts receivable</accountingEntryDescription>
     <recordID2>19000115</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <FinancialMgmtAccountingFact id="1000488">
     <id>1000488</id>
@@ -20769,6 +20891,8 @@
     <value>113</value>
     <accountingEntryDescription>Bank in transit</accountingEntryDescription>
     <recordID2>19000115</recordID2>
+    <withholding xsi:nil="true"/>
+    <documentType xsi:nil="true"/>
   </FinancialMgmtAccountingFact>
   <ProductAccounts id="52118BF1B8B94D84E040007F01005FEC">
     <id>52118BF1B8B94D84E040007F01005FEC</id>
@@ -23479,6 +23603,1447 @@
     <showIBAN>false</showIBAN>
     <displayedAccount>Bank Account. 0000-0000-00-0000000000</displayedAccount>
   </BankAccount>
+  <DocumentTypeTrl id="018080E518744480B1073DD8494B3C50">
+    <id>018080E518744480B1073DD8494B3C50</id>
+    <documentType id="1000046"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Manual Settlement</name>
+    <printText>Manual Settlement</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="0550AD0694014C39AC23B4B361C5171E">
+    <id>0550AD0694014C39AC23B4B361C5171E</id>
+    <documentType id="1000062"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Warehouse Order</name>
+    <printText>Order Confirmation</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="0913F511335A47FCB22D5416D0BF3099">
+    <id>0913F511335A47FCB22D5416D0BF3099</id>
+    <documentType id="1000055"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Depreciation</name>
+    <printText>Depreciation</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="0A710C555A1F48F69445A06B5006558B">
+    <id>0A710C555A1F48F69445A06B5006558B</id>
+    <documentType id="1000060"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Standard Order</name>
+    <printText>Order Confirmation</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="0E676615FB3D41EFB59DCCCBB4347CDD">
+    <id>0E676615FB3D41EFB59DCCCBB4347CDD</id>
+    <documentType id="1000032"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>GL Journal</name>
+    <printText>Journal</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="15564BF747404D2B8AD97BDE7D88B01B">
+    <id>15564BF747404D2B8AD97BDE7D88B01B</id>
+    <documentType id="1000041"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>AP CreditMemo</name>
+    <printText>Vendor Credit Memo</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="15A2555FC95F45B68E03C873C100EFFF">
+    <id>15A2555FC95F45B68E03C873C100EFFF</id>
+    <documentType id="1000050"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Inventory Move</name>
+    <printText>Inventory Move</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="2DC3D90C057D413E813DE0404C207AC3">
+    <id>2DC3D90C057D413E813DE0404C207AC3</id>
+    <documentType id="1000036"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>AR Receipt</name>
+    <printText>Receipt</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="2DF7B38FBAD34F5EB05BF68E6B584A86">
+    <id>2DF7B38FBAD34F5EB05BF68E6B584A86</id>
+    <documentType id="1000061"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Credit Order</name>
+    <printText>Order Confirmation</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="2E17DE8FC52A42ED9F2F7793DC3BB33C">
+    <id>2E17DE8FC52A42ED9F2F7793DC3BB33C</id>
+    <documentType id="1000047"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Bank Statement</name>
+    <printText>Bank Statement</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="38BF10C5EF564A0598EBF5879D74E23C">
+    <id>38BF10C5EF564A0598EBF5879D74E23C</id>
+    <documentType id="1000057"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Proposal</name>
+    <printText>Non binding offer</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="3FD1581E3227413EA6160F979457F615">
+    <id>3FD1581E3227413EA6160F979457F615</id>
+    <documentType id="1000043"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Purchase Order</name>
+    <printText>Purchase Order</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="4964E6042AFF42CAA48CAB3A58DF1ED5">
+    <id>4964E6042AFF42CAA48CAB3A58DF1ED5</id>
+    <documentType id="1000039"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>MM Receipt</name>
+    <printText>Vendor Delivery</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="4BD7B222CBDA478594040DFD8F44B19A">
+    <id>4BD7B222CBDA478594040DFD8F44B19A</id>
+    <documentType id="1000042"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>AP Payment</name>
+    <printText>Vendor Payment</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="5AB4A67086AC45AC89BC2D437F653246">
+    <id>5AB4A67086AC45AC89BC2D437F653246</id>
+    <documentType id="1000054"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Debt Payement Management</name>
+    <printText>Debt Payement Management</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="5DE9412F405B4A7ABA20E8DE916CCDF7">
+    <id>5DE9412F405B4A7ABA20E8DE916CCDF7</id>
+    <documentType id="1000048"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Cash Journal</name>
+    <printText>Cash Journal</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="76BDFA514EA94048B614C54FED72F4FB">
+    <id>76BDFA514EA94048B614C54FED72F4FB</id>
+    <documentType id="1000045"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Settlement</name>
+    <printText>Settlement</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="7E704A50DE354D628C5CA9D586422D17">
+    <id>7E704A50DE354D628C5CA9D586422D17</id>
+    <documentType id="1000033"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>AR Invoice</name>
+    <printText>Invoice</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="82661B632C6F4A82981505A829663653">
+    <id>82661B632C6F4A82981505A829663653</id>
+    <documentType id="1000035"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>AR Credit Memo</name>
+    <printText>Credit Memo</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="8CD807201EE949CD81FF60F4B6A22ED6">
+    <id>8CD807201EE949CD81FF60F4B6A22ED6</id>
+    <documentType id="1000053"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Matched Purchase Orders</name>
+    <printText>Matched Purchase Orders</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="AE91DE33A029425986B483CDECE4027D">
+    <id>AE91DE33A029425986B483CDECE4027D</id>
+    <documentType id="1000038"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>MM Shipment Indirect</name>
+    <printText>Delivery Note</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="AFC315583B4B48AFA8E94C2330886647">
+    <id>AFC315583B4B48AFA8E94C2330886647</id>
+    <documentType id="1000063"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>POS Order</name>
+    <printText>Order Confirmation</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="B12586AFDFAB41709C9BA2559AD0536F">
+    <id>B12586AFDFAB41709C9BA2559AD0536F</id>
+    <documentType id="1000034"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>AR Invoice Indirect</name>
+    <printText>Invoice Indirect.</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="B1DF1FE669D34F4EB449040B6436AB78">
+    <id>B1DF1FE669D34F4EB449040B6436AB78</id>
+    <documentType id="1000059"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Return Material</name>
+    <printText>Return Material Authorization</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="BB1F80F211014A16B8CFB895598C4101">
+    <id>BB1F80F211014A16B8CFB895598C4101</id>
+    <documentType id="1000037"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>MM Shipment</name>
+    <printText>Delivery Note</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="C26B2ACE00604B989A5143E27814F415">
+    <id>C26B2ACE00604B989A5143E27814F415</id>
+    <documentType id="1000049"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Physical Inventory</name>
+    <printText>Physical Inventory</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="C4DB04AA0EEA4A5EA052F873BC6EA63F">
+    <id>C4DB04AA0EEA4A5EA052F873BC6EA63F</id>
+    <documentType id="1000040"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>AP Invoice</name>
+    <printText>Vendor Invoice</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="CBD419A7DE97462AB6F3507463C36CCE">
+    <id>CBD419A7DE97462AB6F3507463C36CCE</id>
+    <documentType id="1000044"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Purchase Requisition</name>
+    <printText>Purchase Requisition</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="D71373B6F1D648DEA9A79C477C6CE1D5">
+    <id>D71373B6F1D648DEA9A79C477C6CE1D5</id>
+    <documentType id="1000052"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Matched Invoices</name>
+    <printText>Matched Invoices</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="E0AAEBFAFFD947078395589CB56A1AD1">
+    <id>E0AAEBFAFFD947078395589CB56A1AD1</id>
+    <documentType id="1000051"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Production</name>
+    <printText>Production</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="F03FC43E50EA430380374CED03C69A76">
+    <id>F03FC43E50EA430380374CED03C69A76</id>
+    <documentType id="1000058"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Prepay Order</name>
+    <printText>Prepay Order</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <DocumentTypeTrl id="FF8E14E21F2541BD85EBC6886CEBCE62">
+    <id>FF8E14E21F2541BD85EBC6886CEBCE62</id>
+    <documentType id="1000056"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Quotation</name>
+    <printText>Binding offer</printText>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </DocumentTypeTrl>
+  <FinancialMgmtElementValueTrl id="01E92293395C407FA9D8DD75A21A938E">
+    <id>01E92293395C407FA9D8DD75A21A938E</id>
+    <accountElement id="1001521"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Purchase Price Variance Offset</name>
+    <description>Purchase Price Variance Offset</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="065847B755674ABEB73813D57B6C4A1C">
+    <id>065847B755674ABEB73813D57B6C4A1C</id>
+    <accountElement id="1001498"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Capital</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="09BBBAFE7E8F49FC89BF74ED1182890E">
+    <id>09BBBAFE7E8F49FC89BF74ED1182890E</id>
+    <accountElement id="1001514"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Bad debts</name>
+    <description>Write-off</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="0B4AFE17200D4B8DA5A189EB99AB89EC">
+    <id>0B4AFE17200D4B8DA5A189EB99AB89EC</id>
+    <accountElement id="1001525"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Selling expenses</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="0B5A0D943BE04553B1243032F16019A6">
+    <id>0B5A0D943BE04553B1243032F16019A6</id>
+    <accountElement id="1001520"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Inventory valuation loss</name>
+    <description>Inventory Revaluation</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="0C52D363D51B4E11966A48C87CCC756F">
+    <id>0C52D363D51B4E11966A48C87CCC756F</id>
+    <accountElement id="1001470"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Product asset</name>
+    <description>Fixed Asset</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="0C950712CB0E400EADB7C344F0592C36">
+    <id>0C950712CB0E400EADB7C344F0592C36</id>
+    <accountElement id="1001494"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Bonds</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="0E5DF846F5F340CB889649F5AFFC1580">
+    <id>0E5DF846F5F340CB889649F5AFFC1580</id>
+    <accountElement id="1001509"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Gross Revenues</name>
+    <description>.41</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="0EC41F6CE5904DC0996675ED94C04D83">
+    <id>0EC41F6CE5904DC0996675ED94C04D83</id>
+    <accountElement id="1001464"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Inventory</name>
+    <description>Warehouse Inventory</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="13AEF1A6F15A4781A1F0AD28EF515A01">
+    <id>13AEF1A6F15A4781A1F0AD28EF515A01</id>
+    <accountElement id="1001462"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Bank in transit</name>
+    <description>Bank in Transit</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="16722B34304A4747A661FA0E13B761C5">
+    <id>16722B34304A4747A661FA0E13B761C5</id>
+    <accountElement id="1001535"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Other expense</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="1697577CC8C34D588EB645C22FD0F1B4">
+    <id>1697577CC8C34D588EB645C22FD0F1B4</id>
+    <accountElement id="1001467"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Petty Cash In-Transfer</name>
+    <description>Cash Book Transfer</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="175393E76E17439F8DAC35465E8F7529">
+    <id>175393E76E17439F8DAC35465E8F7529</id>
+    <accountElement id="1001468"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Long-term Assets</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="1CCB3E345C2A4591BA2295F2E909F66E">
+    <id>1CCB3E345C2A4591BA2295F2E909F66E</id>
+    <accountElement id="1001507"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Sales</name>
+    <description>Product Revenue</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="1E873BDA21A844F8814EA76CD8F48214">
+    <id>1E873BDA21A844F8814EA76CD8F48214</id>
+    <accountElement id="1001540"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Default account</name>
+    <description>Default Account (if no other account is defined) V1.1</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="1E8C0BE0E4E6446A80ACC71538FAAF7D">
+    <id>1E8C0BE0E4E6446A80ACC71538FAAF7D</id>
+    <accountElement id="1001486"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Salaries payable</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="20CAC798EE5A4DC2BBA88F147C3452F7">
+    <id>20CAC798EE5A4DC2BBA88F147C3452F7</id>
+    <accountElement id="1001517"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Cost of goods sold</name>
+    <description>Product COGS</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="216EF9D247474D2394FD9C0B28F221E6">
+    <id>216EF9D247474D2394FD9C0B28F221E6</id>
+    <accountElement id="1001543"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Income Tax</name>
+    <description>Income Tax</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="2190C9AFDAB0406A9EE466BD5113701D">
+    <id>2190C9AFDAB0406A9EE466BD5113701D</id>
+    <accountElement id="1001475"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Patents</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="258CD780B4BC48FE8592912F3C3547DF">
+    <id>258CD780B4BC48FE8592912F3C3547DF</id>
+    <accountElement id="1001497"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Capital</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="291116F65B8C4890818DFB4C7601B399">
+    <id>291116F65B8C4890818DFB4C7601B399</id>
+    <accountElement id="1001458"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Assets</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="2960798A6C714E45BA3BF7CD924DF6A4">
+    <id>2960798A6C714E45BA3BF7CD924DF6A4</id>
+    <accountElement id="1001500"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Earnings</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="39EEDC4FE68F4B6D9E9D36FDD8D23E62">
+    <id>39EEDC4FE68F4B6D9E9D36FDD8D23E62</id>
+    <accountElement id="1001488"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>State withholding payable</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="41FBA7B06B5245F8ACD4F76335C447F3">
+    <id>41FBA7B06B5245F8ACD4F76335C447F3</id>
+    <accountElement id="1001504"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Total Liabilities and Owner?s equity</name>
+    <description>29+38</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="42DF8CF8A6654ABA996A64D32DA83EE2">
+    <id>42DF8CF8A6654ABA996A64D32DA83EE2</id>
+    <accountElement id="1001516"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Cost of goods sold</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="43BD5AD403704C3AA5E069896EE5965A">
+    <id>43BD5AD403704C3AA5E069896EE5965A</id>
+    <accountElement id="1001491"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Long-term Liabilities</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="4D0062DA163742FA90B61CC26ED8DCA4">
+    <id>4D0062DA163742FA90B61CC26ED8DCA4</id>
+    <accountElement id="1001499"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Earnings</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="4E8556C30B3D41F791F4207AA3FA221C">
+    <id>4E8556C30B3D41F791F4207AA3FA221C</id>
+    <accountElement id="1001526"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Payroll expenses</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="53AE8E06B83F446BB315037AD59376EF">
+    <id>53AE8E06B83F446BB315037AD59376EF</id>
+    <accountElement id="1001506"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Sales</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="53D1238C1B8B4886BFF6D5728A39A920">
+    <id>53D1238C1B8B4886BFF6D5728A39A920</id>
+    <accountElement id="1001501"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Retained earnings</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="547E86294E684D028DE611D1C790AA51">
+    <id>547E86294E684D028DE611D1C790AA51</id>
+    <accountElement id="1001536"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Interest expense</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="590284F5093744778A9E5ECE00788D38">
+    <id>590284F5093744778A9E5ECE00788D38</id>
+    <accountElement id="1001541"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Operating profit before taxes</name>
+    <description>54+45-55</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="6151FC2A106A4E0FA1AD811BB491A801">
+    <id>6151FC2A106A4E0FA1AD811BB491A801</id>
+    <accountElement id="1001505"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Income Statement</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="63E0E593F7DD43A4BECA088C16369D16">
+    <id>63E0E593F7DD43A4BECA088C16369D16</id>
+    <accountElement id="1001523"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Gross Profit</name>
+    <description>44-51</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="6BAD53CA9EC14C08A2EAC14E78528B20">
+    <id>6BAD53CA9EC14C08A2EAC14E78528B20</id>
+    <accountElement id="1001482"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Withholding</name>
+    <description>Withholding</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="6E47361FB90F44039436C2A5E1805E39">
+    <id>6E47361FB90F44039436C2A5E1805E39</id>
+    <accountElement id="1001485"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Interest payable</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="6EAFE8F7B7D24BD59CA2FAC8FB3894B1">
+    <id>6EAFE8F7B7D24BD59CA2FAC8FB3894B1</id>
+    <accountElement id="1001539"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Bank revaluation loss</name>
+    <description>Bank Revaluation Loss (foreign currency)</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="71F8D71B2A414996A824745CB9CF7C6F">
+    <id>71F8D71B2A414996A824745CB9CF7C6F</id>
+    <accountElement id="1001463"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Accounts receivable</name>
+    <description>Customer Receivables</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="71FD522F2A1D4834A560B414E04A1C59">
+    <id>71FD522F2A1D4834A560B414E04A1C59</id>
+    <accountElement id="1001522"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Depreciation Expense</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="73B2DAB016FC48BF9D168EBA9A6BF4BB">
+    <id>73B2DAB016FC48BF9D168EBA9A6BF4BB</id>
+    <accountElement id="1001515"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Net Revenue</name>
+    <description>42-59</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="75C2CFD42BE14FF29888493E15DDFF28">
+    <id>75C2CFD42BE14FF29888493E15DDFF28</id>
+    <accountElement id="1001531"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Operating Income</name>
+    <description>52-53</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="75DB421ED0FE4704A6CB078A760ABF6C">
+    <id>75DB421ED0FE4704A6CB078A760ABF6C</id>
+    <accountElement id="1001460"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Petty Cash</name>
+    <description>Cash Book Asset</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="776EB65A6DD248C69F3ADFD282BB680B">
+    <id>776EB65A6DD248C69F3ADFD282BB680B</id>
+    <accountElement id="1001538"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Currency balancing</name>
+    <description>Currency Balancing</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="7F42011F46E8493995D23F06BA881513">
+    <id>7F42011F46E8493995D23F06BA881513</id>
+    <accountElement id="1001480"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Current Liabilities</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="7FF01AA6DDA5437591C8E1F715B352C9">
+    <id>7FF01AA6DDA5437591C8E1F715B352C9</id>
+    <accountElement id="1001496"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Owner?s equity </name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="819F0ACA37B94737970D9560F9F6597E">
+    <id>819F0ACA37B94737970D9560F9F6597E</id>
+    <accountElement id="1001472"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Plants</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="842507D782D84CF2AA6300804B2A74CC">
+    <id>842507D782D84CF2AA6300804B2A74CC</id>
+    <accountElement id="1001484"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Tax Due</name>
+    <description>Tax Due</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="867269AC59794ACCA6B884B047D2FC28">
+    <id>867269AC59794ACCA6B884B047D2FC28</id>
+    <accountElement id="1001492"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Long-term notes payable</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="877B85EEC47A49608AED9810F151C30E">
+    <id>877B85EEC47A49608AED9810F151C30E</id>
+    <accountElement id="1001512"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Merchandise returns</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="8CC8B24A0CAF4B5686F3E452ACA90A0D">
+    <id>8CC8B24A0CAF4B5686F3E452ACA90A0D</id>
+    <accountElement id="1001473"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Equipment</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="8EF1416CAE1344649D0FD83353D6DB76">
+    <id>8EF1416CAE1344649D0FD83353D6DB76</id>
+    <accountElement id="1001490"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Not invoiced receipts</name>
+    <description>Not invoiced receipts</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="9040EBCB56804EE0ABDA4488D3C74850">
+    <id>9040EBCB56804EE0ABDA4488D3C74850</id>
+    <accountElement id="1001544"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Net Profit</name>
+    <description>56-57</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="9733BFA908324907AA3761AAD2208632">
+    <id>9733BFA908324907AA3761AAD2208632</id>
+    <accountElement id="1001513"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Allowances</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="98A279AD8C2E44BAA8FF6DAB1E4F5639">
+    <id>98A279AD8C2E44BAA8FF6DAB1E4F5639</id>
+    <accountElement id="1001502"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Income summary</name>
+    <description>Income summary</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="99AB03EC552549C2B1DFBA534BA824F1">
+    <id>99AB03EC552549C2B1DFBA534BA824F1</id>
+    <accountElement id="1001524"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Operating Expenses</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="9BA933803ECB43CAB8F852AA36FA7A6E">
+    <id>9BA933803ECB43CAB8F852AA36FA7A6E</id>
+    <accountElement id="1001508"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Services</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="9D72AA009B5C4245A046592194B642CE">
+    <id>9D72AA009B5C4245A046592194B642CE</id>
+    <accountElement id="1001528"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Depreciation expense</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="A192EF29B40E4516A0F92B488A98D510">
+    <id>A192EF29B40E4516A0F92B488A98D510</id>
+    <accountElement id="1001518"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Service costs</name>
+    <description>Product Expense (for services)</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="A42C901F3E3E4C3BB23644DD4274E061">
+    <id>A42C901F3E3E4C3BB23644DD4274E061</id>
+    <accountElement id="1001466"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Intercompany Due From</name>
+    <description>Intercompany Due From</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="A6F8F0AE05B649C0BDE43E5650EA52CD">
+    <id>A6F8F0AE05B649C0BDE43E5650EA52CD</id>
+    <accountElement id="1001542"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Income Tax</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="A853688DF9554EB9880000B6B37DB259">
+    <id>A853688DF9554EB9880000B6B37DB259</id>
+    <accountElement id="1001487"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Federal withholding payable</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="A9D2B86818584EBFA3FC3627340978EE">
+    <id>A9D2B86818584EBFA3FC3627340978EE</id>
+    <accountElement id="1001483"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Payment Selection</name>
+    <description>Payment Selection</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="ABE5C8754E0C40B6A9E28E395BF3EBB5">
+    <id>ABE5C8754E0C40B6A9E28E395BF3EBB5</id>
+    <accountElement id="1001503"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Total Owner?s equity</name>
+    <description>31+32+33</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="AD645958ED9945D297696A1C661A9C53">
+    <id>AD645958ED9945D297696A1C661A9C53</id>
+    <accountElement id="1001461"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Bank Account</name>
+    <description>Bank Asset</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="B319E26CAA624312A43AFE5A61F58840">
+    <id>B319E26CAA624312A43AFE5A61F58840</id>
+    <accountElement id="1001476"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Land</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="B67616A1D9B14B30B17730E01DB53E37">
+    <id>B67616A1D9B14B30B17730E01DB53E37</id>
+    <accountElement id="1001459"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Current Assets</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="B748B16DA0434541874E2D87B2E2C593">
+    <id>B748B16DA0434541874E2D87B2E2C593</id>
+    <accountElement id="1001551"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Suspense Error</name>
+    <description>Suspense Error</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="B79791BDDBE04703BE8699BC9F94B6F0">
+    <id>B79791BDDBE04703BE8699BC9F94B6F0</id>
+    <accountElement id="1001548"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Cash book expense</name>
+    <description>Cash book expense</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="BCB24F3258E14E3780BBC1D0308B04EA">
+    <id>BCB24F3258E14E3780BBC1D0308B04EA</id>
+    <accountElement id="1001546"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Temporary default accounts</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="BCFC8EAEE31B426AA2D47BBA6703B1BC">
+    <id>BCFC8EAEE31B426AA2D47BBA6703B1BC</id>
+    <accountElement id="1001534"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Bank revaluation gain</name>
+    <description>Bank Revaluation Gain (foreign currency)</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="BEE9B60B3816462582602F4FF0E7F97C">
+    <id>BEE9B60B3816462582602F4FF0E7F97C</id>
+    <accountElement id="1001537"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Petty cash differences</name>
+    <description>Cash Book Differences</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="C06D58F924F34C22B28CA1210914CE61">
+    <id>C06D58F924F34C22B28CA1210914CE61</id>
+    <accountElement id="1001489"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>FICA payable</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="C2BFB6BFFE0F4F719480F31AFF553B20">
+    <id>C2BFB6BFFE0F4F719480F31AFF553B20</id>
+    <accountElement id="1001493"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Loans</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="C422C4F0E99A4A269154B9935F36C1DE">
+    <id>C422C4F0E99A4A269154B9935F36C1DE</id>
+    <accountElement id="1001474"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Trademarks</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="C51790BF10D74EECAB6C2A77D0416A20">
+    <id>C51790BF10D74EECAB6C2A77D0416A20</id>
+    <accountElement id="1001495"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Total Liabilities</name>
+    <description>21+22</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="C5A19D1F8269401CBF2D61E57512CA53">
+    <id>C5A19D1F8269401CBF2D61E57512CA53</id>
+    <accountElement id="1001529"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Rent expense</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="C6E88EBC06D54A64A69881A1F448C146">
+    <id>C6E88EBC06D54A64A69881A1F448C146</id>
+    <accountElement id="1001481"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Accounts payable</name>
+    <description>Vendor Liability</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="C817739A30D741D993F74A1914EFE225">
+    <id>C817739A30D741D993F74A1914EFE225</id>
+    <accountElement id="1001510"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Discounts</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="C863A5BF4D0B4ED5A41991C32525B760">
+    <id>C863A5BF4D0B4ED5A41991C32525B760</id>
+    <accountElement id="1001477"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Accumulated Depreciation</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="CBF692A287304516B9CD258427C17732">
+    <id>CBF692A287304516B9CD258427C17732</id>
+    <accountElement id="1001549"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Cash book receipts</name>
+    <description>Cash book receipts</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="CF2341B1586A49B985000677EA8CCACB">
+    <id>CF2341B1586A49B985000677EA8CCACB</id>
+    <accountElement id="1001533"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Interest income</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="D836D578875D4FA2AB7E723F07706CA4">
+    <id>D836D578875D4FA2AB7E723F07706CA4</id>
+    <accountElement id="1001545"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Temporary default accounts</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="D9AFFEFED23F4C68BCA70154B8B61678">
+    <id>D9AFFEFED23F4C68BCA70154B8B61678</id>
+    <accountElement id="1001530"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Bang charge</name>
+    <description>Bank Expense</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="DAB3E7EC4B5844198453725A6365F38B">
+    <id>DAB3E7EC4B5844198453725A6365F38B</id>
+    <accountElement id="1001478"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Total Assets</name>
+    <description>11+12</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="DE1B6FF252784F82ADE1A8BA23D5E817">
+    <id>DE1B6FF252784F82ADE1A8BA23D5E817</id>
+    <accountElement id="1001469"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Goods in Process</name>
+    <description>Work in Progress</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="E306C9C0A4E74D17A90A64F3C254861E">
+    <id>E306C9C0A4E74D17A90A64F3C254861E</id>
+    <accountElement id="1001527"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Marketing expenses</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="ECB8808C4FE54CB7A21935612FBF6CB3">
+    <id>ECB8808C4FE54CB7A21935612FBF6CB3</id>
+    <accountElement id="1001532"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Other income</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="ECCB04086A2249C09739F1F6081481D0">
+    <id>ECCB04086A2249C09739F1F6081481D0</id>
+    <accountElement id="1001471"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Trucks</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="ED57F92A1B2541B1B9AE3C00BC1C99B9">
+    <id>ED57F92A1B2541B1B9AE3C00BC1C99B9</id>
+    <accountElement id="1001511"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Sales Discounts</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="F14F9CF107B1478C96DC74FA7B014F0D">
+    <id>F14F9CF107B1478C96DC74FA7B014F0D</id>
+    <accountElement id="1001550"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Suspense Balancing</name>
+    <description>Suspense Balancing</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="F32F872DF3604DC681B8F2934B55A941">
+    <id>F32F872DF3604DC681B8F2934B55A941</id>
+    <accountElement id="1001479"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Liabilities</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="F5431B7E6FDF446DA1F81D26036A8034">
+    <id>F5431B7E6FDF446DA1F81D26036A8034</id>
+    <accountElement id="1001465"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Tax Receivables</name>
+    <description>Tax Credit</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="F5FE2C98BA184DC0B77D9906A0BCC29D">
+    <id>F5FE2C98BA184DC0B77D9906A0BCC29D</id>
+    <accountElement id="1001547"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Charge Expense</name>
+    <description>Charge Expense</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtElementValueTrl id="FCFC873CB9924737B4082FF7A50B536E">
+    <id>FCFC873CB9924737B4082FF7A50B536E</id>
+    <accountElement id="1001519"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="1000001"/>
+    <active>true</active>
+    <name>Inventory loss</name>
+    <description>Warehouse Differences</description>
+    <translation>false</translation>
+  </FinancialMgmtElementValueTrl>
+  <FinancialMgmtPaymentTermTrl id="49004D043FD94CBDB0B965B7AFF7DDDE">
+    <id>49004D043FD94CBDB0B965B7AFF7DDDE</id>
+    <paymentTerms id="1000004"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Immediate</name>
+    <description xsi:nil="true"/>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtPaymentTermTrl>
+  <ProductTrl id="4D925D72CD16418C873D009E9DD8168D">
+    <id>4D925D72CD16418C873D009E9DD8168D</id>
+    <product id="1000064"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Standard</name>
+    <comments xsi:nil="true"/>
+    <translation>false</translation>
+  </ProductTrl>
   <OrderTax id="52118BF1B83B4D84E040007F01005FEC">
     <id>52118BF1B83B4D84E040007F01005FEC</id>
     <salesOrder id="1000051"/>
@@ -24553,6 +26118,28 @@
     <id>1000047</id>
     <recalculate>true</recalculate>
   </InvoiceTax>
+  <FinancialMgmtTaxCategoryTrl id="90E7926F15714CE0BE497F95FF0A2816">
+    <id>90E7926F15714CE0BE497F95FF0A2816</id>
+    <taxCategory id="1000005"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>Sales Tax</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtTaxCategoryTrl>
+  <FinancialMgmtTaxCategoryTrl id="F0063FC1559F4BF2ACF64362ED2704B1">
+    <id>F0063FC1559F4BF2ACF64362ED2704B1</id>
+    <taxCategory id="1000006"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <name>VAT 15%</name>
+    <description xsi:nil="true"/>
+    <translation>false</translation>
+  </FinancialMgmtTaxCategoryTrl>
   <ADFormAccess id="5E4DB943A59116CFE040007F01002944">
     <id>5E4DB943A59116CFE040007F01002944</id>
     <specialForm id="800017"/>
@@ -25464,6 +27051,30 @@
     <owned>true</owned>
     <depreciate>true</depreciate>
   </FinancialMgmtAssetGroup>
+  <FinancialMgmtTaxTrl id="3E5E9001FB604141A3A424B21AB848BD">
+    <id>3E5E9001FB604141A3A424B21AB848BD</id>
+    <tax id="1000007"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <translation>false</translation>
+    <name>Standard</name>
+    <description xsi:nil="true"/>
+    <taxSearchKey xsi:nil="true"/>
+  </FinancialMgmtTaxTrl>
+  <FinancialMgmtTaxTrl id="B9D5FC6F006744F18D658DC151ECC316">
+    <id>B9D5FC6F006744F18D658DC151ECC316</id>
+    <tax id="1000008"/>
+    <language id="192"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <translation>false</translation>
+    <name>VAT 15%</name>
+    <description xsi:nil="true"/>
+    <taxSearchKey xsi:nil="true"/>
+  </FinancialMgmtTaxTrl>
   <FinancialMgmtElementValueOperand id="1000119">
     <id>1000119</id>
     <sign>1</sign>
@@ -26202,7 +27813,7 @@
     <name>Assets</name>
     <description xsi:nil="true"/>
     <accountElement id="1001458"/>
-    <lineNo>10.0</lineNo>
+    <lineNo>10</lineNo>
   </FinancialMgmtAcctRptNode>
   <FinancialMgmtAcctRptNode id="1000001">
     <id>1000001</id>
@@ -26213,7 +27824,7 @@
     <name>Liabilities</name>
     <description xsi:nil="true"/>
     <accountElement id="1001479"/>
-    <lineNo>10.0</lineNo>
+    <lineNo>10</lineNo>
   </FinancialMgmtAcctRptNode>
   <FinancialMgmtAcctRptNode id="1000002">
     <id>1000002</id>
@@ -26224,7 +27835,7 @@
     <name>Owner's Equity</name>
     <description xsi:nil="true"/>
     <accountElement id="1001496"/>
-    <lineNo>20.0</lineNo>
+    <lineNo>20</lineNo>
   </FinancialMgmtAcctRptNode>
   <FinancialMgmtAcctRptGroup id="1000000">
     <id>1000000</id>
@@ -26234,7 +27845,7 @@
     <active>true</active>
     <name>Assets</name>
     <description xsi:nil="true"/>
-    <lineNo>10.0</lineNo>
+    <lineNo>10</lineNo>
   </FinancialMgmtAcctRptGroup>
   <FinancialMgmtAcctRptGroup id="1000001">
     <id>1000001</id>
@@ -26244,7 +27855,7 @@
     <active>true</active>
     <name>Liabilities &amp; Owner's Equity</name>
     <description xsi:nil="true"/>
-    <lineNo>20.0</lineNo>
+    <lineNo>20</lineNo>
   </FinancialMgmtAcctRptGroup>
   <OrganizationAcctSchema id="5AEDC6F79ADDDDC0E040007F010138DD">
     <id>5AEDC6F79ADDDDC0E040007F010138DD</id>
@@ -26252,5 +27863,11 @@
     <organization id="1000001"/>
     <active>true</active>
     <accountingSchema id="1000001"/>
+    <createNewAccountForBusinessParnter>false</createNewAccountForBusinessParnter>
+    <sequanceForBusinessPartner xsi:nil="true"/>
+    <createNewAcountForProduct>false</createNewAcountForProduct>
+    <sequenceForProduct xsi:nil="true"/>
+    <accountLength xsi:nil="true"/>
+    <subAccountLength xsi:nil="true"/>
   </OrganizationAcctSchema>
 </ob:Openbravo>

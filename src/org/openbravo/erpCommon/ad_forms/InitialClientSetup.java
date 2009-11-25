@@ -1529,7 +1529,11 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       InitialClientSetupData[] dataCOA = null;
       if (bCreateAccounting) {
         dataCOA = InitialClientSetupData.selectCOAModules(this, strModules);
-        ModuleUtiltiy.orderModuleByDependency(this, dataCOA);
+        try {
+          ModuleUtiltiy.orderModuleByDependency(dataCOA);
+        } catch (Exception e) {
+          log4j.error("Error ordering modules", e);
+        }
         if (dataCOA != null && dataCOA.length != 0) {
           DataImportService myData = DataImportService.getInstance();
           for (int i = 0; i < dataCOA.length; i++) {
@@ -1566,7 +1570,11 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
       // Import Reference data
       InitialClientSetupData[] data = InitialClientSetupData.selectRDModules(this, strModules);
-      ModuleUtiltiy.orderModuleByDependency(this, data);
+      try {
+        ModuleUtiltiy.orderModuleByDependency(data);
+      } catch (Exception e) {
+        log4j.error("Error ordering modules", e);
+      }
 
       if (data != null && data.length != 0) {
         DataImportService myData = DataImportService.getInstance();

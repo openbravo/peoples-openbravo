@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -190,7 +191,11 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
     if (strModules != null && !strModules.equals("")) {
       UpdateReferenceDataData[] data = UpdateReferenceDataData.selectModules(this, strModules,
           strOrganization);
-      ModuleUtiltiy.orderModuleByDependency(this, data);
+      try {
+        ModuleUtiltiy.orderModuleByDependency(data);
+      } catch (Exception e) {
+        log4j.error("Error ordering modules", e);
+      }
       if (data != null && data.length != 0) {
         DataImportService myData = DataImportService.getInstance();
         m_info.append(SALTO_LINEA).append(
@@ -276,7 +281,13 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
     for (int i = 0; i < modules.length; i++) {
       list.add(modules[i].adModuleId);
     }
-    ArrayList<String> orderList = ModuleUtiltiy.orderByDependency(this, list);
+    List<String> orderList = null;
+    try {
+      orderList = ModuleUtiltiy.orderByDependency(list);
+    } catch (Exception e) {
+      log4j.error("Error ordering modules", e);
+      orderList = list;
+    }
     UpdateReferenceDataData[] rt = new UpdateReferenceDataData[orderList.size()];
     for (int i = 0; i < orderList.size(); i++) {
       int j = 0;

@@ -115,7 +115,7 @@ public class DocDPManagement extends AcctServer {
 
     try {
       data = DocLineDPManagementData.select(conn, Record_ID);
-      log4j.debug("LoadLines: data.len" + data.length + " record_ID " + Record_ID);
+      log4j.debug("LoadLines: data.length " + data.length + " record_ID " + Record_ID);
     } catch (ServletException e) {
       log4j.warn(e);
     }
@@ -127,6 +127,7 @@ public class DocDPManagement extends AcctServer {
       docLine.loadAttributes(data[i], this);
       docLine.Amount = data[i].getField("AMOUNT");
       docLine.m_Record_Id2 = data[i].getField("C_DEBT_PAYMENT_ID");
+      docLine.conversionDate = data[i].getField("conversiondate");
       docLine.Isreceipt = data[i].getField("ISRECEIPT");
       docLine.StatusTo = data[i].getField("STATUS_TO");
       docLine.StatusFrom = data[i].getField("STATUS_FROM");
@@ -182,21 +183,21 @@ public class DocDPManagement extends AcctServer {
     fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_DPManagement line = (DocLine_DPManagement) p_lines[i];
-      // ProductInfo product = new ProductInfo(line.m_M_Product_ID,conn);
+      String amount = calculateAmount(as, line, conn);
       if (line.Isreceipt.equals("Y")) {
         fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusTo,
-            conn), line.m_C_Currency_ID, line.Amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            conn), line.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
         fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusFrom,
-            conn), line.m_C_Currency_ID, "", line.Amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            conn), line.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
 
       } else {
         fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusTo,
-            conn), line.m_C_Currency_ID, "", line.Amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            conn), line.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
         fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusFrom,
-            conn), line.m_C_Currency_ID, line.Amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            conn), line.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
       }
     }
@@ -204,27 +205,49 @@ public class DocDPManagement extends AcctServer {
     return fact;
   } // createFact
 
+  /**
+   * 
+   * @param oldSeqNo
+   * @return
+   */
   public String nextSeqNo(String oldSeqNo) {
-    log4j.debug("DocAmortization - oldSeqNo = " + oldSeqNo);
+    log4j.debug("DocDPManagement - oldSeqNo = " + oldSeqNo);
     BigDecimal seqNo = new BigDecimal(oldSeqNo);
     SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
-    log4j.debug("DocAmortization - nextSeqNo = " + SeqNo);
+    log4j.debug("DocDPManagement - nextSeqNo = " + SeqNo);
     return SeqNo;
   }
 
   /**
-   * Get Document Confirmation
    * 
-   * not used
+   * @param as
+   * @param line
+   * @param conn
+   * @return
    */
+  public String calculateAmount(AcctSchema as, DocLine_DPManagement line, ConnectionProvider conn) {
+    String Amt = getConvertedAmt(line.Amount, line.m_C_Currency_ID, C_Currency_ID,
+        line.conversionDate, "", AD_Client_ID, AD_Org_ID, conn);
+    Amt = getConvertedAmt(Amt, C_Currency_ID, line.m_C_Currency_ID, DateAcct, "", AD_Client_ID,
+        AD_Org_ID, conn);
+    return Amt;
+  }
+
+  /**
+ *
+ */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;
   }
 
   /**
-   * Line Account from Asset
    * 
-   * @return Requested Asset Account
+   * @param Isreceipt
+   * @param partnerID
+   * @param as
+   * @param status
+   * @param conn
+   * @return
    */
   public Account getAccount(String Isreceipt, String partnerID, AcctSchema as, String status,
       ConnectionProvider conn) {
@@ -258,7 +281,7 @@ public class DocDPManagement extends AcctServer {
       if (validCombination_ID.equals(""))
         return null;
       acc = Account.getAccount(conn, validCombination_ID);
-      log4j.debug("DocAmortization - getAccount - " + acc.Account_ID);
+      log4j.debug("DocDPManagement - getAccount - " + acc.Account_ID);
     } catch (ServletException e) {
       log4j.warn(e);
     }

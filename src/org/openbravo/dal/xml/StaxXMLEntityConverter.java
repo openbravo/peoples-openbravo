@@ -331,7 +331,6 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
       }
       return bob;
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
       error("Exception when parsing entity " + entityName + " (" + id + "):" + e.getMessage());
       return null;
     }

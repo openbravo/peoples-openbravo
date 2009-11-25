@@ -42,6 +42,7 @@ var defaultActionElement = null;
 var defaultActionType = null;
 
 var isTabPressed = null;
+var isOBTabBehavior = true;
 var isFirstTime = true;
 var isReadOnlyWindow =  false;
 
@@ -871,42 +872,57 @@ function getLastWindowElement() {
   return obj;
 }
 
-function windowTabKey(state) {
-  if (state==true) {
-    if (isTabBlocked == false) {
-      isTabPressed = true;
-      isSelectedComboOpened = false;
-      if (selectedArea == 'window') {
-        var obj = getNextWindowElement();
-        setWindowElementFocus(obj);
-      } else if (selectedArea == 'tabs') {
-        var obj = getNextTab();
-        setTabFocus(obj);
-      }
-    }
-  } else {
-    isTabPressed = false;
+function setOBTabBehavior(state) {
+  if (state == true) {
+    isOBTabBehavior = true;
+  } else if (state == false) {
+    isOBTabBehavior = false;
   }
-  return false;
+  return true;
+}
+
+function windowTabKey(state) {
+  if (isOBTabBehavior) {
+    if (state==true) {
+      if (isTabBlocked == false) {
+        isTabPressed = true;
+        isSelectedComboOpened = false;
+        if (selectedArea == 'window') {
+          var obj = getNextWindowElement();
+          setWindowElementFocus(obj);
+        } else if (selectedArea == 'tabs') {
+          var obj = getNextTab();
+          setTabFocus(obj);
+        }
+      }
+    } else {
+      isTabPressed = false;
+    }
+    return false;
+  }
+  return true;
 }
 
 function windowShiftTabKey(state) {
-  if (state==true) {
-    if (isTabBlocked == false) {
-      isTabPressed = true;
-      isSelectedComboOpened = false;
-      if (selectedArea == 'window') {
-        var obj = getPreviousWindowElement();
-        setWindowElementFocus(obj);
-      } else if (selectedArea == 'tabs') {
-        var obj = getPreviousTab();
-        setTabFocus(obj);
+  if (isOBTabBehavior) {
+    if (state==true) {
+      if (isTabBlocked == false) {
+        isTabPressed = true;
+        isSelectedComboOpened = false;
+        if (selectedArea == 'window') {
+          var obj = getPreviousWindowElement();
+          setWindowElementFocus(obj);
+        } else if (selectedArea == 'tabs') {
+          var obj = getPreviousTab();
+          setTabFocus(obj);
+        }
       }
+    } else {
+      isTabPressed = false;
     }
-  } else {
-    isTabPressed = false;
+    return false;
   }
-  return false;
+  return true;
 }
 
 function windowEnterKey() {
@@ -1064,13 +1080,12 @@ function getAssociatedFieldButton(type) {
   var fieldButton = null;
   var success = true;
   fieldButton = focusedWindowElement;
-  //Go to the TD parent
-  if (type=='wad_window') {
-    //If is an Input Text + Dojo
+  if (type=='window') {
     try {
+      //Go to the TD parent
       for (;;) {
         fieldButton = fieldButton.parentNode;
-        if (fieldButton.tagName == 'TD') {
+        if (fieldButton.tagName == 'TD' && fieldButton.className.indexOf('TextBox_ContentCell') != -1) {
           break;
         } else if (fieldButton.tagName == 'BODY') {
           success = false;
@@ -1078,22 +1093,6 @@ function getAssociatedFieldButton(type) {
         }
       }
       success = true;
-    } catch (e) {
-      success = false;
-    }
-  }
-  if (success == true) {
-    try {
-      for (;;) {
-        fieldButton = fieldButton.parentNode;
-        if (fieldButton.tagName == 'TD') {
-          success = true;
-          break;
-        } else if (fieldButton.tagName == 'BODY') {
-          success = false;
-          break;
-        }
-      }
     } catch (e) {
       success = false;
     }
@@ -1132,18 +1131,10 @@ function getAssociatedFieldButton(type) {
 
 function executeAssociatedFieldButton() {
   var fieldButton = null;
-  fieldButton = getAssociatedFieldButton('wad_window');
+  fieldButton = getAssociatedFieldButton('window');
   if (fieldButton != null && fieldButton != false) {
     fieldButton.onclick();
     return true;
-  } else {
-    fieldButton = getAssociatedFieldButton('manual_window');
-    if (fieldButton != null && fieldButton != false) {
-      fieldButton.onclick();
-      return true;
-    } else {
-      return false;
-    }
   }
 }
 

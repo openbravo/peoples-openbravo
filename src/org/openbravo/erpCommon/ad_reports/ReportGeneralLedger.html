@@ -63,6 +63,9 @@ function imprimir() {
 
 function validate() {
 	var frm = document.frmMain;
+    var evFrom = frm.inpcElementValueIdFrom.value;
+	var evTo = frm.inpcElementValueIdTo.value;
+
 	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
 		setWindowElementFocus(frm.inpDateFrom);
 		showJSMessage(7);
@@ -75,6 +78,10 @@ function validate() {
 		setWindowElementFocus(frm.inpcAcctSchemaId);
 		showJSMessage(7);
 		return false;
+    } else if ((evFrom != null && evFrom != "" && (evTo == null || evTo == ""))
+    		   ||  (evTo != null && evTo != "" && (evFrom == null || evFrom == ""))) {
+    	showJSMessage(27);
+    	return false;
 	}
 	markCheckedAllElements(frm.inpcBPartnerId_IN);
 	return true;
@@ -359,7 +366,7 @@ function onloadFunctions() {
                       <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpElementValueIdFrom_DES" id="inpElementValueIdFrom_DES" maxlength="20" value=""></input>
                     </td>
                     <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Account'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Account'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value);return false;">
                       <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Search';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                         <tr>
                           <td class="FieldButton_bg">
@@ -377,11 +384,11 @@ function onloadFunctions() {
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input type="hidden" name="inpcElementValueIdTo" id="paramElementvalueToId" value=""></input>
+                      <input type="hidden" name="inpcElementValueIdTo" id="paramElementvalueIdTo" value=""></input>
                       <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpElementValueIdTo_DES" id="inpElementValueIdTo_DES" maxlength="20" value=""></input>
                     </td>
                     <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Account'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdTo', 'inpElementValueIdTo_DES', document.frmMain.inpElementValueIdTo_DES.value);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Account'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdTo', 'inpElementValueIdTo_DES', document.frmMain.inpElementValueIdTo_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value);return false;">
                       <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Search';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                         <tr>
                           <td class="FieldButton_bg">

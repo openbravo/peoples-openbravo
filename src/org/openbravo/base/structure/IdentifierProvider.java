@@ -41,14 +41,14 @@ public class IdentifierProvider implements OBSingleton {
 
   private static IdentifierProvider instance;
 
-  public static IdentifierProvider getInstance() {
+  public static synchronized IdentifierProvider getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(IdentifierProvider.class);
     }
     return instance;
   }
 
-  public static void setInstance(IdentifierProvider instance) {
+  public static synchronized void setInstance(IdentifierProvider instance) {
     IdentifierProvider.instance = instance;
   }
 

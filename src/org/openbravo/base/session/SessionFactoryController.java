@@ -27,6 +27,8 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.PostgreSQLDialect;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.core.DalSessionFactory;
 
 /**
  * Initializes and provides the session factory to the rest of the application. There are subclasses
@@ -74,11 +76,11 @@ public abstract class SessionFactoryController {
     SessionFactoryController.runningInWebContainer = runningInWebContainer;
   }
 
-  public static SessionFactoryController getInstance() {
+  public static synchronized SessionFactoryController getInstance() {
     return instance;
   }
 
-  public static void setInstance(SessionFactoryController sfc) {
+  public static synchronized void setInstance(SessionFactoryController sfc) {
     if (sfc != null) {
       log.debug("Setting instance of " + sfc.getClass().getName()
           + " as session factory controller");
@@ -144,10 +146,20 @@ public abstract class SessionFactoryController {
 
       // second-level caching is disabled for now because not all data
       // access and updates go through hibernate.
+      // TODO: move to configuration file
       configuration.getProperties().setProperty(Environment.USE_SECOND_LEVEL_CACHE, "false");
       configuration.getProperties().setProperty(Environment.USE_QUERY_CACHE, "false");
+      configuration.getProperties().setProperty(Environment.DEFAULT_BATCH_FETCH_SIZE, "50");
+      configuration.getProperties().setProperty(Environment.STATEMENT_BATCH_SIZE, "10");
+      configuration.getProperties().setProperty(Environment.STATEMENT_FETCH_SIZE, "50");
+      // TODO: consider setting isolation level explicitly
+      // configuration.getProperties().setProperty(Environment.ISOLATION,
+      // "" + Connection.TRANSACTION_READ_COMMITTED);
 
-      sessionFactory = configuration.buildSessionFactory();
+      final DalSessionFactory dalSessionFactory = OBProvider.getInstance().get(
+          DalSessionFactory.class);
+      dalSessionFactory.setDelegateSessionFactory(configuration.buildSessionFactory());
+      sessionFactory = dalSessionFactory;
 
       log.debug("Session Factory initialized");
     } catch (final Throwable t) {
