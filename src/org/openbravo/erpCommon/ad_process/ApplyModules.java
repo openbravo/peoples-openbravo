@@ -86,8 +86,6 @@ public class ApplyModules extends HttpSecureAppServlet {
       restartApplicationServer(response, vars);
     } else if (vars.commandIn("RELOAD")) {
       reloadContext(response, vars);
-    } else if (vars.commandIn("DONOTHING")) {
-      // Won't be called.
     } else {
       pageError(response);
     }

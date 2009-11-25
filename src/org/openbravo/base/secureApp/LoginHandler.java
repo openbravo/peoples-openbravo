@@ -88,6 +88,9 @@ public class LoginHandler extends HttpBaseServlet {
         action = "../security/Login_FS.html";
       }
 
+      // We check if there is a Openbravo Professional Subscription restriction in the license,
+      // or if the last rebuild didn't go well. If any of these are true, then the user is
+      // allowed to login only as system administrator
       switch (ak.checkOPSLimitations(vars.getDBSession())) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
         String msg = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED", vars

@@ -213,6 +213,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               || sysInfo.getSystemStatus().equals("RB70");
           ActivationKey ak = new ActivationKey();
           LicenseRestriction limitation = ak.checkOPSLimitations(variables.getDBSession());
+          // We check if there is a Openbravo Professional Subscription restriction in the license,
+          // or if the last rebuild didn't go well. If any of these are true, then the user is
+          // allowed to login only as system administrator
           if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
               || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
               || limitation == LicenseRestriction.MODULE_EXPIRED || !correctSystemStatus) {
