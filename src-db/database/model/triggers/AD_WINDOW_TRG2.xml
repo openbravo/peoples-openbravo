@@ -45,7 +45,7 @@ BEGIN
  
 
     IF v_JavaPackage IS NOT NULL THEN
-      v_ModuleMapping := '/'||v_JavaPackage;
+      v_ModuleMapping := '/'||v_JavaPackage||'.';
       v_JavaPackage := v_JavaPackage||'.'||AD_MAPPING_FORMAT(TO_CHAR(:NEW.NAME));
     ELSE
       v_ModuleMapping := '/';

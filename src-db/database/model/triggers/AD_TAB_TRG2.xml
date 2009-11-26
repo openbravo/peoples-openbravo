@@ -67,7 +67,7 @@ BEGIN
     END IF;
     
     IF v_JavaPackage IS NOT NULL THEN
-      v_ModuleMapping := '/'||v_JavaPackage;
+      v_ModuleMapping := '/'||v_JavaPackage||'.';
       v_JavaPackage := v_JavaPackage||'.'||v_WindowName;
     ELSE
       v_ModuleMapping := '/';
@@ -269,7 +269,7 @@ BEGIN
   END IF;
 
   IF (v_JavaPackage IS NOT NULL)  THEN
-    v_ModuleMapping := '/'||v_JavaPackage;
+    v_ModuleMapping := '/'||v_JavaPackage||'.';
     v_JavaPackage := v_JavaPackage||'.'||v_WindowName;
   ELSE
     v_JavaPackage := v_WindowName;
