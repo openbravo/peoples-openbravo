@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TABLE C_PERIODCONTROL_LOG">
-    <table name="C_PERIODCONTROL_LOG" primaryKey="CPERIODCONTROLLOG_KEY">
+    <table name="C_PERIODCONTROL_LOG" primaryKey="C_PERIODCONTROL_LOG_KEY">
       <column name="C_PERIODCONTROL_LOG_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
