@@ -536,10 +536,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="update.database.mod" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="update.customized.database" depends="init, core.lib, database.lib">
-    <ant dir="${base.db}" target="update.customized.database" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="create.database.script" depends="init, core.lib">
     <ant dir="${base.db}" target="create.database.script" inheritAll="true" inheritRefs="true" />
   </target>

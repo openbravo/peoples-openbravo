@@ -49,11 +49,11 @@ public class CallProcess {
 
   private static CallProcess instance = new CallProcess();
 
-  public static CallProcess getInstance() {
+  public static synchronized CallProcess getInstance() {
     return instance;
   }
 
-  public static void setInstance(CallProcess instance) {
+  public static synchronized void setInstance(CallProcess instance) {
     CallProcess.instance = instance;
   }
 

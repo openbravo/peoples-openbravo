@@ -97,6 +97,45 @@ public class NamingUtil {
   }
 
   /**
+   * Checks if a name of a table contains illegal chars.
+   * 
+   * @param name
+   *          the name to check
+   * @return true if the name contains a char from the {@link #ILLEGAL_ENTITY_NAME_CHARS}).
+   */
+  public static boolean doesNameHaveIllegalChars(String name) {
+    final char[] chars = name.trim().toCharArray();
+    for (char c : chars) {
+      for (char illegalChar : ILLEGAL_ENTITY_NAME_CHARS) {
+        if (c == illegalChar) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks a name for non-normal characters. Non-normal is everything from a to z, A to Z, 0 to 9
+   * and _.
+   * 
+   * @param name
+   *          the name to check
+   * @return true if the name contains illegal chars, false otherwise
+   */
+  public static boolean doesNameContainNonNormalCharacters(String name) {
+    final char[] chars = name.trim().toCharArray();
+    for (char c : chars) {
+      final boolean normalChar = ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')
+          || ('a' <= c && c <= 'z') || c == '_';
+      if (!normalChar) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Returns the value of the ENTITY_NAME constant in the passed class.
    * 
    * @param clz
