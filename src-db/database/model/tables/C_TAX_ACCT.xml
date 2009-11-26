@@ -61,34 +61,34 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CTAXACCT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_TAX_ACCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CTAXACCT">
+      <foreign-key foreignTable="AD_ORG" name="C_TAX_ACCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CTAXACCT" onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_TAX_ACCT_C_ACCTSCHEMA" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX_CTAXACCT">
+      <foreign-key foreignTable="C_TAX" name="C_TAX_ACCT_C_TAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_TCREDIT_CTAX">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_TAX_ACCT_T_CREDIT_ACCT">
         <reference local="T_CREDIT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_TDUE_CTAX">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_TAX_ACCT_T_DUE_ACCT">
         <reference local="T_DUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_TEXPENSE_CTAX">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_TAX_ACCT_T_EXPENSE_ACCT">
         <reference local="T_EXPENSE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_TLIABILITY_CTAX">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_TAX_ACCT_T_LIABILITY_ACCT">
         <reference local="T_LIABILITY_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_TREC_CTAX">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_TAX_ACCT_T_RECEIVABLES_ACCT">
         <reference local="T_RECEIVABLES_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <unique name="CTAXACCT_CTAXID_CACCTSCHEMA_UN">
+      <unique name="C_TAX_ACCT_TAX_ACCTSCHEMA_UN">
         <unique-column name="C_TAX_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>

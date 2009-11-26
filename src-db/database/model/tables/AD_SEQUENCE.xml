@@ -81,19 +81,19 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="SEQUENCECLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_SEQUENCE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="SEQUENCEORG">
+      <foreign-key foreignTable="AD_ORG" name="AD_SEQUENCE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <unique name="AD_SEQUENCE_NAME">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="ADSEQ_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADSEQ_ISAUTOSEQUENCE_CHECK"><![CDATA[ISAUTOSEQUENCE IN ('Y', 'N')]]></check>
-      <check name="ADSEQ_ISTABLEID_CHECK"><![CDATA[ISTABLEID IN ('Y', 'N')]]></check>
-      <check name="ADSEQ_STARTNEWYEAR_CHECK"><![CDATA[STARTNEWYEAR IN ('Y', 'N')]]></check>
+      <check name="AD_SEQUENCE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_SEQUENCE_ISAUTOSEQUENCE_CHK"><![CDATA[ISAUTOSEQUENCE IN ('Y', 'N')]]></check>
+      <check name="AD_SEQUENCE_ISTABLEID_CHK"><![CDATA[ISTABLEID IN ('Y', 'N')]]></check>
+      <check name="AD_SEQUENCE_STARTNEWYEAR_CHK"><![CDATA[STARTNEWYEAR IN ('Y', 'N')]]></check>
     </table>
   </database>

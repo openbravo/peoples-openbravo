@@ -60,20 +60,20 @@
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_WFNODETRL">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_WF_NODE" name="AD_WFNODETRL" onDelete="cascade">
-        <reference local="AD_WF_NODE_ID" foreign="AD_WF_NODE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADWFNODETRL">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_WF_NODE_TRL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADWFNODETRL">
+      <foreign-key foreignTable="AD_ORG" name="AD_WF_NODE_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_WF_NODE" name="AD_WFNODETRL" onDelete="cascade">
+        <reference local="AD_WF_NODE_ID" foreign="AD_WF_NODE_ID"/>
       </foreign-key>
       <index name="AD_WF_NODE_TRL_UN_KEY" unique="true">
         <index-column name="AD_WF_NODE_ID"/>
         <index-column name="AD_LANGUAGE"/>
       </index>
-      <check name="ADWFNODETRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADWFNODETRL_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="AD_WF_NODE_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_WF_NODE_TRL_ISTRANSLATE_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -148,38 +148,38 @@
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_AD_TAB">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_TAB_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_COLUMN" name="AD_TAB_AD_COLUMNSORTORDER">
+        <reference local="AD_COLUMNSORTORDER_ID" foreign="AD_COLUMN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_COLUMN" name="AD_TAB_AD_COLUMNSORTYESNO">
+        <reference local="AD_COLUMNSORTYESNO_ID" foreign="AD_COLUMN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_TAB_AD_IMAGE">
+        <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="AD_TAB_AD_MODULE">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_TAB_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_PROCESS" name="AD_TAB_AD_PROCESS">
+        <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_FORM" name="AD_TAB_EDITREFERENCE">
+        <reference local="EDITREFERENCE" foreign="AD_FORM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TAB" name="AD_TAB_INCLUDED_TAB">
+        <reference local="INCLUDED_TAB_ID" foreign="AD_TAB_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_TAB">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TAB" onDelete="cascade">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADTABSORTORDER">
-        <reference local="AD_COLUMNSORTORDER_ID" foreign="AD_COLUMN_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADTABSORTYESNO">
-        <reference local="AD_COLUMNSORTYESNO_ID" foreign="AD_COLUMN_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_FORM" name="ADFORM_ADTAB">
-        <reference local="EDITREFERENCE" foreign="AD_FORM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_IMAGE" name="ADIMAGE_ADTAB">
-        <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADTAB">
-        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADTAB">
-        <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TAB" name="ADTAB_INCLUDED">
-        <reference local="INCLUDED_TAB_ID" foreign="AD_TAB_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="TABCLIENT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="TABORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <index name="AD_TAB_TABLE" unique="false">
         <index-column name="AD_TABLE_ID"/>
@@ -191,12 +191,12 @@
         <unique-column name="AD_WINDOW_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="ADTAB_HASTREE_CHECK"><![CDATA[HASTREE IN ('Y', 'N')]]></check>
-      <check name="ADTAB_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADTAB_ISINFOTAB_CHECK"><![CDATA[ISINFOTAB IN ('Y', 'N')]]></check>
-      <check name="ADTAB_ISREADONLY_CHECK"><![CDATA[ISREADONLY IN ('Y', 'N')]]></check>
-      <check name="ADTAB_ISSINGLEROW_CHECK"><![CDATA[ISSINGLEROW IN ('Y', 'N')]]></check>
-      <check name="ADTAB_ISTRANSLATIONTAB_CHECK"><![CDATA[ISTRANSLATIONTAB IN ('Y', 'N')]]></check>
-      <check name="ADTAB_NAME_CHECK"><![CDATA[INSTR(NAME, TO_CHAR('_')) = 0]]></check>
+      <check name="AD_TAB_HASTREE_CHK"><![CDATA[HASTREE IN ('Y', 'N')]]></check>
+      <check name="AD_TAB_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_TAB_ISINFOTAB_CHK"><![CDATA[ISINFOTAB IN ('Y', 'N')]]></check>
+      <check name="AD_TAB_ISREADONLY_CHK"><![CDATA[ISREADONLY IN ('Y', 'N')]]></check>
+      <check name="AD_TAB_ISSINGLEROW_CHK"><![CDATA[ISSINGLEROW IN ('Y', 'N')]]></check>
+      <check name="AD_TAB_ISTRANSLATIONTAB_CHK"><![CDATA[ISTRANSLATIONTAB IN ('Y', 'N')]]></check>
+      <check name="AD_TAB_NAME_CHK"><![CDATA[INSTR(NAME, TO_CHAR('_')) = 0]]></check>
     </table>
   </database>

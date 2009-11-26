@@ -57,16 +57,16 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPINSTANCE">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_PINSTANCE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADPINSTANCE">
+      <foreign-key foreignTable="AD_ORG" name="AD_PINSTANCE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADPINSTANCE" onDelete="cascade">
+      <foreign-key foreignTable="AD_PROCESS" name="AD_PINSTANCE_AD_PROCESS" onDelete="cascade">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_PINSTANCE">
+      <foreign-key foreignTable="AD_USER" name="AD_PINSTANCE_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
       <index name="AD_PINSTANCE_RECORD" unique="false">

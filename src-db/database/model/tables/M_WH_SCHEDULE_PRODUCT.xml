@@ -45,10 +45,10 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MWHSCHEDULEPRODUCT">
+      <foreign-key foreignTable="AD_CLIENT" name="M_WH_SCHEDULE_PRODUCT_AD_CLIEN">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MWHSCHEDULEPRODUCT">
+      <foreign-key foreignTable="AD_ORG" name="M_WH_SCHEDULE_PRODUCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_WH_SP_PRODUCT">

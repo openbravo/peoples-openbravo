@@ -41,17 +41,17 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MACOSTCENTERIC">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_COSTCENTER_IC_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MACOSTCENTERIC">
+      <foreign-key foreignTable="AD_ORG" name="MA_COSTCENTER_IC_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_INDIRECT_COST" name="CSALARYCAT_MACOSTCENTERIC">
-        <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="MA_COSTCENTER_VERSION" name="MACCVERSION_COSTCENTERIC">
+      <foreign-key foreignTable="MA_COSTCENTER_VERSION" name="MA_COSTCENTER_IC_MA_COSTCENTER">
         <reference local="MA_COSTCENTER_VERSION_ID" foreign="MA_COSTCENTER_VERSION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_INDIRECT_COST" name="MA_COSTCENTER_IC_MA_INDIRECT_C">
+        <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
       </foreign-key>
       <check name="MA_COSTCENTER_I_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

@@ -269,77 +269,77 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CORDER">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CORDER">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_CORDER">
-        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_CORDER">
-        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_SR_CORDER">
-        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSERDROPSHIP_CORDER">
-        <reference local="DROPSHIP_USER_ID" foreign="AD_USER_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_CORDER">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="C_ORDER_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_ORDER_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_ORDER_AD_ORGTRX">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="C_ORDER_AD_USER">
+        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_ORDER_BILLTO">
+        <reference local="BILLTO_ID" foreign="C_BPARTNER_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACTIVITY" name="C_ORDER_C_ACTIVITY">
+        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="C_ORDER_C_BPARTNER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_ORDER_C_BPARTNER_LOCATION">
         <reference local="DELIVERY_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CORDER">
-        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CORDER">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNERDROPSHIP_CORDER">
-        <reference local="DROPSHIP_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPARTNERLOCATION_SOHEADER">
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_ORDER_C_BPARTNER_LOCATION1">
         <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPLOCATIONBILLTO_SOHEADER">
-        <reference local="BILLTO_ID" foreign="C_BPARTNER_LOCATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPLOCATIONDROPSHIP_CORDER">
-        <reference local="DROPSHIP_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_CORDER">
+      <foreign-key foreignTable="C_CAMPAIGN" name="C_ORDER_C_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CHARGE" name="CCHARGE_CORDER">
+      <foreign-key foreignTable="C_CHARGE" name="C_ORDER_C_CHARGE">
         <reference local="C_CHARGE_ID" foreign="C_CHARGE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CORDER">
+      <foreign-key foreignTable="C_CURRENCY" name="C_ORDER_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPETARGET_CORDER">
+      <foreign-key foreignTable="C_DOCTYPE" name="C_ORDER_C_DOCTYPETARGET">
         <reference local="C_DOCTYPETARGET_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INCOTERMS" name="CORDER_CINCOTEMRS">
+      <foreign-key foreignTable="C_INCOTERMS" name="C_ORDER_C_INCOTERMS">
         <reference local="C_INCOTERMS_ID" foreign="C_INCOTERMS_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PAYMENTTERM" name="CPAYMENTTERM_SOHEADER">
+      <foreign-key foreignTable="C_PAYMENTTERM" name="C_ORDER_C_PAYMENTTERM">
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CORDER">
+      <foreign-key foreignTable="C_PROJECT" name="C_ORDER_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_SOHEADER">
+      <foreign-key foreignTable="C_BPARTNER" name="C_ORDER_DROPSHIP_BPARTNER">
+        <reference local="DROPSHIP_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_ORDER_DROPSHIP_LOCATION">
+        <reference local="DROPSHIP_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="C_ORDER_DROPSHIP_USER">
+        <reference local="DROPSHIP_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRICELIST" name="C_ORDER_M_PRICELIST">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_SHIPPER" name="MSHIPPER_CORDER">
+      <foreign-key foreignTable="M_SHIPPER" name="C_ORDER_M_SHIPPER">
         <reference local="M_SHIPPER_ID" foreign="M_SHIPPER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_CORDER">
+      <foreign-key foreignTable="M_WAREHOUSE" name="C_ORDER_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="C_ORDER_SALESREP">
+        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
       <index name="C_ORDER_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
@@ -358,12 +358,12 @@
       </index>
       <check name="C_ORDER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISDELIVERED_CHECK"><![CDATA[ISDELIVERED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISDISCOUNTPRINTED_CHK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISINVOICED_CHECK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISSELECTED_CHECK"><![CDATA[ISSELECTED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISTAXINCLUDED_CHECK"><![CDATA[ISTAXINCLUDED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
-      <check name="CORDER_ISDISCOUNTPRINT_CHECK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
     </table>
   </database>

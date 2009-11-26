@@ -93,19 +93,19 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_GLJOURNALBATCH">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_GLJOURNALBATCH">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_PERIOD" name="C_PERIOD_JOURNALBATCH">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_GLJOURNALBATCH">
+      <foreign-key foreignTable="AD_CLIENT" name="GL_JOURNALBATCH_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="GL_JOURNALBATCH_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="GL_JOURNALBATCH_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="GL_CATEGORY" name="GLCATEGORY_GLJOURNALBATCH">
+      <foreign-key foreignTable="GL_CATEGORY" name="GL_JOURNALBATCH_GL_CATEGORY">
         <reference local="GL_CATEGORY_ID" foreign="GL_CATEGORY_ID"/>
       </foreign-key>
       <unique name="GL_JOURNALBATCH_DOCNO">
@@ -114,7 +114,7 @@
         <unique-column name="DOCUMENTNO"/>
       </unique>
       <check name="GL_JOURNALBATCH_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="GLJOURNBATCH_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
-      <check name="GLJOURNBATCH_PROCESSING_CHECK"><![CDATA[PROCESSING IN ('Y', 'N')]]></check>
+      <check name="GL_JOURNALBATCH_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="GL_JOURNALBATCH_PROCESSING_CHK"><![CDATA[PROCESSING IN ('Y', 'N')]]></check>
     </table>
   </database>

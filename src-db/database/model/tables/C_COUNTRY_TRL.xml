@@ -61,23 +61,23 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CCOUNTRYTRL">
+      <foreign-key foreignTable="AD_CLIENT" name="C_COUNTRY_TRL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_CCOUNTRYTRL">
+      <foreign-key foreignTable="AD_LANGUAGE" name="C_COUNTRY_TRL_AD_LANGUAGE">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CCOUNTRYTRL">
+      <foreign-key foreignTable="AD_ORG" name="C_COUNTRY_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_COUNTRY" name="CCOUNTRY_CCOUNTRYTRL" onDelete="cascade">
+      <foreign-key foreignTable="C_COUNTRY" name="C_COUNTRY_TRL_C_COUNTRY" onDelete="cascade">
         <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
       </foreign-key>
-      <unique name="CCOUNTRYTRL_CCOUNTRYID_ADLA_UN">
+      <unique name="C_COUNTRY_TRL_COUNTRY_LANGU_UN">
         <unique-column name="C_COUNTRY_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
       <check name="C_COUNTRY_TRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CCOUNTRYTRL_ISTRANSL_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="C_COUNTRY_TRL_ISTRANSLATED_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -129,32 +129,32 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CPROJECTLINE">
+      <foreign-key foreignTable="AD_CLIENT" name="C_PROJECTLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CPROJECTLINE">
+      <foreign-key foreignTable="AD_ORG" name="C_PROJECTLINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ORDER" name="C_PROJECTLINE_C_ORDER">
+        <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ORDER" name="C_PROJECTLINE_C_ORDERPO">
+        <reference local="C_ORDERPO_ID" foreign="C_ORDER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PROJECT" name="C_PROJECTLINE_C_PROJECT" onDelete="cascade">
+        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PROJECTISSUE" name="C_PROJECTLINE_C_PROJECTISSUE">
+        <reference local="C_PROJECTISSUE_ID" foreign="C_PROJECTISSUE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="C_PROJECTLINE_M_PRODUCT">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="C_PROJECTLINE_M_PRODUCT_CATEGO">
+        <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_TAX" name="C_TAX_FK_PROJECTLINE">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ORDER" name="CORDER_CPROJECTLINE">
-        <reference local="C_ORDERPO_ID" foreign="C_ORDER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ORDER" name="CORDER_CPROJECTLINE1">
-        <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CPROJECTLINE" onDelete="cascade">
-        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_PROJECTISSUE" name="CPROJECTISSUE_CPROJECTLINE">
-        <reference local="C_PROJECTISSUE_ID" foreign="C_PROJECTISSUE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CPROJECTLINE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODUCTCAT_CPROJECTLINE">
-        <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
       <check name="C_PROJECTLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

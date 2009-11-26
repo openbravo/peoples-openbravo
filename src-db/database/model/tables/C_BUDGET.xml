@@ -61,13 +61,13 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="BUDGETCLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_BUDGET_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="BUDGETORG">
+      <foreign-key foreignTable="AD_ORG" name="C_BUDGET_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_YEAR" name="BUDGETYEAR">
+      <foreign-key foreignTable="C_YEAR" name="C_BUDGET_C_YEAR">
         <reference local="C_YEAR_ID" foreign="C_YEAR_ID"/>
       </foreign-key>
       <check name="C_BUDGET_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

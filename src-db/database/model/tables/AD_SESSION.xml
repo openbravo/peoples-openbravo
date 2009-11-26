@@ -57,10 +57,10 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADSESSION">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_SESSION_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADSESSION">
+      <foreign-key foreignTable="AD_ORG" name="AD_SESSION_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="AD_SESSION_ACTIVE_CHK"><![CDATA[SESSION_ACTIVE IN ('Y', 'N')]]></check>

@@ -93,41 +93,41 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_RREQUESTACTION">
+      <foreign-key foreignTable="AD_CLIENT" name="R_REQUESTACTION_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_RREQUESTACTION">
+      <foreign-key foreignTable="AD_ORG" name="R_REQUESTACTION_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_RREQUESTACTION">
+      <foreign-key foreignTable="AD_USER" name="R_REQUESTACTION_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_SR_RREQUESTACTION">
-        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_RREQUESTACTION">
+      <foreign-key foreignTable="C_BPARTNER" name="R_REQUESTACTION_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DEBT_PAYMENT" name="CDEBT_PAYMENT_RREQUESTACTION">
+      <foreign-key foreignTable="C_DEBT_PAYMENT" name="R_REQUESTACTION_C_DEBT_PAYMENT">
         <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICE" name="CINVOICE_RREQUESTACTION">
+      <foreign-key foreignTable="C_INVOICE" name="R_REQUESTACTION_C_INVOICE">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDER" name="CORDER_RREQUESTACTION">
+      <foreign-key foreignTable="C_ORDER" name="R_REQUESTACTION_C_ORDER">
         <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_RREQUESTACTION">
+      <foreign-key foreignTable="C_PROJECT" name="R_REQUESTACTION_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_RREQUESTACTION">
+      <foreign-key foreignTable="M_PRODUCT" name="R_REQUESTACTION_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="R_MAILTEXT" name="RMAILTEXT_RREQUESTACTION">
+      <foreign-key foreignTable="R_MAILTEXT" name="R_REQUESTACTION_R_MAILTEXT">
         <reference local="R_MAILTEXT_ID" foreign="R_MAILTEXT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="R_REQUEST" name="RREQUEST_RREQUESTACTION">
+      <foreign-key foreignTable="R_REQUEST" name="R_REQUESTACTION_R_REQUEST">
         <reference local="R_REQUEST_ID" foreign="R_REQUEST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="R_REQUESTACTION_SALESREP">
+        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
       <check name="R_REQUESTACTION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

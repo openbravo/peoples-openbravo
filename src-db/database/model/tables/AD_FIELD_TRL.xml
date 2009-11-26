@@ -57,23 +57,23 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_FIELD_TRL_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_FIELD_TRL_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_FIELD" name="AD_FIELDTRL" onDelete="cascade">
         <reference local="AD_FIELD_ID" foreign="AD_FIELD_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_FIELDTRL">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADFIELDTRL">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADFIELDTRL">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <unique name="ADFIELDTRL_ADFIELDID_ADLANG_UN">
+      <unique name="AD_FIELD_TRL_FIELD_LANGUAGE_UN">
         <unique-column name="AD_FIELD_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="ADFIELDTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADFIELDTRL_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_TRL_ISTRANSLATED_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -45,22 +45,22 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_WF_NODENEXT_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_WF_NODENEXT_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_WF_NODE" name="AD_WFID_NEXT" onDelete="cascade">
         <reference local="AD_WF_NEXT_ID" foreign="AD_WF_NODE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_WF_NODE" name="AD_WFID_NODENEXT" onDelete="cascade">
         <reference local="AD_WF_NODE_ID" foreign="AD_WF_NODE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="WF_NODENEXTCLIENT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="WF_NODENEXTORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <unique name="ADWFNODENEXT_ADWFNODEID_ADW_UN">
+      <unique name="AD_WF_NODENEXT_WF_NODE_WF_N_UN">
         <unique-column name="AD_WF_NODE_ID"/>
         <unique-column name="AD_WF_NEXT_ID"/>
       </unique>
-      <check name="ADWFNODENEXT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_WF_NODENEXT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

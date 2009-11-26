@@ -57,16 +57,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_FK_CTAXREGISTER">
+      <foreign-key foreignTable="AD_CLIENT" name="C_TAXREGISTER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_FK_CTAXREGISTER">
+      <foreign-key foreignTable="AD_ORG" name="C_TAXREGISTER_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAXPAYMENT" name="TAXPAYMENT_TAXREGISTER">
+      <foreign-key foreignTable="C_TAXPAYMENT" name="C_TAXREGISTER_C_TAXPAYMENT">
         <reference local="C_TAXPAYMENT_ID" foreign="C_TAXPAYMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAXREGISTER_TYPE" name="TAXREGISTER_TYPE_TAXREGISTER">
+      <foreign-key foreignTable="C_TAXREGISTER_TYPE" name="C_TAXREGISTER_C_TAXREGISTER_TY">
         <reference local="C_TAXREGISTER_TYPE_ID" foreign="C_TAXREGISTER_TYPE_ID"/>
       </foreign-key>
     </table>

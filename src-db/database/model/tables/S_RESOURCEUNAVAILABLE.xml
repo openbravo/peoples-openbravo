@@ -49,13 +49,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_SRESOURCEUNAVAILABLE">
+      <foreign-key foreignTable="AD_CLIENT" name="S_RESOURCEUNAVAILABLE_AD_CLIEN">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_SRESOURCEUNAVAILABLE">
+      <foreign-key foreignTable="AD_ORG" name="S_RESOURCEUNAVAILABLE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="S_RESOURCE" name="SRESOURCE_SRESUNAVAILABLE" onDelete="cascade">
+      <foreign-key foreignTable="S_RESOURCE" name="S_RESOURCEUNAVAILABLE_S_RESOUR" onDelete="cascade">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
       </foreign-key>
       <check name="S_RESOURCEUNAVA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

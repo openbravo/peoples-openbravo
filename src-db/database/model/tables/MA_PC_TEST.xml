@@ -52,7 +52,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAPC_TEST">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAPC_TEST">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_PC_TEST_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_PERIODIC_CONTROL" name="MA_PERIODIC_CONTROL_MAPCTEST">

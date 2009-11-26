@@ -81,23 +81,23 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CREMITTANCE">
+      <foreign-key foreignTable="AD_CLIENT" name="C_REMITTANCE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BANKACCOUNT" name="CBANKACCOUNT_CREMITTANCE">
+      <foreign-key foreignTable="AD_ORG" name="C_REMITTANCE_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BANKACCOUNT" name="C_REMITTANCE_C_BANKACCOUNT">
         <reference local="C_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DP_MANAGEMENT" name="CDPMANAGEMENT_CREMITTANCE">
+      <foreign-key foreignTable="C_DP_MANAGEMENT" name="C_REMITTANCE_C_DP_MANAGEMENT">
         <reference local="C_DP_MANAGEMENT_ID" foreign="C_DP_MANAGEMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_REMITTANCE_TYPE" name="CREMITTANCETYPE_CREMITTANCE">
+      <foreign-key foreignTable="C_REMITTANCE_TYPE" name="C_REMITTANCE_C_REMITTANCE_TYPE">
         <reference local="C_REMITTANCE_TYPE_ID" foreign="C_REMITTANCE_TYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_SETTLEMENT" name="CSETTLEMENT_CREMITTANCE">
+      <foreign-key foreignTable="C_SETTLEMENT" name="C_REMITTANCE_C_SETTLEMENT">
         <reference local="C_SETTLEMENT_ID" foreign="C_SETTLEMENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ORG_CREMINTANCE">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="C_REMITTANCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

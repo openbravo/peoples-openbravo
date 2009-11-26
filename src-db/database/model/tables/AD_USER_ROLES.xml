@@ -41,19 +41,19 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_ROLE" name="AD_USER_ROLES_AD_ROLE" onDelete="cascade">
+        <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="AD_USER_ROLES_AD_USER" onDelete="cascade">
+        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="AD_USERROLESCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_USERROLESORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADUSERROLES" onDelete="cascade">
-        <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_USERROLES" onDelete="cascade">
-        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
-      </foreign-key>
-      <unique name="ADUSERROLES_ADUSERID_ADROLE_UN">
+      <unique name="AD_USER_ROLES_USER_ROLE_UN">
         <unique-column name="AD_USER_ID"/>
         <unique-column name="AD_ROLE_ID"/>
       </unique>

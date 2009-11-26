@@ -57,16 +57,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_RRESOURCEPLANCOST">
+      <foreign-key foreignTable="AD_CLIENT" name="R_RESOURCEPLANCOST_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_RRESOURCEPLANCOST">
+      <foreign-key foreignTable="AD_ORG" name="R_RESOURCEPLANCOST_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="REFC_ACCTSCHEMA1891">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="R_RESOURCEPLANCOST_C_ACCTSCHEM">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="S_RESOURCE" name="SRESOURCE_RRESOURCEPLANCOST">
+      <foreign-key foreignTable="S_RESOURCE" name="R_RESOURCEPLANCOST_S_RESOURCE">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
       </foreign-key>
     </table>

@@ -57,23 +57,23 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPROCESSPARATRL">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_PROCESS_PARA_TRL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_ADPROCESSPARATRL">
+      <foreign-key foreignTable="AD_LANGUAGE" name="AD_PROCESS_PARA_TRL_AD_LANGUAG">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADPROCESSPARATRL">
+      <foreign-key foreignTable="AD_ORG" name="AD_PROCESS_PARA_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PROCESS_PARA" name="ADPROCPARA_ADPROCPARATRL" onDelete="cascade">
+      <foreign-key foreignTable="AD_PROCESS_PARA" name="AD_PROCESS_PARA_TRL_AD_PROCESS" onDelete="cascade">
         <reference local="AD_PROCESS_PARA_ID" foreign="AD_PROCESS_PARA_ID"/>
       </foreign-key>
-      <unique name="ADPROCESSPARATRL_ADPROCESSP_UN">
+      <unique name="AD_PROCESS_PARA_TRL_PROCESS_UN">
         <unique-column name="AD_PROCESS_PARA_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="ADPRPARATRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADPRPARATRL_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_PARA_TRL_ISACTI_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_PARA_TRL_ISTRAN_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

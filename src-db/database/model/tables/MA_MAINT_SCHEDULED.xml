@@ -92,26 +92,26 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMAINT_SCHEDULED">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMAINT_SCHEDULED">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_INTERNAL_CONSUMPTION" name="M_INTCONSUMP_MAINT_SCHEDULED">
         <reference local="M_INTERNAL_CONSUMPTION_ID" foreign="M_INTERNAL_CONSUMPTION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_MACHINE_TYPE" name="MACHINETYPE_MAMAINT_SCHEDULED">
-        <reference local="MA_MACHINE_TYPE_ID" foreign="MA_MACHINE_TYPE_ID"/>
+      <foreign-key foreignTable="AD_CLIENT" name="MA_MAINT_SCHEDULED_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_MAINTENANCE" name="MAINTENANCE_MAMAINT_SCHEDULED">
-        <reference local="MA_MAINTENANCE_ID" foreign="MA_MAINTENANCE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="MA_MACHINE" name="MAMACHINE_MAMAINT_SCHEDULED">
+      <foreign-key foreignTable="MA_MACHINE" name="MA_MAINT_SCHEDULED_MA_MACHINE">
         <reference local="MA_MACHINE_ID" foreign="MA_MACHINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_MAINT_OPERATION" name="MAMAINTOPERATIONMAINTSCHEDULED">
+      <foreign-key foreignTable="MA_MACHINE_TYPE" name="MA_MAINT_SCHEDULED_MA_MACHINE_">
+        <reference local="MA_MACHINE_TYPE_ID" foreign="MA_MACHINE_TYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_MAINT_OPERATION" name="MA_MAINT_SCHEDULED_MA_MAINT_OP">
         <reference local="MA_MAINT_OPERATION_ID" foreign="MA_MAINT_OPERATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_MAINT_PART" name="MAMAINTPART_MAMAINT_SCHEDULED">
+      <foreign-key foreignTable="MA_MAINT_PART" name="MA_MAINT_SCHEDULED_MA_MAINT_PA">
         <reference local="MA_MAINT_PART_ID" foreign="MA_MAINT_PART_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_MAINTENANCE" name="MA_MAINT_SCHEDULED_MA_MAINTENA">
+        <reference local="MA_MAINTENANCE_ID" foreign="MA_MAINTENANCE_ID"/>
       </foreign-key>
       <check name="MA_MAINT_SCHEDU_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

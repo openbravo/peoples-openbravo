@@ -143,7 +143,7 @@
       <foreign-key foreignTable="C_UOM" name="C_UOM_M_PRODUCT_PO">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_MPRODUCTPO">
+      <foreign-key foreignTable="C_CURRENCY" name="M_PRODUCT_PO_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_PRODUCTPO" onDelete="cascade">
@@ -155,7 +155,7 @@
       <foreign-key foreignTable="AD_ORG" name="M_PRODUCTPO_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <unique name="MPRODUCTPO_MPRODUCTID_CBPAR_UN">
+      <unique name="M_PRODUCT_PO_PRODUCT_BPARTN_UN">
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="C_BPARTNER_ID"/>
       </unique>
@@ -163,8 +163,8 @@
         <unique-column name="C_BPARTNER_ID"/>
         <unique-column name="VENDORPRODUCTNO"/>
       </unique>
-      <check name="MPRODUCTPO_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
-      <check name="MPRODUCTPO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MPRODUCTPO_ISCU_NTVENDOR_CHECK"><![CDATA[ISCURRENTVENDOR IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_PO_DISCONTINUED_CHK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_PO_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_PO_ISCURRENTVEND_CHK"><![CDATA[ISCURRENTVENDOR IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -112,20 +112,20 @@
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_FIELD">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TAB" name="AD_TAB_FIELD" onDelete="cascade">
-        <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_FIELDGROUP" name="ADFIELDGROUP_ADFIELD">
-        <reference local="AD_FIELDGROUP_ID" foreign="AD_FIELDGROUP_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADFIELD">
-        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="FIELDCLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_FIELD_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="FIELDORG">
+      <foreign-key foreignTable="AD_FIELDGROUP" name="AD_FIELD_AD_FIELDGROUP">
+        <reference local="AD_FIELDGROUP_ID" foreign="AD_FIELDGROUP_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="AD_FIELD_AD_MODULE">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_FIELD_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TAB" name="AD_TAB_FIELD" onDelete="cascade">
+        <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
       </foreign-key>
       <index name="AD_FIELD_COLUMN" unique="false">
         <index-column name="AD_COLUMN_ID"/>
@@ -133,12 +133,12 @@
       <index name="AD_FIELD_TAB" unique="false">
         <index-column name="AD_TAB_ID"/>
       </index>
-      <check name="ADFIELD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADFIELD_ISCENMAINT_CHECK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
-      <check name="ADFIELD_ISDISPLAYED_CHECK"><![CDATA[ISDISPLAYED IN ('Y', 'N')]]></check>
-      <check name="ADFIELD_ISENCRYPTED_CHECK"><![CDATA[ISENCRYPTED IN ('Y', 'N')]]></check>
-      <check name="ADFIELD_ISFIELDONLY_CHECK"><![CDATA[ISFIELDONLY IN ('Y', 'N')]]></check>
-      <check name="ADFIELD_ISREADONLY_CHECK"><![CDATA[ISREADONLY IN ('Y', 'N')]]></check>
-      <check name="ADFIELD_ISSAMELINE_CHECK"><![CDATA[ISSAMELINE IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISCENTRALLYMAINTA_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISDISPLAYED_CHK"><![CDATA[ISDISPLAYED IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISENCRYPTED_CHK"><![CDATA[ISENCRYPTED IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISFIELDONLY_CHK"><![CDATA[ISFIELDONLY IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISREADONLY_CHK"><![CDATA[ISREADONLY IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISSAMELINE_CHK"><![CDATA[ISSAMELINE IN ('Y', 'N')]]></check>
     </table>
   </database>

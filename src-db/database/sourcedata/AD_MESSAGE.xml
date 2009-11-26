@@ -8675,7 +8675,7 @@
 <!--800198-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800198-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800198-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800198-->  <VALUE><![CDATA[MESSAGE_UN_VALUE]]></VALUE>
+<!--800198-->  <VALUE><![CDATA[AD_MESSAGE_VALUE_UN]]></VALUE>
 <!--800198-->  <MSGTEXT><![CDATA[A message with the same  Search key  already exists. Input a different one]]></MSGTEXT>
 <!--800198-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800198-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8719,7 +8719,7 @@
 <!--800202-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800202-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800202-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800202-->  <VALUE><![CDATA[BPCUSTACC_SCHEMA_ORG_BP_ST_UNI]]></VALUE>
+<!--800202-->  <VALUE><![CDATA[C_BP_CUSTOMER_ACCT_BPARTNER_UN]]></VALUE>
 <!--800202-->  <MSGTEXT><![CDATA[The customer already has a record with the same accounting schema, with the same organization and with the same status. At least change one of the three]]></MSGTEXT>
 <!--800202-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800202-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8730,7 +8730,7 @@
 <!--800203-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800203-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800203-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800203-->  <VALUE><![CDATA[BPVENTACC_SCHEMA_ORG_BP_ST_UNI]]></VALUE>
+<!--800203-->  <VALUE><![CDATA[C_BP_VENDOR_ACCT_ACCTSCHEMA_UN]]></VALUE>
 <!--800203-->  <MSGTEXT><![CDATA[The vendor already has a record with the same accounting schema, with the same organization and with the same status. At least change one of the three]]></MSGTEXT>
 <!--800203-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8796,7 +8796,7 @@
 <!--800209-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800209-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800209-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800209-->  <VALUE><![CDATA[ORGPRODUCT_UN_PRODUCTORG]]></VALUE>
+<!--800209-->  <VALUE><![CDATA[M_PRODUCT_ORG_ORG_PRODUCT_UN]]></VALUE>
 <!--800209-->  <MSGTEXT><![CDATA[The same organization already exists for this product. Choose another one]]></MSGTEXT>
 <!--800209-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800209-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8807,7 +8807,7 @@
 <!--800210-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800210-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800210-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800210-->  <VALUE><![CDATA[BPARTNERPRODUCT_PRTEMPLATE]]></VALUE>
+<!--800210-->  <VALUE><![CDATA[M_PRODUCT_TEMPLATE_BPARTNER_UN]]></VALUE>
 <!--800210-->  <MSGTEXT><![CDATA[The same product already exists for this template. Please choose another one]]></MSGTEXT>
 <!--800210-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800210-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8830,7 +8830,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800212-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800212-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800212-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800212-->  <VALUE><![CDATA[INVOICERULE_CK_CBPARTNER]]></VALUE>
+<!--800212-->  <VALUE><![CDATA[C_BPARTNER_INVOICERULE_CHK]]></VALUE>
 <!--800212-->  <MSGTEXT><![CDATA[You have selected  Customer Schedule after Delivery  as  Invoice Rule .  This specific option requires a corresponding  Invoice Schedule]]></MSGTEXT>
 <!--800212-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800212-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8852,7 +8852,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800214-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800214-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800214-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800214-->  <VALUE><![CDATA[CBPARTNER_DEBT_PAYMENT]]></VALUE>
+<!--800214-->  <VALUE><![CDATA[C_DEBT_PAYMENT_C_BPARTNER__CHK]]></VALUE>
 <!--800214-->  <MSGTEXT><![CDATA[The field  Business partner  is mandatory and cannot be left empty]]></MSGTEXT>
 <!--800214-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800214-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8863,7 +8863,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800215-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800215-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800215-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800215-->  <VALUE><![CDATA[DIRECTPOSTING_DEBT_PAYMENT_CHK]]></VALUE>
+<!--800215-->  <VALUE><![CDATA[C_DEBT_PAYMENT_ISDIRECTPOS_CHK]]></VALUE>
 <!--800215-->  <MSGTEXT><![CDATA[You have checked  Direct Posting . You must also select a corresponding  Gl item]]></MSGTEXT>
 <!--800215-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800215-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8874,7 +8874,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800216-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800216-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800216-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800216-->  <VALUE><![CDATA[ISPAID_CDEBTPAYMENT]]></VALUE>
+<!--800216-->  <VALUE><![CDATA[C_DEBT_PAYMENT_C_SETTLEMEN_CH1]]></VALUE>
 <!--800216-->  <MSGTEXT><![CDATA[You cannot check  Paid  if there is no associated settlement]]></MSGTEXT>
 <!--800216-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800216-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8885,7 +8885,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800217-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800217-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800217-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800217-->  <VALUE><![CDATA[ISVALIDACTIVE_DEBT_PAYMENT]]></VALUE>
+<!--800217-->  <VALUE><![CDATA[C_DEBT_PAYMENT_ISVALID_CHK]]></VALUE>
 <!--800217-->  <MSGTEXT><![CDATA[This debt payment is valid and cannot be deactivated. Please contact your Openbravo Administrator
 Openbravo Administrator]]></MSGTEXT>
 <!--800217-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
@@ -8897,7 +8897,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800218-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800218-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800218-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800218-->  <VALUE><![CDATA[CANCEL_DEBT_PAYMENT]]></VALUE>
+<!--800218-->  <VALUE><![CDATA[C_DEBT_PAYMENT_CANCEL_PROC_CHK]]></VALUE>
 <!--800218-->  <MSGTEXT><![CDATA[This debt payment cannot be cancelled without its corresponding settlement. Please contact your Openbravo Administrator]]></MSGTEXT>
 <!--800218-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800218-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8908,7 +8908,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800219-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800219-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800219-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800219-->  <VALUE><![CDATA[CANCELISVALID_DEBT_PAYMENT]]></VALUE>
+<!--800219-->  <VALUE><![CDATA[C_DEBT_PAYMENT_C_SETTLEMEN_CHK]]></VALUE>
 <!--800219-->  <MSGTEXT><![CDATA[This debt payment is not valid and cannot be cancelled. Please contact your Openbravo Administrator]]></MSGTEXT>
 <!--800219-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800219-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8919,7 +8919,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800220-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800220-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800220-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800220-->  <VALUE><![CDATA[ISPAID2_CDEBTPAYMENT]]></VALUE>
+<!--800220-->  <VALUE><![CDATA[C_DEBT_PAYMENT_C_BANKSTATE_CHK]]></VALUE>
 <!--800220-->  <MSGTEXT><![CDATA[This debt payment has an associated bank statement or cash line and  Paid  must be checked. Please contact your Openbravo Administrator]]></MSGTEXT>
 <!--800220-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8930,7 +8930,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800221-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800221-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800221-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800221-->  <VALUE><![CDATA[CLINE_BSLINE_DEBT_PAYMENT]]></VALUE>
+<!--800221-->  <VALUE><![CDATA[C_DEBT_PAYMENT_C_CASHLINE__CHK]]></VALUE>
 <!--800221-->  <MSGTEXT><![CDATA[This debt payment already has an associated bank statement or cash line and cannot have both]]></MSGTEXT>
 <!--800221-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800221-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -8996,7 +8996,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800227-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800227-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800227-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800227-->  <VALUE><![CDATA[DATEACCT_CSETTLEMENT]]></VALUE>
+<!--800227-->  <VALUE><![CDATA[C_SETTLEMENT_DATEACCT_CHK]]></VALUE>
 <!--800227-->  <MSGTEXT><![CDATA[The field  Account Date  is mandatory and cannot be left empty]]></MSGTEXT>
 <!--800227-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800227-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9007,7 +9007,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800228-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800228-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800228-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800228-->  <VALUE><![CDATA[BREAKDOWN_CHECK_CUOM]]></VALUE>
+<!--800228-->  <VALUE><![CDATA[C_UOM_BREAKDOWN_CHK]]></VALUE>
 <!--800228-->  <MSGTEXT><![CDATA[Only values 'Y'or 'N' may be entered into the field  Breakdown . Please contact your Openbravo administrator]]></MSGTEXT>
 <!--800228-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800228-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9029,7 +9029,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800230-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800230-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800230-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800230-->  <VALUE><![CDATA[ISACTIVE_CH_SEQEMPLOYEE]]></VALUE>
+<!--800230-->  <VALUE><![CDATA[MA_SEQUENCE_EMPLOYEE_ISACT_CHK]]></VALUE>
 <!--800230-->  <MSGTEXT><![CDATA[Only values 'Y'or 'N' may be entered into the field  Active . Please contact your Openbravo administrator]]></MSGTEXT>
 <!--800230-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800230-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9040,7 +9040,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800231-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800231-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800231-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800231-->  <VALUE><![CDATA[ISACTIVE_CH_SEQIC]]></VALUE>
+<!--800231-->  <VALUE><![CDATA[MA_SEQUENCE_IC_ISACTIVE_CHK]]></VALUE>
 <!--800231-->  <MSGTEXT><![CDATA[Only values 'Y'or 'N' may be entered into the field  Active . Please contact your Openbravo administrator]]></MSGTEXT>
 <!--800231-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800231-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9051,7 +9051,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800232-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800232-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800232-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800232-->  <VALUE><![CDATA[ISACTIVE_CH_SEQMACHINE]]></VALUE>
+<!--800232-->  <VALUE><![CDATA[MA_SEQUENCE_MACHINE_ISACTI_CHK]]></VALUE>
 <!--800232-->  <MSGTEXT><![CDATA[Only values 'Y'or 'N' may be entered into the field  Active . Please contact your Openbravo administrator]]></MSGTEXT>
 <!--800232-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800232-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9062,7 +9062,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800233-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800233-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800233-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800233-->  <VALUE><![CDATA[ISLOGISTIC_MINOUT]]></VALUE>
+<!--800233-->  <VALUE><![CDATA[M_INOUT_ISLOGISTIC_CHK]]></VALUE>
 <!--800233-->  <MSGTEXT><![CDATA[Only values 'Y'or 'N' may be entered into the field  Logistic . Please contact your Openbravo administrator]]></MSGTEXT>
 <!--800233-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800233-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9073,7 +9073,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800234-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800234-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800234-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800234-->  <VALUE><![CDATA[MINOUT_UPDATELINES_YN]]></VALUE>
+<!--800234-->  <VALUE><![CDATA[M_INOUT_UPDATELINES_CHK]]></VALUE>
 <!--800234-->  <MSGTEXT><![CDATA[Only values 'Y'or 'N' may be entered into the field  Update lines . Please contact your Openbravo administrator]]></MSGTEXT>
 <!--800234-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800234-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9117,7 +9117,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800238-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800238-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800238-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800238-->  <VALUE><![CDATA[ENFORCEATTRIBUTE_CH_MPRODUCT]]></VALUE>
+<!--800238-->  <VALUE><![CDATA[M_PRODUCT_ENFORCE_ATTRIBUT_CHK]]></VALUE>
 <!--800238-->  <MSGTEXT><![CDATA[Only values 'Y'or 'N' may be entered into the field  Enforce attribute . Please contact your Openbravo administrator]]></MSGTEXT>
 <!--800238-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800238-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9139,7 +9139,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800240-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800240-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800240-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800240-->  <VALUE><![CDATA[ISACTIVE_CH_PRODUCTORG]]></VALUE>
+<!--800240-->  <VALUE><![CDATA[M_PRODUCT_ORG_ISACTIVE_CHK]]></VALUE>
 <!--800240-->  <MSGTEXT><![CDATA[Only values 'Y'or 'N' may be entered into the field  Active . Please contact your Openbravo administrator]]></MSGTEXT>
 <!--800240-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800240-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9150,7 +9150,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800241-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800241-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800241-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800241-->  <VALUE><![CDATA[DISC]]></VALUE>
+<!--800241-->  <VALUE><![CDATA[M_RAPPEL_SCALE_DISCOUNT_CHK]]></VALUE>
 <!--800241-->  <MSGTEXT><![CDATA[Only values between 0 and 100 may be entered into the field  Discount %]]></MSGTEXT>
 <!--800241-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800241-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9194,7 +9194,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800245-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800245-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800245-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800245-->  <VALUE><![CDATA[ISSHIPPER_WAREHOUSE]]></VALUE>
+<!--800245-->  <VALUE><![CDATA[M_WAREHOUSE_ISSHIPPER_CHK]]></VALUE>
 <!--800245-->  <MSGTEXT><![CDATA[Only values 'Y'or 'N' may be entered into the field  Is Shipper . Please contact your Openbravo administrator]]></MSGTEXT>
 <!--800245-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800245-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9216,7 +9216,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800247-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800247-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800247-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800247-->  <VALUE><![CDATA[ISVALIDPLUS_DEBT_PAYMENT2]]></VALUE>
+<!--800247-->  <VALUE><![CDATA[C_DEBT_PAYMENT_ISVALID_CHK1]]></VALUE>
 <!--800247-->  <MSGTEXT><![CDATA[There is an error in table C_Debt_Payment. Contraint ISVALIDPLUS_DEBT_PAYMENT2. Please contact your Openbravo administrator]]></MSGTEXT>
 <!--800247-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--800247-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -60206,7 +60206,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1000100004-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1000100004-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1000100004-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1000100004-->  <VALUE><![CDATA[ADTAB_NAME_CHECK]]></VALUE>
+<!--1000100004-->  <VALUE><![CDATA[AD_TAB__CHK]]></VALUE>
 <!--1000100004-->  <MSGTEXT><![CDATA[It is not allowed to insert tabs with underscore character (_) in its name.]]></MSGTEXT>
 <!--1000100004-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1000100004-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -60977,7 +60977,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1001200000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1001200000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1001200000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1001200000-->  <VALUE><![CDATA[ADCLIENT_ADUSERDEFAULT]]></VALUE>
+<!--1001200000-->  <VALUE><![CDATA[AD_USER_DEFAULT_AD_CLIENT]]></VALUE>
 <!--1001200000-->  <MSGTEXT><![CDATA[This record cannot be deleted because a user has associated this client.]]></MSGTEXT>
 <!--1001200000-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1001200000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -60988,7 +60988,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1001200001-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1001200001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1001200001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1001200001-->  <VALUE><![CDATA[ADLANGUAGE_ADUSERDEFAULT]]></VALUE>
+<!--1001200001-->  <VALUE><![CDATA[AD_USER_DEFAULT_AD_LANGUAGE]]></VALUE>
 <!--1001200001-->  <MSGTEXT><![CDATA[This record cannot be deleted because a user has associated this language.]]></MSGTEXT>
 <!--1001200001-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1001200001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -60999,7 +60999,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1001200002-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1001200002-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1001200002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1001200002-->  <VALUE><![CDATA[ADORG_ADUSERDEFAULT]]></VALUE>
+<!--1001200002-->  <VALUE><![CDATA[AD_USER_DEFAULT_AD_ORG]]></VALUE>
 <!--1001200002-->  <MSGTEXT><![CDATA[This record cannot be deleted because a user has associated this organization.]]></MSGTEXT>
 <!--1001200002-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1001200002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -61010,7 +61010,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1001200003-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1001200003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1001200003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1001200003-->  <VALUE><![CDATA[ADROLE_ADUSERDEFAULT]]></VALUE>
+<!--1001200003-->  <VALUE><![CDATA[AD_USER_DEFAULT_AD_ROLE]]></VALUE>
 <!--1001200003-->  <MSGTEXT><![CDATA[This record cannot be deleted because a user has associated this role.]]></MSGTEXT>
 <!--1001200003-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1001200003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -61021,7 +61021,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1001200004-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1001200004-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1001200004-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1001200004-->  <VALUE><![CDATA[MWAREHOUSE_ADUSERDEFAULT]]></VALUE>
+<!--1001200004-->  <VALUE><![CDATA[AD_USER_DEFAULT_M_WAREHOUSE]]></VALUE>
 <!--1001200004-->  <MSGTEXT><![CDATA[This record cannot be deleted because a user has associated this warehouse.]]></MSGTEXT>
 <!--1001200004-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1001200004-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -61032,7 +61032,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1001300000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1001300000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1001300000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1001300000-->  <VALUE><![CDATA[CBANK_SPANISHACCOUNT_CHECK]]></VALUE>
+<!--1001300000-->  <VALUE><![CDATA[C_BANK_CODEBANK_CHK]]></VALUE>
 <!--1001300000-->  <MSGTEXT><![CDATA[Bank code must be length 4.
 Branch code must be length 4.
 Control Digit must be length 1.]]></MSGTEXT>
@@ -64258,7 +64258,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--63801BDB3B014D6885DA44861692DBBC-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--63801BDB3B014D6885DA44861692DBBC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--63801BDB3B014D6885DA44861692DBBC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--63801BDB3B014D6885DA44861692DBBC-->  <VALUE><![CDATA[ADMODULE_DEFAULT_CHECK]]></VALUE>
+<!--63801BDB3B014D6885DA44861692DBBC-->  <VALUE><![CDATA[AD_MODULE_ISDEFAULT_CHK]]></VALUE>
 <!--63801BDB3B014D6885DA44861692DBBC-->  <MSGTEXT><![CDATA[A default module must be in development]]></MSGTEXT>
 <!--63801BDB3B014D6885DA44861692DBBC-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--63801BDB3B014D6885DA44861692DBBC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>

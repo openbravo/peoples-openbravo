@@ -81,29 +81,29 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CEXTERNALPOS">
+      <foreign-key foreignTable="AD_CLIENT" name="C_EXTERNALPOS_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CEXTERNALPOS">
+      <foreign-key foreignTable="AD_ORG" name="C_EXTERNALPOS_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_SR_C_EXTERNALPOS">
-        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="BPARTNER_C_EXTERNALPOS">
+      <foreign-key foreignTable="C_BPARTNER" name="C_EXTERNALPOS_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="DOCTYPE_C_EXTERNALPOS">
+      <foreign-key foreignTable="C_DOCTYPE" name="C_EXTERNALPOS_C_DOCTYPE">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="PRICELIST_C_EXTERNALPOS">
+      <foreign-key foreignTable="M_PRICELIST" name="C_EXTERNALPOS_M_PRICELIST">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_SHIPPER" name="SHIPPER_C_EXTERNALPOS">
+      <foreign-key foreignTable="M_SHIPPER" name="C_EXTERNALPOS_M_SHIPPER">
         <reference local="M_SHIPPER_ID" foreign="M_SHIPPER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="WAREHOUSE_C_EXTERNALPOS">
+      <foreign-key foreignTable="M_WAREHOUSE" name="C_EXTERNALPOS_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="C_EXTERNALPOS_SALESREP">
+        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
     </table>
   </database>

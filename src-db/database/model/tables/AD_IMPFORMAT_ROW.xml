@@ -85,23 +85,23 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADIMPFORMATROW">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_IMPFORMAT_ROW_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADIMPFORMATROW" onDelete="cascade">
+      <foreign-key foreignTable="AD_COLUMN" name="AD_IMPFORMAT_ROW_AD_COLUMN" onDelete="cascade">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_IMPFORMAT" name="ADIMPFORMAT_ADIMPFORMATROW" onDelete="cascade">
+      <foreign-key foreignTable="AD_IMPFORMAT" name="AD_IMPFORMAT_ROW_AD_IMPFORMAT" onDelete="cascade">
         <reference local="AD_IMPFORMAT_ID" foreign="AD_IMPFORMAT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADIMPFORMATROW">
+      <foreign-key foreignTable="AD_ORG" name="AD_IMPFORMAT_ROW_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <unique name="AD_IMPFORMAT_ROW_COLUMN">
         <unique-column name="AD_IMPFORMAT_ID"/>
         <unique-column name="AD_COLUMN_ID"/>
       </unique>
-      <check name="ADIMPFORMATROW_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADIMPFORMROW_DIV100_CHECK"><![CDATA[DIVIDEBY100 IN ('Y', 'N')]]></check>
+      <check name="AD_IMPFORMAT_ROW_DIVIDEBY1_CHK"><![CDATA[DIVIDEBY100 IN ('Y', 'N')]]></check>
+      <check name="AD_IMPFORMAT_ROW_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

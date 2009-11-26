@@ -49,14 +49,14 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MODELOBJP">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_MODEL_OBJECT_PARA_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MODELOBJP">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_MODEL_OBJECT" name="MODEL_MODELOBJP">
+      <foreign-key foreignTable="AD_MODEL_OBJECT" name="AD_MODEL_OBJECT_PARA_AD_MODEL_">
         <reference local="AD_MODEL_OBJECT_ID" foreign="AD_MODEL_OBJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_MODEL_OBJECT_PARA_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="AD_MOD_OBJ_PARA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

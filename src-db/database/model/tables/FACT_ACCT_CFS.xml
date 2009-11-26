@@ -49,10 +49,10 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_FACTACCTCFS">
+      <foreign-key foreignTable="AD_CLIENT" name="FACT_ACCT_CFS_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_FACTACCTCFS">
+      <foreign-key foreignTable="AD_ORG" name="FACT_ACCT_CFS_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ELEMENTVALUE" name="FACT_ACCT_CFS_C_ELEMENTVALUE">
@@ -61,7 +61,7 @@
       <foreign-key foreignTable="FACT_ACCT" name="FACT_ACCT_CFS_FACT_ACCT">
         <reference local="FACT_ACCT_REF_ID" foreign="FACT_ACCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="FACT_ACCT" name="FACTACCT_FACTACCTCFS" onDelete="cascade">
+      <foreign-key foreignTable="FACT_ACCT" name="FACT_ACCT_CFS_FACT_ACCT1" onDelete="cascade">
         <reference local="FACT_ACCT_ID" foreign="FACT_ACCT_ID"/>
       </foreign-key>
     </table>

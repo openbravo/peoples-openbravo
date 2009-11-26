@@ -100,13 +100,13 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MASEQUENCE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MASEQUENCE">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_SEQUENCE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_PROCESS" name="MAPROCESS_MASEQUENCE">
+      <foreign-key foreignTable="MA_PROCESS" name="MA_SEQUENCE_MA_PROCESS">
         <reference local="MA_PROCESS_ID" foreign="MA_PROCESS_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_PROCESSPLAN_VERSION" name="MAPROCESSPLANVERSION_MASEQ">
+      <foreign-key foreignTable="MA_PROCESSPLAN_VERSION" name="MA_SEQUENCE_MA_PROCESSPLAN_VER">
         <reference local="MA_PROCESSPLAN_VERSION_ID" foreign="MA_PROCESSPLAN_VERSION_ID"/>
       </foreign-key>
       <index name="MA_SEUENCE_PROCESSPLAN_VERSION" unique="false">

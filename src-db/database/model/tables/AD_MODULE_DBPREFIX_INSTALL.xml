@@ -45,12 +45,12 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_ORG" name="ADMODULE_DBPREFIX_INS_AD_ORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADMODULE_DBPREFIX_INS_ADCLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_MODULE_DBPREFIX_INSTALL_AD_">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <check name="ADMODULEDBPREFIX_INS_ACTIVE_CK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <foreign-key foreignTable="AD_ORG" name="AD_MODULE_DBPREFIX_INSTALL_AD1">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <check name="AD_MODULE_DBPREFIX_INSTALL_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

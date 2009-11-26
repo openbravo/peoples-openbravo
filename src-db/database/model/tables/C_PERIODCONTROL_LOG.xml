@@ -69,19 +69,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CPERIODCONTROLLOG">
+      <foreign-key foreignTable="AD_CLIENT" name="C_PERIODCONTROL_LOG_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CPERIODCONTROLLOG">
+      <foreign-key foreignTable="AD_ORG" name="C_PERIODCONTROL_LOG_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CALENDAR" name="CCALENDAR_CPERIODCONTROLOG">
+      <foreign-key foreignTable="C_CALENDAR" name="C_PERIODCONTROL_LOG_C_CALENDAR">
         <reference local="C_CALENDAR_ID" foreign="C_CALENDAR_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_YEAR" name="CYEAR_CPERIODCONTROLOG">
+      <foreign-key foreignTable="C_YEAR" name="C_PERIODCONTROL_LOG_C_YEAR">
         <reference local="C_YEAR_ID" foreign="C_YEAR_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PERIOD" name="PERIODNO_CPERIODCONTROLLOG">
+      <foreign-key foreignTable="C_PERIOD" name="C_PERIODCONTROL_LOG_PERIODNO">
         <reference local="PERIODNO" foreign="C_PERIOD_ID"/>
       </foreign-key>
       <check name="C_PERIODCTRLLOG_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
