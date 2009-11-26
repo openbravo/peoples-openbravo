@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,12 +51,15 @@ public class Menu extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final String url = request.getQueryString();
-    // System.out.println("url: " + url);
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String targetmenu = vars.getSessionValue("targetmenu");
+    OBContext userContext = OBContext.getOBContext();
 
-    if (url != null && !url.equals("")) { // Trying to deep-link
+    final String[] allowedCommands = { "DEFAULT", "NEW", "EDIT", "GRID" };
+    final ValueListFilter listFilter = new ValueListFilter(allowedCommands);
+    final String command = vars.getStringParameter("Command", listFilter);
 
+    if (command != null && !command.equals("")) { // Trying to deep-link
       try {
 
         OBContext.setAdminContext();
@@ -64,14 +67,6 @@ public class Menu extends HttpSecureAppServlet {
         final String tabId = vars.getStringParameter("tabId", IsIDFilter.instance);
         final String windowId = vars.getStringParameter("windowId", IsIDFilter.instance);
         final String recordId = vars.getStringParameter("recordId", IsIDFilter.instance);
-
-        final String[] allowedCommands = { "DEFAULT", "NEW", "EDIT", "GRID" };
-        final ValueListFilter listFilter = new ValueListFilter(allowedCommands);
-        final String command = vars.getStringParameter("Command", listFilter);
-
-        if (command == null) {
-          throw new ServletException("URL not valid"); // FIXME: Error message should be translated
-        }
 
         if (!tabId.equals("") && !windowId.equals("")) {
 
@@ -97,7 +92,7 @@ public class Menu extends HttpSecureAppServlet {
         log4j.error("Error in deep-linking: " + e.getMessage(), e);
         throw new ServletException(e.getMessage());
       } finally {
-        OBContext.setOBContext(vars.getUser()); // FIXME: Fix return user context
+        OBContext.setOBContext(userContext);
       }
     }
     String textDirection = vars.getSessionValue("#TextDirection", "LTR");
