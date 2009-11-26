@@ -68,6 +68,7 @@
       </foreign-key>
       <unique name="AD_REFERENCE_NAME">
         <unique-column name="NAME"/>
+        <unique-column name="AD_MODULE_ID"/>
       </unique>
       <check name="AD_REFERENCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

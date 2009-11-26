@@ -27,6 +27,7 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
@@ -234,9 +235,16 @@ public class ComboTableData {
       try {
         Integer.valueOf(_reference).intValue();
       } catch (Exception ignore) {
-        if (!Utility.isUUIDString(_reference))
+        if (!Utility.isUUIDString(_reference)) {
+          // Looking reference by name! This shouldn't be used, name is prone to change. It only
+          // looks in core names
           _reference = ComboTableQueryData.getReferenceID(getPool(), _reference,
               (getReferenceType().equals("17") ? "L" : "T"));
+          if (_reference == null || _reference.equals("")) {
+            throw new OBException(Utility.messageBD(pool, "ReferenceNotFound", vars.getLanguage())
+                + " " + _reference);
+          }
+        }
       }
     }
     setParameter(internalPrefix + "objectReference", _reference);
