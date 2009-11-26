@@ -43,12 +43,12 @@
          SELECT count(*) as NAME FROM
             ((SELECT 1  
                 FROM AD_MODULE
-                WHERE STATUS='I'      
+                WHERE (STATUS='I' OR STATUS='P')      
                AND (AD_MODULE_ID = '0' OR TYPE='T'))
             UNION
             (SELECT 1
                 FROM AD_MODULE_INSTALL
-                WHERE STATUS='I'      
+                WHERE (STATUS='I' OR STATUS='P')      
                AND (AD_MODULE_ID = '0' OR TYPE='T'))) q
           ]]>
       </Sql>
@@ -59,7 +59,7 @@
       <Sql><![CDATA[
          SELECT count(*) as NAME
            FROM AD_MODULE
-          WHERE (STATUS='I'      
+          WHERE ((STATUS='I' OR STATUS='P')      
                  AND TYPE = 'T')
              OR (STATUS='U')
           ]]>

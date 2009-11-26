@@ -137,11 +137,6 @@ public class ApplyModules extends HttpSecureAppServlet {
 
   /**
    * Prints a page that only allows the user to restart or reload Tomcat
-   * 
-   * @param response
-   * @param vars
-   * @throws IOException
-   * @throws ServletException
    */
   private void printPageTomcat(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars) throws IOException, ServletException {
@@ -216,8 +211,8 @@ public class ApplyModules extends HttpSecureAppServlet {
   }
 
   private ApplyModulesResponse fillResponse(String state) {
-    ApplyModulesResponse pet = new ApplyModulesResponse();
-    pet.setState(Integer.parseInt(state.replace("RB", "")));
+    ApplyModulesResponse resp = new ApplyModulesResponse();
+    resp.setState(Integer.parseInt(state.replace("RB", "")));
     PreparedStatement ps = null;
     PreparedStatement ps2 = null;
     PreparedStatement ps3 = null;
@@ -230,10 +225,7 @@ public class ApplyModules extends HttpSecureAppServlet {
       while (rs.next()) {
         warnings.add(rs.getString(1));
       }
-      String[] warns = new String[warnings.size()];
-      for (int i = 0; i < warnings.size(); i++)
-        warns[i] = warnings.get(i);
-      pet.setWarnings(warnings.toArray(new String[0]));
+      resp.setWarnings(warnings.toArray(new String[0]));
 
       ps2 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND SYSTEM_STATUS LIKE ?");
       ps2.setString(1, "%" + state);
@@ -243,16 +235,13 @@ public class ApplyModules extends HttpSecureAppServlet {
       while (rs2.next()) {
         errors.add(rs2.getString(1));
       }
-      String[] errs = new String[errors.size()];
-      for (int i = 0; i < errors.size(); i++)
-        errs[i] = errors.get(i);
-      pet.setErrors(errs);
+      resp.setErrors(errors.toArray(new String[0]));
 
       ps3 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG ORDER BY CREATED DESC");
       ps3.executeQuery();
       ResultSet rs3 = ps3.getResultSet();
       if (rs3.next()) {
-        pet.setLastmessage(rs3.getString(1));
+        resp.setLastmessage(rs3.getString(1));
       }
 
     } catch (Exception e) {
@@ -263,10 +252,10 @@ public class ApplyModules extends HttpSecureAppServlet {
         releasePreparedStatement(ps2);
         releasePreparedStatement(ps);
       } catch (SQLException e2) {
-        e2.printStackTrace();
+        log4j.error("Error when closing prepared statements while building response object", e2);
       }
     }
-    return pet;
+    return resp;
   }
 
   private void update(HttpServletResponse response, VariablesSecureApp vars) {
@@ -277,19 +266,19 @@ public class ApplyModules extends HttpSecureAppServlet {
       ResultSet rs = ps.getResultSet();
       rs.next();
       String state = rs.getString(1);
-      ApplyModulesResponse pet = fillResponse(state);
-      if (pet.getErrors().length > 0)
-        pet.setStatusofstate("Error");
-      else if (pet.getWarnings().length > 0)
-        pet.setStatusofstate("Warning");
+      ApplyModulesResponse resp = fillResponse(state);
+      if (resp.getErrors().length > 0)
+        resp.setStatusofstate("Error");
+      else if (resp.getWarnings().length > 0)
+        resp.setStatusofstate("Warning");
       else
-        pet.setStatusofstate("Processing");
+        resp.setStatusofstate("Processing");
       response.setContentType("text/plain; charset=UTF-8");
       final PrintWriter out = response.getWriter();
       String strResult;
       XStream xs = new XStream(new JettisonMappedXmlDriver());
       xs.alias("Response", ApplyModulesResponse.class);
-      strResult = xs.toXML(pet);
+      strResult = xs.toXML(resp);
       out.print(strResult);
       out.close();
     } catch (Exception e) {

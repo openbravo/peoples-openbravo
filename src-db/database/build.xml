@@ -180,22 +180,7 @@ export.database.structure: Exports the database structure in the xml's files.
     </sql>
   </target>
 
-  <target name="setApplied.ORACLE">
-    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="abort" autocommit="true">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-          UPDATE AD_MODULE SET STATUS='A',ISINDEVELOPMENT='N' WHERE STATUS='P';
-          DELETE FROM AD_MODULE WHERE STATUS = 'U';
-      </transaction>
-    </sql>
-  </target>
-
-  <target name="setApplied.POSTGRE">
+  <target name="setApplied">
     <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="abort" autocommit="true">
       <classpath>
         <fileset dir="${base.lib}">

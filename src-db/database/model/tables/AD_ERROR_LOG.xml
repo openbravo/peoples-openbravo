@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TABLE AD_ERROR_LOG">
-    <table name="AD_ERROR_LOG">
-      <column name="AD_ERROR_LOG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+    <table name="AD_ERROR_LOG" primaryKey="AD_ERROR_LOG_KEY">
+      <column name="AD_ERROR_LOG_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -33,7 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="SYSTEM_STATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="SYSTEM_STATUS" primaryKey="false" required="false" type="VARCHAR" size="6" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -45,5 +45,11 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_CLIENT" name="ERRORLOGCLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ERRORLOGORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
     </table>
   </database>

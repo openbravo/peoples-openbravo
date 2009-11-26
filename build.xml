@@ -589,7 +589,7 @@ export.database: exports database structure and data to xml files.
     </condition>
     
     <antcall target="apply.modules.compile"/>
-    <ant dir="${base.db}" target="setApplied.${bbdd.rdbms}" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
      
   </target>
   
