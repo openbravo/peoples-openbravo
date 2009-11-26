@@ -117,7 +117,6 @@ public class ApplyModules extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("help", ApplyModulesData.getHelp(this, vars.getLanguage()));
     xmlDocument.setParameter("buttonLog", fileName);
     xmlDocument.setParameter("logfile", fileName);
     {
@@ -152,15 +151,6 @@ public class ApplyModules extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
-    // xmlDocument.setParameter("help", ApplyModulesData.getHelp(this, vars.getLanguage()));
-
-    final OBError myMessage = vars.getMessage("ApplyModules");
-    vars.removeMessage("ApplyModules");
-    if (myMessage != null) {
-      xmlDocument.setParameter("messageType", myMessage.getType());
-      xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-      xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-    }
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
