@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,6 @@
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-  <PARAMETER id="processHelp" name="help" replaceCharacters="htmlHelp" default=""/>
   <PARAMETER id="textContent" name="textContent" replaceCharacters="htmlPreformated" default=""/>
   <PARAMETER id="fileName" name="fileName" replace="xx" default=""/>
 </REPORT>

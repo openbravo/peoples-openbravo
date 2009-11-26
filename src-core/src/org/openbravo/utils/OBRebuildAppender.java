@@ -1,3 +1,14 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2001-2008 Openbravo S.L.
+ * Licensed under the Apache Software License version 2.0
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to  in writing,  software  distributed
+ * under the License is distributed  on  an  "AS IS"  BASIS,  WITHOUT  WARRANTIES  OR
+ * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
+ * specific language governing permissions and limitations under the License.
+ ************************************************************************************
+ */
 package org.openbravo.utils;
 
 import java.io.File;
@@ -5,35 +16,29 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.openbravo.database.ConnectionProviderImpl;
 
+/* This class inserts the rebuild log into a table in the database.
+ * This information is used in the rebuild window in Openbravo
+ */
 public class OBRebuildAppender extends AppenderSkeleton {
 
-  ConnectionProviderImpl cp;
-  Connection connection;
+  private ConnectionProviderImpl cp;
+  private Connection connection;
   private static final Logger log4j = Logger.getLogger(OBRebuildAppender.class);
-  static File properties = null;
+  private static File properties = null;
   private static String Basedir;
-
-  public OBRebuildAppender() {
-    super();
-    try {
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
 
   @Override
   protected void append(LoggingEvent arg0) {
-    if (arg0.getLevel().isGreaterOrEqual(org.apache.log4j.Level.INFO))
+    if (arg0.getLevel().isGreaterOrEqual(Level.INFO))
       try {
         if (cp == null) {
           File f = new File("");
           f = new File(f.getAbsolutePath());
-          System.out.println(f.getAbsolutePath());
           File fProp = null;
           if (Basedir != null)
             fProp = new File(Basedir, "config/Openbravo.properties");
@@ -66,7 +71,7 @@ public class OBRebuildAppender extends AppenderSkeleton {
         ps.setString(2, arg0.getMessage().toString());
         ps.executeUpdate();
       } catch (Exception e) {
-
+        System.err.println("Error while trying to insert into log table");
       }
 
   }
@@ -86,10 +91,18 @@ public class OBRebuildAppender extends AppenderSkeleton {
     return false;
   }
 
+  /*
+   * Sets the basedir (directory of the Openbravo sources, which needs to contain a
+   * config/Openbravo.properties folder
+   */
   public void setBasedir(String basedir) {
     Basedir = basedir;
   }
 
+  /*
+   * returns the basedir (directory of the Openbravo sources, which needs to contain a
+   * config/Openbravo.properties folder
+   */
   public String getBasedir() {
     return Basedir;
   }

@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.erpCommon.utility;
+package org.openbravo.erpCommon.ad_forms;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,9 +30,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
-public class ShowFile extends HttpSecureAppServlet {
+public class ShowLogFile extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
@@ -41,6 +42,28 @@ public class ShowFile extends HttpSecureAppServlet {
 
     final VariablesSecureApp vars = new VariablesSecureApp(request);
     String filePath = vars.getStringParameter("filePath");
+
+    try {
+      Long.parseLong(filePath);
+    } catch (NumberFormatException e) {
+      final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/erpCommon/ad_forms/ShowLogFile").createXmlDocument();
+
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      xmlDocument.setParameter("messageType", "Error");
+      xmlDocument.setParameter("messageTitle", Utility.messageBD(this, "InvalidFilePath", vars
+          .getLanguage()));
+      xmlDocument.setParameter("messageMessage", Utility.messageBD(this, "InvalidFilePath", vars
+          .getLanguage()));
+      final PrintWriter out = response.getWriter();
+
+      out.println(xmlDocument.print());
+
+      out.close();
+      return;
+    }
     File file = new File(vars.getSessionValue("#sourcePath") + "/log/" + filePath + "-apply.log");
 
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
