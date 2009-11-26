@@ -51,6 +51,7 @@
                               and c.iskey = 'Y')
            and t.ad_package_id = p.ad_package_id
            and m.ad_module_id = p.ad_module_id
+           and t.isview='N'
            and (m.javapackage in ('1') or 'Y'=?)
       ]]>
     </Sql>
