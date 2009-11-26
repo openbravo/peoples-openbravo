@@ -58,6 +58,7 @@ public class WADValidator {
     validateKey(result);
     validateModelObject(result);
     validateModelObjectMapping(result);
+    validateColumnNaming(result);
     return result;
   }
 
@@ -120,6 +121,23 @@ public class WADValidator {
         result.addError(WADValidationType.MODEL_OBJECT_MAPPING, issue.objecttype + " "
             + issue.objectname + " has mapping: " + issue.currentvalue
             + ". But it should start with /" + issue.expectedvalue + ".");
+      }
+    } catch (Exception e) {
+      result.addWarning(WADValidationType.SQL,
+          "Error when executing query for validating moel object: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Validates names and columnnames in columns
+   */
+  private void validateColumnNaming(WADValidationResult result) {
+    try {
+      WADValidatorData data[] = WADValidatorData.checkColumnName(conn, modules, checkAll);
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.COLUMN_NAME, issue.objecttype + " " + issue.objectname
+            + " has value: " + issue.currentvalue + ". But it should start with EM_"
+            + issue.expectedvalue);
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,

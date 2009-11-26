@@ -39,7 +39,7 @@ public class WADValidationResult {
    */
   public enum WADValidationType {
     SQL("SQL"), MISSING_IDENTIFIER("Missing Identifier"), MISSING_KEY("Missing Key Column"), MODEL_OBJECT(
-        "Model Object"), MODEL_OBJECT_MAPPING("HTML Mapping");
+        "Model Object"), MODEL_OBJECT_MAPPING("HTML Mapping"), COLUMN_NAME("Column Naming");
 
     private String description;
 

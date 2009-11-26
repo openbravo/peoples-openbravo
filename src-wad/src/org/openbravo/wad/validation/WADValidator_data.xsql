@@ -177,4 +177,49 @@
   </SqlMethod>
   
   
+    <SqlMethod name="checkColumnName" type="preparedStatement" return="multiple">
+    <Sql>
+      <![CDATA[
+           select t.tablename||'.'||c.columnname as objectName, 'DB Column Name' as objectType, c.columnname as currentValue, dbp.name as expectedvalue
+          from ad_table t, ad_module m, ad_package p, ad_column c, ad_module_dbprefix dbp
+         where t.ad_package_id = p.ad_package_id
+           and t.ad_table_id = c.ad_table_id
+           and c.ad_module_id != p.ad_module_id
+           and m.ad_module_id = c.ad_module_id
+           and dbp.ad_module_id = c.ad_module_id
+           and not exists (select 1 
+                             from dual
+                            where instr(upper(c.columnname), 'EM_'||upper(dbp.name)||'_') = 1)
+           AND NOT EXISTS( SELECT 1
+                             FROM AD_EXCEPTIONS
+                             WHERE TYPE='COLUMN'
+                             AND UPPER(NAME2)=UPPER(T.Tablename)
+                             AND UPPER(NAME1)=UPPER(c.Columnname)) 
+           and (1=1 and m.javapackage in ('1') or 'Y'=?)
+    union
+        select t.tablename||'.'||c.columnname as objectName, 'Name' as objectType, to_char(c.name) as currentValue, dbp.name as expectedvalue
+          from ad_table t, ad_module m, ad_package p, ad_column c, ad_module_dbprefix dbp
+         where t.ad_package_id = p.ad_package_id
+           and t.ad_table_id = c.ad_table_id
+           and c.ad_module_id != p.ad_module_id
+           and m.ad_module_id = c.ad_module_id
+           and dbp.ad_module_id = c.ad_module_id
+           and not exists (select 1 
+                             from dual
+                            where instr(upper(c.name), 'EM_'||upper(dbp.name)||'_') = 1)
+           AND NOT EXISTS( SELECT 1
+                             FROM AD_EXCEPTIONS
+                             WHERE TYPE='COLUMN'
+                             AND UPPER(NAME2)=UPPER(T.Tablename)
+                             AND UPPER(NAME1)=UPPER(c.Columnname)) 
+           and (2=2 and m.javapackage in ('2') or 'Y'=?)
+          order by 2,1
+      ]]>
+    </Sql>
+    <Parameter name="module" optional="true" type="replace" after="1=1 and m.javapackage in (" text="'1'"/>
+    <Parameter name="checkAll"/>
+    <Parameter name="module" optional="true" type="replace" after="2=2 and m.javapackage in (" text="'2'"/>
+    <Parameter name="checkAll"/>
+  </SqlMethod>
+  
 </SqlClass>
