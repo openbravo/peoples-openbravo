@@ -809,11 +809,12 @@ END AD_GET_RDBMS;
  
 
 --Regenerate mappings and classnames for tabs in modules (issue #11431)
-update ad_tab set name = 'M'||name where ad_module_id != '0';
-/--END
+update ad_tab set name = 'M'||name where ad_module_id != '0'
+/-- END
  
-update ad_tab set name = substr(name,2) where ad_module_id != '0';
-/--END
+update ad_tab set name = substr(name,2) where ad_module_id != '0'
+/-- END
+
 CALL DBA_RECOMPILE(NULL)
 /-- END
 
