@@ -62,7 +62,7 @@
       <foreign-key foreignTable="C_DOCTYPE" name="C_POC_DOCTYPE_TEMPLATE_C_DOCTY">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <index name="CDOCTYPE_CPOC_DOCTYPE_TEMPL" unique="false">
+      <index name="C_POC_DOCTYPE_TEMP_DOCTYPE_IDX" unique="false">
         <index-column name="C_DOCTYPE_ID"/>
       </index>
     </table>

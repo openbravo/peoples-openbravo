@@ -58,10 +58,10 @@
       <foreign-key foreignTable="AD_ORG" name="AD_EXCEPTIONS_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <index name="FKI_ADCLIENT_ADEXCEPTIONS" unique="false">
+      <index name="AD_EXCEPTIONS_CLIENT_IDX" unique="false">
         <index-column name="AD_CLIENT_ID"/>
       </index>
-      <index name="FKI_ADORG_ADEXCEPTIONS" unique="false">
+      <index name="AD_EXCEPTIONS_ORG_IDX" unique="false">
         <index-column name="AD_ORG_ID"/>
       </index>
     </table>

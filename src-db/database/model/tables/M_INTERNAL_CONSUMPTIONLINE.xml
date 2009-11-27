@@ -97,7 +97,7 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_INTERNAL_CONSUMPTIONLINE_M_P">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <index name="MINTERNAL_CONSUMPTIONLINE_INDX" unique="false">
+      <index name="M_INTERNAL_CONSUMPTLN_CONS_IDX" unique="false">
         <index-column name="M_INTERNAL_CONSUMPTION_ID"/>
       </index>
       <check name="M_INTERNAL_CONSUMPTIONLINE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

@@ -59,7 +59,7 @@
       <foreign-key foreignTable="AD_ORG" name="C_POC_CONFIGURATION_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <index name="ADCLIENT_POC_CONFIGURATION" unique="false">
+      <index name="C_POC_CONFIGURATION_CLIENT_IDX" unique="false">
         <index-column name="AD_CLIENT_ID"/>
       </index>
     </table>

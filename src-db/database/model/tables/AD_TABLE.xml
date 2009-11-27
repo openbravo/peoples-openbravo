@@ -135,7 +135,7 @@
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TABLE" onDelete="setnull">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
-      <index name="FKI_AD_PACKAGE_KEY" unique="false">
+      <index name="AD_TABLE_PACKAGE_IDX" unique="false">
         <index-column name="AD_PACKAGE_ID"/>
       </index>
       <unique name="AD_TABLE_CLASSNAME_PACKAGE_UN">
