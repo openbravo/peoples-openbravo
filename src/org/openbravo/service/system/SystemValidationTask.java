@@ -25,6 +25,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.model.Database;
+import org.apache.ddlutils.platform.ExcludeFilter;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
@@ -32,6 +33,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.DalInitializingTask;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.ddlutils.task.DatabaseUtils;
 import org.openbravo.model.ad.module.Module;
 
 /**
@@ -50,9 +52,8 @@ public class SystemValidationTask extends DalInitializingTask {
   protected void doExecute() {
     final Module module = getModule();
 
-    final Database database = createDatabaseObject();
-
     if (getType().contains("database")) {
+      final Database database = createDatabaseObject();
       log.info("Validating Database and Application Dictionary");
       final DatabaseValidator databaseValidator = new DatabaseValidator();
       databaseValidator.setValidateModule(module);
@@ -71,8 +72,31 @@ public class SystemValidationTask extends DalInitializingTask {
     if (getType().contains("module")) {
       log.info("Validating Modules");
 
-      final SystemValidationResult result = SystemService.getInstance().validateModule(module,
-          database);
+      // Validate module
+      final SystemValidationResult result = SystemService.getInstance()
+          .validateModule(module, null);
+
+      // validate DB for module if there's dbprefixes
+      if (module == null) {
+        System.out.println("mod null...");
+      }
+      if (module != null && module.getModuleDBPrefixList() != null
+          && module.getModuleDBPrefixList().size() != 0) {
+        log.info("Validating DB");
+        Platform platform = getPlatform();
+        String dbPrefix = module.getModuleDBPrefixList().get(0).getName();
+
+        String excludeobjects = "com.openbravo.db.OpenbravoExcludeFilter";
+        ExcludeFilter filter = DatabaseUtils.getExcludeFilter(excludeobjects);
+        filter.addPrefix(dbPrefix);
+
+        Database database = platform.loadModelFromDatabase(filter, dbPrefix, true, module.getId());
+        final DatabaseValidator databaseValidator = new DatabaseValidator();
+        databaseValidator.setValidateModule(module);
+        databaseValidator.setDatabase(database);
+        SystemValidationResult resultDb = databaseValidator.validate();
+        result.addAll(resultDb);
+      }
 
       if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
         log.warn("Validation successfull no warnings or errors");
@@ -85,7 +109,7 @@ public class SystemValidationTask extends DalInitializingTask {
     }
   }
 
-  private Database createDatabaseObject() {
+  private Platform getPlatform() {
     final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
 
     final BasicDataSource ds = new BasicDataSource();
@@ -97,7 +121,11 @@ public class SystemValidationTask extends DalInitializingTask {
     }
     ds.setUsername(props.getProperty("bbdd.user"));
     ds.setPassword(props.getProperty("bbdd.password"));
-    Platform platform = PlatformFactory.createNewPlatformInstance(ds);
+    return PlatformFactory.createNewPlatformInstance(ds);
+  }
+
+  private Database createDatabaseObject() {
+    Platform platform = getPlatform();
     platform.getModelLoader().setOnlyLoadTableColumns(true);
     return platform.loadModelFromDatabase(null);
   }
