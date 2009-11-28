@@ -193,7 +193,7 @@
 		<defaultValueExpression ><![CDATA[new Boolean(true)]]></defaultValueExpression>
 	</parameter>
 	<parameter name="auxPartner" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA[$P{ShowPartner}.booleanValue()?" and c_bpartner_id="+$P{Partner}:""]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA[$P{ShowPartner}.booleanValue()?" and c_bpartner_id='"+$P{Partner}+"'":""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Org" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="InitialYearDate" isForPrompting="false" class="java.util.Date"/>

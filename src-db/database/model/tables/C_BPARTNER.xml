@@ -304,56 +304,56 @@
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_C_BUSPARTNER">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPARTNER">
+      <foreign-key foreignTable="AD_CLIENT" name="C_BPARTNER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CBPARTNER">
+      <foreign-key foreignTable="AD_ORG" name="C_BPARTNER_AD_FORCED_ORG">
+        <reference local="AD_FORCED_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_BPARTNER_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BP_TAXCATEGORY" name="BP_CBPTAXCATEGORYPO">
-        <reference local="PO_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
+      <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_BPARTNER_PARENT">
+        <reference local="BPARTNER_PARENT_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BP_TAXCATEGORY" name="BP_CBPTAXCATEGORYSO">
-        <reference local="SO_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
+      <foreign-key foreignTable="C_BP_GROUP" name="C_BPARTNER_C_BP_GROUP">
+        <reference local="C_BP_GROUP_ID" foreign="C_BP_GROUP_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_C_BPARTNER">
         <reference local="SALESREP_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_SALARY_CATEGORY" name="C_SALARY_CATEGORY_CBPARTNER">
-        <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CPBARTNERPARENT">
-        <reference local="BPARTNER_PARENT_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BP_GROUP" name="CBPGROUP_CBPARTNER">
-        <reference local="C_BP_GROUP_ID" foreign="C_BP_GROUP_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_GREETING" name="CGREETING_CBPARTNER">
+      <foreign-key foreignTable="C_GREETING" name="C_BPARTNER_C_GREETING">
         <reference local="C_GREETING_ID" foreign="C_GREETING_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICESCHEDULE" name="CINVOICESCHEDULE_CBPARTNER">
+      <foreign-key foreignTable="C_INVOICESCHEDULE" name="C_BPARTNER_C_INVOICESCHEDULE">
         <reference local="C_INVOICESCHEDULE_ID" foreign="C_INVOICESCHEDULE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PAYMENTTERM" name="CPAYMENTTERM_CBPARTNER">
+      <foreign-key foreignTable="C_PAYMENTTERM" name="C_BPARTNER_C_PAYMENTTERM">
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PAYMENTTERM" name="CPOPAYMENTTERM_CBPARTNER">
-        <reference local="PO_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="FORCEDORG_CBPARTNER">
-        <reference local="AD_FORCED_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_CBPARTNER" onDelete="setnull">
+      <foreign-key foreignTable="M_PRICELIST" name="C_BPARTNER_M_PRICELIST" onDelete="setnull">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="MPRICELISTPO_CBUSPARTNER" onDelete="setnull">
-        <reference local="PO_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BANKACCOUNT" name="POBACKACCOUTN_CBPARTNER">
+      <foreign-key foreignTable="C_BANKACCOUNT" name="C_BPARTNER_PO_BANKACCOUNT">
         <reference local="PO_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BANKACCOUNT" name="SOBACKACCOUTN_CBPARTNER">
+      <foreign-key foreignTable="C_BP_TAXCATEGORY" name="C_BPARTNER_PO_BP_TAXCATEGORY">
+        <reference local="PO_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PAYMENTTERM" name="C_BPARTNER_PO_PAYMENTTERM">
+        <reference local="PO_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRICELIST" name="C_BPARTNER_PO_PRICELIST" onDelete="setnull">
+        <reference local="PO_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BANKACCOUNT" name="C_BPARTNER_SO_BANKACCOUNT">
         <reference local="SO_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BP_TAXCATEGORY" name="C_BPARTNER_SO_BP_TAXCATEGORY">
+        <reference local="SO_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_SALARY_CATEGORY" name="C_SALARY_CATEGORY_CBPARTNER">
+        <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
       </foreign-key>
       <index name="C_BPARTNER_NAME" unique="false">
         <index-column name="NAME"/>
@@ -362,17 +362,17 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="CBPARTNER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CBPARTNER_ISCUSTOMER_CHECK"><![CDATA[ISCUSTOMER IN ('Y', 'N')]]></check>
-      <check name="CBPARTNER_ISDIS_TPRINTED_CHECK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
-      <check name="CBPARTNER_ISEMPLOYEE_CHECK"><![CDATA[ISEMPLOYEE IN ('Y', 'N')]]></check>
-      <check name="CBPARTNER_ISONETIME_CHECK"><![CDATA[ISONETIME IN ('Y', 'N')]]></check>
-      <check name="CBPARTNER_ISPROSPECT_CHECK"><![CDATA[ISPROSPECT IN ('Y', 'N')]]></check>
-      <check name="CBPARTNER_ISSALESREP_CHECK"><![CDATA[ISSALESREP IN ('Y', 'N')]]></check>
-      <check name="CBPARTNER_ISSUMMARY_CHECK"><![CDATA[ISSUMMARY IN ('Y', 'N')]]></check>
-      <check name="CBPARTNER_ISTAXEXEMPT_CHECK"><![CDATA[ISTAXEXEMPT IN ('Y', 'N')]]></check>
-      <check name="CBPARTNER_ISVENDOR_CHECK"><![CDATA[ISVENDOR IN ('Y', 'N')]]></check>
-      <check name="CBPARTNER_SHOWPRICE_CHECK"><![CDATA[SHOWPRICEINORDER IN ('Y', 'N')]]></check>
-      <check name="INVOICERULE_CK_CBPARTNER"><![CDATA[((INVOICERULE) <> 'S') OR (C_INVOICESCHEDULE_ID IS NOT NULL)]]></check>
+      <check name="C_BPARTNER_INVOICERULE_CHK"><![CDATA[((INVOICERULE) <> 'S') OR (C_INVOICESCHEDULE_ID IS NOT NULL)]]></check>
+      <check name="C_BPARTNER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_ISCUSTOMER_CHK"><![CDATA[ISCUSTOMER IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_ISDISCOUNTPRINT_CHK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_ISEMPLOYEE_CHK"><![CDATA[ISEMPLOYEE IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_ISONETIME_CHK"><![CDATA[ISONETIME IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_ISPROSPECT_CHK"><![CDATA[ISPROSPECT IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_ISSALESREP_CHK"><![CDATA[ISSALESREP IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_ISSUMMARY_CHK"><![CDATA[ISSUMMARY IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_ISTAXEXEMPT_CHK"><![CDATA[ISTAXEXEMPT IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_ISVENDOR_CHK"><![CDATA[ISVENDOR IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_SHOWPRICEINORDE_CHK"><![CDATA[SHOWPRICEINORDER IN ('Y', 'N')]]></check>
     </table>
   </database>

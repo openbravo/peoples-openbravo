@@ -49,16 +49,16 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="CINVOICEDISC_FK_ADCLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_INVOICE_DISCOUNT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="CINVOICEDISC_FK_ADORG">
+      <foreign-key foreignTable="AD_ORG" name="C_INVOICE_DISCOUNT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DISCOUNT" name="CINVOICEDISC_FK_CDISCOUNT">
+      <foreign-key foreignTable="C_DISCOUNT" name="C_INVOICE_DISCOUNT_C_DISCOUNT">
         <reference local="C_DISCOUNT_ID" foreign="C_DISCOUNT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICE" name="CINVOICEDISC_FK_CINVOICE">
+      <foreign-key foreignTable="C_INVOICE" name="C_INVOICE_DISCOUNT_C_INVOICE">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
     </table>

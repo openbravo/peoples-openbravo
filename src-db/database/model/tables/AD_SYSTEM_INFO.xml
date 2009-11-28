@@ -154,6 +154,6 @@
       <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_IMAGEMENUCOMP">
         <reference local="YOUR_COMPANY_MENU_IMAGE" foreign="AD_IMAGE_ID"/>
       </foreign-key>
-      <check name="ADSYSTEMINFO_CUSTOMALLOW_CHECK"><![CDATA[CUSTOMIZATION_ALLOWED IN ('Y', 'N')]]></check>
+      <check name="AD_SYSTEM_INFO_CUSTOMIZATI_CHK"><![CDATA[CUSTOMIZATION_ALLOWED IN ('Y', 'N')]]></check>
     </table>
   </database>

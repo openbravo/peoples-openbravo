@@ -24,15 +24,18 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -51,6 +54,9 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.ad.ui.ProcessRequest;
+import org.openbravo.scheduling.ProcessBundle.Channel;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.SimpleModule;
@@ -66,6 +72,7 @@ import org.openbravo.xmlEngine.XmlDocument;
  */
 public class ModuleManagement extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  private static final String HB_Process_ID = "1005800000";
 
   /**
    * Main method that controls the sent command
@@ -539,8 +546,16 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     // Remote installation is only allowed for heartbeat enabled instances
     if (!islocal && !isHeartbeatEnabled()) {
-      response.sendRedirect(strDireccion
-          + "/ad_forms/Heartbeat.html?Command=DEFAULT_MODULE&inpcRecordId=" + recordId);
+      String inpcRecordId = recordId;
+      String command = "DEFAULT";
+
+      if (updateModules != null && updateModules.length > 0 && !updateModules[0].equals("")) {
+        inpcRecordId = "FFF";
+        command = "UPDATE";
+      }
+
+      response.sendRedirect(strDireccion + "/ad_forms/Heartbeat.html?Command=" + command
+          + "_MODULE&inpcRecordId=" + inpcRecordId);
     }
 
     if (!islocal && (updateModules == null || updateModules.length == 0)) {
@@ -776,7 +791,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
   private boolean isHeartbeatEnabled() {
     SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
-    return sys.isEnableHeartbeat() != null && sys.isEnableHeartbeat();
+    final Process HBProcess = OBDal.getInstance().get(Process.class, HB_Process_ID);
+    final boolean isHBEnabled = sys.isEnableHeartbeat() == null ? false : sys.isEnableHeartbeat();
+
+    final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
+        ProcessRequest.class);
+    prCriteria.add(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess));
+    prCriteria.add(Expression.eq(ProcessRequest.PROPERTY_CHANNEL, Channel.SCHEDULED.toString()));
+    final List<ProcessRequest> prRequestList = prCriteria.list();
+
+    // Must exist a scheduled process request for HB and must be enable at SystemInfo level
+    return prRequestList.size() > 0 && isHBEnabled;
   }
 
   /**

@@ -77,30 +77,30 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA[SELECT AD_MODULE_ID FROM AD_MODULE WHERE AD_MODULE_ID<>'0' AND TYPE='M']]></onCreateDefault>
       </column>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_MENU_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_FORM" name="AD_MENU_AD_FORM">
+        <reference local="AD_FORM_ID" foreign="AD_FORM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="AD_MENU_AD_MODULE">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_PROCESS" name="AD_MENU_AD_PROCESS">
+        <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TASK" name="AD_MENU_AD_TASK">
+        <reference local="AD_TASK_ID" foreign="AD_TASK_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_WINDOW" name="AD_MENU_AD_WINDOW">
+        <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_WORKFLOW" name="AD_MENU_AD_WORKFLOW">
+        <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_MENU_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADMENU">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_FORM" name="ADFORM_ADMENU">
-        <reference local="AD_FORM_ID" foreign="AD_FORM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADMENU">
-        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADMENU">
-        <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TASK" name="ADTASK_ADMENU">
-        <reference local="AD_TASK_ID" foreign="AD_TASK_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_WINDOW" name="ADWINDOW_ADMENU">
-        <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_WORKFLOW" name="ADWORKFLOW_ADMENU">
-        <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
-      </foreign-key>
-      <check name="ADMENU_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_MENU_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

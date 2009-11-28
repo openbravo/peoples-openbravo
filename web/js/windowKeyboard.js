@@ -1083,13 +1083,12 @@ function getAssociatedFieldButton(type) {
   var fieldButton = null;
   var success = true;
   fieldButton = focusedWindowElement;
-  //Go to the TD parent
-  if (type=='wad_window') {
-    //If is an Input Text + Dojo
+  if (type=='window') {
     try {
+      //Go to the TD parent
       for (;;) {
         fieldButton = fieldButton.parentNode;
-        if (fieldButton.tagName == 'TD') {
+        if (fieldButton.tagName == 'TD' && fieldButton.className.indexOf('TextBox_ContentCell') != -1) {
           break;
         } else if (fieldButton.tagName == 'BODY') {
           success = false;
@@ -1097,22 +1096,6 @@ function getAssociatedFieldButton(type) {
         }
       }
       success = true;
-    } catch (e) {
-      success = false;
-    }
-  }
-  if (success == true) {
-    try {
-      for (;;) {
-        fieldButton = fieldButton.parentNode;
-        if (fieldButton.tagName == 'TD') {
-          success = true;
-          break;
-        } else if (fieldButton.tagName == 'BODY') {
-          success = false;
-          break;
-        }
-      }
     } catch (e) {
       success = false;
     }
@@ -1151,18 +1134,10 @@ function getAssociatedFieldButton(type) {
 
 function executeAssociatedFieldButton() {
   var fieldButton = null;
-  fieldButton = getAssociatedFieldButton('wad_window');
+  fieldButton = getAssociatedFieldButton('window');
   if (fieldButton != null && fieldButton != false) {
     fieldButton.onclick();
     return true;
-  } else {
-    fieldButton = getAssociatedFieldButton('manual_window');
-    if (fieldButton != null && fieldButton != false) {
-      fieldButton.onclick();
-      return true;
-    } else {
-      return false;
-    }
   }
 }
 

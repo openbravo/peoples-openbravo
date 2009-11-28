@@ -1415,7 +1415,7 @@ div.calendar {
   font-size: 10pt;
   font-weight: normal;
   font-family: tahoma,arial,helvetica,sans-serif;
-  padding: 2 0 0 0;
+  padding: 4 0 0 0;
   float: left;
 }
 
@@ -1430,7 +1430,7 @@ div.calendar {
   font-size: 10pt;
   font-weight: bold;
   font-family: tahoma,arial,helvetica,sans-serif;
-  padding: 2 0 0 0;
+  padding: 4 0 0 0;
   float: left;
 }
 
@@ -1439,7 +1439,7 @@ div.calendar {
   font-size: 10pt;
   font-weight: bold;
   font-family: tahoma,arial,helvetica,sans-serif;
-  padding: 2 0 0 0;
+  padding: 4 0 0 0;
   float: left;
 }
 
@@ -1448,7 +1448,7 @@ div.calendar {
   font-size: 10pt;
   font-weight: bold;
   font-family: tahoma,arial,helvetica,sans-serif;
-  padding: 2 0 0 0;
+  padding: 4 0 0 0;
   float: left;
 }
 
@@ -1457,7 +1457,7 @@ div.calendar {
   font-size: 10pt;
   font-weight: normal;
   font-family: tahoma,arial,helvetica,sans-serif;
-  padding: 2 15 0 0;
+  padding: 4 15 0 0;
   float: left;
   background-repeat: no-repeat;
   background-position: right bottom;

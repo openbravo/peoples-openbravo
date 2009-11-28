@@ -37,7 +37,8 @@ BEGIN
   IF (UPDATING) THEN
     v_check := (:new.tableName != :old.tableName) 
             or (:new.Name != :old.Name) 
-            or (:new.AD_Package_ID != :old.AD_Package_ID);
+            or (:new.AD_Package_ID != :old.AD_Package_ID)
+            or (:new.IsView != :old.IsView);
   END IF;
   
   IF v_check THEN
@@ -58,21 +59,22 @@ BEGIN
       UNION
        SELECT 1
          FROM AD_EXCEPTIONS 
-         WHERE TYPE='TABLE'
+         WHERE ((TYPE='TABLE' AND :new.IsView = 'N') or (TYPE='VIEW' AND :new.IsView = 'Y'))
          AND UPPER(NAME1)=UPPER(:new.Tablename)) AA;
       
      IF v_Aux = 0 THEN
        RAISE_APPLICATION_ERROR(-20536, 'Names must start with its module''s DB prefix ') ;
      END IF;
-  END IF;
 
-  --Check Name for illegal characters
-  FOR I IN 1..LENGTH(trim(:NEW.name)) LOOP
-     v_char := substr(trim(:NEW.name),i,1);
-     IF v_char = ' ' or v_char = '.' or v_char='/' THEN
-         RAISE_APPLICATION_ERROR(-20635, '@NameWithInvalidCharacters@') ;
-     END IF;
-  END LOOP;
+     --Check Name for illegal characters
+     FOR I IN 1..LENGTH(trim(:NEW.name)) LOOP
+        v_char := substr(trim(:NEW.name),i,1);
+        IF v_char = ' ' or v_char = '.' or v_char = ',' or v_char='/' THEN
+           RAISE_APPLICATION_ERROR(-20635, '@NameWithInvalidCharacters@') ;
+        END IF;
+     END LOOP;
+
+  END IF;
 
 END AD_TABLE_TRG
 ]]></body>

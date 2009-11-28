@@ -37,10 +37,10 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADCLIENTMODULE">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENTMODULE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADCLIENTMODULE" onDelete="cascade">
+      <foreign-key foreignTable="AD_MODULE" name="AD_CLIENTMODULE_AD_MODULE" onDelete="cascade">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
       <check name="AD_CLIENTMODULE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

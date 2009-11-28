@@ -41,14 +41,14 @@ public class OBConfigFileProvider implements OBSingleton {
 
   private static OBConfigFileProvider instance;
 
-  public static OBConfigFileProvider getInstance() {
+  public static synchronized OBConfigFileProvider getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(OBConfigFileProvider.class);
     }
     return instance;
   }
 
-  public static void setInstance(OBConfigFileProvider instance) {
+  public static synchronized void setInstance(OBConfigFileProvider instance) {
     OBConfigFileProvider.instance = instance;
   }
 
@@ -124,8 +124,7 @@ public class OBConfigFileProvider implements OBSingleton {
         }
       }
     } catch (final Throwable t) {
-      t.printStackTrace(System.err);
-      log.error(t);
+      log.error(t.getMessage(), t);
     }
   }
 
@@ -154,8 +153,7 @@ public class OBConfigFileProvider implements OBSingleton {
         }
       }
     } catch (final Throwable t) {
-      t.printStackTrace(System.err);
-      log.error(t);
+      log.error(t.getMessage(), t);
     }
   }
 

@@ -53,14 +53,14 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CPERIODCONTROL">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CPERIODCONTROL">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_PERIOD" name="C_PERIOD_PERIODCONTROL">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="C_PERIODCONTROL_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_PERIODCONTROL_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="C_PERIODCONTROL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

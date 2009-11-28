@@ -77,16 +77,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPERPETUALINV">
+      <foreign-key foreignTable="AD_CLIENT" name="M_PERPETUALINV_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MPERPETUALINV">
+      <foreign-key foreignTable="AD_ORG" name="M_PERPETUALINV_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODCATEGORY_MPERPETUALINV">
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PERPETUALINV_M_PRODUCT_CATEG">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_MPERPETUALINV">
+      <foreign-key foreignTable="M_WAREHOUSE" name="M_PERPETUALINV_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
       <check name="M_PERPETUALINV_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

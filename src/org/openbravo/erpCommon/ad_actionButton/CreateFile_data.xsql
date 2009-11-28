@@ -5,15 +5,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
@@ -28,15 +28,15 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-				select B.NAME AS BANK,b.codebank, b.codebranch, b.DIGITCONTROL as digitcontrol1, ba.DIGITCONTROL as digitcontrol2, 
-      ba.CODEACCOUNT, 
+				select B.NAME AS BANK,b.codebank, b.codebranch, b.DIGITCONTROL as digitcontrol1, ba.DIGITCONTROL as digitcontrol2,
+      ba.CODEACCOUNT,
 			LPAD(B.CODEBANK,4,'0')||LPAD(B.CODEBRANCH,4,'0')||B.DIGITCONTROL||ba.DIGITCONTROL||LPAD(ba.CODEACCOUNT,10,'0') AS N_CUENTA,
-      lpad(rpad(c.NAME,40,' '),46,' ') AS ENTIDAD, rpad(c.NAME,40,' ') AS ENTIDAD19, oi.TAXID AS NIF, TO_CHAR(r.Duedate  ,'DD')||TO_CHAR(r.Duedate,'MM')||TO_CHAR(r.Duedate,'YY')AS DATEPLANNED, TO_CHAR(now(), 'DD')||TO_CHAR(now(), 'MM')||TO_CHAR(now(), 'YY') AS HOY, 
-			LPAD(RPAD(LPAD(B.CODEBANK,4,'0')||LPAD(B.CODEBRANCH,4,'0'),74,' '),94,' ') AS ENTOFI, LPAD(B.INE_NUMBER,61,' ') AS INE, 
+      lpad(rpad(c.NAME,40,' '),46,' ') AS ENTIDAD, rpad(c.NAME,40,' ') AS ENTIDAD19, oi.TAXID AS NIF, TO_CHAR(r.Duedate  ,'DD')||TO_CHAR(r.Duedate,'MM')||TO_CHAR(r.Duedate,'YY')AS DATEPLANNED, TO_CHAR(now(), 'DD')||TO_CHAR(now(), 'MM')||TO_CHAR(now(), 'YY') AS HOY,
+			LPAD(RPAD(LPAD(B.CODEBANK,4,'0')||LPAD(B.CODEBRANCH,4,'0'),74,' '),94,' ') AS ENTOFI, LPAD(B.INE_NUMBER,61,' ') AS INE,
 			'' AS TERCERO,
       '' AS FECHA_FACTURA, '' AS FECHA_VENCIMIENTO, '' AS PAYAMT, '' AS CREDITCARDNUMBER, '' AS N_FACTURA, '' AS N_FACTURA19, '' AS CIUDAD, '' AS DIRECCION,
       '' AS CONCEPTO, '' AS PLAZA, '' AS LOCALIDAD, '' AS POSTAL, '' AS CODIGO_PROVINCIA, '' AS LINEAS, '' AS ORDENANTES, '' AS HUECO, '' AS CONTENT, '' AS bpname
-      from c_remittance r, ad_client c, 
+      from c_remittance r, ad_client c,
 					 c_bankAccount		ba,
 					 c_Bank						b,
 					 ad_orgInfo				oi
@@ -53,19 +53,21 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT RPAD(COALESCE(BP.NAME2,BP.NAME),40,' ') AS TERCERO,RPAD(TO_CHAR(COALESCE(C_INVOICE.DATEINVOICED,DP.DATEPLANNED), 'DDMMYY'),14) AS FECHA_FACTURA, 
-      TO_CHAR(TO_CHAR(DP.DATEPLANNED, 'DDMMYY')) AS FECHA_VENCIMIENTO,LPAD(TO_CHAR(ROUND(DP.AMOUNT*100,0)),10,'0') AS PAYAMT, 
+      SELECT RPAD(COALESCE(BA.A_Name,COALESCE(BP.NAME2,BP.NAME)),40,' ') AS TERCERO,RPAD(TO_CHAR(COALESCE(C_INVOICE.DATEINVOICED,DP.DATEPLANNED), 'DDMMYY'),14) AS FECHA_FACTURA,
+      TO_CHAR(TO_CHAR(DP.DATEPLANNED, 'DDMMYY')) AS FECHA_VENCIMIENTO,LPAD(TO_CHAR(ROUND(DP.AMOUNT*100,0)),10,'0') AS PAYAMT,
       (SELECT MAX(BP_A.ACCOUNTNO) FROM C_BP_BANKACCOUNT BP_A WHERE BP.C_BPARTNER_ID = BP_A.C_BPARTNER_ID AND BP_A.ISACTIVE='Y')  AS CREDITCARDNUMBER,
-      LPAD(BP.VALUE,12,'0') AS N_FACTURA, RPAD(LPAD(BP.VALUE,8,'0'),12,' ') AS N_FACTURA19,L.CITY AS CIUDAD, RPAD(L.ADDRESS1,40,' ') AS DIRECCION, 
+      LPAD(BP.VALUE,12,'0') AS N_FACTURA, RPAD(LPAD(BP.VALUE,8,'0'),12,' ') AS N_FACTURA19,L.CITY AS CIUDAD, RPAD(L.ADDRESS1,40,' ') AS DIRECCION,
       TO_CHAR(now(),'DD')||TO_CHAR(now(),'MM')||TO_CHAR(now(),'YY') AS HOY, RPAD(COALESCE(TO_CHAR(DP.DESCRIPTION),' '),40,' ') AS CONCEPTO,
       RPAD(L.CITY,35,' ') AS PLAZA, RPAD(L.CITY,38,' ') AS LOCALIDAD, L.POSTAL AS POSTAL, SUBSTR(L.POSTAL,1,2) AS CODIGO_PROVINCIA, BP.TAXID AS NIF
       FROM c_remittanceline S, C_BPARTNER_LOCATION BP_L,
-      C_LOCATION L, C_BPARTNER BP, 
+      C_LOCATION L, C_BPARTNER BP, C_BP_BankAccount BA,
       C_DEBT_PAYMENT DP left join C_INVOICE on DP.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
       WHERE S.C_debt_payment_id = DP.C_debt_payment_id
+      AND BA.C_BPartner_ID = BP.C_BPartner_ID
       AND DP.C_BPARTNER_ID = BP.C_BPARTNER_ID
       AND BP_L.C_BPARTNER_LOCATION_ID = C_GETBPLOCATIONID(BP.C_BPARTNER_ID, 'B')
       AND BP_L.C_LOCATION_ID = L.C_LOCATION_ID
+      AND BA.IsActive = 'Y'
       and s.C_Remittance_ID = ?
     ]]>
     </Sql>
@@ -75,8 +77,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT RPAD(LPAD(TO_CHAR(ROUND(sum(DP.AMOUNT)*100,0)),10,'0'),16,' ') AS PAYAMT, 
-      LPAD(TO_CHAR(COUNT(*)),10,'0') AS N_FACTURA 
+      SELECT RPAD(LPAD(TO_CHAR(ROUND(sum(DP.AMOUNT)*100,0)),10,'0'),16,' ') AS PAYAMT,
+      LPAD(TO_CHAR(COUNT(*)),10,'0') AS N_FACTURA
       FROM C_DEBT_PAYMENT DP,
 			     c_remittanceLine rl
 		 where dp.c_debt_payment_id = rl.c_debt_payment_id
@@ -117,9 +119,9 @@
     <![CDATA[
     SELECT count(*)
 		FROM C_DEBT_PAYMENT DP,
-		     c_remittanceLine rl 
+		     c_remittanceLine rl
     WHERE rl.c_debt_payment_id = dp.c_debt_payment_id
-    AND DP.ISPAID = 'N' 
+    AND DP.ISPAID = 'N'
     AND DP.C_BPARTNER_ID = NULL
 		and rl.c_remittance_id = ?
     ]]>
@@ -130,8 +132,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-    	SELECT COUNT(*) 
-		  FROM c_remittanceLine rl 
+    	SELECT COUNT(*)
+		  FROM c_remittanceLine rl
     WHERE rl.c_remittance_id = ?
     ]]>
     </Sql>

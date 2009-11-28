@@ -57,13 +57,13 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="CLIENT_FK_PROCESS_SCHEDULING">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_PROCESS_SCHEDULING_AD_CLIEN">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ORG_FK_PROCESS_SCHEDULING">
+      <foreign-key foreignTable="AD_ORG" name="AD_PROCESS_SCHEDULING_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PROCESS" name="PROCESS_FK_PROCESS_SCHEDULING" onDelete="cascade">
+      <foreign-key foreignTable="AD_PROCESS" name="AD_PROCESS_SCHEDULING_AD_PROCE" onDelete="cascade">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
       <check name="AD_PROCESS_SCHEDULING_ISFT"><![CDATA[ISFULLTIME IN ('Y', 'N')]]></check>

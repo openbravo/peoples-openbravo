@@ -33,7 +33,7 @@ public class OBException extends RuntimeException {
 
   public OBException() {
     super();
-    getLogger().error(this);
+    getLogger().error("Exception", this);
   }
 
   public OBException(String message, Throwable cause) {
@@ -48,7 +48,7 @@ public class OBException extends RuntimeException {
 
   public OBException(Throwable cause) {
     super(cause);
-    getLogger().error(cause);
+    getLogger().error(cause.getMessage(), cause);
   }
 
   /**

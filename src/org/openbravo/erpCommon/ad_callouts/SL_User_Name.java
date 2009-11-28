@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -73,19 +74,43 @@ public class SL_User_Name extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_User_Name';\n\n");
     resultado.append("var respuesta = new Array(");
+    // limits name and username to a maximum number of characters
+    int maxChar = 60;
     // do not change the name field, if the user just left it
     if (!strChanged.equals("inpname")) {
-      strName = FormatUtilities.replaceJS(strFirstname + strLastname);
+      if (FormatUtilities.replaceJS(strFirstname + strLastname).length() > maxChar) {
+        strName = FormatUtilities.replaceJS(strFirstname + strLastname).substring(0, maxChar);
+      } else {
+        strName = FormatUtilities.replaceJS(strFirstname + strLastname);
+      }
       resultado.append("new Array(\"inpname\", \"" + strName + "\"),");
     }
     // if we have a name filled in use that for the username
     if (!strName.equals("")) {
-      resultado
-          .append("new Array(\"inpusername\", \"" + FormatUtilities.replaceJS(strName) + "\")");
+      if (FormatUtilities.replaceJS(strName).length() > maxChar) {
+        resultado.append("new Array(\"inpusername\", \""
+            + FormatUtilities.replaceJS(strName).substring(0, maxChar) + "\")");
+      } else {
+        resultado.append("new Array(\"inpusername\", \"" + FormatUtilities.replaceJS(strName)
+            + "\")");
+      }
     } else {
       // else concatenate first- and lastname
-      resultado.append("new Array(\"inpusername\", \""
-          + FormatUtilities.replaceJS(strFirstname + strLastname) + "\")");
+      if (FormatUtilities.replaceJS(strFirstname + strLastname).length() > maxChar) {
+        resultado.append("new Array(\"inpusername\", \""
+            + FormatUtilities.replaceJS(strFirstname + strLastname).substring(0, maxChar) + "\")");
+      } else {
+        resultado.append("new Array(\"inpusername\", \""
+            + FormatUtilities.replaceJS(strFirstname + strLastname) + "\")");
+      }
+    }
+    // informs about characters cut
+    if (FormatUtilities.replaceJS(strFirstname + strLastname).length() > maxChar) {
+      resultado.append(", new Array('MESSAGE', \""
+          + FormatUtilities.replaceJS(Utility.messageBD(this, "NameUsernameLengthCut", vars
+              .getLanguage())) + "\")");
+    } else {
+      resultado.append(", new Array('MESSAGE', \"\")");
     }
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

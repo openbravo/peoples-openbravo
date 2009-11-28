@@ -72,7 +72,7 @@ public class DataExportService implements OBSingleton {
    * 
    * @return the DataExportService instance
    */
-  public static DataExportService getInstance() {
+  public static synchronized DataExportService getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(DataExportService.class);
     }
@@ -86,7 +86,7 @@ public class DataExportService implements OBSingleton {
    * @param instance
    *          the DataExportService instance used by the
    */
-  public static void setInstance(DataExportService instance) {
+  public static synchronized void setInstance(DataExportService instance) {
     DataExportService.instance = instance;
   }
 

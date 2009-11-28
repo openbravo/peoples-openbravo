@@ -172,7 +172,7 @@ public class ActivationKey {
     } catch (Exception e) {
       errorMessage = "@ErrorReadingDates@";
       isActive = false;
-      log.error(e);
+      log.error(e.getMessage(), e);
       setLogger();
       return;
     }
@@ -254,7 +254,7 @@ public class ActivationKey {
       X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(rawPublicKey);
       return keyFactory.generatePublic(publicKeySpec);
     } catch (Exception e) {
-      log.error(e);
+      log.error(e.getMessage(), e);
       return null;
     }
   }

@@ -105,21 +105,21 @@
         <default><![CDATA[S]]></default>
         <onCreateDefault><![CDATA[CASE WHEN PROCEDURENAME IS NOT NULL THEN 'S' WHEN ISJASPER='Y' THEN 'S' ELSE 'M' END]]></onCreateDefault>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPROCESS">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_PROCESS_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADPROCESS">
+      <foreign-key foreignTable="AD_MODULE" name="AD_PROCESS_AD_MODULE">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADPROCESS">
+      <foreign-key foreignTable="AD_ORG" name="AD_PROCESS_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="ADPROC_EXTERNALSERVICE_CHECK"><![CDATA[ISEXTERNALSERVICE IN ('Y', 'N')]]></check>
-      <check name="ADPROCESS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADPROCESS_ISBACKGROUND_CHECK"><![CDATA[ISBACKGROUND IN ('Y', 'N')]]></check>
-      <check name="ADPROCESS_ISDIRECTPRINT_CHECK"><![CDATA[ISDIRECTPRINT IN ('Y', 'N')]]></check>
-      <check name="ADPROCESS_ISREPORT_CHECK"><![CDATA[ISREPORT IN ('Y', 'N')]]></check>
-      <check name="ADPROCESS_ISUSE_TARTABLE_CHECK"><![CDATA[ISUSERSTARTABLE IN ('Y', 'N')]]></check>
-      <check name="ADPROCESS_UIPATTERN_CHECK"><![CDATA[UIPATTERN IN ('S', 'M')]]></check>
+      <check name="AD_PROCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_ISBACKGROUND_CHK"><![CDATA[ISBACKGROUND IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_ISDIRECTPRINT_CHK"><![CDATA[ISDIRECTPRINT IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_ISEXTERNALSERVI_CHK"><![CDATA[ISEXTERNALSERVICE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_ISREPORT_CHK"><![CDATA[ISREPORT IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_ISUSERSTARTABLE_CHK"><![CDATA[ISUSERSTARTABLE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_UIPATTERN_CHK"><![CDATA[UIPATTERN IN ('S', 'M')]]></check>
     </table>
   </database>

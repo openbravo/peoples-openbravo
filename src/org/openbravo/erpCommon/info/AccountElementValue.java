@@ -32,6 +32,7 @@ import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
@@ -61,7 +62,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
           "AccountElementValue.name");
       String strAcctSchema = vars.getSessionValue(strWindowId + "|C_AcctSchema_ID");
       if (strAcctSchema.equals("")) {
-        strAcctSchema = vars.getRequestGlobalVariable("inpAcctSchema",
+        strAcctSchema = vars.getRequestGlobalVariable("inpcAcctSchemaId",
             "AccountElementValue.cAcctschemaId");
       }
       if (strAcctSchema.equals("")) {
@@ -85,7 +86,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
       String strWindowId = vars.getStringParameter("WindowID");
       String strAcctSchema = vars.getSessionValue(strWindowId + "|C_AcctSchema_ID");
       if (strAcctSchema.equals("")) {
-        strAcctSchema = vars.getRequestGlobalVariable("inpAcctSchema",
+        strAcctSchema = vars.getRequestGlobalVariable("inpcAcctSchemaId",
             "AccountElementValue.cAcctschemaId");
       }
       if (strAcctSchema.equals("")) {
@@ -107,7 +108,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
     } else if (vars.commandIn("KEY")) {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue",
           "AccountElementValue.value");
-      String strAcctSchema = vars.getRequestGlobalVariable("inpAcctSchema",
+      String strAcctSchema = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "AccountElementValue.cAcctschemaId");
       if (strAcctSchema.equals("")) {
         strAcctSchema = Utility.getContext(this, vars, "$C_AcctSchema_ID", "AccountElementValue");
@@ -200,6 +201,11 @@ public class AccountElementValue extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("orgs", vars.getStringParameter("inpAD_Org_ID"));
+    xmlDocument.setParameter("cAcctschemaId", strAcctSchema);
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
+        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
+            "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+            "ReportGeneralLedger"), strAcctSchema));
 
     xmlDocument.setParameter("grid", "20");
     xmlDocument.setParameter("grid_Offset", "");

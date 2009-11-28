@@ -280,23 +280,38 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRODUCT">
+      <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_IMAGE" name="ADIMAGE_MPRODUCT">
+      <foreign-key foreignTable="AD_IMAGE" name="M_PRODUCT_AD_IMAGE">
         <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_MPRODUCT">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_MPRODUCT">
-        <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_MPRODUCT">
-        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="M_PRODUCT_AD_USER">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="M_PRODUCT_C_BPARTNER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_TAXCATEGORY" name="M_PRODUCT_C_TAXCATEGORY">
+        <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="M_PRODUCT_C_UOM">
+        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTESET" name="M_PRODUCT_M_ATTRIBUTESET" onDelete="cascade">
+        <reference local="M_ATTRIBUTESET_ID" foreign="M_ATTRIBUTESET_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_PRODUCT_M_ATTRIBUTESETINSTAN">
+        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_FREIGHTCATEGORY" name="M_PRODUCT_M_FREIGHTCATEGORY">
+        <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_LOCATOR" name="M_PRODUCT_M_LOCATOR">
+        <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PRODUCT_M_PRODUCT_CATEGORY">
+        <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MRP_PLANNER" name="M_PRODUCT_MRP_PLANNER">
         <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
@@ -304,29 +319,14 @@
       <foreign-key foreignTable="MRP_PLANNINGMETHOD" name="M_PRODUCT_MRP_PLANNINGMETHOD">
         <reference local="MRP_PLANNINGMETHOD_ID" foreign="MRP_PLANNINGMETHOD_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MPRODUCT">
-        <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESET" name="MATTRIBUTESET_MPRODUCT" onDelete="cascade">
-        <reference local="M_ATTRIBUTESET_ID" foreign="M_ATTRIBUTESET_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_MPRODUCT">
-        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_FREIGHTCATEGORY" name="MFREIGHTCATEGORY_MPRODUCT">
-        <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_MPRODUCT">
-        <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODUCT_MPRODUCTCATEGORY">
-        <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="S_EXPENSETYPE" name="SEXPENSETYPE_MPRODUCT">
+      <foreign-key foreignTable="S_EXPENSETYPE" name="M_PRODUCT_S_EXPENSETYPE">
         <reference local="S_EXPENSETYPE_ID" foreign="S_EXPENSETYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="S_RESOURCE" name="SRESOURCE_MPRODUCT">
+      <foreign-key foreignTable="S_RESOURCE" name="M_PRODUCT_S_RESOURCE">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MPRODUCT">
+        <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
       </foreign-key>
       <index name="M_PRODUCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
@@ -350,15 +350,15 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="ENFORCEATTRIBUTE_CH_MPRODUCT"><![CDATA[ENFORCE_ATTRIBUTE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_ENFORCE_ATTRIBUT_CHK"><![CDATA[ENFORCE_ATTRIBUTE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISBOM_CHECK"><![CDATA[ISBOM IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_ISINVOICEPRINTDE_CHK"><![CDATA[ISINVOICEPRINTDETAILS IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_ISPICKLISTPRINTD_CHK"><![CDATA[ISPICKLISTPRINTDETAILS IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPURCHASED_CHECK"><![CDATA[ISPURCHASED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISSOLD_CHECK"><![CDATA[ISSOLD IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISSTOCKED_CHECK"><![CDATA[ISSTOCKED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISVERIFIED_CHECK"><![CDATA[ISVERIFIED IN ('Y', 'N')]]></check>
-      <check name="MPROD_ISINVPRINTDET_CHECK"><![CDATA[ISINVOICEPRINTDETAILS IN ('Y', 'N')]]></check>
-      <check name="MPROD_ISPICKLPRINTDET_CHECK"><![CDATA[ISPICKLISTPRINTDETAILS IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -137,49 +137,49 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CINVOICELINE">
+      <foreign-key foreignTable="AD_CLIENT" name="C_INVOICELINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CINVOICELINE">
+      <foreign-key foreignTable="AD_ORG" name="C_INVOICELINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CHARGE" name="CCHARGE_CINVOICELINE">
+      <foreign-key foreignTable="C_CHARGE" name="C_INVOICELINE_C_CHARGE">
         <reference local="C_CHARGE_ID" foreign="C_CHARGE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICE" name="CINVOICE_CINVOICELINE">
+      <foreign-key foreignTable="C_INVOICE" name="C_INVOICELINE_C_INVOICE">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICE_DISCOUNT" name="CINVOICELINE_FK_DISCINVOICE">
+      <foreign-key foreignTable="C_INVOICE_DISCOUNT" name="C_INVOICELINE_C_INVOICE_DISCOU">
         <reference local="C_INVOICE_DISCOUNT_ID" foreign="C_INVOICE_DISCOUNT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDERLINE" name="CORDERLINE_CINVOICELINE">
+      <foreign-key foreignTable="C_ORDERLINE" name="C_INVOICELINE_C_ORDERLINE">
         <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX_CINVOICELINE">
-        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_CINVOICELINE">
-        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_CINVOICELINE">
-        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_INOUTLINE" name="MINOUTLINE_CINVOICELINE" onDelete="setnull">
-        <reference local="M_INOUTLINE_ID" foreign="M_INOUTLINE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_OFFER" name="MOFFER_CINVOICELINE">
-        <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CINVOICELINE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_CINVOICELINE">
-        <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_PROJECTLINE" name="PROJECTLINE_CINVOICELINE">
+      <foreign-key foreignTable="C_PROJECTLINE" name="C_INVOICELINE_C_PROJECTLINE">
         <reference local="C_PROJECTLINE_ID" foreign="C_PROJECTLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="SRESOURCEASSIGN_CINVOICELINE">
+      <foreign-key foreignTable="C_TAX" name="C_INVOICELINE_C_TAX">
+        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="C_INVOICELINE_C_UOM">
+        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="C_INVOICELINE_M_ATTRIBUTESETIN">
+        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_INOUTLINE" name="C_INVOICELINE_M_INOUTLINE" onDelete="setnull">
+        <reference local="M_INOUTLINE_ID" foreign="M_INOUTLINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_OFFER" name="C_INVOICELINE_M_OFFER">
+        <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="C_INVOICELINE_M_PRODUCT">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_UOM" name="C_INVOICELINE_M_PRODUCT_UOM">
+        <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="C_INVOICELINE_S_RESOURCEASSIGN">
         <reference local="S_RESOURCEASSIGNMENT_ID" foreign="S_RESOURCEASSIGNMENT_ID"/>
       </foreign-key>
       <index name="C_INVOICELINE_INOUTLINE" unique="false">

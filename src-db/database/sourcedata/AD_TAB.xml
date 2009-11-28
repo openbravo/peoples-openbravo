@@ -6654,7 +6654,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--529-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--529-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--529-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--529-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--529-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--529--></AD_TAB>
 
 <!--530--><AD_TAB>
@@ -9864,7 +9864,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800172-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800172-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800172-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800172-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800172-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800172--></AD_TAB>
 
 <!--800173--><AD_TAB>
@@ -9888,7 +9888,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800173-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800173-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800173-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800173-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800173-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800173--></AD_TAB>
 
 <!--800174--><AD_TAB>

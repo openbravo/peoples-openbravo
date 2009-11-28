@@ -151,7 +151,8 @@ public class OBInterceptor extends EmptyInterceptor {
 
     checkReferencedOrganizations(entity, currentState, previousState, propertyNames);
 
-    if (entity instanceof Traceable) {
+    if (entity instanceof Traceable || entity instanceof ClientEnabled
+        || entity instanceof OrganizationEnabled) {
       return true;
     }
     return false;
@@ -204,8 +205,7 @@ public class OBInterceptor extends EmptyInterceptor {
     boolean isNew = bob.getId() == null || bob.isNewOBObject();
 
     // check if the organization of the current object has changed, if so
-    // then
-    // check all references
+    // then check all references
     if (!isNew) {
       for (int i = 0; i < currentState.length; i++) {
         if (propertyNames[i].equals(PROPERTY_ORGANIZATION)) {
@@ -241,77 +241,86 @@ public class OBInterceptor extends EmptyInterceptor {
   }
 
   // general event handler does new and update
-  protected void doEvent(Object o, Object[] currentState, String[] propertyNames) {
+  protected void doEvent(Object object, Object[] currentState, String[] propertyNames) {
     try {
       // not traceable but still do the security check
-      if (!(o instanceof Traceable)) {
+      if (!(object instanceof Traceable)) {
         // do a check for writeaccess
         // TODO: the question is if this is the correct
         // location as because of hibernate cascade many things are
         // written.
-        SecurityChecker.getInstance().checkWriteAccess(o);
+        SecurityChecker.getInstance().checkWriteAccess(object);
         return;
       }
 
-      final Traceable t = (Traceable) o;
+      final Traceable t = (Traceable) object;
       if (t.getCreatedBy() == null) { // new
         onNew(t, propertyNames, currentState);
       } else {
         onUpdate(t, propertyNames, currentState);
       }
     } catch (Exception e) {
-      final Exception originalException = e;
-      e.printStackTrace(System.err);
-      while (e instanceof SQLException) {
+      while (e instanceof SQLException && e != ((SQLException) e).getNextException()) {
         e = ((SQLException) e).getNextException();
-        e.printStackTrace(System.err);
       }
-      throw new OBException(originalException);
+      throw new OBException(e);
     }
 
     // do a check for writeaccess
     // TODO: the question is if this is the correct
     // location as because of hibernate cascade many things are written.
-    SecurityChecker.getInstance().checkWriteAccess(o);
+    SecurityChecker.getInstance().checkWriteAccess(object);
   }
 
   // set created/createdby and the client and organization
-  private void onNew(Traceable t, String[] propertyNames, Object[] currentState) {
+  private void onNew(Traceable traceable, String[] propertyNames, Object[] currentState) {
+    // note both the currentState and the Traceable t are modified
+    // the object t is modified because right after this call a security
+    // check is done (see onSave). This is before hibernate can copy
+    // the changes from currentState to the object. This happens slighlty later.
     final OBContext obContext = OBContext.getOBContext();
     final User currentUser = obContext.getUser();
-    log
-        .debug("OBEvent for new object " + t.getClass().getName() + " user "
-            + currentUser.getName());
+    log.debug("OBEvent for new object " + traceable.getClass().getName() + " user "
+        + currentUser.getName());
 
     Client client = null;
     Organization org = null;
-    if (t instanceof ClientEnabled || t instanceof OrganizationEnabled) {
+    if (traceable instanceof ClientEnabled || traceable instanceof OrganizationEnabled) {
       // reread the client and organization
       client = SessionHandler.getInstance()
           .find(Client.class, obContext.getCurrentClient().getId());
       org = SessionHandler.getInstance().find(Organization.class,
           obContext.getCurrentOrganization().getId());
     }
+    final Date currentDate = new Date();
     for (int i = 0; i < propertyNames.length; i++) {
+      // TODO: check why this is here, seems strange
       if ("".equals(propertyNames[i])) {
-        currentState[i] = new Date();
+        currentState[i] = currentDate;
       }
+
       if (PROPERTY_UPDATED.equals(propertyNames[i])) {
-        currentState[i] = new Date();
+        traceable.setUpdated(currentDate);
+        currentState[i] = currentDate;
       }
       if (PROPERTY_UPDATEDBY.equals(propertyNames[i])) {
+        traceable.setUpdatedBy(currentUser);
         currentState[i] = currentUser;
       }
       if (Organization.PROPERTY_CREATIONDATE.equals(propertyNames[i])) {
-        currentState[i] = new Date();
+        traceable.setCreationDate(currentDate);
+        currentState[i] = currentDate;
       }
       if (Organization.PROPERTY_CREATEDBY.equals(propertyNames[i])) {
+        traceable.setCreatedBy(currentUser);
         currentState[i] = currentUser;
       }
       if (PROPERTY_CLIENT.equals(propertyNames[i]) && currentState[i] == null) {
+        ((ClientEnabled) traceable).setClient(client);
         currentState[i] = client;
       }
       if (PROPERTY_ORGANIZATION.equals(propertyNames[i]) && currentState[i] == null) {
+        ((OrganizationEnabled) traceable).setOrganization(org);
         currentState[i] = org;
       }
     }
@@ -334,6 +343,7 @@ public class OBInterceptor extends EmptyInterceptor {
   }
 
   // after flushing an object is not new anymore
+  @SuppressWarnings("unchecked")
   public void postFlush(Iterator entities) {
     while (entities.hasNext()) {
       final BaseOBObject bob = (BaseOBObject) entities.next();

@@ -55,11 +55,11 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_C_ACCTSCHEMA_TAB_DOC">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_CREATEFACT_TEMPLATE" name="C_ACCTSCHEMA_TABLE_DOCTYPE_AD_">
+        <reference local="AD_CREATEFACT_TEMPLATE_ID" foreign="AD_CREATEFACT_TEMPLATE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA_TABLE" name="C_CCTSCHM_TBL_D_C_CCTSCHM_TBL">
         <reference local="C_ACCTSCHEMA_TABLE_ID" foreign="C_ACCTSCHEMA_TABLE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CREATEFACT_TEMPLATE" name="CACCTSCHTABDOC_ADCREATEFACTEMP">
-        <reference local="AD_CREATEFACT_TEMPLATE_ID" foreign="AD_CREATEFACT_TEMPLATE_ID"/>
       </foreign-key>
       <check name="C_ACCTSCH_TA_DO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_ACCTSCH_TA_DO_NEGATIVE_CHECK"><![CDATA[ALLOWNEGATIVE IN ('Y', 'N')]]></check>

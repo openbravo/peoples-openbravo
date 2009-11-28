@@ -63,7 +63,7 @@ public class Heartbeat extends HttpSecureAppServlet {
       }
     }
 
-    if (vars.commandIn("DEFAULT", "DEFAULT_MODULE")) {
+    if (vars.commandIn("DEFAULT", "DEFAULT_MODULE", "UPDATE_MODULE")) {
       printPageDataSheet(response, vars);
     } else if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE")) {
       response.sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command="

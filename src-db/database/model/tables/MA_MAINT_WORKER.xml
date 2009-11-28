@@ -44,13 +44,13 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMAINT_WORKER">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMAINT_WORKER">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_MAINT_WORKER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_MAMAINT_WORKER">
+      <foreign-key foreignTable="C_BPARTNER" name="MA_MAINT_WORKER_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_MAINT_PART" name="MAMAINTPART_MAMAINT_WORKER">
+      <foreign-key foreignTable="MA_MAINT_PART" name="MA_MAINT_WORKER_MA_MAINT_PART">
         <reference local="MA_MAINT_PART_ID" foreign="MA_MAINT_PART_ID"/>
       </foreign-key>
       <check name="MA_MAINT_WORKER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

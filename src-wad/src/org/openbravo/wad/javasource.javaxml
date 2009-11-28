@@ -649,6 +649,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       data.updatedby = vars.getUser();
       data.adUserClient = Utility.getContext(this, vars, "#User_Client", windowId, accesslevel);
       data.adOrgClient = Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel);
+      data.updatedTimeStamp = vars.getStringParameter("updatedTimestamp");
 
 <PARAMETER_TMP id="parent">      data.<PARENT_TMP id="keyParentT">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
 </PARAMETER_TMP>

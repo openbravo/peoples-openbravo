@@ -45,16 +45,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MRAPPELINVOICE">
+      <foreign-key foreignTable="AD_CLIENT" name="M_RAPPEL_INVOICE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MRAPPELINVOICE">
+      <foreign-key foreignTable="AD_ORG" name="M_RAPPEL_INVOICE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICE" name="CINVOICEID_M_RAPPEL_BPARTNER">
+      <foreign-key foreignTable="C_INVOICE" name="M_RAPPEL_INVOICE_C_INVOICE">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_RAPPEL_BPARTNER" name="MRAPPELBPARTNER_M_RAPPEL_INV">
+      <foreign-key foreignTable="M_RAPPEL_BPARTNER" name="M_RAPPEL_INVOICE_M_RAPPEL_BPAR">
         <reference local="M_RAPPEL_BPARTNER_ID" foreign="M_RAPPEL_BPARTNER_ID"/>
       </foreign-key>
       <check name="M_RAPPEL_INVOIC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

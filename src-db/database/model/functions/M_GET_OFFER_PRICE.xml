@@ -44,7 +44,8 @@ BEGIN
       v_AddAmt,
       v_Discount
     FROM M_OFFER
-    WHERE M_OFFER_ID = p_Offer_ID;
+    WHERE M_OFFER_ID = p_Offer_ID
+    AND ISACTIVE = 'Y';
     IF v_Fixed IS NOT NULL THEN
       v_Price := v_Fixed;
     ELSE

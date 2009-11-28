@@ -78,10 +78,10 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
       setDataValue(propName, value);
     } catch (ValidationException ve) {
       // do not fail here so that build tasks can still continue
-      log.error(ve.getMessage());
+      log.error(ve.getMessage(), ve);
     } catch (CheckException ce) {
       // do not fail here so that build tasks can still continue
-      log.error(ce.getMessage());
+      log.error(ce.getMessage(), ce);
     }
   }
 

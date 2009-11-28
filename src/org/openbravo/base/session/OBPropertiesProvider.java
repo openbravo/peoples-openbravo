@@ -40,11 +40,11 @@ public class OBPropertiesProvider {
 
   private static OBPropertiesProvider instance = new OBPropertiesProvider();
 
-  public static OBPropertiesProvider getInstance() {
+  public static synchronized OBPropertiesProvider getInstance() {
     return instance;
   }
 
-  public static void setInstance(OBPropertiesProvider instance) {
+  public static synchronized void setInstance(OBPropertiesProvider instance) {
     OBPropertiesProvider.instance = instance;
   }
 

@@ -40,6 +40,7 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.DataPackage;
 import org.openbravo.model.ad.utility.Image;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ImageInfoBLOB extends HttpSecureAppServlet {
@@ -66,50 +67,69 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
       imageID = vars.getStringParameter("imageId");
     }
 
+    String orgId = vars.getStringParameter("inpOrgId");
+    if (orgId == null || orgId.equals("")) {
+      orgId = vars.getStringParameter("inpadOrgId");
+    }
+
     String parentObjectId = vars.getStringParameter("parentObjectId");
     if (parentObjectId == null || parentObjectId.equals("")) {
       boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
       try {
         Table table = OBDal.getInstance().get(Table.class, vars.getStringParameter("inpTableId"));
-        List<Column> cols = table.getADColumnList();
-        String keyCol = "";
-        for (Column col : cols) {
-          if (col.isKeyColumn()) {
-            keyCol = col.getDBColumnName();
-            break;
+        if (table != null) {
+          List<Column> cols = table.getADColumnList();
+          String keyCol = "";
+          for (Column col : cols) {
+            if (col.isKeyColumn()) {
+              keyCol = col.getDBColumnName();
+              break;
+            }
           }
+          String strWindowId = vars.getStringParameter("inpwindowId");
+          String strKeyColumnId = vars.getStringParameter("inpkeyColumnId");
+          // parentObjectId = vars.getGlobalVariable("inp" + Sqlc.TransformaNombreColumna(keyCol),
+          // strWindowId + "|" + strKeyColumnId);
+          parentObjectId = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(keyCol));
         }
-        parentObjectId = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(keyCol));
       } finally {
         OBContext.getOBContext().setInAdministratorMode(adminMode);
       }
+
     }
     if (vars.commandIn("DEFAULT")) {
 
-      printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId);
+      printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
     } else if (vars.commandIn("SAVE")) {
-      final FileItem fi = vars.getMultiFile("inpFile");
-      byte[] bytea = fi.get();
+      boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+      try {
+        final FileItem fi = vars.getMultiFile("inpFile");
+        byte[] bytea = fi.get();
 
-      // Using DAL to write the image data to the database
-      Image image;
-      if (imageID == null || imageID.equals("")) {
-        image = OBProvider.getInstance().get(Image.class);
-        image.setBindaryData(bytea);
-        image.setActive(true);
-        image.setName("Image");
-        OBDal.getInstance().save(image);
-        OBDal.getInstance().flush();
+        // Using DAL to write the image data to the database
+        Image image;
+        if (imageID == null || imageID.equals("")) {
+          image = OBProvider.getInstance().get(Image.class);
+          Organization org = OBDal.getInstance().get(Organization.class, orgId);
+          image.setOrganization(org);
+          image.setBindaryData(bytea);
+          image.setActive(true);
+          image.setName("Image");
+          OBDal.getInstance().save(image);
+          OBDal.getInstance().flush();
 
-      } else {
-        image = OBDal.getInstance().get(Image.class, imageID);
-        image.setActive(true);
-        image.setBindaryData(bytea);
-        OBDal.getInstance().flush();
+        } else {
+          image = OBDal.getInstance().get(Image.class, imageID);
+          image.setActive(true);
+          image.setBindaryData(bytea);
+          OBDal.getInstance().flush();
+        }
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter writer = response.getWriter();
+        writeRedirect(writer, image.getId(), columnName);
+      } finally {
+        OBContext.getOBContext().setInAdministratorMode(adminMode);
       }
-      response.setContentType("text/html; charset=UTF-8");
-      PrintWriter writer = response.getWriter();
-      writeRedirect(writer, image.getId(), columnName);
     } else if (vars.commandIn("DELETE")) {
       if (imageID != null && !imageID.equals("")) {
         boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
@@ -138,7 +158,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         PrintWriter writer = response.getWriter();
         writeRedirect(writer, "", columnName);
       } else {
-        printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId);
+        printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
       }
     } else {
       pageError(response);
@@ -146,8 +166,8 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
   }
 
   private void printPageFrame(HttpServletResponse response, VariablesSecureApp vars,
-      String imageID, String tableId, String columnName, String parentObjectId) throws IOException,
-      ServletException {
+      String imageID, String tableId, String columnName, String parentObjectId, String orgId)
+      throws IOException, ServletException {
     String[] discard;
     if (imageID.equals("")) {
       discard = new String[1];
@@ -161,6 +181,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
     xmlDocument.setParameter("parentObjectId", parentObjectId);
     xmlDocument.setParameter("imageId", imageID);
     xmlDocument.setParameter("inpColumnName", columnName);
+    xmlDocument.setParameter("inpOrgId", orgId);
     xmlDocument.setParameter("tableId", tableId);
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");

@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.secureApp.LoginUtils;
@@ -46,6 +47,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 
 public class BaseWebServiceServlet extends HttpServlet {
+  private static final Logger log = Logger.getLogger(BaseWebServiceServlet.class);
 
   public static final String LOGIN_PARAM = "l";
   public static final String PASSWORD_PARAM = "p";
@@ -66,6 +68,11 @@ public class BaseWebServiceServlet extends HttpServlet {
       response.setHeader("WWW-Authenticate", "Basic realm=\"Openbravo\"");
       response.setStatus(401);
     }
+  }
+
+  protected void callServiceInSuper(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    super.service(request, response);
   }
 
   protected void doService(HttpServletRequest request, HttpServletResponse response)
@@ -98,8 +105,8 @@ public class BaseWebServiceServlet extends HttpServlet {
       w.write(WebServiceUtil.getInstance().createErrorXML(e));
       w.close();
     } catch (final Throwable t) {
+      log.error(t.getMessage(), t);
       SessionHandler.getInstance().setDoRollback(true);
-      t.printStackTrace(System.err);
       response.setStatus(500);
       final Writer w = response.getWriter();
       w.write(WebServiceUtil.getInstance().createErrorXML(t));

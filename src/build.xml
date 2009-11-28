@@ -100,21 +100,21 @@ build.war: build a war file in the lib directory.
     <taskdef name="validateDatabase" classname="org.openbravo.service.system.SystemValidationTask">
       <classpath refid="project.class.path" />
     </taskdef>
-    <validateDatabase userId="0" propertiesFile="${base.config}/Openbravo.properties" type="database" />
+    <validateDatabase userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="database" />
   </target>
 
   <target name="validate.modules">
     <taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">
       <classpath refid="project.class.path" />
     </taskdef>
-    <validateModules userId="0" propertiesFile="${base.config}/Openbravo.properties" type="module" />
+    <validateModules userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" />
   </target>
   
   <target name="load.logoimages">
     <taskdef name="imageloading" classname="org.openbravo.erpCommon.utility.ImageToDatabaseLoader">
       <classpath refid="project.class.path" />
     </taskdef>
-    <imageloading userId="0" propertiesFile="${base.config}/Openbravo.properties" basePath="${basedir}/../"
+    <imageloading userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" basePath="${basedir}/../"
       imagePaths="web/images/CompanyLogo_big.png,web/images/SupportLogo_big.png,web/images/CompanyLogo_small.png,web/skins/Default/Login/initialOpenbravoLogo.png,web/images/CompanyLogo_big.png"
       propertyNames="yourCompanyLoginImage,yourItServiceLoginImage,yourCompanyMenuImage,yourCompanyBigImage,yourCompanyDocumentImage"/>
   </target>
@@ -179,7 +179,8 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </taskdef>
     <echo message="Exporting sample reference data" />
-    <exportsampledata userId="0" propertiesFile="${base.config}/Openbravo.properties" clients="SmallBazaar" />
+    <exportsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" clients="SmallBazaar" />
+    <exportsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" clients="Accounting Test" />
   </target>
 
   <target name="import.sample.data" description="Import Sample Data" depends="generate.entities">
@@ -187,7 +188,7 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </taskdef>
     <echo message="Importing sample reference data" />
-    <importsampledata userId="0" propertiesFile="${base.config}/Openbravo.properties" />
+    <importsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" />
     <ant dir="${base.db}" target="database.postupdate.${bbdd.rdbms}" inheritAll="true" inheritRefs="true" />
   </target>
 
@@ -344,17 +345,27 @@ build.war: build a war file in the lib directory.
     </copy>
   </target>
 
-  <target name="wad" depends="init">
+  <target name="wadvalidation">
+    <taskdef name="WADValidation" classname="org.openbravo.wad.validation.WADValidatorTask">
+            <classpath refid="project.class.path" />
+          </taskdef>
+        
+        <WADValidation propertiesFile="${base.config}/Openbravo.properties"
+                       modules="${module}"
+                       stoponerror="${stopOnWadError}"/>
+  </target>
+  
+  <target name="wad" depends="init, wadvalidation">
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="true">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick' '${stopOnWadError}'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick'" />
       <classpath refid="project.class.path" />
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true" />
   </target>
 
-  <target name="wad.quick" depends="init">
+  <target name="wad.quick" depends="init, wadvalidation">
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick' '${stopOnWadError}'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick'" />
       <classpath refid="project.class.path" />
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true" />

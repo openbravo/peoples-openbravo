@@ -192,7 +192,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       if (!variables.getDBSession().equals("")) {
         loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
         if (!loggedOK) {
-          m_AuthManager.logout(request, response);
+          logout(request, response);
           return;
         }
       }

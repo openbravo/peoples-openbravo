@@ -82,7 +82,7 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="ISSHIPPER_WAREHOUSE"><![CDATA[ISSHIPPER IN ('Y', 'N')]]></check>
-      <check name="MWAREHOUSE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_WAREHOUSE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_WAREHOUSE_ISSHIPPER_CHK"><![CDATA[ISSHIPPER IN ('Y', 'N')]]></check>
     </table>
   </database>

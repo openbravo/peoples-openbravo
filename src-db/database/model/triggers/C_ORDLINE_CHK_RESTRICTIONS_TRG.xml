@@ -22,6 +22,10 @@
   v_Processed VARCHAR(60) ;
   v_C_ORDER_ID VARCHAR2(32) ;
   v_Docaction VARCHAR(60) ;
+  v_Docstatus VARCHAR(60);
+  v_DocumentNo C_ORDER.DocumentNO%TYPE;
+  v_IsSOTrx CHAR(1);
+  v_Message VARCHAR2(2000):='';
     
 BEGIN
     
@@ -36,17 +40,15 @@ BEGIN
   END IF;
   IF UPDATING THEN
     IF((COALESCE(:old.LINE, 0) <> COALESCE(:NEW.LINE, 0) OR COALESCE(:old.M_PRODUCT_ID, '0') <> COALESCE(:NEW.M_PRODUCT_ID, '0') OR COALESCE(:old.QTYORDERED, 0) <> COALESCE(:NEW.QTYORDERED, 0) OR COALESCE(:old.PRICELIST, 0) <> COALESCE(:NEW.PRICELIST, 0) OR COALESCE(:old.PRICEACTUAL, 0) <> COALESCE(:NEW.PRICEACTUAL, 0) OR COALESCE(:old.PRICELIMIT, 0) <> COALESCE(:NEW.PRICELIMIT, 0) OR COALESCE(:old.LINENETAMT, 0) <> COALESCE(:NEW.LINENETAMT, 0) OR COALESCE(:old.C_CHARGE_ID, '0') <> COALESCE(:NEW.C_CHARGE_ID, '0') OR COALESCE(:old.CHARGEAMT, 0) <> COALESCE(:NEW.CHARGEAMT, 0) OR COALESCE(:old.C_TAX_ID, '0') <> COALESCE(:NEW.C_TAX_ID, '0')  OR COALESCE(:old.DIRECTSHIP, '.') <> COALESCE(:NEW.DIRECTSHIP, '.') OR COALESCE(:old.M_ATTRIBUTESETINSTANCE_ID, '0') <> COALESCE(:NEW.M_ATTRIBUTESETINSTANCE_ID, '0') OR COALESCE(:old.QUANTITYORDER, 0) <> COALESCE(:NEW.QUANTITYORDER, 0) OR COALESCE(
-      :old.M_PRODUCT_UOM_ID, '0') <> COALESCE(:NEW.M_PRODUCT_UOM_ID, '0') )) THEN
+      :old.M_PRODUCT_UOM_ID, '0') <> COALESCE(:NEW.M_PRODUCT_UOM_ID, '0')
+      OR COALESCE(:old.QtyInvoiced, 0) <> COALESCE(:NEW.QtyInvoiced, 0))) THEN
       SELECT PROCESSED,
-    DOCACTION
-  INTO v_Processed,
-    v_Docaction
-  FROM C_ORDER
-  WHERE C_ORDER_ID=v_C_ORDER_ID;
-      IF(v_Processed='Y'
-        AND v_Docaction <> 'CL' 
-        AND (
-          (COALESCE(:OLD.LINE, 0) <> COALESCE(:NEW.LINE, 0))
+        DOCACTION, DOCSTATUS, DocumentNo, ISSOTRX
+      INTO v_Processed,
+        v_Docaction, v_DocStatus, v_DocumentNo, v_IsSOTrx
+      FROM C_ORDER
+      WHERE C_ORDER_ID=v_C_ORDER_ID;
+      IF((COALESCE(:OLD.LINE, 0) <> COALESCE(:NEW.LINE, 0))
           OR(COALESCE(:OLD.M_PRODUCT_ID, '0') <> COALESCE(:NEW.M_PRODUCT_ID, '0'))
           OR(COALESCE(:OLD.QTYORDERED, 0) <> COALESCE(:NEW.QTYORDERED, 0))
           OR(COALESCE(:OLD.PRICELIST, 0) <> COALESCE(:NEW.PRICELIST, 0))
@@ -62,9 +64,16 @@ BEGIN
           OR(COALESCE(:OLD.M_PRODUCT_UOM_ID, '0') <> COALESCE(:NEW.M_PRODUCT_UOM_ID, '0'))
           OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
           OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0'))
-        )
-      )THEN
-        RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+        ) THEN
+        IF (v_Processed='Y' AND v_Docaction <> 'CL') THEN
+          RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+        ELSIF (v_IsSOTrx ='Y' AND v_DocStatus = 'DR' AND (:OLD.QTYDELIVERED <> 0 OR :OLD.QTYINVOICED <> 0)) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@DeliveredInvoicedOrderline@');
+        END IF;
+      ELSIF (v_IsSOTrx = 'Y' AND ABS(:new.QtyInvoiced) > ABS(:new.QtyOrdered)) THEN
+        v_Message := '@OrderDocumentno@' || ' ' || v_DocumentNo || ' ' || '@line@' || :old.line || '. ';
+        v_Message := v_Message || '@QtyInvoicedHigherOrdered@';
+        RAISE_APPLICATION_ERROR(-20000, v_Message);
       END IF;
     END IF;
   END IF;

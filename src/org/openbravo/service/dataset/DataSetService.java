@@ -60,14 +60,14 @@ public class DataSetService implements OBSingleton {
 
   private static DataSetService instance;
 
-  public static DataSetService getInstance() {
+  public static synchronized DataSetService getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(DataSetService.class);
     }
     return instance;
   }
 
-  public static void setInstance(DataSetService instance) {
+  public static synchronized void setInstance(DataSetService instance) {
     DataSetService.instance = instance;
   }
 

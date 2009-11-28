@@ -70,10 +70,18 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|C_ElementValue_IDFROM", "");
       String strcelementvalueto = vars.getGlobalVariable("inpcElementValueIdTo",
           "ReportGeneralLedger|C_ElementValue_IDTO", "");
-      String strcelementvaluefromdes = vars.getGlobalVariable("inpElementValueIdFrom_DES",
-          "ReportGeneralLedger|inpElementValueIdFrom_DES", "");
-      String strcelementvaluetodes = vars.getGlobalVariable("inpElementValueIdTo_DES",
-          "ReportGeneralLedger|inpElementValueIdTo_DES", "");
+      String strcelementvaluefromdes = "", strcelementvaluetodes = "";
+      if (!strcelementvaluefrom.equals(""))
+        strcelementvaluefromdes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+            strcelementvaluefrom);
+      if (!strcelementvalueto.equals(""))
+        strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+            strcelementvalueto);
+      strcelementvaluefromdes = (strcelementvaluefromdes.equals("null")) ? ""
+          : strcelementvaluefromdes;
+      strcelementvaluetodes = (strcelementvaluetodes.equals("null")) ? "" : strcelementvaluetodes;
+      vars.setSessionValue("inpElementValueIdFrom_DES", strcelementvaluefromdes);
+      vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportGeneralLedger|cBpartnerId", "", IsIDFilter.instance);
@@ -97,10 +105,15 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
           "ReportGeneralLedger|C_ElementValue_IDTO");
-      String strcelementvaluefromdes = vars.getRequestGlobalVariable("inpElementValueIdFrom_DES",
-          "ReportGeneralLedger|inpElementValueIdFrom_DES");
-      String strcelementvaluetodes = vars.getRequestGlobalVariable("inpElementValueIdTo_DES",
-          "ReportGeneralLedger|inpElementValueIdTo_DES");
+      String strcelementvaluefromdes = "", strcelementvaluetodes = "";
+      if (!strcelementvaluefrom.equals(""))
+        strcelementvaluefromdes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+            strcelementvaluefrom);
+      if (!strcelementvalueto.equals(""))
+        strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+            strcelementvalueto);
+      vars.setSessionValue("inpElementValueIdFrom_DES", strcelementvaluefromdes);
+      vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportGeneralLedger|cBpartnerId", IsIDFilter.instance);
@@ -247,6 +260,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
         if (strcelementvalueto.equals("")) {
           strcelementvalueto = strcelementvaluefrom;
+          strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+              strcelementvalueto);
+          vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
+
         }
         if (log4j.isDebugEnabled())
           log4j.debug("##################### strcelementvaluefrom= " + strcelementvaluefrom);
@@ -254,21 +271,21 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           log4j.debug("##################### strcelementvalueto= " + strcelementvalueto);
         if (strHide.equals(""))
           data = ReportGeneralLedgerData.select(this, rowNum, (strcBpartnerId.equals("") && (strAll
-              .equals(""))) ? "'0' AS C_BPARTNER_ID, '0' AS PARTNER, "
+              .equals(""))) ? "TO_CHAR('0') AS C_BPARTNER_ID, TO_CHAR('0') AS PARTNER, "
               : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ", strcelementvaluefrom,
               strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
                   "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
                   "ReportGeneralLedger"), strcAcctSchemaId, null, null, null, strDateFrom,
               DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily, strcBpartnerId,
               strAmtFrom, strAmtTo, (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
-                  : "C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, ", pgLimit, oraLimit1, oraLimit2,
-              (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "PARTNER, ");
+                  : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, ", pgLimit, oraLimit1, oraLimit2,
+              (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "C_BPARTNER_ID, ");
         else
           data = ReportGeneralLedgerData
               .selectHiding(
                   this,
                   rowNum,
-                  (strcBpartnerId.equals("") && (strAll.equals(""))) ? "'0' AS C_BPARTNER_ID, '0' AS PARTNER, "
+                  (strcBpartnerId.equals("") && (strAll.equals(""))) ? "TO_CHAR('0') AS C_BPARTNER_ID, TO_CHAR('0') AS PARTNER, "
                       : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ", strDateFrom,
                   DateTimeData.nDaysAfter(this, strDateTo, "1"), strcelementvaluefrom,
                   strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -276,38 +293,43 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                       "ReportGeneralLedger"), strcAcctSchemaId, null, null, null, strDateFrom,
                   DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily, strcBpartnerId,
                   strAmtFrom, strAmtTo, (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
-                      : "C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, ", pgLimit, oraLimit1,
-                  oraLimit2, (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "PARTNER, ");
+                      : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, ", pgLimit, oraLimit1,
+                  oraLimit2, (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
+                      : "C_BPARTNER_ID, ");
       } else {
+        strcelementvalueto = "";
+        strcelementvaluetodes = "";
+        vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
         if (strHide.equals(""))
           data = ReportGeneralLedgerData
               .selectAll(
                   this,
                   rowNum,
-                  (strcBpartnerId.equals("") && (strAll.equals(""))) ? "'0' AS C_BPARTNER_ID, '0' AS PARTNER, "
+                  (strcBpartnerId.equals("") && (strAll.equals(""))) ? "TO_CHAR('0') AS C_BPARTNER_ID, TO_CHAR('0') AS PARTNER, "
                       : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ", Utility
                       .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
                       .getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
                   strcAcctSchemaId, null, null, null, strDateFrom, DateTimeData.nDaysAfter(this,
                       strDateTo, "1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo,
                   (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
-                      : "C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, ", pgLimit, oraLimit1,
-                  oraLimit2, (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "PARTNER, ");
+                      : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, ", pgLimit, oraLimit1,
+                  oraLimit2, (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
+                      : "C_BPARTNER_ID, ");
         else
           data = ReportGeneralLedgerData
               .selectAllHiding(
                   this,
                   rowNum,
-                  (strcBpartnerId.equals("") && (strAll.equals(""))) ? "'0' AS C_BPARTNER_ID, '0' AS PARTNER, "
+                  (strcBpartnerId.equals("") && (strAll.equals(""))) ? "TO_CHAR('0') AS C_BPARTNER_ID, TO_CHAR('0') AS PARTNER, "
                       : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ", strDateFrom,
                   DateTimeData.nDaysAfter(this, strDateTo, "1"), Utility.getContext(this, vars,
                       "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars,
                       "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, null, null, null,
                   strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily,
                   strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("") && (strAll
-                      .equals(""))) ? "" : "C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, ", pgLimit,
+                      .equals(""))) ? "" : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, ", pgLimit,
                   oraLimit1, oraLimit2, (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
-                      : "PARTNER, ");
+                      : "C_BPARTNER_ID, ");
       }
       if (log4j.isDebugEnabled())
         log4j.debug("RecordNo: " + initRecordNumber);
@@ -322,7 +344,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                 .select(
                     this,
                     rowNum,
-                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? "'0' AS C_BPARTNER_ID, '0' AS PARTNER, "
+                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? "TO_CHAR('0') AS C_BPARTNER_ID, TO_CHAR('0') AS PARTNER, "
                         : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ",
                     strcelementvaluefrom, strcelementvalueto, Utility.getContext(this, vars,
                         "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this,
@@ -332,30 +354,33 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                     strYearInitialDate, DateTimeData.nDaysAfter(this, data[0].dateacct, "1"),
                     strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo,
                     (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
-                        : "C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, ", null, null, null,
-                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "PARTNER, ");
+                        : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, ", null, null, null,
+                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "C_BPARTNER_ID, ");
           else
-            dataTotal = ReportGeneralLedgerData.selectHiding(this, rowNum, (strcBpartnerId
-                .equals("") && (strAll.equals(""))) ? "'0' AS C_BPARTNER_ID, '0' AS PARTNER, "
-                : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ", strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), strcelementvaluefrom,
-                strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
-                    "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
-                    "ReportGeneralLedger"), strcAcctSchemaId, data[0].id, data[0].dateacctnumber
-                    + data[0].factAcctGroupId + data[0].factAcctId,
-                (strcBpartnerId.equals("") && strAll.equals("")) ? null : data[0].cBpartnerId,
-                strYearInitialDate, DateTimeData.nDaysAfter(this, data[0].dateacct, "1"),
-                strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo,
-                (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
-                    : "C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, ", null, null, null,
-                (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "PARTNER, ");
+            dataTotal = ReportGeneralLedgerData
+                .selectHiding(
+                    this,
+                    rowNum,
+                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? "TO_CHAR('0') AS C_BPARTNER_ID, TO_CHAR('0') AS PARTNER, "
+                        : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ", strDateFrom,
+                    DateTimeData.nDaysAfter(this, strDateTo, "1"), strcelementvaluefrom,
+                    strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
+                        "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+                        "ReportGeneralLedger"), strcAcctSchemaId, data[0].id,
+                    data[0].dateacctnumber + data[0].factAcctGroupId + data[0].factAcctId,
+                    (strcBpartnerId.equals("") && strAll.equals("")) ? null : data[0].cBpartnerId,
+                    strYearInitialDate, DateTimeData.nDaysAfter(this, data[0].dateacct, "1"),
+                    strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo,
+                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
+                        : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, ", null, null, null,
+                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "C_BPARTNER_ID, ");
         } else {
           if (strHide.equals(""))
             dataTotal = ReportGeneralLedgerData
                 .selectAll(
                     this,
                     rowNum,
-                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? "'0' AS C_BPARTNER_ID, '0' AS PARTNER, "
+                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? "TO_CHAR('0') AS C_BPARTNER_ID, TO_CHAR('0') AS PARTNER, "
                         : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ",
                     Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
                     Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
@@ -367,22 +392,25 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                     strYearInitialDate, DateTimeData.nDaysAfter(this, data[0].dateacct, "1"),
                     strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo,
                     (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
-                        : "C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, ", null, null, null,
-                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "PARTNER, ");
+                        : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, ", null, null, null,
+                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "C_BPARTNER_ID, ");
           else
-            dataTotal = ReportGeneralLedgerData.selectAllHiding(this, rowNum, (strcBpartnerId
-                .equals("") && (strAll.equals(""))) ? "'0' AS C_BPARTNER_ID, '0' AS PARTNER, "
-                : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ", strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), Utility.getContext(this, vars,
-                    "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars,
-                    "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, data[0].id,
-                data[0].dateacctnumber + data[0].factAcctGroupId + data[0].factAcctId,
-                (strcBpartnerId.equals("") && strAll.equals("")) ? null : data[0].cBpartnerId,
-                strYearInitialDate, DateTimeData.nDaysAfter(this, data[0].dateacct, "1"),
-                strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo,
-                (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
-                    : "C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, ", null, null, null,
-                (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "PARTNER, ");
+            dataTotal = ReportGeneralLedgerData
+                .selectAllHiding(
+                    this,
+                    rowNum,
+                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? "TO_CHAR('0') AS C_BPARTNER_ID, TO_CHAR('0') AS PARTNER, "
+                        : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ", strDateFrom,
+                    DateTimeData.nDaysAfter(this, strDateTo, "1"), Utility.getContext(this, vars,
+                        "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this,
+                        vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, data[0].id,
+                    data[0].dateacctnumber + data[0].factAcctGroupId + data[0].factAcctId,
+                    (strcBpartnerId.equals("") && strAll.equals("")) ? null : data[0].cBpartnerId,
+                    strYearInitialDate, DateTimeData.nDaysAfter(this, data[0].dateacct, "1"),
+                    strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo,
+                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
+                        : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, ", null, null, null,
+                    (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "C_BPARTNER_ID, ");
         }
       }
       // Now dataTotal is covered adding debit and credit amounts
@@ -583,21 +611,21 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
         if (strHide.equals(""))
           data = ReportGeneralLedgerData.select(this, "0", (strcBpartnerId.equals("") && (strAll
-              .equals(""))) ? "'0' AS C_BPARTNER_ID, '0' AS PARTNER, "
+              .equals(""))) ? "TO_CHAR('0') AS C_BPARTNER_ID, TO_CHAR('0') AS PARTNER, "
               : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ", strcelementvaluefrom,
               strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
                   "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
                   "ReportGeneralLedger"), strcAcctSchemaId, null, null, null, strDateFrom,
               DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily, strcBpartnerId,
               strAmtFrom, strAmtTo, (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
-                  : "C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, ", null, null, null, (strcBpartnerId
-                  .equals("") && (strAll.equals(""))) ? "" : "PARTNER, ");
+                  : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, ", null, null, null, (strcBpartnerId
+                  .equals("") && (strAll.equals(""))) ? "" : "C_BPARTNER_ID, ");
         else
           data = ReportGeneralLedgerData
               .selectHiding(
                   this,
                   "0",
-                  (strcBpartnerId.equals("") && (strAll.equals(""))) ? "'0' AS C_BPARTNER_ID, '0' AS PARTNER, "
+                  (strcBpartnerId.equals("") && (strAll.equals(""))) ? "TO_CHAR('0') AS C_BPARTNER_ID, TO_CHAR('0') AS PARTNER, "
                       : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ", strDateFrom,
                   DateTimeData.nDaysAfter(this, strDateTo, "1"), strcelementvaluefrom,
                   strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -605,33 +633,34 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                       "ReportGeneralLedger"), strcAcctSchemaId, null, null, null, strDateFrom,
                   DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily, strcBpartnerId,
                   strAmtFrom, strAmtTo, (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
-                      : "C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, ", null, null, null,
-                  (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "PARTNER, ");
+                      : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, ", null, null, null,
+                  (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "C_BPARTNER_ID, ");
       } else {
         if (strHide.equals(""))
           data = ReportGeneralLedgerData.selectAll(this, "0", (strcBpartnerId.equals("") && (strAll
-              .equals(""))) ? "'0' AS C_BPARTNER_ID, '0' AS PARTNER, "
+              .equals(""))) ? "TO_CHAR('0') AS C_BPARTNER_ID, TO_CHAR('0') AS PARTNER, "
               : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ", Utility.getContext(this,
               vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars,
               "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, null, null, null,
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily,
               strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("") && (strAll
-                  .equals(""))) ? "" : "C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, ", null, null,
-              null, (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "PARTNER, ");
+                  .equals(""))) ? "" : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, ", null, null,
+              null, (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "C_BPARTNER_ID, ");
         else
           data = ReportGeneralLedgerData
               .selectAllHiding(
                   this,
                   "0",
-                  (strcBpartnerId.equals("") && (strAll.equals(""))) ? "'0' AS C_BPARTNER_ID, '0' AS PARTNER, "
+                  (strcBpartnerId.equals("") && (strAll.equals(""))) ? "TO_CHAR('0') AS C_BPARTNER_ID, TO_CHAR('0') AS PARTNER, "
                       : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER, ", strDateFrom,
                   DateTimeData.nDaysAfter(this, strDateTo, "1"), Utility.getContext(this, vars,
                       "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars,
                       "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, null, null, null,
                   strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strOrgFamily,
                   strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("") && (strAll
-                      .equals(""))) ? "" : "C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, ", null,
-                  null, null, (strcBpartnerId.equals("") && (strAll.equals(""))) ? "" : "PARTNER, ");
+                      .equals(""))) ? "" : "FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, ", null,
+                  null, null, (strcBpartnerId.equals("") && (strAll.equals(""))) ? ""
+                      : "C_BPARTNER_ID, ");
       }
     }
     String strOld = "";

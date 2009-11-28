@@ -85,34 +85,34 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_FORM" name="ADFORM_ADWFNODE">
-        <reference local="AD_FORM_ID" foreign="AD_FORM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADWFNODE">
-        <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TASK" name="ADTASK_ADWFNODE">
-        <reference local="AD_TASK_ID" foreign="AD_TASK_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_WINDOW" name="ADWINDOW_ADWFNODE">
-        <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_WORKFLOW" name="ADWORKFLOW_ADWFNODE" onDelete="cascade">
-        <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_WORKFLOW" name="ADWORKFLOW_ADWFNODEACTION">
-        <reference local="WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="WF_NODECLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_WF_NODE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="WF_NODEORG">
+      <foreign-key foreignTable="AD_FORM" name="AD_WF_NODE_AD_FORM">
+        <reference local="AD_FORM_ID" foreign="AD_FORM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_WF_NODE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_PROCESS" name="AD_WF_NODE_AD_PROCESS">
+        <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TASK" name="AD_WF_NODE_AD_TASK">
+        <reference local="AD_TASK_ID" foreign="AD_TASK_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_WINDOW" name="AD_WF_NODE_AD_WINDOW">
+        <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_WORKFLOW" name="AD_WF_NODE_AD_WORKFLOW" onDelete="cascade">
+        <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_WORKFLOW" name="AD_WF_NODE_WORKFLOW">
+        <reference local="WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
       </foreign-key>
       <index name="AD_WF_NODE_WORKFLOW" unique="false">
         <index-column name="AD_WORKFLOW_ID"/>
       </index>
-      <check name="ADWFNODE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADWFNODE_ISCENTMAINT_CHECK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
+      <check name="AD_WF_NODE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_WF_NODE_ISCENTRALLYMAIN_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
     </table>
   </database>

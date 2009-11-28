@@ -50,14 +50,14 @@ public class WebServiceUtil implements OBSingleton {
 
   private static WebServiceUtil instance = new WebServiceUtil();
 
-  public static WebServiceUtil getInstance() {
+  public static synchronized WebServiceUtil getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(WebServiceUtil.class);
     }
     return instance;
   }
 
-  public static void setInstance(WebServiceUtil instance) {
+  public static synchronized void setInstance(WebServiceUtil instance) {
     WebServiceUtil.instance = instance;
   }
 

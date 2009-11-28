@@ -396,6 +396,13 @@ public class Buscador extends HttpSecureAppServlet {
     // get list of fields with comboreloads
     Vector<String> comboReloadFields = getComboReloadFields(this, strTab);
 
+    // store in session all the fields in the pup up, to be used when loading session parameters
+    StringBuffer strAllFields = new StringBuffer();
+    for (BuscadorData field : fields) {
+      strAllFields.append("|").append(field.columnname).append("|");
+    }
+    vars.setSessionValue("buscador.searchFilds", strAllFields.toString());
+
     for (int i = 0; i < fields.length; i++) {
       randomId4Num1 = rnd.nextInt(10000);
       randomId4Num2 = rnd.nextInt(10000);

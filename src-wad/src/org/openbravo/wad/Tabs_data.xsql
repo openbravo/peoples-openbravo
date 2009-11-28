@@ -32,7 +32,7 @@
         AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, AD_TAB.UIPATTERN, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
         '' as tabNameTrl, AD_TABLE.ad_table_id AS table_Id, ad_tab.isInfoTab, ad_tab.isTranslationTab, '' AS NameTab, 
         replace(replace(AD_TAB.FILTERCLAUSE, CHR(10), ' '), CHR(13), ' ') AS FILTERCLAUSE, AD_TAB.EDITREFERENCE, AD_MODEL_OBJECT.CLASSNAME,
-        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE
+        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE, AD_TAB.AD_MODULE_ID as tabmodule
         FROM AD_TAB, AD_WINDOW, AD_TABLE, AD_MODEL_OBJECT, AD_MODULE M1
         WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
         AND AD_TAB.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
@@ -71,7 +71,7 @@
         AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, AD_TAB.UIPATTERN, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
         '' as tabNameTrl, AD_TABLE.ad_table_id AS table_Id, ad_tab.isInfoTab, ad_tab.isTranslationTab, '' AS NameTab, 
         replace(replace(AD_TAB.FILTERCLAUSE, CHR(10), ' '), CHR(13), ' ') AS FILTERCLAUSE, AD_TAB.EDITREFERENCE, AD_MODEL_OBJECT.CLASSNAME,
-        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE
+        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE, AD_TAB.AD_MODULE_ID as tabmodule
         FROM AD_TAB, AD_WINDOW, AD_TABLE, AD_MODEL_OBJECT, AD_MODULE M1, AD_MODULE M
         WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
         AND AD_TAB.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
@@ -148,7 +148,7 @@
         AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, AD_TAB.UIPATTERN, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
         '' as tabNameTrl, AD_TABLE.ad_table_id AS table_Id, ad_tab.isInfoTab, ad_tab.isTranslationTab, '' AS NameTab, 
         replace(replace(AD_TAB.FILTERCLAUSE, CHR(10), ' '), CHR(13), ' ') AS FILTERCLAUSE, AD_TAB.EDITREFERENCE, AD_MODEL_OBJECT.CLASSNAME,
-        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE
+        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE, AD_TAB.AD_MODULE_ID as tabmodule
         FROM AD_TAB, AD_WINDOW, AD_TABLE, AD_MODEL_OBJECT, AD_SYSTEM_INFO SI, AD_MODULE M1
         WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
         AND AD_TAB.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
@@ -215,7 +215,7 @@
         SELECT ad_tab_id as tabId, ad_tab.NAME as tabName, ad_window.NAME as windowName, 
         ad_tab.seqno as seqNo, ad_tab.tablevel as tabLevel, ad_tab.name as tabNameCompact, ad_tab.isInfoTab, ad_tab.isTranslationTab, 
         ad_tab.AD_WINDOW_ID as key, '' as TD_Class, '' as href, '' as Td_Height, '' as Parent_Key, ad_tab.NAME as tabNameTrl, 
-        ad_tab.EDITREFERENCE 
+        ad_tab.EDITREFERENCE, AD_TAB.AD_MODULE_ID as tabmodule
         FROM ad_tab, ad_window
         WHERE ad_tab.AD_WINDOW_ID = ad_window.AD_WINDOW_ID
           AND ad_tab.tablevel = 0 
@@ -238,7 +238,7 @@
         AND iskey='Y' 
         AND AD_TABLE.ad_table_id = a2.ad_table_id) AS KEY, '' AS href, '' AS Td_Height, 
         COALESCE(a1.ad_tab_id,'-1') AS Parent_Key, a2.isInfoTab, a2.isTranslationTab, AD_ShortName(a2.Name) as NameTab, 
-        a2.EDITREFERENCE 
+        a2.EDITREFERENCE, a2.AD_MODULE_ID as tabmodule
         FROM AD_TAB a1, AD_TAB a2
         WHERE a1.ad_tab_id = ?
         AND a1.ad_window_id = a2.ad_window_id

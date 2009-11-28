@@ -106,11 +106,11 @@
       <foreign-key foreignTable="MRP_PLANNER" name="MRP_PLANNER_RUN_PURCHASE">
         <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="VENDOR_MRP_RUN_PURCHASE">
+      <foreign-key foreignTable="C_BPARTNER" name="MRP_RUN_PURCHASE_VENDOR">
         <reference local="VENDOR_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <check name="MRPRUNPURCHASE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MRPRUNPURCHASE_LAUNCHPO_CHECK"><![CDATA[LAUNCHPO IN ('Y', 'N')]]></check>
-      <check name="MRPRUNPURCHASE_SIMULATE_CHECK"><![CDATA[SIMULATE IN ('Y', 'N')]]></check>
+      <check name="MRP_RUN_PURCHASE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MRP_RUN_PURCHASE_LAUNCHPO_CHK"><![CDATA[LAUNCHPO IN ('Y', 'N')]]></check>
+      <check name="MRP_RUN_PURCHASE_SIMULATE_CHK"><![CDATA[SIMULATE IN ('Y', 'N')]]></check>
     </table>
   </database>

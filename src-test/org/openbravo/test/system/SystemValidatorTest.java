@@ -28,6 +28,8 @@ import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.service.system.DatabaseValidator;
 import org.openbravo.service.system.ModuleValidator;
 import org.openbravo.service.system.SystemValidationResult;
@@ -55,7 +57,22 @@ public class SystemValidatorTest extends BaseTest {
     final DatabaseValidator databaseValidator = new DatabaseValidator();
     databaseValidator.setDatabase(createDatabaseObject());
     final SystemValidationResult result = databaseValidator.validate();
-    printResult(result);
+    printResult(result, true);
+  }
+
+  /**
+   * Executes the {@link DatabaseValidator#validate()} method on the current database for all
+   * modules.
+   */
+  public void testSystemValidationModules() {
+    setUserContext("0");
+    for (Module module : OBDal.getInstance().createQuery(Module.class, "").list()) {
+      final DatabaseValidator databaseValidator = new DatabaseValidator();
+      databaseValidator.setDatabase(createDatabaseObject());
+      databaseValidator.setValidateModule(module);
+      final SystemValidationResult result = databaseValidator.validate();
+      printResult(result, false);
+    }
   }
 
   private Database createDatabaseObject() {
@@ -82,10 +99,10 @@ public class SystemValidatorTest extends BaseTest {
     setUserContext("0");
     final ModuleValidator moduleValidator = new ModuleValidator();
     final SystemValidationResult result = moduleValidator.validate();
-    printResult(result);
+    printResult(result, true);
   }
 
-  private void printResult(SystemValidationResult result) {
+  private void printResult(SystemValidationResult result, boolean allowFail) {
     for (SystemValidationType validationType : result.getWarnings().keySet()) {
       log.debug("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
       log.debug("Warnings for Validation type: " + validationType);
@@ -108,7 +125,7 @@ public class SystemValidatorTest extends BaseTest {
           sb.append("\n");
         }
       }
-      if (errors.size() > 0) {
+      if (allowFail && errors.size() > 0) {
         fail(sb.toString());
       }
     }

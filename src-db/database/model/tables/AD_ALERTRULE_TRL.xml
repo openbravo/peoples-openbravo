@@ -49,19 +49,19 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_ALERTRULE" name="ADALERTRULE_ADALERTRULETRL" onDelete="cascade">
+      <foreign-key foreignTable="AD_ALERTRULE" name="AD_ALERTRULE_TRL_AD_ALERTRULE" onDelete="cascade">
         <reference local="AD_ALERTRULE_ID" foreign="AD_ALERTRULE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADALERRTRULETRL" onDelete="cascade">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_ALERTRULE_TRL_AD_CLIENT" onDelete="cascade">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_ADALERTRULETRL">
+      <foreign-key foreignTable="AD_LANGUAGE" name="AD_ALERTRULE_TRL_AD_LANGUAGE">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADALERTRULETRL">
+      <foreign-key foreignTable="AD_ORG" name="AD_ALERTRULE_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <unique name="ADALERTRULETRL_ADALERTRULEI_UN">
+      <unique name="AD_ALERTRULE_TRL_ALERTRULE__UN">
         <unique-column name="AD_ALERTRULE_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>

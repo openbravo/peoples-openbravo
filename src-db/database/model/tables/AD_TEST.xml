@@ -109,37 +109,37 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_TEST">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_TEST">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_TEST">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_TEST">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_DEBT_PAYMENT" name="CDEBT_PAYMENT_TEST">
-        <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="CLOCATION_TEST">
-        <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_TEST">
-        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_TEST">
-        <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_TEST">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_ACCOUNT_TEST">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="AD_TEST_ACCOUNT_ACCT">
         <reference local="ACCOUNT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <check name="TEST_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="TEST_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_TEST_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_TEST_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="AD_TEST_C_BPARTNER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="AD_TEST_C_CURRENCY">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DEBT_PAYMENT" name="AD_TEST_C_DEBT_PAYMENT">
+        <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_LOCATION" name="AD_TEST_C_LOCATION">
+        <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="AD_TEST_C_UOM">
+        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_LOCATOR" name="AD_TEST_M_LOCATOR">
+        <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="AD_TEST_M_PRODUCT">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <check name="AD_TEST_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_TEST_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

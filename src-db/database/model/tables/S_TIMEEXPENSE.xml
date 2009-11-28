@@ -65,22 +65,22 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_STIMEEXPENSE">
+      <foreign-key foreignTable="AD_CLIENT" name="S_TIMEEXPENSE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_STIMEEXPENSE">
+      <foreign-key foreignTable="AD_ORG" name="S_TIMEEXPENSE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_STIMEEXPENSE">
+      <foreign-key foreignTable="C_BPARTNER" name="S_TIMEEXPENSE_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_STIMEEXPENSE">
+      <foreign-key foreignTable="M_PRICELIST" name="S_TIMEEXPENSE_M_PRICELIST">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_STIMEEXPENSE">
+      <foreign-key foreignTable="M_WAREHOUSE" name="S_TIMEEXPENSE_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
-      <check name="STIMEEXPENSE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="STIMEEXPENSE_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="S_TIMEEXPENSE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="S_TIMEEXPENSE_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

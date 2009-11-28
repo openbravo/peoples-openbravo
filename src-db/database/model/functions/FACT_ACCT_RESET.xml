@@ -56,7 +56,7 @@
 
     v_factAcctCounter NUMBER:= 0;
     c_commitInterval NUMBER:= 1000;
-    
+
     v_count NUMBER;
     v_DocAction VARCHAR2(60);
     v_UpdatedBy AD_PINSTANCE.UpdatedBy%TYPE;
@@ -106,20 +106,20 @@
     END LOOP; -- Get Parameter
 
     -- Get AD_Org_ID from the document header (useful when the process is executed from a document)
-    IF (v_AD_Table_ID IS NOT NULL AND v_Record_ID IS NOT NULL) THEN     
+    IF (v_AD_Table_ID IS NOT NULL AND v_Record_ID IS NOT NULL) THEN
         SELECT TableName
         INTO v_TableName
-        FROM AD_Table 
+        FROM AD_Table
         WHERE AD_Table_ID=v_AD_Table_ID;
         IF (v_Record_ID!='0') THEN
-         EXECUTE IMMEDIATE 
-          'SELECT AD_Org_ID 
+         EXECUTE IMMEDIATE
+          'SELECT AD_Org_ID
           FROM ' ||  v_TableName || '
           WHERE ' || v_TableName || '_ID =''' || v_Record_ID || ''' AND AD_CLIENT_ID =''' || v_AD_Client_ID || ''' '
           INTO v_AD_Org_ID;
         END IF;
     END IF;
-    
+
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
    -- Fact_Acct_Rest - Finish_Process Extension Point
    SELECT count(*) INTO v_count
@@ -129,17 +129,17 @@
      DECLARE
        v_ep_instance VARCHAR(32);
        v_extension_point_id VARCHAR(32) := 'E1F9635815BF4A44B88E3EAADBD0D10E';
-       
+
      BEGIN
        v_ep_instance := get_uuid();
        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Record_ID',
          v_Record_ID, NULL, NULL, NULL, NULL, NULL, NULL);
        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AD_Table_ID',
-         v_AD_Table_ID, NULL, NULL, NULL, NULL, NULL, NULL); 
+         v_AD_Table_ID, NULL, NULL, NULL, NULL, NULL, NULL);
        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AD_Client_ID',
-         v_AD_Client_ID, NULL, NULL, NULL, NULL, NULL, NULL); 
+         v_AD_Client_ID, NULL, NULL, NULL, NULL, NULL, NULL);
        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'DeleteFact',
-         v_DeleteFact, NULL, NULL, NULL, NULL, NULL, NULL);  
+         v_DeleteFact, NULL, NULL, NULL, NULL, NULL, NULL);
        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'User',
          v_UpdatedBy, NULL, NULL, NULL, NULL, NULL, NULL);
        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Message',
@@ -160,7 +160,7 @@
        SELECT p_string INTO v_DeleteFact
        FROM ad_ep_instance_para
        WHERE ad_ep_instance_id = v_ep_instance
-         AND parametername LIKE 'DeleteFact';   
+         AND parametername LIKE 'DeleteFact';
        DELETE FROM ad_ep_instance_para
        WHERE ad_ep_instance_id = v_ep_instance;
       END;
@@ -208,7 +208,7 @@
           v_ResultStr:='ResetTable:' || Cur_Tables.TableName;
            IF(v_DeletePosting='Y') THEN
             FOR Cur_Fact_Acct IN (
-              SELECT Record_ID
+              SELECT DISTINCT Record_ID
               FROM FACT_ACCT
               WHERE AD_TABLE_ID=Cur_Tables.AD_Table_ID
               AND AD_ISORGINCLUDED(FACT_ACCT.ad_org_id, v_AD_Org_ID, FACT_ACCT.ad_client_id)<>-1
@@ -264,13 +264,19 @@
                          AND Record_ID=Cur_Fact_Acct.Record_ID
                          AND FACT_ACCT.AD_Client_ID = Cur_Clients.AD_Client_ID
 	        );
-        DELETE
+	    SELECT count(DISTINCT FACT_ACCT_GROUP_ID)
+	    INTO v_rowcount
+	    FROM FACT_ACCT
+              WHERE AD_TABLE_ID=Cur_Tables.AD_Table_ID
+                AND Record_ID=Cur_Fact_Acct.Record_ID
+                AND AD_Client_ID = Cur_Clients.AD_Client_ID;
+            DELETE
               FROM FACT_ACCT
               WHERE AD_TABLE_ID=Cur_Tables.AD_Table_ID
                 AND Record_ID=Cur_Fact_Acct.Record_ID
                 AND AD_Client_ID = Cur_Clients.AD_Client_ID;
 
-              v_rowcount:=SQL%ROWCOUNT;
+              -- GET DIAGNOSTICS v_rowcount:=ROW_COUNT;
               v_Deleted:=v_Deleted + v_rowcount;
               DBMS_OUTPUT.PUT_LINE('  deleted=' || v_rowcount) ;
 
@@ -282,10 +288,10 @@
         END LOOP;
         v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='''  || Cur_Clients.AD_Client_ID
         || ''' AND (Posted=''Y'' OR Processing<>''N'' OR Processing IS NULL) AND NOT EXISTS (SELECT 1 FROM FACT_ACCT WHERE AD_TABLE_ID =''' || Cur_Tables.AD_Table_ID ||
-        ''' AND RECORD_ID = ' || Cur_Tables.TableName || '_ID AND AD_CLIENT_ID =''' || Cur_Clients.AD_Client_ID || ''') AND (' 
-        || Cur_Tables.TableName || '_ID = ''' || v_Record_ID || ''' OR ''' || UPPER(v_Record_ID) ||''' = ''NULL'')';
+        ''' AND RECORD_ID = ' || Cur_Tables.TableName || '_ID AND AD_CLIENT_ID =''' || Cur_Clients.AD_Client_ID || ''') AND ('
+        || Cur_Tables.TableName || '_ID = ''' || v_Record_ID || ''' OR ''' || UPPER(v_Record_ID) ||''' = ''0'')';
             -- DBMS_OUTPUT.PUT_LINE('  executing: ' || v_Cmd);
-            EXECUTE IMMEDIATE v_Cmd; 
+            EXECUTE IMMEDIATE v_Cmd;
             v_rowcount:=SQL%ROWCOUNT;
             v_Updated:=v_Updated + v_rowcount;
             DBMS_OUTPUT.PUT_LINE('  updated=' || v_rowcount) ;
@@ -305,7 +311,12 @@
       END LOOP;
     END;
     -- Summary info
-    v_Message:='@Updated@ = ' || v_Updated || ', @Deleted@ = ' || v_Deleted;
+    --v_Message:='@Updated@ = ' || v_Updated || ', @Deleted@ = ' || v_Deleted;
+    IF(v_DeletePosting='Y') THEN
+      v_Message:='@UnpostedDocuments@ = ' || v_Updated || ', @DeletedEntries@ = ' || v_Deleted;
+    ELSE
+      v_Message:='@UpdatedDocuments@ = ' || v_Updated;
+    END IF;
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;

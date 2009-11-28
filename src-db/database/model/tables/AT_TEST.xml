@@ -80,10 +80,10 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_ATTEST">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ATTEST">
+      <foreign-key foreignTable="AD_CLIENT" name="AT_TEST_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AT_ROLLOGIN" name="ATROLLOGIN_ATTEST">
+      <foreign-key foreignTable="AT_ROLLOGIN" name="AT_TEST_AT_ROLLOGIN">
         <reference local="AT_ROLLOGIN_ID" foreign="AT_ROLLOGIN_ID"/>
       </foreign-key>
       <check name="AT_TEST_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

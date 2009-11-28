@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.BatchUpdateException;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBSingleton;
@@ -34,6 +35,26 @@ import org.openbravo.base.provider.OBSingleton;
  */
 
 public class DbUtility implements OBSingleton {
+
+  /**
+   * This method will take care of finding the real underlying exception. When a jdbc
+   * {@link BatchUpdateException} occurs then not the whole stack trace is available in the log
+   * because the {@link BatchUpdateException} does not place the underlying exception in the
+   * {@link Throwable#getCause()} but in the {@link BatchUpdateException#getNextException()}.
+   * 
+   * @param t
+   *          the throwable to analyze
+   * @return the underlying sql exception or the original t if none found
+   */
+  public static Throwable getUnderlyingSQLException(Throwable throwable) {
+    if (throwable.getCause() instanceof BatchUpdateException
+        && ((BatchUpdateException) throwable.getCause()).getNextException() != null) {
+      final BatchUpdateException bue = (BatchUpdateException) throwable.getCause();
+      return bue.getNextException();
+    }
+    return throwable;
+  }
+
   /**
    * Reads a file and returns the content as a String. The file must exist otherwise an
    * {@link OBException} is thrown.

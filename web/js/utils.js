@@ -63,14 +63,14 @@ var debugMode = false; // Flag to output debug messages in Firebug
  * @return Boolean
  */
 function isDebugEnabled() {
-  return debugMode && typeof console === 'object';
+  return debugMode && typeof window.console === 'object';
 }
 
 /**
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5361';
+  var number = '5433';
   return number;
 }
 
@@ -340,10 +340,10 @@ function removeOnUnload() {
  */
 function removeOnUnloadHandler(form) {
   var f = form;
-  if(f === null) {
+  if(typeof f === 'undefined' || f === null) {
     f = document.forms[0];
   }
-  if(typeof f.isPopUpCall !== 'undefined' && f.isPopUpCall.value === '1') {
+  if(typeof f.IsPopUpCall !== 'undefined' && f.IsPopUpCall.value === '1') {
     // Checking for a onunload event handler
     if(typeof window.onunload === 'function') {
       if(isDebugEnabled()) {
@@ -4314,6 +4314,7 @@ function numberInputEvent(command, obj, evt) {
     focusNumberInput(obj, getInputNumberMask(obj));
     return true;
   } else if (command == "onblur") {
+    blurNumberInput(obj, getInputNumberMask(obj));
     return true;
   } else if (command == "onkeydown") {
     manageDecPoint(obj, null, evt);

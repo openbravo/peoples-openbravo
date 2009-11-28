@@ -92,16 +92,16 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAWRPHASE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAWRPHASE">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MA_SEQUENCE" name="MA_SEQUENCE_MAWRPHASE">
         <reference local="MA_SEQUENCE_ID" foreign="MA_SEQUENCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_WORKREQUIREMENT" name="MA_WORKREQUIREMENT_MAWRPHASE">
         <reference local="MA_WORKREQUIREMENT_ID" foreign="MA_WORKREQUIREMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_PROCESS" name="MAPROCESS_MAWRPHASE">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_WRPHASE_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_PROCESS" name="MA_WRPHASE_MA_PROCESS">
         <reference local="MA_PROCESS_ID" foreign="MA_PROCESS_ID"/>
       </foreign-key>
       <index name="MA_WRPHASE_WORKREQUIREMENT" unique="false">

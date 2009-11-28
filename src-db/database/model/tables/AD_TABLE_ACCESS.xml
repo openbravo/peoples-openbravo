@@ -55,13 +55,13 @@
       <foreign-key foreignTable="AD_ORG" name="AD_DATAACCESSORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADTABLEACCESS" onDelete="cascade">
+      <foreign-key foreignTable="AD_ROLE" name="AD_TABLE_ACCESS_AD_ROLE" onDelete="cascade">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADTABLEACCESS" onDelete="cascade">
+      <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_ACCESS_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
-      <unique name="ADTABLEACCESS_ADROLEID_ADTA_UN">
+      <unique name="AD_TABLE_ACCESS_ROLE_TABLE_UN">
         <unique-column name="AD_ROLE_ID"/>
         <unique-column name="AD_TABLE_ID"/>
       </unique>

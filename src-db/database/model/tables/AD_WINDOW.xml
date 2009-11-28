@@ -69,24 +69,25 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA[SELECT AD_MODULE_ID FROM AD_MODULE WHERE AD_MODULE_ID<>'0' AND TYPE='M']]></onCreateDefault>
       </column>
-      <foreign-key foreignTable="AD_IMAGE" name="ADIMAGE_ADWINDOW">
-        <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADWINDOW">
-        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="WINDOWCLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_WINDOW_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="WINDOWORG">
+      <foreign-key foreignTable="AD_IMAGE" name="AD_WINDOW_AD_IMAGE">
+        <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="AD_WINDOW_AD_MODULE">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_WINDOW_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <unique name="AD_WINDOW_NAME">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
+        <unique-column name="AD_MODULE_ID"/>
       </unique>
+      <check name="AD_WINDOW_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_WINDOW_ISSOTRX_CHK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
       <check name="AD_WINDOW_NAME_CHECK"><![CDATA[(INSTR(NAME, (CHR(39))) = 0) AND (INSTR(NAME, TO_CHAR('_')) = 0)]]></check>
-      <check name="ADWINDOW_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADWINDOW_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
     </table>
   </database>

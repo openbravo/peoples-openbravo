@@ -49,14 +49,14 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_C_INCOTERMS">
+      <foreign-key foreignTable="AD_CLIENT" name="C_INCOTERMS_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_C_INCOTERMS">
+      <foreign-key foreignTable="AD_ORG" name="C_INCOTERMS_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="C_INCOTERMS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_INCOTERMS_ISDELIVERY_CHECK"><![CDATA[ISDELIVERY IN ('Y', 'N')]]></check>
-      <check name="CINCOTERM_REQUIRDESCR_CHECK"><![CDATA[REQUIRESDESCRIPTION IN ('Y', 'N')]]></check>
+      <check name="C_INCOTERMS_REQUIRESDESCRI_CHK"><![CDATA[REQUIRESDESCRIPTION IN ('Y', 'N')]]></check>
     </table>
   </database>
