@@ -79,6 +79,7 @@
 <!--10-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--10-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--10-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--10-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADString]]></WAD_IMPL>
 <!--10--></AD_REFERENCE>
 
 <!--11--><AD_REFERENCE>
@@ -91,6 +92,7 @@
 <!--11-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--11-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--11-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--11-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADInteger]]></WAD_IMPL>
 <!--11--></AD_REFERENCE>
 
 <!--12--><AD_REFERENCE>
@@ -103,6 +105,7 @@
 <!--12-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--12-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--12-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--12-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADAmount]]></WAD_IMPL>
 <!--12--></AD_REFERENCE>
 
 <!--13--><AD_REFERENCE>
@@ -115,6 +118,7 @@
 <!--13-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--13-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--13-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--13-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADID]]></WAD_IMPL>
 <!--13--></AD_REFERENCE>
 
 <!--14--><AD_REFERENCE>
@@ -127,6 +131,7 @@
 <!--14-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--14-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--14-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--14-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADText]]></WAD_IMPL>
 <!--14--></AD_REFERENCE>
 
 <!--15--><AD_REFERENCE>
@@ -139,6 +144,7 @@
 <!--15-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--15-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--15-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--15-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADDate]]></WAD_IMPL>
 <!--15--></AD_REFERENCE>
 
 <!--16--><AD_REFERENCE>
@@ -151,6 +157,7 @@
 <!--16-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--16-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--16-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--16-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADDateTime]]></WAD_IMPL>
 <!--16--></AD_REFERENCE>
 
 <!--17--><AD_REFERENCE>
@@ -163,6 +170,7 @@
 <!--17-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--17-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--17-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--17-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADList]]></WAD_IMPL>
 <!--17--></AD_REFERENCE>
 
 <!--18--><AD_REFERENCE>
@@ -175,6 +183,7 @@
 <!--18-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--18-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--18-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--18-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADTable]]></WAD_IMPL>
 <!--18--></AD_REFERENCE>
 
 <!--19--><AD_REFERENCE>
@@ -187,6 +196,7 @@
 <!--19-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--19-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--19-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--19-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADTableDir]]></WAD_IMPL>
 <!--19--></AD_REFERENCE>
 
 <!--20--><AD_REFERENCE>
@@ -199,6 +209,7 @@
 <!--20-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--20-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--20-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--20-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADYesNo]]></WAD_IMPL>
 <!--20--></AD_REFERENCE>
 
 <!--21--><AD_REFERENCE>
@@ -224,6 +235,7 @@
 <!--22-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--22-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--22-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--22-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADNumber]]></WAD_IMPL>
 <!--22--></AD_REFERENCE>
 
 <!--23--><AD_REFERENCE>
@@ -236,6 +248,7 @@
 <!--23-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--23-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--23-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--23-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADBinary]]></WAD_IMPL>
 <!--23--></AD_REFERENCE>
 
 <!--24--><AD_REFERENCE>
@@ -248,6 +261,7 @@
 <!--24-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--24-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--24-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--24-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADTime]]></WAD_IMPL>
 <!--24--></AD_REFERENCE>
 
 <!--25--><AD_REFERENCE>
@@ -273,6 +287,7 @@
 <!--26-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--26-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--26-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--26-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADRowID]]></WAD_IMPL>
 <!--26--></AD_REFERENCE>
 
 <!--27--><AD_REFERENCE>
@@ -285,6 +300,7 @@
 <!--27-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--27-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--27-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--27-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADColor]]></WAD_IMPL>
 <!--27--></AD_REFERENCE>
 
 <!--28--><AD_REFERENCE>
@@ -297,6 +313,7 @@
 <!--28-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--28-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--28-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--28-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADButton]]></WAD_IMPL>
 <!--28--></AD_REFERENCE>
 
 <!--29--><AD_REFERENCE>
@@ -309,6 +326,7 @@
 <!--29-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--29-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--29-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--29-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADQuantity]]></WAD_IMPL>
 <!--29--></AD_REFERENCE>
 
 <!--30--><AD_REFERENCE>
@@ -321,6 +339,7 @@
 <!--30-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--30-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--30-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--30-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADSearch]]></WAD_IMPL>
 <!--30--></AD_REFERENCE>
 
 <!--31--><AD_REFERENCE>
@@ -346,6 +365,7 @@
 <!--32-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--32-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--32-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--32-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADImage]]></WAD_IMPL>
 <!--32--></AD_REFERENCE>
 
 <!--33--><AD_REFERENCE>
@@ -358,6 +378,7 @@
 <!--33-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--33-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--33-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--33-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADAssignment]]></WAD_IMPL>
 <!--33--></AD_REFERENCE>
 
 <!--34--><AD_REFERENCE>
@@ -370,6 +391,7 @@
 <!--34-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--34-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--34-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--34-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADMemo]]></WAD_IMPL>
 <!--34--></AD_REFERENCE>
 
 <!--35--><AD_REFERENCE>
@@ -382,6 +404,7 @@
 <!--35-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--35-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--35-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--35-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADPAttribute]]></WAD_IMPL>
 <!--35--></AD_REFERENCE>
 
 <!--100--><AD_REFERENCE>
@@ -2768,6 +2791,7 @@
 <!--800008-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--800008-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800008-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--800008-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADPrice]]></WAD_IMPL>
 <!--800008--></AD_REFERENCE>
 
 <!--800009--><AD_REFERENCE>
@@ -2891,6 +2915,7 @@
 <!--800019-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--800019-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800019-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--800019-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADGeneral Quantity]]></WAD_IMPL>
 <!--800019--></AD_REFERENCE>
 
 <!--800020--><AD_REFERENCE>
@@ -3722,6 +3747,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800101-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--800101-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800101-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--800101-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADLink]]></WAD_IMPL>
 <!--800101--></AD_REFERENCE>
 
 <!--800102--><AD_REFERENCE>
@@ -3983,6 +4009,7 @@ For example, if you want to create different invoices for each ship location for
 <!--4AA6C3BE9D3B4D84A3B80489505A23E5-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
 <!--4AA6C3BE9D3B4D84A3B80489505A23E5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4AA6C3BE9D3B4D84A3B80489505A23E5-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
+<!--4AA6C3BE9D3B4D84A3B80489505A23E5-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADImage BLOB]]></WAD_IMPL>
 <!--4AA6C3BE9D3B4D84A3B80489505A23E5--></AD_REFERENCE>
 
 <!--55BB57CFEF7E4EA0B3F429E4A55586D8--><AD_REFERENCE>
