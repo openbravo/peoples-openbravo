@@ -204,8 +204,17 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         if (vars.commandIn("CONFIGURE_MODULE")) {
           // Continue with the module install
           String recordId = vars.getStringParameter("inpcRecordId", IsIDFilter.instance);
-          response.sendRedirect(strDireccion
-              + "/ad_forms/ModuleManagement.html?Command=INSTALL&inpcRecordId=" + recordId);
+          String command = "INSTALL";
+
+          if (recordId.equals("FFF")) {
+            command = "UPDATE";
+            recordId = "&inpcUpdate=all";
+          } else {
+            recordId = "&inpcRecordId=" + recordId;
+          }
+
+          response.sendRedirect(strDireccion + "/ad_forms/ModuleManagement.html?Command=" + command
+              + recordId);
         } else {
           // Prompt HB configured
           String msg = Utility.messageBD(connectionProvider, "HB_SUCCESS", vars.getLanguage());
