@@ -289,7 +289,7 @@ build.war: build a war file in the lib directory.
   </target>
   
   <target name="compileSqlc" depends="sqlc">
-    <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+    <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" excludes="${base.modules}/src-wad/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
       <classpath refid="project.class.path" />
     </javac>
     
