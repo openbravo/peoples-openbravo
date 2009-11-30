@@ -2312,16 +2312,9 @@ public class WadUtility {
     prop.setProperty("isReadOnlyDefinedTab", (isReadOnlyDefinedTab ? "Y" : "N"));
     prop.setProperty("hasParentsFields", (hasParentsFields ? "Y" : "N"));
 
-    String classname = "org.openbravo.wad.controls.WAD"
-        + FormatUtilities.replace(field.getField("referenceName"));
-    WADControl _myClass = null;
-    try {
-      Class<?> c = Class.forName(classname);
-      _myClass = (WADControl) c.newInstance();
-    } catch (ClassNotFoundException ex) {
-      log4j.warn("Couldn´t find class: " + classname);
-      _myClass = new WADControl();
-    }
+    WADControl _myClass = getWadControlClass(conn, field.getField("AD_Reference_ID"), field
+        .getField("AD_Reference_Value_ID"));
+
     _myClass.setConnection(conn);
     _myClass.setReportEngine(xmlEngine);
     _myClass.setInfo(prop);
@@ -2329,6 +2322,29 @@ public class WadUtility {
     _myClass.setConnection(null);
 
     return _myClass;
+  }
+
+  /**
+   * Obtains an instance of the WAD implementator for the reference passed as parameter
+   */
+  private static WADControl getWadControlClass(ConnectionProvider conn, String parentRef,
+      String subRef) throws Exception {
+    String classname = WadUtilityData.getReferenceClassName(conn, subRef, parentRef);
+    WADControl control;
+    try {
+      Class<?> c = Class.forName(classname);
+      control = (WADControl) c.newInstance();
+    } catch (ClassNotFoundException ex) {
+      log4j.warn("Couldn't find class: " + classname);
+      control = new WADControl();
+    } catch (InstantiationException e) {
+      log4j.warn("Couldn't instanciate class: " + classname);
+      control = new WADControl();
+    } catch (IllegalAccessException e) {
+      log4j.warn("Illegal access class: " + classname);
+      control = new WADControl();
+    }
+    return control;
   }
 
   public static boolean isNewGroup(WADControl control, String strFieldGroup) {
