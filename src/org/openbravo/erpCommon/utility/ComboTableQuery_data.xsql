@@ -91,10 +91,20 @@
         SELECT AD_REFERENCE_ID
         FROM AD_REFERENCE 
         WHERE UPPER(NAME) = UPPER(?) 
-        AND UPPER(VALIDATIONTYPE) = UPPER(?)
+        AND PARENTREFERENCE_ID = ?
       </Sql>
       <Parameter name="value"/>
       <Parameter name="validationtype"/>
+  </SqlMethod>
+  <SqlMethod name="getBaseReferenceID" type="preparedStatement" return="String" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT AD_REFERENCE_ID
+        FROM AD_REFERENCE 
+        WHERE UPPER(NAME) = UPPER(?) 
+        AND isBaseReference = 'Y'
+      </Sql>
+      <Parameter name="value"/>
   </SqlMethod>
   <SqlMethod name="getValidationID" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>

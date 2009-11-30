@@ -187,7 +187,7 @@ public class ComboTableData {
         Integer.valueOf(_reference).intValue();
       } catch (Exception ignore) {
         if (!Utility.isUUIDString(_reference))
-          _reference = ComboTableQueryData.getReferenceID(getPool(), _reference, "D");
+          _reference = ComboTableQueryData.getBaseReferenceID(getPool(), _reference);
       }
     }
     setParameter(internalPrefix + "reference", _reference);
@@ -236,7 +236,7 @@ public class ComboTableData {
       } catch (Exception ignore) {
         if (!Utility.isUUIDString(_reference))
           _reference = ComboTableQueryData.getReferenceID(getPool(), _reference,
-              (getReferenceType().equals("17") ? "L" : "T"));
+              getReferenceType());
       }
     }
     setParameter(internalPrefix + "objectReference", _reference);
