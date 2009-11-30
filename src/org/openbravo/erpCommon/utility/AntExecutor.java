@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -33,7 +32,6 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.listener.Log4jListener;
-import org.openbravo.utils.OBLogAppender;
 
 /**
  * The AntExecutor class allows to execute ant tasks in a given build.xml file.
@@ -45,8 +43,8 @@ public class AntExecutor {
 
   private Project project;
   private String baseDir;
-  private OBPrintStream log;
-  private OBPrintStream err;
+  private PrintStream log;
+  private PrintStream err;
   private String returnMessage;
   private PrintWriter out;
 
@@ -88,6 +86,7 @@ public class AntExecutor {
     this(buildDir + "/build.xml", buildDir);
   }
 
+  @Deprecated
   public void setPrintWriter(PrintWriter p) {
     out = p;
   }
@@ -102,6 +101,7 @@ public class AntExecutor {
    * @return - The complete file name (including directory)
    * @throws Exception
    */
+  @Deprecated
   public String setLogFile(String directory, String logFileName) throws Exception {
     // DefaultLogger logger = new DefaultLogger();
     final FileOutputStream logFile = new FileOutputStream(directory + "/" + logFileName);
@@ -129,9 +129,10 @@ public class AntExecutor {
   // return null;
   // return setLogFile(baseDir + "/log", name);
   // }
+  @Deprecated
   public void setLogFileInOBPrintStream(File f) {
-    log.setLogFile(f);
-    err.setLogFile(f);
+    ((OBPrintStream) log).setLogFile(f);
+    ((OBPrintStream) err).setLogFile(f);
   }
 
   public void setLogFile(String filename) {
@@ -158,6 +159,7 @@ public class AntExecutor {
    * 
    * @see OBPrintStream
    */
+  @Deprecated
   public void setOBPrintStreamLog(PrintWriter p) {
     setPrintWriter(p);
     final DefaultLogger logger1 = new DefaultLogger();
@@ -171,6 +173,7 @@ public class AntExecutor {
     log = ps1;
   }
 
+  @Deprecated
   public void setOBPrintStreamLog(PrintStream p) {
     final DefaultLogger logger1 = new DefaultLogger();
     final OBPrintStream ps1 = new OBPrintStream(p);
@@ -184,7 +187,7 @@ public class AntExecutor {
 
     // force log4j to also print to this response
     // OBLogAppender.setOutputStream(ps1);
-    OBLogAppender.setProject(project);
+    org.openbravo.utils.OBLogAppender.setProject(project);
   }
 
   /**
@@ -216,17 +219,7 @@ public class AntExecutor {
       project.executeTarget(task);
     } catch (final BuildException e) {
       logger.error(e.getMessage(), e);
-      logger.error(throwableToString(e));
-      err.print(e.toString());
     }
-  }
-
-  // log stack trace
-  private String throwableToString(Throwable t) {
-    final StringWriter sw = new StringWriter();
-    final PrintWriter pw = new PrintWriter(sw);
-    t.printStackTrace(pw);
-    return sw.toString();
   }
 
   /**
@@ -244,8 +237,6 @@ public class AntExecutor {
       project.executeTargets(tasks);
     } catch (final BuildException e) {
       logger.error(e.getMessage(), e);
-      err.print(e.toString());
-      logger.error(throwableToString(e));
     }
   }
 
@@ -257,8 +248,9 @@ public class AntExecutor {
    * @param v
    *          - boolean value to set
    */
+  @Deprecated
   public void setFinished(boolean v) {
-    log.setFinished(v);
+    ((OBPrintStream) log).setFinished(v);
     if (out != null)
       out.close();
   }
@@ -278,6 +270,7 @@ public class AntExecutor {
    * 
    * @return - error String
    */
+  @Deprecated
   public String getErr() {
     // note returnMessage has to be stored in a member because calling
     // err.getLog(...) twice will always result in an empty string
@@ -285,7 +278,7 @@ public class AntExecutor {
     if (returnMessage != null) {
       return returnMessage;
     }
-    returnMessage = err.getLog(OBPrintStream.TEXT_PLAIN);
+    returnMessage = ((OBPrintStream) err).getLog(OBPrintStream.TEXT_PLAIN);
     if (returnMessage == null || returnMessage.equals("")) {
       final String mode = project.getProperty("deploy.mode");
       returnMessage = "SuccessRebuild." + mode;
@@ -293,6 +286,7 @@ public class AntExecutor {
     return returnMessage;
   }
 
+  @Deprecated
   public boolean hasErrorOccured() {
     return !getErr().startsWith("SuccessRebuild");
   }

@@ -78,8 +78,6 @@ public class ApplyModules extends HttpSecureAppServlet {
       update(response, vars);
     } else if (vars.commandIn("REQUESTERRORSTATE")) {
       requesterrorstate(response, vars);
-    } else if (vars.commandIn("UPDATELOG")) {
-      updateLog(response, vars);
     } else if (vars.commandIn("GETERR")) {
       getError(response, vars);
     } else if (vars.commandIn("RESTART")) {
@@ -95,11 +93,6 @@ public class ApplyModules extends HttpSecureAppServlet {
    * Prints the default page for the process, showing the process description and a OK and Cancel
    * buttons. First it checks whether the server has write permissions to be able to execute the
    * process.
-   * 
-   * @param response
-   * @param vars
-   * @throws IOException
-   * @throws ServletException
    */
   private void printPage(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars) throws IOException, ServletException {
@@ -210,6 +203,13 @@ public class ApplyModules extends HttpSecureAppServlet {
     RestartTomcat.restart();
   }
 
+  /**
+   * This method returns an ApplyModulesResponse object, that later is transformed into a JSON
+   * object and resend to the rebuild window.
+   * 
+   * @param state
+   * @return
+   */
   private ApplyModulesResponse fillResponse(String state) {
     ApplyModulesResponse resp = new ApplyModulesResponse();
     resp.setState(Integer.parseInt(state.replace("RB", "")));
@@ -258,6 +258,10 @@ public class ApplyModules extends HttpSecureAppServlet {
     return resp;
   }
 
+  /**
+   * This method is called via AJAX through a timer in the rebuild window. It returns the current
+   * status of the system (and warnings/errors that happened in the current state)
+   */
   private void update(HttpServletResponse response, VariablesSecureApp vars) {
     PreparedStatement ps = null;
     try {
@@ -288,11 +292,17 @@ public class ApplyModules extends HttpSecureAppServlet {
         try {
           releasePreparedStatement(ps);
         } catch (SQLException e) {
-          log4j.error(e);
+          log4j.error(
+              "Error while trying to close prepared statement when updating the rebuild window", e);
         }
     }
   }
 
+  /**
+   * This method is called via AJAX, and returns the status and warnings/errors for a particular
+   * state. This method will be called when the Rebuild Window notices that one or more steps were
+   * not updated and the build process already finished them
+   */
   private void requesterrorstate(HttpServletResponse response, VariablesSecureApp vars) {
     String state = vars.getStringParameter("reqStatus");
     ApplyModulesResponse pet = fillResponse(state);
@@ -319,11 +329,6 @@ public class ApplyModules extends HttpSecureAppServlet {
   /**
    * Method to be called via AJAX. Creates a new AntExecutor object, saves it in session and
    * executes the apply modules task on it.
-   * 
-   * @param response
-   * @param vars
-   * @throws IOException
-   * @throws ServletException
    */
   private void startApply(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
@@ -352,8 +357,6 @@ public class ApplyModules extends HttpSecureAppServlet {
       final PrintWriter out = response.getWriter();
 
       ant.setLogFile(vars.getStringParameter("logfile"));
-
-      vars.setSessionObject("ApplyModules|Log", ant);
 
       // do not execute tranlsation process (all entries should be already in the module)
       ant.setProperty("tr", "no");
@@ -403,7 +406,7 @@ public class ApplyModules extends HttpSecureAppServlet {
       }
       out.close();
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error("Error while updating the system status in the rebuild window.", e);
       // rolback the old transaction and start a new one
       // to store the build log
       OBDal.getInstance().rollbackAndClose();
@@ -420,7 +423,7 @@ public class ApplyModules extends HttpSecureAppServlet {
         releasePreparedStatement(ps3);
         releasePreparedStatement(updateSession);
       } catch (SQLException e) {
-        log4j.error(e);
+        log4j.error("Error while updating the system status in the rebuild window.", e);
       }
       OBContext.getOBContext().setInAdministratorMode(admin);
     }
@@ -455,33 +458,8 @@ public class ApplyModules extends HttpSecureAppServlet {
   }
 
   /**
-   * Method to be called via AJAX. It is intended to be called periodically to show the log
-   * generated after the las call
-   * 
-   * @param response
-   * @param vars
-   * @throws IOException
-   * @throws ServletException
-   */
-  private void updateLog(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
-    try {
-      final AntExecutor ant = (AntExecutor) vars.getSessionObject("ApplyModules|Log");
-      if (ant != null)
-        ant.setPrintWriter(response.getWriter());
-    } catch (final Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
    * Method to be called via AJAX. It returns a XML structure with the error messages (if any) or a
    * Success one
-   * 
-   * @param response
-   * @param vars
-   * @throws IOException
-   * @throws ServletException
    */
   private void getError(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
@@ -495,9 +473,9 @@ public class ApplyModules extends HttpSecureAppServlet {
       if (rs.next()) {
         error.setType("Error");
         error.setTitle(Utility.messageBD(myPool, "Error", vars.getLanguage()));
-        error
-            .setMessage(Utility.messageBD(myPool, "BuildError", vars.getLanguage())
-                + "<a href=\"http://wiki.openbravo.com/wiki/UpgradeTips\" target=\"_blank\">this link</a>.");
+        error.setMessage(Utility.messageBD(myPool, "BuildError", vars.getLanguage())
+            + "<a href=\"http://wiki.openbravo.com/wiki/UpgradeTips\" target=\"_blank\">"
+            + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>.");
 
       } else {
         ps2 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN'");
@@ -506,10 +484,10 @@ public class ApplyModules extends HttpSecureAppServlet {
         if (rs2.next()) {
           error.setType("Warning");
           error.setTitle(Utility.messageBD(myPool, "Warning", vars.getLanguage()));
-          error
-              .setMessage(Utility.messageBD(myPool, "BuildWarning", vars.getLanguage())
-                  + "<a href=\"http://wiki.openbravo.com/wiki/UpgradeTips\" target=\"_blank\">this link</a>."
-                  + Utility.messageBD(myPool, "BuildWarning2", vars.getLanguage()));
+          error.setMessage(Utility.messageBD(myPool, "BuildWarning", vars.getLanguage())
+              + "<a href=\"http://wiki.openbravo.com/wiki/UpgradeTips\" target=\"_blank\">"
+              + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>."
+              + Utility.messageBD(myPool, "BuildWarning2", vars.getLanguage()));
 
         } else {
           error.setType("Success");
