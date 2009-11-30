@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_REFERENCE_TRG2">
-    <trigger name="AD_REFERENCE_TRG2" table="AD_REFERENCE" fires="after" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="AD_REFERENCE_TRG2" table="AD_REFERENCE" fires="after" insert="true" update="false" delete="true" foreach="row">
       <body><![CDATA[
 
 
@@ -18,7 +18,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All portions are Copyright (C) 2001-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -32,18 +32,8 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-
-  IF (UPDATING) THEN
-    IF NOT((COALESCE(:old.NAME,'.')<>COALESCE(:NEW.NAME,'.')
-   OR COALESCE(:old.VALIDATIONTYPE,'.')<>COALESCE(:NEW.VALIDATIONTYPE,'.')
-   OR COALESCE(:old.IsActive,'.')<>COALESCE(:NEW.IsActive,'.')))
-  THEN
-      RETURN;
-    END IF;
-  END IF;
-
  IF (DELETING) THEN
-  IF :OLD.VALIDATIONTYPE='S' AND :OLD.ISACTIVE='Y' THEN
+  IF :OLD.PARENTREFERENCE_ID='30' AND :OLD.ISACTIVE='Y' THEN
    DELETE FROM AD_MODEL_OBJECT_MAPPING WHERE AD_MODEL_OBJECT_ID IN (
       SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_REFERENCE_ID=:old.AD_REFERENCE_ID AND ACTION = 'S');
    DELETE FROM AD_MODEL_OBJECT WHERE ACTION = 'S' AND AD_MODEL_OBJECT.AD_REFERENCE_ID = :OLD.AD_REFERENCE_ID;
@@ -51,7 +41,7 @@ BEGIN
  END IF;
 
  IF (INSERTING) THEN
-  IF :NEW.VALIDATIONTYPE='S' AND :NEW.ISACTIVE='Y' THEN
+  IF :NEW.PARENTREFERENCE_ID='30' AND :NEW.ISACTIVE='Y' THEN
    v_ClassName := AD_MAPPING_FORMAT(TO_CHAR(:NEW.NAME));
    Ad_Sequence_Next('AD_Model_Object', :new.AD_Client_ID, v_ID);
    INSERT INTO AD_MODEL_OBJECT (AD_MODEL_OBJECT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
