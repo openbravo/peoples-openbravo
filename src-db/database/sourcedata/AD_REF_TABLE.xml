@@ -9,7 +9,7 @@
 <!--1-->  <AD_KEY><![CDATA[129]]></AD_KEY>
 <!--1-->  <AD_DISPLAY><![CDATA[130]]></AD_DISPLAY>
 <!--1-->  <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--1-->  <WHERECLAUSE><![CDATA[AD_Reference.ValidationType='D']]></WHERECLAUSE>
+<!--1-->  <WHERECLAUSE><![CDATA[AD_Reference.IsBaseReference='Y']]></WHERECLAUSE>
 <!--1-->  <ORDERBYCLAUSE><![CDATA[2]]></ORDERBYCLAUSE>
 <!--1--></AD_REF_TABLE>
 
