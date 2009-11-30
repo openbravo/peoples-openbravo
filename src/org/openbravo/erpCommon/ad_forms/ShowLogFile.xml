@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 <REPORT>
-  <template file="ShowFile.html"/>
+  <template file="ShowLogFile.html"/>
   <PARAMETER id="paramLanguage" name="language" default=""/>
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>

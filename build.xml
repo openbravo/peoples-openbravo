@@ -252,6 +252,7 @@ export.database: exports database structure and data to xml files.
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
 
+    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <antcall target="build.deploy" />
     <!-- only restart tomcat if the restart prop was set to true -->
     <condition property="dorestart">
@@ -498,7 +499,8 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="install.source" depends="init, create.database, wad.lib, trl.lib, compile.complete.deploy">
-    
+
+    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 

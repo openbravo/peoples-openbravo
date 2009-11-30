@@ -348,7 +348,7 @@ public class ApplyModules extends HttpSecureAppServlet {
       Properties props = new Properties();
       props.setProperty("log4j.appender.DB", "org.openbravo.utils.OBRebuildAppender");
       props.setProperty("log4j.appender.DB.Basedir", vars.getSessionValue("#sourcePath"));
-      props.setProperty("log4j.rootCategory", "INFO,R,DB");
+      props.setProperty("log4j.rootCategory", "INFO,DB");
       PropertyConfigurator.configure(props);
 
       ant = new AntExecutor(vars.getSessionValue("#sourcePath"));
@@ -358,7 +358,7 @@ public class ApplyModules extends HttpSecureAppServlet {
 
       ant.setLogFile(vars.getStringParameter("logfile"));
 
-      // do not execute tranlsation process (all entries should be already in the module)
+      // do not execute translation process (all entries should be already in the module)
       ant.setProperty("tr", "no");
 
       final Vector<String> tasks = new Vector<String>();

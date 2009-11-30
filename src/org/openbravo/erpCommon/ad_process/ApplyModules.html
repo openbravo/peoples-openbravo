@@ -397,6 +397,7 @@
     function onUnloadDo() {
       try {
         top.opener.setProcessingMode('window', false);
+        reloadOpener();
       }
       catch (e) {}
     }
@@ -575,6 +576,8 @@
               </tr>
               <tr>
                 <td style="height: 20px;"></td>
+              </tr>
+              <tr>
                 <td class="Button_RightAlign_ContentCell">
                   <div>
                     <button type="button"
