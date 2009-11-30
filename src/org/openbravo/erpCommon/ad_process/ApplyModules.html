@@ -51,49 +51,47 @@
     var start=false;
     var mainTimeout;
 
-    
     function restart() {
-        if (document.frmMain.option[0].checked) {
-          window.opener.submitCommandForm('RESTART', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
-          closeThisPage();
-          return false;
-        } else if (document.frmMain.option[1].checked) {
-          window.opener.submitCommandForm('RELOAD', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
-          closeThisPage();
-          return false;
-        } else if (document.frmMain.option[2].checked) {
-          closeThisPage();
-        }
-      } 
+      if (document.frmMain.option[0].checked) {
+        window.opener.submitCommandForm('RESTART', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
+        closeThisPage();
+        return false;
+      } else if (document.frmMain.option[1].checked) {
+        window.opener.submitCommandForm('RELOAD', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
+        closeThisPage();
+        return false;
+      } else if (document.frmMain.option[2].checked) {
+        closeThisPage();
+      }
+    } 
 
     function getError1(paramXMLParticular, XMLHttpRequestObj) {
-        var strText = "";
-        if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
-          try {
-            if (XMLHttpRequestObj.responseText) {
-                strText = XMLHttpRequestObj.responseText;
-            }
-          } catch (e) {
-            initialize_MessageBox('messageBoxID');
-            setValues_MessageBox('messageBoxID','ERROR','ERROR',e);
+      var strText = "";
+      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
+        try {
+          if (XMLHttpRequestObj.responseText) {
+              strText = XMLHttpRequestObj.responseText;
           }
-          if (strText == "") {
-            showJSMessage(22);
-          } else {
-            //Expecting msg in JSON format
-            var msg = eval("("+strText+")");
-            initialize_MessageBox('messageBoxID');
-            setValues_MessageBox('messageBoxID',msg.OBError.type, msg.OBError.title, msg.OBError.message);
-            if(msg.OBError.type!="Error"){
-                displayLogicElement('restartOptions',true);
-            }
-            document.getElementById("rebuildMessage").style.display = "none";
-          }
+        } catch (e) {
+          initialize_MessageBox('messageBoxID');
+          setValues_MessageBox('messageBoxID','ERROR','ERROR',e);
         }
-        return true;
+        if (strText == "") {
+          showJSMessage(22);
+        } else {
+          //Expecting msg in JSON format
+          var msg = eval("("+strText+")");
+          initialize_MessageBox('messageBoxID');
+          setValues_MessageBox('messageBoxID',msg.OBError.type, msg.OBError.title, msg.OBError.message);
+          if(msg.OBError.type!="Error"){
+              displayLogicElement('restartOptions',true);
+          }
+          document.getElementById("rebuildMessage").style.display = "none";
+        }
+      }
+      return true;
     }
-      
-    
+ 
     function getError() {
       var frm = document.frmMain;
       var paramXMLReq = null;
@@ -101,14 +99,14 @@
     }
     
     function endProcess(paramXMLParticular, XMLHttpRequestObj) {
-        if (getReadyStateHandler(XMLHttpRequestObj)) { 
-            processing = false;
-            top.opener.setProcessingMode('window', false);
-            setTimeout("getError()",100);
-        }
-        return true;
+      if (getReadyStateHandler(XMLHttpRequestObj)) { 
+        processing = false;
+        top.opener.setProcessingMode('window', false);
+        setTimeout("getError()",100);
+      }
+      return true;
     }
-    
+ 
     function startProcessing() {
       startLocalChrono('localChrono');
       processing = true;
@@ -119,7 +117,7 @@
       var paramXMLReq = null;
       return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false, null, paramXMLReq);
     }
-    
+ 
     function stopLocalChrono() {
       lc_isChronoEnabled = false;
     }
@@ -132,146 +130,142 @@
 
     function getStatusIndex(state){
       for(i=0;i<possible_states.length;i++){
-          if(possible_states[i]==state){
-              return i;
-          }
+        if(possible_states[i]==state){
+          return i;
+        }
       }
     }
 
     function askForErrorStatus(paramXMLParticular, XMLHttpRequestObj) {
-    	var strText = "";
-        if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
-          try {
-            if (XMLHttpRequestObj.responseText) {
-                strText = XMLHttpRequestObj.responseText;
-            }
-          } catch (e) {
+      var strText = "";
+      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
+        try {
+          if (XMLHttpRequestObj.responseText) {
+            strText = XMLHttpRequestObj.responseText;
           }
-
-          if(start===true){
-            var msg = eval("("+strText+")");
-            
-            var state=msg.Response.state;
-            var errorStatus=msg.Response.statusofstate;
-            var stateindex=getStatusIndex(state);
-            progList_changeStatus(correspondingNode(state), errorStatus);
-            error_status[stateindex]=errorStatus;
-            insertWarnsAndErrors(msg.Response);
-          }
-
-          var ind11=getStatusIndex(11);
-          if(error_status[ind11]=='Success' && error_status[ind11+1]=='Success' && error_status[ind11+2]=='Success' && error_status[ind11+3]=='Success' && error_status[ind11+4]=='Success'){
-              progList_changeStatus('1', 'Success');
-          }else if(error_status[ind11]=='Error' || error_status[ind11+1]=='Error'|| error_status[ind11+2]=='Error'|| error_status[ind11+3]=='Error'|| error_status[ind11+4]=='Error'){
-              progList_changeStatus('1', 'Error');
-          }else if(error_status[ind11]=='Warning' || error_status[ind11+1]=='Warning'|| error_status[ind11+2]=='Warning'|| error_status[ind11+3]=='Warning'|| error_status[ind11+4]=='Warning'){
-              progList_changeStatus('1', 'Warning');
-          }
-          var ind41=getStatusIndex(41);
-          if(error_status[ind41]=='Success' && error_status[ind41+1]=='Success' && error_status[ind41+2]=='Success' && error_status[ind41+3]=='Success' && error_status[ind41+4]=='Success'){
-              progList_changeStatus('4', 'Success');
-          }else if(error_status[ind41]=='Error' || error_status[ind41+1]=='Error'|| error_status[ind41+2]=='Error'|| error_status[ind41+3]=='Error'|| error_status[ind41+4]=='Error'){
-              progList_changeStatus('4', 'Error');
-          }else if(error_status[ind41]=='Warning' || error_status[ind41+1]=='Warning'|| error_status[ind41+2]=='Warning'|| error_status[ind41+3]=='Warning'|| error_status[ind41+4]=='Warning'){
-              progList_changeStatus('4', 'Warning');
-          }
+        } catch (e) {
         }
+
+        if(start===true){
+          var msg = eval("("+strText+")");
+ 
+          var state=msg.Response.state;
+          var errorStatus=msg.Response.statusofstate;
+          var stateindex=getStatusIndex(state);
+          progList_changeStatus(correspondingNode(state), errorStatus);
+          error_status[stateindex]=errorStatus;
+          insertWarnsAndErrors(msg.Response);
+        }
+
+        var ind11=getStatusIndex(11);
+        if(error_status[ind11]=='Success' && error_status[ind11+1]=='Success' && error_status[ind11+2]=='Success' && error_status[ind11+3]=='Success' && error_status[ind11+4]=='Success'){
+          progList_changeStatus('1', 'Success');
+        }else if(error_status[ind11]=='Error' || error_status[ind11+1]=='Error'|| error_status[ind11+2]=='Error'|| error_status[ind11+3]=='Error'|| error_status[ind11+4]=='Error'){
+          progList_changeStatus('1', 'Error');
+        }else if(error_status[ind11]=='Warning' || error_status[ind11+1]=='Warning'|| error_status[ind11+2]=='Warning'|| error_status[ind11+3]=='Warning'|| error_status[ind11+4]=='Warning'){
+          progList_changeStatus('1', 'Warning');
+        }
+        var ind41=getStatusIndex(41);
+        if(error_status[ind41]=='Success' && error_status[ind41+1]=='Success' && error_status[ind41+2]=='Success' && error_status[ind41+3]=='Success' && error_status[ind41+4]=='Success'){
+          progList_changeStatus('4', 'Success');
+        }else if(error_status[ind41]=='Error' || error_status[ind41+1]=='Error'|| error_status[ind41+2]=='Error'|| error_status[ind41+3]=='Error'|| error_status[ind41+4]=='Error'){
+          progList_changeStatus('4', 'Error');
+        }else if(error_status[ind41]=='Warning' || error_status[ind41+1]=='Warning'|| error_status[ind41+2]=='Warning'|| error_status[ind41+3]=='Warning'|| error_status[ind41+4]=='Warning'){
+          progList_changeStatus('4', 'Warning');
+        }
+      }
     }
 
     function correspondingNode(state_index){
-        state_index=parseFloat(state_index)/10;
-        return state_index.toString();
+      state_index=parseFloat(state_index)/10;
+      return state_index.toString();
     }
-
-    
+ 
     function insertWarnsAndErrors(response){
-        if(start===true){
-	        if(response.statusofstate=="Warning"){
-	            var warns=response.warnings.string;
-	            if(warns!==null){
-	                if(!(warns instanceof Array)){
-	                    warns=[warns];
-	                }
-	                if(numofwarns[getStatusIndex(response.state)]<warns.length){
-	                    for(i=numofwarns[getStatusIndex(response.state)];i<warns.length;i++){
-	                    	    var old=document.getElementById("warning_"+correspondingNode(response.state)).title;
-	                    	    if(old===""){
-		                    	    old="Warnings: ";
-	                    	    }else{
-		                    	    old+=",";
-	                    	    }
-	                    	    document.getElementById("warning_"+correspondingNode(response.state)).title=old+warns[i];
-	                            warnings.push(warns[i]);
-	                            progList_addTextToTextArea('<i>Warning: </i>'+warns[i]);
-	                    }
-	                    numofwarns[getStatusIndex(response.state)]=warns.length;
-	                }
-	            }
-	        }
-	        if(response.statusofstate=="Error"){
-	            var errs=response.errors.string;
-	            if(errs!==null){
-	                if(!(errs instanceof Array)){
-	                    errs=[errs];
-	                }
-	                if(numoferrs[getStatusIndex(response.state)]<errs.length){
-	                    for(i=numoferrs[getStatusIndex(response.state)];i<errs.length;i++){
-	                            warnings.push(errs[i]);
-	                            progList_addTextToTextArea('<b>Error: </b>'+errs[i]);
-	                    }
-	                    numoferrs[getStatusIndex(response.state)]=errs.length;
-	                }
-	            }
-	        }
+      if(start===true){
+        if(response.statusofstate=="Warning"){
+          var warns=response.warnings.string;
+          if(warns!==null){
+            if(!(warns instanceof Array)){
+              warns=[warns];
+            }
+            if(numofwarns[getStatusIndex(response.state)]<warns.length){
+              for(i=numofwarns[getStatusIndex(response.state)];i<warns.length;i++){
+                var old=document.getElementById("warning_"+correspondingNode(response.state)).title;
+                if(old===""){
+                  old="Warnings: ";
+                }else{
+                  old+=",";
+                }
+                document.getElementById("warning_"+correspondingNode(response.state)).title=old+warns[i];
+                warnings.push(warns[i]);
+                progList_addTextToTextArea('<i>Warning: </i>'+warns[i]);
+              }
+              numofwarns[getStatusIndex(response.state)]=warns.length;
+            }
+          }
         }
+        if(response.statusofstate=="Error"){
+          var errs=response.errors.string;
+          if(errs!==null){
+            if(!(errs instanceof Array)){
+              errs=[errs];
+            }
+            if(numoferrs[getStatusIndex(response.state)]<errs.length){
+              for(i=numoferrs[getStatusIndex(response.state)];i<errs.length;i++){
+                warnings.push(errs[i]);
+                progList_addTextToTextArea('<b>Error: </b>'+errs[i]);
+              }
+              numoferrs[getStatusIndex(response.state)]=errs.length;
+            }
+          }
+        }
+      }
     }
     
     function update(paramXMLParticular, XMLHttpRequestObj) {
-    	var strText = "";
-        if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
-          try {
-            if (XMLHttpRequestObj.responseText) {
-                strText = XMLHttpRequestObj.responseText;
+      var strText = "";
+      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
+        try {
+          if (XMLHttpRequestObj.responseText) {
+            strText = XMLHttpRequestObj.responseText;
+          }
+        } catch (e) {
+        }
+
+        var msg = eval("("+strText+")");
+          
+        var state=msg.Response.state;
+        if(state=="11" || start===true){
+          if(state=="60"){
+            clearTimeout(mainTimeout);
+          }
+          start=true;
+          var errorStatus=msg.Response.statusofstate;
+          var stateindex=getStatusIndex(state);
+          if(stateindex>current_state){
+            for(i=current_state;i<stateindex;i++){
+              //We need to ask for warning/error state for the intermediate status
+              document.getElementById("reqStatus").value=possible_states[i];
+              submitXmlHttpRequest(askForErrorStatus, frmMain, "REQUESTERRORSTATE", "ApplyModules.html", false, null, null);
             }
-          } catch (e) {
+          }
+ 
+          error_status[getStatusIndex(state)]=errorStatus;
+          var message;
+          if(msg.Response.lastmessage!==null){
+            message=msg.Response.lastmessage.substring(0,50);
+          }else{
+            message="";
           }
 
-          var msg = eval("("+strText+")");
-          
-          var state=msg.Response.state;
-          if(state=="11" || start===true){
-             if(state=="60"){
-                 clearTimeout(mainTimeout);
-             }
-             start=true;
-	         var errorStatus=msg.Response.statusofstate;
-	         var stateindex=getStatusIndex(state);
-	         if(stateindex>current_state){
-	           for(i=current_state;i<stateindex;i++){
-	               //We need to ask for warning/error state for the intermediate status
-	               document.getElementById("reqStatus").value=possible_states[i];
-	               submitXmlHttpRequest(askForErrorStatus, frmMain, "REQUESTERRORSTATE", "ApplyModules.html", false, null, null);
-	           }
-	         }
-	         
-	         error_status[getStatusIndex(state)]=errorStatus;
-	         var message;
-	         if(msg.Response.lastmessage!==null){
-		         message=msg.Response.lastmessage.substring(0,50);
-	         }else{
-		         message="";
-	         }
-	         
-             insertWarnsAndErrors(msg.Response);
-             if(state!="60"){
-            	  progList_changeStatus(correspondingNode(state), errorStatus, message);
-             }
-	         
-	         current_state=stateindex;
-	      
+          insertWarnsAndErrors(msg.Response);
+          if(state!="60"){
+            progList_changeStatus(correspondingNode(state), errorStatus, message);
           }
-          
+          current_state=stateindex;
         }
+      }
     }
 
     function LocalChrono(destiny, referenceDate) {
@@ -297,9 +291,7 @@
       var output = minutes_string + ":" + seconds_string;
       document.getElementById(destiny).innerHTML=output;
 
-
       submitXmlHttpRequest(update, frmMain, "UPDATESTATUS", "ApplyModules.html", false, null, null);
-      
 
       if (lc_isChronoEnabled) {
         mainTimeout=setTimeout(function() {LocalChrono(destiny, referenceDate);},1000);
@@ -307,54 +299,54 @@
     }
 
     function progList_changeStatus(node, newStatus, text) {
-	      node=node.toString();
-	      if (newStatus == "Success") {
-	        document.getElementById("icon_" + node).className = "CheckList_Icon_Success";
-	        document.getElementById("processing_" + node).innerHTML = " ";
-	        document.getElementById("processing_" + node).style.display = "none";
-	        document.getElementById("error_" + node).style.display = "none";
-	        document.getElementById("exception_" + node).style.display = "none";
-	        document.getElementById("warning_" + node).style.display = "none";
-	      } else if (newStatus == "Error") {
-	        document.getElementById("icon_" + node).className = "CheckList_Icon_Error";
-	        document.getElementById("processing_" + node).innerHTML = " ";
-	        document.getElementById("processing_" + node).style.display = "none";
-	        document.getElementById("error_" + node).style.display = "";
-	        document.getElementById("exception_" + node).style.display = "none";
-	        document.getElementById("warning_" + node).style.display = "none";
-	      } else if (newStatus == "Exception") {
-	        document.getElementById("icon_" + node).className = "CheckList_Icon_Exception";
-	        document.getElementById("processing_" + node).innerHTML = " ";
-	        document.getElementById("processing_" + node).style.display = "none";
-	        document.getElementById("error_" + node).style.display = "none";
-	        document.getElementById("exception_" + node).style.display = "";
-	        document.getElementById("warning_" + node).style.display = "none";
-	      } else if (newStatus == "Warning") {
-	        document.getElementById("icon_" + node).className = "CheckList_Icon_Warning";
-	        document.getElementById("processing_" + node).innerHTML = " ";
-	        document.getElementById("processing_" + node).style.display = "none";
-	        document.getElementById("error_" + node).style.display = "none";
-	        document.getElementById("exception_" + node).style.display = "none";
-	        document.getElementById("warning_" + node).style.display = "";
-	      } else if (newStatus == "Pending") {
-	        document.getElementById("icon_" + node).className = "CheckList_Icon_Pending";
-	        document.getElementById("processing_" + node).innerHTML = " ";
-	        document.getElementById("processing_" + node).style.display = "none";
-	        document.getElementById("error_" + node).style.display = "none";
-	        document.getElementById("exception_" + node).style.display = "none";
-	        document.getElementById("warning_" + node).style.display = "none";
-	      } else if (newStatus == "Processing") {
-	        document.getElementById("icon_" + node).className = "CheckList_Icon_Processing";
-	        if (text) {
-	          document.getElementById("processing_" + node).innerHTML = text;
-	        } else {
-	          document.getElementById("processing_" + node).innerHTML = " ";
-	        }
-	        document.getElementById("processing_" + node).style.display = "";
-	        document.getElementById("error_" + node).style.display = "none";
-	        document.getElementById("exception_" + node).style.display = "none";
-	        document.getElementById("warning_" + node).style.display = "none";
-	      }
+      node=node.toString();
+      if (newStatus == "Success") {
+        document.getElementById("icon_" + node).className = "CheckList_Icon_Success";
+        document.getElementById("processing_" + node).innerHTML = " ";
+        document.getElementById("processing_" + node).style.display = "none";
+        document.getElementById("error_" + node).style.display = "none";
+        document.getElementById("exception_" + node).style.display = "none";
+        document.getElementById("warning_" + node).style.display = "none";
+      } else if (newStatus == "Error") {
+        document.getElementById("icon_" + node).className = "CheckList_Icon_Error";
+        document.getElementById("processing_" + node).innerHTML = " ";
+        document.getElementById("processing_" + node).style.display = "none";
+        document.getElementById("error_" + node).style.display = "";
+        document.getElementById("exception_" + node).style.display = "none";
+        document.getElementById("warning_" + node).style.display = "none";
+      } else if (newStatus == "Exception") {
+        document.getElementById("icon_" + node).className = "CheckList_Icon_Exception";
+        document.getElementById("processing_" + node).innerHTML = " ";
+        document.getElementById("processing_" + node).style.display = "none";
+        document.getElementById("error_" + node).style.display = "none";
+        document.getElementById("exception_" + node).style.display = "";
+        document.getElementById("warning_" + node).style.display = "none";
+      } else if (newStatus == "Warning") {
+        document.getElementById("icon_" + node).className = "CheckList_Icon_Warning";
+        document.getElementById("processing_" + node).innerHTML = " ";
+        document.getElementById("processing_" + node).style.display = "none";
+        document.getElementById("error_" + node).style.display = "none";
+        document.getElementById("exception_" + node).style.display = "none";
+        document.getElementById("warning_" + node).style.display = "";
+      } else if (newStatus == "Pending") {
+        document.getElementById("icon_" + node).className = "CheckList_Icon_Pending";
+        document.getElementById("processing_" + node).innerHTML = " ";
+        document.getElementById("processing_" + node).style.display = "none";
+        document.getElementById("error_" + node).style.display = "none";
+        document.getElementById("exception_" + node).style.display = "none";
+        document.getElementById("warning_" + node).style.display = "none";
+      } else if (newStatus == "Processing") {
+        document.getElementById("icon_" + node).className = "CheckList_Icon_Processing";
+        if (text) {
+          document.getElementById("processing_" + node).innerHTML = text;
+        } else {
+          document.getElementById("processing_" + node).innerHTML = " ";
+        }
+        document.getElementById("processing_" + node).style.display = "";
+        document.getElementById("error_" + node).style.display = "none";
+        document.getElementById("exception_" + node).style.display = "none";
+        document.getElementById("warning_" + node).style.display = "none";
+      }
     }
 
     function progList_setTextToTextArea(text) {
@@ -366,24 +358,24 @@
     }
 
     function resetAllStates(){
-        progList_changeStatus('1', 'Pending');
-        progList_changeStatus('1.1', 'Pending');
-        progList_changeStatus('1.2', 'Pending');
-        progList_changeStatus('1.3', 'Pending');
-        progList_changeStatus('1.4', 'Pending');
-        progList_changeStatus('1.5', 'Pending');
-        progList_changeStatus('2.1', 'Pending');
-        progList_changeStatus('3.1', 'Pending');
-        progList_changeStatus('4', 'Pending');
-        progList_changeStatus('4.1', 'Pending');
-        progList_changeStatus('4.2', 'Pending');
-        progList_changeStatus('4.3', 'Pending');
-        progList_changeStatus('4.4', 'Pending');
-        progList_changeStatus('5', 'Pending');
+      progList_changeStatus('1', 'Pending');
+      progList_changeStatus('1.1', 'Pending');
+      progList_changeStatus('1.2', 'Pending');
+      progList_changeStatus('1.3', 'Pending');
+      progList_changeStatus('1.4', 'Pending');
+      progList_changeStatus('1.5', 'Pending');
+      progList_changeStatus('2.1', 'Pending');
+      progList_changeStatus('3.1', 'Pending');
+      progList_changeStatus('4', 'Pending');
+      progList_changeStatus('4.1', 'Pending');
+      progList_changeStatus('4.2', 'Pending');
+      progList_changeStatus('4.3', 'Pending');
+      progList_changeStatus('4.4', 'Pending');
+      progList_changeStatus('5', 'Pending');
     }
 
   </script>
-    <script language="JavaScript" type="text/javascript">
+  <script language="JavaScript" type="text/javascript">
 
     function onLoadDo() {
       this.windowTables = new Array(
@@ -410,8 +402,8 @@
     }
 
     var processing = false;
+  </script>
 
-</script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onunload="onUnloadDo();" id="paramMessage">
   <form id="form" method="post" action="ApplyModules.html" name="frmMain" target="hiddenFrame">
@@ -645,7 +637,7 @@
 
               <tr><td colspan="4">
                 <div style="overflow: auto; width: 600px;">
-                  <span id="rebuildMessage" class="CheckList_RebuildSystemWindow_title">Estimated total time for rebuild: 3-7 minutes. Elapsed time: <span id="localChrono">00:00</span>.</br> Do not close this window.</span>
+                  <span id="rebuildMessage" class="CheckList_RebuildSystemWindow_title">Elapsed time: <span id="localChrono">00:00</span>.</br> Do not close this window.</span>
                  </div>
               </td></tr>
 
