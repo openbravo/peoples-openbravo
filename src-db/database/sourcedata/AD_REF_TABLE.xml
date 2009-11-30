@@ -34,8 +34,8 @@
 <!--4-->  <AD_KEY><![CDATA[129]]></AD_KEY>
 <!--4-->  <AD_DISPLAY><![CDATA[130]]></AD_DISPLAY>
 <!--4-->  <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--4-->  <WHERECLAUSE><![CDATA[AD_Reference.ValidationType in ('T','L','S')]]></WHERECLAUSE>
-<!--4-->  <ORDERBYCLAUSE><![CDATA[AD_Reference.ValidationType, 2]]></ORDERBYCLAUSE>
+<!--4-->  <WHERECLAUSE><![CDATA[AD_Reference.IsBaseReference = 'N']]></WHERECLAUSE>
+<!--4-->  <ORDERBYCLAUSE><![CDATA[AD_Reference.ParentReference_ID, 2]]></ORDERBYCLAUSE>
 <!--4--></AD_REF_TABLE>
 
 <!--100--><AD_REF_TABLE>
