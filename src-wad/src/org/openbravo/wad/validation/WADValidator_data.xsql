@@ -62,7 +62,7 @@
   <SqlMethod name="checkModelObject" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-        select to_char(p.name) objectname, 'Process' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue 
+        select to_char(p.name) as objectname, 'Process' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue 
           from ad_model_object o, ad_process p, ad_module m
          where o.ad_process_id = p.ad_process_id
            and p.ad_module_id = m.ad_module_id
@@ -116,7 +116,7 @@
   <SqlMethod name="checkModelObjectMapping" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-        select to_char(p.name) objectname, 'Process' as objectType, om.mappingname as currentvalue, m.javapackage as expectedvalue 
+        select to_char(p.name) as objectname, 'Process' as objectType, om.mappingname as currentvalue, m.javapackage as expectedvalue 
           from ad_model_object o, ad_process p, ad_module m, ad_model_object_mapping om
          where o.ad_process_id = p.ad_process_id
            and p.ad_module_id = m.ad_module_id
