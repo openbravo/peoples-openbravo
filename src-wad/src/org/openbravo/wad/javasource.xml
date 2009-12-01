@@ -78,11 +78,7 @@
   <FIELD id="fieldCatch">catchtext</FIELD>
   <SECTION id="sectionDetailgetEditVariables"/>
 </structure>
-<structure name="structure2">
-  <FIELD id="fieldRelationName">Name</FIELD>
-  <FIELD id="fieldMaxLength">displaylength</FIELD>
-  <SECTION id="sectionDetailgetRelationData"/>
-</structure>
+
   <PARAMETER id="defaultValues" name = "defaultValues" default=" "/>
 <!-- structure name="structure4">
   <FIELD id="fieldName4">Name</FIELD>

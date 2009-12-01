@@ -2059,7 +2059,6 @@ public class Wad extends DefaultHandler {
           .size() > 0) ? ", vars.getLanguage()" : "");
     }
     FieldsData[] fieldsData = null;
-    final Vector<Object> vector = new Vector<Object>();
     boolean defaultValue;
     {
       final Vector<Object> vecFieldsSelect = new Vector<Object>();
@@ -2073,16 +2072,7 @@ public class Wad extends DefaultHandler {
           fieldsData1[i].name = Sqlc.TransformaNombreColumna(fieldsData1[i].name);
           fieldsData1[i].columnname = fieldsData1[i].name;
           defaultValue = false;
-          if (!fieldsData1[i].reference.equals("23")
-              && !WadUtility.isDateTimeField(fieldsData1[i].reference)
-              && !fieldsData1[i].reference.equals("20")
-              && !WadUtility.isDecimalNumber(fieldsData1[i].reference)
-              && !WadUtility.isQtyNumber(fieldsData1[i].reference)
-              && !WadUtility.isPriceNumber(fieldsData1[i].reference)
-              && !WadUtility.isIntegerNumber(fieldsData1[i].reference)
-              && !WadUtility.isGeneralNumber(fieldsData1[i].reference)
-              && WadUtility.columnRelationFormat(fieldsData1[i], false, MAX_COL_SIZE_RELATION))
-            vector.addElement(fieldsData1[i]);
+
           if (fieldsData1[i].reference.equals("20")) {
             fieldsData1[i].xmltext = ", \"N\"";
             defaultValue = true;
@@ -2161,9 +2151,6 @@ public class Wad extends DefaultHandler {
       fieldsData = new FieldsData[vecFieldsSelect.size()];
       vecFieldsSelect.copyInto(fieldsData);
     }
-
-    final FieldsData[] fieldsTruncate = new FieldsData[vector.size()];
-    vector.copyInto(fieldsTruncate);
 
     // Campos del Session actual
     // Fields of the current Session
@@ -2302,7 +2289,7 @@ public class Wad extends DefaultHandler {
     }
 
     xmlDocument.setData("structure1", fieldsData);
-    xmlDocument.setData("structure2", fieldsTruncate);
+
     xmlDocument.setData("structure7", auxiliarFields);
     xmlDocument.setData("structure27", auxiliarFields);
     xmlDocument.setData("structure8", fieldsParentSession);
