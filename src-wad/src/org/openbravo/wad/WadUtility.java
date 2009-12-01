@@ -240,96 +240,17 @@ public class WadUtility {
       throws ServletException {
     if (fields == null)
       return "";
-    StringBuffer texto = new StringBuffer();
-    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-    if (fields.reference.equals("13")) { // ID
-      FieldsData fdi[] = FieldsData.identifierColumns(conn, tableName);
-      for (int i = 0; i < fdi.length; i++) {
-        if (i > 0)
-          texto.append(" || ' - ' || ");
-        vecCounters.set(0, Integer.toString(itable));
-        vecCounters.set(1, Integer.toString(ilist));
-        texto.append(columnIdentifier(conn, tableName, required, fdi[i], vecCounters, translated,
-            vecFields, vecTable, vecWhere, vecParameters, vecTableParameters, sqlDateFormat));
-        ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-        itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-      }
-      if (texto.toString().equals("")) {
-        vecFields.addElement(((tableName != null && tableName.length() != 0) ? (tableName + ".")
-            : "")
-            + fields.name);
-        texto.append(((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
-            + fields.name);
-      }
-    } else if (fields.reference.equals("17")) { // List
-      ilist++;
-      if (tableName != null && tableName.length() != 0) {
-        vecTable.addElement("left join ad_ref_list_v list" + ilist + " on (" + tableName + "."
-            + fields.name + " = list" + ilist + ".value and list" + ilist + ".ad_reference_id = '"
-            + fields.referencevalue + "' and list" + ilist + ".ad_language = ?) ");
-        vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-      } else {
-        vecTable.addElement("ad_ref_list_v list" + ilist);
-        vecWhere.addElement(fields.referencevalue + " = " + "list" + ilist + ".ad_reference_id ");
-        vecWhere.addElement("list" + ilist + ".ad_language = ? ");
-        vecParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-      }
-      texto.append("list").append(ilist).append(".name");
-      vecFields.addElement(texto.toString());
-      vecCounters.set(0, Integer.toString(itable));
-      vecCounters.set(1, Integer.toString(ilist));
-    } else if (fields.reference.equals("18")) { // Table
-      itable++;
-      TableRelationData trd[] = TableRelationData.selectRefTable(conn, fields.referencevalue);
-      if (log4j.isDebugEnabled())
-        log4j.debug(" number of TableRelationData: " + trd.length);
 
-      if (tableName != null && tableName.length() != 0) {
-        vecTable
-            .addElement("left join (select "
-                + trd[0].keyname
-                + ((trd[0].isvaluedisplayed.equals("Y") && !trd[0].keyname
-                    .equalsIgnoreCase("value")) ? ", value" : "")
-                + (!trd[0].keyname.equalsIgnoreCase(trd[0].name) ? (", " + trd[0].name) : "")
-                + " from " + trd[0].tablename + ") table" + itable + " on (" + tableName + "."
-                + fields.name + " = " + " table" + itable + "." + trd[0].keyname + ")");
-      } else {
-        vecTable.addElement(trd[0].tablename + " table" + itable);
-      }
-      FieldsData fieldsAux = new FieldsData();
-      fieldsAux.name = trd[0].name;
-      fieldsAux.tablename = trd[0].tablename;
-      fieldsAux.reference = trd[0].reference;
-      fieldsAux.referencevalue = trd[0].referencevalue;
-      fieldsAux.required = trd[0].required;
-      fieldsAux.istranslated = trd[0].istranslated;
-      vecCounters.set(0, Integer.toString(itable));
-      vecCounters.set(1, Integer.toString(ilist));
-      if (trd[0].isvaluedisplayed.equals("Y"))
-        texto.append("table" + itable + ".value || ' - ' || ");
-      texto.append(columnIdentifier(conn, "table" + itable, required, fieldsAux, vecCounters,
-          translated, vecFields, vecTable, vecWhere, vecParameters, vecTableParameters,
-          sqlDateFormat));
-      ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-      itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-    } else if (fields.reference.equals("32")) { // Image
-      ilist++;
-      if (tableName != null && tableName.length() != 0) {
-        vecTable.addElement("left join (select AD_Image_ID, ImageURL from AD_Image) list" + ilist
-            + " on (" + tableName + "." + fields.name + " = list" + ilist + ".AD_Image_ID) ");
-      } else {
-        vecTable.addElement("AD_Image list" + ilist);
-      }
-      texto.append("list").append(ilist).append(".ImageURL");
-      vecFields.addElement(texto.toString());
-      vecCounters.set(0, Integer.toString(itable));
-      vecCounters.set(1, Integer.toString(ilist));
-    } else if (fields.reference.equals("19") || fields.reference.equals("30")
+    if (fields.reference.equals("19") || fields.reference.equals("30")
         || fields.reference.equals("31") || fields.reference.equals("35")
-        || fields.reference.equals("25") || fields.reference.equals("800011")) { // TableDir, Search
-      // y
-      // Locator
+        || fields.reference.equals("25") || fields.reference.equals("800011")) {
+      // TableDir, Search and Locator
+      // Maintain this old code for convenience, rest of code moved to WADControl subclasses
+
+      StringBuffer texto = new StringBuffer();
+      int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
+      int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
+
       itable++;
       EditionFieldsData[] dataSearchs = null;
       if (fields.reference.equals("30"))
@@ -394,47 +315,16 @@ public class WadUtility {
         ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
         itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
       }
+      vecCounters.set(0, Integer.toString(itable));
+      vecCounters.set(1, Integer.toString(ilist));
+      return texto.toString();
     } else {
-      if (fields.istranslated.equals("Y")
-          && TableRelationData.existsTableColumn(conn, fields.tablename + "_TRL", fields.name)) {
-        FieldsData fdi[] = FieldsData.tableKeyColumnName(conn, fields.tablename);
-        if (fdi == null || fdi.length == 0) {
-          vecFields.addElement(applyFormat(
-              ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
-                  + fields.name, fields.reference, sqlDateFormat));
-          texto.append(applyFormat(
-              ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
-                  + fields.name, fields.reference, sqlDateFormat));
-        } else {
-          vecTable.addElement("left join (select " + fdi[0].name + ",AD_Language"
-              + (!fdi[0].name.equalsIgnoreCase(fields.name) ? (", " + fields.name) : "") + " from "
-              + fields.tablename + "_TRL) tableTRL" + itable + " on (" + tableName + "."
-              + fdi[0].name + " = tableTRL" + itable + "." + fdi[0].name + " and tableTRL" + itable
-              + ".AD_Language = ?) ");
-          vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-          vecFields.addElement(applyFormat("(CASE WHEN tableTRL" + itable + "." + fields.name
-              + " IS NULL THEN TO_CHAR(" + tableName + "." + fields.name
-              + ") ELSE TO_CHAR(tableTRL" + itable + "." + fields.name + ") END)",
-              fields.reference, sqlDateFormat));
-          texto.append(applyFormat("(CASE WHEN tableTRL" + itable + "." + fields.name
-              + " IS NULL THEN TO_CHAR(" + tableName + "." + fields.name
-              + ") ELSE TO_CHAR(tableTRL" + itable + "." + fields.name + ") END)",
-              fields.reference, sqlDateFormat));
-        }
-      } else {
-        vecFields
-            .addElement(applyFormat(
-                ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
-                    + fields.name, fields.reference, sqlDateFormat));
-        texto
-            .append(applyFormat(((tableName != null && tableName.length() != 0) ? (tableName + ".")
-                : "")
-                + fields.name, fields.reference, sqlDateFormat));
-      }
+      WADControl control = WadUtility.getWadControlClass(conn, fields.reference,
+          fields.adReferenceValueId);
+      return control.columnIdentifier(tableName, required, fields, vecCounters, translated,
+          vecFields, vecTable, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
     }
-    vecCounters.set(0, Integer.toString(itable));
-    vecCounters.set(1, Integer.toString(ilist));
-    return texto.toString();
+
   }
 
   /**
@@ -2315,11 +2205,9 @@ public class WadUtility {
     WADControl _myClass = getWadControlClass(conn, field.getField("AD_Reference_ID"), field
         .getField("AD_Reference_Value_ID"));
 
-    _myClass.setConnection(conn);
     _myClass.setReportEngine(xmlEngine);
     _myClass.setInfo(prop);
     _myClass.initialize();
-    _myClass.setConnection(null);
 
     return _myClass;
   }

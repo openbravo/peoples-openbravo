@@ -19,6 +19,13 @@
 package org.openbravo.wad.controls;
 
 import java.util.Properties;
+import java.util.Vector;
+
+import javax.servlet.ServletException;
+
+import org.openbravo.wad.FieldsData;
+import org.openbravo.wad.TableRelationData;
+import org.openbravo.wad.WadUtility;
 
 public class WADTable extends WADList {
 
@@ -31,5 +38,53 @@ public class WADTable extends WADList {
 
   public boolean has2UIFields() {
     return true;
+  }
+
+  public String columnIdentifier(String tableName, boolean required, FieldsData fields,
+      Vector<Object> vecCounters, boolean translated, Vector<Object> vecFields,
+      Vector<Object> vecTable, Vector<Object> vecWhere, Vector<Object> vecParameters,
+      Vector<Object> vecTableParameters, String sqlDateFormat) throws ServletException {
+    if (fields == null)
+      return "";
+    StringBuffer texto = new StringBuffer();
+    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
+    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
+
+    itable++;
+    TableRelationData trd[] = TableRelationData.selectRefTable(conn, fields.referencevalue);
+
+    if (tableName != null && tableName.length() != 0) {
+      vecTable
+          .addElement("left join (select "
+              + trd[0].keyname
+              + ((trd[0].isvaluedisplayed.equals("Y") && !trd[0].keyname.equalsIgnoreCase("value")) ? ", value"
+                  : "")
+              + (!trd[0].keyname.equalsIgnoreCase(trd[0].name) ? (", " + trd[0].name) : "")
+              + " from " + trd[0].tablename + ") table" + itable + " on (" + tableName + "."
+              + fields.name + " = " + " table" + itable + "." + trd[0].keyname + ")");
+    } else {
+      vecTable.addElement(trd[0].tablename + " table" + itable);
+    }
+    FieldsData fieldsAux = new FieldsData();
+    fieldsAux.name = trd[0].name;
+    fieldsAux.tablename = trd[0].tablename;
+    fieldsAux.reference = trd[0].reference;
+    fieldsAux.referencevalue = trd[0].referencevalue;
+    fieldsAux.required = trd[0].required;
+    fieldsAux.istranslated = trd[0].istranslated;
+    vecCounters.set(0, Integer.toString(itable));
+    vecCounters.set(1, Integer.toString(ilist));
+    if (trd[0].isvaluedisplayed.equals("Y")) {
+      texto.append("table" + itable + ".value || ' - ' || ");
+    }
+
+    WADControl control = WadUtility.getWadControlClass(conn, fieldsAux.reference,
+        fieldsAux.adReferenceValueId);
+    texto.append(control
+        .columnIdentifier("table" + itable, required, fieldsAux, vecCounters, translated,
+            vecFields, vecTable, vecWhere, vecParameters, vecTableParameters, sqlDateFormat));
+    ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
+    itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
+    return texto.toString();
   }
 }

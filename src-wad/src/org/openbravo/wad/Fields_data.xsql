@@ -20,7 +20,7 @@
 
 
 
-<SqlClass name="FieldsData" package="org.openbravo.wad">
+<SqlClass name="FieldsData" package="org.openbravo.wad" accessModifier="public">
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>
@@ -377,7 +377,7 @@
       <Sql>
         SELECT ad_column.columnname as name, ad_reference_id as reference, ismandatory as required, 
         REPLACE(replace(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as columnname, ad_reference_value_id as referencevalue, 
-        ad_column.istranslated, ad_table.tablename 
+        ad_column.istranslated, ad_table.tablename, ad_reference_value_id
         FROM ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id, 
              ad_table 
         WHERE UPPER(ad_table.tablename) = UPPER(?)

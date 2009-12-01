@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,12 @@
 package org.openbravo.wad.controls;
 
 import java.util.Properties;
+import java.util.Vector;
+
+import javax.servlet.ServletException;
+
+import org.openbravo.wad.FieldsData;
+import org.openbravo.wad.WadUtility;
 
 public class WADID extends WADControl {
 
@@ -28,5 +34,42 @@ public class WADID extends WADControl {
   public WADID(Properties prop) {
     setInfo(prop);
     initialize();
+  }
+
+  public String columnIdentifier(String tableName, boolean required, FieldsData fields,
+      Vector<Object> vecCounters, boolean translated, Vector<Object> vecFields,
+      Vector<Object> vecTable, Vector<Object> vecWhere, Vector<Object> vecParameters,
+      Vector<Object> vecTableParameters, String sqlDateFormat) throws ServletException {
+    if (fields == null)
+      return "";
+    StringBuffer texto = new StringBuffer();
+    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
+    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
+
+    FieldsData fdi[] = FieldsData.identifierColumns(conn, tableName);
+    for (int i = 0; i < fdi.length; i++) {
+      if (i > 0)
+        texto.append(" || ' - ' || ");
+      vecCounters.set(0, Integer.toString(itable));
+      vecCounters.set(1, Integer.toString(ilist));
+
+      WADControl control = WadUtility.getWadControlClass(conn, fdi[i].reference,
+          fdi[i].adReferenceValueId);
+
+      texto.append(control.columnIdentifier(tableName, required, fdi[i], vecCounters, translated,
+          vecFields, vecTable, vecWhere, vecParameters, vecTableParameters, sqlDateFormat));
+      ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
+      itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
+    }
+    if (texto.toString().equals("")) {
+      vecFields
+          .addElement(((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
+              + fields.name);
+      texto.append(((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
+          + fields.name);
+    }
+    vecCounters.set(0, Integer.toString(itable));
+    vecCounters.set(1, Integer.toString(ilist));
+    return texto.toString();
   }
 }

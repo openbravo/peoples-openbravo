@@ -2376,7 +2376,7 @@ public class Wad extends DefaultHandler {
         } else if (sfd[i].accesslevel.equals("6")
             && sfd[i].columnname.equalsIgnoreCase("AD_ORG_ID")) {
           sfd[i].defaultvalue = "\"0\"";
-        } else if (!sfd[i].referencevalue.equals("13")) {
+        } else if (!sfd[i].referencevalue.equals("13")) { // ID
           sfd[i].defaultvalue = "Utility.getDefault(this, vars, \"" + sfd[i].columnname + "\", \""
               + WadUtility.toJavaString(sfd[i].defaultvalue) + "\", \"" + strWindow + "\", \""
               + WadUtility.getWadDefaultValue(sfd[i]) + "\", dataField)";
@@ -2389,6 +2389,7 @@ public class Wad extends DefaultHandler {
       } else {
         sfd[i].defaultvalue = "strP" + sfd[i].columnname;
       }
+      // keep hardcoded for core references
       if ((sfd[i].referencevalue.equals("30") || sfd[i].referencevalue.equals("31")
           || sfd[i].referencevalue.equals("35") || sfd[i].referencevalue.equals("25") || sfd[i].reference
           .equals("800011"))
@@ -2396,7 +2397,7 @@ public class Wad extends DefaultHandler {
         strDefaultValues.append(", " + tabName + "Data.selectDef" + sfd[i].reference + "_"
             + (isSelect++) + "(this, " + sfd[i].defaultvalue + ")");
       else if (sfd[i].referencevalue.equals("28") && sfd[i].isdisplayed.equals("Y")
-          && !sfd[i].type.equals(""))
+          && !sfd[i].type.equals("")) // Button
         strDefaultValues.append(
             ", (vars.getLanguage().equals(\"en_US\")?ListData.selectName(this, \"").append(
             sfd[i].type).append("\", ").append(sfd[i].defaultvalue).append(
@@ -4740,6 +4741,7 @@ public class Wad extends DefaultHandler {
    */
   public void createPool(String strFileConnection) {
     pool = new WadConnection(strFileConnection);
+    WADControl.setConnection(pool);
   }
 
   /**

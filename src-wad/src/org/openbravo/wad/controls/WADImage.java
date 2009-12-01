@@ -19,7 +19,11 @@
 package org.openbravo.wad.controls;
 
 import java.util.Properties;
+import java.util.Vector;
 
+import javax.servlet.ServletException;
+
+import org.openbravo.wad.FieldsData;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADImage extends WADControl {
@@ -115,5 +119,29 @@ public class WADImage extends WADControl {
 
   public boolean has2UIFields() {
     return true;
+  }
+
+  public String columnIdentifier(String tableName, boolean required, FieldsData fields,
+      Vector<Object> vecCounters, boolean translated, Vector<Object> vecFields,
+      Vector<Object> vecTable, Vector<Object> vecWhere, Vector<Object> vecParameters,
+      Vector<Object> vecTableParameters, String sqlDateFormat) throws ServletException {
+    if (fields == null)
+      return "";
+    StringBuffer texto = new StringBuffer();
+    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
+    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
+
+    ilist++;
+    if (tableName != null && tableName.length() != 0) {
+      vecTable.addElement("left join (select AD_Image_ID, ImageURL from AD_Image) list" + ilist
+          + " on (" + tableName + "." + fields.name + " = list" + ilist + ".AD_Image_ID) ");
+    } else {
+      vecTable.addElement("AD_Image list" + ilist);
+    }
+    texto.append("list").append(ilist).append(".ImageURL");
+    vecFields.addElement(texto.toString());
+    vecCounters.set(0, Integer.toString(itable));
+    vecCounters.set(1, Integer.toString(ilist));
+    return texto.toString();
   }
 }

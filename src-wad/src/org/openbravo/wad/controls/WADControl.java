@@ -23,7 +23,12 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.servlet.ServletException;
+
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.wad.FieldsData;
+import org.openbravo.wad.TableRelationData;
+import org.openbravo.wad.WadUtility;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
 
@@ -35,7 +40,7 @@ public class WADControl {
   XmlEngine xmlEngine;
   private String validation = "";
   private String onload = "";
-  private ConnectionProvider conn = null;
+  protected static ConnectionProvider conn = null;
 
   private WADLabelControl label;
 
@@ -69,12 +74,12 @@ public class WADControl {
     }
   }
 
-  public void setConnection(ConnectionProvider _conn) {
-    this.conn = _conn;
+  public static void setConnection(ConnectionProvider _conn) {
+    conn = _conn;
   }
 
   public ConnectionProvider getConnection() {
-    return this.conn;
+    return conn;
   }
 
   public void setReportEngine(XmlEngine _xmlEngine) {
@@ -353,5 +358,55 @@ public class WADControl {
    */
   public boolean has2UIFields() {
     return false;
+  }
+
+  /**
+   * Generates SQL identifier
+   */
+  public String columnIdentifier(String tableName, boolean required, FieldsData fields,
+      Vector<Object> vecCounters, boolean translated, Vector<Object> vecFields,
+      Vector<Object> vecTable, Vector<Object> vecWhere, Vector<Object> vecParameters,
+      Vector<Object> vecTableParameters, String sqlDateFormat) throws ServletException {
+    if (fields == null)
+      return "";
+    StringBuffer texto = new StringBuffer();
+    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
+    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
+    if (fields.istranslated.equals("Y")
+        && TableRelationData.existsTableColumn(conn, fields.tablename + "_TRL", fields.name)) {
+      FieldsData fdi[] = FieldsData.tableKeyColumnName(conn, fields.tablename);
+      if (fdi == null || fdi.length == 0) {
+        vecFields.addElement(WadUtility
+            .applyFormat(((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
+                + fields.name, fields.reference, sqlDateFormat));
+        texto.append(WadUtility
+            .applyFormat(((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
+                + fields.name, fields.reference, sqlDateFormat));
+      } else {
+        vecTable.addElement("left join (select " + fdi[0].name + ",AD_Language"
+            + (!fdi[0].name.equalsIgnoreCase(fields.name) ? (", " + fields.name) : "") + " from "
+            + fields.tablename + "_TRL) tableTRL" + itable + " on (" + tableName + "."
+            + fdi[0].name + " = tableTRL" + itable + "." + fdi[0].name + " and tableTRL" + itable
+            + ".AD_Language = ?) ");
+        vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
+        vecFields.addElement(WadUtility.applyFormat("(CASE WHEN tableTRL" + itable + "."
+            + fields.name + " IS NULL THEN TO_CHAR(" + tableName + "." + fields.name
+            + ") ELSE TO_CHAR(tableTRL" + itable + "." + fields.name + ") END)", fields.reference,
+            sqlDateFormat));
+        texto.append(WadUtility.applyFormat("(CASE WHEN tableTRL" + itable + "." + fields.name
+            + " IS NULL THEN TO_CHAR(" + tableName + "." + fields.name + ") ELSE TO_CHAR(tableTRL"
+            + itable + "." + fields.name + ") END)", fields.reference, sqlDateFormat));
+      }
+    } else {
+      vecFields.addElement(WadUtility.applyFormat(
+          ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + fields.name,
+          fields.reference, sqlDateFormat));
+      texto.append(WadUtility.applyFormat(
+          ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + fields.name,
+          fields.reference, sqlDateFormat));
+    }
+    vecCounters.set(0, Integer.toString(itable));
+    vecCounters.set(1, Integer.toString(ilist));
+    return texto.toString();
   }
 }
