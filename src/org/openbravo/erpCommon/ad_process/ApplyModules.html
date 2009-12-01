@@ -40,7 +40,7 @@
     }
   </script>
   <script language="JavaScript" type="text/javascript">
-    var lc_isChronoEnabled = true;
+    var lc_isTimerEnabled = true;
     var current_state=0;
     var possible_states=[11,12,13,14,15,21,31,41,42,43,44,45,51,60];
     var error_status=['','','','','','','','','','','','','',''];
@@ -49,255 +49,9 @@
     var warnings=[];
     var errors=[];
     var start=false;
-    var mainTimeout;
+    var processing = false;
 
-    function restart() {
-      if (document.frmMain.option[0].checked) {
-        window.opener.submitCommandForm('RESTART', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
-        closeThisPage();
-        return false;
-      } else if (document.frmMain.option[1].checked) {
-        window.opener.submitCommandForm('RELOAD', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
-        closeThisPage();
-        return false;
-      } else if (document.frmMain.option[2].checked) {
-        closeThisPage();
-      }
-    } 
-
-    function getError1(paramXMLParticular, XMLHttpRequestObj) {
-      var strText = "";
-      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
-        try {
-          if (XMLHttpRequestObj.responseText) {
-              strText = XMLHttpRequestObj.responseText;
-          }
-        } catch (e) {
-          initialize_MessageBox('messageBoxID');
-          setValues_MessageBox('messageBoxID','ERROR','ERROR',e);
-        }
-        if (strText == "") {
-          showJSMessage(22);
-        } else {
-          //Expecting msg in JSON format
-          var msg = eval("("+strText+")");
-          initialize_MessageBox('messageBoxID');
-          setValues_MessageBox('messageBoxID',msg.OBError.type, msg.OBError.title, msg.OBError.message);
-          if(msg.OBError.type!="Error"){
-              displayLogicElement('restartOptions',true);
-          }
-          document.getElementById("rebuildMessage").style.display = "none";
-        }
-      }
-      return true;
-    }
- 
-    function getError() {
-      var frm = document.frmMain;
-      var paramXMLReq = null;
-      return submitXmlHttpRequest(getError1, frm, "GETERR", "ApplyModules.html", false, null, paramXMLReq);
-    }
-    
-    function endProcess(paramXMLParticular, XMLHttpRequestObj) {
-      if (getReadyStateHandler(XMLHttpRequestObj)) { 
-        processing = false;
-        top.opener.setProcessingMode('window', false);
-        setTimeout("getError()",100);
-      }
-      return true;
-    }
- 
-    function startProcessing() {
-      startLocalChrono('localChrono');
-      processing = true;
-      top.opener.setProcessingMode('window', true, false);
-      var frm = document.frmMain;
-      displayLogicElement('confirmation',false);
-      displayLogicElement('rebuildTable',true);
-      var paramXMLReq = null;
-      return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false, null, paramXMLReq);
-    }
- 
-    function stopLocalChrono() {
-      lc_isChronoEnabled = false;
-    }
-
-    function startLocalChrono(destiny) {
-      var referenceDate = new Date();
-      referenceDate = referenceDate.getTime();
-      LocalChrono(destiny, referenceDate);
-    }
-
-    function getStatusIndex(state){
-      for(i=0;i<possible_states.length;i++){
-        if(possible_states[i]==state){
-          return i;
-        }
-      }
-    }
-
-    function askForErrorStatus(paramXMLParticular, XMLHttpRequestObj) {
-      var strText = "";
-      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
-        try {
-          if (XMLHttpRequestObj.responseText) {
-            strText = XMLHttpRequestObj.responseText;
-          }
-        } catch (e) {
-        }
-
-        if(start===true){
-          var msg = eval("("+strText+")");
- 
-          var state=msg.Response.state;
-          var errorStatus=msg.Response.statusofstate;
-          var stateindex=getStatusIndex(state);
-          progList_changeStatus(correspondingNode(state), errorStatus);
-          error_status[stateindex]=errorStatus;
-          insertWarnsAndErrors(msg.Response);
-        }
-
-        var ind11=getStatusIndex(11);
-        if(error_status[ind11]=='Success' && error_status[ind11+1]=='Success' && error_status[ind11+2]=='Success' && error_status[ind11+3]=='Success' && error_status[ind11+4]=='Success'){
-          progList_changeStatus('1', 'Success');
-        }else if(error_status[ind11]=='Error' || error_status[ind11+1]=='Error'|| error_status[ind11+2]=='Error'|| error_status[ind11+3]=='Error'|| error_status[ind11+4]=='Error'){
-          progList_changeStatus('1', 'Error');
-        }else if(error_status[ind11]=='Warning' || error_status[ind11+1]=='Warning'|| error_status[ind11+2]=='Warning'|| error_status[ind11+3]=='Warning'|| error_status[ind11+4]=='Warning'){
-          progList_changeStatus('1', 'Warning');
-        }
-        var ind41=getStatusIndex(41);
-        if(error_status[ind41]=='Success' && error_status[ind41+1]=='Success' && error_status[ind41+2]=='Success' && error_status[ind41+3]=='Success' && error_status[ind41+4]=='Success'){
-          progList_changeStatus('4', 'Success');
-        }else if(error_status[ind41]=='Error' || error_status[ind41+1]=='Error'|| error_status[ind41+2]=='Error'|| error_status[ind41+3]=='Error'|| error_status[ind41+4]=='Error'){
-          progList_changeStatus('4', 'Error');
-        }else if(error_status[ind41]=='Warning' || error_status[ind41+1]=='Warning'|| error_status[ind41+2]=='Warning'|| error_status[ind41+3]=='Warning'|| error_status[ind41+4]=='Warning'){
-          progList_changeStatus('4', 'Warning');
-        }
-      }
-    }
-
-    function correspondingNode(state_index){
-      state_index=parseFloat(state_index)/10;
-      return state_index.toString();
-    }
- 
-    function insertWarnsAndErrors(response){
-      if(start===true){
-        if(response.statusofstate=="Warning"){
-          var warns=response.warnings.string;
-          if(warns!==null){
-            if(!(warns instanceof Array)){
-              warns=[warns];
-            }
-            if(numofwarns[getStatusIndex(response.state)]<warns.length){
-              for(i=numofwarns[getStatusIndex(response.state)];i<warns.length;i++){
-                var old=document.getElementById("warning_"+correspondingNode(response.state)).title;
-                if(old===""){
-                  old="Warnings: ";
-                }else{
-                  old+=",";
-                }
-                document.getElementById("warning_"+correspondingNode(response.state)).title=old+warns[i];
-                warnings.push(warns[i]);
-                progList_addTextToTextArea('<i>Warning: </i>'+warns[i]);
-              }
-              numofwarns[getStatusIndex(response.state)]=warns.length;
-            }
-          }
-        }
-        if(response.statusofstate=="Error"){
-          var errs=response.errors.string;
-          if(errs!==null){
-            if(!(errs instanceof Array)){
-              errs=[errs];
-            }
-            if(numoferrs[getStatusIndex(response.state)]<errs.length){
-              for(i=numoferrs[getStatusIndex(response.state)];i<errs.length;i++){
-                warnings.push(errs[i]);
-                progList_addTextToTextArea('<b>Error: </b>'+errs[i]);
-              }
-              numoferrs[getStatusIndex(response.state)]=errs.length;
-            }
-          }
-        }
-      }
-    }
-    
-    function update(paramXMLParticular, XMLHttpRequestObj) {
-      var strText = "";
-      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
-        try {
-          if (XMLHttpRequestObj.responseText) {
-            strText = XMLHttpRequestObj.responseText;
-          }
-        } catch (e) {
-        }
-
-        var msg = eval("("+strText+")");
-          
-        var state=msg.Response.state;
-        if(state=="11" || start===true){
-          if(state=="60"){
-            clearTimeout(mainTimeout);
-          }
-          start=true;
-          var errorStatus=msg.Response.statusofstate;
-          var stateindex=getStatusIndex(state);
-          if(stateindex>current_state){
-            for(i=current_state;i<stateindex;i++){
-              //We need to ask for warning/error state for the intermediate status
-              document.getElementById("reqStatus").value=possible_states[i];
-              submitXmlHttpRequest(askForErrorStatus, frmMain, "REQUESTERRORSTATE", "ApplyModules.html", false, null, null);
-            }
-          }
- 
-          error_status[getStatusIndex(state)]=errorStatus;
-          var message;
-          if(msg.Response.lastmessage!==null){
-            message=msg.Response.lastmessage.substring(0,50);
-          }else{
-            message="";
-          }
-
-          insertWarnsAndErrors(msg.Response);
-          if(state!="60"){
-            progList_changeStatus(correspondingNode(state), errorStatus, message);
-          }
-          current_state=stateindex;
-        }
-      }
-    }
-
-    function LocalChrono(destiny, referenceDate) {
-      var actualDate = new Date();
-      actualDate = actualDate.getTime();
-
-      var difDate = actualDate - referenceDate;
-      difDate = difDate / 1000;
-      difDate = Math.floor(difDate);
-
-      var seconds = difDate%60;
-      var minutes = Math.floor(difDate/60);
-
-      var seconds_string = seconds.toString();
-      var minutes_string = minutes.toString();
-
-      if (seconds_string.length == 1) {
-        seconds_string = "0" + seconds_string;
-      }
-      if (minutes_string.length == 1) {
-        minutes_string = "0" + minutes_string;
-      }
-      var output = minutes_string + ":" + seconds_string;
-      document.getElementById(destiny).innerHTML=output;
-
-      submitXmlHttpRequest(update, frmMain, "UPDATESTATUS", "ApplyModules.html", false, null, null);
-
-      if (lc_isChronoEnabled) {
-        mainTimeout=setTimeout(function() {LocalChrono(destiny, referenceDate);},1000);
-      }
-    }
-
+    //Changes the status of one node (corresponding icon, ...)
     function progList_changeStatus(node, newStatus, text) {
       node=node.toString();
       if (newStatus == "Success") {
@@ -349,14 +103,268 @@
       }
     }
 
+    //Sets text of textarea
     function progList_setTextToTextArea(text) {
       document.getElementById('warningsAndErrors').innerHTML = text;
     }
 
+    //Adds text to the textarea
     function progList_addTextToTextArea(text) {
       document.getElementById('warningsAndErrors').innerHTML += text+"<br>";
     }
+    
+    //Starts a timer (used to periodically trigger a request to update the status of the window)
+    function LocalTimer(targetvar, referenceDate) {
+      var actualDate = new Date();
+      actualDate = actualDate.getTime();
 
+      var difDate = actualDate - referenceDate;
+      difDate = difDate / 1000;
+      difDate = Math.floor(difDate);
+
+      var seconds = difDate%60;
+      var minutes = Math.floor(difDate/60);
+
+      var seconds_string = seconds.toString();
+      var minutes_string = minutes.toString();
+
+      if (seconds_string.length == 1) {
+        seconds_string = "0" + seconds_string;
+      }
+      if (minutes_string.length == 1) {
+        minutes_string = "0" + minutes_string;
+      }
+      var output = minutes_string + ":" + seconds_string;
+      document.getElementById(targetvar).innerHTML=output;
+
+      submitXmlHttpRequest(update, frmMain, "UPDATESTATUS", "ApplyModules.html", false, null, null);
+
+      if (lc_isTimerEnabled) {
+        setTimeout(function() {LocalTimer(targetvar, referenceDate);},1000);
+      }
+    }
+
+    //Stops the local timer
+    function stopLocalTimer() {
+      lc_isTimerEnabled = false;
+    }
+
+    //Starts the local timer
+    function startLocalTimer(targetvar) {
+      var referenceDate = new Date();
+      referenceDate = referenceDate.getTime();
+      LocalTimer(targetvar, referenceDate);
+    }
+
+    //Returns the corresponding node for a given state index
+    function correspondingNode(state_index){
+      state_index=parseFloat(state_index)/10;
+      return state_index.toString();
+    }
+
+    //Restarts tomcat/Reloads tomcat/Just closes the window
+    function restart() {
+      if (document.frmMain.option[0].checked) {
+        window.opener.submitCommandForm('RESTART', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
+        closeThisPage();
+        return false;
+      } else if (document.frmMain.option[1].checked) {
+        window.opener.submitCommandForm('RELOAD', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
+        closeThisPage();
+        return false;
+      } else if (document.frmMain.option[2].checked) {
+        closeThisPage();
+        return;
+      }
+    } 
+
+    //This function sets the succes/warning/error message after the information returned by the server
+    function getError(paramXMLParticular, XMLHttpRequestObj) {
+      var strText = "";
+      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
+        try {
+          if (XMLHttpRequestObj.responseText) {
+              strText = XMLHttpRequestObj.responseText;
+          }
+        } catch (e) {
+          initialize_MessageBox('messageBoxID');
+          setValues_MessageBox('messageBoxID','ERROR','ERROR',e);
+        }
+        if (strText == "") {
+          showJSMessage(22);
+        } else {
+          //Expecting msg in JSON format
+          var msg = eval("("+strText+")");
+          initialize_MessageBox('messageBoxID');
+          setValues_MessageBox('messageBoxID',msg.OBError.type, msg.OBError.title, msg.OBError.message);
+          if(msg.OBError.type!="Error"){
+              displayLogicElement('restartOptions',true);
+          }
+          document.getElementById("rebuildMessage").style.display = "none";
+        }
+      }
+      return true;
+    }
+ 
+
+    //This function is called by the server when the last ant task is executed. It's responsible of
+    //calling the getError function to display a success/warning/error final message
+    function endProcess(paramXMLParticular, XMLHttpRequestObj) {
+      if (getReadyStateHandler(XMLHttpRequestObj)) { 
+        processing = false;
+        top.opener.setProcessingMode('window', false);
+        var frm = document.frmMain;
+        return submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModules.html", false, null, null);
+      }
+      return true;
+    }
+
+    //This function starts the ApplyModules task, and is called when the user presses the "Yes" button
+    function startProcessing() {
+      startLocalTimer('localTimer');
+      processing = true;
+      top.opener.setProcessingMode('window', true, false);
+      var frm = document.frmMain;
+      displayLogicElement('confirmation',false);
+      displayLogicElement('rebuildTable',true);
+      return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false, null, null);
+    }
+
+    //Returns the index of the specified state in the state array
+    function getStatusIndex(state){
+      for(i=0;i<possible_states.length;i++){
+        if(possible_states[i]==state){
+          return i;
+        }
+      }
+    }
+
+    //Inserts warnings and errors in the textarea
+    function insertWarnsAndErrors(response){
+      if(start===true){
+        if(response.statusofstate=="Warning"){
+          var warns=response.warnings.string;
+          if(warns!==null){
+            if(!(warns instanceof Array)){
+              warns=[warns];
+            }
+            if(numofwarns[getStatusIndex(response.state)]<warns.length){
+              for(i=numofwarns[getStatusIndex(response.state)];i<warns.length;i++){
+                var old=document.getElementById("warning_"+correspondingNode(response.state)).title;
+                if(old===""){
+                  old="Warnings: ";
+                }else{
+                  old+=",";
+                }
+                document.getElementById("warning_"+correspondingNode(response.state)).title=old+warns[i];
+                warnings.push(warns[i]);
+                progList_addTextToTextArea('<i>Warning: </i>'+warns[i]);
+              }
+              numofwarns[getStatusIndex(response.state)]=warns.length;
+            }
+          }
+        }
+        if(response.statusofstate=="Error"){
+          var errs=response.errors.string;
+          if(errs!==null){
+            if(!(errs instanceof Array)){
+              errs=[errs];
+            }
+            if(numoferrs[getStatusIndex(response.state)]<errs.length){
+              for(i=numoferrs[getStatusIndex(response.state)];i<errs.length;i++){
+                warnings.push(errs[i]);
+                progList_addTextToTextArea('<b>Error: </b>'+errs[i]);
+              }
+              numoferrs[getStatusIndex(response.state)]=errs.length;
+            }
+          }
+        }
+      }
+    }
+
+    //This function is called when status information of intermediate states is required
+    function askForErrorStatus(paramXMLParticular, XMLHttpRequestObj) {
+      var strText = "";
+      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
+        if (XMLHttpRequestObj.responseText) {
+          strText = XMLHttpRequestObj.responseText;
+        }
+
+        if(start===true){
+          var msg = eval("("+strText+")");
+ 
+          var state=msg.Response.state;
+          var errorStatus=msg.Response.statusofstate;
+          var stateindex=getStatusIndex(state);
+          progList_changeStatus(correspondingNode(state), errorStatus);
+          error_status[stateindex]=errorStatus;
+          insertWarnsAndErrors(msg.Response);
+        }
+
+        var ind11=getStatusIndex(11);
+        if(error_status[ind11]=='Success' && error_status[ind11+1]=='Success' && error_status[ind11+2]=='Success' && error_status[ind11+3]=='Success' && error_status[ind11+4]=='Success'){
+          progList_changeStatus('1', 'Success');
+        }else if(error_status[ind11]=='Error' || error_status[ind11+1]=='Error'|| error_status[ind11+2]=='Error'|| error_status[ind11+3]=='Error'|| error_status[ind11+4]=='Error'){
+          progList_changeStatus('1', 'Error');
+        }else if(error_status[ind11]=='Warning' || error_status[ind11+1]=='Warning'|| error_status[ind11+2]=='Warning'|| error_status[ind11+3]=='Warning'|| error_status[ind11+4]=='Warning'){
+          progList_changeStatus('1', 'Warning');
+        }
+        var ind41=getStatusIndex(41);
+        if(error_status[ind41]=='Success' && error_status[ind41+1]=='Success' && error_status[ind41+2]=='Success' && error_status[ind41+3]=='Success' && error_status[ind41+4]=='Success'){
+          progList_changeStatus('4', 'Success');
+        }else if(error_status[ind41]=='Error' || error_status[ind41+1]=='Error'|| error_status[ind41+2]=='Error'|| error_status[ind41+3]=='Error'|| error_status[ind41+4]=='Error'){
+          progList_changeStatus('4', 'Error');
+        }else if(error_status[ind41]=='Warning' || error_status[ind41+1]=='Warning'|| error_status[ind41+2]=='Warning'|| error_status[ind41+3]=='Warning'|| error_status[ind41+4]=='Warning'){
+          progList_changeStatus('4', 'Warning');
+        }
+      }
+    }
+
+    //This function is called by the servlet after a request from the timer, and updates the status of the build
+    //in the window according to the data sent by the servlet
+    function update(paramXMLParticular, XMLHttpRequestObj) {
+      var strText = "";
+      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
+        if (XMLHttpRequestObj.responseText) {
+          strText = XMLHttpRequestObj.responseText;
+        }
+
+        var msg = eval("("+strText+")");
+          
+        var state=msg.Response.state;
+        if(state=="11" || start===true){
+          if(state=="60"){
+            stopLocalTimer();
+          }
+          start=true;
+          var errorStatus=msg.Response.statusofstate;
+          var stateindex=getStatusIndex(state);
+          if(stateindex>current_state){
+            for(i=current_state;i<stateindex;i++){
+              //We need to ask for warning/error state for the intermediate status
+              document.getElementById("reqStatus").value=possible_states[i];
+              submitXmlHttpRequest(askForErrorStatus, null, "REQUESTERRORSTATE", "ApplyModules.html", false, null, null);
+            }
+          }
+ 
+          error_status[getStatusIndex(state)]=errorStatus;
+          var message;
+          if(msg.Response.lastmessage!==null){
+            message=msg.Response.lastmessage.substring(0,50);
+          }else{
+            message="";
+          }
+
+          insertWarnsAndErrors(msg.Response);
+          if(state!="60"){
+            progList_changeStatus(correspondingNode(state), errorStatus, message);
+          }
+          current_state=stateindex;
+        }
+      }
+    }
+
+    //This function resets the status of all the nodes
     function resetAllStates(){
       progList_changeStatus('1', 'Pending');
       progList_changeStatus('1.1', 'Pending');
@@ -395,14 +403,10 @@
     }
     
     function onUnloadDo() {
-      try {
-        top.opener.setProcessingMode('window', false);
-        reloadOpener();
-      }
-      catch (e) {}
+      top.opener.setProcessingMode('window', false);
+      reloadOpener();
     }
 
-    var processing = false;
   </script>
 
 </head>
@@ -631,16 +635,11 @@
             </table>
             
             <table class="Popup_Client_TablePopup" cellpadding="0" cellspacing="0" style="margin-top: 15px;" id="rebuildTable">
-              <tr>
-                <td class="TablePopup_OneCell_width"></td>
-                <td class="TablePopup_OneCell_width"></td>
-                <td class="TablePopup_OneCell_width"></td>
-                <td class="TablePopup_OneCell_width"></td>
-              </tr>
+           
 
               <tr><td colspan="4">
                 <div style="overflow: auto; width: 600px;">
-                  <span id="rebuildMessage" class="CheckList_RebuildSystemWindow_title">Elapsed time: <span id="localChrono">00:00</span>.</br> Do not close this window.</span>
+                  <span id="rebuildMessage" class="CheckList_RebuildSystemWindow_title">Elapsed time: <span id="localTimer">00:00</span>.</br> Do not close this window.</span>
                  </div>
               </td></tr>
 
@@ -904,8 +903,8 @@
                 </div>
               </td></tr>
 
+              <tr><td height="10"></td></tr>
               <tr>
-                <tr><td height="10"></td></tr>
                 <td colspan="4">
                   <div class="CheckList_RebuildSystemWindow_textarea" id="warningsAndErrors">
                 </td>
@@ -942,4 +941,3 @@
 
 
 </body></html>
-              

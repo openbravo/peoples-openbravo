@@ -345,6 +345,14 @@ public class ApplyModules extends HttpSecureAppServlet {
       ps2 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB11'");
       ps2.executeUpdate();
 
+      // We first shutdown the background process, so that it doesn't interfere
+      // with the rebuild process
+      try {
+        OBScheduler.getInstance().getScheduler().shutdown(true);
+      } catch (Exception e) {
+        // We will not log an exception if the scheduler complains. The user shouldn't notice this
+      }
+
       Properties props = new Properties();
       props.setProperty("log4j.appender.DB", "org.openbravo.utils.OBRebuildAppender");
       props.setProperty("log4j.appender.DB.Basedir", vars.getSessionValue("#sourcePath"));
@@ -381,14 +389,6 @@ public class ApplyModules extends HttpSecureAppServlet {
         ant.setProperty("force", "true");
         tasks.add("apply.modules");
         ant.setProperty("module", unnappliedModules);
-      }
-
-      // We first shutdown the background process, so that it doesn't interfere
-      // with the rebuild process
-      try {
-        OBScheduler.getInstance().getScheduler().shutdown(true);
-      } catch (Exception e) {
-        // We will not log an exception if the scheduler complains. The user shouldn't notice this
       }
 
       // We also cancel sessions opened for users different from the current one
