@@ -202,4 +202,8 @@ public class WADNumber extends WADControl {
       xmlDocument.setParameter("outputFormat", "generalQtyEdition");
     }
   }
+
+  public boolean isNumericType() {
+    return true;
+  }
 }

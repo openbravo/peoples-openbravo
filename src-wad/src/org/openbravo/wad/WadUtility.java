@@ -2327,10 +2327,18 @@ public class WadUtility {
   /**
    * Obtains an instance of the WAD implementator for the reference passed as parameter
    */
-  private static WADControl getWadControlClass(ConnectionProvider conn, String parentRef,
-      String subRef) throws Exception {
-    String classname = WadUtilityData.getReferenceClassName(conn, subRef, parentRef);
+  public static WADControl getWadControlClass(ConnectionProvider conn, String parentRef,
+      String subRef) {
+    String classname;
     WADControl control;
+
+    try {
+      classname = WadUtilityData.getReferenceClassName(conn, subRef, parentRef);
+    } catch (ServletException e1) {
+      log4j.warn("Couldn't find reference classname ref " + parentRef + ", subRef " + subRef, e1);
+      return new WADControl();
+    }
+
     try {
       Class<?> c = Class.forName(classname);
       control = (WADControl) c.newInstance();

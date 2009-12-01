@@ -334,4 +334,8 @@ public class WADControl {
         null, getData("IsLinkable"), getData("KeyColumnName"), getData("ColumnNameInp"),
         getData("AD_Table_ID"), columnLink);
   }
+
+  public boolean isNumericType() {
+    return false;
+  }
 }

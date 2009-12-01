@@ -173,4 +173,8 @@ public class WADInteger extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  public boolean isNumericType() {
+    return true;
+  }
+
 }

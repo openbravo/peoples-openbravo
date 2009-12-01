@@ -2073,6 +2073,9 @@ public class Wad extends DefaultHandler {
           fieldsData1[i].columnname = fieldsData1[i].name;
           defaultValue = false;
 
+          WADControl control = WadUtility.getWadControlClass(pool, fieldsData1[i].reference,
+              fieldsData1[i].adReferenceValueId);
+
           if (fieldsData1[i].reference.equals("20")) {
             fieldsData1[i].xmltext = ", \"N\"";
             defaultValue = true;
@@ -2084,7 +2087,7 @@ public class Wad extends DefaultHandler {
             fieldsData1[i].xmltext = ", windowId + \"|" + fieldsData1[i].realname + "\"";
             fieldsData1[i].type = "RequestGlobalVariable";
           } else if (fieldsData1[i].issessionattr.equals("Y")) {
-            if (WadActionButton.isNumericType(fieldsData1[i].reference)) {
+            if (control.isNumericType()) {
               fieldsData1[i].xmltext = ", vars.getSessionValue(windowId + \"|"
                   + fieldsData1[i].realname + "\")";
             } else {
@@ -2109,7 +2112,7 @@ public class Wad extends DefaultHandler {
             fieldsData1[i].type = "RequiredStringParameter";
           }
 
-          if (WadActionButton.isNumericType(fieldsData1[i].reference)) {
+          if (control.isNumericType()) {
             if (fieldsData1[i].required.equals("Y")) {
               fieldsData1[i].type = "RequiredNumericParameter";
             } else {
@@ -2117,7 +2120,7 @@ public class Wad extends DefaultHandler {
             }
           }
 
-          if (WadActionButton.isNumericType(fieldsData1[i].reference)) {
+          if (control.isNumericType()) {
             fieldsData1[i].trytext = " try { ";
             fieldsData1[i].catchtext = " } catch (ServletException paramEx) { ex = paramEx; } ";
           } else {
