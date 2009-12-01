@@ -464,7 +464,7 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Bitstream Vera Sans" size="11"/>
+						<font fontName="Bitstream Vera Sans" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalAmount}!=null)?$P{NUMBERFORMAT}.format($V{totalAmount}.add($F{INITIALBALANCE})):new String(" ")]]></textFieldExpression>
 				</textField>
@@ -478,7 +478,7 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
 						stretchType="RelativeToBandHeight"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Bitstream Vera Sans" size="11"/>
+						<font fontName="Bitstream Vera Sans" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalAmount}!=null)?$P{NUMBERFORMAT}.format($V{totalAmount}.add($F{INITIALBALANCE})):$P{NUMBERFORMAT}.format($F{INITIALBALANCE})]]></textFieldExpression>
 				</textField>

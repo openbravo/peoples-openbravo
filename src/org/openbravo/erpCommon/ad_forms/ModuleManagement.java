@@ -546,8 +546,16 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     // Remote installation is only allowed for heartbeat enabled instances
     if (!islocal && !isHeartbeatEnabled()) {
-      response.sendRedirect(strDireccion
-          + "/ad_forms/Heartbeat.html?Command=DEFAULT_MODULE&inpcRecordId=" + recordId);
+      String inpcRecordId = recordId;
+      String command = "DEFAULT";
+
+      if (updateModules != null && updateModules.length > 0 && !updateModules[0].equals("")) {
+        inpcRecordId = "FFF";
+        command = "UPDATE";
+      }
+
+      response.sendRedirect(strDireccion + "/ad_forms/Heartbeat.html?Command=" + command
+          + "_MODULE&inpcRecordId=" + inpcRecordId);
     }
 
     if (!islocal && (updateModules == null || updateModules.length == 0)) {
