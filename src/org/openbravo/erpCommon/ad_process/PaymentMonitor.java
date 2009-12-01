@@ -20,14 +20,13 @@ import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.DebtPayment;
 import org.openbravo.service.db.DalConnectionProvider;
 
-public class PaymentMonitor {
-  static Logger log4j = Logger.getLogger(PaymentMonitor.class);
+class PaymentMonitor {
+  private static final Logger log4j = Logger.getLogger(PaymentMonitor.class);
 
   /**
-   * 
-   * @param invoice
+   * Updates payment monitor information
    */
-  public static void updateInvoice(Invoice invoice) {
+  static void updateInvoice(Invoice invoice) {
     List<DebtPayment> payments = invoice.getFinancialMgmtDebtPaymentList();
     BigDecimal paidAmount = BigDecimal.ZERO;
     BigDecimal overDueAmount = BigDecimal.ZERO;
@@ -38,38 +37,33 @@ public class PaymentMonitor {
             .getClient().getId(), invoice.getOrganization().getId()));
       else {
         paidAmount = paidAmount.add(calculatePaidAmount(payment, invoice.getCurrency().getId(),
-            invoice.getAccountingDate(), new BigDecimal("1")));
+            invoice.getAccountingDate(), BigDecimal.ONE));
         overDueAmount = overDueAmount.add(calculateOverdueAmount(payment, invoice.getCurrency()
-            .getId(), invoice.getAccountingDate(), new BigDecimal("1")));
+            .getId(), invoice.getAccountingDate(), BigDecimal.ONE));
       }
     }
     if (paidAmount.setScale(invoice.getCurrency().getStandardPrecision().intValue(),
         BigDecimal.ROUND_HALF_UP).compareTo(invoice.getGrandTotalAmount()) == 0) {
-      invoice.setDaysTillDue(new Long(0));
+      invoice.setDaysTillDue(0L);
       invoice.setDueAmount(BigDecimal.ZERO);
       invoice.setPaymentComplete(true);
     } else {
       invoice.setDaysTillDue(getDaysTillDue(invoice));
       invoice.setPaymentComplete(false);
     }
-    invoice.setTotalpaid(paidAmount.setScale(invoice.getCurrency().getStandardPrecision()
+    invoice.setTotalPaid(paidAmount.setScale(invoice.getCurrency().getStandardPrecision()
         .intValue(), BigDecimal.ROUND_HALF_UP));
     invoice.setDueAmount(overDueAmount.setScale(invoice.getCurrency().getStandardPrecision()
         .intValue(), BigDecimal.ROUND_HALF_UP));
-    invoice.setOutstandingAmount(invoice.getGrandTotalAmount().subtract(invoice.getTotalpaid()));
+    invoice.setOutstandingAmount(invoice.getGrandTotalAmount().subtract(invoice.getTotalPaid()));
     invoice.setLastCalculatedOnDate(new Date(System.currentTimeMillis()));
     OBDal.getInstance().save(invoice);
     OBDal.getInstance().flush();
     return;
   }
 
-  /**
-   * 
-   * @param invoice
-   * @return
-   */
-  public static Long getDaysTillDue(Invoice invoice) {
-    Long daysToDue = new Long(0);
+  static Long getDaysTillDue(Invoice invoice) {
+    Long daysToDue = 0L;
     final StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as dp ");
     whereClause.append(" where dp.invoice.id ='").append(invoice.getId()).append("'");
@@ -93,12 +87,7 @@ public class PaymentMonitor {
     return daysToDue;
   }
 
-  /**
-   * 
-   * @param payment
-   * @return
-   */
-  public static Long getPaymentDaysToDue(DebtPayment payment) {
+  static Long getPaymentDaysToDue(DebtPayment payment) {
     if (payment.isPaymentComplete())
       return null;
     if (payment.getSettlementCancelled() == null)
@@ -116,48 +105,30 @@ public class PaymentMonitor {
     if (allDaysToDue == null || allDaysToDue.size() == 0)
       return null;
     allDaysToDue = sort(allDaysToDue);
-    Long daysToDue = new Long(0);
-    daysToDue = allDaysToDue.get(0);
+    Long daysToDue = allDaysToDue.get(0);
     return daysToDue;
   }
 
-  /**
-   * 
-   * @param date
-   * @return
-   */
-  public static Long getDaysToDue(Date date) {
+  static Long getDaysToDue(Date date) {
     Date now = new Date(System.currentTimeMillis());
     DateFormat df1 = DateFormat.getDateInstance(DateFormat.SHORT);
     String strToday = df1.format(now);
     Date today = null;
     try {
       today = df1.parse(strToday);
+      return (date.getTime() - today.getTime()) / 86400000;
     } catch (ParseException e) {
-      log4j.error(e);
+      log4j.error("Error parsing date: ", e);
     }
-    return (date.getTime() - today.getTime()) / 86400000;
+    return null;
   }
 
-  /**
-   * 
-   * @param al
-   * @return
-   */
-  public static ArrayList<Long> sort(ArrayList<Long> al) {
+  static ArrayList<Long> sort(ArrayList<Long> al) {
     Collections.sort(al);
     return al;
   }
 
-  /**
-   * 
-   * @param payment
-   * @param strCurrencyTo
-   * @param conversionDate
-   * @param multiplier
-   * @return
-   */
-  public static BigDecimal calculatePaidAmount(DebtPayment payment, String strCurrencyTo,
+  static BigDecimal calculatePaidAmount(DebtPayment payment, String strCurrencyTo,
       Date conversionDate, BigDecimal multiplier) {
     BigDecimal paidAmount = BigDecimal.ZERO;
     if (payment.getSettlementCancelled() == null)
@@ -207,15 +178,7 @@ public class PaymentMonitor {
     return paidAmount;
   }
 
-  /**
-   * 
-   * @param payment
-   * @param strCurrencyTo
-   * @param conversionDate
-   * @param multiplier
-   * @return
-   */
-  public static BigDecimal calculateOverdueAmount(DebtPayment payment, String strCurrencyTo,
+  static BigDecimal calculateOverdueAmount(DebtPayment payment, String strCurrencyTo,
       Date conversionDate, BigDecimal multiplier) {
     BigDecimal overdueAmount = BigDecimal.ZERO;
 
@@ -262,17 +225,7 @@ public class PaymentMonitor {
     return overdueAmount;
   }
 
-  /**
-   * 
-   * @param Amt
-   * @param CurFrom_ID
-   * @param CurTo_ID
-   * @param ConvDate
-   * @param client
-   * @param org
-   * @return
-   */
-  public static BigDecimal getConvertedAmt(BigDecimal Amt, String CurFrom_ID, String CurTo_ID,
+  static BigDecimal getConvertedAmt(BigDecimal Amt, String CurFrom_ID, String CurTo_ID,
       Date ConvDate, String client, String org) {
     if (CurFrom_ID == null || CurTo_ID == null || CurFrom_ID.equals(CurTo_ID))
       return Amt;
