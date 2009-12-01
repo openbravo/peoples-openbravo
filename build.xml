@@ -725,7 +725,7 @@ export.database: exports database structure and data to xml files.
       <classpath refid="project.class.path" />
     </taskdef>
     
-    <taskdef name="WADValidation" classname="org.openbravo.service.system.WADValidatorTask">
+    <taskdef name="WADValidation" classname="org.openbravo.wad.validation.WADValidatorTask">
       <classpath refid="project.class.path" />
     </taskdef>
             
