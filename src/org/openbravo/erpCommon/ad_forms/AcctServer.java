@@ -291,13 +291,15 @@ public abstract class AcctServer {
         if (!post(data[i].getField("ID"), false, vars, connectionProvider, con)) {
           connectionProvider.releaseRollbackConnection(con);
           return;
+        } else {
+          connectionProvider.releaseCommitConnection(con);
+          con = connectionProvider.getTransactionConnection();
         }
       }
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - Run -" + data.length + " IDs [" + strIDs + "]");
       // Create Automatic Matching
       // match (vars, this,con);
-      connectionProvider.releaseCommitConnection(con);
     } catch (NoConnectionAvailableException ex) {
       throw new ServletException("@CODE=NoConnectionAvailable", ex);
     } catch (SQLException ex2) {
@@ -680,9 +682,6 @@ public abstract class AcctServer {
     int no = 0;
     try {
       no = AcctServerData.updateSave(conn, tableName, Status, Record_ID);
-      // If Status is not posted (Error...) then the created accounting is deleted
-      if (!Status.equals(AcctServer.STATUS_Posted))
-        AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);
     } catch (ServletException e) {
       log4j.warn(e);
     }
