@@ -33,6 +33,7 @@ import org.openbravo.test.dal.DalStoredProcedureTest;
 import org.openbravo.test.dal.DalTest;
 import org.openbravo.test.dal.DynamicEntityTest;
 import org.openbravo.test.dal.HiddenUpdateTest;
+import org.openbravo.test.dal.IssuesTest;
 import org.openbravo.test.dal.MappingGenerationTest;
 import org.openbravo.test.dal.OBContextTest;
 import org.openbravo.test.dal.ValidationTest;
@@ -85,6 +86,7 @@ public class AntTaskTests {
     suite.addTestSuite(DalTest.class);
     suite.addTestSuite(DalCopyTest.class);
     suite.addTestSuite(DynamicEntityTest.class);
+    suite.addTestSuite(IssuesTest.class);
     suite.addTestSuite(HiddenUpdateTest.class);
     // suite.addTestSuite(HqlTest.class);
     suite.addTestSuite(MappingGenerationTest.class);

@@ -41,11 +41,11 @@ public class CallStoredProcedure {
 
   private static CallStoredProcedure instance = new CallStoredProcedure();
 
-  public static CallStoredProcedure getInstance() {
+  public static synchronized CallStoredProcedure getInstance() {
     return instance;
   }
 
-  public static void setInstance(CallStoredProcedure instance) {
+  public static synchronized void setInstance(CallStoredProcedure instance) {
     CallStoredProcedure.instance = instance;
   }
 

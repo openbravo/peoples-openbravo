@@ -27,18 +27,7 @@
       ]]>
     </Sql>
   </SqlMethod>
-  <SqlMethod name="selectTables" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-    select ad_table_id as id from ad_table where tablename in ('C_Invoice','C_BankStatement','C_Cash','GL_Journal','C_Settlement')
-      ]]>
-    </Sql>
-  </SqlMethod>
-     <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-   </SqlMethod>
+
   <SqlMethod name="insertClient" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -119,19 +108,7 @@
     <Parameter name="AD_Tree_SalesRegion_ID"/>
     <Parameter name="AD_Tree_Product_ID"/>
   </SqlMethod>
-    <SqlMethod name="insertOrg" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      INSERT INTO AD_Org (AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,IsSummary)
-      VALUES (?,?,'Y',now(),'0',now(),'0' ,?,?,'N')
-      ]]>
-    </Sql>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="AD_Org_ID"/>
-    <Parameter name="name"/>
-    <Parameter name="name"/>
-  </SqlMethod>
+
     <SqlMethod name="insertRole" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -148,22 +125,7 @@
     <Parameter name="AD_Client_ID"/>
     <Parameter name="AD_Org_ID"/>
   </SqlMethod>
-    <SqlMethod name="insertRole2" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      INSERT INTO AD_Role(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,AD_Role_ID,Name,
-      Description,UserLevel,ClientList,OrgList)
-      VALUES (?,'0','Y',now(),'0',now(),'0',?,?,?,'  O',?,?)
-      ]]>
-    </Sql>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="AD_Role_ID_U"/>
-    <Parameter name="name"/>
-    <Parameter name="name"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="AD_Org_ID"/>
-  </SqlMethod>
+
       <SqlMethod name="insertRoleOrgAccess" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -302,18 +264,7 @@
     <Parameter name="C_Element_ID"/>
     <Parameter name="C_AcctSchema_Element_ID"/>
   </SqlMethod>
-      <SqlMethod name="updateAcctSchemaElement3" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      UPDATE C_AcctSchema_Element SET C_Project_ID = ?
-      WHERE C_AcctSchema_ID = ?
-      AND ElementType='PJ'
-      ]]>
-    </Sql>
-    <Parameter name="C_Project_ID"/>
-    <Parameter name="C_AcctSchema_ID"/>
-  </SqlMethod>
+
       <SqlMethod name="insertAcctSchemaGL" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -598,194 +549,7 @@
     </Sql>
     <Parameter name="currency"/>
   </SqlMethod>
-  <SqlMethod name="insertChannel" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      INSERT INTO C_Channel (C_Channel_ID,Name,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy)
-      VALUES (?,?,?,'0','Y',now(),'0',now(),'0')
-      ]]>
-    </Sql>
-    <Parameter name="C_Channel_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="AD_Client_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertCampaign" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      INSERT INTO C_Campaign (C_Campaign_ID,C_Channel_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,Costs)
-      VALUES (?,?,?,'0','Y',now(),'0',now(),'0',?,?,'0')
-      ]]>
-    </Sql>
-    <Parameter name="C_Campaign_ID"/>
-    <Parameter name="C_Channel_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="defaultName"/>
-  </SqlMethod>
-  <SqlMethod name="updateAcctSchemaElementSR" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      UPDATE C_AcctSchema_Element
-      SET C_SalesRegion_ID = ?
-      WHERE C_AcctSchema_ID= ?
-      AND ElementType='SR'
-    </Sql>
-    <Parameter name="C_SalesRegion_ID"/>
-    <Parameter name="C_AcctSchema_ID"/>
-  </SqlMethod>
-  <SqlMethod name="updateAcctSchemaElementMC" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      UPDATE C_AcctSchema_Element
-      SET C_Campaign_ID = ?
-      WHERE C_AcctSchema_ID= ?
-      AND ElementType='MC'
-    </Sql>
-    <Parameter name="C_Campaign_ID"/>
-    <Parameter name="C_AcctSchema_ID"/>
-  </SqlMethod>
-  <SqlMethod name="updateAcctSchemaElementBP" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      UPDATE C_AcctSchema_Element
-      SET C_BPartner_ID = ?
-      WHERE C_AcctSchema_ID= ?
-      AND ElementType='BP'
-    </Sql>
-    <Parameter name="C_BPartner_ID"/>
-    <Parameter name="C_AcctSchema_ID"/>
-  </SqlMethod>
-  <SqlMethod name="updateAcctSchemaElementPR" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      UPDATE C_AcctSchema_Element
-      SET M_Product_ID = ?
-      WHERE C_AcctSchema_ID= ?
-      AND ElementType='PR'
-    </Sql>
-    <Parameter name="M_Product_ID"/>
-    <Parameter name="C_AcctSchema_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertSalesRegion" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_SalesRegion (C_SalesRegion_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,IsSummary)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,?,'N')
-    </Sql>
-    <Parameter name="C_SalesRegion_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="defaultName"/>
-  </SqlMethod>
 
-  <SqlMethod name="insertAssetGroup" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO A_Asset_Group (A_ASSET_GROUP_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?)
-    </Sql>
-    <Parameter name="A_Asset_Group_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="defaultName"/>
-  </SqlMethod>
-
-  <SqlMethod name="insertBPGroup" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_BP_Group (C_BP_Group_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,IsDefault)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,?,'Y')
-    </Sql>
-    <Parameter name="C_BP_Group_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="defaultName"/>
-  </SqlMethod>
-
-
-
-  <SqlMethod name="insertBPartner" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_BPartner
-         (C_BPartner_ID,AD_Client_ID,AD_Org_ID,IsActive,
-         Created,CreatedBy,Updated,UpdatedBy,
-         Value,Name,C_BP_Group_ID,IsSummary)
-      VALUES (?,?,'0','Y',
-              now(),'0',now(),'0',
-              ?,?,?,'N')
-    </Sql>
-    <Parameter name="C_BPartner_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="C_BP_Group_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertProductCategory" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO M_Product_Category (M_Product_Category_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,IsDefault,PlannedMargin)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,?,'Y',0)
-    </Sql>
-    <Parameter name="M_Product_Category_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="defaultName"/>
-  </SqlMethod>
-  <SqlMethod name="insertTaxCategory" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_TaxCategory (C_TaxCategory_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Name,IsDefault)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?, 'Y')
-    </Sql>
-    <Parameter name="C_TaxCategory_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="append"/>
-  </SqlMethod>
-  <SqlMethod name="insertTax" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_Tax (C_Tax_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
-      Name,Rate,C_TaxCategory_ID,C_Country_ID,TO_Country_ID,
-      ValidFrom,SoPoType,IsDefault)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,0,?,?,?,TO_DATE('1990-01-01','YYYY-MM-DD'),'B','Y')
-    </Sql>
-    <Parameter name="C_Tax_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="C_TaxCategory_ID"/>
-    <Parameter name="C_Country_ID"/>
-    <Parameter name="C_Country_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertProduct" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO M_Product (M_Product_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
-      Value,Name,C_UOM_ID,M_Product_Category_ID,C_TaxCategory_ID)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,?,?,?,?)
-    </Sql>
-    <Parameter name="M_Product_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="C_UOM_ID"/>
-    <Parameter name="M_Product_Category_ID"/>
-    <Parameter name="C_TaxCategory_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertLocation" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_Location (C_Location_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,City,
-      C_Country_ID,C_Region_ID)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,?,?)
-    </Sql>
-    <Parameter name="C_Location_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="City"/>
-    <Parameter name="C_Country_ID"/>
-    <Parameter name="C_Region_ID"/>
-  </SqlMethod>
   <SqlMethod name="updateOrgInfo" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -795,200 +559,6 @@
     <Parameter name="C_Location_ID"/>
     <Parameter name="AD_Org_ID"/>
   </SqlMethod>
-  <SqlMethod name="insertWarehouse" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    INSERT INTO M_Warehouse (M_Warehouse_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
-    Value,Name,C_Location_ID,Separator)
-    VALUES (?,?,?,'Y',now(),'0',now(),'0',?,?,?,'-')
-    </Sql>
-  <Parameter name="M_Warehouse_ID"/>
-  <Parameter name="AD_Client_ID"/>
-  <Parameter name="AD_Org_ID"/>
-  <Parameter name="defaultName"/>
-  <Parameter name="defaultName"/>
-  <Parameter name="C_Location_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertLocator" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO M_Locator (M_Locator_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,
-      Updated,UpdatedBy,Value,M_Warehouse_ID,X,Y,Z,PriorityNo,IsDefault)
-      VALUES (?,?,'0','Y',now(),'0',now(),0,?,?,0,0,0,50,'Y')
-    </Sql>
-    <Parameter name="M_Locator_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="M_Warehouse_ID"/>
-  </SqlMethod>
-  <SqlMethod name="updateClientInfo2" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      UPDATE AD_ClientInfo
-      SET C_BPartnerCashTrx_ID = ?, M_ProductFreight_ID = ?
-      WHERE AD_Client_ID = ?
-    </Sql>
-    <Parameter name="C_BPartner_ID"/>
-    <Parameter name="M_Product_ID"/>
-    <Parameter name="AD_Client_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertPriceList" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO M_PriceList (M_PriceList_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,
-      CreatedBy,Updated,UpdatedBy,Name,C_Currency_ID,IsDefault)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,?,'Y')
-    </Sql>
-    <Parameter name="M_PriceList_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="C_Currency_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertDiscountSchema" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO M_DiscountSchema (M_DiscountSchema_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,
-      Updated,UpdatedBy,Name,ValidFrom,DiscountType, FlatDiscount)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,now(),'P',0)
-    </Sql>
-    <Parameter name="M_DiscountSchema_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="defaultName"/>
-  </SqlMethod>
-  <SqlMethod name="insertPriceListVersion" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO M_PriceList_Version (M_PriceList_Version_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
-      UpdatedBy,Name,ValidFrom,M_PriceList_ID,M_DiscountSchema_ID)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,TO_DATE(now()),?,?)
-    </Sql>
-    <Parameter name="M_PriceList_Version_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="StringDate"/>
-    <Parameter name="M_PriceList_ID"/>
-    <Parameter name="M_DiscountSchema_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertProductPrice" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO M_ProductPrice (M_ProductPrice_ID, M_PriceList_Version_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
-      UpdatedBy,M_Product_ID,PriceList,PriceStd,PriceLimit)
-      VALUES (get_uuid(), ?,?,'0','Y',now(),'0',now(),'0',?,1,1,1)
-    </Sql>
-    <Parameter name="M_PriceList_Version_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="M_Product_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertBPartnerLocation" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_BPartner_Location (C_BPartner_Location_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
-      UpdatedBy,Name,C_BPartner_ID,C_Location_ID)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,?,?)
-    </Sql>
-    <Parameter name="C_BPartner_Location_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="City"/>
-    <Parameter name="C_BPartner_ID"/>
-    <Parameter name="C_Location_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertBPartner2" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_BPartner
-        (C_BPartner_ID,AD_Client_ID,AD_Org_ID,IsActive,
-        Created,CreatedBy,Updated, UpdatedBy,
-        Value,Name,C_BP_Group_ID,IsSummary,
-        IsEmployee,IsSalesRep,IsVendor)
-      VALUES (?,?,'0','Y',
-              now(),'0',now(),'0',
-              ?,?,?,'N',
-              'Y','Y','Y')
-    </Sql>
-    <Parameter name="C_BPartner_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="AD_User_U_Name"/>
-    <Parameter name="AD_User_U_Name"/>
-    <Parameter name="C_BP_Group_ID"/>
-  </SqlMethod>
-  <SqlMethod name="updateUser" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      UPDATE AD_User SET C_BPartner_ID = ?
-      WHERE AD_User_ID = ?
-    </Sql>
-    <Parameter name="C_BPartner_ID"/>
-    <Parameter name="AD_User_U_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertPaymentTerm" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_PaymentTerm (C_PaymentTerm_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,
-      CreatedBy,Updated,UpdatedBy,Value,Name,NetDays,IsDefault)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0','Immediate','Immediate',0,'Y')
-    </Sql>
-    <Parameter name="C_PaymentTerm_ID"/>
-    <Parameter name="AD_Client_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertCycle" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_Cycle (C_Cycle_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Name,C_Currency_ID)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,?)
-    </Sql>
-    <Parameter name="C_Cycle_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="C_Currency_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertCycleStep" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_CycleStep (C_CycleStep_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
-      C_Cycle_ID,SeqNo,C_ProjectStatus_ID,RelativeWeight)
-      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,?,?,1)
-    </Sql>
-    <Parameter name="C_CycleStep_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="C_Cycle_ID"/>
-    <Parameter name="SeqNo"/>
-    <Parameter name="C_ProjectStatus_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertProject" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_Project (C_Project_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
-      UpdatedBy,Value,Name,C_Currency_ID,IsSummary)
-      VALUES (?,?,?,'Y',now(),'0',now(),'0',?,?,?,'N')
-    </Sql>
-    <Parameter name="C_Project_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="AD_Org_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="C_Currency_ID"/>
-  </SqlMethod>
-  <SqlMethod name="insertCashBook" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO C_CashBook (C_CashBook_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,
-      Updated,UpdatedBy,Name,C_Currency_ID)
-      VALUES (?,?,?,'Y',now(),'0',now(),'0',?,?)
-    </Sql>
-    <Parameter name="C_CashBook_ID"/>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="AD_Org_ID"/>
-    <Parameter name="defaultName"/>
-    <Parameter name="C_Currency_ID"/>
-  </SqlMethod>
-   <!--SqlMethod name="setup" type="callableStatement" return="object" object="InitialClientSetupData">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        CALL AD_Setup(?,?)
-      </Sql>
-      <Parameter name="uno"/>
-      <Parameter name="dos"/>
-   </SqlMethod-->
    
    <SqlMethod name="selectCOAModules" type="preparedStatement" return="multiple">
     <SqlMethodComment>selects chart of accounts modules</SqlMethodComment>
@@ -1044,26 +614,6 @@
     <Parameter name="AD_User_ID"/>
     <Parameter name="AD_Module_ID"/>
     <Parameter name="version"/>
-  </SqlMethod>
-  <SqlMethod name="insertDoctypeTemplate" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      INSERT INTO c_poc_doctype_template(
-            c_poc_doctype_template_id, ad_client_id, ad_org_id, isactive, 
-            created, createdby, updated, updatedby, c_doctype_id, name, 
-            templatelocation, reportfilename, templatefilename)
-      VALUES (GET_UUID(), ?, '0', 'Y', 
-            now(), '0', now(), '0', ?, ?, 
-            ?, ?, ?)
-      ]]>
-    </Sql>
-    <Parameter name="clientId"/>
-    <Parameter name="doctypeId"/>
-    <Parameter name="name"/>
-    <Parameter name="templatelocation"/>
-    <Parameter name="reportfilename"/>
-    <Parameter name="templatefilename"/>
   </SqlMethod>
   <SqlMethod name="insertDoctypeTemplate2" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

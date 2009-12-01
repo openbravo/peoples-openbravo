@@ -54,35 +54,35 @@ keyArray[0] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Busines
 }
 function validate() {
 	var frm = document.frmMain;
-	if (frm.inpReportDateFrom.value!=null && frm.inpReportDateFrom.value!="" && !isValidDate(frm.inpReportDateFrom.value, frm.inpReportDateFrom.displayFormat)) {
-			setWindowElementFocus(frm.inpReportDateFrom);
+	if (document.getElementById('paramDateFrom').value!=null && document.getElementById('paramDateFrom').value!="" && !isValidDate(document.getElementById('paramDateFrom').value, document.getElementById('paramDateFrom').getAttribute('displayFormat'))) {
+			setWindowElementFocus(frm.paramDateFrom);
 			frm.inpReportDateFrom.select();
 			showJSMessage(5);
 			return false;
-	} else if (frm.inpReportDateTo.value!=null && frm.inpReportDateTo.value!="" && !isValidDate(frm.inpReportDateTo.value, frm.inpReportDateTo.displayFormat)) {
-			setWindowElementFocus(frm.inpReportDateTo);
+	} else if (document.getElementById('paramDateTo').value!=null && document.getElementById('paramDateTo').value!="" && !isValidDate(document.getElementById('paramDateTo').value, document.getElementById('paramDateTo').getAttribute('displayFormat'))) {
+			setWindowElementFocus(frm.paramDateTo);
 			frm.inpReportDateTo.select();
 			showJSMessage(5);
 			return false;
-	} else if (frm.inpDateinvoiced.value!=null && frm.inpDateinvoiced.value!="" && !isValidDate(frm.inpDateinvoiced.value, frm.inpDateinvoiced.displayFormat)) {
-			setWindowElementFocus(frm.inpDateinvoiced);
+	} else if (document.getElementById('paramDateinvoiced').value!=null && document.getElementById('paramDateinvoiced').value!="" && !isValidDate(document.getElementById('paramDateinvoiced').value, document.getElementById('paramDateinvoiced').getAttribute('displayFormat'))) {
+			setWindowElementFocus(frm.paramDateinvoiced);
 			frm.inpDateinvoiced.select();
 			showJSMessage(5);
 			return false;
 	}
-  if ((frm.inpReportDateFrom.value==null || frm.inpReportDateFrom.value=="")) {
+  if ((document.getElementById('paramDateFrom').value==null || document.getElementById('paramDateFrom').value=="")) {
     	setWindowElementFocus(frm.inpReportDateFrom);
 		frm.inpReportDateFrom.select();
 		showJSMessage(1);
 		return false;
 	}
-  if ((frm.inpReportDateTo.value==null || frm.inpReportDateTo.value=="")) {
+  if ((document.getElementById('paramDateTo').value==null || document.getElementById('paramDateTo').value=="")) {
     	setWindowElementFocus(frm.inpReportDateTo);
 		frm.inpReportDateTo.select();
 		showJSMessage(1);
 		return false;
 	}
-  if ((frm.inpDateinvoiced.value == null || frm.inpDateinvoiced.value == "")) {
+  if ((document.getElementById('paramDateinvoiced').value == null || document.getElementById('paramDateinvoiced').value == "")) {
     	setWindowElementFocus(frm.inpDateinvoiced);
 		frm.inpDateinvoiced.select();
 		showJSMessage(1);
