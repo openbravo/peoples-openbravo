@@ -2029,47 +2029,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("searchName", strHighVolume);
     xmlDocument.setParameter("searchVariables", strParamHighVolume);
     xmlDocument.setParameter("searchComparations", strHighVolumeComp);
-    {
-      final StringBuffer fieldsRelationStructure = new StringBuffer();
-      FieldsData[] fieldsDataSelect = null;
-      fieldsDataSelect = copyarray(fieldsDataSelectAux);
-      fieldsRelationStructure
-          .append("strData.append(\"\\\"\").append(Replace.replace(Replace.replace(Replace.replace(data[contadorData].");
-      fieldsRelationStructure.append(Sqlc.TransformaNombreColumna(keyColumnName));
-      fieldsRelationStructure
-          .append(", \"\\r\", \"\"), \"\\n\", \"<br>\"), \"\\\"\", \"\\\\\\\"\")).append(\"\\\"\");\n");
-      for (int i = 0; i < fieldsDataSelect.length; i++) {
-        if (fieldsDataSelect[i].showinrelation.equals("Y")
-            && fieldsDataSelect[i].isencrypted.equals("N")
-            && (fieldsDataSelect[i].isdisplayed.equals("Y"))) {
-          if (parentsFieldsData.length == 0
-              || !parentsFieldsData[0].name.equals(fieldsDataSelect[i].name)) {
-            fieldsRelationStructure.append("strData.append(\",\");\n");
-            fieldsRelationStructure
-                .append("strData.append(\"\\\"\").append(Replace.replace(Replace.replace(Replace.replace(data[contadorData].");
-            if ((fieldsDataSelect[i].reference.equals("17")
-                || fieldsDataSelect[i].reference.equals("18") || fieldsDataSelect[i].reference
-                .equals("19"))
-                && fieldsDataSelect[i].isdisplayed.equals("Y")) { // List
-              fieldsDataSelect[i].name = fieldsDataSelect[i].name + "R"; // _REF
-            } else if ((fieldsDataSelect[i].reference.equals("30")
-                || fieldsDataSelect[i].reference.equals("800011")
-                || fieldsDataSelect[i].reference.equals("31")
-                || fieldsDataSelect[i].reference.equals("35")
-                || fieldsDataSelect[i].reference.equals("25")
-                || fieldsDataSelect[i].reference.equals("21") || fieldsDataSelect[i].reference
-                .equals("32"))
-                && fieldsDataSelect[i].isdisplayed.equals("Y")) {
-              fieldsDataSelect[i].name = fieldsDataSelect[i].name + "R";
-            }
-            fieldsRelationStructure.append(Sqlc.TransformaNombreColumna(fieldsDataSelect[i].name));
-            fieldsRelationStructure
-                .append(", \"\\r\", \"\"), \"\\n\", \"<br>\"), \"\\\"\", \"\\\\\\\"\")).append(\"\\\"\");\n");
-          }
-        }
-      }
-      xmlDocument.setParameter("fieldsRelation", fieldsRelationStructure.toString());
-    }
+
     if (WadUtility.findField(vecFields, "adClientId"))
       xmlDocument.setParameter("clientId", "data.adClientId");
     else

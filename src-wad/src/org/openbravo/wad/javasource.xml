@@ -25,7 +25,6 @@
 <PARAMETER id="paramSearchName" name="searchName" default=""/>
 <PARAMETER id="paramSearchVariables" name="searchVariables" default=""/>
 <PARAMETER id="paramSearchComparations" name="searchComparations" default=""/>
-<PARAMETER id="fieldFieldsRelation" name="fieldsRelation" default=""/>
 <PARAMETER id="relationControl" name="relationControl" default=""/>
 <PARAMETER id="fieldControlsJavaCode" name="controlsJavaCode"/>
 
