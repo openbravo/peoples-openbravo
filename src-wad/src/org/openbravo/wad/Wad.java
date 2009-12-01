@@ -2138,9 +2138,7 @@ public class Wad extends DefaultHandler {
             fieldsData1[i].htmltexttrl = ")";
           }
           vecFieldsSelect.addElement(fieldsData1[i]);
-          if ((WadUtility.isSearchType(fieldsData1[i].reference) || WadUtility
-              .isSelectType(fieldsData1[i].reference))
-              && fieldsData1[i].isdisplayed.equals("Y")) {
+          if (control.has2UIFields() && fieldsData1[i].isdisplayed.equals("Y")) {
             FieldsData fieldsData2 = null;
             fieldsData2 = copyarrayElement(fieldsData1[i]);
             fieldsData2.name += "r";// (WadUtility.isSearchType(fieldsData1[i].reference)?"D":"r");

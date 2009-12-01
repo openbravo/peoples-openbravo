@@ -224,4 +224,8 @@ public class WADList extends WADControl {
     }
     return text.toString();
   }
+
+  public boolean has2UIFields() {
+    return true;
+  }
 }

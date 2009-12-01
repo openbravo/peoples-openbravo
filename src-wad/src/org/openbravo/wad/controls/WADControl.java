@@ -335,7 +335,23 @@ public class WADControl {
         getData("AD_Table_ID"), columnLink);
   }
 
+  /**
+   * Checks whether the reference is a numeric value
+   * 
+   * @return true in case the reference is numeric
+   */
   public boolean isNumericType() {
+    return false;
+  }
+
+  /**
+   * Checks whether there are two ui fields for the control. These 2 fields are used in case the
+   * displayed value is different than the actual one in database, for example for list or table
+   * references.
+   * 
+   * @return true in case there are 2 ui fields
+   */
+  public boolean has2UIFields() {
     return false;
   }
 }

@@ -112,4 +112,8 @@ public class WADImage extends WADControl {
     }
     return text.toString();
   }
+
+  public boolean has2UIFields() {
+    return true;
+  }
 }

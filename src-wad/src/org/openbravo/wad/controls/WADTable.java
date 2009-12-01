@@ -28,4 +28,8 @@ public class WADTable extends WADList {
   public WADTable(Properties prop) {
     super(prop);
   }
+
+  public boolean has2UIFields() {
+    return true;
+  }
 }

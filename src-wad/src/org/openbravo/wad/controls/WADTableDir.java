@@ -28,4 +28,8 @@ public class WADTableDir extends WADList {
   public WADTableDir(Properties prop) {
     super(prop);
   }
+
+  public boolean has2UIFields() {
+    return true;
+  }
 }
