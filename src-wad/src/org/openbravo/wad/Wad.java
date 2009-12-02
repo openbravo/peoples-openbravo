@@ -3058,6 +3058,7 @@ public class Wad extends DefaultHandler {
       xmlDocumentXsql.setData("structure7", fieldsDataParameterInsert1);
     }
     {
+      // generate set() method
       final FieldsData fieldsDataDefaults[] = FieldsData.selectDefaultValue(pool, "", strTab);
       final Vector<Object> vecDDef = new Vector<Object>();
       for (int i = 0; i < fieldsDataDefaults.length; i++) {
@@ -3070,14 +3071,14 @@ public class Wad extends DefaultHandler {
           vecDDef.addElement(fieldsDataDefaults[i]);
           modified = true;
         }
-        if ((fieldsDataDefaults[i].referencevalue.equals("30")
-            || fieldsDataDefaults[i].reference.equals("800011")
-            || fieldsDataDefaults[i].referencevalue.equals("31")
-            || fieldsDataDefaults[i].referencevalue.equals("32")
-            || fieldsDataDefaults[i].referencevalue.equals("35")
-            || fieldsDataDefaults[i].referencevalue.equals("21") || fieldsDataDefaults[i].referencevalue
-            .equals("25"))
-            && fieldsDataDefaults[i].isdisplayed.equals("Y")) {
+
+        // add another field for default special cases with more than 1 field
+        WADControl control = WadUtility.getWadControlClass(pool,
+            fieldsDataDefaults[i].referencevalue, fieldsDataDefaults[i].type);
+        if (fieldsDataDefaults[i].isdisplayed.equals("Y")
+            && control.addAdditionDefaulJavaFields(new StringBuffer(), fieldsDataDefaults[i],
+                tabName, 0) != 0) {
+
           final FieldsData f = new FieldsData();
           f.name = (modified ? fieldsDataDefaults[i].name : Sqlc
               .TransformaNombreColumna(fieldsDataDefaults[i].name))
@@ -3089,6 +3090,7 @@ public class Wad extends DefaultHandler {
         } else if (fieldsDataDefaults[i].referencevalue.equals("28")
             && fieldsDataDefaults[i].isdisplayed.equals("Y")
             && !fieldsDataDefaults[i].type.equals("")) {
+          // Button special case
           final FieldsData f = new FieldsData();
           f.name = (modified ? fieldsDataDefaults[i].name : Sqlc
               .TransformaNombreColumna(fieldsDataDefaults[i].name))
