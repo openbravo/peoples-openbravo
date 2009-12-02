@@ -122,20 +122,22 @@ public class AntExecutor {
    * @return - The complete file name (including directory)
    * @throws Exception
    */
-  // public String setLogFile(String name) throws Exception {
-  // final File dir = new File(baseDir + "/log");
-  // if (!dir.exists())
-  // if (!dir.mkdir())
-  // return null;
-  // return setLogFile(baseDir + "/log", name);
-  // }
+  @Deprecated
+  public String setLogFile(String name) throws Exception {
+    final File dir = new File(baseDir + "/log");
+    if (!dir.exists())
+      if (!dir.mkdir())
+        return null;
+    return setLogFile(baseDir + "/log", name);
+  }
+
   @Deprecated
   public void setLogFileInOBPrintStream(File f) {
     ((OBPrintStream) log).setLogFile(f);
     ((OBPrintStream) err).setLogFile(f);
   }
 
-  public void setLogFile(String filename) {
+  public void setLogFileAndListener(String filename) {
     File logFolder = new File(baseDir, "log");
     if (!logFolder.exists()) {
       logFolder.mkdir();

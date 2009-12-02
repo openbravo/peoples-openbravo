@@ -361,7 +361,7 @@ public class ApplyModules extends HttpSecureAppServlet {
       response.setContentType("text/html; charset=UTF-8");
       final PrintWriter out = response.getWriter();
 
-      ant.setLogFile(vars.getStringParameter("logfile"));
+      ant.setLogFileAndListener(vars.getStringParameter("logfile"));
 
       // do not execute translation process (all entries should be already in the module)
       ant.setProperty("tr", "no");
