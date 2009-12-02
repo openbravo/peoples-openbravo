@@ -22,7 +22,7 @@ public class PaymentMonitorProcess extends DalBaseProcess {
     logger.log("Starting Update Paid Amount for Invoices Backgrouond Process.\n");
     try {
       int counter = 0;
-      String whereClause = " as inv where inv.totalpaid <> inv.grandTotalAmount and inv.processed=true";
+      String whereClause = " as inv where inv.totalPaid <> inv.grandTotalAmount and inv.processed=true";
 
       final OBQuery<Invoice> obqParameters = OBDal.getInstance().createQuery(Invoice.class,
           whereClause);
