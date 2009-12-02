@@ -65,25 +65,25 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRICELIST">
+      <foreign-key foreignTable="AD_CLIENT" name="M_PRICELIST_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MPRICELIST">
+      <foreign-key foreignTable="AD_ORG" name="M_PRICELIST_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="BASEPRICELIST">
+      <foreign-key foreignTable="M_PRICELIST" name="M_PRICELIST_BASEPRICELIST">
         <reference local="BASEPRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_MPRICELIST">
+      <foreign-key foreignTable="C_CURRENCY" name="M_PRICELIST_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <unique name="M_PRICELIST_NAME">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="M_PRICELIST_ENFORCEPRICELI_CHK"><![CDATA[ENFORCEPRICELIMIT IN ('Y', 'N')]]></check>
       <check name="M_PRICELIST_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MPRICELISTISSOPRLIST_CHECK"><![CDATA[ISSOPRICELIST IN ('Y', 'N')]]></check>
-      <check name="MPRICELISTISTAXINCL_CHECK"><![CDATA[ISTAXINCLUDED IN ('Y', 'N')]]></check>
-      <check name="MPRLIST_ENFORCEPRLIM_CHECK"><![CDATA[ENFORCEPRICELIMIT IN ('Y', 'N')]]></check>
+      <check name="M_PRICELIST_ISSOPRICELIST_CHK"><![CDATA[ISSOPRICELIST IN ('Y', 'N')]]></check>
+      <check name="M_PRICELIST_ISTAXINCLUDED_CHK"><![CDATA[ISTAXINCLUDED IN ('Y', 'N')]]></check>
     </table>
   </database>

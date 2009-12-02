@@ -37,16 +37,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADROLEORGACCESS">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_ROLE_ORGACCESS_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADROLEORGACCESS" onDelete="cascade">
+      <foreign-key foreignTable="AD_ORG" name="AD_ROLE_ORGACCESS_AD_ORG" onDelete="cascade">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADROLEORGACCESS" onDelete="cascade">
+      <foreign-key foreignTable="AD_ROLE" name="AD_ROLE_ORGACCESS_AD_ROLE" onDelete="cascade">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
-      <unique name="ADROLEORGACCESS_ADROLEID_AD_UN">
+      <unique name="AD_ROLE_ORGACCESS_ROLE_ORG_UN">
         <unique-column name="AD_ROLE_ID"/>
         <unique-column name="AD_ORG_ID"/>
       </unique>

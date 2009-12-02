@@ -80,17 +80,18 @@
       <foreign-key foreignTable="AD_REFERENCE" name="AD_REFERENCE_AD_REFERENCE">
         <reference local="PARENTREFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADREFERENCE">
-        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="REFERENCECLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_REFERENCE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="REFERENCEORG">
+      <foreign-key foreignTable="AD_MODULE" name="AD_REFERENCE_AD_MODULE">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_REFERENCE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <unique name="AD_REFERENCE_NAME">
         <unique-column name="NAME"/>
+        <unique-column name="AD_MODULE_ID"/>
       </unique>
       <check name="AD_REFERENCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

@@ -49,19 +49,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADTREENODE">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_TREENODE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADTREENODE" onDelete="cascade">
+      <foreign-key foreignTable="AD_ORG" name="AD_TREENODE_AD_ORG" onDelete="cascade">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREE_ADTREENODE" onDelete="cascade">
+      <foreign-key foreignTable="AD_TREE" name="AD_TREENODE_AD_TREE" onDelete="cascade">
         <reference local="AD_TREE_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
       <index name="AD_TREENODE_PARENTID" unique="false">
         <index-column name="PARENT_ID"/>
       </index>
-      <unique name="ADTREENODE_ADTREEID_NODEID_UN">
+      <unique name="AD_TREENODE_TREE_NODE_UN">
         <unique-column name="AD_TREE_ID"/>
         <unique-column name="NODE_ID"/>
       </unique>

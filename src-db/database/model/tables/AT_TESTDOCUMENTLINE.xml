@@ -88,13 +88,13 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_ATTESTDOCUMENTLINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ATTESTDOCUMENTLINE">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AT_COMMAND" name="AT_COMMAND_ATTESTDOCUMENTLINE">
         <reference local="AT_COMMAND_ID" foreign="AT_COMMAND_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AT_TESTDOCUMENT" name="ATTESTDOCUMENT_TESTDOCLINE">
+      <foreign-key foreignTable="AD_CLIENT" name="AT_TESTDOCUMENTLINE_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AT_TESTDOCUMENT" name="AT_TESTDOCUMENTLINE_AT_TESTDOC">
         <reference local="AT_TESTDOCUMENT_ID" foreign="AT_TESTDOCUMENT_ID"/>
       </foreign-key>
       <unique name="AT_TESTDOCUMENTLINE_UNIQUE">

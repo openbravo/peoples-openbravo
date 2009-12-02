@@ -69,16 +69,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CELEMENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_ELEMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREE_CELEMENT" onDelete="setnull">
+      <foreign-key foreignTable="AD_TREE" name="C_ELEMENT_AD_TREE" onDelete="setnull">
         <reference local="AD_TREE_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREE1_CELEMENT" onDelete="setnull">
+      <foreign-key foreignTable="AD_TREE" name="C_ELEMENT_ADD1TREE" onDelete="setnull">
         <reference local="ADD1TREE_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREE2_CELEMENT" onDelete="setnull">
+      <foreign-key foreignTable="AD_TREE" name="C_ELEMENT_ADD2TREE" onDelete="setnull">
         <reference local="ADD2TREE_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="C_ELEMENTORG">
@@ -90,6 +90,6 @@
       </unique>
       <check name="C_ELEMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_ELEMENT_ISBALANCING_CHECK"><![CDATA[ISBALANCING IN ('Y', 'N')]]></check>
-      <check name="CELEM_ISNATURACCOUNT_CHECK"><![CDATA[ISNATURALACCOUNT IN ('Y', 'N')]]></check>
+      <check name="C_ELEMENT_ISNATURALACCOUNT_CHK"><![CDATA[ISNATURALACCOUNT IN ('Y', 'N')]]></check>
     </table>
   </database>

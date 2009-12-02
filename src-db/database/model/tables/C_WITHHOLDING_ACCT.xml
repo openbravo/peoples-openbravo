@@ -45,22 +45,22 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CWITHHOLDINGACCT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_WITHHOLDING_ACCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CWITHHOLDINGACCT">
+      <foreign-key foreignTable="AD_ORG" name="C_WITHHOLDING_ACCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CWITHHOLDINGACCT" onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_WITHHOLDING_ACCT_C_ACCTSCHEM" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_WITHHOLDING" name="CWITHHOLDING_CWITHHOLDINGACCT">
+      <foreign-key foreignTable="C_WITHHOLDING" name="C_WITHHOLDING_ACCT_C_WITHHOLDI">
         <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_WITHHOLDING_CWITHHOLDING">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_WITHHOLDING_ACCT_WITHHOLDING">
         <reference local="WITHHOLDING_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <unique name="CWITHHOLDINGACCT_CWITHHOLDI_UN">
+      <unique name="C_WITHHOLDING_ACCT_WITHHOLD_UN">
         <unique-column name="C_WITHHOLDING_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>

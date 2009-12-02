@@ -73,14 +73,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_TREE" name="AD_ROLE_AD_TREE_MENU">
+        <reference local="AD_TREE_MENU_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="AD_ROLECLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ROLEORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREE_ADROLE">
-        <reference local="AD_TREE_MENU_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCY_AD_ROLE">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>

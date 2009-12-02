@@ -53,14 +53,14 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_REF_SEARCH" name="ADREFSEARCH_ADREFSEARCHCOLUMN">
-        <reference local="AD_REF_SEARCH_ID" foreign="AD_REF_SEARCH_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="REFSEARCHCOLUMN_FK_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_REF_SEARCH_COLUMN_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="REFSEARCHCOLUMN_FK_ORG">
+      <foreign-key foreignTable="AD_ORG" name="AD_REF_SEARCH_COLUMN_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_REF_SEARCH" name="AD_REF_SEARCH_COLUMN_AD_REF_SE">
+        <reference local="AD_REF_SEARCH_ID" foreign="AD_REF_SEARCH_ID"/>
       </foreign-key>
       <check name="AD_REF_SEARCH_C_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

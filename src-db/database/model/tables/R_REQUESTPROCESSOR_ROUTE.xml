@@ -53,20 +53,20 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_RREQUESTPROCESSORROUT">
+      <foreign-key foreignTable="AD_CLIENT" name="R_REQUESTPROCESSOR_ROUTE_AD_CL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_RREQUESTPROCESSORROUTE">
+      <foreign-key foreignTable="AD_ORG" name="R_REQUESTPROCESSOR_ROUTE_AD_OR">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_RREQUESTPROCESSORROUTE">
+      <foreign-key foreignTable="AD_USER" name="R_REQUESTPROCESSOR_ROUTE_AD_US">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="R_REQUESTPROCESSOR" name="RREQUESTPROCESSOR_ROUTE">
-        <reference local="R_REQUESTPROCESSOR_ID" foreign="R_REQUESTPROCESSOR_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="R_REQUESTTYPE" name="RREQUESTTYPE_RPROCESSORRULE">
+      <foreign-key foreignTable="R_REQUESTTYPE" name="R_REQUESTPROCESSOR_ROUTE_R_RE1">
         <reference local="R_REQUESTTYPE_ID" foreign="R_REQUESTTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="R_REQUESTPROCESSOR" name="R_REQUESTPROCESSOR_ROUTE_R_REQ">
+        <reference local="R_REQUESTPROCESSOR_ID" foreign="R_REQUESTPROCESSOR_ID"/>
       </foreign-key>
       <check name="R_REQPROCROUTE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

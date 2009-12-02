@@ -23,9 +23,9 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
  v_ID       varchar2(32);
- v_ID_MAP      VARCHAR2(32);
  v_WindowName     VARCHAR2(60):= 'info';
  v_ClassName     VARCHAR2(60);
+ v_JavaPackage varchar2(500);
     
 BEGIN
     
@@ -42,36 +42,27 @@ BEGIN
 
  IF (INSERTING) THEN
   IF :NEW.PARENTREFERENCE_ID='30' AND :NEW.ISACTIVE='Y' THEN
+    IF :new.AD_Module_ID != '0' THEN
+      SELECT ad_mapping_format(javapackage||'.info')
+        INTO v_javapackage
+        FROM AD_MODULE 
+       WHERE AD_Module_ID = :new.AD_Module_ID;
+       v_WindowName := v_javapackage;
+    ELSE 
+      v_javapackage := 'org.openbravo.erpCommon.info';
+    END IF;
+  
    v_ClassName := AD_MAPPING_FORMAT(TO_CHAR(:NEW.NAME));
-   Ad_Sequence_Next('AD_Model_Object', :new.AD_Client_ID, v_ID);
+   v_ID := get_uuid();
    INSERT INTO AD_MODEL_OBJECT (AD_MODEL_OBJECT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
    UPDATED, UPDATEDBY, ACTION, AD_REFERENCE_ID, CLASSNAME, ISDEFAULT)
    VALUES (v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', now(), :new.CREATEDBY,
-   now(), :new.UPDATEDBY, 'S', :new.AD_REFERENCE_ID, 'org.openbravo.erpCommon.' || v_WindowName || '.' || v_ClassName, 'Y');
+   now(), :new.UPDATEDBY, 'S', :new.AD_REFERENCE_ID, v_javapackage || '.' || v_ClassName, 'Y');
 
-   Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
    INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
    ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
-   VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', now(), :new.CREATEDBY,
-   now(), :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_FS.html'), 'Y');
-
-   Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
-   INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
-   ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
-   VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', now(), :new.CREATEDBY,
-   now(), :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_F1.html'), 'N');
-
-   Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
-   INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
-   ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
-   VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', now(), :new.CREATEDBY,
-   now(), :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_F2.html'), 'N');
-
-   Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
-   INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
-   ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
-   VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', now(), :new.CREATEDBY,
-   now(), :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_F3.html'), 'N');
+   VALUES (get_uuid(), :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', now(), :new.CREATEDBY,
+   now(), :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '.html'), 'Y');
   END IF;
  END IF;
 

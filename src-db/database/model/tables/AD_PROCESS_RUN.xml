@@ -71,7 +71,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_PROCESS_RUN_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PROCESS_REQUEST" name="PROCESSREQUEST_PROCESSRUN_FK" onDelete="cascade">
+      <foreign-key foreignTable="AD_PROCESS_REQUEST" name="AD_PROCESS_RUN_AD_PROCESS_REQU" onDelete="cascade">
         <reference local="AD_PROCESS_REQUEST_ID" foreign="AD_PROCESS_REQUEST_ID"/>
       </foreign-key>
     </table>

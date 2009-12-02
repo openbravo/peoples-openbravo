@@ -724,8 +724,17 @@ export.database: exports database structure and data to xml files.
     <taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">
       <classpath refid="project.class.path" />
     </taskdef>
-
+    
+    <taskdef name="WADValidation" classname="org.openbravo.wad.validation.WADValidatorTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+            
     <echo message="Validating Module..." />
+    
+    <WADValidation propertiesFile="${base.config}/Openbravo.properties"
+                   modules="${module}"
+                   stoponerror="true"/>
+
     <validateModules moduleJavaPackage="${module}" failOnError="false" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" />
 
     <antcall target="obx.export.database" />
@@ -861,5 +870,9 @@ export.database: exports database structure and data to xml files.
   
   <target name="load.logoimages">
     <ant dir="${base.src}" target="load.logoimages" inheritAll="true" inheritRefs="true" />
+  </target>
+  
+  <target name="validate.wad">
+    <ant dir="${base.src}" target="wadvalidation" inheritAll="true" inheritRefs="true" />
   </target>
 </project>

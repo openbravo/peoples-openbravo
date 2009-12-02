@@ -49,15 +49,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MRAPPELSCALE">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MRAPPELSCALE">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_RAPPEL" name="M_RAPPEL_M_RAPPEL_SCALE">
         <reference local="M_RAPPEL_ID" foreign="M_RAPPEL_ID"/>
       </foreign-key>
-      <check name="DISC"><![CDATA[(DISCOUNT >= 0) AND (DISCOUNT <= 100)]]></check>
+      <foreign-key foreignTable="AD_CLIENT" name="M_RAPPEL_SCALE_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="M_RAPPEL_SCALE_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <check name="M_RAPPEL_SCALE_DISCOUNT_CHK"><![CDATA[(DISCOUNT >= 0) AND (DISCOUNT <= 100)]]></check>
     </table>
   </database>

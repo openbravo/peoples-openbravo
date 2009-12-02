@@ -69,13 +69,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_C_EMAIL">
+      <foreign-key foreignTable="AD_CLIENT" name="C_POC_EMAIL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_C_POC_EMAIL">
+      <foreign-key foreignTable="AD_ORG" name="C_POC_EMAIL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CPOC_EMAIL">
+      <foreign-key foreignTable="C_BPARTNER" name="C_POC_EMAIL_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
     </table>

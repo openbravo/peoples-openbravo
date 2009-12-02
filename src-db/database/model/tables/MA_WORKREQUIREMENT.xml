@@ -92,15 +92,15 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAWORKREQUIREMENT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAWORKREQUIREMENT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MAWORKREQ">
         <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
       </foreign-key>
-      <check name="MAWORKREQ_EXPLODEPHASES_CHECK"><![CDATA[EXPLODEPHASES IN ('Y', 'N')]]></check>
-      <check name="MAWORKREQMENT_CLOSED_CHECK"><![CDATA[CLOSED IN ('Y', 'N')]]></check>
-      <check name="MAWORKREQMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MAWORKREQMENT_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <foreign-key foreignTable="AD_CLIENT" name="MA_WORKREQUIREMENT_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <check name="MA_WORKREQUIREMENT_CLOSED_CHK"><![CDATA[CLOSED IN ('Y', 'N')]]></check>
+      <check name="MA_WORKREQUIREMENT_EXPLODE_CHK"><![CDATA[EXPLODEPHASES IN ('Y', 'N')]]></check>
+      <check name="MA_WORKREQUIREMENT_ISACTIV_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MA_WORKREQUIREMENT_PROCESS_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

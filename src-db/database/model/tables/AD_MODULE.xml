@@ -141,21 +141,21 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <foreign-key foreignTable="AD_ORG" name="ADMODULE_AD_ORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADMODULE_ADCLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_MODULE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADMODULE_ADLANGUAGE">
+      <foreign-key foreignTable="AD_LANGUAGE" name="AD_MODULE_AD_LANGUAGE">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_MODULE_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="AD_MODULE_INDEVELOPMENT_CHK"><![CDATA[ISINDEVELOPMENT IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_ISCOMMERCIAL_CHCK"><![CDATA[ISCOMMERCIAL IN ('Y', 'N')]]></check>
+      <check name="AD_MODULE_ISDEFAULT_CHK"><![CDATA[(ISDEFAULT = 'N') OR ((ISDEFAULT = 'Y') AND (ISINDEVELOPMENT = 'Y'))]]></check>
       <check name="AD_MODULE_ISREGISTERED_CHK"><![CDATA[ISREGISTERED IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_ISTRANSLATEABLE_CHK"><![CDATA[ISTRANSLATIONREQUIRED IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_TYPE_CHK"><![CDATA[TYPE IN ('M', 'P', 'T')]]></check>
-      <check name="ADMODULE_DEFAULT_CHECK"><![CDATA[(ISDEFAULT = 'N') OR ((ISDEFAULT = 'Y') AND (ISINDEVELOPMENT = 'Y'))]]></check>
     </table>
   </database>

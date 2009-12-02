@@ -181,34 +181,34 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_IBPARTNER">
+      <foreign-key foreignTable="AD_CLIENT" name="I_BPARTNER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_IBPARTNER">
+      <foreign-key foreignTable="AD_ORG" name="I_BPARTNER_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_IBPARTNER">
+      <foreign-key foreignTable="AD_USER" name="I_BPARTNER_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_IBPARTNER">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPARTNERLOCATION_IBPARTNER">
-        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BP_GROUP" name="CBPGROUP_IBPARTNER">
+      <foreign-key foreignTable="C_BP_GROUP" name="I_BPARTNER_C_BP_GROUP">
         <reference local="C_BP_GROUP_ID" foreign="C_BP_GROUP_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_COUNTRY" name="CCOUNTRY_IPARTNER">
+      <foreign-key foreignTable="C_BPARTNER" name="I_BPARTNER_C_BPARTNER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="I_BPARTNER_C_BPARTNER_LOCATION">
+        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="I_BPARTNER_C_COUNTRY">
         <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_GREETING" name="CGREETING_IBPARTNER">
+      <foreign-key foreignTable="C_GREETING" name="I_BPARTNER_C_GREETING">
         <reference local="C_GREETING_ID" foreign="C_GREETING_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_REGION" name="CREGION_IBPARTNER">
+      <foreign-key foreignTable="C_REGION" name="I_BPARTNER_C_REGION">
         <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
       <check name="I_BPARTNER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="IBPARTNER_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="I_BPARTNER_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

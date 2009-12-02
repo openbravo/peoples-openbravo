@@ -68,14 +68,14 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAINDIRECT_COST_VALUE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAINDIRECT_COST_VALUE">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_INDIRECT_COST_VALUE_AD_CLIE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_INDIRECT_COST" name="MAINDIRECT_COST_MA_IC_VALUE">
+      <foreign-key foreignTable="MA_INDIRECT_COST" name="MA_INDIRECT_COST_VALUE_MA_INDI">
         <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
       </foreign-key>
-      <check name="MAINDCOVAL_CALCULATE_CHECK"><![CDATA[CALCULATE IN ('Y', 'N')]]></check>
-      <check name="MAINDCOVAL_CALCULATED_CHECK"><![CDATA[CALCULATED IN ('Y', 'N')]]></check>
-      <check name="MAINDCOVAL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MA_INDIRECT_COST_VALUE_CAL_CH1"><![CDATA[CALCULATED IN ('Y', 'N')]]></check>
+      <check name="MA_INDIRECT_COST_VALUE_CAL_CHK"><![CDATA[CALCULATE IN ('Y', 'N')]]></check>
+      <check name="MA_INDIRECT_COST_VALUE_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

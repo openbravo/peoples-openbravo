@@ -45,16 +45,16 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MACOSTCENTERMACHINE">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_COSTCENTER_MACHINE_AD_CLIEN">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MACOSTCENTERMACHINE">
+      <foreign-key foreignTable="AD_ORG" name="MA_COSTCENTER_MACHINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_COSTCENTER_VERSION" name="MACCVERSION_COSTCENTERMACHINE">
+      <foreign-key foreignTable="MA_COSTCENTER_VERSION" name="MA_COSTCENTER_MACHINE_MA_COSTC">
         <reference local="MA_COSTCENTER_VERSION_ID" foreign="MA_COSTCENTER_VERSION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_MACHINE" name="MAMACHINE_MACOSTCENTERMACHINE">
+      <foreign-key foreignTable="MA_MACHINE" name="MA_COSTCENTER_MACHINE_MA_MACHI">
         <reference local="MA_MACHINE_ID" foreign="MA_MACHINE_ID"/>
       </foreign-key>
       <check name="MA_COSTCENTER_M_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

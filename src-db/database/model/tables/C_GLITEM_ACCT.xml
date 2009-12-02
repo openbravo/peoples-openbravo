@@ -49,25 +49,25 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CGLITEMACCT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_GLITEM_ACCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CGLITEMACCT">
+      <foreign-key foreignTable="AD_ORG" name="C_GLITEM_ACCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CGLITEMACCT" onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_GLITEM_ACCT_C_ACCTSCHEMA" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_GLITEM" name="CGLITEM_CGLITEMACCT">
+      <foreign-key foreignTable="C_GLITEM" name="C_GLITEM_ACCT_C_GLITEM">
         <reference local="C_GLITEM_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="GLITEMCREDITACCT_CGLITEMACCT">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_GLITEM_ACCT_GLITEM_CREDIT_AC">
         <reference local="GLITEM_CREDIT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="GLITEMDEBITACCT_CGLITEMACCT">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_GLITEM_ACCT_GLITEM_DEBIT_ACC">
         <reference local="GLITEM_DEBIT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <unique name="CGLITEMACCT_CGLITEMID_CACCT_UN">
+      <unique name="C_GLITEM_ACCT_GLITEM_ACCTSC_UN">
         <unique-column name="C_GLITEM_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>

@@ -61,23 +61,23 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA[SELECT AD_MODULE_ID FROM AD_MODULE WHERE AD_MODULE_ID<>'0' AND TYPE='M']]></onCreateDefault>
       </column>
-      <foreign-key foreignTable="AD_DATASET" name="ADDATASET_ADDSTABLE">
-        <reference local="AD_DATASET_ID" foreign="AD_DATASET_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADDSTABLE">
-        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADDSTABLE">
-        <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="CLIENT_ADDSTABLE">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_DATASET_TABLE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ORG_ADDSTABLE">
+      <foreign-key foreignTable="AD_DATASET" name="AD_DATASET_TABLE_AD_DATASET">
+        <reference local="AD_DATASET_ID" foreign="AD_DATASET_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="AD_DATASET_TABLE_AD_MODULE">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_DATASET_TABLE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="ADDSTABLE_ALLCOLUMNS_CHECK"><![CDATA[INCLUDEALLCOLUMNS IN ('Y', 'N')]]></check>
-      <check name="ADDSTABLE_BUSINESSOBJ_CHECK"><![CDATA[ISBUSINESSOBJECT IN ('Y', 'N')]]></check>
-      <check name="ADDSTABLE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <foreign-key foreignTable="AD_TABLE" name="AD_DATASET_TABLE_AD_TABLE">
+        <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
+      </foreign-key>
+      <check name="AD_DATASET_TABLE_INCLUDEAL_CHK"><![CDATA[INCLUDEALLCOLUMNS IN ('Y', 'N')]]></check>
+      <check name="AD_DATASET_TABLE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_DATASET_TABLE_ISBUSINES_CHK"><![CDATA[ISBUSINESSOBJECT IN ('Y', 'N')]]></check>
     </table>
   </database>

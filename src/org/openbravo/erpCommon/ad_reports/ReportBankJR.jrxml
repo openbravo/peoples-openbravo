@@ -678,7 +678,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						key="textField-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Bitstream Vera Sans" size="10"/>
+						<font fontName="Bitstream Vera Sans" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{TRXAMT}!=null)?$P{NUMBERFORMAT}.format($F{TRXAMT}):new String(" ")]]></textFieldExpression>
 				</textField>

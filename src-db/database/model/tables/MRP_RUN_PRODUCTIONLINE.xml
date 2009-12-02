@@ -123,17 +123,17 @@
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_PRODUCTIONLINE">
         <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_WORKREQUIREMENT" name="MAWORKREQUIREMENT_MRPRUNPRODUC">
-        <reference local="MA_WORKREQUIREMENT_ID" foreign="MA_WORKREQUIREMENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MRP_RUN_PRODUCTION" name="MRP_PLANNER_RUN_PRODUCTIONLINE">
         <reference local="MRP_RUN_PRODUCTION_ID" foreign="MRP_RUN_PRODUCTION_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="MA_WORKREQUIREMENT" name="MRP_RUN_PRODUCTIONLINE_MA_WORK">
+        <reference local="MA_WORKREQUIREMENT_ID" foreign="MA_WORKREQUIREMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MRP_RUN_PRODUCTIONLINE" name="MRP_RUN_PRODUCTIONLINE_PARENT">
+        <reference local="PARENT_ID" foreign="MRP_RUN_PRODUCTIONLINE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="MRP_SALESFORECASTLINE" name="MRP_SALESFORECASTLINE_PROD">
         <reference local="MRP_SALESFORECASTLINE_ID" foreign="MRP_SALESFORECASTLINE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="MRP_RUN_PRODUCTIONLINE" name="PARENT_MRP_RUN_PRODUCTIONLINE">
-        <reference local="PARENT_ID" foreign="MRP_RUN_PRODUCTIONLINE_ID"/>
       </foreign-key>
       <index name="MRP_PRODUCTIONLINE_ID_PROD_ID" unique="false">
         <index-column name="MRP_RUN_PRODUCTION_ID"/>
@@ -145,8 +145,8 @@
       <index name="MRP_RUN_PRODUCTIONLINE_PARENT" unique="false">
         <index-column name="PARENT_ID"/>
       </index>
-      <check name="MRPRUNPRLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MRPRUNPRLN_ISFIXED_CHECK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>
-      <check name="MRPRUNPRLN_ISPLANNED_CHECK"><![CDATA[ISPLANNED IN ('Y', 'N')]]></check>
+      <check name="MRP_RUN_PRODUCTIONLINE_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MRP_RUN_PRODUCTIONLINE_ISF_CHK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>
+      <check name="MRP_RUN_PRODUCTIONLINE_ISP_CHK"><![CDATA[ISPLANNED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -81,13 +81,13 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBANKSTATEMENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_BANKSTATEMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CBANKSTATEMENT">
+      <foreign-key foreignTable="AD_ORG" name="C_BANKSTATEMENT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BANKACCOUNT" name="CBANKACCOUNT_CBANKSTATEMENT">
+      <foreign-key foreignTable="C_BANKACCOUNT" name="C_BANKSTATEMENT_C_BANKACCOUNT">
         <reference local="C_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>
       </foreign-key>
       <index name="C_BANKSTMT_UPDATED" unique="false">

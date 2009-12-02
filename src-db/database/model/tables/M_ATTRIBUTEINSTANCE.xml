@@ -49,22 +49,22 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MATTRIBUTEINSTANCE">
+      <foreign-key foreignTable="AD_CLIENT" name="M_ATTRIBUTEINSTANCE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MATTRIBUTEINSTANCE">
+      <foreign-key foreignTable="AD_ORG" name="M_ATTRIBUTEINSTANCE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTE" name="MATTRIBUTE_MATTRIBUTEINST">
-        <reference local="M_ATTRIBUTE_ID" foreign="M_ATTRIBUTE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTEVALUE" name="MATTRIBUTEVALUE_MATTRINST">
-        <reference local="M_ATTRIBUTEVALUE_ID" foreign="M_ATTRIBUTEVALUE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST__MATTRINST" onDelete="cascade">
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_ATTRIBUTEINSTANCE_M_ATTRIBU1" onDelete="cascade">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
-      <unique name="MATTRIBUTEINSTANCE_MATTRIBU_UN">
+      <foreign-key foreignTable="M_ATTRIBUTEVALUE" name="M_ATTRIBUTEINSTANCE_M_ATTRIBU2">
+        <reference local="M_ATTRIBUTEVALUE_ID" foreign="M_ATTRIBUTEVALUE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTE" name="M_ATTRIBUTEINSTANCE_M_ATTRIBUT">
+        <reference local="M_ATTRIBUTE_ID" foreign="M_ATTRIBUTE_ID"/>
+      </foreign-key>
+      <unique name="M_ATTRIBUTEINSTANCE_ATTRIBU_UN">
         <unique-column name="M_ATTRIBUTESETINSTANCE_ID"/>
         <unique-column name="M_ATTRIBUTE_ID"/>
       </unique>

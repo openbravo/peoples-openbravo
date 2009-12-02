@@ -61,6 +61,9 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="C_CURRENCY" name="C_CONVERSION_RATE_C_CURRENCY">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_CONVERSION_RATECLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -69,9 +72,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCYCONVRATETO">
         <reference local="C_CURRENCY_ID_TO" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CCONVERSIONRATE">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <unique name="C_CONVERSIONRATE_ONCE">
         <unique-column name="AD_CLIENT_ID"/>

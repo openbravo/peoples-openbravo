@@ -109,33 +109,33 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPROCESSPARA">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_PROCESS_PARA_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ELEMENT" name="ADELEMENT_ADPROCESSPARA">
+      <foreign-key foreignTable="AD_ELEMENT" name="AD_PROCESS_PARA_AD_ELEMENT">
         <reference local="AD_ELEMENT_ID" foreign="AD_ELEMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADPROCESSPARA">
+      <foreign-key foreignTable="AD_ORG" name="AD_PROCESS_PARA_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADPROCESSPARA" onDelete="cascade">
+      <foreign-key foreignTable="AD_PROCESS" name="AD_PROCESS_PARA_AD_PROCESS" onDelete="cascade">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_REFERENCE" name="ADREFERENCE_ADPROCESSPARA">
+      <foreign-key foreignTable="AD_REFERENCE" name="AD_PROCESS_PARA_AD_REFERENCE">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_REFERENCE" name="ADREFERENCEVALUE_ADPROCPARA">
+      <foreign-key foreignTable="AD_REFERENCE" name="AD_PROCESS_PARA_AD_REFERENCE_V">
         <reference local="AD_REFERENCE_VALUE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_VAL_RULE" name="ADVALRULE_AD_PROCESSPARA">
+      <foreign-key foreignTable="AD_VAL_RULE" name="AD_PROCESS_PARA_AD_VAL_RULE">
         <reference local="AD_VAL_RULE_ID" foreign="AD_VAL_RULE_ID"/>
       </foreign-key>
       <index name="AD_PROCESS_PARA_PROCESS" unique="false">
         <index-column name="AD_PROCESS_ID"/>
       </index>
-      <check name="ADPROCPARA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADPROCPARA_ISCENTMAINT_CHECK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
-      <check name="ADPROCPARA_ISMANDATORY_CHECK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
-      <check name="ADPROCPARA_ISRANGE_CHECK"><![CDATA[ISRANGE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_PARA_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_PARA_ISCENTRALL_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_PARA_ISMANDATOR_CHK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_PARA_ISRANGE_CHK"><![CDATA[ISRANGE IN ('Y', 'N')]]></check>
     </table>
   </database>

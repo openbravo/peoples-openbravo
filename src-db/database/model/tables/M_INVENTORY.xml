@@ -97,33 +97,33 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MINVENTORY">
+      <foreign-key foreignTable="AD_CLIENT" name="M_INVENTORY_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MINVENTORY">
-        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MINVENTORY1">
+      <foreign-key foreignTable="AD_ORG" name="M_INVENTORY_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_MINVENTORY">
+      <foreign-key foreignTable="AD_ORG" name="M_INVENTORY_AD_ORGTRX">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACTIVITY" name="M_INVENTORY_C_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_MINVENTORY">
+      <foreign-key foreignTable="C_CAMPAIGN" name="M_INVENTORY_C_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_MINVENTORY">
+      <foreign-key foreignTable="C_PROJECT" name="M_INVENTORY_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PERPETUALINV" name="MPERPETUALINV_MINVENTORY">
+      <foreign-key foreignTable="M_PERPETUALINV" name="M_INVENTORY_M_PERPETUALINV">
         <reference local="M_PERPETUALINV_ID" foreign="M_PERPETUALINV_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_MINVENTORY">
+      <foreign-key foreignTable="M_WAREHOUSE" name="M_INVENTORY_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <check name="M_INVENTORY_GENERATELIST_CHK"><![CDATA[GENERATELIST IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_UPDATEQTY_CHECK"><![CDATA[UPDATEQTY IN ('Y', 'N')]]></check>
-      <check name="MINVENTORY_GENERATELIST_CHECK"><![CDATA[GENERATELIST IN ('Y', 'N')]]></check>
     </table>
   </database>

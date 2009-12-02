@@ -72,26 +72,26 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAWRPHASEPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAWRPHASEPRODUCT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOMID_MAWRPHASEPRODUCT">
-        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_MAWRPHASEPRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_WRPHASE" name="MAWRPHASE_MAWRPHASEPRODUCT">
-        <reference local="MA_WRPHASE_ID" foreign="MA_WRPHASE_ID"/>
+      <foreign-key foreignTable="AD_CLIENT" name="MA_WRPHASEPRODUCT_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MAWRPHASEPRODUCT">
+      <foreign-key foreignTable="C_UOM" name="MA_WRPHASEPRODUCT_C_UOM">
+        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_UOM" name="MA_WRPHASEPRODUCT_M_PRODUCT_UO">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_WRPHASE" name="MA_WRPHASEPRODUCT_MA_WRPHASE">
+        <reference local="MA_WRPHASE_ID" foreign="MA_WRPHASE_ID"/>
       </foreign-key>
       <index name="MA_WRPHASEPRODUCT_PROD_PHASE" unique="false">
         <index-column name="M_PRODUCT_ID"/>
         <index-column name="MA_WRPHASE_ID"/>
       </index>
-      <check name="MAWRPHASEPROD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MAWRPHASPRODT_PRODTYPE_CHECK"><![CDATA[PRODUCTIONTYPE IN ('+', '-')]]></check>
+      <check name="MA_WRPHASEPRODUCT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MA_WRPHASEPRODUCT_PRODUCTI_CHK"><![CDATA[PRODUCTIONTYPE IN ('+', '-')]]></check>
     </table>
   </database>
