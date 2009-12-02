@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import org.openbravo.utils.FormatUtilities;
+import org.openbravo.wad.FieldsData;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADButton extends WADControl {
@@ -172,6 +173,19 @@ public class WADButton extends WADControl {
             + "_linkBTN\", usedButtonShortCuts, reservedButtonShortCuts));";
     else
       return "";
+  }
+
+  public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
+      String tabName, int itable) {
+    // not need to implement sql method as itable is not modified
+    if (fieldsDef.isdisplayed.equals("Y") && !fieldsDef.type.equals("")) {
+      strDefaultValues.append(
+          ", (vars.getLanguage().equals(\"en_US\")?ListData.selectName(this, \"").append(
+          fieldsDef.type).append("\", ").append(fieldsDef.defaultvalue).append(
+          "):ListData.selectNameTrl(this, vars.getLanguage(), \"").append(fieldsDef.type).append(
+          "\", ").append(fieldsDef.defaultvalue).append("))");
+    }
+    return itable;
   }
 
 }

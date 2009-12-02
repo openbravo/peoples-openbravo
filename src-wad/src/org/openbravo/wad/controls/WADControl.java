@@ -411,10 +411,22 @@ public class WADControl {
   }
 
   /**
-   * Adds to the vector the additional default fields. This is used for search element wich have a
-   * calculated addition to UI field
+   * Adds to the vector the additional SQL default fields. This is used for search element which
+   * have a calculated addition to UI field. Whenever this method is overridden it should also be
+   * overridden the {@link #addAdditionDefaulJavaFields(StringBuffer, FieldsData, String, int)}
+   * method
    */
-  public int addAdditionDefaultFields(Vector<Object> v, FieldsData fieldsDef, int itable) {
+  public int addAdditionDefaulSQLFields(Vector<Object> v, FieldsData fieldsDef, int itable) {
+    return itable;
+  }
+
+  /**
+   * Adds to the vector the additional Java logic default fields. This is used for search element
+   * which have a calculated addition to UI field. Whenever this method is overridden it should also
+   * be overridden the {@link #addAdditionDefaulSQLFields(Vector, FieldsData, int)} method
+   */
+  public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
+      String tabName, int itable) {
     return itable;
   }
 }

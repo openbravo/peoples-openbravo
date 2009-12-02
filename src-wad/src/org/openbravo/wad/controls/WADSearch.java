@@ -266,7 +266,7 @@ public class WADSearch extends WADControl {
     return true;
   }
 
-  public int addAdditionDefaultFields(Vector<Object> v, FieldsData fieldsDef, int itable) {
+  public int addAdditionDefaulSQLFields(Vector<Object> v, FieldsData fieldsDef, int itable) {
     if (fieldsDef.isdisplayed.equals("Y")) {
       final FieldsData fd = new FieldsData();
       fd.reference = fieldsDef.reference + "_" + (itable++);
@@ -396,6 +396,15 @@ public class WADSearch extends WADControl {
       } else {
         vecFields.addElement("table" + tableNum + "." + fdi[i].columnname);
       }
+    }
+    return itable;
+  }
+
+  public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
+      String tabName, int itable) {
+    if (fieldsDef.isdisplayed.equals("Y")) {
+      strDefaultValues.append(", " + tabName + "Data.selectDef" + fieldsDef.reference + "_"
+          + (itable++) + "(this, " + fieldsDef.defaultvalue + ")");
     }
     return itable;
   }

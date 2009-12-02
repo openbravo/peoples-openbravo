@@ -2376,26 +2376,8 @@ public class Wad extends DefaultHandler {
       } else {
         sfd[i].defaultvalue = "strP" + sfd[i].columnname;
       }
-      // keep hardcoded for core references
-      if ((sfd[i].referencevalue.equals("30") || sfd[i].referencevalue.equals("31")
-          || sfd[i].referencevalue.equals("35") || sfd[i].referencevalue.equals("25") || sfd[i].reference
-          .equals("800011"))
-          && sfd[i].isdisplayed.equals("Y"))
-        strDefaultValues.append(", " + tabName + "Data.selectDef" + sfd[i].reference + "_"
-            + (isSelect++) + "(this, " + sfd[i].defaultvalue + ")");
-      else if (sfd[i].referencevalue.equals("28") && sfd[i].isdisplayed.equals("Y")
-          && !sfd[i].type.equals("")) // Button
-        strDefaultValues.append(
-            ", (vars.getLanguage().equals(\"en_US\")?ListData.selectName(this, \"").append(
-            sfd[i].type).append("\", ").append(sfd[i].defaultvalue).append(
-            "):ListData.selectNameTrl(this, vars.getLanguage(), \"").append(sfd[i].type).append(
-            "\", ").append(sfd[i].defaultvalue).append("))");
-      else if (sfd[i].referencevalue.equals("21") && sfd[i].isdisplayed.equals("Y"))
-        strDefaultValues.append(", LocationSearchData.locationAddress(this, " + sfd[i].defaultvalue
-            + ")");
-      else if (sfd[i].referencevalue.equals("32") && sfd[i].isdisplayed.equals("Y"))
-        strDefaultValues.append(", " + tabName + "Data.selectDef" + sfd[i].reference + "_"
-            + (isSelect++) + "(this, " + sfd[i].defaultvalue + ")");
+      WADControl control = WadUtility.getWadControlClass(pool, sfd[i].referencevalue, sfd[i].type);
+      isSelect = control.addAdditionDefaulJavaFields(strDefaultValues, sfd[i], tabName, isSelect);
     }
 
     final StringBuffer controlsJavaSource = new StringBuffer();
@@ -2916,7 +2898,7 @@ public class Wad extends DefaultHandler {
         // Calculate additional defaults
         WADControl control = WadUtility.getWadControlClass(pool, fieldsDef[i].referencevalue,
             fieldsDef[i].type);
-        itable = control.addAdditionDefaultFields(v, fieldsDef[i], itable);
+        itable = control.addAdditionDefaulSQLFields(v, fieldsDef[i], itable);
       }
       final FieldsData[] fd = new FieldsData[v.size()];
       v.copyInto(fd);
