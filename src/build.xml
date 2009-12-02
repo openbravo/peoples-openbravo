@@ -95,6 +95,16 @@ build.war: build a war file in the lib directory.
     <mkdir dir="${build.AD}/org/openbravo/erpCommon/reference" />
     <mkdir dir="${build.docs}" />
   </target>
+  <macrodef name="updatesystemstatus">
+     <attribute name="v" default="NOT SET"/>
+     <sequential>
+       <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
+                          <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+                          <transaction> UPDATE ad_system_info SET system_status='@{v}' ;
+                            DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
+       </sql>
+     </sequential>
+  </macrodef>
 
   <target name="validate.database">
     <taskdef name="validateDatabase" classname="org.openbravo.service.system.SystemValidationTask">
@@ -143,7 +153,7 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="sqlc" depends="copy.srcClient">
-    <antcall target="update.sqlc.status" inheritall="true" inheritrefs="true"/>
+    <updatesystemstatus v="RB42" />
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql . '${build.sqlc}'/src" />
       <classpath refid="project.class.path" />
@@ -156,13 +166,6 @@ build.war: build a war file in the lib directory.
     <copy file="${base.src}/buildAD.xml" tofile="${build.AD}/build.xml" />
     <copy file="${base.src}/log4j.lcf" tofile="${build.AD}/log4j.lcf" />
     <ant dir="${build.AD}" target="buildAD" inheritAll="true" inheritRefs="true" />
-  </target>
-  <target name="update.sqlc.status" >
-      	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-      	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB42' ;
-                     DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
-      	</sql>
   </target>
 
   <target name="copy.srcClient">
@@ -297,7 +300,7 @@ build.war: build a war file in the lib directory.
   </target>
   
   <target name="compileSqlc" depends="sqlc">
-	<antcall target="update.compilesqlc.status" inheritall="true" inheritrefs="true"/>
+    <updatesystemstatus v="RB43"/>
     <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
       <classpath refid="project.class.path" />
     </javac>
@@ -306,14 +309,6 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </javac>
   	<antcall target="calculate.version"/>
-  </target>
-
-  <target name="update.compilesqlc.status" >
-      	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-      	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB43';
-                    DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
-      	</sql>
   </target>
 
 	<target name="calculate.version" depends="init">
@@ -362,24 +357,16 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="wad" depends="init">
-    <antcall target="update.wad.status" inheritall="true" inheritrefs="true"/>
+    <updatesystemstatus v="RB41"/>
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick' '${stopOnWadError}'" />
       <classpath refid="project.class.path" />
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true" />
   </target>
-	
-  <target name="update.wad.status" >
-      	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-      	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB41' ;
-                     DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
-      	</sql>
-  </target>
 
   <target name="wad.quick" depends="init">
-    <antcall target="update.wad.status" inheritall="true" inheritrefs="true"/>
+    <updatesystemstatus v="RB41"/>
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick' '${stopOnWadError}'" />
       <classpath refid="project.class.path" />
@@ -388,7 +375,8 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="postsrc" depends="postsrc.modules">
-    <antcall target="update.postsrc.status" inheritall="true" inheritrefs="true"/>
+
+    <updatesystemstatus v="RB44"/>
     <copy todir="${build}">
       <fileset dir="${basedir}" includes="**/*.properties" />
     </copy>
@@ -420,13 +408,6 @@ build.war: build a war file in the lib directory.
       <fileset file="${base.config}/quartz.properties" />
     </copy>
     <antcall target="build.local.context" inheritAll="true" inheritrefs="true" />
-  </target>
-  <target name="update.postsrc.status" >
-      	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-      	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB44' ;
-                     DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
-      	</sql>
   </target>
 
   <target name="postsrc.modules">
@@ -663,6 +644,7 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </taskdef>
     <updateWADmd5 obDir="${basedir}/.." />
+    <updatesystemstatus v="RB51"/>
   </target>
 
   <target name="smartbuild.no.new.wad" unless="new.wad">
@@ -745,7 +727,7 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="copy.files">
-	<antcall target="update.copyfiles.status" inheritall="true" inheritrefs="true"/>
+    <updatesystemstatus v="RB45"/>
     <mkdir dir="${jakarta.base}/webapps/${context.name}" />
     <copy todir="${jakarta.base}/webapps/${context.name}" encoding="UTF-8">
       <fileset dir="${base.context}" />
@@ -754,14 +736,6 @@ build.war: build a war file in the lib directory.
     <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/classes" encoding="UTF-8">
       <fileset dir="${build}" />
     </copy>
-  </target>
-
-  <target name="update.copyfiles.status" >
-      	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-      	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB45' ;
-                     DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
-      	</sql>
   </target>
 
   <target name="compile.development" depends="generate.entities, compile, copy.files">
@@ -774,16 +748,9 @@ build.war: build a war file in the lib directory.
     <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" />
     <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8">
     </copy>
-	<antcall target="update.finalcompile.status" inheritall="true" inheritrefs="true"/>
+    <updatesystemstatus v="RB51"/>
   </target>
 
-  <target name="update.finalcompile.status" >
-      	<sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-      	  	       <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-      	  	       <transaction> UPDATE ad_system_info SET system_status='RB51' ;
-                     DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
-      	</sql>
-  </target>
   <target name="compile.web" depends="build.web.folder">
   </target>
 
