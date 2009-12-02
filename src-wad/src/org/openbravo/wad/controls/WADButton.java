@@ -11,15 +11,19 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.wad.controls;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Vector;
+
+import javax.servlet.ServletException;
 
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.wad.FieldsData;
@@ -186,6 +190,42 @@ public class WADButton extends WADControl {
           "\", ").append(fieldsDef.defaultvalue).append("))");
     }
     return itable;
+  }
+
+  public void processTable(String strTab, Vector<Object> vecFields, Vector<Object> vecTables,
+      Vector<Object> vecWhere, Vector<Object> vecOrder, Vector<Object> vecParameters,
+      String tableName, Vector<Object> vecTableParameters, FieldsData field,
+      Vector<String> vecFieldParameters, Vector<Object> vecCounters) throws ServletException,
+      IOException {
+
+    String strOrder = "";
+    if (field.isdisplayed.equals("Y") && !field.referencevalue.equals("")
+        && !field.name.equalsIgnoreCase("ChangeProjectStatus")) {
+      int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
+      ilist++;
+      vecFields.addElement("list" + ilist + ".name as " + field.name + "_BTN");
+      strOrder = "list" + ilist + ".name";
+      final StringBuffer strWhere = new StringBuffer();
+      if (field.name.equalsIgnoreCase("DocAction")) {
+        strWhere.append(" AND (CASE " + tableName + "." + field.name
+            + " WHEN '--' THEN 'CL' ELSE TO_CHAR(" + tableName + "." + field.name + ") END) = "
+            + "list" + ilist + ".value");
+      } else {
+        strWhere.append(" AND " + tableName + "." + field.name + " = TO_CHAR(list" + ilist
+            + ".value)");
+      }
+      vecTables.addElement("left join ad_ref_list_v list" + ilist + " on (" + "list" + ilist
+          + ".ad_reference_id = '" + field.referencevalue + "' and list" + ilist
+          + ".ad_language = ? " + strWhere.toString() + ")");
+      vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
+      vecCounters.set(1, Integer.toString(ilist));
+    } else {
+      strOrder = tableName + "." + field.name;
+    }
+
+    final String[] aux = { new String(field.name),
+        new String(strOrder + (field.name.equalsIgnoreCase("DocumentNo") ? " DESC" : "")) };
+    vecOrder.addElement(aux);
   }
 
 }

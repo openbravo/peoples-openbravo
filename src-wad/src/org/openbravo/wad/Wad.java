@@ -75,7 +75,6 @@ public class Wad extends DefaultHandler {
   static final int IMAGE_RELATION_HEIGHT = 16;
   static final int IMAGE_BUTTON_WIDTH = 16;
   static final int IMAGE_BUTTON_HEIGHT = 16;
-  static final String IMAGE_DEFAULT = "blank.gif";
   XmlEngine xmlEngine;
   protected WadConnection pool;
   String strSystemSeparator;
@@ -1287,7 +1286,6 @@ public class Wad extends DefaultHandler {
     final int itable = 0;
     final Vector<Object> vecCounters = new Vector<Object>();
     final Vector<Object> vecOrderAux = new Vector<Object>();
-    String strOrder = "";
     vecCounters.addElement(Integer.toString(itable));
     vecCounters.addElement(Integer.toString(ilist));
     FieldsData[] fieldsData = null;
@@ -1297,7 +1295,9 @@ public class Wad extends DefaultHandler {
           && !fieldsData[i].columnname.equalsIgnoreCase("CreatedBy")
           && !fieldsData[i].columnname.equalsIgnoreCase("Updated")
           && !fieldsData[i].columnname.equalsIgnoreCase("UpdatedBy")) {
-        if (WadUtility.isTimeField(fieldsData[i].reference)) {
+
+        // hardcoded these special cases
+        if (fieldsData[i].reference.equals("24")) {
           vecFields.addElement("TO_CHAR(" + tableName + "." + fieldsData[i].name
               + ", 'HH24:MI:SS') AS " + fieldsData[i].name);
         } else if (fieldsData[i].reference.equals("20")) {
@@ -1311,165 +1311,10 @@ public class Wad extends DefaultHandler {
           vecFields.addElement(tableName + "." + fieldsData[i].name);
         }
 
-        if (fieldsData[i].reference.equals("19") && // TableDir
-            fieldsData[i].isdisplayed.equals("Y")) {
-          final Vector<Object> vecSubFields = new Vector<Object>();
-          WadUtility.columnIdentifier(pool, tableName, fieldsData[i].required.equals("Y"),
-              fieldsData[i], vecCounters, false, vecSubFields, vecTables, vecWhere, vecParameters,
-              vecTableParameters, sqlDateFormat);
-          log4j.debug("Identifier of: " + fieldsData[i].name);
-          final StringBuffer strFields = new StringBuffer();
-          strFields.append(" (");
-          boolean boolFirst = true;
-          for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
-            final String tableField = (String) e.nextElement();
-            log4j.debug("  field: " + tableField);
-            if (boolFirst) {
-              boolFirst = false;
-            } else {
-              strFields.append(" || ' - ' || ");
-            }
-            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
-          }
-          strOrder = strFields.toString() + ")";
-          vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name
-              + " IS NULL THEN '' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name
-              + "R");
-        } else if (fieldsData[i].reference.equals("17") && fieldsData[i].isdisplayed.equals("Y")) { // List
-          final Vector<Object> vecSubFields = new Vector<Object>();
-          WadUtility.columnIdentifier(pool, tableName, fieldsData[i].required.equals("Y"),
-              fieldsData[i], vecCounters, false, vecSubFields, vecTables, vecWhere, vecParameters,
-              vecTableParameters, sqlDateFormat);
-          final StringBuffer strFields = new StringBuffer();
-          strFields.append(" ( ");
-          boolean boolFirst = true;
-          for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
-            final String tableField = (String) e.nextElement();
-            log4j.debug("  field: " + tableField);
-            if (boolFirst) {
-              boolFirst = false;
-            } else {
-              strFields.append(" || ' - ' || ");
-            }
-            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
-          }
-          strOrder = strFields.toString() + ")";
-          vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name
-              + " IS NULL THEN '' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name
-              + "R");
-        } else if (fieldsData[i].reference.equals("18") && fieldsData[i].isdisplayed.equals("Y")) { // Table
-          final Vector<Object> vecSubFields = new Vector<Object>();
-          WadUtility.columnIdentifier(pool, tableName, fieldsData[i].required.equals("Y"),
-              fieldsData[i], vecCounters, false, vecSubFields, vecTables, vecWhere, vecParameters,
-              vecTableParameters, sqlDateFormat);
-          final StringBuffer strFields = new StringBuffer();
-          strFields.append(" ( ");
-          boolean boolFirst = true;
-          for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
-            final String tableField = (String) e.nextElement();
-            log4j.debug("  field: " + tableField);
-            if (boolFirst) {
-              boolFirst = false;
-            } else {
-              strFields.append(" || ' - ' || ");
-            }
-            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
-          }
-          strOrder = strFields.toString() + ")";
-          vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name
-              + " IS NULL THEN '' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name
-              + "R");
-        } else if (fieldsData[i].reference.equals("32") && fieldsData[i].isdisplayed.equals("Y")) {
-          final Vector<Object> vecSubFields = new Vector<Object>();
-          WadUtility.columnIdentifier(pool, tableName, fieldsData[i].required.equals("Y"),
-              fieldsData[i], vecCounters, false, vecSubFields, vecTables, vecWhere, vecParameters,
-              vecTableParameters, sqlDateFormat);
-          final StringBuffer strFields = new StringBuffer();
-          strFields.append(" ( ");
-          boolean boolFirst = true;
-          for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
-            final String tableField = (String) e.nextElement();
-            log4j.debug("  field: " + tableField);
-            if (boolFirst) {
-              boolFirst = false;
-            } else {
-              strFields.append(" || ' - ' || ");
-            }
-            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
-          }
-          strOrder = strFields.toString() + ")";
-          vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name
-              + " IS NULL THEN '" + IMAGE_DEFAULT + "' ELSE " + strFields.toString() + ") END) AS "
-              + fieldsData[i].name + "R");
-        } else if ((fieldsData[i].reference.equals("30") || fieldsData[i].reference.equals("31")
-            || fieldsData[i].reference.equals("35") || fieldsData[i].reference.equals("25") || fieldsData[i].reference
-            .equals("800011"))
-            && fieldsData[i].isdisplayed.equals("Y")) { // Searchs
-          final Vector<Object> vecSubFields = new Vector<Object>();
-          WadUtility.columnIdentifier(pool, tableName, fieldsData[i].required.equals("Y"),
-              fieldsData[i], vecCounters, false, vecSubFields, vecTables, vecWhere, vecParameters,
-              vecTableParameters, sqlDateFormat);
-          log4j.debug("Identifier of: " + fieldsData[i].name);
-          final StringBuffer strFields = new StringBuffer();
-          strFields.append(" (");
-          boolean boolFirst = true;
-          for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
-            final String tableField = (String) e.nextElement();
-            log4j.debug("  field: " + tableField);
-            if (boolFirst) {
-              boolFirst = false;
-            } else {
-              strFields.append(" || ' - ' || ");
-            }
-            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
-          }
-          strOrder = strFields.toString() + ")";
-          vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name
-              + " IS NULL THEN '' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name
-              + "R");
-        } else if (fieldsData[i].reference.equals("21") && fieldsData[i].isdisplayed.equals("Y")) { // Location
-          final StringBuffer strFields = new StringBuffer();
-          strFields.append(" (CASE WHEN " + tableName + "." + fieldsData[i].columnname
-              + " IS NULL THEN '' ELSE TO_CHAR(C_Location_Identifier(" + tableName + "."
-              + fieldsData[i].columnname + ")) END)");
-          log4j.debug("Location field: " + strFields.toString());
-          strOrder = strFields.toString();
-          strFields.append(" AS " + fieldsData[i].name + "R");
-          vecFields.addElement(strFields.toString());
-        } else if (fieldsData[i].reference.equals("28") && fieldsData[i].isdisplayed.equals("Y")
-            && !fieldsData[i].referencevalue.equals("")
-            && !fieldsData[i].name.equalsIgnoreCase("ChangeProjectStatus")) { // Button
-          ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-          ilist++;
-          vecFields.addElement("list" + ilist + ".name as " + fieldsData[i].name + "_BTN");
-          strOrder = "list" + ilist + ".name";
-          final StringBuffer strWhere = new StringBuffer();
-          if (fieldsData[i].name.equalsIgnoreCase("DocAction")) {
-            strWhere.append(" AND (CASE " + tableName + "." + fieldsData[i].name
-                + " WHEN '--' THEN 'CL' ELSE TO_CHAR(" + tableName + "." + fieldsData[i].name
-                + ") END) = " + "list" + ilist + ".value");
-          } else {
-            strWhere.append(" AND " + tableName + "." + fieldsData[i].name + " = TO_CHAR(list"
-                + ilist + ".value)");
-          }
-          vecTables.addElement("left join ad_ref_list_v list" + ilist + " on (" + "list" + ilist
-              + ".ad_reference_id = '" + fieldsData[i].referencevalue + "' and list" + ilist
-              + ".ad_language = ? " + strWhere.toString() + ")");
-          vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-          vecCounters.set(1, Integer.toString(ilist));
-        } else {
-          strOrder = tableName + "." + fieldsData[i].name;
-        }
-        if (!fieldsData[i].reference.equals("23") && !fieldsData[i].reference.equals("14")
-            && !fieldsData[i].reference.equals("34") && !fieldsData[i].reference.equals("13")
-            && !fieldsData[i].reference.equals("26") && !fieldsData[i].reference.equals("32")
-            && !fieldsData[i].sortno.equals("")) {
-          final String[] aux = {
-              new String(fieldsData[i].name),
-              new String(strOrder
-                  + (fieldsData[i].name.equalsIgnoreCase("DocumentNo") ? " DESC" : "")) };
-          vecOrderAux.addElement(aux);
-        }
+        WADControl control = WadUtility.getWadControlClass(pool, fieldsData[i].reference,
+            fieldsData[i].referencevalue);
+        control.processTable(strTab, vecFields, vecTables, vecWhere, vecOrderAux, vecParameters,
+            tableName, vecTableParameters, fieldsData[i], vecFieldParameters, vecCounters);
       }
     }
     final FieldsData sfd1[] = FieldsData.selectSequence(pool, strTab);
@@ -4705,6 +4550,7 @@ public class Wad extends DefaultHandler {
       jsDateFormat = properties.getProperty("dateFormat.js");
       log4j.info("jsDateFormat: " + jsDateFormat);
       sqlDateFormat = properties.getProperty("dateFormat.sql");
+      WADControl.setDateFormat(sqlDateFormat);
       log4j.info("sqlDateFormat: " + sqlDateFormat);
     } catch (final IOException e) {
       // catch possible io errors from readLine()

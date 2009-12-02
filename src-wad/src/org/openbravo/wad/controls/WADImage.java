@@ -18,15 +18,19 @@
  */
 package org.openbravo.wad.controls;
 
+import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
 
 import org.openbravo.wad.FieldsData;
+import org.openbravo.wad.WadUtility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADImage extends WADControl {
+  private static final String IMAGE_DEFAULT = "blank.gif";
 
   public WADImage() {
   }
@@ -182,5 +186,32 @@ public class WADImage extends WADControl {
           + (itable++) + "(this, " + fieldsDef.defaultvalue + ")");
     }
     return itable;
+  }
+
+  public void processTable(String strTab, Vector<Object> vecFields, Vector<Object> vecTables,
+      Vector<Object> vecWhere, Vector<Object> vecOrder, Vector<Object> vecParameters,
+      String tableName, Vector<Object> vecTableParameters, FieldsData field,
+      Vector<String> vecFieldParameters, Vector<Object> vecCounters) throws ServletException,
+      IOException {
+    if (field.isdisplayed.equals("Y")) {
+      final Vector<Object> vecSubFields = new Vector<Object>();
+      WadUtility.columnIdentifier(conn, tableName, field.required.equals("Y"), field, vecCounters,
+          false, vecSubFields, vecTables, vecWhere, vecParameters, vecTableParameters,
+          sqlDateFormat);
+      final StringBuffer strFields = new StringBuffer();
+      strFields.append(" ( ");
+      boolean boolFirst = true;
+      for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
+        final String tableField = (String) e.nextElement();
+        if (boolFirst) {
+          boolFirst = false;
+        } else {
+          strFields.append(" || ' - ' || ");
+        }
+        strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
+      }
+      vecFields.addElement("(CASE WHEN " + tableName + "." + field.name + " IS NULL THEN '"
+          + IMAGE_DEFAULT + "' ELSE " + strFields.toString() + ") END) AS " + field.name + "R");
+    }
   }
 }

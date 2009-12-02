@@ -18,12 +18,15 @@
  */
 package org.openbravo.wad.controls;
 
+import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
 
 import org.openbravo.wad.FieldsData;
+import org.openbravo.wad.WadUtility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADList extends WADControl {
@@ -261,5 +264,41 @@ public class WADList extends WADControl {
     vecCounters.set(1, Integer.toString(ilist));
 
     return texto.toString();
+  }
+
+  public void processTable(String strTab, Vector<Object> vecFields, Vector<Object> vecTables,
+      Vector<Object> vecWhere, Vector<Object> vecOrder, Vector<Object> vecParameters,
+      String tableName, Vector<Object> vecTableParameters, FieldsData field,
+      Vector<String> vecFieldParameters, Vector<Object> vecCounters) throws ServletException,
+      IOException {
+
+    String strOrder = "";
+    if (field.isdisplayed.equals("Y")) {
+      final Vector<Object> vecSubFields = new Vector<Object>();
+      WadUtility.columnIdentifier(conn, tableName, field.required.equals("Y"), field, vecCounters,
+          false, vecSubFields, vecTables, vecWhere, vecParameters, vecTableParameters,
+          sqlDateFormat);
+      final StringBuffer strFields = new StringBuffer();
+      strFields.append(" ( ");
+      boolean boolFirst = true;
+      for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
+        final String tableField = (String) e.nextElement();
+        if (boolFirst) {
+          boolFirst = false;
+        } else {
+          strFields.append(" || ' - ' || ");
+        }
+        strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
+      }
+      strOrder = strFields.toString() + ")";
+      vecFields.addElement("(CASE WHEN " + tableName + "." + field.name + " IS NULL THEN '' ELSE "
+          + strFields.toString() + ") END) AS " + field.name + "R");
+    } else {
+      strOrder = tableName + "." + field.name;
+    }
+
+    final String[] aux = { new String(field.name),
+        new String(strOrder + (field.name.equalsIgnoreCase("DocumentNo") ? " DESC" : "")) };
+    vecOrder.addElement(aux);
   }
 }

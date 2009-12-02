@@ -18,6 +18,7 @@
  */
 package org.openbravo.wad.controls;
 
+import java.io.IOException;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -71,5 +72,13 @@ public class WADID extends WADControl {
     vecCounters.set(0, Integer.toString(itable));
     vecCounters.set(1, Integer.toString(ilist));
     return texto.toString();
+  }
+
+  public void processTable(String strTab, Vector<Object> vecFields, Vector<Object> vecTables,
+      Vector<Object> vecWhere, Vector<Object> vecOrder, Vector<Object> vecParameters,
+      String tableName, Vector<Object> vecTableParameters, FieldsData field,
+      Vector<String> vecFieldParameters, Vector<Object> vecCounters) throws ServletException,
+      IOException {
+    // Override this to do nothing
   }
 }
