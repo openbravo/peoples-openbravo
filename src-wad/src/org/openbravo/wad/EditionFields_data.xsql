@@ -20,7 +20,7 @@
 
 
 
-<SqlClass name="EditionFieldsData" package="org.openbravo.wad">
+<SqlClass name="EditionFieldsData" package="org.openbravo.wad" accessModifier="public">
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
     <Sql><![CDATA[

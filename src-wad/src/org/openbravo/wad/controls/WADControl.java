@@ -409,4 +409,12 @@ public class WADControl {
     vecCounters.set(1, Integer.toString(ilist));
     return texto.toString();
   }
+
+  /**
+   * Adds to the vector the additional default fields. This is used for search element wich have a
+   * calculated addition to UI field
+   */
+  public int addAdditionDefaultFields(Vector<Object> v, FieldsData fieldsDef, int itable) {
+    return itable;
+  }
 }

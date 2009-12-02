@@ -144,4 +144,34 @@ public class WADImage extends WADControl {
     vecCounters.set(1, Integer.toString(ilist));
     return texto.toString();
   }
+
+  public int addAdditionDefaultFields(Vector<Object> v, FieldsData fieldsDef, int itable) {
+    if (fieldsDef.isdisplayed.equals("Y")) { // Image
+      final FieldsData fd = new FieldsData();
+      fd.reference = fieldsDef.reference + "_" + (itable++);
+      fd.name = fieldsDef.columnname + "R";
+      final String tableN = "AD_Image";
+      fieldsDef.name = fieldsDef.name;
+      final Vector<Object> vecTables2 = new Vector<Object>();
+      final Vector<Object> vecWhere2 = new Vector<Object>();
+      vecTables2.addElement(tableN + " table1");
+      final StringBuffer strFields2 = new StringBuffer();
+      strFields2.append(" ( table1.ImageURL ) AS ").append(fieldsDef.columnname);
+      final StringBuffer fields = new StringBuffer();
+      fields.append("SELECT ").append(strFields2);
+      fields.append(" FROM ");
+      for (int j = 0; j < vecTables2.size(); j++) {
+        fields.append(vecTables2.elementAt(j));
+      }
+      fields.append(" WHERE table1.isActive='Y'");
+      for (int j = 0; j < vecWhere2.size(); j++) {
+        fields.append(vecWhere2.elementAt(j));
+      }
+      fields.append(" AND table1." + fieldsDef.name + " = ? ");
+      fd.defaultvalue = fields.toString();
+      fd.whereclause = "<Parameter name=\"" + fd.name + "\"/>";
+      v.addElement(fd);
+    }
+    return itable;
+  }
 }

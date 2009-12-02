@@ -2925,107 +2925,11 @@ public class Wad extends DefaultHandler {
           fieldsDef[i].whereclause = parametros.toString();
           v.addElement(fieldsDef[i]);
         }
-        if ((fieldsDef[i].referencevalue.equals("30") || fieldsDef[i].referencevalue.equals("31")
-            || fieldsDef[i].referencevalue.equals("35") || fieldsDef[i].reference.equals("800011") || fieldsDef[i].referencevalue
-            .equals("25"))
-            && fieldsDef[i].isdisplayed.equals("Y")) {
-          final FieldsData fd = new FieldsData();
-          fd.reference = fieldsDef[i].reference + "_" + (itable++);
-          fd.name = fieldsDef[i].columnname + "R";
-          String tableN = "";
-          EditionFieldsData[] dataSearchs = null;
-          if (fieldsDef[i].referencevalue.equals("30"))
-            dataSearchs = EditionFieldsData.selectSearchs(pool, "", fieldsDef[i].type);
-          if (dataSearchs == null || dataSearchs.length == 0) {
-            if (fieldsDef[i].referencevalue.equals("25"))
-              tableN = "C_ValidCombination";
-            else if (fieldsDef[i].referencevalue.equals("31"))
-              tableN = "M_Locator";
-            else if (fieldsDef[i].referencevalue.equals("35"))
-              tableN = "M_AttributeSetInstance";
-            else if (fieldsDef[i].referencevalue.equals("800011"))
-              tableN = "M_Product";
-            else if (fieldsDef[i].name.equalsIgnoreCase("createdBy")
-                || fieldsDef[i].name.equalsIgnoreCase("updatedBy"))
-              tableN = "AD_User";
-            else
-              tableN = fieldsDef[i].name.substring(0, fieldsDef[i].name.length() - 3);
-            if (fieldsDef[i].referencevalue.equals("25"))
-              fieldsDef[i].name = "C_ValidCombination_ID";
-            else if (fieldsDef[i].referencevalue.equals("31"))
-              fieldsDef[i].name = "M_Locator_ID";
-            else if (fieldsDef[i].referencevalue.equals("35"))
-              fieldsDef[i].name = "M_AttributeSetInstance_ID";
-            else if (fieldsDef[i].referencevalue.equals("800011"))
-              fieldsDef[i].name = "M_Product_ID";
-            else if (fieldsDef[i].name.equalsIgnoreCase("createdBy")
-                || fieldsDef[i].name.equalsIgnoreCase("updatedBy"))
-              fieldsDef[i].name = "AD_User_ID";
-          } else {
-            tableN = dataSearchs[0].reference;
-            fieldsDef[i].name = dataSearchs[0].columnname;
-          }
-          final Vector<Object> vecFields2 = new Vector<Object>();
-          final Vector<Object> vecTables2 = new Vector<Object>();
-          final Vector<Object> vecWhere2 = new Vector<Object>();
-          int itable2 = 0;
-          vecTables2.addElement(tableN + " table1");
-          itable2 = fieldsOfSearch2(tableN, fieldsDef[i].name, fieldsDef[i].required, vecFields2,
-              vecTables2, vecWhere2, itable2, fieldsDef[i].referencevalue, fieldsDef[i].type);
-          final StringBuffer strFields2 = new StringBuffer();
-          strFields2.append(" ( ");
-          boolean boolFirst = true;
-          for (final Enumeration<Object> e = vecFields2.elements(); e.hasMoreElements();) {
-            final String tableField = (String) e.nextElement();
-            log4j.debug("  field: " + tableField);
-            if (boolFirst) {
-              boolFirst = false;
-            } else {
-              strFields2.append(" || ' - ' || ");
-            }
-            strFields2.append("COALESCE(TO_CHAR(").append(tableField).append("), '') ");
-          }
-          strFields2.append(") as ").append(fieldsDef[i].columnname);
-          final StringBuffer fields = new StringBuffer();
-          fields.append("SELECT ").append(strFields2);
-          fields.append(" FROM ");
-          for (int j = 0; j < vecTables2.size(); j++) {
-            fields.append(vecTables2.elementAt(j));
-          }
-          fields.append(" WHERE table1.isActive='Y'");
-          for (int j = 0; j < vecWhere2.size(); j++) {
-            fields.append(vecWhere2.elementAt(j));
-          }
-          fields.append(" AND table1." + fieldsDef[i].name + " = ? ");
-          fd.defaultvalue = fields.toString();
-          fd.whereclause = "<Parameter name=\"" + fd.name + "\"/>";
-          v.addElement(fd);
-        } else if (fieldsDef[i].referencevalue.equals("32") && fieldsDef[i].isdisplayed.equals("Y")) {
-          final FieldsData fd = new FieldsData();
-          fd.reference = fieldsDef[i].reference + "_" + (itable++);
-          fd.name = fieldsDef[i].columnname + "R";
-          final String tableN = "AD_Image";
-          fieldsDef[i].name = fieldsDef[i].name;
-          final Vector<Object> vecTables2 = new Vector<Object>();
-          final Vector<Object> vecWhere2 = new Vector<Object>();
-          vecTables2.addElement(tableN + " table1");
-          final StringBuffer strFields2 = new StringBuffer();
-          strFields2.append(" ( table1.ImageURL ) AS ").append(fieldsDef[i].columnname);
-          final StringBuffer fields = new StringBuffer();
-          fields.append("SELECT ").append(strFields2);
-          fields.append(" FROM ");
-          for (int j = 0; j < vecTables2.size(); j++) {
-            fields.append(vecTables2.elementAt(j));
-          }
-          fields.append(" WHERE table1.isActive='Y'");
-          for (int j = 0; j < vecWhere2.size(); j++) {
-            fields.append(vecWhere2.elementAt(j));
-          }
-          fields.append(" AND table1." + fieldsDef[i].name + " = ? ");
-          fd.defaultvalue = fields.toString();
-          fd.whereclause = "<Parameter name=\"" + fd.name + "\"/>";
-          v.addElement(fd);
-        }
+
+        // Calculate additional defaults
+        WADControl control = WadUtility.getWadControlClass(pool, fieldsDef[i].referencevalue,
+            fieldsDef[i].type);
+        itable = control.addAdditionDefaultFields(v, fieldsDef[i], itable);
       }
       final FieldsData[] fd = new FieldsData[v.size()];
       v.copyInto(fd);
