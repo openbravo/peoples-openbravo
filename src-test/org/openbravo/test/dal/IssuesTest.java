@@ -56,7 +56,7 @@ public class IssuesTest extends BaseTest {
     form.setDescription("description");
     form.setHelpComment("help");
     form.setModule(module);
-    form.setJavaClassName("test");
+    form.setJavaClassName("org.openbravo.test");
 
     FormTrl formTrl = OBProvider.getInstance().get(FormTrl.class);
     formTrl.setHelpComment("help");
