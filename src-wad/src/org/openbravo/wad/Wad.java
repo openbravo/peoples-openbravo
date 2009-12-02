@@ -4256,39 +4256,6 @@ public class Wad extends DefaultHandler {
   }
 
   /**
-   * Auxiliar method to get the query for a tableDir control.
-   * 
-   * @param tableInit
-   *          The name of the parent table.
-   * @param name
-   *          The name of the reference column.
-   * @param required
-   *          Is a required join
-   * @param vecFields
-   *          Vector with the select clause.
-   * @param vecTables
-   *          Vector with the from clause.
-   * @param vecWhere
-   *          Vector with the where clause.
-   * @throws ServletException
-   */
-  public void fieldsOfTableDir(String tableInit, String name, String required,
-      Vector<Object> vecFields, Vector<Object> vecTables, Vector<Object> vecWhere)
-      throws ServletException {
-    final int ilength = name.length();
-    final String tableName = name.substring(0, ilength - 3);
-    final FieldsData fdi[] = FieldsData.identifierColumns(pool, tableName);
-    vecTables.addElement("left join " + tableName + " on (" + tableInit + "." + name + " = "
-        + tableName + "." + name + ")");
-    for (int i = 0; i < fdi.length; i++) {
-      if (fdi[i].reference.equals("19"))
-        fieldsOfTableDir(tableName, fdi[i].name, fdi[i].required, vecFields, vecTables, vecWhere);
-      else
-        vecFields.addElement(tableName + "." + fdi[i].name);
-    }
-  }
-
-  /**
    * Method to prepare the XmlEngine object, which is the one in charged of the templates.
    * 
    * @param fileConnection
