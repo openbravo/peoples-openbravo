@@ -2905,6 +2905,8 @@ public class Wad extends DefaultHandler {
       xmlDocumentXsql.setData("structure10", fd);
     }
     {
+      // default values for search references in parameter windows for action buttons
+      // keep it hardcoded by now
       final ProcessRelationData[] data = ProcessRelationData.selectXSQL(pool, strTab);
       if (data != null) {
         for (int i = 0; i < data.length; i++) {

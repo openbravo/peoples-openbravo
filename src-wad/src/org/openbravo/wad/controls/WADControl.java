@@ -429,4 +429,12 @@ public class WADControl {
       String tabName, int itable) {
     return itable;
   }
+
+  /**
+   * Obtains the SQL casting depending on the data type
+   * 
+   */
+  public String getSQLCasting() {
+    return "";
+  }
 }

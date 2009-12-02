@@ -177,4 +177,8 @@ public class WADInteger extends WADControl {
     return true;
   }
 
+  public String getSQLCasting() {
+    return "TO_NUMBER";
+  }
+
 }

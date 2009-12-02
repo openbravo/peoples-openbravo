@@ -182,4 +182,8 @@ public class WADDate extends WADControl {
         "_Format\", vars.getSessionValue(\"#AD_SqlDateFormat\"));");
     return text.toString();
   }
+
+  public String getSQLCasting() {
+    return "TO_DATE";
+  }
 }

@@ -185,4 +185,8 @@ public class WADDateTime extends WADControl {
             "_Maxlength\", Integer.toString(vars.getSessionValue(\"#AD_SqlDateTimeFormat\").length()));");
     return text.toString();
   }
+
+  public String getSQLCasting() {
+    return "TO_DATE";
+  }
 }

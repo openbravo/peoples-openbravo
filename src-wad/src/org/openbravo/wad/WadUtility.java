@@ -2099,31 +2099,8 @@ public class WadUtility {
   public static String sqlCasting(ConnectionProvider conn, String reference, String referencevalue) {
     if (reference == null || reference.equals(""))
       return "";
-    else if (isDateTimeField(reference))
-      return "TO_DATE";
-    else if (reference.equals("19") || isSearchType(reference))
-      return "";
-    else if (isIntegerNumber(reference) || isPriceNumber(reference) || isQtyNumber(reference)
-        || isGeneralNumber(reference) || isDecimalNumber(reference))
-      return "TO_NUMBER";
-    else if (reference.equals("27") || reference.equals("33"))
-      return "TO_NUMBER";
-    else if (reference.equals("28") && (referencevalue.equals("11")))
-      return "TO_NUMBER";
-    else if (reference.equals("18")) {
-      if (referencevalue == null)
-        return "";
-      try {
-        TableRelationData trd[] = TableRelationData.selectRefTable(conn, referencevalue);
-        if (trd == null || trd.length == 0)
-          return "";
-        return sqlCasting(conn, trd[0].referencekey, trd[0].referencevaluekey);
-      } catch (ServletException ex) {
-        log4j.error("sqlCasting: " + ex);
-        return "";
-      }
-    } else
-      return "";
+    WADControl control = WadUtility.getWadControlClass(conn, reference, referencevalue);
+    return control.getSQLCasting();
   }
 
   public static void setPropertyValue(Properties _prop, FieldProvider _field, String _name,

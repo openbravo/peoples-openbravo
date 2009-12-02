@@ -179,4 +179,8 @@ public class WADTime extends WADControl {
   public String toJava() {
     return "";
   }
+
+  public String getSQLCasting() {
+    return "TO_DATE";
+  }
 }

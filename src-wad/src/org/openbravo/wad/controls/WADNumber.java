@@ -206,4 +206,8 @@ public class WADNumber extends WADControl {
   public boolean isNumericType() {
     return true;
   }
+
+  public String getSQLCasting() {
+    return "TO_NUMBER";
+  }
 }
