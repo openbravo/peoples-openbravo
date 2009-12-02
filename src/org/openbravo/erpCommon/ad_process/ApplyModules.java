@@ -206,9 +206,6 @@ public class ApplyModules extends HttpSecureAppServlet {
   /**
    * This method returns an ApplyModulesResponse object, that later is transformed into a JSON
    * object and resend to the rebuild window.
-   * 
-   * @param state
-   * @return
    */
   private ApplyModulesResponse fillResponse(String state) {
     ApplyModulesResponse resp = new ApplyModulesResponse();

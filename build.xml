@@ -201,9 +201,10 @@ export.database: exports database structure and data to xml files.
      <attribute name="v" default="NOT SET"/>
      <sequential>
        <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-                          <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-                          <transaction> UPDATE ad_system_info SET system_status='@{v}' ;
-                            DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)</transaction>
+         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+         <transaction> UPDATE ad_system_info SET system_status='@{v}' ;
+                       DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)
+         </transaction>
        </sql>
      </sequential>
   </macrodef>
