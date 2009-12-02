@@ -31,10 +31,6 @@ BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
-    IF :old.Name <> :NEW.Name THEN RETURN;
-    END IF;
-
-
   -- Insert C_ElementValue Trigger
   --  for Translation
   --  and TreeNode

@@ -20,13 +20,13 @@ import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.DebtPayment;
 import org.openbravo.service.db.DalConnectionProvider;
 
-class PaymentMonitor {
+public class PaymentMonitor {
   private static final Logger log4j = Logger.getLogger(PaymentMonitor.class);
 
   /**
    * Updates payment monitor information
    */
-  static void updateInvoice(Invoice invoice) {
+  public static void updateInvoice(Invoice invoice) {
     List<DebtPayment> payments = invoice.getFinancialMgmtDebtPaymentList();
     BigDecimal paidAmount = BigDecimal.ZERO;
     BigDecimal overDueAmount = BigDecimal.ZERO;
