@@ -136,6 +136,10 @@ public class AntExecutor {
   }
 
   public void setLogFile(String filename) {
+    File logFolder = new File(baseDir, "log");
+    if (!logFolder.exists()) {
+      logFolder.mkdir();
+    }
     File file = new File(baseDir + "/log", filename + "-apply.log");
     final DefaultLogger logger1 = new DefaultLogger();
     try {
