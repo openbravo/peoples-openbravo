@@ -54,6 +54,7 @@ FOR Cur_Orgs IN (
   END LOOP;
 
   RETURN v_parentorg_id;
-END AD_GET_COMMONPARENTORG]]></body>
+END AD_GET_COMMONPARENTORG
+]]></body>
     </function>
   </database>
