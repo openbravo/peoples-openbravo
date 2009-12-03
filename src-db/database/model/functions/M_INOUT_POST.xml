@@ -87,6 +87,7 @@
     v_Line VARCHAR2(10) ;
     v_OrderID_old VARCHAR2(32);
     FINISH_PROCESS BOOLEAN:=false;
+    v_Aux NUMBER;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -258,6 +259,12 @@
         IF(Cur_InOut.Processed='N' AND Cur_InOut.DocStatus='DR' AND Cur_InOut.DocAction='CO') THEN
           -- For all active shipment lines
           v_ResultStr:='HeaderLoop-1';
+          SELECT COUNT(*) INTO v_Aux
+			FROM M_InOutLine
+			WHERE M_InOut_ID = v_Record_ID;
+		  IF v_Aux=0 THEN
+			RAISE_APPLICATION_ERROR(-20000, '@ReceiptWithoutLines@');
+		  END IF;
           FOR Cur_InOutLine IN
             (SELECT *
             FROM M_INOUTLINE
