@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION AD_GET_COMMONPARENTORG">
+    <function name="AD_GET_COMMONPARENTORG" type="VARCHAR">
+      <parameter name="p_ad_org1_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_org2_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_client_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2009 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+/*************************************************************************
+* Returns common ancestor organization between two organizations. If the
+  common ancestor is not present between two organizations, it returns null.
+************************************************************************/
+  v_minLevel NUMBER:=0;
+  v_currLevel NUMBER;
+  v_parentOrg_Id VARCHAR2(32);
+  TYPE RECORD IS REF CURSOR;
+  Cur_Orgs RECORD;
+BEGIN
+
+FOR Cur_Orgs IN (
+  select * from ad_org where ad_isorgincluded(p_ad_org1_id, ad_org_id, p_ad_client_id)<>-1 AND ad_org_id<>'0'
+  INTERSECT
+  select * from ad_org where ad_isorgincluded(p_ad_org2_id, ad_org_id, p_ad_client_id)<>-1 AND ad_org_id<>'0')
+  LOOP
+    v_currLevel:=ad_isorgincluded(p_ad_org1_id, Cur_Orgs.ad_org_id, p_ad_client_id);
+    if(v_minLevel=0) then
+      v_minLevel:=v_currLevel;
+    end if;
+      
+    if(v_currLevel<=v_minLevel) then
+      v_minLevel:=v_currLevel;
+      v_parentOrg_Id:=Cur_Orgs.ad_org_id;
+    end if;
+  END LOOP;
+
+  RETURN v_parentorg_id;
+END AD_GET_COMMONPARENTORG]]></body>
+    </function>
+  </database>
