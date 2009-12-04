@@ -33,7 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="SYSTEM_STATUS" primaryKey="false" required="false" type="VARCHAR" size="6" autoIncrement="false">
+      <column name="SYSTEM_STATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
