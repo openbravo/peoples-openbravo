@@ -93,16 +93,16 @@
         <default/>
         <onCreateDefault><![CDATA[SELECT SUBSTR(C_BANK.NAME,23) || '. ' || C_BANK.CODEBANK || '-' || C_BANK.CODEBRANCH || '-' || C_BANK.DIGITCONTROL || '-' || A.DIGITCONTROL || '-' || A.CODEACCOUNT FROM C_BANK, C_BANKACCOUNT A WHERE C_BANK.C_BANK_ID = A.C_BANK_ID AND C_BANKACCOUNT.C_BANKACCOUNT_ID=A.C_BANKACCOUNT_ID]]></onCreateDefault>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBANKACCOUNT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_BANKACCOUNT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CBANKACCOUNT">
+      <foreign-key foreignTable="AD_ORG" name="C_BANKACCOUNT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BANK" name="CBANK_CBANKACCOUNT" onDelete="cascade">
+      <foreign-key foreignTable="C_BANK" name="C_BANKACCOUNT_C_BANK" onDelete="cascade">
         <reference local="C_BANK_ID" foreign="C_BANK_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CBANKACCOUNT">
+      <foreign-key foreignTable="C_CURRENCY" name="C_BANKACCOUNT_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <index name="C_BANKACCT_BANK" unique="false">

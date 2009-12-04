@@ -48,14 +48,14 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MATOOLSETUSED">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MATOOLSETUSED">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCTIONPLAN" name="M_PRODPLAN_MATOOLSETUSED">
         <reference local="M_PRODUCTIONPLAN_ID" foreign="M_PRODUCTIONPLAN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_TOOLSET" name="MA_TOOLSET_MATOOLSETUSED">
         <reference local="MA_TOOLSET_ID" foreign="MA_TOOLSET_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="MA_TOOLSETUSED_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <check name="MA_TOOLSETUSED_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

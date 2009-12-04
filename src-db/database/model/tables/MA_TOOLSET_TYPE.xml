@@ -48,7 +48,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MATOOLSETTYPE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MATOOLSETTYPE">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_TOOLSET_TYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <check name="MA_TOOLSET_TYPE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

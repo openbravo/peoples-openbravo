@@ -45,18 +45,18 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CREVENUERECOGNITIONRU">
+      <foreign-key foreignTable="AD_CLIENT" name="C_REVENUERECOGNITION_RUN_AD_CL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CREVENUERECOGNITIONRUN">
+      <foreign-key foreignTable="AD_ORG" name="C_REVENUERECOGNITION_RUN_AD_OR">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_REVENUERECOGNITION_PLAN" name="CREVRECPLAN_CREFRECRUN">
+      <foreign-key foreignTable="C_REVENUERECOGNITION_PLAN" name="C_REVENUERECOGNITION_RUN_C_REV">
         <reference local="C_REVENUERECOGNITION_PLAN_ID" foreign="C_REVENUERECOGNITION_PLAN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="GL_JOURNAL" name="GLJOURNAL_CREVENUERECRUN">
+      <foreign-key foreignTable="GL_JOURNAL" name="C_REVENUERECOGNITION_RUN_GL_JO">
         <reference local="GL_JOURNAL_ID" foreign="GL_JOURNAL_ID"/>
       </foreign-key>
-      <check name="CREVRUN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_REVENUERECOGNITION_RUN_I_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

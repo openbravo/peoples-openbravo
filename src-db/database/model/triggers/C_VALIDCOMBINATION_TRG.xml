@@ -83,10 +83,12 @@ BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
-    IF (:new.Combination <> :old.Combination) THEN RETURN;
-    END IF;
-    IF (:new.Description <> :old.Description) THEN RETURN;
-    END IF;
+    IF UPDATING THEN
+        IF (:new.Combination <> :old.Combination) THEN RETURN;
+        END IF;
+        IF (:new.Description <> :old.Description) THEN RETURN;
+        END IF;
+     END IF;
 
 
  --  Load C_AcctSchema Info (if not valid: 01403 no data found)

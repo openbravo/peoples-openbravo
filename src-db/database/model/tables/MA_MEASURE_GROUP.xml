@@ -48,11 +48,11 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMEASURE_GROUP">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMEASUREGROUP">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MA_CCP_GROUP" name="MA_CCP_GROUP_MAMEASURE_GROUP">
         <reference local="MA_CCP_GROUP_ID" foreign="MA_CCP_GROUP_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="MA_MEASURE_GROUP_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_MEASURE_SHIFT" name="MA_MEASURESHIFT_MAMEASUREGROUP">
         <reference local="MA_MEASURE_SHIFT_ID" foreign="MA_MEASURE_SHIFT_ID"/>

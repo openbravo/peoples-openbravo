@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ddlutils.model.Check;
 import org.apache.ddlutils.model.Database;
 import org.apache.ddlutils.model.ForeignKey;
 import org.apache.ddlutils.model.Index;
@@ -41,6 +42,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.module.ModuleDBPrefix;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
@@ -55,6 +57,7 @@ import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 // check naming rule of a table, use ad_exceptions table
 public class DatabaseValidator implements SystemValidator {
   private Database database;
+  private boolean dbsmExecution = false;
 
   private static int MAX_OBJECT_NAME_LENGTH = 30;
 
@@ -85,6 +88,7 @@ public class DatabaseValidator implements SystemValidator {
     // 3) table present on both sides, column match check
 
     final org.apache.ddlutils.model.Table[] dbTables = getDatabase().getTables();
+
     final Map<String, org.apache.ddlutils.model.Table> dbTablesByName = new HashMap<String, org.apache.ddlutils.model.Table>();
     for (org.apache.ddlutils.model.Table dbTable : dbTables) {
       dbTablesByName.put(dbTable.getName().toUpperCase(), dbTable);
@@ -149,6 +153,8 @@ public class DatabaseValidator implements SystemValidator {
     }
 
     checkIncorrectClientOrganizationName(result);
+
+    checkDBObjectsName(result);
 
     return result;
   }
@@ -510,6 +516,100 @@ public class DatabaseValidator implements SystemValidator {
     }
   }
 
+  /**
+   * Checks DB objects naming rules for: <li>
+   * Primary Keys <li>
+   * Foreign Keys <li>
+   * Check Constraints <li>
+   * Unique Constraints <li>
+   * Indexes
+   * 
+   */
+  private void checkDBObjectsName(SystemValidationResult result) {
+    if (getValidateModule() == null) {
+      return;
+    }
+
+    for (org.apache.ddlutils.model.Table table : getDatabase().getTables()) {
+      // Primary Key
+      if (table.getPrimaryKey() != null && !table.getPrimaryKey().equals("")
+          && !nameStartsByDBPrefix(table.getPrimaryKey())) {
+        String errorMsg = "Table  " + table.getName() + " has primary key named "
+            + table.getPrimaryKey() + ", which does not starts by module's DBPrefix.";
+        if (isDbsmExecution()) {
+          result.addWarning(SystemValidationType.INCORRECT_PK_NAME, errorMsg);
+        } else {
+          result.addError(SystemValidationType.INCORRECT_PK_NAME, errorMsg);
+        }
+      }
+
+      // Foreign Key
+      for (ForeignKey fk : table.getForeignKeys()) {
+        if (!nameStartsByDBPrefix(fk.getName())) {
+          String errorMsg = "Table  " + table.getName() + " has foreign key named " + fk.getName()
+              + ", which does not starts by module's DBPrefix.";
+          if (isDbsmExecution()) {
+            result.addWarning(SystemValidationType.INCORRECT_FK_NAME, errorMsg);
+          } else {
+            result.addError(SystemValidationType.INCORRECT_FK_NAME, errorMsg);
+          }
+        }
+      }
+
+      // Check constraints
+      for (Check check : table.getChecks()) {
+        if (!nameStartsByDBPrefix(check.getName())) {
+          String errorMsg = "Table  " + table.getName() + " has check constraint key named "
+              + check.getName() + ", which does not starts by module's DBPrefix.";
+          if (isDbsmExecution()) {
+            result.addWarning(SystemValidationType.INCORRECT_CHECK_NAME, errorMsg);
+          } else {
+            result.addError(SystemValidationType.INCORRECT_CHECK_NAME, errorMsg);
+          }
+        }
+      }
+
+      // Unique constraints
+      for (Unique unique : table.getuniques()) {
+        if (!nameStartsByDBPrefix(unique.getName())) {
+          String errorMsg = "Table  " + table.getName() + " has unique constraint key named "
+              + unique.getName() + ", which does not starts by module's DBPrefix.";
+          if (isDbsmExecution()) {
+            result.addWarning(SystemValidationType.INCORRECT_UNIQUE_NAME, errorMsg);
+          } else {
+            result.addError(SystemValidationType.INCORRECT_UNIQUE_NAME, errorMsg);
+          }
+        }
+      }
+
+      // Indexes
+      for (Index index : table.getIndices()) {
+        if (!nameStartsByDBPrefix(index.getName())) {
+          String errorMsg = "Table  " + table.getName() + " has index named " + index.getName()
+              + ", which does not starts by module's DBPrefix.";
+          if (isDbsmExecution()) {
+            result.addWarning(SystemValidationType.INCORRECT_INDEX_NAME, errorMsg);
+          } else {
+            result.addError(SystemValidationType.INCORRECT_INDEX_NAME, errorMsg);
+          }
+        }
+      }
+    }
+  }
+
+  private boolean nameStartsByDBPrefix(String name) {
+    if (name.toUpperCase().startsWith("EM_")) {
+      // belongs to another module
+      return true;
+    }
+    for (ModuleDBPrefix dbprefix : getValidateModule().getModuleDBPrefixList()) {
+      if (name.toUpperCase().startsWith(dbprefix.getName().toUpperCase() + "_")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public Database getDatabase() {
     return database;
   }
@@ -524,6 +624,14 @@ public class DatabaseValidator implements SystemValidator {
 
   public void setValidateModule(Module module) {
     this.validateModule = module;
+  }
+
+  public boolean isDbsmExecution() {
+    return dbsmExecution;
+  }
+
+  public void setDbsmExecution(boolean dbsmExecution) {
+    this.dbsmExecution = dbsmExecution;
   }
 
 }

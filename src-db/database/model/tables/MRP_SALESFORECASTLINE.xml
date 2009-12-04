@@ -58,9 +58,9 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_MRPSALESFORECASTLINE">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MRP_SALESFORECAST" name="MRPSALESFORECAST_MRPSALESFOREC">
+      <foreign-key foreignTable="MRP_SALESFORECAST" name="MRP_SALESFORECASTLINE_MRP_SALE">
         <reference local="MRP_SALESFORECAST_ID" foreign="MRP_SALESFORECAST_ID"/>
       </foreign-key>
-      <check name="MRPSALLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MRP_SALESFORECASTLINE_ISAC_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

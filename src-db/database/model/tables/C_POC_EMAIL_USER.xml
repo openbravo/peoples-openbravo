@@ -45,16 +45,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_C_EMAIL_USER">
+      <foreign-key foreignTable="AD_CLIENT" name="C_POC_EMAIL_USER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_C_POC_EMAIL_USER">
+      <foreign-key foreignTable="AD_ORG" name="C_POC_EMAIL_USER_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_CPOC_EMAIL_USER">
+      <foreign-key foreignTable="AD_USER" name="C_POC_EMAIL_USER_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_POC_EMAIL" name="CPOCEMAIL_CPOC_EMAIL_USER">
+      <foreign-key foreignTable="C_POC_EMAIL" name="C_POC_EMAIL_USER_C_POC_EMAIL">
         <reference local="C_POC_EMAIL_ID" foreign="C_POC_EMAIL_ID"/>
       </foreign-key>
     </table>

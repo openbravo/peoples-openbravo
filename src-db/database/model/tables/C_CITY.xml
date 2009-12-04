@@ -61,17 +61,17 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="C_COUNTRY" name="C_CITY_C_COUNTRY">
+        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_REGION" name="C_CITY_C_REGION">
+        <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_CITYCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="C_CITYORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_COUNTRY" name="CCOUNTRY_CCITY">
-        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_REGION" name="CREGION_CCITY">
-        <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
       <check name="C_CITY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

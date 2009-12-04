@@ -45,10 +45,10 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CSALARYCATEGORY">
+      <foreign-key foreignTable="AD_CLIENT" name="C_SALARY_CATEGORY_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CSALARYCATEGORY">
+      <foreign-key foreignTable="AD_ORG" name="C_SALARY_CATEGORY_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="C_SALARY_CATEGO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

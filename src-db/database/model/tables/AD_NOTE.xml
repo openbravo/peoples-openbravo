@@ -61,22 +61,22 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADNOTE">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_NOTE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MESSAGE" name="ADMESSAGE_ADNOTE" onDelete="cascade">
+      <foreign-key foreignTable="AD_MESSAGE" name="AD_NOTE_AD_MESSAGE" onDelete="cascade">
         <reference local="AD_MESSAGE_ID" foreign="AD_MESSAGE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADNOTE">
+      <foreign-key foreignTable="AD_ORG" name="AD_NOTE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADNOTE" onDelete="cascade">
+      <foreign-key foreignTable="AD_TABLE" name="AD_NOTE_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_ADNOTE">
+      <foreign-key foreignTable="AD_USER" name="AD_NOTE_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <check name="ADNOTE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADNOTE_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="AD_NOTE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_NOTE_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

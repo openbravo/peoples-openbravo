@@ -129,12 +129,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CTAX">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CTAX">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_COUNTRY" name="C_COUNTRY_C_TAX">
         <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
       </foreign-key>
@@ -147,14 +141,20 @@
       <foreign-key foreignTable="C_REGION" name="C_REGIONTO_C_TAX">
         <reference local="TO_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BP_TAXCATEGORY" name="CTAX_CBPTAXCATEGORY">
+      <foreign-key foreignTable="AD_CLIENT" name="C_TAX_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_TAX_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BP_TAXCATEGORY" name="C_TAX_C_BP_TAXCATEGORY">
         <reference local="C_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX_PARENT">
-        <reference local="PARENT_TAX_ID" foreign="C_TAX_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_CTAX" onDelete="cascade">
+      <foreign-key foreignTable="C_TAXCATEGORY" name="C_TAX_C_TAXCATEGORY" onDelete="cascade">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_TAX" name="C_TAX_PARENT_TAX">
+        <reference local="PARENT_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
       <unique name="C_TAX_NAME1">
         <unique-column name="AD_CLIENT_ID"/>

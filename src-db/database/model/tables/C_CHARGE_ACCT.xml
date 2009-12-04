@@ -49,25 +49,25 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CCHARGEACCT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_CHARGE_ACCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CCHARGEACCT">
+      <foreign-key foreignTable="AD_ORG" name="C_CHARGE_ACCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CCHARGEACCT" onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_CHARGE_ACCT_C_ACCTSCHEMA" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CHARGE" name="CCHRAGE_CCHARGEACCT">
+      <foreign-key foreignTable="C_CHARGE" name="C_CHARGE_ACCT_C_CHARGE">
         <reference local="C_CHARGE_ID" foreign="C_CHARGE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_CHEXPENSE_CCHARGE">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_CHARGE_ACCT_CH_EXPENSE_ACCT">
         <reference local="CH_EXPENSE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_CHREVENUE_CCHARGE">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_CHARGE_ACCT_CH_REVENUE_ACCT">
         <reference local="CH_REVENUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <unique name="CCHARGEACCT_CCHARGEID_CACCT_UN">
+      <unique name="C_CHARGE_ACCT_CHARGE_ACCTSC_UN">
         <unique-column name="C_CHARGE_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>

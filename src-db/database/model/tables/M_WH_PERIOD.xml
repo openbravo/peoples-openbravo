@@ -45,13 +45,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MWHPERIOD">
+      <foreign-key foreignTable="AD_CLIENT" name="M_WH_PERIOD_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MWHPERIOD">
+      <foreign-key foreignTable="AD_ORG" name="M_WH_PERIOD_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WH_SCHEDULE" name="MWHSCHEDULE_MWHPERIOD">
+      <foreign-key foreignTable="M_WH_SCHEDULE" name="M_WH_PERIOD_M_WH_SCHEDULE">
         <reference local="M_WH_SCHEDULE_ID" foreign="M_WH_SCHEDULE_ID"/>
       </foreign-key>
       <check name="M_WH_PERIOD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

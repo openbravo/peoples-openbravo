@@ -65,26 +65,26 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_C_PROJECT_VENDOR">
+      <foreign-key foreignTable="AD_CLIENT" name="C_PROJECT_VENDOR_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_C_PROJECT_VENDOR">
+      <foreign-key foreignTable="AD_ORG" name="C_PROJECT_VENDOR_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_C_PROJECT_VENDOR">
+      <foreign-key foreignTable="C_BPARTNER" name="C_PROJECT_VENDOR_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INCOTERMS" name="CINCOTERMS_C_PROJECT_VENDOR">
+      <foreign-key foreignTable="C_INCOTERMS" name="C_PROJECT_VENDOR_C_INCOTERMS">
         <reference local="C_INCOTERMS_ID" foreign="C_INCOTERMS_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_C_PROJECT_VENDOR">
+      <foreign-key foreignTable="C_PROJECT" name="C_PROJECT_VENDOR_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST_VERSION" name="MPRICELISTVERSION_CPROJECTVEND">
-        <reference local="M_PRICELIST_VERSION_ID" foreign="M_PRICELIST_VERSION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="PRICELIST_PROJECTVENDOR">
+      <foreign-key foreignTable="M_PRICELIST" name="C_PROJECT_VENDOR_M_PRICELIST">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRICELIST_VERSION" name="C_PROJECT_VENDOR_M_PRICELIST_V">
+        <reference local="M_PRICELIST_VERSION_ID" foreign="M_PRICELIST_VERSION_ID"/>
       </foreign-key>
       <check name="C_PROJECT_VENDO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

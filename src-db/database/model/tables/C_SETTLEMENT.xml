@@ -129,33 +129,33 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CSETTLEMENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_SETTLEMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CSETTLEMENT">
+      <foreign-key foreignTable="AD_ORG" name="C_SETTLEMENT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CSETTLEMENT">
+      <foreign-key foreignTable="C_ACTIVITY" name="C_SETTLEMENT_C_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_CSETTLEMENT">
+      <foreign-key foreignTable="C_CAMPAIGN" name="C_SETTLEMENT_C_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCYID_CSETTLEMENT">
+      <foreign-key foreignTable="C_CURRENCY" name="C_SETTLEMENT_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_CSETTLEMENT">
+      <foreign-key foreignTable="C_DOCTYPE" name="C_SETTLEMENT_C_DOCTYPE">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CSETTLEMENT">
+      <foreign-key foreignTable="C_PROJECT" name="C_SETTLEMENT_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
       <index name="C_SETTLEMENT_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
+      <check name="C_SETTLEMENT_CREATEFILE_CHK"><![CDATA[CREATEFILE IN ('Y', 'N')]]></check>
+      <check name="C_SETTLEMENT_DATEACCT_CHK"><![CDATA[DATEACCT IS NOT NULL]]></check>
       <check name="C_SETTLEMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CSETTLEM_CREATEFILE_CHECK"><![CDATA[CREATEFILE IN ('Y', 'N')]]></check>
-      <check name="CSETTLEMENT_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
-      <check name="DATEACCT_CSETTLEMENT"><![CDATA[DATEACCT IS NOT NULL]]></check>
+      <check name="C_SETTLEMENT_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

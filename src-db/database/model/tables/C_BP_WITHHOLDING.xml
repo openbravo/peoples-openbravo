@@ -73,28 +73,28 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPWITHHOLDING">
+      <foreign-key foreignTable="AD_CLIENT" name="C_BP_WITHHOLDING_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CBPWITHHOLDING">
+      <foreign-key foreignTable="AD_ORG" name="C_BP_WITHHOLDING_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CBPWITHHOLDING" onDelete="cascade">
+      <foreign-key foreignTable="C_BPARTNER" name="C_BP_WITHHOLDING_C_BPARTNER" onDelete="cascade">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX_CBPWITHHOLDING">
+      <foreign-key foreignTable="C_TAX" name="C_BP_WITHHOLDING_C_TAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_WITHHOLDING" name="CWITHHOLDING_CBPWITHHOLDING">
+      <foreign-key foreignTable="C_WITHHOLDING" name="C_BP_WITHHOLDING_C_WITHHOLDING">
         <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
       </foreign-key>
-      <unique name="CBPWITHHOLDING_CBPARTNERID__UN">
+      <unique name="C_BP_WITHHOLDING_BPARTNER_W_UN">
         <unique-column name="C_BPARTNER_ID"/>
         <unique-column name="C_WITHHOLDING_ID"/>
         <unique-column name="C_TAX_ID"/>
       </unique>
-      <check name="CBPWITHHOLDING_DHOLDING_CHECK"><![CDATA[ISMANDATORYWITHHOLDING IN ('Y', 'N')]]></check>
-      <check name="CBPWITHHOLDING_EMEXEMPT_CHECK"><![CDATA[ISTEMPORARYEXEMPT IN ('Y', 'N')]]></check>
-      <check name="CBPWITHHOLDING_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_BP_WITHHOLDING_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_BP_WITHHOLDING_ISMANDATO_CHK"><![CDATA[ISMANDATORYWITHHOLDING IN ('Y', 'N')]]></check>
+      <check name="C_BP_WITHHOLDING_ISTEMPORA_CHK"><![CDATA[ISTEMPORARYEXEMPT IN ('Y', 'N')]]></check>
     </table>
   </database>

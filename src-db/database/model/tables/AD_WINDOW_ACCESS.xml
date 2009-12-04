@@ -51,17 +51,17 @@
       <foreign-key foreignTable="AD_ORG" name="AD_FUNCTACCESSORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADWINDOWACCESS" onDelete="cascade">
+      <foreign-key foreignTable="AD_ROLE" name="AD_WINDOW_ACCESS_AD_ROLE" onDelete="cascade">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_WINDOW" name="ADWINDOW_ADWINDOWACCESS" onDelete="cascade">
+      <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_ACCESS_AD_WINDOW" onDelete="cascade">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
       <index name="AD_WINDOW_ACCESS_UN_KEY" unique="true">
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_WINDOW_ID"/>
       </index>
-      <check name="ADWINDOWACCESS_EADWRITE_CHECK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
-      <check name="ADWINDOWACCESS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_WINDOW_ACCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_WINDOW_ACCESS_ISREADWRI_CHK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>
   </database>

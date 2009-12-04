@@ -97,50 +97,50 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CASCHEMAELEMENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_ACCTSCHEMA_ELEMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CASCHEMAELEMENT">
-        <reference local="ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORGID_C_ASCHEMAELEMENT">
+      <foreign-key foreignTable="AD_ORG" name="C_ACCTSCHEMA_ELEMENT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CASCHEMAELEMENT" onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCTSCHEMA_ELEMENT_C_ACCTSCH" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CACCTSCHEMAELEMENT">
+      <foreign-key foreignTable="C_ACTIVITY" name="C_ACCTSCHEMA_ELEMENT_C_ACTIVIT">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBUSPARTNER_CASCHEMAELEMENT">
+      <foreign-key foreignTable="C_BPARTNER" name="C_ACCTSCHEMA_ELEMENT_C_BPARTNE">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENT" name="CELEMENT_CASCHEMAELEMENT">
-        <reference local="C_ELEMENT_ID" foreign="C_ELEMENT_ID"/>
+      <foreign-key foreignTable="C_CAMPAIGN" name="C_ACCTSCHEMA_ELEMENT_C_CAMPAIG">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_CASCHEMAELEMENT">
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_ACCTSCHEMA_ELEMENT_C_ELEMEN1">
         <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="CLOCATION_CASCHEMAELEMENT">
+      <foreign-key foreignTable="C_ELEMENT" name="C_ACCTSCHEMA_ELEMENT_C_ELEMENT">
+        <reference local="C_ELEMENT_ID" foreign="C_ELEMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_LOCATION" name="C_ACCTSCHEMA_ELEMENT_C_LOCATIO">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CASCHEMAELEMENT">
+      <foreign-key foreignTable="C_PROJECT" name="C_ACCTSCHEMA_ELEMENT_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_SALESREGION" name="CSALESREGION_CASCHEMAELEMENT">
+      <foreign-key foreignTable="C_SALESREGION" name="C_ACCTSCHEMA_ELEMENT_C_SALESRE">
         <reference local="C_SALESREGION_ID" foreign="C_SALESREGION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CASCHEMAELEMENT">
+      <foreign-key foreignTable="M_PRODUCT" name="C_ACCTSCHEMA_ELEMENT_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="SOCAMPAIGN_CASCHEMAELEMENT">
-        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      <foreign-key foreignTable="AD_ORG" name="C_ACCTSCHEMA_ELEMENT_ORG">
+        <reference local="ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <index name="C_ACCTSCHEMA_ELEMENT_SCHEMA" unique="false">
         <index-column name="C_ACCTSCHEMA_ID"/>
       </index>
-      <check name="CACCTSCHEL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CACCTSCHEL_ISBALANCED_CHECK"><![CDATA[ISBALANCED IN ('Y', 'N')]]></check>
-      <check name="CACCTSCHEL_ISMANDATORY_CHECK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCHEMA_ELEMENT_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCHEMA_ELEMENT_ISBAL_CHK"><![CDATA[ISBALANCED IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCHEMA_ELEMENT_ISMAN_CHK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
     </table>
   </database>

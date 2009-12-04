@@ -226,10 +226,10 @@ public class DocDPManagement extends AcctServer {
    * @return
    */
   public String calculateAmount(AcctSchema as, DocLine_DPManagement line, ConnectionProvider conn) {
-    String Amt = getConvertedAmt(line.Amount, line.m_C_Currency_ID, C_Currency_ID,
+    String Amt = getConvertedAmt(line.Amount, line.m_C_Currency_ID, as.m_C_Currency_ID,
         line.conversionDate, "", AD_Client_ID, AD_Org_ID, conn);
-    Amt = getConvertedAmt(Amt, C_Currency_ID, line.m_C_Currency_ID, DateAcct, "", AD_Client_ID,
-        AD_Org_ID, conn);
+    Amt = getConvertedAmt(Amt, as.m_C_Currency_ID, line.m_C_Currency_ID, DateAcct, "",
+        AD_Client_ID, AD_Org_ID, conn);
     return Amt;
   }
 

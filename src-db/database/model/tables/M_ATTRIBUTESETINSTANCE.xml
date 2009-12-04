@@ -65,19 +65,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MATTRIBUTESETINSTANCE">
+      <foreign-key foreignTable="AD_CLIENT" name="M_ATTRIBUTESETINSTANCE_AD_CLIE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MATTRIBUTESETINSTANCE">
+      <foreign-key foreignTable="AD_ORG" name="M_ATTRIBUTESETINSTANCE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_LOT" name="MLOT_MATTRIBUTESETINSTANCE">
-        <reference local="M_LOT_ID" foreign="M_LOT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESET" name="REFM_ATTRIBUTESET1765">
+      <foreign-key foreignTable="M_ATTRIBUTESET" name="M_ATTRIBUTESETINSTANCE_M_ATTRI">
         <reference local="M_ATTRIBUTESET_ID" foreign="M_ATTRIBUTESET_ID"/>
       </foreign-key>
-      <check name="MATTRIBSETINST_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MATTRIBSETINST_ISLOCKED_CHECK"><![CDATA[ISLOCKED IN ('Y', 'N')]]></check>
+      <foreign-key foreignTable="M_LOT" name="M_ATTRIBUTESETINSTANCE_M_LOT">
+        <reference local="M_LOT_ID" foreign="M_LOT_ID"/>
+      </foreign-key>
+      <check name="M_ATTRIBUTESETINSTANCE_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_ATTRIBUTESETINSTANCE_ISL_CHK"><![CDATA[ISLOCKED IN ('Y', 'N')]]></check>
     </table>
   </database>

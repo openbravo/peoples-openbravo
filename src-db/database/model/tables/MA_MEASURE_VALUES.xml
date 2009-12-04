@@ -64,11 +64,11 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMEASUREVALUES">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMEASUREVALUES">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MA_CCP" name="MA_CCP_MAMEASUREVALUES">
         <reference local="MA_CCP_ID" foreign="MA_CCP_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="MA_MEASURE_VALUES_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_MEASURE_TIME" name="MA_MEASURETIME_MAMEASUREVALUES">
         <reference local="MA_MEASURE_TIME_ID" foreign="MA_MEASURE_TIME_ID"/>

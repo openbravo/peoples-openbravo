@@ -57,23 +57,23 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CDOCTYPETRL">
+      <foreign-key foreignTable="AD_CLIENT" name="C_DOCTYPE_TRL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_CDOCTYPETRL">
+      <foreign-key foreignTable="AD_LANGUAGE" name="C_DOCTYPE_TRL_AD_LANGUAGE">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CDOCTYPETRL">
+      <foreign-key foreignTable="AD_ORG" name="C_DOCTYPE_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_CDOCTYPETRL" onDelete="cascade">
+      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_TRL_C_DOCTYPE" onDelete="cascade">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <unique name="CDOCTYPETRL_CDOCTYPEID_ADLA_UN">
+      <unique name="C_DOCTYPE_TRL_DOCTYPE_LANGU_UN">
         <unique-column name="C_DOCTYPE_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
       <check name="C_DOCTYPE_TRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CDOCTYPETRL_ISTRANSLAT_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="C_DOCTYPE_TRL_ISTRANSLATED_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -65,17 +65,17 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CCOMMISSIONRUN">
+      <foreign-key foreignTable="AD_CLIENT" name="C_COMMISSIONRUN_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CCOMMISSIONRUN">
+      <foreign-key foreignTable="AD_ORG" name="C_COMMISSIONRUN_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COMMISSION" name="C_COMMISSIONRUN_C_COMMISSION">
+        <reference local="C_COMMISSION_ID" foreign="C_COMMISSION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_INVOICE" name="C_INVOICE_CCOMMISSIONRUN">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_COMMISSION" name="CCOMMISSION_CCOMMISSIONRUN">
-        <reference local="C_COMMISSION_ID" foreign="C_COMMISSION_ID"/>
       </foreign-key>
       <check name="C_COMMISRUN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_COMMISRUN_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>

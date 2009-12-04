@@ -53,17 +53,17 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLINET_CACCTRPTNODE">
+      <foreign-key foreignTable="AD_CLIENT" name="C_ACCT_RPT_NODE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CACCTRPTNODE">
+      <foreign-key foreignTable="AD_ORG" name="C_ACCT_RPT_NODE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCT_RPT_GROUP" name="C_ACCT_RPT_NODE_C_ACCT_RPT_GRO">
+        <reference local="C_ACCT_RPT_GROUP_ID" foreign="C_ACCT_RPT_GROUP_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ELEMENTVALUE" name="C_ACCT_RPT_NODE_C_ELEMENTVALUE">
         <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ACCT_RPT_GROUP" name="CACCTRPTGROUP_CACCTRPTNODE">
-        <reference local="C_ACCT_RPT_GROUP_ID" foreign="C_ACCT_RPT_GROUP_ID"/>
       </foreign-key>
     </table>
   </database>

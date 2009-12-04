@@ -41,10 +41,10 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPTAXCATEGORY">
+      <foreign-key foreignTable="AD_CLIENT" name="C_BP_TAXCATEGORY_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CBPTAXCATEGORY">
+      <foreign-key foreignTable="AD_ORG" name="C_BP_TAXCATEGORY_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
     </table>

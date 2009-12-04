@@ -95,6 +95,17 @@ build.war: build a war file in the lib directory.
     <mkdir dir="${build.AD}/org/openbravo/erpCommon/reference" />
     <mkdir dir="${build.docs}" />
   </target>
+  <macrodef name="updatesystemstatus">
+     <attribute name="v" default="NOT SET"/>
+     <sequential>
+       <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
+         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+         <transaction> UPDATE ad_system_info SET system_status='@{v}' ;
+                       DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)
+         </transaction>
+       </sql>
+     </sequential>
+  </macrodef>
 
   <target name="validate.database">
     <taskdef name="validateDatabase" classname="org.openbravo.service.system.SystemValidationTask">
@@ -143,6 +154,7 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="sqlc" depends="copy.srcClient">
+    <updatesystemstatus v="RB42" />
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql . '${build.sqlc}'/src" />
       <classpath refid="project.class.path" />
@@ -289,6 +301,7 @@ build.war: build a war file in the lib directory.
   </target>
   
   <target name="compileSqlc" depends="sqlc">
+    <updatesystemstatus v="RB43"/>
     <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
       <classpath refid="project.class.path" />
     </javac>
@@ -298,7 +311,7 @@ build.war: build a war file in the lib directory.
     </javac>
   	<antcall target="calculate.version"/>
   </target>
-	
+
 	<target name="calculate.version" depends="init">
 	  <condition property="revision.from.file">
 		<and>
@@ -311,7 +324,6 @@ build.war: build a war file in the lib directory.
 	  <antcall inheritall="true" target="calculate.instance.version"/>
 	</target>
 	<target name="calculate.instance.version" depends="calculate.version.from.hg, calculate.version.from.file">
-		<echo message="Instance version: ${instance.version}"/>
 	    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" delimiter="/">
 	      <classpath>
 	        <fileset dir="${base.lib}">
@@ -345,23 +357,37 @@ build.war: build a war file in the lib directory.
     </copy>
   </target>
 
-  <target name="wad" depends="init">
+  <target name="wadvalidation">
+    <taskdef name="WADValidation" classname="org.openbravo.wad.validation.WADValidatorTask">
+            <classpath refid="project.class.path" />
+          </taskdef>
+        
+        <WADValidation propertiesFile="${base.config}/Openbravo.properties"
+                       modules="${module}"
+                       stoponerror="${stopOnWadError}"/>
+  </target>
+  
+  <target name="wad" depends="init, wadvalidation">
+    <updatesystemstatus v="RB41"/>
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="true">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick' '${stopOnWadError}'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick'" />
       <classpath refid="project.class.path" />
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true" />
   </target>
 
-  <target name="wad.quick" depends="init">
+  <target name="wad.quick" depends="init, wadvalidation">
+    <updatesystemstatus v="RB41"/>
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick' '${stopOnWadError}'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick'" />
       <classpath refid="project.class.path" />
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true" />
   </target>
 
   <target name="postsrc" depends="postsrc.modules">
+
+    <updatesystemstatus v="RB44"/>
     <copy todir="${build}">
       <fileset dir="${basedir}" includes="**/*.properties" />
     </copy>
@@ -629,6 +655,7 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </taskdef>
     <updateWADmd5 obDir="${basedir}/.." />
+    <updatesystemstatus v="RB51"/>
   </target>
 
   <target name="smartbuild.no.new.wad" unless="new.wad">
@@ -711,6 +738,7 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="copy.files">
+    <updatesystemstatus v="RB45"/>
     <mkdir dir="${jakarta.base}/webapps/${context.name}" />
     <copy todir="${jakarta.base}/webapps/${context.name}" encoding="UTF-8">
       <fileset dir="${base.context}" />
@@ -731,6 +759,7 @@ build.war: build a war file in the lib directory.
     <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" />
     <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8">
     </copy>
+    <updatesystemstatus v="RB51"/>
   </target>
 
   <target name="compile.web" depends="build.web.folder">

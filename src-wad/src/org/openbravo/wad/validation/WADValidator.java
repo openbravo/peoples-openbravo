@@ -19,28 +19,31 @@
 
 package org.openbravo.wad.validation;
 
-import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.wad.validation.WADValidationResult.WADValidationType;
 
 /**
- * Performs a series of validations for WAD tabs
+ * Performs a series of validations for WAD tabs. It does not use DAL but sqlc not to have to init
+ * DAL for each compilation.
  * 
  */
 public class WADValidator {
-  private FieldProvider[] tabs;
+  private String modules;
   private ConnectionProvider conn;
+  private String checkAll;
 
   /**
    * Constructor
    * 
    * @param conn
    *          Database ConnectionProvider
-   * @param tabs
-   *          Tabs to check
+   * @param moduleId
+   *          Module to check
    */
-  public WADValidator(ConnectionProvider conn, FieldProvider[] tabs) {
-    this.tabs = tabs;
+  public WADValidator(ConnectionProvider conn, String modules) {
+    checkAll = (modules == null || modules.equals("%") || modules.equals("")) ? "Y" : "N";
+    this.modules = "'"
+        + (checkAll.equals("Y") ? "%" : modules.replace(", ", ",").replace(",", "', '")) + "'";
     this.conn = conn;
   }
 
@@ -51,19 +54,23 @@ public class WADValidator {
    */
   public WADValidationResult validate() {
     WADValidationResult result = new WADValidationResult();
-    if (tabs != null && tabs.length > 0) {
-      validateIdentifier(result);
-      validateKey(result);
-    }
+    validateIdentifier(result);
+    validateKey(result);
+    validateModelObject(result);
+    validateModelObjectMapping(result);
+    validateColumnNaming(result);
     return result;
   }
 
+  /**
+   * Validates tables have at least one column set as identifier
+   */
   private void validateIdentifier(WADValidationResult result) {
     try {
-      WADValidatorData data[] = WADValidatorData.checkIdentifier(conn, getTabIDs());
+      WADValidatorData data[] = WADValidatorData.checkIdentifier(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.MISSING_IDENTIFIER, issue.windowname + " > "
-            + issue.tabname + ": table " + issue.tablename + " has not identifier.");
+        result.addError(WADValidationType.MISSING_IDENTIFIER, "Table " + issue.objectname
+            + " has not identifier.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
@@ -71,27 +78,70 @@ public class WADValidator {
     }
   }
 
+  /**
+   * Validates tables have a primary key column
+   */
   private void validateKey(WADValidationResult result) {
     try {
-      WADValidatorData data[] = WADValidatorData.checkKey(conn, getTabIDs());
+      WADValidatorData data[] = WADValidatorData.checkKey(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.MISSING_KEY, issue.windowname + " > " + issue.tabname
-            + ": table " + issue.tablename + " has not primary key.");
+        result.addError(WADValidationType.MISSING_KEY, "Table " + issue.objectname
+            + " has not primary key.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
-          "Error when executing query for validating identifiers: " + e.getMessage());
+          "Error when executing query for validating primary keys: " + e.getMessage());
     }
   }
 
-  private String getTabIDs() {
-    StringBuffer result = new StringBuffer();
-    for (FieldProvider tab : tabs) {
-      if (result.length() > 0) {
-        result.append(", ");
+  /**
+   * Validates all classes defined in model object are inside the module package
+   */
+  private void validateModelObject(WADValidationResult result) {
+    try {
+      WADValidatorData data[] = WADValidatorData.checkModelObject(conn, modules, checkAll);
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.MODEL_OBJECT, issue.objecttype + " " + issue.objectname
+            + " has classname: " + issue.currentvalue + ". But it should be in "
+            + issue.expectedvalue + " package.");
       }
-      result.append("'").append(tab.getField("tabId")).append("'");
+    } catch (Exception e) {
+      result.addWarning(WADValidationType.SQL,
+          "Error when executing query for validating moel object: " + e.getMessage());
     }
-    return result.toString();
+  }
+
+  /**
+   * Validates all mappings for modules start by the java package
+   */
+  private void validateModelObjectMapping(WADValidationResult result) {
+    try {
+      WADValidatorData data[] = WADValidatorData.checkModelObjectMapping(conn, modules, checkAll);
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.MODEL_OBJECT_MAPPING, issue.objecttype + " "
+            + issue.objectname + " has mapping: " + issue.currentvalue
+            + ". But it should start with /" + issue.expectedvalue + ".");
+      }
+    } catch (Exception e) {
+      result.addWarning(WADValidationType.SQL,
+          "Error when executing query for validating moel object: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Validates names and columnnames in columns
+   */
+  private void validateColumnNaming(WADValidationResult result) {
+    try {
+      WADValidatorData data[] = WADValidatorData.checkColumnName(conn, modules, checkAll);
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.COLUMN_NAME, issue.objecttype + " " + issue.objectname
+            + " has value: " + issue.currentvalue + ". But it should start with EM_"
+            + issue.expectedvalue);
+      }
+    } catch (Exception e) {
+      result.addWarning(WADValidationType.SQL,
+          "Error when executing query for validating moel object: " + e.getMessage());
+    }
   }
 }

@@ -121,9 +121,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="AC_CLIENT_C_BUDGETLINE">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_C_BUDGETLINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -135,6 +132,27 @@
       </foreign-key>
       <foreign-key foreignTable="C_BP_GROUP" name="C_BP_GROUP_C_BUDGETLINE">
         <reference local="C_BP_GROUP_ID" foreign="C_BP_GROUP_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="C_BUDGETLINE_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACTIVITY" name="C_BUDGETLINE_C_ACTIVITY">
+        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BUDGET" name="C_BUDGETLINE_C_BUDGET">
+        <reference local="C_BUDGET_ID" foreign="C_BUDGET_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CAMPAIGN" name="C_BUDGETLINE_C_CAMPAIGN">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PERIOD" name="C_BUDGETLINE_C_PERIOD">
+        <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_BUDGETLINE_USER1">
+        <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_BUDGETLINE_USER2">
+        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_BUSPARTNER_C_BUDGETLINE">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
@@ -154,29 +172,11 @@
       <foreign-key foreignTable="C_UOM" name="C_UOM_C_BUDGETLINE">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_BUDGETLINE">
-        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BUDGET" name="CBUDGET_CBUDGETLINE">
-        <reference local="C_BUDGET_ID" foreign="C_BUDGET_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER1_BUDGETLINE">
-        <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER2_BUDGETLINE">
-        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_PERIOD" name="CPERIOD_BUDGETLINE">
-        <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_C_BUDGETLINE">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PRODUCT_CATEGORY_CBUDGETLINE">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="SO_CAMPAIGN_C_BUDGETLINE">
-        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
       <check name="C_BUDGETLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

@@ -61,16 +61,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_FK_CTAXREGISTERTYPE">
+      <foreign-key foreignTable="AD_CLIENT" name="C_TAXREGISTER_TYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_FK_CTAXREGISTERTYPE">
+      <foreign-key foreignTable="AD_ORG" name="C_TAXREGISTER_TYPE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_SEQUENCE" name="ADSEQUENCE_FK_TAXREGISTERTYPE">
+      <foreign-key foreignTable="AD_SEQUENCE" name="C_TAXREGISTER_TYPE_AD_SEQUENCE">
         <reference local="AD_SEQUENCE_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_GLITEM" name="CGLITEM_FK_TAXREGISTERTYPE">
+      <foreign-key foreignTable="C_GLITEM" name="C_TAXREGISTER_TYPE_C_GLITEM">
         <reference local="C_GLITEM_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
     </table>
