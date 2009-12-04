@@ -239,6 +239,8 @@ public class ApplyModules extends HttpSecureAppServlet {
       ResultSet rs3 = ps3.getResultSet();
       if (rs3.next()) {
         resp.setLastmessage(rs3.getString(1));
+      } else {
+        resp.setLastmessage("");
       }
 
     } catch (Exception e) {
