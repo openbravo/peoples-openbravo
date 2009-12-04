@@ -53,23 +53,23 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CELEMENTVALUETRL">
+      <foreign-key foreignTable="AD_CLIENT" name="C_ELEMENTVALUE_TRL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_CELEMENTVALUETRL">
+      <foreign-key foreignTable="AD_LANGUAGE" name="C_ELEMENTVALUE_TRL_AD_LANGUAGE">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CELEMENTVALUETRL">
+      <foreign-key foreignTable="AD_ORG" name="C_ELEMENTVALUE_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_CEVALUETRL" onDelete="cascade">
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_ELEMENTVALUE_TRL_C_ELEMENTVA" onDelete="cascade">
         <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
-      <unique name="CELEMENTVALUETRL_CELEMENTVA_UN">
+      <unique name="C_ELEMENTVALUE_TRL_ELEMENTV_UN">
         <unique-column name="C_ELEMENTVALUE_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="CELVALTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CELVALTRL_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="C_ELEMENTVALUE_TRL_ISACTIV_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_ELEMENTVALUE_TRL_ISTRANS_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

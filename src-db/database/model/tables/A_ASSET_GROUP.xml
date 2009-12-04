@@ -53,13 +53,13 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_AASSETGROUP">
+      <foreign-key foreignTable="AD_CLIENT" name="A_ASSET_GROUP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_AASSETGROUP">
+      <foreign-key foreignTable="AD_ORG" name="A_ASSET_GROUP_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="AASSETGROUP_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AASSETGROUP_ISOWNED_CHECK"><![CDATA[ISOWNED IN ('Y', 'N')]]></check>
+      <check name="A_ASSET_GROUP_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="A_ASSET_GROUP_ISOWNED_CHK"><![CDATA[ISOWNED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -145,24 +145,24 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MDISCOUNTSCHEMALINE">
+      <foreign-key foreignTable="AD_CLIENT" name="M_DISCOUNTSCHEMALINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MDISCOUNTSCHEMALINE">
+      <foreign-key foreignTable="AD_ORG" name="M_DISCOUNTSCHEMALINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_MDISCOUNTSLINE">
+      <foreign-key foreignTable="C_BPARTNER" name="M_DISCOUNTSCHEMALINE_C_BPARTNE">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTSCHEMA_MDSLINE" onDelete="cascade">
+      <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="M_DISCOUNTSCHEMALINE_M_DISCOUN" onDelete="cascade">
         <reference local="M_DISCOUNTSCHEMA_ID" foreign="M_DISCOUNTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODCATEGORY_MDISCOUNTSLINE">
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_DISCOUNTSCHEMALINE_M_PRODUC1">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MDISCOUNTSLINE" onDelete="setnull">
+      <foreign-key foreignTable="M_PRODUCT" name="M_DISCOUNTSCHEMALINE_M_PRODUCT" onDelete="setnull">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="MDISCHLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_DISCOUNTSCHEMALINE_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

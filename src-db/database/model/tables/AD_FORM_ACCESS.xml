@@ -45,23 +45,23 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADFORMACCESS">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_FORM_ACCESS_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_FORM" name="ADFORM_ADFORMACCESS" onDelete="cascade">
+      <foreign-key foreignTable="AD_FORM" name="AD_FORM_ACCESS_AD_FORM" onDelete="cascade">
         <reference local="AD_FORM_ID" foreign="AD_FORM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADFORMACCESS">
+      <foreign-key foreignTable="AD_ORG" name="AD_FORM_ACCESS_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADFORMACCESS" onDelete="cascade">
+      <foreign-key foreignTable="AD_ROLE" name="AD_FORM_ACCESS_AD_ROLE" onDelete="cascade">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
       <index name="AD_FORM_ACCESS_UN_KEY" unique="true">
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_FORM_ID"/>
       </index>
-      <check name="ADFORMAC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADFORMAC_ISREADWRITE_CHECK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
+      <check name="AD_FORM_ACCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_FORM_ACCESS_ISREADWRITE_CHK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>
   </database>

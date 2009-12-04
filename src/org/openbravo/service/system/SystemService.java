@@ -113,6 +113,7 @@ public class SystemService implements OBSingleton {
     final DatabaseValidator databaseValidator = new DatabaseValidator();
     databaseValidator.setValidateModule(module);
     databaseValidator.setDatabase(database);
+    databaseValidator.setDbsmExecution(true);
     return databaseValidator.validate();
   }
 

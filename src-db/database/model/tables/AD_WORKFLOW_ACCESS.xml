@@ -45,23 +45,23 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_ROLE" name="AD_WORKFLOW_ACCESS_AD_ROLE" onDelete="cascade">
+        <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_WORKFLOW" name="AD_WORKFLOW_ACCESS_AD_WORKFLOW" onDelete="cascade">
+        <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="AD_WORKFLOWACCESS_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_WORKFLOWACCESS_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADWORKFLOWACCESS" onDelete="cascade">
-        <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_WORKFLOW" name="ADWORKFOW_WORKFLOWACCESS" onDelete="cascade">
-        <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
-      </foreign-key>
       <index name="AD_WORKFLOW_ACCESS_UN_KEY" unique="true">
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_WORKFLOW_ID"/>
       </index>
-      <check name="ADWORKFLOWAC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADWORKFLOWAC_ISREADWRITE_CHECK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
+      <check name="AD_WORKFLOW_ACCESS_ISACTIV_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_WORKFLOW_ACCESS_ISREADW_CHK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>
   </database>

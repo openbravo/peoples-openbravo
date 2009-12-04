@@ -53,23 +53,23 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRODUCTTRL">
+      <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_TRL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_MPRODUCTTRL">
+      <foreign-key foreignTable="AD_LANGUAGE" name="M_PRODUCT_TRL_AD_LANGUAGE">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MPRODUCTTRL">
+      <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MPRODUCTTRL" onDelete="cascade">
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_TRL_M_PRODUCT" onDelete="cascade">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <unique name="MPRODUCTTRL_MPRODUCTID_ADLA_UN">
+      <unique name="M_PRODUCT_TRL_PRODUCT_LANGU_UN">
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="MPRODUCTTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MPRODUCTTRL_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_TRL_ISTRANSLATED_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

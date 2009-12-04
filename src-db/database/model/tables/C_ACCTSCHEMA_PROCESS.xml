@@ -55,13 +55,13 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_CACCTSCHEMAPROCESS">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ACCTPROCESS" name="ADACCTPROCESS_CACCTSCHPROCESS">
+      <foreign-key foreignTable="AD_ACCTPROCESS" name="C_ACCTSCHEMA_PROCESS_AD_ACCTPR">
         <reference local="AD_ACCTPROCESS_ID" foreign="AD_ACCTPROCESS_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CACCTSCHPROCESS">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCTSCHEMA_PROCESS_C_ACCTSCH">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <check name="CACCTSCHPROCESS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CACCTSCHPROCESS_ISDATASET_CHK"><![CDATA[ISDATASET IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCHEMA_PROCESS_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCHEMA_PROCESS_ISDAT_CHK"><![CDATA[ISDATASET IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -129,28 +129,28 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_GLJOURNAL">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_GLJOURNAL">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCTSCHEMA_GL_JOURNAL">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PERIOD" name="C_PERIOD_JOURNAL">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_GLJOURNAL">
+      <foreign-key foreignTable="AD_CLIENT" name="GL_JOURNAL_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="GL_JOURNAL_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="GL_JOURNAL_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_GLJOURNAL">
+      <foreign-key foreignTable="C_DOCTYPE" name="GL_JOURNAL_C_DOCTYPE">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="GL_CATEGORY" name="GLCATEGORY_GLJOURNAL">
+      <foreign-key foreignTable="GL_CATEGORY" name="GL_JOURNAL_GL_CATEGORY">
         <reference local="GL_CATEGORY_ID" foreign="GL_CATEGORY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="GL_JOURNALBATCH" name="GLJOURNALBATCH_GLJOURNAL">
+      <foreign-key foreignTable="GL_JOURNALBATCH" name="GL_JOURNAL_GL_JOURNALBATCH">
         <reference local="GL_JOURNALBATCH_ID" foreign="GL_JOURNALBATCH_ID"/>
       </foreign-key>
       <unique name="GL_JOURNAL_DOCNO">

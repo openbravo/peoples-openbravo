@@ -45,17 +45,17 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAPLIC">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_PL_IC_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MAPLIC">
+      <foreign-key foreignTable="AD_ORG" name="MA_PL_IC_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_INDIRECT_COST" name="MAINDIRECTCOST_MAPLIC">
-        <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCTIONPLAN" name="MPRODUCTIONPLAN_MAPLIC">
+      <foreign-key foreignTable="M_PRODUCTIONPLAN" name="MA_PL_IC_M_PRODUCTIONPLAN">
         <reference local="M_PRODUCTIONPLAN_ID" foreign="M_PRODUCTIONPLAN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_INDIRECT_COST" name="MA_PL_IC_MA_INDIRECT_COST">
+        <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
       </foreign-key>
       <check name="MA_PL_IC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

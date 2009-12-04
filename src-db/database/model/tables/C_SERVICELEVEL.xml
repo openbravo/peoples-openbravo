@@ -61,19 +61,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CSERVICELEVEL">
+      <foreign-key foreignTable="AD_CLIENT" name="C_SERVICELEVEL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CSERVICELEVEL">
+      <foreign-key foreignTable="AD_ORG" name="C_SERVICELEVEL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_REVENUERECOGNITION_PLAN" name="CREVRECPLAN_CSERVICELEVEL">
+      <foreign-key foreignTable="C_REVENUERECOGNITION_PLAN" name="C_SERVICELEVEL_C_REVENUERECOGN">
         <reference local="C_REVENUERECOGNITION_PLAN_ID" foreign="C_REVENUERECOGNITION_PLAN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CSERVICELEVEL">
+      <foreign-key foreignTable="M_PRODUCT" name="C_SERVICELEVEL_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <check name="C_SERVICELEVEL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CSERVICELEVEL_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="C_SERVICELEVEL_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -93,25 +93,25 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CDPMANAGEMENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_DP_MANAGEMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CDPMANAGEMENT">
+      <foreign-key foreignTable="AD_ORG" name="C_DP_MANAGEMENT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CDPMANAGEMENT">
+      <foreign-key foreignTable="C_ACTIVITY" name="C_DP_MANAGEMENT_C_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_CDPMANAGEMENT">
+      <foreign-key foreignTable="C_CAMPAIGN" name="C_DP_MANAGEMENT_C_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CDPMANAGEMENT">
+      <foreign-key foreignTable="C_CURRENCY" name="C_DP_MANAGEMENT_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_CDPMANAGEMENT">
+      <foreign-key foreignTable="C_DOCTYPE" name="C_DP_MANAGEMENT_C_DOCTYPE">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CDPMANAGEMENT">
+      <foreign-key foreignTable="C_PROJECT" name="C_DP_MANAGEMENT_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
     </table>

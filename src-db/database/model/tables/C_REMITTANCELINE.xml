@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TABLE C_REMITTANCELINE">
-    <table name="C_REMITTANCELINE" primaryKey="CREMITTANCELINEKEY">
+    <table name="C_REMITTANCELINE" primaryKey="C_REMITTANCELINE_KEY">
       <column name="C_REMITTANCELINE_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -53,20 +53,20 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CREMITTANCELINE">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CREMITTANCELINE">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_REMITTANCE" name="C_REMITTANCE_C_REMITTANCELINE">
         <reference local="C_REMITTANCE_ID" foreign="C_REMITTANCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DEBT_PAYMENT" name="CDEBTPAYMENT_CREMITTANCELINE">
-        <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
+      <foreign-key foreignTable="AD_CLIENT" name="C_REMITTANCELINE_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DEBT_PAYMENT" name="CDEBTPAYMENT_CREMITTANCELINE1">
+      <foreign-key foreignTable="AD_ORG" name="C_REMITTANCELINE_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DEBT_PAYMENT" name="C_REMITTANCELINE_C_DEBT_PAYME1">
         <reference local="C_DEBT_PAYMENT_CANCELLED" foreign="C_DEBT_PAYMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DEBT_PAYMENT" name="C_REMITTANCELINE_C_DEBT_PAYMEN">
+        <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
       </foreign-key>
     </table>
   </database>

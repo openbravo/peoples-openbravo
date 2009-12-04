@@ -61,16 +61,16 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="CBPARTDISC_FK_ADCLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_BPARTNER_DISCOUNT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="CBPARTDISC_FK_ADORG">
+      <foreign-key foreignTable="AD_ORG" name="C_BPARTNER_DISCOUNT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTDISC_FK_CBPARTNER">
+      <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_DISCOUNT_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DISCOUNT" name="CBPARTDISC_FK_CDISC">
+      <foreign-key foreignTable="C_DISCOUNT" name="C_BPARTNER_DISCOUNT_C_DISCOUNT">
         <reference local="C_DISCOUNT_ID" foreign="C_DISCOUNT_ID"/>
       </foreign-key>
       <check name="C_BPDISC_APPLYINORDER_CHECK"><![CDATA[APPLYINORDER IN ('N', 'Y')]]></check>

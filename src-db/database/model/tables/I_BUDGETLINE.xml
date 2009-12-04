@@ -185,9 +185,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="AC_CLIENT_I_BUDGETLINE">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_I_BUDGETLINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -221,13 +218,19 @@
       <foreign-key foreignTable="C_UOM" name="C_UOM_I_BUDGETLINE">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_I_BUDGETLINE">
+      <foreign-key foreignTable="AD_CLIENT" name="I_BUDGETLINE_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACTIVITY" name="I_BUDGETLINE_C_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BUDGET" name="CBUDGET_IBUDGETLINE">
+      <foreign-key foreignTable="C_BUDGET" name="I_BUDGETLINE_C_BUDGET">
         <reference local="C_BUDGET_ID" foreign="C_BUDGET_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PERIOD" name="CPERIOD_IBUDGETLINE">
+      <foreign-key foreignTable="C_CAMPAIGN" name="I_BUDGETLINE_C_CAMPAIGN">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PERIOD" name="I_BUDGETLINE_C_PERIOD">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PRODUCT_CATEGORY_IBUDGETLINE">
@@ -235,9 +238,6 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_I_BUDGETLINE">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="SO_CAMPAIGN_I_BUDGETLINE">
-        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
       <check name="I_BUDGETLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

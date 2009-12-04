@@ -101,31 +101,31 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CCASH">
+      <foreign-key foreignTable="AD_CLIENT" name="C_CASH_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CCASH">
+      <foreign-key foreignTable="AD_ORG" name="C_CASH_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CCASH1">
+      <foreign-key foreignTable="AD_ORG" name="C_CASH_AD_ORGTRX">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CCASH">
+      <foreign-key foreignTable="C_ACTIVITY" name="C_CASH_C_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_CCASH">
+      <foreign-key foreignTable="C_CAMPAIGN" name="C_CASH_C_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CASHBOOK" name="CCASHBOOK_CCASH">
+      <foreign-key foreignTable="C_CASHBOOK" name="C_CASH_C_CASHBOOK">
         <reference local="C_CASHBOOK_ID" foreign="C_CASHBOOK_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CCASH">
+      <foreign-key foreignTable="C_PROJECT" name="C_CASH_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
       <index name="C_CASH_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <check name="CCASH_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CCASH_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="C_CASH_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_CASH_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

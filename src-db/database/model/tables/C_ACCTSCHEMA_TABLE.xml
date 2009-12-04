@@ -58,10 +58,10 @@
       <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_C_ACCTSCHEMA_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CREATEFACT_TEMPLATE" name="CACCTSCHEMA_ADCREATEFACTTEMP">
+      <foreign-key foreignTable="AD_CREATEFACT_TEMPLATE" name="C_ACCTSCHEMA_TABLE_AD_CREATEFA">
         <reference local="AD_CREATEFACT_TEMPLATE_ID" foreign="AD_CREATEFACT_TEMPLATE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CACCTSCHEMATABLE">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCTSCHEMA_TABLE_C_ACCTSCHEM">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <unique name="AD_TABLE_C_ACCTSCHEMA_UNIQUE">

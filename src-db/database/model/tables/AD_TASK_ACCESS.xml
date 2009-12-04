@@ -45,23 +45,23 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_ROLE" name="AD_TASK_ACCESS_AD_ROLE" onDelete="cascade">
+        <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TASK" name="AD_TASK_ACCESS_AD_TASK" onDelete="cascade">
+        <reference local="AD_TASK_ID" foreign="AD_TASK_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="AD_TASKACCESS_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_TASKACCESS_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADTASKACCESS" onDelete="cascade">
-        <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TASK" name="ADTASK_ADTASKACCESS" onDelete="cascade">
-        <reference local="AD_TASK_ID" foreign="AD_TASK_ID"/>
-      </foreign-key>
       <index name="AD_TASK_ACCESS_UN_KEY" unique="true">
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_TASK_ID"/>
       </index>
-      <check name="ADTASKACCESS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADTASKACCESS_ISREADWRITE_CHECK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
+      <check name="AD_TASK_ACCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_TASK_ACCESS_ISREADWRITE_CHK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>
   </database>

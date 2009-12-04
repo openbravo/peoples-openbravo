@@ -52,7 +52,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAPROCESSPLANVERSION">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAPROCESSPLANVERSION">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_PROCESSPLAN_VERSION_AD_CLIE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCPLAN_MAPROCPLANVERSION">
@@ -61,6 +61,6 @@
       <index name="MA_PROCESSPLAN_VERSION_PPLAN" unique="false">
         <index-column name="MA_PROCESSPLAN_ID"/>
       </index>
-      <check name="MAPROCPLVER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MA_PROCESSPLAN_VERSION_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

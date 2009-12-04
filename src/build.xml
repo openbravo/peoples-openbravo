@@ -357,19 +357,29 @@ build.war: build a war file in the lib directory.
     </copy>
   </target>
 
-  <target name="wad" depends="init">
+  <target name="wadvalidation">
+    <taskdef name="WADValidation" classname="org.openbravo.wad.validation.WADValidatorTask">
+            <classpath refid="project.class.path" />
+          </taskdef>
+        
+        <WADValidation propertiesFile="${base.config}/Openbravo.properties"
+                       modules="${module}"
+                       stoponerror="${stopOnWadError}"/>
+  </target>
+  
+  <target name="wad" depends="init, wadvalidation">
     <updatesystemstatus v="RB41"/>
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="true">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick' '${stopOnWadError}'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick'" />
       <classpath refid="project.class.path" />
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true" />
   </target>
 
-  <target name="wad.quick" depends="init">
+  <target name="wad.quick" depends="init, wadvalidation">
     <updatesystemstatus v="RB41"/>
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick' '${stopOnWadError}'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick'" />
       <classpath refid="project.class.path" />
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true" />

@@ -89,26 +89,26 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MMOVEMENT">
+      <foreign-key foreignTable="AD_CLIENT" name="M_MOVEMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MMOVEMENT">
-        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MMOVEMENT1">
+      <foreign-key foreignTable="AD_ORG" name="M_MOVEMENT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_MMOVEMENT">
+      <foreign-key foreignTable="AD_ORG" name="M_MOVEMENT_AD_ORGTRX">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACTIVITY" name="M_MOVEMENT_C_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_MMOVEMENT">
+      <foreign-key foreignTable="C_CAMPAIGN" name="M_MOVEMENT_C_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_MMOVEMENT">
+      <foreign-key foreignTable="C_PROJECT" name="M_MOVEMENT_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <check name="MMOVEMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MMOVEMENT_MOVEFROMTOLOC_CHECK"><![CDATA[MOVE_FROMTO_LOCATOR IN ('Y', 'N')]]></check>
-      <check name="MMOVEMENT_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="M_MOVEMENT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_MOVEMENT_MOVE_FROMTO_LOC_CHK"><![CDATA[MOVE_FROMTO_LOCATOR IN ('Y', 'N')]]></check>
+      <check name="M_MOVEMENT_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

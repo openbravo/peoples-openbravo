@@ -57,31 +57,31 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MWAREHOUSEACCT">
+      <foreign-key foreignTable="AD_CLIENT" name="M_WAREHOUSE_ACCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MWAREHOUSEACCT">
+      <foreign-key foreignTable="AD_ORG" name="M_WAREHOUSE_ACCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_MWAREHOUSEACCT" onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="M_WAREHOUSE_ACCT_C_ACCTSCHEMA" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_WAREHOUSE_ACCT_W_DIFFERENCES">
+        <reference local="W_DIFFERENCES_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_WAREHOUSE_ACCT_W_INVACTUALAD">
+        <reference local="W_INVACTUALADJUST_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_WAREHOUSE_ACCT_W_INVENTORY_A">
+        <reference local="W_INVENTORY_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_WAREHOUSE_ACCT_W_REVALUATION">
+        <reference local="W_REVALUATION_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_WAREHOUSE" name="M_WAREHOUSE_WAREHOUSE_ACCT" onDelete="cascade">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_WDIFFERENCES_MWAREHOUSE">
-        <reference local="W_DIFFERENCES_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_WINVACTUALADJUST_MWAREHOUSE">
-        <reference local="W_INVACTUALADJUST_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_WINVENTORY_MWAREHOUSE">
-        <reference local="W_INVENTORY_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_WREVALUATION_MWAREHOUSE">
-        <reference local="W_REVALUATION_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <unique name="MWAREHOUSEACCT_MWAREHOUSEID_UN">
+      <unique name="M_WAREHOUSE_ACCT_WAREHOUSE__UN">
         <unique-column name="M_WAREHOUSE_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>

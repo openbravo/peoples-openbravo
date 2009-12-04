@@ -65,22 +65,22 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRICELISTVERSION">
+      <foreign-key foreignTable="AD_CLIENT" name="M_PRICELIST_VERSION_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MPRICELISTVERSION">
+      <foreign-key foreignTable="AD_ORG" name="M_PRICELIST_VERSION_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTS_MPLVERSION">
+      <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="M_PRICELIST_VERSION_M_DISCOUNT">
         <reference local="M_DISCOUNTSCHEMA_ID" foreign="M_DISCOUNTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_MPRICELISTVERSION" onDelete="cascade">
-        <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST_VERSION" name="MPRICELISTVERSION_MPRICELISTVE">
+      <foreign-key foreignTable="M_PRICELIST_VERSION" name="M_PRICELIST_VERSION_M_PRICELI1">
         <reference local="M_PRICELIST_VERSION_BASE_ID" foreign="M_PRICELIST_VERSION_ID"/>
       </foreign-key>
-      <check name="MPRICELISTVER_GENERATE_CHECK"><![CDATA[M_PRICELIST_VERSION_GENERATE IN ('Y', 'N')]]></check>
-      <check name="MPRICELISTVER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <foreign-key foreignTable="M_PRICELIST" name="M_PRICELIST_VERSION_M_PRICELIS" onDelete="cascade">
+        <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
+      </foreign-key>
+      <check name="M_PRICELIST_VERSION_ISACTI_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_PRICELIST_VERSION_M_PRIC_CHK"><![CDATA[M_PRICELIST_VERSION_GENERATE IN ('Y', 'N')]]></check>
     </table>
   </database>

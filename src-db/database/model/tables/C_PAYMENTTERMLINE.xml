@@ -93,19 +93,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CPAYMENTTERMLINE">
+      <foreign-key foreignTable="AD_CLIENT" name="C_PAYMENTTERMLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CPAYMENTTERMLINE">
+      <foreign-key foreignTable="AD_ORG" name="C_PAYMENTTERMLINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PAYMENTTERM" name="CPAYMENTTERM_CPAYMENTTERMLINE">
+      <foreign-key foreignTable="C_PAYMENTTERM" name="C_PAYMENTTERMLINE_C_PAYMENTTER">
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
-      <check name="CPAYMENTTL_EXCLUDETAX_CHECK"><![CDATA[EXCLUDETAX IN ('Y', 'N')]]></check>
-      <check name="CPAYMENTTL_ISDUEFIXED_CHECK"><![CDATA[ISDUEFIXED IN ('Y', 'N')]]></check>
-      <check name="CPAYMENTTL_ISNEXTBUSDAY_CHECK"><![CDATA[ISNEXTBUSINESSDAY IN ('Y', 'N')]]></check>
-      <check name="CPAYMENTTL_ONREMAINDER_CHECK"><![CDATA[ONREMAINDER IN ('Y', 'N')]]></check>
-      <check name="CPAYMENTTLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_PAYMENTTERMLINE_EXCLUDET_CHK"><![CDATA[EXCLUDETAX IN ('Y', 'N')]]></check>
+      <check name="C_PAYMENTTERMLINE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_PAYMENTTERMLINE_ISDUEFIX_CHK"><![CDATA[ISDUEFIXED IN ('Y', 'N')]]></check>
+      <check name="C_PAYMENTTERMLINE_ISNEXTBU_CHK"><![CDATA[ISNEXTBUSINESSDAY IN ('Y', 'N')]]></check>
+      <check name="C_PAYMENTTERMLINE_ONREMAIN_CHK"><![CDATA[ONREMAINDER IN ('Y', 'N')]]></check>
     </table>
   </database>

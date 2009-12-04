@@ -45,19 +45,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADTREEBAR">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_TREEBAR_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADTREEBAR">
+      <foreign-key foreignTable="AD_ORG" name="AD_TREEBAR_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREE_ADTREEBAR" onDelete="cascade">
+      <foreign-key foreignTable="AD_TREE" name="AD_TREEBAR_AD_TREE" onDelete="cascade">
         <reference local="AD_TREE_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_ADTREEBAR" onDelete="cascade">
+      <foreign-key foreignTable="AD_USER" name="AD_TREEBAR_AD_USER" onDelete="cascade">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <unique name="ADTREEBAR_ADTREEID_ADUSERID_UN">
+      <unique name="AD_TREEBAR_TREE_USER_NODE_UN">
         <unique-column name="AD_TREE_ID"/>
         <unique-column name="AD_USER_ID"/>
         <unique-column name="NODE_ID"/>

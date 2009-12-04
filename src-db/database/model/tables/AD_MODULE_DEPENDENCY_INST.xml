@@ -61,13 +61,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADMODULEDEPENDENCYINS_ADCLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_MODULE_DEPENDENCY_INST_AD_C">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADMODULEDEPENDENCYINS_ADORG">
+      <foreign-key foreignTable="AD_ORG" name="AD_MODULE_DEPENDENCY_INST_AD_O">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="AD_MODULE_DEPENDENCY_INST__CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_INST_ISINCLUDED_CHK"><![CDATA[ISINCLUDED IN ('Y', 'N')]]></check>
-      <check name="MODULEDEPENDENINST_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -57,17 +57,17 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="C_YEAR" name="AD_ORG_CLOSING_C_YEAR">
-        <reference local="C_YEAR_ID" foreign="C_YEAR_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADORGCLOSING">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_ORG_CLOSING_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADORGCLOSING">
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_CLOSING_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG_ACCTSCHEMA" name="ADORGCLOSING_ADORGACCTSCHEMA">
+      <foreign-key foreignTable="AD_ORG_ACCTSCHEMA" name="AD_ORG_CLOSING_AD_ORG_ACCTSCHE">
         <reference local="AD_ORG_ACCTSCHEMA_ID" foreign="AD_ORG_ACCTSCHEMA_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_YEAR" name="AD_ORG_CLOSING_C_YEAR">
+        <reference local="C_YEAR_ID" foreign="C_YEAR_ID"/>
       </foreign-key>
     </table>
   </database>
