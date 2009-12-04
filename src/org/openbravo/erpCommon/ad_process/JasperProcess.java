@@ -48,6 +48,7 @@ public class JasperProcess implements Process {
     connection = bundle.getConnection();
   }
 
+  @SuppressWarnings("unchecked")
   public void execute(ProcessBundle bundle) throws Exception {
 
     HashMap<String, Object> designParameters = null;

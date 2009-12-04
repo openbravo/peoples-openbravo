@@ -142,6 +142,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           try {
             Class tableClass = Class.forName(dpackage.getJavaPackage() + "."
                 + table.getJavaClassName());
+            @SuppressWarnings("unchecked")
             BaseOBObject parentObject = (BaseOBObject) OBDal.getInstance().get(tableClass,
                 parentObjectId);
             parentObject.set(propertyName, null);
