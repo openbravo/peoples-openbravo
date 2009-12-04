@@ -33,6 +33,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
@@ -50,51 +51,10 @@ public class Menu extends HttpSecureAppServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-    final String url = request.getQueryString();
+    final String queryString = request.getQueryString();
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    String targetmenu = vars.getSessionValue("targetmenu");
-    OBContext userContext = OBContext.getOBContext();
+    String targetmenu = getTargetMenu(vars, queryString);
 
-    final String[] allowedCommands = { "DEFAULT", "NEW", "EDIT", "GRID" };
-    final ValueListFilter listFilter = new ValueListFilter(allowedCommands);
-    final String command = vars.getStringParameter("Command", listFilter);
-
-    if (command != null && !command.equals("")) { // Trying to deep-link
-      try {
-
-        OBContext.setAdminContext();
-
-        final String tabId = vars.getStringParameter("tabId", IsIDFilter.instance);
-        final String windowId = vars.getStringParameter("windowId", IsIDFilter.instance);
-        final String recordId = vars.getStringParameter("recordId", IsIDFilter.instance);
-
-        if (!tabId.equals("") && !windowId.equals("")) {
-
-          final Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-          final Window window = OBDal.getInstance().get(Window.class, windowId);
-
-          if (!tab.getWindow().equals(window)) {
-            throw new ServletException("URL not valid"); // FIXME: Better Error message
-          }
-
-          Table table = tab.getTable();
-          Entity e = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName());
-          Property p = e.getIdProperties().get(0);
-          // System.out.println("columname: " + p.getColumnName());
-
-          vars.setSessionValue(windowId + "|" + p.getColumnName(), recordId);
-
-          final String type = command.equals("GRID") ? "R" : "E";
-          final String tabURL = Utility.getTabURL(this, tabId, type);
-          targetmenu = tabURL + "?dl=1&" + url;
-        }
-      } catch (Exception e) {
-        log4j.error("Error in deep-linking: " + e.getMessage(), e);
-        throw new ServletException(e.getMessage());
-      } finally {
-        OBContext.setOBContext(userContext);
-      }
-    }
     String textDirection = vars.getSessionValue("#TextDirection", "LTR");
     printPageFrameIdentificacion(response, "../utility/VerticalMenu.html",
         (targetmenu.equals("") ? "../utility/Home.html" : targetmenu),
@@ -119,5 +79,92 @@ public class Menu extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private String getTargetMenu(VariablesSecureApp vars, String queryString) throws ServletException {
+
+    OBContext userContext = OBContext.getOBContext();
+
+    final String[] allowedCommands = { "", "DEFAULT", "NEW", "EDIT", "GRID" };
+    final ValueListFilter listFilter = new ValueListFilter(allowedCommands);
+    final String command = vars.getStringParameter("Command", listFilter);
+    String targetmenu = vars.getSessionValue("targetmenu");
+
+    if (command != null && !command.equals("")) { // Trying to deep-link
+      try {
+
+        OBContext.setAdminContext();
+
+        final String tabId = vars.getStringParameter("tabId", IsIDFilter.instance);
+        final String windowId = vars.getStringParameter("windowId", IsIDFilter.instance);
+        final String recordId = vars.getStringParameter("recordId", IsIDFilter.instance);
+        String viewType = "RELATION";
+
+        if (tabId.equals("") || windowId.equals("")) {
+          return "";
+        }
+
+        final Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+        final Window window = OBDal.getInstance().get(Window.class, windowId);
+
+        if (!tab.getWindow().equals(window)) {
+          log4j.error("Invalid deep-link URL: tab doesn't belong to window");
+          return "";
+        }
+
+        if (tab.getTabLevel() > 0 && recordId.equals("")) {
+          log4j.error("Invalid deep-link URL: Trying to access child tab without an record id");
+          return "";
+        }
+
+        if (vars.commandIn("EDIT")) {
+
+          if (recordId.equals("")) {
+            log4j.error("Invalid deep-link URL: Trying to use EDIT command without a record id");
+            return "";
+          }
+
+          Table table = tab.getTable();
+          Entity e = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName());
+
+          // Validating the record id on table
+          BaseOBObject ob = OBDal.getInstance().get(e.getName(), recordId);
+
+          if (ob == null) {
+            log4j.error("Invalid deep-link URL: Record id: " + recordId
+                + " doesn't exist in table: " + table.getDBTableName());
+            return "";
+          }
+
+          // Getting Id column from table
+          Property p = e.getIdProperties().get(0);
+
+          // Setting the value of the record
+          vars.setSessionValue(windowId + "|" + p.getColumnName(), recordId);
+          viewType = "EDIT";
+
+        }
+
+        if (vars.commandIn("GRID")) {
+          queryString = queryString.replace("GRID", "RELATION");
+        }
+
+        // Setting type of view
+        vars.setSessionValue(tabId + "|" + tab.getName().replaceAll(" ", "") + ".view", viewType);
+
+        final String type = command.equals("GRID") ? "R" : "E";
+
+        // Getting the tab URL
+        final String tabURL = Utility.getTabURL(this, tabId, type);
+        targetmenu = tabURL + "?dl=1&" + queryString;
+
+      } catch (Exception e) {
+        log4j.error("Error in deep-linking: " + e.getMessage(), e);
+        throw new ServletException(e.getMessage());
+      } finally {
+        OBContext.setOBContext(userContext);
+      }
+    }
+    return targetmenu;
   }
 }
