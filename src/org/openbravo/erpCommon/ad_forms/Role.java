@@ -197,6 +197,7 @@ public class Role extends HttpSecureAppServlet {
       ActivationKey ak = new ActivationKey();
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
       boolean correctSystemStatus = sysInfo.getSystemStatus() == null
+          || this.globalParameters.getOBProperty("safe.mode", "false").equalsIgnoreCase("false")
           || sysInfo.getSystemStatus().equals("RB70");
       LicenseRestriction limitation = ak.checkOPSLimitations(vars.getDBSession());
       if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
