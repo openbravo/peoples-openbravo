@@ -210,7 +210,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
           SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
           boolean correctSystemStatus = sysInfo.getSystemStatus() == null
-              || sysInfo.getSystemStatus().equals("RB70");
+              || this.globalParameters.getOBProperty("safe.mode", "false")
+                  .equalsIgnoreCase("false") || sysInfo.getSystemStatus().equals("RB70");
           ActivationKey ak = new ActivationKey();
           LicenseRestriction limitation = ak.checkOPSLimitations(variables.getDBSession());
           // We check if there is a Openbravo Professional Subscription restriction in the license,
