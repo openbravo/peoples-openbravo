@@ -61,6 +61,36 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
    </SqlMethod>
+   <SqlMethod name="countRows" type="preparedStatement" return="String">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+      SELECT COUNT(*) AS VALUE FROM ( SELECT '0' AS RN1, B.* FROM (      				   
+        SELECT 1
+        FROM M_LOCATOR m, M_WAREHOUSE mw
+        WHERE m.M_WAREHOUSE_ID = mw.M_WAREHOUSE_ID
+        AND mw.AD_Client_ID IN ('1') 
+        AND mw.AD_Org_ID IN ('1') 
+        AND mw.ISACTIVE = 'Y'
+        AND m.ISACTIVE = 'Y'
+		AND  1=1
+		) B
+		) A 
+        ]]>
+        </Sql>
+        <Field name="position" value="count"/>
+        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
+        <Parameter name="adUserClient" type="replace" optional="true" after="mw.AD_Client_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="mw.AD_Org_ID IN (" text="'1'"/>
+        <Parameter name="key" ignoreValue="%" optional="true" after="AND m.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(m.VALUE) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="warehouse" ignoreValue="%" optional="true" after="AND m.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(mw.NAME) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="aisle" ignoreValue="%" optional="true" after="AND m.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(m.X) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="bin" ignoreValue="%" optional="true" after="AND m.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(m.Y) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="level" ignoreValue="%" optional="true" after="AND m.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(m.Z) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
+        <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
+        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
+   </SqlMethod>
    <SqlMethod name="selectKey" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql> 
