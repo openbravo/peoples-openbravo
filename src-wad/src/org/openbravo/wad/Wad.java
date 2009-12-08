@@ -314,8 +314,9 @@ public class Wad extends DefaultHandler {
       if (dirWebClients != null && !dirWebClients.equals("")) {
         fileWebXmlClient = new File(dirWebClients);
         if (!fileWebXmlClient.exists()) {
-          log4j.warn("No such directory: " + fileWebXmlClient.getAbsoluteFile());
           fileWebXmlClient = null;
+        } else {
+          log4j.info("srcClient folder found.");
         }
       }
 

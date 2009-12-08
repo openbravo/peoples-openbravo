@@ -196,7 +196,19 @@ export.database: exports database structure and data to xml files.
       <include name="*/lib/**" />
     </fileset>
   </path>
-
+  
+  <macrodef name="updatesystemstatus">
+     <attribute name="v" default="NOT SET"/>
+     <sequential>
+       <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
+         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+         <transaction> UPDATE ad_system_info SET system_status='@{v}' ;
+                       DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)
+         </transaction>
+       </sql>
+     </sequential>
+  </macrodef>
+  
   <taskdef resource="axis-tasks.properties" classpathref="project.class.path" />
   
   <target name="init" depends="code.rev">
@@ -252,6 +264,7 @@ export.database: exports database structure and data to xml files.
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
 
+    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <antcall target="build.deploy" />
     <!-- only restart tomcat if the restart prop was set to true -->
     <condition property="dorestart">
@@ -498,12 +511,13 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="install.source" depends="init, create.database, wad.lib, trl.lib, compile.complete.deploy">
-    
+
     <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <antcall target="import.sample.data" />
     <antcall target="load.logoimages" />
+    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
     <!--
 		<antcall target="validate.database" />
@@ -528,12 +542,13 @@ export.database: exports database structure and data to xml files.
 
   <target name="update.database" depends="init, core.lib, database.lib">
     <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
+    <updatesystemstatus v="RB21"/>
     <antcall target="generate.entities.quick" />
     <antcall target="db.apply.modules" />
   </target>
 
   <target name="update.database.mod" depends="init, core.lib, database.lib">
-    <ant dir="${base.db}" target="update.database.mod" inheritAll="true" inheritRefs="true" />
+    <ant dir="${base.db}" target="update.database.mod.java" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="create.database.script" depends="init, core.lib">
@@ -553,13 +568,11 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="db.apply.modules" if="apply.modules.on.create">
-    <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
   </target>
 
   <target name="db.apply.modules.sampledata" if="apply.modules.on.create">
     <antcall target="generate.entities" />
-    <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
     <antcall target="load.logoimages" />
@@ -567,11 +580,11 @@ export.database: exports database structure and data to xml files.
 
 
   <target name="apply.modules">
-    <echo>Applying ${module} modules...</echo>
     <antcall target="update.database.mod" />
-    
+    <updatesystemstatus v="RB21"/>
     <antcall target="generate.entities" />
-    
+
+    <updatesystemstatus v="RB31"/>
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <condition property="apply.modules.complete.compilation.var">
@@ -583,6 +596,8 @@ export.database: exports database structure and data to xml files.
     </condition>
     
     <antcall target="apply.modules.compile"/>
+    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
+     
   </target>
   
   <target name="apply.module.forked">
