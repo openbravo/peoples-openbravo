@@ -120,14 +120,14 @@ public class BaseTest extends TestCase {
    * Sets the current user to the 1000000 user.
    */
   protected void setBigBazaarUserContext() {
-    OBContext.setOBContext("1000000");
+    OBContext.setOBContext("1000000", "1000002", "1000000", "1000000");
   }
 
   /**
    * Sets the current user to the 100 user.
    */
   protected void setBigBazaarAdminContext() {
-    OBContext.setOBContext("100");
+    OBContext.setOBContext("100", "0", "1000000", "1000000");
   }
 
   /**

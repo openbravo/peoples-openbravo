@@ -29,6 +29,7 @@ import org.openbravo.dal.security.EntityAccessChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.currency.CurrencyTrl;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.test.base.BaseTest;
 
@@ -151,12 +152,13 @@ public class EntityAccessTest extends BaseTest {
    * Removes the test data by using the administrator account.
    */
   public void testZDeleteTestData() {
-    setSystemAdministratorContext();
+    setBigBazaarUserContext();
+    addReadWriteAccess(Currency.class);
+    addReadWriteAccess(CurrencyTrl.class);
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "TE2"));
     final List<Currency> cs = obc.list();
     assertEquals(1, cs.size());
     OBDal.getInstance().remove(cs.get(0));
   }
-
 }
