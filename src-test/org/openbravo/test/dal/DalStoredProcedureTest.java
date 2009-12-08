@@ -44,7 +44,7 @@ public class DalStoredProcedureTest extends BaseTest {
    * Tests calling database procedures using the dal connection provider
    */
   public void testCallGetTax() throws Exception {
-    setUserContext("0");
+    setSystemAdministratorContext();
 
     final List<Object> parameters = new ArrayList<Object>();
     final List<Class<?>> types = new ArrayList<Class<?>>();
@@ -74,7 +74,7 @@ public class DalStoredProcedureTest extends BaseTest {
    * Tests calling database procedures using the dal connection provider
    */
   public void testCallDivide() throws Exception {
-    setUserContext("0");
+    setSystemAdministratorContext();
 
     final List<Object> parameters = new ArrayList<Object>();
     final List<Class<?>> types = new ArrayList<Class<?>>();
@@ -96,7 +96,7 @@ public class DalStoredProcedureTest extends BaseTest {
    * Tests calling database procedures using the dal connection provider
    */
   public void testCallLastDay() throws Exception {
-    setUserContext("0");
+    setSystemAdministratorContext();
 
     final List<Object> parameters = new ArrayList<Object>();
     final List<Class<?>> types = new ArrayList<Class<?>>();

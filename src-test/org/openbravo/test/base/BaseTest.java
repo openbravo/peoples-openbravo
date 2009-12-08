@@ -26,6 +26,8 @@ import java.sql.SQLException;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -47,6 +49,8 @@ import org.openbravo.dal.service.OBDal;
 
 public class BaseTest extends TestCase {
 
+  private static final Logger log = Logger.getLogger(BaseTest.class);
+
   private boolean errorOccured = false;
 
   /**
@@ -55,6 +59,7 @@ public class BaseTest extends TestCase {
    */
   @Override
   protected void setUp() throws Exception {
+    PropertyConfigurator.configure(this.getClass().getResource("/log4j.lcf"));
     initializeDalLayer();
     // clear the session otherwise it keeps the old model
     setBigBazaarUserContext();
@@ -108,14 +113,48 @@ public class BaseTest extends TestCase {
    * Set the current user to the 0 user.
    */
   protected void setSystemAdministratorContext() {
-    setUserContext("0");
+    OBContext.setOBContext("0");
   }
 
   /**
    * Sets the current user to the 1000000 user.
    */
   protected void setBigBazaarUserContext() {
-    setUserContext("1000000");
+    OBContext.setOBContext("1000000");
+  }
+
+  /**
+   * Sets the current user to the 100 user.
+   */
+  protected void setBigBazaarAdminContext() {
+    OBContext.setOBContext("100");
+  }
+
+  /**
+   * Sets the current user. For the 0, 100 and 1000000 users this method should not be used. For
+   * these users one of the other context-set methods should be used:
+   * {@link #setBigBazaarAdminContext()}, {@link #setBigBazaarUserContext()} or
+   * {@link #setSystemAdministratorContext()}.
+   * 
+   * @param userId
+   *          the id of the user to use.
+   */
+  protected void setUserContext(String userId) {
+    if (userId.equals("0")) {
+      log.warn("Forwarding the call to setSystemAdministratorContext, "
+          + "consider using that method directly");
+      setSystemAdministratorContext();
+    } else if (userId.equals("100")) {
+      log.warn("Forwarding the call to setBigBazaarAdminContext method, "
+          + "consider using that method directly");
+      setBigBazaarAdminContext();
+    } else if (userId.equals("1000000")) {
+      log.warn("Forwarding call to the setBigBazaarUserContext method, "
+          + "consider using that method directly");
+      setBigBazaarUserContext();
+    } else {
+      OBContext.setOBContext(userId);
+    }
   }
 
   @Override
@@ -132,23 +171,6 @@ public class BaseTest extends TestCase {
   public void runTest() throws Throwable {
     super.runTest();
     errorOccured = false;
-  }
-
-  /**
-   * Sets the current user,
-   * 
-   * @param userId
-   *          the id of the user to use.
-   */
-  protected void setUserContext(String userId) {
-    OBContext.setOBContext(userId);
-  }
-
-  /**
-   * Sets the current user to the 100 user.
-   */
-  protected void setBigBazaarAdminContext() {
-    setUserContext("100");
   }
 
   /**

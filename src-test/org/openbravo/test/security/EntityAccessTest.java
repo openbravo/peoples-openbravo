@@ -71,7 +71,7 @@ public class EntityAccessTest extends BaseTest {
    * to be executed.
    */
   public void doNotExecutetestNonDeletable() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Currency.class);
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "TE2"));
@@ -151,7 +151,7 @@ public class EntityAccessTest extends BaseTest {
    * Removes the test data by using the administrator account.
    */
   public void testZDeleteTestData() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "TE2"));
     final List<Currency> cs = obc.list();

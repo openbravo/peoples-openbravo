@@ -49,7 +49,7 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
    * list.
    */
   public void testAccessLevelCO() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     doCheckUser();
     setBigBazaarUserContext();
     doCheckUser();
@@ -104,7 +104,7 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
    * Checks that writable organization is checked when an invalid update is attempted.
    */
   public void testUpdateNotAllowed() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Costing.class);
     final OBCriteria<Costing> obc = OBDal.getInstance().createCriteria(Costing.class);
     obc.add(Expression.eq("id", "1000078"));
@@ -129,7 +129,7 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
    * Test if a check is done that an update in an invalid client is not allowed.
    */
   public void testCheckInvalidClient() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
     obc.add(Expression.eq("name", "Standard"));
