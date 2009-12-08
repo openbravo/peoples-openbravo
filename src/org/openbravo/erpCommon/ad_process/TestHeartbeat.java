@@ -195,6 +195,12 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         OBDal.getInstance().save(pr);
 
         final ProcessBundle bundle2 = ProcessBundle.request(pr.getId(), vars, connectionProvider);
+
+        // at this point a commit has to be done because the OBScheduler uses its
+        // own connection provider and if it is not committed the OBScheduler won't
+        // see the ProcessRequest if it is new.
+        OBDal.getInstance().commitAndClose();
+
         if (requestList.size() == 0) {
           OBScheduler.getInstance().schedule(pr.getId(), bundle2);
         } else {
