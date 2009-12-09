@@ -122,6 +122,7 @@
            and p.ad_module_id = m.ad_module_id
            and om.ad_model_object_id = o.ad_model_object_id
            and om.mappingname not like '/'||m.javapackage||'.%'
+           and om.mappingname not like '/'||m.javapackage||'/%'
            and m.ad_module_id !='0'
            and (1=1 and m.javapackage in ('1') or to_char('Y')=to_char(?))
          union
@@ -131,6 +132,7 @@
            and f.ad_module_id = m.ad_module_id
            and om.ad_model_object_id = o.ad_model_object_id
            and om.mappingname not like '/'||m.javapackage||'.%'
+           and om.mappingname not like '/'||m.javapackage||'/%'
            and m.ad_module_id !='0'
            and (2=2 and m.javapackage in ('2') or to_char('Y')=to_char(?))
          union
@@ -140,6 +142,7 @@
            and c.ad_module_id = m.ad_module_id
            and om.ad_model_object_id = o.ad_model_object_id
            and om.mappingname not like '/'||m.javapackage||'.%'
+           and om.mappingname not like '/'||m.javapackage||'/%'
            and m.ad_module_id !='0'
            and (3=3 and m.javapackage in ('3') or to_char('Y')=to_char(?))
          union
@@ -149,6 +152,7 @@
            and r.ad_module_id = m.ad_module_id
            and om.ad_model_object_id = o.ad_model_object_id
            and om.mappingname not like '/'||m.javapackage||'.%'
+           and om.mappingname not like '/'||m.javapackage||'/%'
            and m.ad_module_id !='0'
            and (4=4 and m.javapackage in ('4') or to_char('Y')=to_char(?))
          union
@@ -159,6 +163,7 @@
            and t.ad_module_id = m.ad_module_id
            and om.ad_model_object_id = o.ad_model_object_id
            and om.mappingname not like '/'||m.javapackage||'.%'
+           and om.mappingname not like '/'||m.javapackage||'/%'
            and om.mappingname not like '/ad_callouts/ComboReloads%'
            and m.ad_module_id !='0'
            and (5=5 and m.javapackage in ('5') or to_char('Y')=to_char(?))
