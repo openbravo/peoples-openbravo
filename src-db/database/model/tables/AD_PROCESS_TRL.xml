@@ -63,17 +63,17 @@
       <foreign-key foreignTable="AD_PROCESS" name="AD_PROCESS_AD_PROCESS_TRL" onDelete="cascade">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPROCESSTRL">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_PROCESS_TRL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADPROCESSTRL">
+      <foreign-key foreignTable="AD_ORG" name="AD_PROCESS_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <unique name="ADPROCESSTRL_ADPROCESSID_AD_UN">
+      <unique name="AD_PROCESS_TRL_PROCESS_LANG_UN">
         <unique-column name="AD_PROCESS_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="ADPROCESSTRL_IS_ANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
-      <check name="ADPROCESSTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_TRL_ISTRANSLATE_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

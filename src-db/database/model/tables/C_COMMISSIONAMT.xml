@@ -53,16 +53,16 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CCOMMISSIONAMT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_COMMISSIONAMT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CCOMMISSIONAMT">
+      <foreign-key foreignTable="AD_ORG" name="C_COMMISSIONAMT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_COMMISSIONLINE" name="CCOMLINE_CCOMAMT">
+      <foreign-key foreignTable="C_COMMISSIONLINE" name="C_COMMISSIONAMT_C_COMMISSIONLI">
         <reference local="C_COMMISSIONLINE_ID" foreign="C_COMMISSIONLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_COMMISSIONRUN" name="CCOMMENTRUN_CCOMMISSIONAMT" onDelete="cascade">
+      <foreign-key foreignTable="C_COMMISSIONRUN" name="C_COMMISSIONAMT_C_COMMISSIONRU" onDelete="cascade">
         <reference local="C_COMMISSIONRUN_ID" foreign="C_COMMISSIONRUN_ID"/>
       </foreign-key>
       <index name="C_COMMISSIONAMT_COMLINE" unique="false">

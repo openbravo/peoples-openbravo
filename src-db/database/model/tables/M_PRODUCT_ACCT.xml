@@ -73,43 +73,43 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRODUCTACCT">
+      <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_ACCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MPRODUCTACCT">
+      <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_ACCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_MPRODUCTACCT" onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="M_PRODUCT_ACCT_C_ACCTSCHEMA" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_ASSET_ACCT">
+        <reference local="P_ASSET_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_COGS_ACCT">
+        <reference local="P_COGS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_EXPENSE_ACCT">
+        <reference local="P_EXPENSE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_INVOICEPRICEV">
+        <reference local="P_INVOICEPRICEVARIANCE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_PURCHASEPRICE">
+        <reference local="P_PURCHASEPRICEVARIANCE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_REVENUE_ACCT">
+        <reference local="P_REVENUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_TRADEDISCOUN1">
+        <reference local="P_TRADEDISCOUNTREC_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_TRADEDISCOUNT">
+        <reference local="P_TRADEDISCOUNTGRANT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_M_PRODUCT_ACCT" onDelete="cascade">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PASSET_MPRODUCT">
-        <reference local="P_ASSET_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PCOGS_MPRODUCT">
-        <reference local="P_COGS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PEXPENSE_MPRODUCT">
-        <reference local="P_EXPENSE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PINVOICEPV_MPRODUCT">
-        <reference local="P_INVOICEPRICEVARIANCE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PPURCHASEPV_MPRODUCT">
-        <reference local="P_PURCHASEPRICEVARIANCE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PREVENUE_MPRODUCT">
-        <reference local="P_REVENUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PTDISCOUNTGRANT_MPRODUCT">
-        <reference local="P_TRADEDISCOUNTGRANT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PTDISCOUNTREC_MPRODUCT">
-        <reference local="P_TRADEDISCOUNTREC_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <unique name="MPRODUCTACCT_MPRODUCTID_CAC_UN">
+      <unique name="M_PRODUCT_ACCT_PRODUCT_ACCT_UN">
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>

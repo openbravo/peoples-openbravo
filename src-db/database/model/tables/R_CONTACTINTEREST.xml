@@ -49,16 +49,16 @@
         <default/>
         <onCreateDefault><![CDATA[get_uuid()]]></onCreateDefault>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_RCONTACTINTEREST">
+      <foreign-key foreignTable="AD_CLIENT" name="R_CONTACTINTEREST_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_RCONTACTINTEREST">
+      <foreign-key foreignTable="AD_ORG" name="R_CONTACTINTEREST_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_RCONTACTINTEREST">
+      <foreign-key foreignTable="AD_USER" name="R_CONTACTINTEREST_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="R_INTERESTAREA" name="RINTERESTAREA_RCONTACTINTEREST">
+      <foreign-key foreignTable="R_INTERESTAREA" name="R_CONTACTINTEREST_R_INTERESTAR">
         <reference local="R_INTERESTAREA_ID" foreign="R_INTERESTAREA_ID"/>
       </foreign-key>
       <check name="R_CONTACTINTERE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

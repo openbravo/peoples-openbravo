@@ -298,48 +298,39 @@ public class CreateFrom extends HttpSecureAppServlet {
     CreateFromBankData[] data = null;
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/CreateFrom_Bank").createXmlDocument();
-    if (strcBPartner.equals("") && strPaymentRule.equals("") && strPlannedDateFrom.equals("")
-        && strPlannedDateTo.equals("") && strIsReceipt.equals("") && strBankAccount.equals("")
-        && strOrg.equals("")) {
-      data = new CreateFromBankData[0];
-    } else {
-      if (vars.commandIn("FRAME1") && strIsReceipt.equals(""))
-        strIsReceipt = isSOTrx;
 
-      final int numRows = Integer.valueOf(CreateFromBankData.countRows(this, Utility.getContext(
-          this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org",
-          strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom, strPlannedDateTo,
-          strAmountFrom, strAmountTo, strIsReceipt, strBank, strOrg, strCharge, strDocumentNo));
-      final int maxRows = Integer.valueOf(vars.getSessionValue("#RECORDRANGEINFO"));
+    final int numRows = Integer.valueOf(CreateFromBankData.countRows(this, Utility.getContext(this,
+        vars, "#User_Client", strWindowId), Utility
+        .getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
+        strPlannedDateFrom, strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank,
+        strOrg, strCharge, strDocumentNo));
+    final int maxRows = Integer.valueOf(vars.getSessionValue("#RECORDRANGEINFO"));
 
-      if (numRows > maxRows) {
-        final OBError obError = new OBError();
-        String strMsg = Utility.messageBD(this, "MAX_RECORDS_REACHED", vars.getLanguage());
-        strMsg = strMsg.replaceAll("%returned%", String.valueOf(numRows));
-        strMsg = strMsg.replaceAll("%shown%", String.valueOf(maxRows));
-        obError.setMessage(strMsg);
-        obError.setTitle("");
-        obError.setType("WARNING");
-        vars.setMessage("CreateFrom", obError);
-      }
-
-      // different limit/offset syntax in oracle and postgresql
-      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        data = CreateFromBankData.select(this, vars.getLanguage(), strStatementDate, "ROWNUM",
-            Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom,
-            strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank, strOrg, strCharge,
-            strDocumentNo, String.valueOf(maxRows), null);
-      } else {
-        data = CreateFromBankData.select(this, vars.getLanguage(), strStatementDate, "1", Utility
-            .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
-            "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom,
-            strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank, strOrg, strCharge,
-            strDocumentNo, null, String.valueOf(maxRows));
-      }
+    if (numRows > maxRows) {
+      final OBError obError = new OBError();
+      String strMsg = Utility.messageBD(this, "MAX_RECORDS_REACHED", vars.getLanguage());
+      strMsg = strMsg.replaceAll("%returned%", String.valueOf(numRows));
+      strMsg = strMsg.replaceAll("%shown%", String.valueOf(maxRows));
+      obError.setMessage(strMsg);
+      obError.setTitle("");
+      obError.setType("WARNING");
+      vars.setMessage("CreateFrom", obError);
     }
-    if (vars.commandIn("FRAME1") && strIsReceipt.equals(""))
-      strIsReceipt = isSOTrx;
+
+    // different limit/offset syntax in oracle and postgresql
+    if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+      data = CreateFromBankData.select(this, vars.getLanguage(), strStatementDate, "ROWNUM",
+          Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
+              vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom,
+          strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank, strOrg, strCharge,
+          strDocumentNo, String.valueOf(maxRows), null);
+    } else {
+      data = CreateFromBankData.select(this, vars.getLanguage(), strStatementDate, "1", Utility
+          .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
+          "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom,
+          strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank, strOrg, strCharge,
+          strDocumentNo, null, String.valueOf(maxRows));
+    }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");

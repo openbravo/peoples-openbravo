@@ -65,13 +65,13 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CTAXREPORT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_TAX_REPORT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CTAXREPORT">
+      <foreign-key foreignTable="AD_ORG" name="C_TAX_REPORT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX_CTAXREPORT">
+      <foreign-key foreignTable="C_TAX" name="C_TAX_REPORT_C_TAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
       <check name="C_TAX_REPORT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

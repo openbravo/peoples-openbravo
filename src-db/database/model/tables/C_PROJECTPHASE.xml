@@ -101,22 +101,22 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CPROJECTPHASE">
+      <foreign-key foreignTable="AD_CLIENT" name="C_PROJECTPHASE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CPROJECTPHASE">
+      <foreign-key foreignTable="AD_ORG" name="C_PROJECTPHASE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDER" name="CORDER_CPROJECTPHASE">
+      <foreign-key foreignTable="C_ORDER" name="C_PROJECTPHASE_C_ORDER">
         <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PHASE" name="CPHASE_CPROJECTPHASE">
+      <foreign-key foreignTable="C_PHASE" name="C_PROJECTPHASE_C_PHASE">
         <reference local="C_PHASE_ID" foreign="C_PHASE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CPROJECTPHASE">
+      <foreign-key foreignTable="C_PROJECT" name="C_PROJECTPHASE_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CPROJECTPHASE">
+      <foreign-key foreignTable="M_PRODUCT" name="C_PROJECTPHASE_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
     </table>

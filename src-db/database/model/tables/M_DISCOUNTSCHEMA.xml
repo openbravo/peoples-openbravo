@@ -69,13 +69,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MDISCOUNTSCHEMA">
+      <foreign-key foreignTable="AD_CLIENT" name="M_DISCOUNTSCHEMA_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MDISCOUNTSCHEMA">
+      <foreign-key foreignTable="AD_ORG" name="M_DISCOUNTSCHEMA_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="MDISCOUNTSCHEM_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MDISCSCHEM_ISQUANTBASED_CHECK"><![CDATA[ISQUANTITYBASED IN ('Y', 'N')]]></check>
+      <check name="M_DISCOUNTSCHEMA_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_DISCOUNTSCHEMA_ISQUANTIT_CHK"><![CDATA[ISQUANTITYBASED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -37,7 +37,7 @@ public class DalConnectionProviderTest extends BaseTest {
    * Tests calling database procedures using the dal connection provider
    */
   public void testDalConnectionProvider() throws Exception {
-    setUserContext("0");
+    setSystemAdministratorContext();
 
     final DalConnectionProvider connectionProvider = new DalConnectionProvider();
     // get the current date, this already uses the connectionprovider

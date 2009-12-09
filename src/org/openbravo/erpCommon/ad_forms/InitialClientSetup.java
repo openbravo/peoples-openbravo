@@ -1309,8 +1309,8 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         GL_MXI, "472");
     createDocType(vars, "Matched Purchase Orders", "Matched Purchase Orders", "MXP", "", "0", "0",
         "1000000", GL_MXP, "473");
-    createDocType(vars, "Debt Payement Management", "Debt Payement Management", "DPM", "", "0",
-        "0", "10000", GL_Standard, "800176");
+    createDocType(vars, "Debt Payment Management", "Debt Payment Management", "DPM", "", "0", "0",
+        "10000", GL_Standard, "800176");
     createDocType(vars, "Depreciation", "Depreciation", "AMZ", "", "0", "0", "10000", GL_Standard,
         "800060");
 

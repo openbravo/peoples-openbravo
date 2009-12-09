@@ -53,13 +53,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADIMPFORMAT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_IMPFORMAT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADIMPFORMAT">
+      <foreign-key foreignTable="AD_ORG" name="AD_IMPFORMAT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADIMPFORMAT" onDelete="cascade">
+      <foreign-key foreignTable="AD_TABLE" name="AD_IMPFORMAT_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <unique name="AD_IMPFORMAT_NAME">

@@ -69,20 +69,20 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CLOCATION">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CLOCATION">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_COUNTRY" name="C_COUNTRY_LOCATION">
         <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="C_LOCATION_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_LOCATION_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CITY" name="C_LOCATION_C_CITY">
+        <reference local="C_CITY_ID" foreign="C_CITY_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_REGION" name="C_REGION_LOCATION">
         <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CITY" name="CCITY_CLOCATION">
-        <reference local="C_CITY_ID" foreign="C_CITY_ID"/>
       </foreign-key>
       <check name="C_LOCATION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

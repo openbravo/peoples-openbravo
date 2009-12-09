@@ -73,25 +73,25 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MSTORAGEDETAIL">
+      <foreign-key foreignTable="AD_CLIENT" name="M_STORAGE_DETAIL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MSTORAGEDETAIL">
+      <foreign-key foreignTable="AD_ORG" name="M_STORAGE_DETAIL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_MSTORAGEDETAIL">
+      <foreign-key foreignTable="C_UOM" name="M_STORAGE_DETAIL_C_UOM">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRIBUTE_MSTORAGEDETAIL">
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_STORAGE_DETAIL_M_ATTRIBUTESE">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_MSTORAGEDETAIL">
+      <foreign-key foreignTable="M_LOCATOR" name="M_STORAGE_DETAIL_M_LOCATOR">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MSTORAGEDETAIL">
+      <foreign-key foreignTable="M_PRODUCT" name="M_STORAGE_DETAIL_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOM_MSTORAGEDETAIL">
+      <foreign-key foreignTable="M_PRODUCT_UOM" name="M_STORAGE_DETAIL_M_PRODUCT_UOM">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
       <unique name="M_STORAGE_DETAIL_UN">

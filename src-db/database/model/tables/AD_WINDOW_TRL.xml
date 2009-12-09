@@ -60,20 +60,20 @@
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_WINDOWTRL">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_WINDOW_TRL_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_WINDOW_TRL_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOWTRL" onDelete="cascade">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADWINDOWTRL">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADWINDOWTRL">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <unique name="ADWINDOWTRL_ADWINDOWID_ADLA_UN">
+      <unique name="AD_WINDOW_TRL_WINDOW_LANGUA_UN">
         <unique-column name="AD_WINDOW_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="ADWINDOWTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADWINDOWTRL_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="AD_WINDOW_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_WINDOW_TRL_ISTRANSLATED_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

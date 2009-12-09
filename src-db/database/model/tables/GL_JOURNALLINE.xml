@@ -105,35 +105,35 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_GLJOURNALLINE">
+      <foreign-key foreignTable="AD_CLIENT" name="GL_JOURNALLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_GLJOURNALLINE">
+      <foreign-key foreignTable="AD_ORG" name="GL_JOURNALLINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_GLJOURNALLINE">
+      <foreign-key foreignTable="C_CURRENCY" name="GL_JOURNALLINE_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DEBT_PAYMENT" name="CDEBTPAYMENT_GLJOURNALLINE">
+      <foreign-key foreignTable="C_DEBT_PAYMENT" name="GL_JOURNALLINE_C_DEBT_PAYMENT">
         <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX_GLJOURNALLINE">
+      <foreign-key foreignTable="C_TAX" name="GL_JOURNALLINE_C_TAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_GLJOURNALLINE">
+      <foreign-key foreignTable="C_UOM" name="GL_JOURNALLINE_C_UOM">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVC_GLJOURNALLINE">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="GL_JOURNALLINE_C_VALIDCOMBINAT">
         <reference local="C_VALIDCOMBINATION_ID" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_WITHHOLDING" name="CWITHHOLDING_GLJOURNALLINE">
+      <foreign-key foreignTable="C_WITHHOLDING" name="GL_JOURNALLINE_C_WITHHOLDING">
         <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="GL_JOURNAL" name="GLJOURNAL_GLJOURNALLINE">
+      <foreign-key foreignTable="GL_JOURNAL" name="GL_JOURNALLINE_GL_JOURNAL">
         <reference local="GL_JOURNAL_ID" foreign="GL_JOURNAL_ID"/>
       </foreign-key>
+      <check name="GL_JOURNALLINE_C_TAX_ID_CHK"><![CDATA[(C_TAX_ID IS NULL) OR (C_WITHHOLDING_ID IS NULL)]]></check>
       <check name="GL_JOURNALLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="GLJOURNLINE_ISGENERATED_CHECK"><![CDATA[ISGENERATED IN ('Y', 'N')]]></check>
-      <check name="GLJOURNLINE_WHANDTAX_CHECK"><![CDATA[(C_TAX_ID IS NULL) OR (C_WITHHOLDING_ID IS NULL)]]></check>
+      <check name="GL_JOURNALLINE_ISGENERATED_CHK"><![CDATA[ISGENERATED IN ('Y', 'N')]]></check>
     </table>
   </database>

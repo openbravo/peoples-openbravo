@@ -1154,6 +1154,7 @@ public class ImportModule {
   }
 
   private static void addParentUpdates(HashMap<String, String> updates, ConnectionProvider conn) {
+    @SuppressWarnings("unchecked")
     final HashMap<String, String> iniUpdates = (HashMap<String, String>) updates.clone();
     for (final String node : iniUpdates.keySet()) {
       addParentNode(node, updates, iniUpdates, conn);

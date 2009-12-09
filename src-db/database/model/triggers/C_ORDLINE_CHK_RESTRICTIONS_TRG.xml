@@ -70,7 +70,7 @@ BEGIN
         ELSIF (v_IsSOTrx ='Y' AND v_DocStatus = 'DR' AND (:OLD.QTYDELIVERED <> 0 OR :OLD.QTYINVOICED <> 0)) THEN
           RAISE_APPLICATION_ERROR(-20000, '@DeliveredInvoicedOrderline@');
         END IF;
-      ELSIF (v_IsSOTrx = 'Y' AND :new.QtyInvoiced > :new.QtyOrdered) THEN
+      ELSIF (v_IsSOTrx = 'Y' AND ABS(:new.QtyInvoiced) > ABS(:new.QtyOrdered)) THEN
         v_Message := '@OrderDocumentno@' || ' ' || v_DocumentNo || ' ' || '@line@' || :old.line || '. ';
         v_Message := v_Message || '@QtyInvoicedHigherOrdered@';
         RAISE_APPLICATION_ERROR(-20000, v_Message);

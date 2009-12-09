@@ -49,13 +49,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADCREATEFACTTEMPLATE">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_CREATEFACT_TEMPLATE_AD_CLIE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADCREATEFACTTEMPLATE">
+      <foreign-key foreignTable="AD_ORG" name="AD_CREATEFACT_TEMPLATE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADCREATEFACTTEMPLATE">
+      <foreign-key foreignTable="AD_TABLE" name="AD_CREATEFACT_TEMPLATE_AD_TABL">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <check name="AD_CREAFACTTEMP_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

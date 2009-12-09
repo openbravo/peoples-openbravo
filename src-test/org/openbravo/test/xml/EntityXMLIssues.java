@@ -49,7 +49,7 @@ public class EntityXMLIssues extends XMLBaseTest {
     cleanRefDataLoaded();
     final Client c = OBDal.getInstance().get(Client.class, "1000000");
     final Organization o = OBDal.getInstance().get(Organization.class, "1000000");
-    setUserContext("1000000");
+    setBigBazaarUserContext();
 
     addReadWriteAccess(Greeting.class);
 
@@ -87,7 +87,7 @@ public class EntityXMLIssues extends XMLBaseTest {
     cleanRefDataLoaded();
     final Client c = OBDal.getInstance().get(Client.class, "1000000");
     final Organization o = OBDal.getInstance().get(Organization.class, "1000000");
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(UOM.class);
 
     final List<UOM> uoms = getList(UOM.class);

@@ -49,16 +49,16 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="CORDERDISC_FK_ADCLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_ORDER_DISCOUNT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="CORDERDISC_FK_ADORG">
+      <foreign-key foreignTable="AD_ORG" name="C_ORDER_DISCOUNT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DISCOUNT" name="CORDERDISC_FK_CDISCOUNT">
+      <foreign-key foreignTable="C_DISCOUNT" name="C_ORDER_DISCOUNT_C_DISCOUNT">
         <reference local="C_DISCOUNT_ID" foreign="C_DISCOUNT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDER" name="CORDERDISC_FK_CORDER">
+      <foreign-key foreignTable="C_ORDER" name="C_ORDER_DISCOUNT_C_ORDER">
         <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
       </foreign-key>
     </table>

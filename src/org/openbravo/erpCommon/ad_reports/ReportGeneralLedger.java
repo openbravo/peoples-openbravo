@@ -560,9 +560,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     }
     parameters.put("SR_PREVIOUS", jasperReportLines);
 
-    parameters.put("ShowPartner",
-        new Boolean(!(strcBpartnerId.equals("") && strGroupBy.equals(""))));
-    parameters.put("REPORT_SUBTITLE", Utility.messageBD(this, "GL_Previous", strLanguage));
+    parameters.put("ShowPartner", new Boolean(!(strcBpartnerId.equals("") && strAll.equals(""))));
+    StringBuilder strSubTitle = new StringBuilder();
+    strSubTitle.append(Utility.messageBD(this, "DateFrom", strLanguage) + ": " + strDateFrom
+        + " - " + Utility.messageBD(this, "DateTo", strLanguage) + ": " + strDateTo + " (");
+    strSubTitle.append(ReportGeneralLedgerData.selectCompany(this, vars.getClient()) + " - ");
+    strSubTitle.append(ReportGeneralLedgerData.selectOrganization(this, vars.getOrg()) + ")");
+    parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
     parameters.put("Previous", Utility.messageBD(this, "GL_Previous", strLanguage));
     parameters.put("Total", Utility.messageBD(this, "Total", strLanguage));
     String strDateFormat;

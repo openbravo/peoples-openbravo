@@ -46,7 +46,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
    */
   public void testNotWritableUpdate() {
     cleanRefDataLoaded();
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Greeting.class);
 
     final List<Greeting> gs = getList(Greeting.class);
@@ -57,7 +57,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
 
     final Client c = OBDal.getInstance().get(Client.class, "1000000");
     final Organization o = OBDal.getInstance().get(Organization.class, "1000000");
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     OBContext.getOBContext().setCurrentOrganization(o);
     OBContext.getOBContext().setCurrentClient(c);
 
@@ -89,7 +89,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
    */
   public void testNotWritableInsertError() {
     cleanRefDataLoaded();
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Warehouse.class);
 
     final List<Warehouse> ws = getList(Warehouse.class);
@@ -122,7 +122,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
    */
   public void testUpdatingOtherOrganizationWarning() {
     cleanRefDataLoaded();
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Warehouse.class);
 
     final List<Warehouse> ws = getList(Warehouse.class);
@@ -131,7 +131,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     // change the xml to force an update
     xml = xml.replaceAll("</name>", "t</name>");
     xml = xml.replaceAll("</id>", "new</id>");
-    setUserContext("0");
+    setSystemAdministratorContext();
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
         OBDal.getInstance().get(Client.class, "1000000"),
         OBDal.getInstance().get(Organization.class, "1000002"), xml);
@@ -153,7 +153,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
   // // works also but disabled for now
   // public void _testUpdateOtherOrganizationWarning() {
   // cleanRefDataLoaded();
-  // setUserContext("1000000");
+  // setBigBazaarUserContext();
   // addReadWriteAccess(Location.class);
   //
   // final List<Location> cs = getList(Location.class);
@@ -165,7 +165,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
   // // the following should result in creation of location
   // // xml = xml.replaceAll("location id=\"", "location id=\"new");
   // // xml = xml.replaceAll("CoreLocation id=\"", "CoreLocation id=\"new");
-  // setUserContext("0");
+  // setSystemAdministratorContext();
   // final ImportResult ir = DataImportService.getInstance().importDataFromXML(
   // OBDal.getInstance().get(Client.class, "1000000"),
   // OBDal.getInstance().get(Organization.class, "1000001"), xml);
@@ -186,7 +186,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
 
   // public void testInsertOtherClientWarning() {
   // cleanRefDataLoaded();
-  // setUserContext("0");
+  // setSystemAdministratorContext();
   //
   // final List<Region> cs = getList(Region.class);
   // String xml = getXML(cs);
@@ -198,7 +198,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
   // xml = xml.replaceAll("<name>", "<name>new");
   // xml = xml.replaceAll("region id=\"", "region id=\"new");
   // xml = xml.replaceAll("Region id=\"", "Region id=\"new");
-  // setUserContext("0");
+  // setSystemAdministratorContext();
   // final ImportResult ir = DataImportService.getInstance().importDataFromXML(
   // OBDal.getInstance().get(Client.class, "1000000"),
   // OBDal.getInstance().get(Organization.class, "1000001"), xml);

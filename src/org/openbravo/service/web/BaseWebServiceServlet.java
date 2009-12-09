@@ -70,6 +70,11 @@ public class BaseWebServiceServlet extends HttpServlet {
     }
   }
 
+  protected void callServiceInSuper(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    super.service(request, response);
+  }
+
   protected void doService(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {

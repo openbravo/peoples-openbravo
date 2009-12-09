@@ -145,44 +145,44 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_RREQUEST">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_RREQUEST">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_RREQUEST">
-        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_SR_RREQUEST">
-        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_RREQUEST">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_RREQUEST">
+      <foreign-key foreignTable="AD_CLIENT" name="R_REQUEST_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="R_REQUEST_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="R_REQUEST_AD_USER">
+        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CAMPAIGN" name="R_REQUEST_C_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DEBT_PAYMENT" name="CDEBT_PAYMENT_RREQUEST">
+      <foreign-key foreignTable="C_DEBT_PAYMENT" name="R_REQUEST_C_DEBT_PAYMENT">
         <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDER" name="CORDER_RREQUEST">
-        <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_RREQUEST">
-        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_RREQUEST">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_INVOICE" name="RINVOICE_RREQUEST">
+      <foreign-key foreignTable="C_INVOICE" name="R_REQUEST_C_INVOICE">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="R_MAILTEXT" name="RMAILTEXT_RREQUEST">
+      <foreign-key foreignTable="C_ORDER" name="R_REQUEST_C_ORDER">
+        <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PROJECT" name="R_REQUEST_C_PROJECT">
+        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="R_REQUEST_M_PRODUCT">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="R_MAILTEXT" name="R_REQUEST_R_MAILTEXT">
         <reference local="R_MAILTEXT_ID" foreign="R_MAILTEXT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="R_REQUESTTYPE" name="RREQUESTTYPE_RREQUEST">
+      <foreign-key foreignTable="R_REQUESTTYPE" name="R_REQUEST_R_REQUESTTYPE">
         <reference local="R_REQUESTTYPE_ID" foreign="R_REQUESTTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="R_REQUEST_SALESREP">
+        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
       <index name="R_REQUEST_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
@@ -190,8 +190,8 @@
       <index name="R_REQUEST_USER" unique="false">
         <index-column name="AD_USER_ID"/>
       </index>
-      <check name="RREQUEST_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="RREQUEST_ISESCALATED_CHECK"><![CDATA[ISESCALATED IN ('Y', 'N')]]></check>
-      <check name="RREQUEST_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="R_REQUEST_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="R_REQUEST_ISESCALATED_CHK"><![CDATA[ISESCALATED IN ('Y', 'N')]]></check>
+      <check name="R_REQUEST_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

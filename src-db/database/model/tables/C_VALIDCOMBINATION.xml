@@ -101,50 +101,50 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_VC">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_VC">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_VC">
-        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CVALIDCOMBINATION" onDelete="cascade">
-        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CVALIDCOMBINATION">
-        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_VC">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEACCOUNT_VC" onDelete="cascade">
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_VALIDCOMBINATION_ACCOUNT" onDelete="cascade">
         <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER1_VC">
-        <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
+      <foreign-key foreignTable="AD_CLIENT" name="C_VALIDCOMBINATION_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER2_VC">
-        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
+      <foreign-key foreignTable="AD_ORG" name="C_VALIDCOMBINATION_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_VC">
-        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      <foreign-key foreignTable="AD_ORG" name="C_VALIDCOMBINATION_AD_ORGTRX">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_SALESREGION" name="CSALESREGION_VC">
-        <reference local="C_SALESREGION_ID" foreign="C_SALESREGION_ID"/>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_VALIDCOMBINATION_C_ACCTSCHEM" onDelete="cascade">
+        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="MLOCATIONFROM_VC">
+      <foreign-key foreignTable="C_ACTIVITY" name="C_VALIDCOMBINATION_C_ACTIVITY">
+        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="C_VALIDCOMBINATION_C_BPARTNER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CAMPAIGN" name="C_VALIDCOMBINATION_C_CAMPAIGN">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_LOCATION" name="C_VALIDCOMBINATION_C_LOCFROM">
         <reference local="C_LOCFROM_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="MLOCATIONTO_VC">
+      <foreign-key foreignTable="C_LOCATION" name="C_VALIDCOMBINATION_C_LOCTO">
         <reference local="C_LOCTO_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_VC">
+      <foreign-key foreignTable="C_PROJECT" name="C_VALIDCOMBINATION_C_PROJECT">
+        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_SALESREGION" name="C_VALIDCOMBINATION_C_SALESREGI">
+        <reference local="C_SALESREGION_ID" foreign="C_SALESREGION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="C_VALIDCOMBINATION_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="SOCAMPAIGN_VC">
-        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_VALIDCOMBINATION_USER1">
+        <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_VALIDCOMBINATION_USER2">
+        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
       <index name="C_VALIDCOMBINATION_ALIAS" unique="false">
         <index-column name="AD_CLIENT_ID"/>
@@ -156,7 +156,7 @@
         <index-column name="AD_ORG_ID"/>
         <index-column name="ACCOUNT_ID"/>
       </index>
-      <check name="CVALCOMBIN_ISFULLQUAL_CHECK"><![CDATA[ISFULLYQUALIFIED IN ('Y', 'N')]]></check>
-      <check name="CVALIDCOMBIN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_VALIDCOMBINATION_ISACTIV_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_VALIDCOMBINATION_ISFULLY_CHK"><![CDATA[ISFULLYQUALIFIED IN ('Y', 'N')]]></check>
     </table>
   </database>

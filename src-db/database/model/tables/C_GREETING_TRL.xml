@@ -53,16 +53,16 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CGREETINGTRL">
+      <foreign-key foreignTable="AD_CLIENT" name="C_GREETING_TRL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_CGREETINGTRL">
+      <foreign-key foreignTable="AD_LANGUAGE" name="C_GREETING_TRL_AD_LANGUAGE">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CGREETINGTRL">
+      <foreign-key foreignTable="AD_ORG" name="C_GREETING_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_GREETING" name="CGREETING_CGREETINGTRL" onDelete="cascade">
+      <foreign-key foreignTable="C_GREETING" name="C_GREETING_TRL_C_GREETING" onDelete="cascade">
         <reference local="C_GREETING_ID" foreign="C_GREETING_ID"/>
       </foreign-key>
       <index name="C_GREETING_TRL_UN_KEY" unique="true">
@@ -70,6 +70,6 @@
         <index-column name="AD_LANGUAGE"/>
       </index>
       <check name="C_GREETING_TRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CGREET_TRL_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="C_GREETING_TRL_ISTRANSLATE_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

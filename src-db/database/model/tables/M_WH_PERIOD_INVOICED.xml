@@ -45,10 +45,10 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MWHPERIODINVOICED">
+      <foreign-key foreignTable="AD_CLIENT" name="M_WH_PERIOD_INVOICED_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MWHPERIODINVOICED">
+      <foreign-key foreignTable="AD_ORG" name="M_WH_PERIOD_INVOICED_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="M_WH_PINV_BPARTNER">

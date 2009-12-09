@@ -257,9 +257,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
         rt = total
             + "&nbsp;"
             + Utility.messageBD(this, "ApplyModules", lang)
-            + ", <a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900);return false;\">"
+            + ", <a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900);return false;\">"
             + Utility.messageBD(this, "RebuildNow", lang) + "</a>";
         return rt;
+      }
+      String restartTomcat = ModuleManagementData.selectRestartTomcat(this);
+      // Check if last build was done but Tomcat wasn't restarted
+      if (!restartTomcat.equals("0")) {
+        rt = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('TOMCAT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900);return false;\">"
+            + Utility.messageBD(this, "Restart_Tomcat", lang) + "</a>";
+        return rt;
+
       }
 
       // Check for updates
@@ -546,8 +554,16 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     // Remote installation is only allowed for heartbeat enabled instances
     if (!islocal && !isHeartbeatEnabled()) {
-      response.sendRedirect(strDireccion
-          + "/ad_forms/Heartbeat.html?Command=DEFAULT_MODULE&inpcRecordId=" + recordId);
+      String inpcRecordId = recordId;
+      String command = "DEFAULT";
+
+      if (updateModules != null && updateModules.length > 0 && !updateModules[0].equals("")) {
+        inpcRecordId = "FFF";
+        command = "UPDATE";
+      }
+
+      response.sendRedirect(strDireccion + "/ad_forms/Heartbeat.html?Command=" + command
+          + "_MODULE&inpcRecordId=" + inpcRecordId);
     }
 
     if (!islocal && (updateModules == null || updateModules.length == 0)) {

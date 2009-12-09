@@ -48,7 +48,7 @@ public class DynamicEntityTest extends BaseTest {
    * Create a record for the {@link Category} in the database using a {@link DynamicOBObject}.
    */
   public void testCreateBPGroup() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Category.class);
     final DynamicOBObject bpGroup = new DynamicOBObject();
     bpGroup.setEntityName(Category.ENTITY_NAME);
@@ -65,7 +65,7 @@ public class DynamicEntityTest extends BaseTest {
    * Queries for the created {@link Category} and then removes.
    */
   public void testRemoveBPGroup() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Category.class);
     addReadWriteAccess(CategoryAccounts.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
@@ -104,7 +104,7 @@ public class DynamicEntityTest extends BaseTest {
    * Checks if the removal did occur.
    */
   public void testCheckBPGroupRemoved() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
     obc.add(Expression.eq(Category.PROPERTY_NAME, "hello world"));

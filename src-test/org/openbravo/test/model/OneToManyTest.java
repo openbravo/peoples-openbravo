@@ -43,7 +43,7 @@ public class OneToManyTest extends BaseTest {
    * Tests if it is possible to iterate over {@link OrderLine} objects of an {@link Order}. Adds one
    */
   public void testAccessChildCollection() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
     final OBCriteria<Order> order = OBDal.getInstance().createCriteria(Order.class);
@@ -63,7 +63,7 @@ public class OneToManyTest extends BaseTest {
    */
   public void testAddOrderLine() {
 
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
     final OBCriteria<Order> orders = OBDal.getInstance().createCriteria(Order.class);
@@ -94,7 +94,7 @@ public class OneToManyTest extends BaseTest {
    */
   public void testDeleteChild() {
 
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
     final OBCriteria<Order> orders = OBDal.getInstance().createCriteria(Order.class);
@@ -123,7 +123,7 @@ public class OneToManyTest extends BaseTest {
    * This test checks if the order line has indeed been deleted.
    */
   public void testConfirmDeleted() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
 
@@ -136,7 +136,7 @@ public class OneToManyTest extends BaseTest {
 
   // test is already done above while preventing side effects.
   // public void testAddChild() throws Exception {
-  // setUserContext("1000000");
+  // setBigBazaarUserContext();
   // final OBCriteria<BusinessPartner> bpartners = OBDal.getInstance().createCriteria(
   // BusinessPartner.class);
   // bpartners.add(Expression.eq(BusinessPartner.PROPERTY_SEARCHKEY, "mafalda"));

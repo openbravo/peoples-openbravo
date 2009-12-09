@@ -93,19 +93,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CPROJECTTASK">
+      <foreign-key foreignTable="AD_CLIENT" name="C_PROJECTTASK_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CPROJECTTASK">
+      <foreign-key foreignTable="AD_ORG" name="C_PROJECTTASK_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECTPHASE" name="CPROJECTPHASE_CPROJECTTASK">
+      <foreign-key foreignTable="C_PROJECTPHASE" name="C_PROJECTTASK_C_PROJECTPHASE">
         <reference local="C_PROJECTPHASE_ID" foreign="C_PROJECTPHASE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TASK" name="CTASK_CPROJECTTASK">
+      <foreign-key foreignTable="C_TASK" name="C_PROJECTTASK_C_TASK">
         <reference local="C_TASK_ID" foreign="C_TASK_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CPROJECTTASK">
+      <foreign-key foreignTable="M_PRODUCT" name="C_PROJECTTASK_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
     </table>

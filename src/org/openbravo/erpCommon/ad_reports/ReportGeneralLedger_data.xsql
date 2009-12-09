@@ -214,4 +214,14 @@
     ]]></Sql>
     <Parameter name="elementValueId"/>
   </SqlMethod>
+  <SqlMethod name="selectOrganization" type="preparedStatement" return="string" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        SELECT NAME
+        FROM AD_ORG
+        WHERE AD_ORG_ID = ?
+      ]]></Sql>
+    <Parameter name="org"/>
+  </SqlMethod>
 </SqlClass>

@@ -87,13 +87,13 @@
       <foreign-key foreignTable="AD_ORG" name="C_TAXREGISTERLINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX_FK_TAXREGISTERLINE">
-        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_INVOICETAX" name="INVOICETAX_TAXREGISTERLINE">
+      <foreign-key foreignTable="C_INVOICETAX" name="C_TAXREGISTERLINE_C_INVOICETAX">
         <reference local="C_INVOICETAX_ID" foreign="C_INVOICETAX_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAXREGISTER" name="TAXREGISTER_TAXREGISTERLINE">
+      <foreign-key foreignTable="C_TAX" name="C_TAXREGISTERLINE_C_TAX">
+        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_TAXREGISTER" name="C_TAXREGISTERLINE_C_TAXREGISTE">
         <reference local="C_TAXREGISTER_ID" foreign="C_TAXREGISTER_ID"/>
       </foreign-key>
     </table>

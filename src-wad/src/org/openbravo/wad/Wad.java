@@ -45,8 +45,6 @@ import org.openbravo.wad.controls.WADGrid;
 import org.openbravo.wad.controls.WADHidden;
 import org.openbravo.wad.controls.WADLabelControl;
 import org.openbravo.wad.controls.WadControlLabelBuilder;
-import org.openbravo.wad.validation.WADValidationResult;
-import org.openbravo.wad.validation.WADValidator;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
 import org.xml.sax.helpers.DefaultHandler;
@@ -260,13 +258,6 @@ public class Wad extends DefaultHandler {
       else
         quick = argv[16].equals("quick");
 
-      boolean failOnErrorVerification;
-      if (argv.length <= 17 || argv[17].equals("true")) {
-        failOnErrorVerification = true;
-      } else {
-        failOnErrorVerification = false;
-      }
-
       if (quick) {
         module = "%";
         strWindowName = "xx";
@@ -290,7 +281,6 @@ public class Wad extends DefaultHandler {
       log4j.info("Web path: " + webPath);
       log4j.info("Src path: " + strBaseSrc);
       log4j.info("Quick mode: " + quick);
-      log4j.info("Stop on failed verification:" + failOnErrorVerification);
 
       final File fileFin = new File(dirFin);
       if (!fileFin.exists()) {
@@ -324,8 +314,9 @@ public class Wad extends DefaultHandler {
       if (dirWebClients != null && !dirWebClients.equals("")) {
         fileWebXmlClient = new File(dirWebClients);
         if (!fileWebXmlClient.exists()) {
-          log4j.warn("No such directory: " + fileWebXmlClient.getAbsoluteFile());
           fileWebXmlClient = null;
+        } else {
+          log4j.info("srcClient folder found.");
         }
       }
 
@@ -374,14 +365,6 @@ public class Wad extends DefaultHandler {
       }
       TabsData[] tabsData = td.toArray(new TabsData[0]);
       log4j.info(tabsData.length + " tabs to compile.");
-
-      log4j.info("Verifing tabs...");
-      WADValidator validator = new WADValidator(wad.pool, tabsData);
-      WADValidationResult validationResult = validator.validate();
-      validationResult.printLog();
-      if (validationResult.hasErrors() && failOnErrorVerification) {
-        throw new Exception("Tabs verification has errors");
-      }
 
       // Call to update the table identifiers
       log4j.info("Updating table identifiers");
@@ -790,7 +773,9 @@ public class Wad extends DefaultHandler {
       throws Exception {
     try {
       final String tabNamePresentation = tabsData.realtabname;
-      final String tabName = FormatUtilities.replace(tabNamePresentation);
+      // tabName contains tab's UUID for non core tabs
+      final String tabName = FormatUtilities.replace(tabNamePresentation)
+          + (tabsData.tabmodule.equals("0") ? "" : tabsData.tabid);
       final String windowName = FormatUtilities.replace(tabsData.windowname);
       final String tableName = FieldsData.tableName(pool, tabsData.tabid);
       final String isSOTrx = FieldsData.isSOTrx(pool, tabsData.tabid);
@@ -972,9 +957,7 @@ public class Wad extends DefaultHandler {
       auxFieldsData = null;
       String keyColumnName = "";
       boolean isSecondaryKey = false;
-      final FieldsData[] dataKey = FieldsData
-          .keyColumnName(pool, tabsData.tabid, ((parentsFieldsData != null
-              && parentsFieldsData.length > 0 && !sinParent) ? parentsFieldsData[0].name : " "));
+      final FieldsData[] dataKey = FieldsData.keyColumnName(pool, tabsData.tabid);
       if (dataKey != null && dataKey.length > 0) {
         keyColumnName = dataKey[0].name;
         isSecondaryKey = dataKey[0].issecondarykey.equals("Y");
@@ -1665,7 +1648,8 @@ public class Wad extends DefaultHandler {
     FieldsData[] fieldsParentSession = null;
     FieldsData[] auxiliarPFields = null;
     if (parentTab != -1) {
-      xmlDocument.setParameter("parentClass", FormatUtilities.replace(allTabs[parentTab].tabname));
+      xmlDocument.setParameter("parentClass", FormatUtilities.replace(allTabs[parentTab].tabname)
+          + (allTabs[parentTab].tabmodule.equals("0") ? "" : allTabs[parentTab].tabid));
       fieldsParentSession = FieldsData.selectSession(pool, allTabs[parentTab].tabid);
       for (int i = 0; i < fieldsParentSession.length; i++) {
         fieldsParentSession[i].name = Sqlc.TransformaNombreColumna(fieldsParentSession[i].name);
@@ -2223,7 +2207,8 @@ public class Wad extends DefaultHandler {
     FieldsData[] fieldsParentSession = null;
     FieldsData[] auxiliarPFields = null;
     if (parentTab != -1) {
-      xmlDocument.setParameter("parentClass", FormatUtilities.replace(allTabs[parentTab].tabname));
+      xmlDocument.setParameter("parentClass", FormatUtilities.replace(allTabs[parentTab].tabname)
+          + (allTabs[parentTab].tabmodule.equals("0") ? "" : allTabs[parentTab].tabid));
       fieldsParentSession = FieldsData.selectSession(pool, allTabs[parentTab].tabid);
       for (int i = 0; i < fieldsParentSession.length; i++) {
         fieldsParentSession[i].name = Sqlc.TransformaNombreColumna(fieldsParentSession[i].name);
@@ -2242,6 +2227,7 @@ public class Wad extends DefaultHandler {
               .TransformaNombreColumna(auxiliarPFields[i].columnname);
           if (auxiliarPFields[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
             auxiliarPFields[i].defaultvalue = FormatUtilities.replace(allTabs[parentTab].tabname)
+                + (allTabs[parentTab].tabmodule.equals("0") ? "" : allTabs[parentTab].tabid)
                 + "Data.selectAux"
                 + auxiliarPFields[i].reference
                 + "(this"
@@ -4528,7 +4514,8 @@ public class Wad extends DefaultHandler {
    */
   private void debugTab(TabsData tab, String strTab, int level, int heightTabs, int incrTabs,
       int mayor) throws ServletException {
-    final String tabName = FormatUtilities.replace(tab.tabname);
+    final String tabName = FormatUtilities.replace(tab.tabname)
+        + (tab.tabmodule.equals("0") ? "" : tab.tabid);
     if (strTab.equals(tab.tabid)) {
       tab.tdClass = "";
       tab.href = "return false;";

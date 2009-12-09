@@ -77,23 +77,23 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_ELEMENT_TRL_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ELEMENT" name="AD_ELEMENT_TRL_AD_ELEMENT" onDelete="cascade">
+        <reference local="AD_ELEMENT_ID" foreign="AD_ELEMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_ELEMENT_TRL_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_AD_ELEMENT_TRL">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADELEMENTTRL">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ELEMENT" name="ADELEMENT_ADELEMENTTRL" onDelete="cascade">
-        <reference local="AD_ELEMENT_ID" foreign="AD_ELEMENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADELEMENTTRL">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <unique name="ADELEMENTTRL_ADELEMENTID_AD_UN">
+      <unique name="AD_ELEMENT_TRL_ELEMENT_LANG_UN">
         <unique-column name="AD_ELEMENT_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="ADELEMENTTRL_IS_ANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
-      <check name="ADELEMENTTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_ELEMENT_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_ELEMENT_TRL_ISTRANSLATE_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

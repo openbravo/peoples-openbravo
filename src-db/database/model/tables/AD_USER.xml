@@ -145,41 +145,41 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_ORG" name="AD_USER_AD_ORGTRX">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="AD_USER_C_BPARTNER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="AD_USER_C_BPARTNER_LOCATION">
+        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_GREETING" name="AD_USER_C_GREETING">
+        <reference local="C_GREETING_ID" foreign="C_GREETING_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="AD_USER_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_USER_DEFAULT_AD_CLIENT">
+        <reference local="DEFAULT_AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_LANGUAGE" name="AD_USER_DEFAULT_AD_LANGUAGE">
+        <reference local="DEFAULT_AD_LANGUAGE" foreign="AD_LANGUAGE"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_USER_DEFAULT_AD_ORG">
+        <reference local="DEFAULT_AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ROLE" name="AD_USER_DEFAULT_AD_ROLE">
+        <reference local="DEFAULT_AD_ROLE_ID" foreign="AD_ROLE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_WAREHOUSE" name="AD_USER_DEFAULT_M_WAREHOUSE">
+        <reference local="DEFAULT_M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_USER_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADUSERDEFAULT">
-        <reference local="DEFAULT_AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_ADUSERDEFAULT">
-        <reference local="DEFAULT_AD_LANGUAGE" foreign="AD_LANGUAGE"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADUSERDEFAULT">
-        <reference local="DEFAULT_AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_ADUSER">
-        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADUSERDEFAULT">
-        <reference local="DEFAULT_AD_ROLE_ID" foreign="AD_ROLE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_SUPERVISOR">
+      <foreign-key foreignTable="AD_USER" name="AD_USER_SUPERVISOR">
         <reference local="SUPERVISOR_ID" foreign="AD_USER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_ADUSER">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPLOCATION_ADUSER">
-        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_GREETING" name="CGREETING_ADUSER">
-        <reference local="C_GREETING_ID" foreign="C_GREETING_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_ADUSERDEFAULT">
-        <reference local="DEFAULT_M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
       <index name="AD_USER_EMAIL" unique="false">
         <index-column name="EMAIL"/>

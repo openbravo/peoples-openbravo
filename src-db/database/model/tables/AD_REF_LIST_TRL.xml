@@ -56,20 +56,20 @@
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_REFLISTTRL">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_REF_LIST_TRL_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_REF_LIST_TRL_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_REF_LIST" name="AD_REFLISTTRL" onDelete="cascade">
         <reference local="AD_REF_LIST_ID" foreign="AD_REF_LIST_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADREFLISTTRL">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADREFLISTTRL">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <unique name="ADREFLISTTRL_ADREFLISTID_AD_UN">
+      <unique name="AD_REF_LIST_TRL_REF_LIST_LA_UN">
         <unique-column name="AD_REF_LIST_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="ADREFLISTTRL_IS_ANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
-      <check name="ADREFLISTTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_REF_LIST_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_REF_LIST_TRL_ISTRANSLAT_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

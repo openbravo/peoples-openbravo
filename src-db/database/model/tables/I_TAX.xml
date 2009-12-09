@@ -161,35 +161,35 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="C_BP_TAXCATEGORY" name="BPTAXCATEGORY_ITAX">
-        <reference local="C_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="CLIENT_ITAX">
+      <foreign-key foreignTable="AD_CLIENT" name="I_TAX_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_COUNTRY" name="COUNTRY_ITAX">
-        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_COUNTRY" name="COUTRYTO_ITAX">
-        <reference local="TO_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX_ITAX">
-        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX1_ITAX">
-        <reference local="PARENT_TAX_ID" foreign="C_TAX_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ORG_ITAX">
+      <foreign-key foreignTable="AD_ORG" name="I_TAX_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_REGION" name="REGION_ITAX">
+      <foreign-key foreignTable="C_BP_TAXCATEGORY" name="I_TAX_C_BP_TAXCATEGORY">
+        <reference local="C_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="I_TAX_C_COUNTRY">
+        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_REGION" name="I_TAX_C_REGION">
         <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_REGION" name="REGIONTO_ITAX">
-        <reference local="TO_REGION_ID" foreign="C_REGION_ID"/>
+      <foreign-key foreignTable="C_TAX" name="I_TAX_C_TAX">
+        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAXCATEGORY" name="TAXCATEGORY_ITAX">
+      <foreign-key foreignTable="C_TAXCATEGORY" name="I_TAX_C_TAXCATEGORY">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_TAX" name="I_TAX_PARENT_TAX">
+        <reference local="PARENT_TAX_ID" foreign="C_TAX_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="I_TAX_TO_COUNTRY">
+        <reference local="TO_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_REGION" name="I_TAX_TO_REGION">
+        <reference local="TO_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
     </table>
   </database>

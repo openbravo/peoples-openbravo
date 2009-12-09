@@ -45,13 +45,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CSALARYCATEGORYCOST">
+      <foreign-key foreignTable="AD_CLIENT" name="C_SALARY_CATEGORY_COST_AD_CLIE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CSALARYCATEGORYCOST">
+      <foreign-key foreignTable="AD_ORG" name="C_SALARY_CATEGORY_COST_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_SALARY_CATEGORY" name="CSALARYCAT_CSALARYCATEGORYCOST">
+      <foreign-key foreignTable="C_SALARY_CATEGORY" name="C_SALARY_CATEGORY_COST_C_SALAR">
         <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
       </foreign-key>
     </table>
