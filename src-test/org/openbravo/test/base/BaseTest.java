@@ -59,7 +59,11 @@ public class BaseTest extends TestCase {
    */
   @Override
   protected void setUp() throws Exception {
-    PropertyConfigurator.configure(this.getClass().getResource("/log4j.lcf"));
+
+    if (this.getClass().getResource("/log4j.lcf") != null) {
+      PropertyConfigurator.configure(this.getClass().getResource("/log4j.lcf"));
+    }
+
     initializeDalLayer();
     // clear the session otherwise it keeps the old model
     setBigBazaarUserContext();
