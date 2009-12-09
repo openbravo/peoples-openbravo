@@ -156,6 +156,8 @@ public class Menu extends HttpSecureAppServlet {
         vars.setSessionValue(windowId + "|" + p.getColumnName(), recordId);
         viewType = "EDIT";
 
+      } else if (vars.commandIn("DEFAULT")) {
+        viewType = tab.isDefaultEditMode() ? "EDIT" : "RELATION";
       }
 
       if (vars.commandIn("GRID")) {
