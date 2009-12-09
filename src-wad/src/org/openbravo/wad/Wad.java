@@ -2847,6 +2847,8 @@ public class Wad extends DefaultHandler {
    * Generates the combo reloads for the tab. Combo reloads are the callouts to reloads the values
    * of the subordinated combos in the tab.
    * 
+   * By now combo reloads are created only for core list, table and table dir references
+   * 
    * @param fileDir
    *          Path where to generate the file.
    * @param strTab
@@ -2872,6 +2874,9 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("tabId", strTab);
     final Vector<Object> vecReloads = new Vector<Object>();
     final Vector<Object> vecTotal = new Vector<Object>();
+    final Vector<Object> vecCounters = new Vector<Object>();
+    vecCounters.addElement("0");
+    vecCounters.addElement("0");
     FieldsData[] result = null;
 
     for (int i = 0; i < data.length; i++) {
@@ -2922,8 +2927,12 @@ public class Wad extends DefaultHandler {
             final Vector<Object> vecWhere = new Vector<Object>();
             final Vector<Object> vecParameters = new Vector<Object>();
             final Vector<Object> vecTableParameters = new Vector<Object>();
-            WadUtility.columnIdentifier(pool, tables[0].tablename, true, tables[0], 0, 0, true,
+
+            WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
+                data[i].referencevalue);
+            control.columnIdentifier(tables[0].tablename, true, tables[0], vecCounters, true,
                 vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+
             where.append(tables[0].whereclause);
             data[i].tablename = "TableList";
             data[i].htmltext = "select" + tables[0].referencevalue;
@@ -2962,8 +2971,12 @@ public class Wad extends DefaultHandler {
             final Vector<Object> vecWhere = new Vector<Object>();
             final Vector<Object> vecParameters = new Vector<Object>();
             final Vector<Object> vecTableParameters = new Vector<Object>();
-            WadUtility.columnIdentifier(pool, table_Name, true, tableDir[0], 0, 0, true,
-                vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+
+            WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
+                data[i].referencevalue);
+            control.columnIdentifier(table_Name, true, data[i], vecCounters, true, vecFields1,
+                vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+
             data[i].xmltext = "";
             if (vecTableParameters.size() > 0) {
               data[i].xmltext = ", vars.getLanguage()";
@@ -3026,6 +3039,9 @@ public class Wad extends DefaultHandler {
 
       final Vector<Object> vecReloads = new Vector<Object>();
       final Vector<Object> vecTotal = new Vector<Object>();
+      final Vector<Object> vecCounters = new Vector<Object>();
+      vecCounters.addElement("0");
+      vecCounters.addElement("0");
 
       FieldsData[] result = null;
 
@@ -3066,9 +3082,14 @@ public class Wad extends DefaultHandler {
             final Vector<Object> vecWhere = new Vector<Object>();
             final Vector<Object> vecParameters = new Vector<Object>();
             final Vector<Object> vecTableParameters = new Vector<Object>();
-            WadUtility.columnIdentifier(pool, tables[0].tablename, true, tables[0], 0, 0, true,
+
+            WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
+                data[i].referencevalue);
+            control.columnIdentifier(tables[0].tablename, true, tables[0], vecCounters, true,
                 vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+
             where.append(tables[0].whereclause);
+
             data[i].tablename = "TableList";
             data[i].htmltext = "select" + tables[0].referencevalue;
             if (!tables[0].columnname.equals("")) {
@@ -3106,8 +3127,12 @@ public class Wad extends DefaultHandler {
             final Vector<Object> vecWhere = new Vector<Object>();
             final Vector<Object> vecParameters = new Vector<Object>();
             final Vector<Object> vecTableParameters = new Vector<Object>();
-            WadUtility.columnIdentifier(pool, table_Name, true, tableDir[0], 0, 0, true,
-                vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+
+            WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
+                data[i].referencevalue);
+            control.columnIdentifier(table_Name, true, data[i], vecCounters, true, vecFields1,
+                vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+
             data[i].xmltext = "";
             if (vecTableParameters.size() > 0) {
               data[i].xmltext = ", vars.getLanguage()";
