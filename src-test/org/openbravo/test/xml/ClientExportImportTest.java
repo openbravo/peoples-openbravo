@@ -61,7 +61,7 @@ import org.openbravo.service.db.ImportResult;
 public class ClientExportImportTest extends XMLBaseTest {
 
   // public void _testImportReferenceData() throws Exception {
-  // setUserContext("0");
+  // setSystemAdministratorContext();
   //
   // final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
   // .getProperty("source.path");
@@ -205,7 +205,7 @@ public class ClientExportImportTest extends XMLBaseTest {
   // 8509: References in the database without using foreign keys can go wrong in import
   // https://issues.openbravo.com/view.php?id=8509
   private void testMantis8509(String clientId) {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final OrganizationStructureProvider osp = new OrganizationStructureProvider();
     osp.setClientId(clientId);
     final Client client = OBDal.getInstance().get(Client.class, clientId);
@@ -225,7 +225,7 @@ public class ClientExportImportTest extends XMLBaseTest {
   }
 
   private String exportImport(String clientId) {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final Map<String, Object> parameters = new HashMap<String, Object>();
     parameters.put(DataExportService.CLIENT_ID_PARAMETER_NAME, clientId);
 
@@ -291,7 +291,7 @@ public class ClientExportImportTest extends XMLBaseTest {
   }
 
   private void doImport(String fileName) {
-    setUserContext("0");
+    setSystemAdministratorContext();
 
     final ClientImportProcessor importProcessor = new ClientImportProcessor();
     try {

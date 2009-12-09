@@ -54,14 +54,14 @@ public class DatasetServiceTest extends BaseTest {
    * @see DataSetTable#getSQLWhereClause()
    */
   public void testCheckQueries() {
-    setUserContext("100");
+    setBigBazaarAdminContext();
 
     Map<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("ClientID", "0");
 
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
     final List<DataSet> dss = obc.list();
-    setUserContext("0");
+    setSystemAdministratorContext();
     for (final DataSet ds : dss) {
       for (final DataSetTable dt : ds.getDataSetTableList()) {
         try {
@@ -78,10 +78,10 @@ public class DatasetServiceTest extends BaseTest {
    * Exports the data of all data sets.
    */
   public void testExportAllDataSets() {
-    setUserContext("100");
+    setBigBazaarAdminContext();
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
     final List<DataSet> dss = obc.list();
-    setUserContext("0");
+    setSystemAdministratorContext();
 
     Map<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("ClientID", "0");
@@ -98,7 +98,7 @@ public class DatasetServiceTest extends BaseTest {
    * @see Table
    */
   public void testDataSetTable() {
-    setUserContext("100");
+    setBigBazaarAdminContext();
     final DataSetTable dst = OBProvider.getInstance().get(DataSetTable.class);
     final Table t = OBProvider.getInstance().get(Table.class);
     t.setName("ADTable");

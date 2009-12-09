@@ -838,7 +838,7 @@
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
-						<font size="14"/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{REPORT_SUBTITLE}]]></textFieldExpression>
 				</textField>

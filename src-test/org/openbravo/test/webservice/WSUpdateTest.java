@@ -47,7 +47,7 @@ public class WSUpdateTest extends BaseWSTest {
    * sets the cityId member in this class.
    */
   public void testACreateCity() {
-    setUserContext("100");
+    setBigBazaarAdminContext();
 
     // first delete the current cities, as we should start fresh
     final OBCriteria<City> obc = OBDal.getInstance().createCriteria(City.class);

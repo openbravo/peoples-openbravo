@@ -72,9 +72,17 @@ public class OBDal implements OBSingleton {
   }
 
   /**
+   * Returns the connection used by the hibernate session.
+   * 
+   * Note: flushes the hibernate session before returning the connection.
+   * 
    * @return the current database connection
+   * @see #flush()
    */
   public Connection getConnection() {
+    // before returning a connection always flush all other hibernate actions
+    // to the database.
+    flush();
     return ((SessionImplementor) SessionHandler.getInstance().getSession()).connection();
   }
 

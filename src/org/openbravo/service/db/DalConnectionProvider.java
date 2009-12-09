@@ -38,9 +38,12 @@ import org.openbravo.exception.NoConnectionAvailableException;
  * 
  * It read the properties through the {@link OBPropertiesProvider}.
  * 
- * Note, this implementation does not support connection pooling.
- * 
- * This implementation does neither close the connection.
+ * Note: this implementation
+ * <ul>
+ * <li>does not support connection pooling</li>
+ * <li>does not close the connection</li>
+ * <li>always flushes the hibernate session before returning a connection ({@link OBDal#flush()})</li>
+ * </ul>
  * 
  * @author mtaal
  */
@@ -67,6 +70,10 @@ public class DalConnectionProvider implements ConnectionProvider {
       }
 
     }
+
+    // always flush all remaining actions
+    OBDal.getInstance().flush();
+
     return connection;
   }
 
