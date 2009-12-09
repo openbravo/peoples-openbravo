@@ -2057,6 +2057,7 @@ public class WadUtility {
     return reference.equals("15") || reference.equals("16") || reference.equals("24");
   }
 
+  // string, text, memo
   public static boolean isLikeType(String reference) {
     if (reference == null || reference.equals(""))
       return false;

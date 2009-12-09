@@ -19,7 +19,10 @@
 package org.openbravo.wad.controls;
 
 import java.util.Properties;
+import java.util.Vector;
 
+import org.openbravo.utils.FormatUtilities;
+import org.openbravo.wad.EditionFieldsData;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADTime extends WADControl {
@@ -182,5 +185,52 @@ public class WADTime extends WADControl {
 
   public String getSQLCasting() {
     return "TO_DATE";
+  }
+
+  public void processSelCol(String tableName, EditionFieldsData selCol, Vector<Object> vecAuxSelCol) {
+    final EditionFieldsData aux = new EditionFieldsData();
+    aux.adColumnId = selCol.adColumnId;
+    aux.name = selCol.name;
+    aux.reference = selCol.reference;
+    aux.referencevalue = selCol.referencevalue;
+    aux.adValRuleId = selCol.adValRuleId;
+    aux.fieldlength = selCol.fieldlength;
+    aux.displaylength = selCol.displaylength;
+    aux.columnname = selCol.columnname + "_f";
+    aux.realcolumnname = selCol.realcolumnname;
+    aux.columnnameinp = selCol.columnnameinp;
+    aux.value = selCol.value;
+    aux.adWindowId = selCol.adWindowId;
+    aux.htmltext = "strParam" + aux.columnname + ".equals(\"\")";
+    selCol.xmltext = " + ((strParam" + selCol.columnname + ".equals(\"\") || strParam"
+        + selCol.columnname + ".equals(\"%\"))?\"\":\" AND ";
+    selCol.xmltext += "TO_CHAR(" + tableName + "." + selCol.realcolumnname + ", 'HH24:MI:SS') >= ";
+    selCol.xsqltext = "TO_CHAR(" + tableName + "." + selCol.realcolumnname + ", 'HH24:MI:SS') >= ";
+
+    selCol.xmltext += "TO_TIMESTAMP('";
+    selCol.xsqltext += "TO_TIMESTAMP";
+
+    selCol.xmltext += "\" + strParam" + selCol.columnname + " + \"";
+    selCol.xmltext += "', 'HH24:MI:SS')";
+
+    selCol.xmltext += " \")";
+    selCol.xsqltext += "(?" + ", 'HH24:MI:SS'" + ") ";
+    aux.columnnameinp = FormatUtilities.replace(selCol.columnname) + "_f";
+    aux.xmltext = " + ((strParam" + aux.columnname + ".equals(\"\") || strParam" + aux.columnname
+        + ".equals(\"%\"))?\"\":\" AND";
+
+    aux.xmltext += "TO_CHAR(" + tableName + "." + aux.realcolumnname + ", 'HH24:MI:SS') < ";
+    aux.xsqltext = "TO_CHAR(" + tableName + "." + aux.realcolumnname + ", 'HH24:MI:SS') < ";
+
+    aux.xmltext += "TO_TIMESTAMP('";
+    aux.xsqltext += "TO_TIMESTAMP";
+
+    aux.xmltext += "\" + strParam" + aux.columnname + " + \"";
+
+    aux.xmltext += "', 'HH24:MI:SS')";
+    aux.xmltext += " + 1 \")";
+    aux.xsqltext += "(?" + ", 'HH24:MI:SS'" + ") + 1 ";
+    vecAuxSelCol.addElement(aux);
+
   }
 }
