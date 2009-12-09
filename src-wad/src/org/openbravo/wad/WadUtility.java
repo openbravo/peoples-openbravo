@@ -229,32 +229,17 @@ public class WadUtility {
     if (log4j.isDebugEnabled())
       log4j.debug("processing WadUtility.setLabel() - field name: " + auxControl.getData("Name"));
     String strTableID = "", strColumnName = "", strTableName = "";
-    if (auxControl.getData("AD_Reference_ID").equals("18")) {
-      strTableID = TableLinkData.tableId(conn, auxControl.getData("AD_Reference_Value_ID"));
-      strColumnName = TableLinkData.columnName(conn, auxControl.getData("AD_Reference_Value_ID"));
-    } else if (auxControl.getData("AD_Reference_ID").equals("19")
-        || auxControl.getData("AD_Reference_ID").equals("30")
-        || auxControl.getData("AD_Reference_ID").equals("800011")) {
-      EditionFieldsData[] dataSearchs = null;
-      if (auxControl.getData("AD_Reference_ID").equals("30"))
-        dataSearchs = EditionFieldsData.selectSearchs(conn, "", auxControl
-            .getData("AD_Reference_Value_ID"));
-      if (auxControl.getData("AD_Reference_ID").equals("800011")) {
-        strTableName = "M_Product";
-        strColumnName = TableLinkData.keyColumnName(conn, strTableName);
-      } else if (dataSearchs != null && dataSearchs.length != 0) {
-        strTableName = dataSearchs[0].reference;
-        strColumnName = dataSearchs[0].columnname;
-      } else {
-        strTableName = auxControl.getData("ColumnNameSearch");
-        strTableName = strTableName.substring(0, (strTableName.length() - 3));
-        strColumnName = TableLinkData.keyColumnName(conn, strTableName);
-      }
-      strTableID = TableLinkData.tableNameId(conn, strTableName);
-    } else {
+
+    boolean linkable = auxControl.isLink();
+    if (!linkable) {
       auxControl.setData("IsLinkable", "N");
       return;
     }
+
+    String columnId = auxControl.getLinkColumnId();
+
+    strTableID = TableLinkData.tableId(conn, columnId);
+    strColumnName = TableLinkData.columnName(conn, columnId);
 
     if ((strTableID.equals("") || strColumnName.equals(""))
         && !(auxControl.getData("ColumnName").equalsIgnoreCase("updatedBy") || auxControl.getData(

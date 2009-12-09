@@ -446,4 +446,25 @@ public class WADSearch extends WADControl {
         new String(strOrder + (field.name.equalsIgnoreCase("DocumentNo") ? " DESC" : "")) };
     vecOrder.addElement(aux);
   }
+
+  public boolean isLink() {
+    return true;
+  }
+
+  public String getLinkColumnId() {
+    try {
+      EditionFieldsData[] dataSearchs = EditionFieldsData.selectSearchs(conn, "",
+          getData("AD_Reference_Value_ID"));
+      if (dataSearchs != null && dataSearchs.length != 0) {
+        return dataSearchs[0].adColumnId;
+      } else {
+        String strTableName = getData("ColumnNameSearch");
+        strTableName = strTableName.substring(0, (strTableName.length() - 3));
+        return WADSearchData.getLinkColumn(conn, strTableName);
+      }
+    } catch (Exception e) {
+      return "";
+    }
+  }
+
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -124,5 +124,17 @@ public class WADTable extends WADList {
     final String[] aux = { new String(field.name),
         new String(strOrder + (field.name.equalsIgnoreCase("DocumentNo") ? " DESC" : "")) };
     vecOrder.addElement(aux);
+  }
+
+  public boolean isLink() {
+    return true;
+  }
+
+  public String getLinkColumnId() {
+    try {
+      return WADTableData.getLinkColumn(conn, getData("AD_Reference_Value_ID"));
+    } catch (Exception e) {
+      return "";
+    }
   }
 }
