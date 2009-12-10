@@ -655,7 +655,6 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </taskdef>
     <updateWADmd5 obDir="${basedir}/.." />
-    <updatesystemstatus v="RB51"/>
   </target>
 
   <target name="smartbuild.no.new.wad" unless="new.wad">

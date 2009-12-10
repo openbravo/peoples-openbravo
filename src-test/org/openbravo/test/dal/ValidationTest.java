@@ -127,7 +127,7 @@ public class ValidationTest extends BaseTest {
    * Tests the field length validation on a String.
    */
   public void testFieldLength() {
-    setUserContext("0");
+    setSystemAdministratorContext();
 
     final StringBuffer sb = new StringBuffer();
     final String key = "0123456789";
@@ -154,7 +154,7 @@ public class ValidationTest extends BaseTest {
    * @see Property#getMaxValue()
    */
   public void testMaxValue() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(InvoiceSchedule.class);
     final OBCriteria<InvoiceSchedule> obc = OBDal.getInstance().createCriteria(
         InvoiceSchedule.class);
@@ -175,7 +175,7 @@ public class ValidationTest extends BaseTest {
    * @see Property#getMinValue()
    */
   public void testMinValue() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(InvoiceSchedule.class);
     final OBCriteria<InvoiceSchedule> obc = OBDal.getInstance().createCriteria(
         InvoiceSchedule.class);

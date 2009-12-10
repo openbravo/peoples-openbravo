@@ -52,7 +52,7 @@
          C_Currency c,  AD_Org o
         where p.C_Currency_ID=c.C_Currency_ID
         AND p.IsActive = 'Y'
-        AND p.status = 'DE'
+        AND p.status != 'RT'
         AND p.AD_Org_ID = o.AD_Org_ID
         AND p.AD_CLIENT_ID IN ('1')
         AND p.AD_ORG_ID IN ('1')
